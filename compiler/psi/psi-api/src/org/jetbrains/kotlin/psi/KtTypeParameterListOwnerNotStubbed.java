@@ -24,6 +24,15 @@ import org.jetbrains.kotlin.KtNodeTypes;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Base implementation of {@link KtTypeParameterListOwner} backed directly by the AST tree, for declarations that do not
+ * yet have a stub-based representation.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI.
+ *
+ * @deprecated a transitional base class kept only until all type-parameter-list owners get stubs; prefer the
+ * stub-capable {@link KtTypeParameterListOwnerStub}.
+ */
 // TODO: Remove when all implementations of JetTypeParameterListOwner get stubs
 @Deprecated
 abstract class KtTypeParameterListOwnerNotStubbed extends KtNamedDeclarationNotStubbed implements KtTypeParameterListOwner {

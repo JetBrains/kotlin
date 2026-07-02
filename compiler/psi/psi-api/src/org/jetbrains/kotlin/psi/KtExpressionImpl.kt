@@ -10,6 +10,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.psi.psiUtil.parentSubstitute
 
+/**
+ * Base implementation of [KtExpression] backed directly by the AST tree.
+ *
+ * This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing outside
+ * of the PSI implementation. For expressions that may also be backed by a stub, see [KtExpressionImplStub].
+ */
 abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpression {
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitExpression(this, data)

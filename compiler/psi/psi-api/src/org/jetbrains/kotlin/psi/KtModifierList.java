@@ -18,6 +18,20 @@ import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
 
 import java.util.List;
 
+/**
+ * Represents the list of modifiers and annotations that precede a declaration or other {@link KtModifierListOwner}.
+ *
+ * <p>A modifier list groups plain modifier keywords (such as {@code public}, {@code inline}, {@code suspend}),
+ * annotation entries, and the {@code context(...)} parameter list. Whether a specific modifier is present can be tested
+ * with {@link #hasModifier(KtModifierKeywordToken)}.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ *    @JvmStatic private inline fun foo() {}
+ * // ^______________________^
+ * // The modifier list ('@JvmStatic private inline')
+ * }</pre>
+ */
 public abstract class KtModifierList extends KtElementImplStub<KotlinModifierListStub> implements KtAnnotationsContainer {
 
     public KtModifierList(@NotNull KotlinModifierListStub stub, @NotNull IStubElementType nodeType) {

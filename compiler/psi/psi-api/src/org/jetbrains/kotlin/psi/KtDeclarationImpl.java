@@ -27,6 +27,13 @@ import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentKt;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Base implementation of {@link KtDeclaration} backed directly by the AST tree.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI, used by declaration types that are never
+ * represented by a stub. It is not intended for direct use or subclassing outside of the PSI implementation. For
+ * declarations that may also be backed by a stub, see {@link KtDeclarationStub}.
+ */
 public abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDeclaration {
     public KtDeclarationImpl(@NotNull ASTNode node) {
         super(node);

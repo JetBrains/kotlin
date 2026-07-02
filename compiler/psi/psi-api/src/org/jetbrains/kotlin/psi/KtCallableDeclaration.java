@@ -12,13 +12,49 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents a declaration with the structure of a callable: it may declare value parameters, an extension receiver,
+ * type parameters (with constraints), and a return type.
+ *
+ * <p>Its concrete forms are functions ({@link KtFunction}, which covers named functions, function literals, and
+ * constructors), properties ({@link KtProperty}), and value parameters ({@link KtParameter}). Not every form supports
+ * every element: for instance, a property has no value parameter list, and a constructor has no receiver.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ * fun <T> List<T>.second(index: Int): T = this[index]
+ * //     ^________________________________________________^
+ * // Receiver 'List<T>', type parameter 'T', value parameter 'index', and return type 'T'
+ * }</pre>
+ *
+ * @see KtFunction
+ * @see KtProperty
+ * @see KtParameter
+ */
 public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclarationWithReturnType, KtTypeParameterListOwner {
+    /**
+     * Returns the parenthesized list of value parameters, or {@code null} if this callable has none (for example, a
+     * property).
+     */
     @Nullable
     KtParameterList getValueParameterList();
 
+    /**
+     * Returns the value parameters of this callable, or an empty list if there are none.
+     */
     @NotNull
     List<KtParameter> getValueParameters();
 
+    /**
+     * Returns the type reference of the extension receiver, or {@code null} if this callable is not an extension.
+     *
+     * <h3>Example:</h3>
+     * <pre>{@code
+     * fun String.trimAll(): String = trim()
+     * //  ^____^
+     * // The receiver type reference
+     * }</pre>
+     */
     @Nullable
     KtTypeReference getReceiverTypeReference();
 
@@ -68,6 +104,10 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
         return contextParameterList.getContextParameters();
     }
 
+    /**
+     * Returns the type reference for the declared return type, or {@code null} when the return type is omitted and
+     * inferred by the compiler.
+     */
     @Override
     @Nullable
     KtTypeReference getTypeReference();
@@ -81,6 +121,10 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
     @Nullable
     KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef);
 
+    /**
+     * Returns the colon token that separates the declaration from its return type, or {@code null} if the return type
+     * is omitted.
+     */
     @Nullable
     PsiElement getColon();
 }

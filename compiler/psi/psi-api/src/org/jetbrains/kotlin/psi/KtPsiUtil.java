@@ -36,11 +36,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+/**
+ * A collection of static helper methods for working with the Kotlin PSI.
+ *
+ * <p>The utilities here cover common low-level operations such as unwrapping parenthesized expressions
+ * ({@link #deparenthesize}), inspecting names and identifiers, and testing structural properties of elements
+ * (for example, whether a declaration is local). This class is not instantiable.
+ */
 public class KtPsiUtil {
     private KtPsiUtil() {
     }
 
+    /**
+     * An element that wraps a base expression, such as a parenthesized or annotated expression.
+     */
     public interface KtExpressionWrapper {
+        /**
+         * Returns the wrapped base expression.
+         */
         KtExpression getBaseExpression();
     }
 

@@ -24,6 +24,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
+/**
+ * Base implementation of {@link KtNamedDeclaration} backed directly by the AST tree, for named declarations that do not
+ * yet have a stub-based representation.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI.
+ *
+ * @deprecated a transitional base class kept only until all named declarations get stubs; prefer the stub-capable
+ * {@link KtNamedDeclarationStub}.
+ */
 // TODO: Remove when all named declarations get stubs
 @Deprecated
 abstract class KtNamedDeclarationNotStubbed extends KtDeclarationImpl implements KtNamedDeclaration {

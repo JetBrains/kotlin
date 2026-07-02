@@ -19,7 +19,17 @@ package org.jetbrains.kotlin.psi;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.Name;
 
+/**
+ * Represents an element that carries a Kotlin {@link Name}, such as a named declaration or a label.
+ *
+ * <p>Unlike {@link com.intellij.psi.PsiNamedElement#getName()}, which returns a raw {@link String}, this interface
+ * exposes the name as a structured {@link Name} that already accounts for backtick-quoted identifiers.
+ */
 public interface KtNamed {
+    /**
+     * Returns the name of this element as a {@link Name}, or {@code null} if the element is anonymous or its name is
+     * missing (for example, in incomplete or erroneous code).
+     */
     @Nullable
     Name getNameAsName();
 }

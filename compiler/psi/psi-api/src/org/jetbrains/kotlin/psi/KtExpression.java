@@ -19,6 +19,14 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a Kotlin expression: a piece of code that can be evaluated to a value, such as a literal, an operator
+ * application, a function call, or an {@code if}/{@code when} used as a value.
+ *
+ * <p>This is the common base type for all expression nodes in the Kotlin PSI. In the Kotlin grammar statements are a
+ * subset of expressions, so control-flow constructs (loops, {@code return}, {@code throw}) and even local declarations
+ * ({@link KtDeclaration}) are modeled as {@link KtExpression}s as well.
+ */
 public interface KtExpression extends KtElement {
     KtExpression[] EMPTY_ARRAY = new KtExpression[0];
 

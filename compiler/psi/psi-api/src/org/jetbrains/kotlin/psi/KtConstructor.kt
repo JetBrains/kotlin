@@ -16,6 +16,27 @@ import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
+/**
+ * Represents a constructor of a class or object.
+ *
+ * This is the common base for the concrete node types [KtPrimaryConstructor] and [KtSecondaryConstructor]. A
+ * constructor is a [KtFunction] with value parameters and (for secondary constructors) a body, but it has no name,
+ * receiver, return type, or type parameters of its own.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * class Foo(val x: Int) {
+ * //       ^_________^
+ * //       The primary constructor
+ *     constructor() : this(0)
+ * //  ^_____________________^
+ * //  A secondary constructor
+ * }
+ * ```
+ *
+ * @param T the concrete constructor node type, used by the stub machinery
+ */
 abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinConstructorStub<T>>, KtFunction {
     protected constructor(node: ASTNode) : super(node)
     protected constructor(

@@ -20,6 +20,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 
+/**
+ * A [KtCodeFragment] whose content is a single expression.
+ *
+ * This is the most common fragment kind, used, for example, to evaluate a debugger watch expression. Its
+ * [content element][getContentElement] is a [KtExpression], or `null` if the text could not be parsed as one.
+ */
 class KtExpressionCodeFragment(
     project: Project,
     name: String,

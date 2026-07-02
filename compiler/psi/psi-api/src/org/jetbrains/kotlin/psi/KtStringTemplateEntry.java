@@ -16,6 +16,20 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
 
 import java.util.List;
 
+/**
+ * Represents a single entry of a {@link KtStringTemplateExpression}, that is, one segment of a string literal.
+ *
+ * <p>A string is split into consecutive entries: plain literal text ({@link KtLiteralStringTemplateEntry}), escape
+ * sequences ({@link KtEscapeStringTemplateEntry}), and interpolated expressions ({@link KtStringTemplateEntryWithExpression}).
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ * "Hello, $name!"
+ * // ^^^^^^        literal entry "Hello, "
+ * //        ^^^^^  simple-name entry "$name"
+ * //             ^ literal entry "!"
+ * }</pre>
+ */
 public abstract class KtStringTemplateEntry extends KtElementImplStub<KotlinPlaceHolderWithTextStub<? extends KtStringTemplateEntry>> {
     public static final KtStringTemplateEntry[] EMPTY_ARRAY = new KtStringTemplateEntry[0];
 

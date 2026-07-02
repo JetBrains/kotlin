@@ -21,6 +21,20 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtCodeFragment.Companion.IMPORT_SEPARATOR
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
+/**
+ * A synthetic, in-memory Kotlin file that holds a standalone snippet of code together with a context.
+ *
+ * Code fragments are not part of any real source file. They are created for scenarios such as evaluating a debugger
+ * watch expression, previewing a refactoring, or running an intention, where a piece of Kotlin code must be parsed and
+ * analyzed as if it appeared at a particular [context] element. The context determines which declarations are visible
+ * to the fragment, and additional [imports] can be supplied on top of it.
+ *
+ * This is the common base for the concrete node types [KtExpressionCodeFragment], [KtBlockCodeFragment], and
+ * [KtTypeCodeFragment]; the meaningful content is exposed by [getContentElement].
+ *
+ * @param imports optional imports, separated by [IMPORT_SEPARATOR]
+ * @param context the element the fragment is conceptually placed at, used to resolve references from the fragment
+ */
 abstract class KtCodeFragment(
     viewProvider: FileViewProvider,
     imports: String?, // Should be separated by KtCodeFragment.IMPORT_SEPARATOR
@@ -67,6 +81,10 @@ abstract class KtCodeFragment(
     private var superType: PsiType? = null
     private var exceptionHandler: JavaCodeFragment.ExceptionHandler? = null
 
+    /**
+     * Returns the meaningful content of this fragment (for example, the parsed expression, block, or type reference),
+     * or `null` if it could not be parsed.
+     */
     abstract fun getContentElement(): KtElement?
 
     override fun forceResolveScope(scope: GlobalSearchScope?) {

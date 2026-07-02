@@ -20,6 +20,23 @@ import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
 import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 
+/**
+ * Represents a class, interface, object, or enum entry declaration.
+ *
+ * This is the common base for the concrete node types [KtClass] (classes and interfaces), [KtObjectDeclaration]
+ * (named and companion objects), and [KtEnumEntry]. It gives access to the shared structure of such declarations:
+ * the supertype list, the class body, the primary and secondary constructors, and the nested declarations.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ *    class Foo : Bar() {
+ *        fun baz() {}
+ *    }
+ * // ^__________________^
+ * // The entire class-or-object declaration
+ * ```
+ */
 abstract class KtClassOrObject :
     KtTypeParameterListOwnerStub<KotlinClassOrObjectStub<out KtClassOrObject>>, KtDeclarationContainer, KtNamedDeclaration,
     KtPureClassOrObject, KtClassLikeDeclaration {

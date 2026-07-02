@@ -114,6 +114,25 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
     PsiChildRangeArgumentType
 )
 
+/**
+ * Creates a PSI element from a textual [pattern] with `$0`, `$1`, … placeholders replaced by the corresponding [args].
+ *
+ * The pattern is a piece of Kotlin source with numbered placeholders; each placeholder is substituted by the matching
+ * argument (an expression or type reference is spliced in as PSI, a [String] or [Name] as text), and the resulting text
+ * is parsed by [factory]. This produces more readable element construction than manual string concatenation, and it
+ * preserves the PSI identity of spliced-in elements.
+ *
+ * Supported argument types are [KtExpression], [KtTypeReference], [String], [Name], and
+ * [org.jetbrains.kotlin.psi.psiUtil.PsiChildRange].
+ *
+ * Prefer the specialized entry points ([KtPsiFactory.createExpressionByPattern] and friends) when creating a known kind
+ * of element.
+ *
+ * @param reformat whether to reformat the created element according to the code style
+ * @param factory parses the substituted pattern text into the target element
+ * @throws IllegalArgumentException if an argument is of an unsupported type, or the number of arguments does not match
+ * the number of placeholders
+ */
 fun <TElement : KtElement> createByPattern(
     pattern: String,
     vararg args: Any,
@@ -305,6 +324,15 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
     return PatternData(text, ranges)
 }
 
+/**
+ * A builder that assembles a [createByPattern] pattern step by step, appending fixed text, expressions, type
+ * references, names, and child ranges in order and tracking their placeholders automatically.
+ *
+ * Use it through the `KtPsiFactory.build*` entry points (such as [KtPsiFactory.buildExpression]), which create a
+ * builder, run the configuration block on it, and parse the result into an element.
+ *
+ * @param TElement the kind of element the assembled pattern produces
+ */
 class BuilderByPattern<TElement> {
     private val patternBuilder = StringBuilder()
     private val arguments = ArrayList<Any>()
