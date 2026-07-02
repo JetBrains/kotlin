@@ -304,8 +304,8 @@ class LightTreeRawFirExpressionBuilder(
         val output = mutableListOf<LighterASTNode?>()
         input.add(binaryExpression)
         while (input.isNotEmpty()) {
-            val node = input.pop()
-            when (node?.tokenType) {
+            val node = input.pop() ?: return null
+            when (node.tokenType) {
                 BINARY_EXPRESSION -> {
                     val [leftNode, operationReference, rightNode] = extractBinaryExpression(node)
 
@@ -316,12 +316,11 @@ class LightTreeRawFirExpressionBuilder(
                     input.add(leftNode)
                     input.add(rightNode)
                 }
+                STRING_TEMPLATE -> {
+                    output.add(node)
+                }
                 else -> {
-                    if (node?.tokenType != STRING_TEMPLATE) {
-                        return null
-                    } else {
-                        output.add(node)
-                    }
+                    return null
                 }
             }
         }
