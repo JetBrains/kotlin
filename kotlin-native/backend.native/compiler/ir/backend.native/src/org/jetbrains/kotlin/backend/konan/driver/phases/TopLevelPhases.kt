@@ -395,8 +395,21 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
 ): Sequence<BackendJobFragment> {
     val config = context.config
     val containsStdlib = config.libraryToCache?.klib == context.stdlibModule.konanLibrary
-    if (config.produce.isCache && containsStdlib)
-        input.files.removeAll { it.packageFqName == KonanFqNames.cudaPackageName }
+    if (config.produce.isCache && containsStdlib) {
+        // `kotlin.native.cuda` files reference NVVM `llvm.nvvm.*` symbols that LLVM refuses to
+        // accept on non-NVIDIA targets — actually caching them fails there. But dropping the
+        // files entirely leaves the corresponding per-file cache subdirs missing, which makes
+        // downstream libraries (posix, platform libs) fail the `CacheSupport` consistency
+        // check with "stdlib is going to be cached, but its dependency isn't". Keep the file
+        // objects in place (their identity is used by `KonanPartialModuleDeserializer` to
+        // resolve klib file indices) and just strip their declarations — the per-file cache
+        // pipeline still produces a (trivial) subdir for each, keeping the cache "complete".
+        input.files.forEach { file ->
+            if (file.packageFqName == KonanFqNames.cudaPackageName) {
+                file.declarations.clear()
+            }
+        }
+    }
 
     return if (config.producePerFileCache) {
         val files = input.files.toList()
