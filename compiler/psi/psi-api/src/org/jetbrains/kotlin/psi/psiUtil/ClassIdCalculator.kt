@@ -11,7 +11,14 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.utils.*
 
+/**
+ * Computes [ClassId]s for class-like declarations purely from the PSI structure, without semantic resolution.
+ */
 internal object ClassIdCalculator {
+    /**
+     * Returns the [ClassId] of the given [declaration] by walking its parents, or `null` if it has none — for example,
+     * a local declaration, an enum entry, or a declaration inside an object literal or code fragment.
+     */
     fun calculateClassId(declaration: KtClassLikeDeclaration): ClassId? {
         var ktFile: KtFile? = null
         val containingClassNames = mutableListOf<String>()
