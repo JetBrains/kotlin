@@ -55,6 +55,12 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.baseNativ
             +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
         }
     }
+
+    forTestsMatching("testData/diagnostics/nativeTests/prohibitKotlinPackageInNative.kt") {
+        defaultDirectives {
+            -LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
+        }
+    }
 }
 
 fun TestConfigurationBuilder.baseFirNativeDiagnosticTestConfiguration() {
