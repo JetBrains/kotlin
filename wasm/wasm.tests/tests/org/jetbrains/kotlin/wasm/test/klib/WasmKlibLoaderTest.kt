@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.wasm.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
@@ -14,11 +13,12 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.AbstractKlibLoaderTest
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
-import java.io.File
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.pathString
 import kotlin.test.fail
 
 abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : AbstractKlibLoaderTest() {
@@ -51,17 +51,17 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
     ) {
         val args = KotlinWasmCompilerArguments().apply {
             if (parameters.asFile) {
-                outputDir = parameters.klibLocation.parent
+                outputDir = parameters.klibLocation.parent.pathString
             } else {
                 nopack = true
-                outputDir = parameters.klibLocation.path
+                outputDir = parameters.klibLocation.pathString
             }
             wasmTarget = this@AbstractWasmKlibLoaderTest.target.alias
             libraries = stdlib
             moduleName = parameters.sourceFile.nameWithoutExtension
             irModuleName = parameters.sourceFile.nameWithoutExtension
             customKlibAbiVersion = parameters.abiVersion.toString()
-            freeArgs = listOf(parameters.sourceFile.absolutePath)
+            freeArgs = listOf(parameters.sourceFile.absolutePathString())
             if (parameters.withCompanionBlocksAndExtensionsFeature) companionBlocksAndExtensions = true
         }
 

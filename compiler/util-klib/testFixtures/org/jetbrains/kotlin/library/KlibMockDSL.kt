@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.saveToFile
+import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_RESOURCES_FOLDER_NAME
@@ -18,24 +17,26 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KlibIrComponentWriterImpl
 import org.jetbrains.kotlin.library.impl.KlibMetadataComponentWriterImpl
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import java.io.File
-import kotlin.io.path.Path
+import java.nio.file.Path
+import java.util.Properties
+import kotlin.io.path.createDirectories
+import kotlin.io.path.writeBytes
+import kotlin.io.path.writeText
 import kotlin.random.Random
-import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
  * A DSL to mock a Klib on the file system. See the default endpoint [mockKlib].
  */
-class KlibMockDSL(val currentDir: File, val parent: KlibMockDSL?) {
+class KlibMockDSL(val currentDir: Path, val parent: KlibMockDSL?) {
     fun dir(name: String, init: KlibMockDSL.() -> Unit = {}) {
-        val newDir = currentDir.resolve(name).apply(File::mkdirs)
+        val newDir = currentDir.resolve(name).apply(Path::createDirectories)
         KlibMockDSL(currentDir = newDir, parent = this).init()
     }
 
     fun file(name: String, content: String = ""): Unit = currentDir.resolve(name).writeText(content)
     fun file(name: String, content: ByteArray): Unit = currentDir.resolve(name).writeBytes(content)
 
-    val rootDir: File
+    val rootDir: Path
         get() = parent?.rootDir ?: currentDir
 
     companion object {
@@ -49,8 +50,8 @@ class KlibMockDSL(val currentDir: File, val parent: KlibMockDSL?) {
          * }
          * ```
          */
-        fun mockKlib(klibDir: File, init: KlibMockDSL.() -> Unit): File {
-            klibDir.mkdirs()
+        fun mockKlib(klibDir: Path, init: KlibMockDSL.() -> Unit): Path {
+            klibDir.createDirectories()
             KlibMockDSL(currentDir = klibDir, parent = null).apply {
                 dir(KLIB_DEFAULT_COMPONENT_NAME, init)
             }
@@ -153,7 +154,7 @@ fun KlibMockDSL.manifest(
     }
     properties.writeKonanLibraryVersioning(versioning)
     properties.other()
-    properties.saveToFile(KlibFile(currentDir.resolve(KLIB_MANIFEST_FILE_NAME).path))
+    currentDir.resolve(KLIB_MANIFEST_FILE_NAME).writeProperties(properties)
 }
 
 fun KlibMockDSL.resources(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_RESOURCES_FOLDER_NAME, init)
@@ -161,7 +162,7 @@ fun KlibMockDSL.resources(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_RE
 fun KlibMockDSL.metadata(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_METADATA_FOLDER_NAME, init)
 
 fun KlibMockDSL.metadata(metadata: SerializedMetadata) {
-    KlibMetadataComponentWriterImpl(metadata).writeTo(Path(rootDir.path))
+    KlibMetadataComponentWriterImpl(metadata).writeTo(rootDir)
 }
 
 fun KlibMockDSL.ir(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_FOLDER_NAME, init)
@@ -169,8 +170,6 @@ fun KlibMockDSL.ir(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_FOLDER
 fun KlibMockDSL.irInlinableFunctions(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME, init)
 
 fun KlibMockDSL.irModule(serializedIrModule: SerializedIrModule) {
-    val output = Path(rootDir.path)
-
-    KlibIrComponentWriterImpl.ForMainIr(serializedIrModule.files).writeTo(output)
-    serializedIrModule.fileWithPreparedInlinableFunctions?.let { KlibIrComponentWriterImpl.ForInlinableFunctionsIr(it).writeTo(output) }
+    KlibIrComponentWriterImpl.ForMainIr(serializedIrModule.files).writeTo(rootDir)
+    serializedIrModule.fileWithPreparedInlinableFunctions?.let { KlibIrComponentWriterImpl.ForInlinableFunctionsIr(it).writeTo(rootDir) }
 }

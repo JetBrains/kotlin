@@ -17,11 +17,11 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
+import java.nio.file.Path
 
 class NativeKlibPlatformCheckerTest {
     @TempDir
-    private lateinit var tmpDir: File
+    private lateinit var tmpDir: Path
 
     @Test
     fun `No or empty 'native_targets', no or empty 'commonizer_native_targets'`() {
@@ -101,7 +101,7 @@ class NativeKlibPlatformCheckerTest {
     private fun mockKlib(
         nativeTargets: List<String>?,
         nativeCommonizerTargets: List<String>?,
-    ): File = mockKlib(tmpDir.resolve(generateRandomName(10))) {
+    ): Path = mockKlib(tmpDir.resolve(generateRandomName(10))) {
         manifest(
             uniqueName = "sample",
             builtInsPlatform = BuiltInsPlatform.NATIVE,
@@ -121,7 +121,7 @@ class NativeKlibPlatformCheckerTest {
         }
     }
 
-    private fun File.assertLoadedWith(checker: KlibPlatformChecker) {
+    private fun Path.assertLoadedWith(checker: KlibPlatformChecker) {
         val result = KlibLoader {
             libraryPaths(this@assertLoadedWith)
             platformChecker(checker)
@@ -131,7 +131,7 @@ class NativeKlibPlatformCheckerTest {
         assertEquals(1, result.librariesStdlibFirst.size)
     }
 
-    private fun File.assertNotLoadedWith(checker: KlibPlatformChecker) {
+    private fun Path.assertNotLoadedWith(checker: KlibPlatformChecker) {
         val result = KlibLoader {
             libraryPaths(this@assertNotLoadedWith)
             platformChecker(checker)
