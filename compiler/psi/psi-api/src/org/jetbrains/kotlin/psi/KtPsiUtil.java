@@ -57,7 +57,7 @@ public class KtPsiUtil {
         KtExpression getBaseExpression();
     }
 
-    /** Dispatches each direct {@link KtElement} child of the given [element] to the [visitor]. */
+    /** Dispatches each direct {@link KtElement} child of the given {@code element} to the {@code visitor}. */
     public static <D> void visitChildren(@NotNull KtElement element, @NotNull KtVisitor<Void, D> visitor, D data) {
         PsiElement child = element.getFirstChild();
         while (child != null) {
@@ -68,14 +68,16 @@ public class KtPsiUtil {
         }
     }
 
-    /** Like {@link #deparenthesize(KtExpression)}, but returns [expression] itself if there is nothing to unwrap. */
+    /**
+     * Like {@link #deparenthesize(KtExpression)}, but returns {@code expression} itself if there is nothing to unwrap.
+     */
     @NotNull
     public static KtExpression safeDeparenthesize(@NotNull KtExpression expression) {
         return safeDeparenthesize(expression, false);
     }
 
     /**
-     * Like {@link #deparenthesize(KtExpression, boolean)}, but returns [expression] itself if there is nothing to
+     * Like {@link #deparenthesize(KtExpression, boolean)}, but returns {@code expression} itself if there is nothing to
      * unwrap.
      */
     @NotNull
@@ -84,15 +86,15 @@ public class KtPsiUtil {
         return deparenthesized != null ? deparenthesized : expression;
     }
 
-    /** Recursively unwraps parentheses, labels, and annotations from the given [expression]. */
+    /** Recursively unwraps parentheses, labels, and annotations from the given {@code expression}. */
     @Nullable
     public static KtExpression deparenthesize(@Nullable KtExpression expression) {
         return deparenthesize(expression, false);
     }
 
     /**
-     * Recursively unwraps parentheses and labels (and annotations unless [keepAnnotations] is `true`) from the given
-     * [expression], returning the innermost wrapped expression.
+     * Recursively unwraps parentheses and labels (and annotations unless {@code keepAnnotations} is {@code true}) from
+     * the given {@code expression}, returning the innermost wrapped expression.
      */
     @Nullable
     public static KtExpression deparenthesize(@Nullable KtExpression expression, boolean keepAnnotations) {
@@ -104,7 +106,7 @@ public class KtPsiUtil {
         }
     }
 
-    /** Unwraps a single layer of parentheses, label, or annotation from the given [expression]. */
+    /** Unwraps a single layer of parentheses, label, or annotation from the given {@code expression}. */
     @Nullable
     public static KtExpression deparenthesizeOnce(
             @Nullable KtExpression expression
@@ -113,8 +115,8 @@ public class KtPsiUtil {
     }
 
     /**
-     * Unwraps a single layer of parentheses or label (and annotation unless [keepAnnotations] is `true`) from the given
-     * [expression].
+     * Unwraps a single layer of parentheses or label (and annotation unless {@code keepAnnotations} is {@code true})
+     * from the given {@code expression}.
      */
     @Nullable
     public static KtExpression deparenthesizeOnce(
@@ -135,13 +137,13 @@ public class KtPsiUtil {
         return expression;
     }
 
-    /** Returns [name] as a {@link Name}, or the special "no name provided" name if [name] is `null`. */
+    /** Returns {@code name} as a {@link Name}, or the special "no name provided" name if {@code name} is {@code null}. */
     @NotNull
     public static Name safeName(@Nullable String name) {
         return name == null ? SpecialNames.NO_NAME_PROVIDED : Name.identifier(name);
     }
 
-    /** Returns the subset of [unreachableElements] that are not contained within any other element of the set. */
+    /** Returns the subset of {@code unreachableElements} that are not contained within any other element of the set. */
     @NotNull
     public static Set<KtElement> findRootExpressions(@NotNull Collection<KtElement> unreachableElements) {
         Set<KtElement> rootElements = new HashSet<>();
@@ -165,7 +167,10 @@ public class KtPsiUtil {
         return rootElements;
     }
 
-    /** Removes surrounding backticks from a backtick-quoted identifier, returning [quoted] unchanged if it has none. */
+    /**
+     * Removes surrounding backticks from a backtick-quoted identifier, returning {@code quoted} unchanged if it has
+     * none.
+     */
     @NotNull
     public static String unquoteIdentifier(@NotNull String quoted) {
         if (quoted.indexOf('`') < 0) {
@@ -195,7 +200,7 @@ public class KtPsiUtil {
         }
     }
 
-    /** Returns {@code true} if [owner] is syntactically annotated with {@code @Deprecated} (by short name only). */
+    /** Returns {@code true} if {@code owner} is syntactically annotated with {@code @Deprecated} (by short name only). */
     public static boolean isDeprecated(@NotNull KtModifierListOwner owner) {
         KtModifierList modifierList = owner.getModifierList();
         if (modifierList != null) {
@@ -211,8 +216,8 @@ public class KtPsiUtil {
     }
 
     /**
-     * Returns the enclosing element of type [aClass] for which [block] is a direct body (an {@code if} branch, a
-     * {@code when} entry, a lambda body, or a {@code try}/{@code catch} body), or {@code null} otherwise.
+     * Returns the enclosing element of type {@code aClass} for which {@code block} is a direct body (an {@code if}
+     * branch, a {@code when} entry, a lambda body, or a {@code try}/{@code catch} body), or {@code null} otherwise.
      */
     @Nullable
     public static <T extends PsiElement> T getDirectParentOfTypeForBlock(@NotNull KtBlockExpression block, @NotNull Class<T> aClass) {
@@ -251,21 +256,29 @@ public class KtPsiUtil {
         return null;
     }
 
-    /** Returns the last (rightmost) simple-name reference of the given qualified [importedReference], or {@code null}. */
+    /**
+     * Returns the last (rightmost) simple-name reference of the given qualified {@code importedReference}, or
+     * {@code null}.
+     */
     @Nullable
     public static KtSimpleNameExpression getLastReference(@NotNull KtExpression importedReference) {
         KtElement selector = KtPsiUtilKt.getQualifiedElementSelector(importedReference);
         return selector instanceof KtSimpleNameExpression ? (KtSimpleNameExpression) selector : null;
     }
 
-    /** Returns {@code true} if [nameExpression] is the selector of a qualified expression or qualified user type. */
+    /**
+     * Returns {@code true} if {@code nameExpression} is the selector of a qualified expression or qualified user type.
+     */
     public static boolean isSelectorInQualified(@NotNull KtSimpleNameExpression nameExpression) {
         KtElement qualifiedElement = KtPsiUtilKt.getQualifiedElement(nameExpression);
         return qualifiedElement instanceof KtQualifiedExpression
                || ((qualifiedElement instanceof KtUserType) && ((KtUserType) qualifiedElement).getQualifier() != null);
     }
 
-    /** Returns {@code true} if [expression] is on the left-hand side (the receiver) of a qualified `.`/`?.` expression. */
+    /**
+     * Returns {@code true} if {@code expression} is on the left-hand side (the receiver) of a qualified
+     * {@code .}/{@code ?.} expression.
+     */
     public static boolean isLHSOfDot(@NotNull KtExpression expression) {
         PsiElement parent = expression.getParent();
         if (!(parent instanceof KtQualifiedExpression)) return false;
@@ -273,7 +286,7 @@ public class KtPsiUtil {
         return qualifiedParent.getReceiverExpression() == expression || isLHSOfDot(qualifiedParent);
     }
 
-    /** Returns {@code true} if [namedDeclaration] is a top-level declaration of a script. */
+    /** Returns {@code true} if {@code namedDeclaration} is a top-level declaration of a script. */
     public static boolean isScriptDeclaration(@NotNull KtDeclaration namedDeclaration) {
         return getScript(namedDeclaration) != null;
     }
@@ -290,7 +303,10 @@ public class KtPsiUtil {
         }
     }
 
-    /** Returns {@code true} if [declaration] is a variable declaration that can be safely removed or replaced with `_`. */
+    /**
+     * Returns {@code true} if {@code declaration} is a variable declaration that can be safely removed or replaced with
+     * {@code _}.
+     */
     public static boolean isRemovableVariableDeclaration(@NotNull KtDeclaration declaration) {
         if (!(declaration instanceof KtVariableDeclaration)) return false;
         if (declaration instanceof KtProperty) return true;
@@ -300,8 +316,8 @@ public class KtPsiUtil {
     }
 
     /**
-     * Returns the topmost ancestor of [element] (or the enclosing file) whose type is one of [parentTypes], or
-     * {@code null} if there is none.
+     * Returns the topmost ancestor of {@code element} (or the enclosing file) whose type is one of
+     * {@code parentTypes}, or {@code null} if there is none.
      */
     @Nullable
     @SafeVarargs
@@ -325,33 +341,33 @@ public class KtPsiUtil {
         return answer;
     }
 
-    /** Returns {@code true} if [expression] (after deparenthesizing) is the `null` literal. */
+    /** Returns {@code true} if {@code expression} (after deparenthesizing) is the {@code null} literal. */
     public static boolean isNullConstant(@NotNull KtExpression expression) {
         KtExpression deparenthesized = deparenthesize(expression);
         return deparenthesized instanceof KtConstantExpression && deparenthesized.getNode().getElementType() == KtNodeTypes.NULL;
     }
 
-    /** Returns {@code true} if [condition] is the boolean literal `true`. */
+    /** Returns {@code true} if {@code condition} is the boolean literal {@code true}. */
     public static boolean isTrueConstant(@Nullable KtExpression condition) {
         return isBooleanConstant(condition) && condition.getNode().findChildByType(KtTokens.TRUE_KEYWORD) != null;
     }
 
-    /** Returns {@code true} if [condition] is the boolean literal `false`. */
+    /** Returns {@code true} if {@code condition} is the boolean literal {@code false}. */
     public static boolean isFalseConstant(@Nullable KtExpression condition) {
         return isBooleanConstant(condition) && condition.getNode().findChildByType(KtTokens.FALSE_KEYWORD) != null;
     }
 
-    /** Returns {@code true} if [condition] is a boolean literal (`true` or `false`). */
+    /** Returns {@code true} if {@code condition} is a boolean literal ({@code true} or {@code false}). */
     public static boolean isBooleanConstant(@Nullable KtExpression condition) {
         return condition != null && condition.getNode().getElementType() == KtNodeTypes.BOOLEAN_CONSTANT;
     }
 
-    /** Returns {@code true} if [declaration] has no body (and is therefore abstract). */
+    /** Returns {@code true} if {@code declaration} has no body (and is therefore abstract). */
     public static boolean isAbstract(@NotNull KtDeclarationWithBody declaration) {
         return declaration.getBodyExpression() == null;
     }
 
-    /** Returns the last statement of [expression] if it is a block, otherwise [expression] itself. */
+    /** Returns the last statement of {@code expression} if it is a block, otherwise {@code expression} itself. */
     @Nullable
     public static KtExpression getExpressionOrLastStatementInBlock(@Nullable KtExpression expression) {
         if (expression instanceof KtBlockExpression) {
@@ -360,7 +376,7 @@ public class KtPsiUtil {
         return expression;
     }
 
-    /** Returns the last statement of the given block, or {@code null} if the block is `null` or empty. */
+    /** Returns the last statement of the given block, or {@code null} if the block is {@code null} or empty. */
     @Nullable
     public static KtExpression getLastStatementInABlock(@Nullable KtBlockExpression blockExpression) {
         if (blockExpression == null) return null;
@@ -368,14 +384,14 @@ public class KtPsiUtil {
         return statements.isEmpty() ? null : statements.get(statements.size() - 1);
     }
 
-    /** Returns {@code true} if [classOrObject] is an interface. */
+    /** Returns {@code true} if {@code classOrObject} is an interface. */
     public static boolean isTrait(@NotNull KtClassOrObject classOrObject) {
         return classOrObject instanceof KtClass && ((KtClass) classOrObject).isInterface();
     }
 
     /**
-     * Returns the outermost enclosing class or object of [classOrObject] (walking out through class bodies), or
-     * [classOrObject] itself if it is top-level or local.
+     * Returns the outermost enclosing class or object of {@code classOrObject} (walking out through class bodies), or
+     * {@code classOrObject} itself if it is top-level or local.
      */
     @Nullable
     public static KtClassOrObject getOutermostClassOrObject(@NotNull KtClassOrObject classOrObject) {
@@ -397,8 +413,8 @@ public class KtPsiUtil {
     }
 
     /**
-     * If [ktParameter] is a primary-constructor `val`/`var` property parameter, returns the class or object that
-     * declares it; otherwise returns {@code null}.
+     * If {@code ktParameter} is a primary-constructor {@code val}/{@code var} property parameter, returns the class or
+     * object that declares it; otherwise returns {@code null}.
      */
     @Nullable
     public static KtClassOrObject getClassIfParameterIsProperty(@NotNull KtParameter ktParameter) {
@@ -473,7 +489,7 @@ public class KtPsiUtil {
         return MAX_PRIORITY;
     }
 
-    /** Returns {@code true} if the parentheses in [expression] are redundant and could be removed. */
+    /** Returns {@code true} if the parentheses in {@code expression} are redundant and could be removed. */
     @SuppressWarnings("unused") // used in intellij repo
     public static boolean areParenthesesUseless(@NotNull KtParenthesizedExpression expression) {
         KtExpression innerExpression = expression.getExpression();
@@ -484,9 +500,9 @@ public class KtPsiUtil {
     }
 
     /**
-     * Returns {@code true} if parentheses around [innerExpression] are required for the code to keep its meaning, given
-     * that they currently appear as [currentInner] inside [parentElement]. Accounts for operator precedence and the
-     * many syntactic special cases where parentheses cannot be dropped.
+     * Returns {@code true} if parentheses around {@code innerExpression} are required for the code to keep its
+     * meaning, given that they currently appear as {@code currentInner} inside {@code parentElement}. Accounts for
+     * operator precedence and the many syntactic special cases where parentheses cannot be dropped.
      */
     public static boolean areParenthesesNecessary(
             @NotNull KtExpression innerExpression,
@@ -661,34 +677,37 @@ public class KtPsiUtil {
                (expression.getLeft() instanceof KtBinaryExpression && isKeepBinaryExpressionParenthesized((KtBinaryExpression) expression.getLeft()));
     }
 
-    /** Returns {@code true} if [element] is an assignment (`=` or an augmented assignment such as `+=`). */
+    /**
+     * Returns {@code true} if {@code element} is an assignment ({@code =} or an augmented assignment such as
+     * {@code +=}).
+     */
     public static boolean isAssignment(@NotNull PsiElement element) {
         return element instanceof KtBinaryExpression &&
                KtTokens.ALL_ASSIGNMENTS.contains(((KtBinaryExpression) element).getOperationToken());
     }
 
-    /** Returns {@code true} if [element] is a plain assignment (`=`), excluding augmented assignments. */
+    /** Returns {@code true} if {@code element} is a plain assignment ({@code =}), excluding augmented assignments. */
     public static boolean isOrdinaryAssignment(@NotNull PsiElement element) {
         return element instanceof KtBinaryExpression &&
                ((KtBinaryExpression) element).getOperationToken().equals(KtTokens.EQ);
     }
 
-    /** Returns {@code true} if [expression] is a cast, whether safe (`as?`) or unsafe (`as`). */
+    /** Returns {@code true} if {@code expression} is a cast, whether safe ({@code as?}) or unsafe ({@code as}). */
     public static boolean isCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
         return isSafeCast(expression) || isUnsafeCast(expression);
     }
 
-    /** Returns {@code true} if [expression] is a safe cast (`as?`). */
+    /** Returns {@code true} if {@code expression} is a safe cast ({@code as?}). */
     public static boolean isSafeCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
         return expression.getOperationReference().getReferencedNameElementType() == KtTokens.AS_SAFE;
     }
 
-    /** Returns {@code true} if [expression] is an unsafe cast (`as`). */
+    /** Returns {@code true} if {@code expression} is an unsafe cast ({@code as}). */
     public static boolean isUnsafeCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
         return expression.getOperationReference().getReferencedNameElementType() == KtTokens.AS_KEYWORD;
     }
 
-    /** Returns {@code true} if [block] contains a variable declaration named [varName]. */
+    /** Returns {@code true} if {@code block} contains a variable declaration named {@code varName}. */
     public static boolean checkVariableDeclarationInBlock(@NotNull KtBlockExpression block, @NotNull String varName) {
         for (KtExpression element : block.getStatements()) {
             if (element instanceof KtVariableDeclaration) {
@@ -701,7 +720,7 @@ public class KtPsiUtil {
         return false;
     }
 
-    /** Returns {@code true} if [whenExpression] has exactly one `else` branch. */
+    /** Returns {@code true} if {@code whenExpression} has exactly one {@code else} branch. */
     public static boolean checkWhenExpressionHasSingleElse(@NotNull KtWhenExpression whenExpression) {
         int elseCount = 0;
         for (KtWhenEntry entry : whenExpression.getEntries()) {
@@ -712,13 +731,13 @@ public class KtPsiUtil {
         return (elseCount == 1);
     }
 
-    /** Returns the first following sibling of [element] that is neither whitespace nor a comment, or {@code null}. */
+    /** Returns the first following sibling of {@code element} that is neither whitespace nor a comment, or {@code null}. */
     @Nullable
     public static PsiElement skipTrailingWhitespacesAndComments(@Nullable PsiElement element)  {
         return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace.class, PsiComment.class);
     }
 
-    /** Returns the previous leaf before [element], skipping whitespace and comments, or {@code null}. */
+    /** Returns the previous leaf before {@code element}, skipping whitespace and comments, or {@code null}. */
     @Nullable
     public static PsiElement prevLeafIgnoringWhitespaceAndComments(@NotNull PsiElement element) {
         PsiElement prev = PsiTreeUtil.prevLeaf(element, true);
@@ -728,7 +747,7 @@ public class KtPsiUtil {
         return prev;
     }
 
-    /** Returns the previous leaf if it is the identifier [word] (skipping whitespace and comments), or {@code null}. */
+    /** Returns the previous leaf if it is the identifier {@code word} (skipping whitespace and comments), or {@code null}. */
     @Nullable
     public static PsiElement getPreviousWord(@NotNull PsiElement element, @NotNull String word) {
         PsiElement prev = prevLeafIgnoringWhitespaceAndComments(element);
@@ -739,13 +758,13 @@ public class KtPsiUtil {
         return null;
     }
 
-    /** Returns the text of [element], or an empty string if [element] is {@code null}. */
+    /** Returns the text of {@code element}, or an empty string if {@code element} is {@code null}. */
     @NotNull
     public static String getText(@Nullable PsiElement element) {
         return element != null ? element.getText() : "";
     }
 
-    /** Returns the text of [element], or {@code null} if [element] is {@code null}. */
+    /** Returns the text of {@code element}, or {@code null} if {@code element} is {@code null}. */
     @Nullable
     public static String getNullableText(@Nullable PsiElement element) {
         return element != null ? element.getText() : null;
@@ -765,8 +784,8 @@ public class KtPsiUtil {
     }
 
     /**
-     * Returns the outermost ancestor of [element] that is still a direct child of [upperBound], or {@code null}. When
-     * [strict] is `false`, [element] itself is considered.
+     * Returns the outermost ancestor of {@code element} that is still a direct child of {@code upperBound}, or
+     * {@code null}. When {@code strict} is {@code false}, {@code element} itself is considered.
      */
     @Nullable
     public static PsiElement getOutermostParent(@NotNull PsiElement element, @NotNull PsiElement upperBound, boolean strict) {
@@ -778,7 +797,10 @@ public class KtPsiUtil {
         return parent;
     }
 
-    /** Returns the last direct child of [root] whose type is one of [elementTypes], or {@code null} if there is none. */
+    /**
+     * Returns the last direct child of {@code root} whose type is one of {@code elementTypes}, or {@code null} if there
+     * is none.
+     */
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <T extends PsiElement> T getLastChildByType(@NotNull PsiElement root, @NotNull Class<? extends T>... elementTypes) {
@@ -794,8 +816,9 @@ public class KtPsiUtil {
     }
 
     /**
-     * Traverses the subtree of [root], collecting the outermost descendants that satisfy [predicate] (not descending
-     * into a matching element), and returns the [first] or last such element, or {@code null} if there is none.
+     * Traverses the subtree of {@code root}, collecting the outermost descendants that satisfy {@code predicate} (not
+     * descending into a matching element), and returns the {@code first} or last such element, or {@code null} if there
+     * is none.
      */
     @Nullable
     public static KtElement getOutermostDescendantElement(
@@ -827,14 +850,17 @@ public class KtPsiUtil {
         return first ? results.get(0) : results.get(results.size() - 1);
     }
 
-    /** Returns the first direct child of [element] with the given node [type], or {@code null} if there is none. */
+    /**
+     * Returns the first direct child of {@code element} with the given node {@code type}, or {@code null} if there is
+     * none.
+     */
     @Nullable
     public static PsiElement findChildByType(@NotNull PsiElement element, @NotNull IElementType type) {
         ASTNode node = element.getNode().findChildByType(type);
         return node == null ? null : node.getPsi();
     }
 
-    /** Returns the first preceding sibling of [element] not matched by [elementsToSkip], or {@code null}. */
+    /** Returns the first preceding sibling of {@code element} not matched by {@code elementsToSkip}, or {@code null}. */
     @Nullable
     public static PsiElement skipSiblingsBackwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
         if (element == null) return null;
@@ -845,7 +871,7 @@ public class KtPsiUtil {
         return null;
     }
 
-    /** If [element] is a property accessor, returns its owning property; otherwise returns [element] unchanged. */
+    /** If {@code element} is a property accessor, returns its owning property; otherwise returns {@code element} unchanged. */
     public static PsiElement ascendIfPropertyAccessor(PsiElement element) {
         if (element instanceof KtPropertyAccessor) {
             return element.getParent();
@@ -864,7 +890,7 @@ public class KtPsiUtil {
         return KtPsiMutationService.getInstance().replaceModifierList(owner, modifierList);
     }
 
-    /** Returns the dot-separated package name of the file containing [element], or {@code null} if unavailable. */
+    /** Returns the dot-separated package name of the file containing {@code element}, or {@code null} if unavailable. */
     @Nullable
     public static String getPackageName(@NotNull KtElement element) {
         KtFile file = element.getContainingKtFile();
@@ -874,8 +900,9 @@ public class KtPsiUtil {
     }
 
     /**
-     * Returns the innermost element that scopes [declaration] as a local declaration (a block, parameter, and so on),
-     * or {@code null} if the declaration is not local. See [getEnclosingElementForLocalDeclaration] with `skipParameters`.
+     * Returns the innermost element that scopes {@code declaration} as a local declaration (a block, parameter, and so
+     * on), or {@code null} if the declaration is not local. See
+     * {@link #getEnclosingElementForLocalDeclaration(KtDeclaration, boolean)} with {@code skipParameters}.
      */
     @Nullable
     public static KtElement getEnclosingElementForLocalDeclaration(@NotNull KtDeclaration declaration) {
@@ -901,8 +928,8 @@ public class KtPsiUtil {
     }
 
     /**
-     * Returns the innermost element that scopes [declaration] as a local declaration, or {@code null} if it is not
-     * local. When [skipParameters] is `true`, type and value parameters delegate to their owning declaration.
+     * Returns the innermost element that scopes {@code declaration} as a local declaration, or {@code null} if it is not
+     * local. When {@code skipParameters} is {@code true}, type and value parameters delegate to their owning declaration.
      */
     @Nullable
     public static KtElement getEnclosingElementForLocalDeclaration(@NotNull KtDeclaration declaration, boolean skipParameters) {
@@ -987,12 +1014,12 @@ public class KtPsiUtil {
         return null;
     }
 
-    /** Returns {@code true} if [declaration] is local (declared inside a function body or other local scope). */
+    /** Returns {@code true} if {@code declaration} is local (declared inside a function body or other local scope). */
     public static boolean isLocal(@NotNull KtDeclaration declaration) {
         return getEnclosingElementForLocalDeclaration(declaration) != null;
     }
 
-    /** Returns the operation token of [expression] (for example, {@code PLUS}), or {@code null} if unavailable. */
+    /** Returns the operation token of {@code expression} (for example, {@code PLUS}), or {@code null} if unavailable. */
     @Nullable
     public static KtToken getOperationToken(@NotNull KtOperationExpression expression) {
         KtSimpleNameExpression operationExpression = expression.getOperationReference();
@@ -1003,13 +1030,13 @@ public class KtPsiUtil {
         return (KtToken) elementType;
     }
 
-    /** Returns {@code true} if [element] is a label reference expression. */
+    /** Returns {@code true} if {@code element} is a label reference expression. */
     public static boolean isLabelIdentifierExpression(PsiElement element) {
         return element instanceof KtLabelReferenceExpression;
     }
 
     /**
-     * Returns the nearest enclosing call-like expression that [expression] is an operand or argument of, looking
+     * Returns the nearest enclosing call-like expression that {@code expression} is an operand or argument of, looking
      * through parentheses, casts, argument lists, lambdas, and labels, or {@code null} if there is none.
      */
     @Nullable
@@ -1048,15 +1075,15 @@ public class KtPsiUtil {
         return null;
     }
 
-    /** Returns {@code true} if [functionLiteral]'s enclosing lambda expression carries a label. */
+    /** Returns {@code true} if {@code functionLiteral}'s enclosing lambda expression carries a label. */
     public static boolean isLabeledFunctionLiteral(@NotNull KtFunctionLiteral functionLiteral) {
         // KtFunctionLiteral -> KtLambdaExpression -> KtLabeledExpression
         return functionLiteral.getParent().getParent() instanceof KtLabeledExpression;
     }
 
     /**
-     * Deparenthesizes [expression] and, if it is a block, recurses into the block's last statement (respecting
-     * [statementFilter]), returning the innermost "result" expression.
+     * Deparenthesizes {@code expression} and, if it is a block, recurses into the block's last statement (respecting
+     * {@code statementFilter}), returning the innermost "result" expression.
      */
     @Nullable
     public static KtExpression getLastElementDeparenthesized(
@@ -1078,24 +1105,30 @@ public class KtPsiUtil {
         return deparenthesizedExpression;
     }
 
-    /** Returns {@code true} if [container] is an element whose children are statements (a block, control-structure body, or `when` entry). */
+    /**
+     * Returns {@code true} if {@code container} is an element whose children are statements (a block,
+     * control-structure body, or {@code when} entry).
+     */
     public static boolean isStatementContainer(@Nullable PsiElement container) {
         return container instanceof KtBlockExpression ||
                container instanceof KtContainerNodeForControlStructureBody ||
                container instanceof KtWhenEntry;
     }
 
-    /** Returns {@code true} if [element] appears in a statement position (its parent is a {@link #isStatementContainer statement container}). */
+    /**
+     * Returns {@code true} if {@code element} appears in a statement position (its parent is a
+     * {@link #isStatementContainer statement container}).
+     */
     public static boolean isStatement(@NotNull PsiElement element) {
         return isStatementContainer(element.getParent());
     }
 
-    /** Returns {@code true} if [binaryExpression] is an `in` or `!in` membership check. */
+    /** Returns {@code true} if {@code binaryExpression} is an {@code in} or {@code !in} membership check. */
     public static boolean isInOrNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
         return isInOperation(binaryExpression) || isNotInOperation(binaryExpression);
     }
 
-    /** Returns {@code true} if [binaryExpression] is a `!in` (not-in) membership check. */
+    /** Returns {@code true} if {@code binaryExpression} is a {@code !in} (not-in) membership check. */
     public static boolean isNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
         return (binaryExpression.getOperationToken() == KtTokens.NOT_IN);
     }
