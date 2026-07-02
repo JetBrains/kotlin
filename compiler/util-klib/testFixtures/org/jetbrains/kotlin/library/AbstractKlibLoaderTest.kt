@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library
 
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.io.zipDirAs
@@ -616,9 +617,9 @@ abstract class AbstractKlibLoaderTest {
         var stdlibExpectedInPaths = stdlib != null
 
         val otherLibrariesCanonicalPaths = libraryPaths.mapNotNull { libraryPath ->
-            val canonicalLibraryPath: String = Path(libraryPath).toRealPath().pathString
+            val canonicalLibraryPath: String = Path(libraryPath).canonicalPathString()
 
-            if (canonicalLibraryPath == stdlib?.libraryFile?.canonicalPath) {
+            if (canonicalLibraryPath == stdlib?.path?.canonicalPathString()) {
                 assertTrue(stdlibExpectedInPaths)
                 stdlibExpectedInPaths = false
                 return@mapNotNull null
@@ -627,7 +628,7 @@ abstract class AbstractKlibLoaderTest {
             canonicalLibraryPath
         }
 
-        assertEquals(otherLibrariesCanonicalPaths, otherLibraries.map { it.libraryFile.canonicalPath })
+        assertEquals(otherLibrariesCanonicalPaths, otherLibraries.map { it.path.canonicalPathString() })
 
         return this
     }

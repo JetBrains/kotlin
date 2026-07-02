@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolver
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import kotlin.io.path.absolutePathString
 
 @Deprecated(
     "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882." +
@@ -103,7 +104,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
     private fun List<KotlinLibrary>.leaveDistinct(): List<KotlinLibrary> {
         if (size <= 1) return this
 
-        val deduplicatedLibraries: Map<String, List<KotlinLibrary>> = groupByTo(linkedMapOf()) { it.libraryFile.absolutePath }
+        val deduplicatedLibraries: Map<String, List<KotlinLibrary>> = groupByTo(linkedMapOf()) { it.path.absolutePathString() }
         return deduplicatedLibraries.values.map { it.first() }
     }
 
@@ -120,7 +121,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         val deduplicatedLibs = groupBy { it.uniqueName }.let { groupedByUniqName ->
             val librariesWithDuplicatedUniqueNames = groupedByUniqName.filterValues { it.size > 1 }
             librariesWithDuplicatedUniqueNames.entries.sortedBy { it.key }.forEach { [uniqueName, libraries] ->
-                val libraryPaths = libraries.map { it.libraryFile.absolutePath }.sorted().joinToString()
+                val libraryPaths = libraries.map { it.path.absolutePathString() }.sorted().joinToString()
                 val message = "KLIB resolver: The same 'unique_name=$uniqueName' found in more than one library: $libraryPaths"
                 if (duplicatedUniqueNameStrategy == DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING ||
                     duplicatedUniqueNameStrategy == DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
+import kotlin.io.path.absolutePathString
 
 /**
  * Genuine C-interop library always has two properties in manifest: `interop=true` and the `ir_provider` that
@@ -54,6 +55,6 @@ fun KotlinLibrary.getIncompatibility(ownMetadataVersion: MetadataVersion): Incom
         compilerVersion = MetadataVersion.INSTANCE,
         languageVersion = ownMetadataVersion,
         expectedVersion = ownMetadataVersion.lastSupportedVersionWithThisLanguageVersion(libraryMetadataVersion.isStrictSemantics),
-        filePath = this.libraryFile.absolutePath,
+        filePath = this.path.absolutePathString(),
     )
 }

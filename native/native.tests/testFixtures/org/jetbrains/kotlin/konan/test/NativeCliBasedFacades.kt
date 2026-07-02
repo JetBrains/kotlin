@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirCliFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
+import kotlin.io.path.absolutePathString
 
 // NativeCliBasedFacades
 
@@ -128,7 +129,7 @@ class KlibSerializerNativeCliFacade(
         var builtIns: KotlinBuiltIns? = null
 
         fun loadOrCreateModuleDescriptor(library: KotlinLibrary): ModuleDescriptorImpl {
-            val moduleDescriptor = testServices.libraryProvider.getOrCreateStdlibByPath(library.libraryFile.absolutePath) {
+            val moduleDescriptor = testServices.libraryProvider.getOrCreateStdlibByPath(library.path.absolutePathString()) {
                 val moduleDescriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                     library,
                     languageVersionSettings,

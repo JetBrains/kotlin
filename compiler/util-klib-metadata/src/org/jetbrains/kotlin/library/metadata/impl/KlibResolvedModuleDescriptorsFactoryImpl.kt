@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 // TODO: eliminate Native specifics.
 class KlibResolvedModuleDescriptorsFactoryImpl(
@@ -44,9 +44,9 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        friendModuleFiles: Set<File>,
-        refinesModuleFiles: Set<File>,
-        includedLibraryFiles: Set<File>,
+        friendModuleFiles: Set<KlibFile>,
+        refinesModuleFiles: Set<KlibFile>,
+        includedLibraryFiles: Set<KlibFile>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors {
@@ -71,11 +71,13 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
 
-                if (refinesModuleFiles.contains(library.libraryFile))
+                val libraryFile = KlibFile(library.path)
+
+                if (refinesModuleFiles.contains(libraryFile))
                     refinesModuleDescriptors.add(moduleDescriptor)
-                if (friendModuleFiles.contains(library.libraryFile))
+                if (friendModuleFiles.contains(libraryFile))
                     friendModuleDescriptors.add(moduleDescriptor)
-                if (includedLibraryFiles.contains(library.libraryFile))
+                if (includedLibraryFiles.contains(libraryFile))
                     includedLibraryDescriptors.add(moduleDescriptor)
             }
         }
