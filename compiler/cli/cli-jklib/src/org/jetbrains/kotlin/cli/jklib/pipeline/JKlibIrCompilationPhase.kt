@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
+import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.jvm.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -97,7 +99,7 @@ class JKlibIrCompilationPhase :
         val projectContext = ProjectContext(projectEnvironment.project, "TopDownAnalyzer for JKlib")
         val storageManager = projectContext.storageManager
         val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
-        val sortedDependencies = loadLibraries(klibFiles, messageCollector)
+        val sortedDependencies = loadLibraries(klibFiles, configuration)
 
         val dependencyDescriptorsByKlib = createKlibDescriptors(sortedDependencies, configuration, storageManager, builtIns)
 
@@ -329,11 +331,13 @@ class JKlibIrCompilationPhase :
         return dependencyDescriptorsByKlib
     }
 
-    private fun loadLibraries(klibFiles: List<String>, collector: MessageCollector): List<KotlinLibrary> {
-        val loadingResult = KlibLoader { libraryPaths(klibFiles) }.load()
-        loadingResult.reportLoadingProblemsIfAny { _, message ->
-            collector.report(ERROR, message)
-        }
+    private fun loadLibraries(klibFiles: List<String>, configuration: CompilerConfiguration): List<KotlinLibrary> {
+        val loadingResult =
+            KlibLoader {
+                libraryPaths(klibFiles)
+                configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
+            }.load()
+        loadingResult.reportLoadingProblemsIfAny(configuration, allAsErrors = true)
         return loadingResult.librariesStdlibFirst
     }
 }
