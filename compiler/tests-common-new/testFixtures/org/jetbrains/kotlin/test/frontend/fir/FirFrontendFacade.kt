@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigu
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import kotlin.io.path.absolutePathString
 
 open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
     override val additionalServices: List<ServiceRegistrationData>
@@ -437,7 +438,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                             val loadedKlibs = KlibLoader { libraryPaths(allPaths) }.load().librariesStdlibFirst
                             val [interopLibs, regularLibs] = loadedKlibs.partition { it.isCInteropLibrary() }
 
-                            dependencies(regularLibs.map { it.libraryFile.absolutePath })
+                            dependencies(regularLibs.map { it.path.absolutePathString() })
                             friendDependencies(friendPaths)
 
                             if (interopLibs.isNotEmpty()) {
@@ -445,7 +446,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                                     Name.special("<regular interop dependencies of $mainModuleName>"),
                                     FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
                                 )
-                                this@build.dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
+                                this@build.dependencies(interopModuleData, interopLibs.map { it.path.absolutePathString() })
                             }
                         }
                         targetPlatform.isWasm() -> {
