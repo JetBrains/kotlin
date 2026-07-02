@@ -70,6 +70,7 @@ internal abstract class SwiftExportTask @Inject constructor(
         // Run Swift Export with process isolation to avoid leakage for AA/IntelliJ classes. See KT-73438
         val swiftExportQueue = workerExecutor.processIsolation { workerSpec ->
             workerSpec.classpath.from(swiftExportClasspath)
+            workerSpec.forkOptions.systemProperties.put("ide.can.use.coroutines.fork", "false")
         }
 
         val swiftModules = parameters.swiftModules.map {
