@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 class ExternalCompanionObjectsLowering(val context: WasmBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val varsByContainer = irBody.collectExternalInterfaceCompanionObjectVars()
-        for ((statementContainer, vars) in varsByContainer) {
+        for ([statementContainer, vars] in varsByContainer) {
             statementContainer.statements.removeAll(vars.toHashSet())
         }
     }
