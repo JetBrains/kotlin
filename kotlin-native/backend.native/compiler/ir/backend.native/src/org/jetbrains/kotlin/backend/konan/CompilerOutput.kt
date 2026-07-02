@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
+import kotlin.io.path.pathString
 
 /**
  * Supposed to be true for a single LLVM module within final binary.
@@ -118,7 +119,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
         }
         addAll(generatedBitcodeFiles)
         addAll(generationState.llvm.additionalProducedBitcodeFiles)
-        addAll(bitcodeLibraries)
+        addAll(bitcodeLibraries.map { it.pathString })
         if (config.produce == CompilerOutputKind.DYNAMIC_CACHE) {
             add(RuntimeModule.EXCEPTIONS_SUPPORT)
         }
@@ -182,7 +183,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
             false -> add(RuntimeModule.EXTERNAL_CALLS_CHECKER_NOOP)
         }
         // Bitcode parts of stdlib are considered part of the runtime
-        addAll(bitcodePartOfStdlib)
+        addAll(bitcodePartOfStdlib.map { it.pathString })
     }
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->

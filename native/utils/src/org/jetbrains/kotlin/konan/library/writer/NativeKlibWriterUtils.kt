@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
 import org.jetbrains.kotlin.library.writer.KlibManifestWriterSpec
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.KlibWriterSpec
+import java.nio.file.Path
 
 /**
  * A [KlibWriter] DSL extension to include names of dependencies to the manifest file.
@@ -53,7 +54,7 @@ fun KlibManifestWriterSpec.legacyNativeShortNameInManifest(shortName: String?) {
  */
 fun KlibWriterSpec.includeBitcode(
     target: KonanTarget,
-    bitcodeFilePaths: Collection<String>,
+    bitcodeFilePaths: Collection<Path>,
 ) {
     include(KlibBitcodeComponentWriterImpl(target, bitcodeFilePaths))
 }
@@ -63,7 +64,7 @@ fun KlibWriterSpec.includeBitcode(
  */
 fun KlibWriterSpec.includeNativeIncludedBinaries(
     target: KonanTarget,
-    nativeIncludedBinaryFilePaths: Collection<String>,
+    nativeIncludedBinaryFilePaths: Collection<Path>,
 ) {
     include(KlibNativeIncludedBinariesComponentWriterImpl(target, nativeIncludedBinaryFilePaths))
 }

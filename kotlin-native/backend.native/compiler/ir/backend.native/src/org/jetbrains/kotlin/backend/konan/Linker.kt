@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.konan.target.LinkerArguments
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
+import kotlin.io.path.name
+import kotlin.io.path.pathString
 
 internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOutputKind =
         when (context.config.produce) {
@@ -67,7 +69,9 @@ internal class Linker(
 
         val includedBinariesLibraries = config.libraryToCache?.let { listOf(it.klib) }
                 ?: nativeDependencies.filterNot { config.cachedLibraries.isLibraryCached(it) }
-        val includedBinaries = includedBinariesLibraries.map { it.nativeIncludedBinaries(config.target)?.nativeIncludedBinaryFilePaths.orEmpty() }.flatten()
+        val includedBinaries = includedBinariesLibraries.flatMap { library ->
+            library.nativeIncludedBinaries(config.target)?.nativeIncludedBinaryFilePaths?.map { it.pathString }.orEmpty()
+        }
 
         val libraryProvidedLinkerFlags = dependenciesTrackingResult.allNativeDependencies.map { it.linkerOpts }.flatten()
         return runLinker(outputFile, objectFiles, includedBinaries, libraryProvidedLinkerFlags, caches)

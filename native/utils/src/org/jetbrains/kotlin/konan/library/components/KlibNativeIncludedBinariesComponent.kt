@@ -18,7 +18,7 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 
 interface KlibNativeIncludedBinariesComponent : KlibComponent {
-    val nativeIncludedBinaryFilePaths: List<String>
+    val nativeIncludedBinaryFilePaths: List<Path>
 
     data class Kind(val target: KonanTarget) : KlibComponent.Kind<KlibNativeIncludedBinariesComponent, KlibNativeIncludedBinariesComponentLayout> {
         override fun createLayout(root: Path) = KlibNativeIncludedBinariesComponentLayout(target, root)

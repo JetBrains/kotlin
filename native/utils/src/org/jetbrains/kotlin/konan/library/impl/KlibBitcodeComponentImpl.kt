@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.konan.library.components.KlibBitcodeComponent
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeComponentLayout
 import org.jetbrains.kotlin.library.KlibLayoutReader
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
+import kotlin.io.path.absolute
 import kotlin.io.path.listDirectoryEntries
 
 internal class KlibBitcodeComponentImpl(
     private val layoutReader: KlibLayoutReader<KlibBitcodeComponentLayout>
 ) : KlibBitcodeComponent {
-    override val bitcodeFilePaths: List<String> by lazy {
+    override val bitcodeFilePaths: List<Path> by lazy {
         layoutReader.readExtractingToTemp(KlibBitcodeComponentLayout::bitcodeDir)
             .listDirectoryEntries()
-            .map(Path::absolutePathString)
+            .map(Path::absolute)
     }
 }
