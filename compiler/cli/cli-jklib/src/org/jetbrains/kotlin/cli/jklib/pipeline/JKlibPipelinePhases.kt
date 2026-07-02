@@ -172,6 +172,13 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
         arguments.destination?.let { configuration.jklibOutputDestination = it }
         configuration.jklibCompileIr = arguments.compileIr
         arguments.friendModules?.let { configuration.friendPaths = it.split(File.pathSeparator).filterNot(String::isEmpty) }
+
+        // TODO(KT-87172): call configuration.setupCommonKlibArguments() instead of manual setup.
+        configuration.zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
+            zipFileAccessorCacheLimitArgument = K2JKlibCompilerArguments::klibZipFileAccessorCacheLimit,
+            configuration = configuration,
+            rootDisposable = input.rootDisposable,
+        )
     }
 }
 
@@ -198,7 +205,11 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
 
         val klibFiles = configuration.klibPaths
 
-        val klibLoadingResult = KlibLoader { libraryPaths(klibFiles) }.load()
+        val klibLoadingResult =
+            KlibLoader {
+                libraryPaths(klibFiles)
+                configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
+            }.load()
         klibLoadingResult.reportLoadingProblemsIfAny { _, message ->
             configuration.report(CLASSPATH_RESOLUTION_ERROR, message)
         }
