@@ -49,18 +49,6 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.baseNativ
     )
 
     facadeStep(frontendFacade)
-
-    forTestsMatching("testData/diagnostics/nativeTests/*") {
-        defaultDirectives {
-            +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-        }
-    }
-
-    forTestsMatching("testData/diagnostics/nativeTests/prohibitKotlinPackageInNative.kt") {
-        defaultDirectives {
-            -LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-        }
-    }
 }
 
 fun TestConfigurationBuilder.baseFirNativeDiagnosticTestConfiguration() {

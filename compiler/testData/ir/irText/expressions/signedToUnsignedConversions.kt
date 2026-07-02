@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+// ALLOW_KOTLIN_PACKAGE
 
 // FILE: signedToUnsignedConversions_annotation.kt
 

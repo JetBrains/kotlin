@@ -7,6 +7,7 @@
 
 // ISSUE: KT-57484
 // LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+// ALLOW_KOTLIN_PACKAGE
 // WITH_STDLIB
 
 // FILE: annotation.kt

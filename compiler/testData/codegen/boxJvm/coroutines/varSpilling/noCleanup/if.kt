@@ -3,6 +3,7 @@
 // TARGET_BACKEND: JVM
 // LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 // PREFER_IN_TEST_OVER_STDLIB
+// ALLOW_KOTLIN_PACKAGE
 
 // FILE: Spilling.kt
 
