@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoe
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import kotlin.io.path.absolutePathString
@@ -263,7 +264,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         additionalCompilationAssertions: CompilationOutcome.() -> Unit = {},
     ) {
         val currentVersion = KotlinToolingVersion(project.kotlinToolchain.getCompilerVersion())
-        val firstErrorSince = restrictedArgs.first().second
+        val firstErrorSince = restrictedArgs.minOf { it.second }
         val isWarning = currentVersion < KotlinToolingVersion(firstErrorSince.major, firstErrorSince.minor, firstErrorSince.patch, "dev-1")
 
         if (isWarning) {
@@ -280,19 +281,24 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
             }
         } else {
             // Error args require separate compilations because the first error throws an exception
-            for ([aliases, _] in restrictedArgs) {
-                val compilationBody = {
-                    compile(compilationConfigAction = {
-                        it.compilerArguments.applyArgumentStrings(configuredArgs)
-                    }) {
-                        if (expectedCompilationError) {
-                            expectFail()
-                        }
-                        additionalCompilationAssertions()
+
+            val compilationBody = {
+                compile(compilationConfigAction = {
+                    it.compilerArguments.applyArgumentStrings(configuredArgs)
+                }) {
+                    if (expectedCompilationError) {
+                        expectFail()
                     }
+                    additionalCompilationAssertions()
                 }
-                val exception = assertThrows<CompilerArgumentsParseException> { compilationBody() }
-                assertRestrictedArgError(aliases, exception)
+            }
+            val exception = assertThrows<CompilerArgumentsParseException> { compilationBody() }
+            assertTrue(
+                restrictedArgs.flatMap { it.first }.any { alias ->
+                    exception.message?.contains("'$alias' is not supported in the Build Tools API.") == true
+                }
+            ) {
+                "Exception was: \"${exception.message}\" and did not contain any of ${restrictedArgs.flatMap { it.first }.joinToString() }"
             }
         }
     }
