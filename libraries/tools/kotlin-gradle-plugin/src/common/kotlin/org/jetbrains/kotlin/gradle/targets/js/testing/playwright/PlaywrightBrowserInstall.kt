@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmToolingDir
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsRoot
 import org.jetbrains.kotlin.gradle.utils.directoryProperty
@@ -57,7 +58,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = if (browsers.get().isNotEmpty()) {
             setOf(
-                compilation.nodeJsRoot.versions.playwright
+                NpmPackageVersion("playwright", "1.60.0")
             )
         } else emptySet()
 
