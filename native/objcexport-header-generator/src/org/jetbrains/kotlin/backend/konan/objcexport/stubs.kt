@@ -47,7 +47,7 @@ val ObjCExportStub.psiOrNull
 abstract class ObjCTopLevel : ObjCExportStub
 
 
-class ObjCNSEnum(
+class ObjCNSClosedEnum(
     override val name: String,
     val swiftName: String,
     override val origin: ObjCExportStubOrigin?,

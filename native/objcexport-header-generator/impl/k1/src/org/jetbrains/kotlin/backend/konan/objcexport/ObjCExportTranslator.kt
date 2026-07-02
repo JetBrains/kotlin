@@ -294,7 +294,7 @@ class ObjCExportTranslatorImpl(
                     namer.getNSEnumTypeName(descriptor)?.let { nsEnumTypeName ->
                         // Map the enum entries in declaration order, preserving the ordinal
                         auxiliaryDeclarations.add(
-                            ObjCNSEnum(
+                            ObjCNSClosedEnum(
                                 name = nsEnumTypeName.objCName,
                                 swiftName = nsEnumTypeName.swiftName,
                                 origin = ObjCExportStubOrigin(descriptor),
@@ -302,7 +302,7 @@ class ObjCExportTranslatorImpl(
                                     val objcEnumEntryName = entry.getObjCEnumEntryName()
                                     val objCName = objcEnumEntryName.getName(forSwift = false) ?: namer.getEnumEntrySelector(entry)
                                     val swiftName = objcEnumEntryName.getName(forSwift = true) ?: namer.getEnumEntrySwiftName(entry)
-                                    ObjCNSEnum.Entry(
+                                    ObjCNSClosedEnum.Entry(
                                         objCName = nsEnumTypeName.objCName + objCName.replaceFirstChar { it.uppercaseChar() },
                                         swiftName = swiftName,
                                         value = ordinal
