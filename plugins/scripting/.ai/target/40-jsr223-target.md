@@ -2,7 +2,7 @@
 
 > **When to consult**: JSR-223 bindings (Option D canonical home) or remote compilation design. For historic options A/B/C rationale see `40-jsr223-options-archive.md`.
 > **Cache lifetime**: mutable-on-prototype
-> **Last verified**: 2026-05-16
+> **Last verified**: 2026-07-02g (new "Reusable BTA-backed `ScriptEngine`" section — first `CompileReplSnippetOperation`-driven JSR-223 engine, `:kotlin-scripting-jsr223-bta`)
 
 Two work items: (1) bindings, (2) remote compilation scenario.
 
@@ -177,6 +177,16 @@ What needs serialising per snippet:
 ### Recommendation
 
 **Design and prototype the stateless model now**, not later. The bindings work (above) and the stateless work can run in parallel — they touch overlapping but separable code. Output of the prototype: confirm/disconfirm that the existing EPs are sufficient, identify any required EP additions, and freeze the sidecar format.
+
+### Reusable BTA-backed `ScriptEngine` — landed 2026-07-02g
+
+Now that the BTA transport (Q5d) is fully landed (daemon execution + genuine subprocess coverage), a first, reusable JSR-223 `KotlinJsr223JvmScriptEngineFactoryBase` implementation driving compilation entirely through `CompileReplSnippetOperation` exists: `KotlinJsr223BtaScriptEngineImpl` / `KotlinJsr223BtaScriptEngineFactory` in the new module `libraries/scripting/jsr223-bta` (`:kotlin-scripting-jsr223-bta`). Design/scope:
+
+- **Not a `javax.script.ScriptEngineFactory` service** — no `META-INF/services` registration, no separate module to smoke-test it through real `ScriptEngineManager` lookup (yet). Callers (including this module's own tests, `KotlinJsr223BtaScriptEngineTest`) construct the factory directly. A dedicated `*-test` module mirroring `jsr223-test`'s `KotlinJsr223ScriptEngineIT` service-registration smoke test is future work if/when this engine is promoted.
+- **Execution**: `ExecutionPolicy.WithDaemon` only (the op rejects `InProcess` by design, per the "Out-of-process-only finalised" Q5d note above).
+- **State**: one engine instance == one REPL session; a small in-process `BtaReplSnippetSession` (own reimplementation, not a reuse of the `internal` `SnippetArtifactEvaluator`) incrementally defines + runs each new artifact's classes on a shared classloader, using the public `SnippetArtifactCodec`/`SnippetArtifactHeader` wire types.
+- **Bindings/implicit receivers are out of scope for this first cut** — `$$eval` is invoked with no arguments; `CompileReplSnippetOperation` has no receiver-passing support at all yet. Adding it would need a new BTA option (analogous to `ADDITIONAL_CLASSPATH`) plus `BtaReplSnippetSession` support for instantiating/passing receiver values — not attempted here.
+- **Gotcha found while wiring this up**: the daemon-side `-Xplugin` re-registration of the scripting compiler plugin (`CompileReplSnippetOperationImpl.createScriptingPluginServicesJar`) only works when the actual **shaded/embedded** `kotlin-build-tools-impl` jar (with the scripting-compiler classes relocated + bundled in) is on the daemon's compiler classpath — a plain/incomplete build of that jar (e.g. one built only to satisfy a compile-classpath resolution, not an actual packaging task) silently produces a `ClassNotFoundException` on the *unrelocated* plugin class name inside the daemon log, with the BTA op surfacing it as an empty-diagnostics `Failure`. Symptom looks like a missing-dependency bug; the actual fix is just making sure the full/shaded jar gets built (a stale/partial artifact from an unrelated task graph was the cause here, not a wiring bug) — see [iterations/2026-07-02g_jsr223-bta-engine.md](../iterations/2026-07-02g_jsr223-bta-engine.md).
 
 ## Parser path note
 

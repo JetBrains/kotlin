@@ -439,6 +439,7 @@ include(
     ":kotlin-scripting-jsr223-unshaded",
     ":kotlin-scripting-jsr223-test",
     ":kotlin-scripting-jsr223",
+    ":kotlin-scripting-jsr223-bta",
     ":kotlin-main-kts",
     ":kotlin-main-kts-test",
     ":examples:scripting-jvm-simple-script",
@@ -961,6 +962,7 @@ project(":kotlin-scripting-dependencies-maven-all").projectDir = File("$rootDir/
 project(":kotlin-scripting-jsr223-unshaded").projectDir = File("$rootDir/libraries/scripting/jsr223")
 project(":kotlin-scripting-jsr223-test").projectDir = File("$rootDir/libraries/scripting/jsr223-test")
 project(":kotlin-scripting-jsr223").projectDir = File("$rootDir/libraries/scripting/jsr223-embeddable")
+project(":kotlin-scripting-jsr223-bta").projectDir = File("$rootDir/libraries/scripting/jsr223-bta")
 project(":kotlin-scripting-intellij").projectDir = File("$rootDir/libraries/scripting/intellij")
 project(":kotlin-scripting-compiler").projectDir = File("$rootDir/plugins/scripting/scripting-compiler")
 project(":kotlin-scripting-compiler-embeddable").projectDir = File("$rootDir/plugins/scripting/scripting-compiler-embeddable")
