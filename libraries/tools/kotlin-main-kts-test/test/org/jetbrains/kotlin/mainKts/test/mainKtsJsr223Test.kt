@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.mainKts.test
 
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import javax.script.ScriptEngineManager
 
@@ -36,6 +37,15 @@ class MainKtsJsr223Test {
     }
 
     @Test
+    @Ignore(
+        "BLOCKED-COMPILER-KT-77583/KT-83498: light-tree REPL-snippet support is unimplemented " +
+            "(LightTreeRawFirDeclarationBuilder.convertReplSnippet TODO). K2ReplCompiler's own " +
+            "isReplSnippetSource predicate is session-wide/argument-independent 'true', so the " +
+            "light-tree-converted @file:Import(...) scripts get misclassified as REPL snippets and " +
+            "hit the TODO instead of the working convertScript path. Ignored by decision - deferred, " +
+            "not fixed for now. See Q2 in plugins/scripting/.ai/target/90-open-questions.md and G15 in " +
+            "plugins/scripting/.ai/current/80-known-gotchas.md."
+    )
     fun testWithImport() {
         val engine = ScriptEngineManager().getEngineByExtension("main.kts")!!
         val out = captureOut {

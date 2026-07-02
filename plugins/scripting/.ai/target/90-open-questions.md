@@ -2,7 +2,7 @@
 
 > **When to consult**: before committing to a design answer or claiming a Q* as a task. Q1–Q12 are referenceable IDs; sub-questions Q5a–e, Q10a–f are individually delegate-able.
 > **Cache lifetime**: mutable-per-iteration
-> **Last verified**: 2026-07-02 (Q14 refined — backtick-quote + delegated property replaces marker-only encoding for most special characters)
+> **Last verified**: 2026-07-02f (Q2 — `MainKtsJsr223Test.testWithImport` root cause pinned to `K2ReplCompiler`'s session-wide `isReplSnippetSource` predicate (G15); explicitly deferred by decision, test muted rather than fixed. Q14 refined — backtick-quote + delegated property replaces marker-only encoding for most special characters)
 
 Items needing brainstorm before they can be acted on.
 
@@ -32,9 +32,11 @@ Each Q (and sub-question, where present) carries:
 - Owner: unassigned
 - YT: KT-83498
 - Target doc: [`50-migration-plan.md`](50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler)
-- Last touched: 2026-05-16
+- Last touched: 2026-07-02f
 
 Tracked as migration-plan step 2. Sub-questions (priority, shape — `convertToFir` lambda vs hardwired LT) are recorded inline in step 2 "Design notes".
+
+**`MainKtsJsr223Test.testWithImport` — deferred, not fixed (2026-07-02f)**: this test fails on exactly the `TODO("KT-77583")` gap in `LightTreeRawFirDeclarationBuilder.convertReplSnippet` as soon as a REPL snippet does `@file:Import(...)`. A prior investigation ([session, see `current/80-known-gotchas.md` **G15**](../current/80-known-gotchas.md#g15-k2replcompilers-session-wide-isreplsnippetsource---true--misclassifies-light-tree-compiled-repl-imports-as-snippets--deferred-2026-07-02f-test-muted-not-fixed)) found the failure is triggered for the *wrong* reason: the imported `.main.kts` files are ordinary scripts (not REPL snippets) and are light-tree-compiled (the root snippet is PSI-compiled), but `K2ReplCompiler.createCompilationState` registers `isReplSnippetSource { _, _ -> true }` **session-wide**, so the light-tree builder misclassifies the import as a snippet and routes it into the unimplemented `convertReplSnippet` branch instead of the already-working `convertScript` branch. This means the test could plausibly be fixed **without** waiting for `KT-83498` in full, by narrowing that predicate to the actual root/main snippet source. **Decision: explicitly deferred/ignored for now** — `testWithImport` is `@Ignore`d in `mainKtsJsr223Test.kt` with a reference to this note and to G15, rather than left as an unexplained failure. Revisit either as part of landing `KT-83498` proper, or as a smaller standalone `isReplSnippetSource`-narrowing fix if prioritized before then.
 
 ## Q3. ~~`scripting-ide-services` — delete or salvage?~~ — resolved
 
