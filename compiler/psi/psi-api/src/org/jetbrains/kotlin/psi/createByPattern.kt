@@ -32,21 +32,25 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
+/** Creates an expression from the given [pattern] with `$0`, `$1`, … placeholders substituted by [args]. See [createByPattern]. */
 fun KtPsiFactory.createExpressionByPattern(@NonNls pattern: String, @NonNls vararg args: Any, reformat: Boolean = true): KtExpression =
     createByPattern(pattern, *args, reformat = reformat) { createExpression(it) }
 
+/** Creates a value argument list from the given [pattern] with placeholders substituted by [args]. See [createByPattern]. */
 fun KtPsiFactory.createValueArgumentListByPattern(
     @NonNls pattern: String,
     @NonNls vararg args: Any,
     reformat: Boolean = true
 ): KtValueArgumentList = createByPattern(pattern, *args, reformat = reformat) { createCallArguments(it) }
 
+/** Creates a declaration from the given [pattern] with placeholders substituted by [args]. See [createByPattern]. */
 fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(
     @NonNls pattern: String,
     @NonNls vararg args: Any,
     reformat: Boolean = true
 ): TDeclaration = createByPattern(pattern, *args, reformat = reformat) { createDeclaration(it) }
 
+/** Creates a destructuring declaration from the given [pattern] with placeholders substituted by [args]. See [createByPattern]. */
 fun KtPsiFactory.createDestructuringDeclarationByPattern(
     @NonNls pattern: String,
     @NonNls vararg args: Any,
@@ -337,17 +341,20 @@ class BuilderByPattern<TElement> {
     private val patternBuilder = StringBuilder()
     private val arguments = ArrayList<Any>()
 
+    /** Appends literal text to the pattern verbatim (no placeholder). */
     fun appendFixedText(text: String): BuilderByPattern<TElement> {
         patternBuilder.append(text)
         return this
     }
 
+    /** Appends [text] as an argument spliced in as-is, without reformatting. */
     fun appendNonFormattedText(text: String): BuilderByPattern<TElement> {
         patternBuilder.append("$" + arguments.size)
         arguments.add(text)
         return this
     }
 
+    /** Appends [expression] as an argument, or nothing if it is `null`. */
     fun appendExpression(expression: KtExpression?): BuilderByPattern<TElement> {
         if (expression != null) {
             patternBuilder.append("$" + arguments.size)
@@ -356,6 +363,7 @@ class BuilderByPattern<TElement> {
         return this
     }
 
+    /** Appends the given [expressions] as arguments, joined by [separator]. */
     fun appendExpressions(expressions: Iterable<KtExpression?>, separator: String = ","): BuilderByPattern<TElement> {
         for ([index, expression] in expressions.withIndex()) {
             if (index > 0) {
@@ -366,6 +374,7 @@ class BuilderByPattern<TElement> {
         return this
     }
 
+    /** Appends [typeRef] as an argument, or nothing if it is `null`. */
     fun appendTypeReference(typeRef: KtTypeReference?): BuilderByPattern<TElement> {
         if (typeRef != null) {
             patternBuilder.append("$" + arguments.size)
@@ -374,39 +383,50 @@ class BuilderByPattern<TElement> {
         return this
     }
 
+    /** Appends [name] as an argument, rendered as text. */
     fun appendName(name: Name): BuilderByPattern<TElement> {
         patternBuilder.append("$" + arguments.size)
         arguments.add(name)
         return this
     }
 
+    /** Appends the given child [range] as an argument. */
     fun appendChildRange(range: PsiChildRange): BuilderByPattern<TElement> {
         patternBuilder.append("$" + arguments.size)
         arguments.add(range)
         return this
     }
 
+    /** Builds the element by passing the assembled pattern and arguments to [factory]. */
     fun create(factory: (String, Array<out Any>) -> TElement): TElement {
         return factory(patternBuilder.toString(), arguments.toArray())
     }
 }
 
+/** Builds an expression using a [BuilderByPattern] configured by [build]. */
 fun KtPsiFactory.buildExpression(reformat: Boolean = true, build: BuilderByPattern<KtExpression>.() -> Unit): KtExpression {
     return buildByPattern({ pattern, args -> this.createExpressionByPattern(pattern, *args, reformat = reformat) }, build)
 }
 
+/** Builds a value argument list using a [BuilderByPattern] configured by [build]. */
 fun KtPsiFactory.buildValueArgumentList(build: BuilderByPattern<KtValueArgumentList>.() -> Unit): KtValueArgumentList {
     return buildByPattern({ pattern, args -> this.createValueArgumentListByPattern(pattern, *args) }, build)
 }
 
+/** Builds a declaration using a [BuilderByPattern] configured by [build]. */
 fun KtPsiFactory.buildDeclaration(build: BuilderByPattern<KtDeclaration>.() -> Unit): KtDeclaration {
     return buildByPattern({ pattern, args -> this.createDeclarationByPattern(pattern, *args) }, build)
 }
 
+/** Builds a destructuring declaration using a [BuilderByPattern] configured by [build]. */
 fun KtPsiFactory.buildDestructuringDeclaration(build: BuilderByPattern<KtDestructuringDeclaration>.() -> Unit): KtDestructuringDeclaration {
     return buildByPattern({ pattern, args -> this.createDestructuringDeclarationByPattern(pattern, *args) }, build)
 }
 
+/**
+ * Creates a [BuilderByPattern], runs [build] on it, and produces the element via [factory]. Backs the
+ * `KtPsiFactory.build*` entry points.
+ */
 fun <TElement> buildByPattern(factory: (String, Array<out Any>) -> TElement, build: BuilderByPattern<TElement>.() -> Unit): TElement {
     val builder = BuilderByPattern<TElement>()
     builder.build()
