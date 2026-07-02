@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.runners
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
 import org.jetbrains.kotlin.js.test.handlers.JsLineNumberHandler
+import org.jetbrains.kotlin.js.test.handlers.JsSizeHandler
 import org.jetbrains.kotlin.js.test.handlers.JsWrongModuleHandler
 import org.jetbrains.kotlin.js.test.utils.configureLineNumberTests
 import org.jetbrains.kotlin.js.test.utils.configureSteppingTests
@@ -75,6 +76,7 @@ abstract class AbstractJsTest(
             configureJsArtifactsHandlersStep {
                 useHandlers(
                     ::JsIrRecompiledArtifactsIdentityHandler,
+                    ::JsSizeHandler,
                 )
             }
 
