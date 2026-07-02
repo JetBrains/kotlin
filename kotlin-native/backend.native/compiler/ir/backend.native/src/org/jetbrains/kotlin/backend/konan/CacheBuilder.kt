@@ -31,6 +31,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
+import org.jetbrains.kotlin.io.canonicalPathString
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
     val allDependencies = mutableSetOf<KotlinLibrary>()
@@ -92,8 +93,11 @@ class CacheBuilder(
         override fun toString() = "${library.uniqueName}|$file"
     }
 
-    private val KotlinLibrary.isExternal
-        get() = autoCacheableFrom.any { libraryFile.canonicalFile.startsWith(it.canonicalFile) }
+    private val KotlinLibrary.isExternal: Boolean
+        get() {
+            val libraryCanonicalPath = Path(path.canonicalPathString())
+            return autoCacheableFrom.any { libraryCanonicalPath.startsWith(Path(it.canonicalPath)) }
+        }
 
     fun build() {
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
@@ -462,9 +466,9 @@ class CacheBuilder(
             config.configuration.konanHome?.let {
                 this.konanHome = it
             }
-            val libraryPath = library.libraryFile.absolutePath
-            val libraries = dependencies.filter { it.isExplicitlySpecifiedByUserInCLIArgument }.map { it.libraryFile.absolutePath }
-            val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }
+            val libraryPath = library.path.absolutePathString()
+            val libraries = dependencies.filter { it.isExplicitlySpecifiedByUserInCLIArgument }.map { it.path.absolutePathString() }
+            val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.path.absolutePathString() to it.second }
             configuration.reportLog(
                     "-p static_cache -Xadd-cache=${library.path} \\\n" +
                             libraries.joinToString("\n") { "-library $it \\" } + "\n" +

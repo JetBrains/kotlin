@@ -393,7 +393,7 @@ class NativeSecondStageCompilationConfig(
 
     val includedLibraries: List<KotlinLibrary>
         get() = getIncludedLibraries(
-                configuration.konanIncludedLibraries.map { File(it) },
+                configuration.konanIncludedLibraries.map { Path(it) },
                 configuration,
                 resolve.resolvedLibraries
         )
