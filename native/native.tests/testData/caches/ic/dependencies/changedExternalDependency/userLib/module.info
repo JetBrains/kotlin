@@ -9,3 +9,8 @@ STEP 0:
 STEP 1:
     dependencies: externalLib
     modified cache: file1.kt, file2.kt
+
+// Check rolling back external dep version forces caches recompilation
+STEP 2:
+    dependencies: externalLib
+    modified cache: file1.kt, file2.kt

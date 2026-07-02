@@ -1,3 +1,3 @@
 package external
 
-fun foo2() = 128
+inline fun foo2() = 128

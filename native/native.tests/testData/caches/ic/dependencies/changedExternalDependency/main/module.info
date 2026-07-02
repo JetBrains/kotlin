@@ -8,3 +8,8 @@ STEP 1:
     dependencies: externalLib, userLib
     modifications:
         U : main2.1.kt -> main2.kt
+
+STEP 2:
+    dependencies: externalLib, userLib
+    modifications:
+        U : main2.kt -> main2.kt

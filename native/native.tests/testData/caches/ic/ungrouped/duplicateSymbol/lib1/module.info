@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: core
+    modifications:
+        U : file1.kt -> file1.kt
+    added cache: file1.kt
+
+STEP 1:
+    dependencies: core
+    modifications:
+        U : file1.1.kt -> file1.kt
+    modified cache: file1.kt

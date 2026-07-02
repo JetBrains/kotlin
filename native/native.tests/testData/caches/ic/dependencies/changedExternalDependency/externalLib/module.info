@@ -6,3 +6,7 @@ STEP 0:
 STEP 1:
     modifications:
         U : file2.1.kt -> file2.kt
+
+STEP 2:
+    modifications:
+        U : file2.kt -> file2.kt

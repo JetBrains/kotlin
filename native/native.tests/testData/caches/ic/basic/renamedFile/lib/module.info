@@ -3,9 +3,24 @@ STEP 0:
         U : file1.kt -> file1.kt
     added cache: file1.kt
 
+// rename file1.kt -> file1.changed.kt
 STEP 1:
     modifications:
         D : file1.kt
         U : file1.kt -> file1.changed.kt
     removed cache: file1.kt
     added cache: file1.changed.kt
+
+// update content of renamed file
+STEP 2:
+    modifications:
+        U : file1.1.kt -> file1.changed.kt
+    modified cache: file1.changed.kt
+
+// rename back file1.changed.kt -> file1.kt
+STEP 3:
+    modifications:
+        D : file1.changed.kt
+        U : file1.1.kt -> file1.kt
+    removed cache: file1.changed.kt
+    added cache: file1.kt
