@@ -39,9 +39,11 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * minor size win: trivial singleton instances no longer need to be loaded from their static
  * globals at use sites where the value is unused.
  *
- * "Trivial" here means: no anonymous initializer blocks, no field/property initializers,
- * and the primary constructor body contains only a delegating super-constructor call and/or
- * the implicit `IrInstanceInitializerCall` placeholder. Objects with observable construction
+ * "Trivial" here means: no anonymous initializer blocks, no non-`const` field/property
+ * initializers, and the primary constructor body contains only a delegating super-constructor
+ * call and/or the implicit `IrInstanceInitializerCall` placeholder. `const val` properties
+ * are ignored because their reads are folded to literals at use sites — the backing field
+ * initializer is observably equivalent to no initializer. Objects with observable construction
  * side effects are left alone.
  */
 internal class DropTrivialObjectInstancesLowering(val context: Context) : FileLoweringPass {
@@ -75,7 +77,13 @@ private fun IrClass.hasTrivialPrimaryConstructor(): Boolean {
     } else {
         if (declarations.any { it is IrAnonymousInitializer }) return false
         val hasFieldInitializers = declarations.asSequence()
-                .mapNotNull { (it as? IrProperty)?.backingField ?: it as? IrField }
+                .mapNotNull { decl ->
+                    when (decl) {
+                        is IrProperty -> if (decl.isConst) null else decl.backingField
+                        is IrField -> decl
+                        else -> null
+                    }
+                }
                 .any { it.initializer != null }
         if (hasFieldInitializers) return false
         val body = ctor.body as? IrBlockBody ?: return false
