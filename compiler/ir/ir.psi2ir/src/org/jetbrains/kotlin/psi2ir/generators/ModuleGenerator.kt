@@ -111,8 +111,8 @@ open class ModuleGenerator(override val context: GeneratorContext) : Generator {
         val fakeFile = IrFileImpl(
             fakeFileEntry,
             EmptyPackageFragmentDescriptor(context.moduleDescriptor, FqName(fakeFileEntry.name)),
+            module = IrModuleFragmentImpl(ErrorModuleDescriptor)
         )
-        fakeFile.module = IrModuleFragmentImpl(ErrorModuleDescriptor)
         val gen = SyntheticDeclarationsGenerator(context)
         gen.visitClassDescriptor(ErrorUtils.errorClass, fakeFile)
         gen.visitConstructorDescriptor(
