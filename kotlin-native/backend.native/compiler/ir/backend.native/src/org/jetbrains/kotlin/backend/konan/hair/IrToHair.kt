@@ -185,8 +185,9 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         IntrinsicType.PLUS -> Add(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.MINUS -> Sub(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.TIMES -> Mul(resType)(args[0]!!, args[1]!!)
-                        IntrinsicType.SIGNED_DIV -> Div(resType)(args[0]!!, args[1]!!)
-                        IntrinsicType.SIGNED_REM -> Rem(resType)(args[0]!!, args[1]!!)
+                        // TODO: Throwing on division by zero not yet supported
+//                        IntrinsicType.SIGNED_DIV -> Div(resType)(args[0]!!, args[1]!!)
+//                        IntrinsicType.SIGNED_REM -> Rem(resType)(args[0]!!, args[1]!!)
 
                         IntrinsicType.INC -> Add(resType)(args[0]!!, Const(resType, 1))
                         IntrinsicType.DEC -> Sub(resType)(args[0]!!, Const(resType, 1))
@@ -201,7 +202,9 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         IntrinsicType.OR -> Or(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.XOR -> Xor(resType)(args[0]!!, args[1]!!)
 
-                        IntrinsicType.INV -> Not(args[0]!!)
+                        IntrinsicType.INV -> Inv(args[0]!!)
+
+                        IntrinsicType.NOT -> Not(args[0]!!)
 
                         IntrinsicType.THE_UNIT_INSTANCE -> UnitValue()
 

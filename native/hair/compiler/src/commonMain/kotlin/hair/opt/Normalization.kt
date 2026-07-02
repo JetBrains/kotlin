@@ -7,6 +7,12 @@ import hair.utils.ensuring
 
 // TODO Throw with handler -> Goto
 
+fun HairType.isIntegral() = when (this) {
+    HairType.INT -> true
+    HairType.LONG -> true
+    else -> false
+}
+
 class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater: ArgumentUpdater) {
 
     fun normalize(node: Node): Node {
@@ -59,16 +65,17 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                         return lhs
                 }
 
-                if (op.associative && lhs is BinaryOp && lhs::class == node::class) {
+                if (op.associative && lhs is BinaryOp && lhs.form == node.form) {
                     // (a op const[b]) op const[c] => a op const[b op c]
                     if (lhs.rhs is ConstAny && rhs is ConstAny)
                         return builder(lhs.lhs, Const(op.op((lhs.rhs as ConstAny).numberValue, rhs.numberValue)))
 
                     // (a op b) op (c op d) => ((a op b) op c) op d
-                    if (rhs is BinaryOp && rhs::class == node::class)
+                    if (rhs is BinaryOp && rhs.form == node.form)
                         return builder(builder(builder(lhs.lhs, lhs.rhs), rhs.lhs), rhs.rhs)
                 }
 
+                // If swap happened, build this node again
                 if (lhs != node.lhs || rhs != node.rhs)
                     return builder(lhs, rhs)
 
@@ -82,6 +89,8 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                 rhs is ConstAny -> false
                 lhs is ConstAny -> true
                 rhs is BinaryOp && lhs !is BinaryOp -> true
+                lhs is BinaryOp -> false
+                // phi nodes as well
                 rhs.id > lhs.id -> true
                 else -> false
             }
@@ -108,7 +117,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                 }
 
                 // a + a => a << const[1]
-                if (lhs == rhs) {
+                if (node.type.isIntegral() && lhs == rhs) {
                     return Shl(node.type)(lhs, ConstI(1))
                 }
 
@@ -127,7 +136,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                 val [lhs, rhs] = node.lhs to node.rhs
 
                 // a - a => const[0]
-                if (rhs == lhs)
+                if (node.type.isIntegral() && rhs == lhs)
                     return Const(node.type, 0)
 
                 // a - -b => a + b
@@ -135,7 +144,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                     return Add(node.type)(lhs, rhs.operand)
 
                 // -a - b => -(a + b)
-                if (lhs is Neg)
+                if (node.type.isIntegral() && lhs is Neg)
                     return Neg(Add(node.type)(lhs, rhs))
 
                 return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Sub(node.type)(lhs, rhs) }
@@ -152,8 +161,9 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
                 val [lhs, rhs] = canonicalArgs(node.lhs, node.rhs)
 
+                // TODO: Support for NaN and infinities
                 // a * const[0] => const[0]
-                if (rhs is ConstAny && rhs.numberValue == 0)
+                if (node.type.isIntegral() && rhs is ConstAny && rhs.numberValue == 0)
                     return Const(node.type, 0)
 
                 return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Mul(node.type)(lhs, rhs) }
@@ -172,11 +182,6 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
                 // TODO: a / const[0] => throwable
 
-                // a / a => const[1]
-                if (lhs == rhs)
-                    return Const(node.type, 1)
-
-
                 return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Div(node.type)(lhs, rhs) }
             }
 
@@ -194,15 +199,11 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                     else -> error("Should not reach here $node")
                 }
 
-                // a % a => const[0]
-                if (lhs == rhs)
-                    return Const(node.type, 0)
-
                 // Remainder does not have identity and is not associative or commutative.
                 return node
             }
 
-            override fun visitNot(node: Not): Node = when (val operand = node.operand) {
+            override fun visitInv(node: Inv): Node = when (val operand = node.operand) {
                 is ConstAny -> Const(
                     when (val value = operand.numberValue) {
                         is Int -> value.inv()
@@ -211,6 +212,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                     }
                 )
 
+                // -(-a) => a
                 is Not -> operand.operand
 
                 else -> node
@@ -310,7 +312,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                         return lhs.lhs
                 }
 
-                return normalizeBinary(opKind, node, lhs, rhs, { lhs, rhs -> Xor(node.type)(lhs, rhs) })
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Xor(node.type)(lhs, rhs) }
             }
 
             override fun visitShl(node: Shl): Node {
@@ -324,14 +326,14 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
                 // a << const[width(a) - 1] => const[0]
                 if (rhs is ConstAny) {
-                    if (node.type == HairType.INT && rhs.numberValue == 31)
+                    if (node.type == HairType.INT && rhs.numberValue == Int.SIZE_BITS - 1)
                         return Const(node.type, 0)
 
-                    if (node.type == HairType.LONG && rhs.numberValue == 63)
+                    if (node.type == HairType.LONG && rhs.numberValue == Long.SIZE_BITS - 1)
                         return Const(node.type, 0)
                 }
 
-                return normalizeBinary(opKind, node, lhs, rhs, { lhs, rhs -> Shl(node.type)(lhs, rhs) })
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Shl(node.type)(lhs, rhs) }
             }
 
             override fun visitShr(node: Shr): Node {
@@ -343,7 +345,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
                 // TODO: positives can be reduced on >> 31 for ints and >> 63 for longs
 
-                return normalizeBinary(opKind, node, node.lhs, node.rhs, { lhs, rhs -> Shl(node.type)(lhs, rhs) })
+                return normalizeBinary(opKind, node, node.lhs, node.rhs) { lhs, rhs -> Shr(node.type)(lhs, rhs) }
             }
 
             override fun visitUshr(node: Ushr): Node {
@@ -357,14 +359,22 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
                 // a >> const[width(a) - 1] => const[0]
                 if (rhs is ConstAny) {
-                    if (node.type == HairType.INT && rhs.numberValue == 31)
+                    if (node.type == HairType.INT && rhs.numberValue == Int.SIZE_BITS - 1)
                         return Const(node.type, 0)
 
-                    if (node.type == HairType.LONG && rhs.numberValue == 63)
+                    if (node.type == HairType.LONG && rhs.numberValue == Long.SIZE_BITS - 1)
                         return Const(node.type, 0)
                 }
 
-                return normalizeBinary(opKind, node, lhs, rhs, { lhs, rhs -> Shl(node.type)(lhs, rhs) })
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Ushr(node.type)(lhs, rhs) }
+            }
+
+            override fun visitNot(node: Not): Node {
+                // !!a => a
+                if (node.operand is Not)
+                    return (node.operand as Not).operand
+
+                return node
             }
 
             // TODO the rest

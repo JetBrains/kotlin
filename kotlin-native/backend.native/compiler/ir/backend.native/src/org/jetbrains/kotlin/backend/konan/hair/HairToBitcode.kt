@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.backend.konan.llvm.node
 import org.jetbrains.kotlin.backend.konan.llvm.theUnitInstanceRef
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
+import org.jetbrains.kotlin.backend.konan.llvm.type
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.isNothing
 
@@ -96,6 +97,16 @@ internal class HairToBitcode(
             llvm.int8Type,
             llvm.int16Type -> fgc.trunc(value, targetType)
             else -> value
+        }
+
+        fun makeConstOfType(value: Int, targetType: LLVMTypeRef) = when (targetType) {
+            llvm.int8Type -> llvm.int8(value.toByte())
+            llvm.int16Type -> llvm.char16(value.toChar())
+            llvm.int32Type -> llvm.int32(value)
+            llvm.int64Type -> llvm.int64(value.toLong())
+            llvm.floatType -> llvm.float32(value.toFloat())
+            llvm.doubleType -> llvm.float64(value.toDouble())
+            else -> error("Unexpected primitive type: $targetType")
         }
 
         /** Retrieves the already-emitted LLVM value for an operand node. */
@@ -216,12 +227,14 @@ internal class HairToBitcode(
         override fun visitOr(node: Or): LLVMValueRef = emit { or(node.lhs.value(), node.rhs.value()) }
         override fun visitXor(node: Xor): LLVMValueRef = emit { xor(node.lhs.value(), node.rhs.value()) }
 
-        override fun visitNot(node: Not): LLVMValueRef =
-                adaptToHair(emit { not(adaptFromHair(node.operand.value(), llvm.int1Type)) })
-
         override fun visitShl(node: Shl): LLVMValueRef = emit { LLVMBuildShl(builder, node.lhs.value(), node.rhs.value(), "")!! }
         override fun visitShr(node: Shr): LLVMValueRef = emit { LLVMBuildAShr(builder, node.lhs.value(), node.rhs.value(), "")!! }
         override fun visitUshr(node: Ushr): LLVMValueRef = emit { LLVMBuildLShr(builder, node.lhs.value(), node.rhs.value(), "")!! }
+
+        override fun visitInv(node: Inv): LLVMValueRef = emit { xor(node.value(), makeConstOfType(-1, node.value().type), "") }
+
+        override fun visitNot(node: Not): LLVMValueRef =
+                adaptToHair(emit { not(adaptFromHair(node.operand.value(), llvm.int1Type)) })
 
         override fun visitCmp(node: Cmp): LLVMValueRef {
             val lhs = node.lhs.value()
