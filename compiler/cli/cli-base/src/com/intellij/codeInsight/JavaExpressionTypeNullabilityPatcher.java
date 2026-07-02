@@ -8,14 +8,18 @@ package com.intellij.codeInsight;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiType;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+// This file was hijacked from com.jetbrains.intellij.java:java-psi-impl
+// As we don't have access to com.jetbrains.intellij.java:java-analysis-impl containing implementations of this extension point,
+// we had to simplify it to return always true. The module is compiled against JDK 25, so we can't depend on it
+// and implementations can't be easily hijacked.
 
 /**
  * An extension point which allows to patch the type nullability of expressions.
  */
-@ApiStatus.Experimental
+@SuppressWarnings("unused")
 public interface JavaExpressionTypeNullabilityPatcher {
     ExtensionPointName<JavaExpressionTypeNullabilityPatcher> EP_NAME = ExtensionPointName.create("com.intellij.java.expressionTypeNullabilityPatcher");
 
@@ -41,12 +45,6 @@ public interface JavaExpressionTypeNullabilityPatcher {
      * @return the patched type, or the originally computed type if no patcher wants to patch this expression
      */
     static @NotNull PsiType patchTypeNullability(@NotNull PsiExpression expression, @NotNull PsiType type) {
-        for (JavaExpressionTypeNullabilityPatcher patcher : EP_NAME.getExtensionList()) {
-            PsiType patchedType = patcher.tryPatchType(expression, type);
-            if (patchedType != null) {
-                return patchedType;
-            }
-        }
         return type;
     }
 }
