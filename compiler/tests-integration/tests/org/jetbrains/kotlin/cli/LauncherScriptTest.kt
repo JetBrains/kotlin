@@ -650,6 +650,18 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     @Test
+    fun testKotlinExecutableIsdeprecated() {
+        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        runProcess(
+            "kotlin",
+            "-cp", tmpdir.path,
+            "test.HelloWorldKt",
+            expectedStdout = "Hello!\n",
+            expectedStderr = "warning: the 'kotlin' executable is deprecated; use 'kotlinr' instead to avoid ambiguity with the Kotlin toolchain's 'kotlin' command.\n"
+        )
+    }
+
+    @Test
     fun testKotlinFromJar() {
         val jarFile = File(tmpdir, "out.jar").path
         runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", jarFile)
