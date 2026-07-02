@@ -32,6 +32,7 @@ dependencies {
     testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(project(":compiler:cli-base"))
 }
 
 sourceSets {
