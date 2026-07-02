@@ -1,4 +1,6 @@
+// WITH_STDLIB
 // FULL_JDK
+// WITH_ADVANCED_LOGGERS
 
 // FILE: test.kt
 

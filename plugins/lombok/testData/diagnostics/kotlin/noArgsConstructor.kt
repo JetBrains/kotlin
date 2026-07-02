@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 import lombok.NoArgsConstructor
 
 open class C {
