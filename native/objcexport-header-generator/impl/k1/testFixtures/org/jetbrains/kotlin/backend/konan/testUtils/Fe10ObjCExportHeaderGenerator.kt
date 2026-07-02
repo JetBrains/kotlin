@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
@@ -26,7 +25,6 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
 import java.io.File
-
 
 class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
 
@@ -103,7 +101,7 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
             .filter { descriptor ->
                 val origin = descriptor.getCapability(KlibModuleOrigin.CAPABILITY) ?: return@filter true
                 origin is DeserializedKlibModuleOrigin &&
-                    origin.library.libraryFile.javaFile().toPath() in exportedKlibs
+                    origin.library.path in exportedKlibs
             }
 
         val namer = ObjCExportNamerImpl(

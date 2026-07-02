@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersSerializer
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.runtimeFingerprint
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.javaFile
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.library.isNativeStdlib
 import kotlin.random.Random
 

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.library.impl.javaFile
 
 internal class CacheInfoBuilder(
         private val generationState: NativeGenerationState,
@@ -36,7 +35,7 @@ internal class CacheInfoBuilder(
 ) {
     fun build() {
         if (!generationState.config.producePerFileCache)
-            generationState.klibHash = SerializedKlibFingerprint(moduleDeserializer.klib.libraryFile.javaFile()).klibFingerprint
+            generationState.klibHash = SerializedKlibFingerprint(moduleDeserializer.klib.path.toFile()).klibFingerprint
         irModule.files.forEach { irFile ->
             var hasEagerlyInitializedProperties = false
 

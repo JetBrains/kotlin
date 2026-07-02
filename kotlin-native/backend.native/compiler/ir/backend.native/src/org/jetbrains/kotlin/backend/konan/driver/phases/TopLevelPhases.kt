@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.verifyBitcode
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.javaFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
