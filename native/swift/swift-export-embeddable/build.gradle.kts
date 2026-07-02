@@ -171,6 +171,7 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
     dependencies.add(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils.common")))
 
     dependencies.add(project.dependencies.testFixtures(project(":native:swift:swift-export-standalone-integration-tests")))
+    dependencies.add(project.dependencies.testFixtures(project(":native:swift:swift-export-standalone-integration-tests:external")))
 }
 
 val shadedIntransitiveTestDependenciesJar = tasks.register<ShadowJar>("shadedTestDependencies") {
@@ -228,7 +229,6 @@ projectTests {
             // These dependencies are used by the test classes
             shadedIntransitiveTestDependenciesJar,
             transitiveTestRuntimeClasspath,
-            configurations.testRuntimeClasspath, // Includes KotlinSecurityManager from test-inputs-check
         )
         testClassesDirs = testSourceSet.output.classesDirs
     }
