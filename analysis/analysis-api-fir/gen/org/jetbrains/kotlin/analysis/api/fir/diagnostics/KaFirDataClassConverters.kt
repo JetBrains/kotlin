@@ -1448,6 +1448,12 @@ private fun KaDiagnosticConverterBuilder.addConversions27() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions28() {
+    add(FirErrors.KOTLIN_PACKAGE_USAGE) { firDiagnostic ->
+        KotlinPackageUsageImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION.warningFactory) { firDiagnostic ->
         UnsupportedArrayLiteralOutsideOfAnnotationWarningImpl(
             firDiagnostic as KtPsiDiagnostic,

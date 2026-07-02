@@ -199,6 +199,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val REDUNDANT_INTERPOLATION_PREFIX: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_INTERPOLATION_PREFIX", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val WRAPPED_LHS_IN_ASSIGNMENT: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("WRAPPED_LHS_IN_ASSIGNMENT", ForbidParenthesizedLhsInAssignments, SourceElementPositioningStrategies.OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS, PsiElement::class, getRendererFactory())
     val PARENTHESIZED_PACKAGE_QUALIFIER: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("PARENTHESIZED_PACKAGE_QUALIFIER", ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val KOTLIN_PACKAGE_USAGE: KtDiagnosticFactory0 = KtDiagnosticFactory0("KOTLIN_PACKAGE_USAGE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION", ForbidArrayLiteralsInNonAnnotationContexts, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Unresolved
