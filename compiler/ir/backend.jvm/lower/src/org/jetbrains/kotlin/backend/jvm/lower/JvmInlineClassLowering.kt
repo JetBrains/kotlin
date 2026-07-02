@@ -382,6 +382,11 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         if (!leftIsUnboxed && !rightIsUnboxed)
             return null
 
+        // If the left operand's type is a type parameter (e.g., the value of a generic value class
+        // after field-getter lowering erases the concrete type to T), we cannot specialize.
+        if (left.type.classOrNull == null)
+            return null
+
         // Precondition: left is an unboxed inline class type
         fun equals(left: IrExpression, right: IrExpression): IrExpression {
             // Unsigned types use primitive comparisons
