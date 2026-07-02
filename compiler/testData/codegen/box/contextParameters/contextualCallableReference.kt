@@ -17,6 +17,7 @@ var O.bar: String
     }
 
 fun box(): String {
+    // Tests on invocation of callables:
     context("O", 'K') {
         val fnRef: () -> String = O::foo
         fnRef().let { result ->
@@ -32,6 +33,15 @@ fun box(): String {
         propRef().let { result ->
             if (result != "OK") return "FAIL 3: $result != \"OK\""
         }
+    }
+
+    // Tests on getting reference name:
+    context("O", 'K') {
+        val fnRef = O::foo
+        if (fnRef.name != "foo") return "FAIL 4: ${fnRef.name} != \"foo\""
+
+        val propRef = O::bar
+        if (propRef.name != "bar") return "FAIL 5: ${propRef.name} != \"bar\""
     }
 
     return "OK"
