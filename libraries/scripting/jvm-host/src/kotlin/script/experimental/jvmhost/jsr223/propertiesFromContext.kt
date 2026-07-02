@@ -11,6 +11,7 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl._isSyntheticSnippet
 import kotlin.script.experimental.util.PropertiesCollection
+import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
 private val ScriptCompilationConfigurationKeys.exposedBindings by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
 private val ScriptCompilationConfigurationKeys.rootBindingsConfigured by PropertiesCollection.key(false) // bindings variable
@@ -129,26 +130,33 @@ private fun escapeForKotlinStringLiteral(s: String): String = buildString {
     }
 }
 
+// The implicit receivers exposed to every JSR-223 snippet: `ScriptContext` (the JSR-223-specific
+// scopes/attributes API) and `ScriptTemplateWithBindings` (the K1-era `bindings`-only shape), added
+// side by side — see the comment on `REQUIRED_IMPLICIT_RECEIVERS` usage below for why both are needed.
+// `ScriptTemplateWithBindings` only exposes a `bindings` property, and `ScriptContext` exposes
+// JSR-223-specific methods (`getBindings`, `getAttribute`, `getWriter`, ...), so there's no member-name
+// collision between the two receivers under normal use.
+private val REQUIRED_IMPLICIT_RECEIVERS = listOf(ScriptContext::class, ScriptTemplateWithBindings::class)
+
 fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
     if (context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.getScriptContext]?.invoke() == null)
         return context.compilationConfiguration.asSuccess()
 
-    // Add `ScriptContext` as an implicit receiver, but only once. This refinement runs `beforeCompiling`
+    // Add the required implicit receivers, but only once each. This refinement runs `beforeCompiling`
     // on every snippet, and the engine threads (and mutates) a single `ScriptCompilationConfiguration`
     // across evals; a freshly-created nested-eval REPL state is even seeded from that threaded config
     // (see `KotlinJsr223ScriptEngineImpl.createState` and the generated `eval(...)` helper that resets
     // the engine state before re-entering). Appending unconditionally would let the receiver list grow
-    // across evals, so a snippet's `$$eval` would take N `ScriptContext` parameters while the evaluator
-    // always passes exactly one — surfacing as `IllegalArgumentException: wrong number of arguments` in
-    // the eval-in-eval scenario (`KotlinJsr223ScriptEngineIT.testSimpleEvalInEval`). Adding it
-    // idempotently keeps the count at one in every (including nested) state.
-    val alreadyPresent =
-        context.compilationConfiguration[ScriptCompilationConfiguration.implicitReceivers]
-            ?.contains(KotlinType(ScriptContext::class)) == true
-    if (alreadyPresent) return context.compilationConfiguration.asSuccess()
+    // across evals, so a snippet's `$$eval` would take N receiver parameters of each kind while the
+    // evaluator always passes exactly one of each — surfacing as `IllegalArgumentException: wrong
+    // number of arguments` in the eval-in-eval scenario (`KotlinJsr223ScriptEngineIT.testSimpleEvalInEval`).
+    // Adding them idempotently keeps the count at one (per receiver type) in every (including nested) state.
+    val existingReceivers = context.compilationConfiguration[ScriptCompilationConfiguration.implicitReceivers].orEmpty()
+    val missingReceivers = REQUIRED_IMPLICIT_RECEIVERS.filter { KotlinType(it) !in existingReceivers }
+    if (missingReceivers.isEmpty()) return context.compilationConfiguration.asSuccess()
 
     return ScriptCompilationConfiguration(context.compilationConfiguration) {
-        implicitReceivers(ScriptContext::class)
+        implicitReceivers(*missingReceivers.toTypedArray())
     }.asSuccess()
 }
 
@@ -314,11 +322,19 @@ class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, pr
             } to source).asSuccess()
 }
 
+// A trivial concrete subclass, since `ScriptTemplateWithBindings` itself is abstract. It wraps the
+// same (live, mutable) `Bindings` map instance already backing `ScriptContext`'s `ENGINE_SCOPE`, so
+// there's no separate synchronization needed between the two receivers' views of the data.
+private class Jsr223ScriptTemplateWithBindings(bindings: Map<String, Any?>) : ScriptTemplateWithBindings(bindings)
+
 fun configureExposedJsr223Context(context: ScriptEvaluationConfigurationRefinementContext): ResultWithDiagnostics<ScriptEvaluationConfiguration> {
     val jsr223context = context.evaluationConfiguration[ScriptEvaluationConfiguration.jsr223.getScriptContext]?.invoke()
         ?: return context.evaluationConfiguration.asSuccess() // likely an error
 
+    // Order matches the order the corresponding types were added in `configureExposedJsr223Context`
+    // (compile-time overload above): `ScriptContext` first, then `ScriptTemplateWithBindings`.
+    val engineBindings = jsr223context.getBindings(ScriptContext.ENGINE_SCOPE) ?: emptyMap<String, Any?>()
     return context.evaluationConfiguration.with {
-        implicitReceivers(jsr223context)
+        implicitReceivers(jsr223context, Jsr223ScriptTemplateWithBindings(engineBindings))
     }.asSuccess()
 }

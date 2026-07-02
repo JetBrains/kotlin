@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
@@ -383,7 +382,6 @@ obj
     }
 
     @Test
-    @Disabled("BLOCKED-DESIGN-Q16: JSR-223 K2 implicit-receiver strategy is unresolved. The user helper `fun ScriptTemplateWithBindings.myFunFromBindings(...)` is unreachable because K2's \$\$eval implicit receiver is `ScriptContext`, not `ScriptTemplateWithBindings` (receiver-type mismatch). Needs sign-off; see plugins/scripting/.ai/target/90-open-questions.md Q16 (G10).")
     fun testEvalInEvalWithBindingsWithLambda() {
         // the problem (KT-67747) is only reproducible with INDY lambdas
         withProperty(

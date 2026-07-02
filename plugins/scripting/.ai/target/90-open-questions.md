@@ -264,18 +264,22 @@ When a JSR-223 binding's runtime value is an indy-lambda (`-Xlambdas=indy`) or a
 
 Current state: `propertiesFromContext.kt` filters such bindings with `isParseableKotlinQualifiedName(qn)`; they remain accessible via `bindings["..."]` but not as typed properties. Open question: do we want typed access (e.g. emit `var foo: (Int) -> Int` by inspecting the functional-interface signature) or keep the current "skip with `Any?` fallback" behaviour? Decision rides on whether typed lambda accessors are a stated JSR-223 K2 contract.
 
-## Q16. JSR-223 K2 implicit-receiver strategy
+## Q16. ~~JSR-223 K2 implicit-receiver strategy~~ — resolved
 
-- Status: open — design needed
+- Status: **resolved — landed 2026-07-02c** (Option "add a second implicit receiver")
 - Owner: unassigned
 - YT: —
 - Target doc: [`40-jsr223-target.md`](40-jsr223-target.md)
-- Last touched: 2026-05-18
+- Last touched: 2026-07-02c
 
-K1 path exposed bindings via helpers receiving `ScriptTemplateWithBindings`. K2 path uses `ScriptContext` as `$$eval`'s implicit receiver, so user-defined `fun ScriptTemplateWithBindings.foo(...)` is unreachable. See [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g10-k2-jsr-223-implicit-receiver-is-scriptcontext-not-scripttemplatewithbindings) (G10).
+**Resolved**: `ScriptTemplateWithBindings` is now added as a **second** implicit receiver alongside `ScriptContext`, in both `configureExposedJsr223Context` overloads (`libraries/scripting/jvm-host/src/.../jsr223/propertiesFromContext.kt`). No FIR/IR/evaluator change was needed — a prior investigation confirmed the whole implicit-receiver pipeline (`FirReplSnippetConfiguratorExtensionImpl.configure()`, `ReplSnippetsToClassesLowering.makeImplicitReceiversFieldsWithParameters()`/`finalizeReplSnippetClass()`, `K2ReplEvaluator.eval()`) is already fully generic over N receivers, keyed by type/index. The compile-time overload adds `ScriptContext::class` and `ScriptTemplateWithBindings::class` idempotently (same existing-receiver-list guard that protects `testSimpleEvalInEval` from receiver-count drift across nested evals); the eval-time overload passes a new private `Jsr223ScriptTemplateWithBindings` concrete wrapper around the same live engine-scope `Bindings` map already backing `ScriptContext`'s `ENGINE_SCOPE`, so both receivers share one underlying data source with no extra synchronization. `KotlinJsr223ScriptEngineIT.testEvalInEvalWithBindingsWithLambda` is un-`@Disabled` and passes; full suite is 23/23 (0 skipped, 0 failed). No ambiguous-receiver diagnostics were observed — `ScriptTemplateWithBindings` exposes only `bindings`, while `ScriptContext` exposes JSR-223-specific methods (`getBindings`, `getAttribute`, `getWriter`, ...), so there's no member-name collision under normal use.
+
+**Options considered** (chosen: row 2):
 
 | Option | Description |
 |---|---|
 | Drop `ScriptTemplateWithBindings` helper API; document the K2 contract as "extension receivers must be on `ScriptContext` or `Bindings`" | Cleanest; breaks existing user code that used the K1 extension shape. |
-| Add a second implicit receiver (`ScriptTemplateWithBindings`) on K2 `$$eval` | Backwards-compatible; risk of ambiguous-receiver diagnostics; needs FIR snippet-resolve EP support. |
-| Switch the JSR-223 script template entirely (so the K2 `$$eval` receiver IS `ScriptTemplateWithBindings`) | Compatible-by-construction; ripples through `KotlinJsr223DefaultScript` + every snippet's compilation config. |
+| Add a second implicit receiver (`ScriptTemplateWithBindings`) on K2 `$$eval` — **chosen, 2026-07-02c** | Backwards-compatible; no FIR/IR/evaluator change needed (receivers are already N-ary); ambiguous-receiver risk did not materialize in practice. |
+| Switch the JSR-223 script template entirely (so the K2 `$$eval` receiver IS `ScriptTemplateWithBindings`) | Compatible-by-construction; ripples through `KotlinJsr223DefaultScript` + every snippet's compilation config; de-prioritized once row 2 was shown to be free. |
+
+**Known follow-up, unrelated to this fix**: `MainKtsJsr223Test` (in `kotlin-main-kts-test`) independently fails all 3 tests with `Unresolved reference 'getBindings'` on the synthetic snippet — i.e. even the pre-existing `ScriptContext` receiver isn't being added for the `MainKtsScript` template. Root cause looks like Q6 (classpath-based script definition discovery, KT-82551): the `DEBUG Configure scripting: Added template org.jetbrains.kotlin.mainKts.MainKtsScript from [...]` log line shows `ScriptDefinitionsFromClasspathDiscoverySource` reflectively re-instantiating `MainKtsScriptDefinition`/`MainKtsHostConfiguration` from the `META-INF/kotlin/script/templates/*` classpath marker, bypassing the `hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }` override that `KotlinJsr223ScriptEngineImpl` applies at runtime — so `getScriptContext` resolves to `null` for that rediscovered config and `configureExposedJsr223Context` returns early with no receivers at all. This is pre-existing (confirmed present before this fix too) and orthogonal to the Q16 receiver-count question; it needs its own investigation, likely coupled to the Q6 resolution.

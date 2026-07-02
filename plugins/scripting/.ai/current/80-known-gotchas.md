@@ -76,12 +76,13 @@ Hard-won facts about the K2 REPL pipeline and the JSR-223 bridge that are easy t
 - **Status**: see `Q15` in [`../target/90-open-questions.md`](../target/90-open-questions.md) for a typed-access design option (functional-interface synthesis vs erased `Any?` accessor).
 - **Reference**: [iterations/2026-05-18_jsr223-followup-1.md](../iterations/2026-05-18_jsr223-followup-1.md#remaining-9-failures-after-this-iteration) + this session's follow-up.
 
-## G10. K2 JSR-223 implicit receiver is `ScriptContext`, not `ScriptTemplateWithBindings`
+## G10. K2 JSR-223 implicit receiver is `ScriptContext`, not `ScriptTemplateWithBindings` — **FIXED 2026-07-02c** (second implicit receiver)
 
-- **Symptom**: user-defined `fun ScriptTemplateWithBindings.foo(...)` is unreachable from a subsequent snippet: "Candidate ... is inapplicable because of a receiver type mismatch".
-- **Cause**: K1 path exposed bindings via helpers receiving `ScriptTemplateWithBindings`. The K2 path uses `ScriptContext` as the implicit receiver of `$$eval`. Architectural divergence between the two paths.
-- **Status**: design needed — see `Q16` in [`../target/90-open-questions.md`](../target/90-open-questions.md) (JSR-223 K2 implicit-receiver strategy).
-- **Reference**: this session's investigation of `testEvalInEvalWithBindingsWithLambda`.
+- **Symptom (historical)**: user-defined `fun ScriptTemplateWithBindings.foo(...)` is unreachable from a subsequent snippet: "Candidate ... is inapplicable because of a receiver type mismatch".
+- **Cause**: K1 path exposed bindings via helpers receiving `ScriptTemplateWithBindings`. The K2 path uses only `ScriptContext` as the implicit receiver of `$$eval`. Architectural divergence between the two paths.
+- **Fix**: `ScriptTemplateWithBindings` is now added as a **second** implicit receiver alongside `ScriptContext` — both `configureExposedJsr223Context` overloads in `libraries/scripting/jvm-host/src/.../jsr223/propertiesFromContext.kt` add it idempotently (compile-time) / pass a `Jsr223ScriptTemplateWithBindings` wrapper instance (eval-time) around the same live engine-scope `Bindings`. No FIR/IR/evaluator change needed — the whole implicit-receiver pipeline was already N-ary. `testEvalInEvalWithBindingsWithLambda` is un-`@Disabled` and passes; no receiver-ambiguity diagnostics observed.
+- **Status**: **resolved** — see `Q16` in [`../target/90-open-questions.md`](../target/90-open-questions.md) (JSR-223 K2 implicit-receiver strategy).
+- **Reference**: this session's investigation of `testEvalInEvalWithBindingsWithLambda`; fix landed same session (2026-07-02c).
 
 ## G11. `IR_EXTERNAL_DECLARATION_STUB` on *any* external Kotlin top-level decl referenced from a snippet (umbrella over G1/G2) — **FIXED 2026-05-18** (migration step 1b)
 
