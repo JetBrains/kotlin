@@ -5692,22 +5692,22 @@ internal class InvalidVersioningOnReceiverOrContextParameterPositionImpl(
 internal class InvalidVersioningOnRequiredAfterOptionalImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnRequiredAfterOptional
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnRequiredAfterOptional
 
 internal class InvalidVersioningOnNonOptionalImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnNonOptional
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnNonOptional
 
 internal class InvalidVersioningOnVarargImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnVararg
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnVararg
 
 internal class InvalidVersioningOnValueClassParameterImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnValueClassParameter
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnValueClassParameter
 
 internal class NonAscendingVersionAnnotationImpl(
     override val lowestVersion: MavenComparableVersion?,
@@ -5715,7 +5715,7 @@ internal class NonAscendingVersionAnnotationImpl(
     override val sourceOfHighestVersion: KaCallableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.NonAscendingVersionAnnotation
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonAscendingVersionAnnotation
 
 internal class InvalidDefaultValueDependencyImpl(
     override val lowestVersion: MavenComparableVersion?,

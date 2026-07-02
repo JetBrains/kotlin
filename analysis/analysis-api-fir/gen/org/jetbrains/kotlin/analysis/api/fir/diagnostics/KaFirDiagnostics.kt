@@ -4740,23 +4740,23 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InvalidVersioningOnReceiverOrContextParameterPosition::class
     }
 
-    interface InvalidVersioningOnRequiredAfterOptional : KaFirDiagnostic<KtParameter> {
+    interface InvalidVersioningOnRequiredAfterOptional : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvalidVersioningOnRequiredAfterOptional::class
     }
 
-    interface InvalidVersioningOnNonOptional : KaFirDiagnostic<KtAnnotationEntry> {
+    interface InvalidVersioningOnNonOptional : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
     }
 
-    interface InvalidVersioningOnVararg : KaFirDiagnostic<KtAnnotationEntry> {
+    interface InvalidVersioningOnVararg : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvalidVersioningOnVararg::class
     }
 
-    interface InvalidVersioningOnValueClassParameter : KaFirDiagnostic<KtAnnotationEntry> {
+    interface InvalidVersioningOnValueClassParameter : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvalidVersioningOnValueClassParameter::class
     }
 
-    interface NonAscendingVersionAnnotation : KaFirDiagnostic<KtAnnotationEntry> {
+    interface NonAscendingVersionAnnotation : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NonAscendingVersionAnnotation::class
         val lowestVersion: MavenComparableVersion?
         val highestVersion: MavenComparableVersion?

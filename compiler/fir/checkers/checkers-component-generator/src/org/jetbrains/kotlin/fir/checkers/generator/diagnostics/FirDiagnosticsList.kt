@@ -2407,13 +2407,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INVALID_VERSIONING_ON_INLINE by error<KtDeclaration>(PositioningStrategy.DECLARATION_NAME)
 
         val INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION by error<PsiElement>()
-        val INVALID_VERSIONING_ON_REQUIRED_AFTER_OPTIONAL by error<KtParameter>()
+        val INVALID_VERSIONING_ON_REQUIRED_AFTER_OPTIONAL by error<PsiElement>()
 
-        val INVALID_VERSIONING_ON_NON_OPTIONAL by error<KtAnnotationEntry>()
-        val INVALID_VERSIONING_ON_VARARG by error<KtAnnotationEntry>()
-        val INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER by error<KtAnnotationEntry>()
+        val INVALID_VERSIONING_ON_NON_OPTIONAL by error<PsiElement>()
+        val INVALID_VERSIONING_ON_VARARG by error<PsiElement>()
+        val INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER by error<PsiElement>()
 
-        val NON_ASCENDING_VERSION_ANNOTATION by error<KtAnnotationEntry> {
+        val NON_ASCENDING_VERSION_ANNOTATION by error<PsiElement> {
             parameter<MavenComparableVersion?>("lowestVersion")
             parameter<MavenComparableVersion?>("highestVersion")
             parameter<FirCallableSymbol<*>>("sourceOfHighestVersion")

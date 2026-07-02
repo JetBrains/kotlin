@@ -50,7 +50,7 @@ fun nonAscendingVersion(
 fun invalidParameterPosition(
     x: Int = 4,
     @IntroducedAt("1") y: Int = 2,
-    <!INVALID_NON_OPTIONAL_PARAMETER_POSITION!>z: Int<!>
+    <!INVALID_VERSIONING_ON_REQUIRED_AFTER_OPTIONAL!>z: Int<!>
 ) {}
 
 @JsExport
@@ -72,7 +72,7 @@ data class ConstructorNonAscendingVersion(
 data class ConstructorWithInvalidParameterPosition(
     val x: Int,
     @IntroducedAt("1") val y: Int = x,
-    <!INVALID_NON_OPTIONAL_PARAMETER_POSITION!>val z: Int<!>
+    <!INVALID_VERSIONING_ON_REQUIRED_AFTER_OPTIONAL!>val z: Int<!>
 )
 
 @JsExport
