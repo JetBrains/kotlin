@@ -1,9 +1,9 @@
-// TARGET_BACKEND: NATIVE
-// test is disabled now because of https://youtrack.jetbrains.com/issue/KT-55426
-// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+// LL_FIR_DIVERGENCE
+// We report `LEAKED_VOLATILE_FIELD` after fir2ir stage before serialization in Klib
+// LL_FIR_DIVERGENCE
+// RUN_PIPELINE_TILL: BACKEND
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
+// DIAGNOSTICS: -ERROR_SUPPRESSION
 
 // MODULE: lib
 // FILE: lib.kt
