@@ -30,16 +30,13 @@ import org.jetbrains.annotations.Nullable;
 // The necessary change was integrated in IDEA in https://jetbrains.team/p/ij/reviews/209259/timeline MR,
 // and we can reuse it after migration to IJ SDK 262+ and drop this file. See also KT-87400.
 
-public class JavaFieldStubFactory implements LightStubElementFactory<PsiFieldStubImpl, PsiField> {
+@SuppressWarnings("UnstableApiUsage")
+public class JavaFieldStubFactory implements LightStubElementFactory<PsiFieldStub, PsiField> {
     private static final int INITIALIZER_LENGTH_LIMIT = 1000;
 
     @Override
-    public @NotNull PsiFieldStubImpl createStub(
-            @NotNull LighterAST tree,
-            @NotNull LighterASTNode node,
-            @NotNull StubElement<?> parentStub
-    ) {
-        final TypeInfo typeInfo = TypeInfo.create(tree, node, parentStub);
+    public @NotNull PsiFieldStubImpl createStub(@NotNull LighterAST tree, @NotNull LighterASTNode node, @NotNull StubElement<?> parentStub) {
+        TypeInfo typeInfo = TypeInfo.create(tree, node, parentStub);
 
         boolean isDeprecatedByComment = false;
         boolean hasDeprecatedAnnotation = false;
@@ -48,8 +45,8 @@ public class JavaFieldStubFactory implements LightStubElementFactory<PsiFieldStu
         String initializer = null;
 
         boolean expectingInit = false;
-        for (final LighterASTNode child : tree.getChildren(node)) {
-            final IElementType type = child.getTokenType();
+        for (LighterASTNode child : tree.getChildren(node)) {
+            IElementType type = child.getTokenType();
             if (JavaDocElementType.DOC_COMMENT_TOKENS.contains(type)) {
                 hasDocComment = true;
                 isDeprecatedByComment = RecordUtil.isDeprecatedByDocComment(tree, child);
@@ -69,31 +66,26 @@ public class JavaFieldStubFactory implements LightStubElementFactory<PsiFieldStu
             }
         }
 
-        final boolean isEnumConst = node.getTokenType() == JavaElementType.ENUM_CONSTANT;
-        final byte flags = PsiFieldStubImpl.packFlags(isEnumConst, isDeprecatedByComment, hasDeprecatedAnnotation, hasDocComment);
+        boolean isEnumConst = node.getTokenType() == JavaElementType.ENUM_CONSTANT;
+        byte flags = PsiFieldStubImpl.packFlags(isEnumConst, isDeprecatedByComment, hasDeprecatedAnnotation, hasDocComment);
 
         return new PsiFieldStubImpl(parentStub, name, typeInfo, initializer, flags);
     }
 
     @Override
-    public PsiField createPsi(@NotNull PsiFieldStubImpl stub) {
+    public PsiField createPsi(@NotNull PsiFieldStub stub) {
         return JavaStubElementType.getFileStub(stub).getPsiFactory().createField(stub);
     }
 
     @Override
-    public @NotNull PsiFieldStubImpl createStub(@NotNull PsiField psi, @Nullable StubElement parentStub) {
-        final String message =
-                "Should not be called. Element=" +
-                psi +
-                "; class" +
-                psi.getClass() +
-                "; file=" +
-                (psi.isValid() ? psi.getContainingFile() : "-");
+    public @NotNull PsiFieldStubImpl createStub(@NotNull PsiField psi, @Nullable StubElement<?> parentStub) {
+        String message =
+                "Should not be called. Element=" + psi + "; class" + psi.getClass() + "; file=" + (psi.isValid() ? psi.getContainingFile() : "-");
         throw new UnsupportedOperationException(message);
     }
 
     private static String encodeInitializer(final LighterAST tree, final LighterASTNode initializer) {
-        final IElementType type = initializer.getTokenType();
+        IElementType type = initializer.getTokenType();
         if (type == JavaElementType.NEW_EXPRESSION || type == JavaElementType.METHOD_CALL_EXPRESSION) {
             return PsiFieldStub.INITIALIZER_NOT_STORED;
         }
