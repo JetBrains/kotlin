@@ -130,17 +130,25 @@ private fun escapeForKotlinStringLiteral(s: String): String = buildString {
     }
 }
 
-// The implicit receivers exposed to every JSR-223 snippet: `ScriptContext` (the JSR-223-specific
-// scopes/attributes API) and `ScriptTemplateWithBindings` (the K1-era `bindings`-only shape), added
-// side by side — see the comment on `REQUIRED_IMPLICIT_RECEIVERS` usage below for why both are needed.
-// `ScriptTemplateWithBindings` only exposes a `bindings` property, and `ScriptContext` exposes
-// JSR-223-specific methods (`getBindings`, `getAttribute`, `getWriter`, ...), so there's no member-name
-// collision between the two receivers under normal use.
-private val REQUIRED_IMPLICIT_RECEIVERS = listOf(ScriptContext::class, ScriptTemplateWithBindings::class)
-
 fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
     if (context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.getScriptContext]?.invoke() == null)
         return context.compilationConfiguration.asSuccess()
+
+    // The implicit receivers exposed to every JSR-223 snippet: `ScriptContext` (the JSR-223-specific
+    // scopes/attributes API) and `ScriptTemplateWithBindings` (the K1-era `bindings`-only shape), added
+    // side by side. `ScriptTemplateWithBindings` only exposes a `bindings` property, and `ScriptContext`
+    // exposes JSR-223-specific methods (`getBindings`, `getAttribute`, `getWriter`, ...), so there's no
+    // member-name collision between the two receivers under normal use.
+    //
+    // This list is deliberately computed *here*, inside the function and after the `getScriptContext`
+    // guard above, rather than as a top-level property: a top-level `listOf(ScriptContext::class, ...)`
+    // would be evaluated eagerly by this file's static initializer as soon as this function is first
+    // invoked — including for the early-return (non-JSR-223) branch above — forcing `javax.script.*`
+    // classes to load even for plain, non-JSR-223 script compilation (e.g. `MainKtsScriptDefinition`
+    // wires this same callback unconditionally). That previously surfaced as a spurious
+    // `NoClassDefFoundError: javax/script/ScriptContext` when compiling ordinary `.main.kts` scripts
+    // that never touch JSR-223 at all.
+    val requiredImplicitReceivers = listOf(ScriptContext::class, ScriptTemplateWithBindings::class)
 
     // Add the required implicit receivers, but only once each. This refinement runs `beforeCompiling`
     // on every snippet, and the engine threads (and mutates) a single `ScriptCompilationConfiguration`
@@ -152,7 +160,7 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
     // number of arguments` in the eval-in-eval scenario (`KotlinJsr223ScriptEngineIT.testSimpleEvalInEval`).
     // Adding them idempotently keeps the count at one (per receiver type) in every (including nested) state.
     val existingReceivers = context.compilationConfiguration[ScriptCompilationConfiguration.implicitReceivers].orEmpty()
-    val missingReceivers = REQUIRED_IMPLICIT_RECEIVERS.filter { KotlinType(it) !in existingReceivers }
+    val missingReceivers = requiredImplicitReceivers.filter { KotlinType(it) !in existingReceivers }
     if (missingReceivers.isEmpty()) return context.compilationConfiguration.asSuccess()
 
     return ScriptCompilationConfiguration(context.compilationConfiguration) {
