@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.wasm
 internal enum class WasmCompilationMode {
     MONOLITH,
     MULTIMODULE_OPEN_WORLD,
-    MULTIMODULE_CLOSED_WORLD;
+    MULTIMODULE_CLOSED_WORLD,
+    MULTIMODULE_CLOSED_WORLD_ONLY_IN_DEV;
 
     internal fun isOpenWorld() = this == MULTIMODULE_OPEN_WORLD
 

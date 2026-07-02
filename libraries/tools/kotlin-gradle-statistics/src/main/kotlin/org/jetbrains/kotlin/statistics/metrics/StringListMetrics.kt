@@ -55,7 +55,17 @@ enum class StringListMetrics(
     JS_TARGET_MODE(CONCAT, AllowedListAnonymizer(listOf("both", "browser", "nodejs", "none"))),
     JS_BINARY_TYPE(CONCAT, AllowedListAnonymizer(listOf("both", "library", "executable", "none"))),
 
-    WASM_COMPILER_MODE(CONCAT, AllowedListAnonymizer(listOf("monolith", "multimodule-open-world", "multimodule-closed-world"))),
+    WASM_COMPILER_MODE(
+        CONCAT,
+        AllowedListAnonymizer(
+            listOf(
+                "monolith",
+                "multimodule-open-world",
+                "multimodule-closed-world",
+                "multimodule-closed-world-only-in-dev"
+            )
+        )
+    ),
 
     // Compiler parameters
     JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("enable", "no-compatibility", "disable"))),
@@ -66,6 +76,6 @@ enum class StringListMetrics(
 
 
     companion object {
-        const val VERSION = 1
+        const val VERSION = 2
     }
 }

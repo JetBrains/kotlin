@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.InvalidUserDataException
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinWasmIrLinkMetrics
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.supportsPerKlibCompilation
 
-@OptIn(ExperimentalWasmDsl::class)
 internal open class KotlinJsIrLinkConfig(
     private val binary: JsIrBinary,
 ) : BaseKotlin2JsCompileConfig<KotlinJsIrLink>(KotlinCompilationInfo(binary.compilation)) {
@@ -78,7 +78,13 @@ internal open class KotlinJsIrLinkConfig(
                             configureOptions(ENABLE_DCE)
 
                             if (compilation.isWasm()) {
-                                configureWasmOptions(compilation)
+                                configureWasmOptions(compilation, mode)
+                                task.buildFusService.orNull?.reportFusMetrics {
+                                    CompileKotlinWasmIrLinkMetrics.collectWasmCompilerModeMetric(
+                                        wasmCompilationMode.toArgument(),
+                                        it
+                                    )
+                                }
                             } else {
                                 configureOptions(
                                     MINIMIZED_MEMBER_NAMES
@@ -88,7 +94,13 @@ internal open class KotlinJsIrLinkConfig(
 
                         KotlinJsBinaryMode.DEVELOPMENT -> {
                             if (compilation.isWasm()) {
-                                configureWasmOptions(compilation, WASM_FORCE_DEBUG_FRIENDLY)
+                                configureWasmOptions(compilation, mode, WASM_FORCE_DEBUG_FRIENDLY)
+                                task.buildFusService.orNull?.reportFusMetrics {
+                                    CompileKotlinWasmIrLinkMetrics.collectWasmCompilerModeMetric(
+                                        wasmCompilationMode.toArgument(),
+                                        it
+                                    )
+                                }
                             }
                         }
                         else -> throw InvalidUserDataException(
@@ -119,19 +131,33 @@ internal open class KotlinJsIrLinkConfig(
 
     private fun MutableList<String>.configureWasmOptions(
         compilation: KotlinCompilationInfo,
+        mode: KotlinJsBinaryMode,
         vararg additionalCompilerArgs: String,
     ) {
         configureOptions(*additionalCompilerArgs)
         addAdditionalCompilerFlags(compilation)
         if (wasmSupportsPerKlibCompilation) {
-            when(wasmCompilationMode) {
+            when (wasmCompilationMode) {
                 WasmCompilationMode.MULTIMODULE_OPEN_WORLD -> {
                     add(WASM_INCLUDED_MODULE_ONLY)
                 }
                 WasmCompilationMode.MULTIMODULE_CLOSED_WORLD -> {
                     add(WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
                 }
-                else -> {}
+                WasmCompilationMode.MULTIMODULE_CLOSED_WORLD_ONLY_IN_DEV -> {
+                    when (mode) {
+                        KotlinJsBinaryMode.PRODUCTION -> {
+                            // use monolith strategy
+                            // do nothing
+                        }
+                        KotlinJsBinaryMode.DEVELOPMENT -> {
+                            add(WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
+                        }
+                    }
+                }
+                WasmCompilationMode.MONOLITH -> {
+                    // do nothing
+                }
             }
         }
     }

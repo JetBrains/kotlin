@@ -157,19 +157,8 @@ abstract class KotlinJsIrLink
                 CompileKotlinJsIrLinkMetrics.collectMetrics(args, incrementalJsIr, it)
             }
         } else {
-            val openWorldMultiModule = args.wasmIncludedModuleOnly ||
-                    args.freeArgs.contains(WASM_INCLUDED_MODULE_ONLY)
-            val closedWorldMultiModule = args.wasmGenerateClosedWorldMultimodule ||
-                    args.freeArgs.contains(WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
-
-            val wasmCompilerMode = when {
-                openWorldMultiModule -> WasmCompilationMode.MULTIMODULE_OPEN_WORLD
-                closedWorldMultiModule -> WasmCompilationMode.MULTIMODULE_CLOSED_WORLD
-                else -> WasmCompilationMode.MONOLITH
-            }.toArgument()
-
             buildFusService.orNull?.reportFusMetrics {
-                CompileKotlinWasmIrLinkMetrics.collectMetrics(incrementalWasm, wasmCompilerMode, it)
+                CompileKotlinWasmIrLinkMetrics.collectMetrics(incrementalWasm, it)
             }
         }
     }
