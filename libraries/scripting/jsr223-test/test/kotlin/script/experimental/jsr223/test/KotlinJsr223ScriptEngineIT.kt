@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
 import java.io.File
 import java.lang.management.ManagementFactory
@@ -224,6 +225,36 @@ obj
         assertEquals(74, res2)
         val res22 = comp2.eval()
         assertEquals(74, res22)
+    }
+
+    @Test
+    fun testRebindWithChangedType() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("z", 33)
+        assertEquals(66, engine.eval("z * 2"))
+        // Rebind `z` to a value of a different type. The typed accessor must be re-emitted so that
+        // subsequent snippets see `z: String` (Q10d); otherwise the stale `var z: Int` accessor makes
+        // `z.length` unresolved (or its getter `bindings["z"] as Int` throws a ClassCastException).
+        engine.put("z", "abc")
+        assertEquals(6, engine.eval("z.length * 2"))
+    }
+
+    @Test
+    fun testRebindRemoval() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("z", 33)
+        assertEquals(66, engine.eval("z * 2"))
+        // Remove the binding. Accessing the (former) typed accessor must fail with a clear diagnostic
+        // rather than the cryptic `null cannot be cast to non-null type kotlin.Int` NPE (Q10c).
+        engine.getBindings(ScriptContext.ENGINE_SCOPE).remove("z")
+        val e = assertThrows<ScriptException> { engine.eval("z * 2") }
+        assertTrue(
+            (e.message ?: "").contains("no longer available"),
+            "Expected a clear 'no longer available' diagnostic, got: ${e.message}"
+        )
+        // Re-adding the binding restores typed access.
+        engine.put("z", 5)
+        assertEquals(10, engine.eval("z * 2"))
     }
 
     @Test

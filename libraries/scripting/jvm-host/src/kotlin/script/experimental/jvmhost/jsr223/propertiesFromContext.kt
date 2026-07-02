@@ -136,7 +136,10 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
 
     val knownBindings =
         context.compilationConfiguration[ScriptCompilationConfiguration.exposedBindings] ?: hashMapOf()
-    val newBindings = hashMapOf<String, KotlinType>()
+    // The set of bindings exposed as typed properties after this snippet. Starts from the
+    // previously-known set and, when `importAllBindings` is on, is recomputed below and written back
+    // into `exposedBindings` so the next snippet can diff against it (add / retype / remove).
+    var updatedBindings: Map<String, KotlinType> = knownBindings
 
     if (
         context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.importAllBindings] == true &&
@@ -147,22 +150,27 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
             if (engineBindings != null)
                 putAll(engineBindings)
         }
+        // Current bindings that can be exposed as typed properties, with the type inferred from the
+        // present runtime value. Names that aren't usable identifiers, or whose value type can't be
+        // embedded as a Kotlin type reference (lambdas under -Xlambdas=indy, local/anonymous classes,
+        // ...), are left out — they stay reachable via `bindings["..."]`, just not as typed properties.
+        val currentBindings = LinkedHashMap<String, KotlinType>()
         for ([k, v] in allBindings) {
-            if (knownBindings.containsKey(k)) continue
             if (k in ENGINE_INTERNAL_BINDING_KEYS) continue
             if (encodeBindingNameToKotlinIdentifier(k) == null) continue
             val qn = v?.let { it::class.qualifiedName }
-            if (v != null && (qn == null || !isParseableKotlinQualifiedName(qn))) {
-                // Skip values whose type cannot be embedded as a Kotlin type reference in source
-                // (lambdas under -Xlambdas=indy, local/anonymous classes, etc.). Such bindings remain
-                // accessible via `bindings["..."]` from user code, just not as auto-generated properties.
-                continue
-            }
+            if (v != null && (qn == null || !isParseableKotlinQualifiedName(qn))) continue
             // TODO: find out how it's implemented in other jsr223 engines for typed languages, since this approach prevent certain usage scenarios, e.g. assigning back value of a "sibling" type
-            newBindings[k] = if (v == null) KotlinType(Any::class, isNullable = true) else KotlinType(v::class)
+            currentBindings[k] = if (v == null) KotlinType(Any::class, isNullable = true) else KotlinType(v::class)
         }
 
-        newBindings.forEach { [name, type] ->
+        // Q10d — (re)emit a typed accessor for each binding that is new or whose type changed since it
+        // was last exposed (KotlinType compares by type name + nullability). A retyped binding gets a
+        // fresh accessor that shadows the stale one in subsequent snippets, so e.g. rebinding an Int as
+        // a String stops the old `var x: Int` (whose `as Int` getter would then fail to compile / throw
+        // a ClassCastException against the new value) from resolving.
+        for ([name, type] in currentBindings) {
+            if (knownBindings[name] == type) continue
             val encodedName = encodeBindingNameToKotlinIdentifier(name)!!
             val safeKey = escapeForKotlinStringLiteral(name)
             // Render the source-level type with its nullability marker: KotlinType.typeName strips the
@@ -179,12 +187,35 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
 
                 """.trimIndent() + "\n"
         }
+
+        // Q10c — a binding that was exposed as a typed property before but is no longer present
+        // (removed from the bindings, or absent in the current eval's context) gets a shadowing
+        // accessor that keeps the previously declared type — so existing user code still type-checks —
+        // but throws a clear diagnostic at access time instead of the cryptic `null cannot be cast to
+        // non-null type ...` NPE from the stale getter. Re-adding the binding later emits a fresh typed
+        // accessor (it is new relative to the recomputed set) which shadows this one again.
+        for (removedName in knownBindings.keys - currentBindings.keys) {
+            val encodedName = encodeBindingNameToKotlinIdentifier(removedName) ?: continue
+            val safeKey = escapeForKotlinStringLiteral(removedName)
+            val prevType = knownBindings.getValue(removedName)
+            val renderedType = if (prevType.isNullable) "${prevType.typeName}?" else prevType.typeName
+            bindingsSnippet +=
+                """
+                    @Suppress("UNCHECKED_CAST")
+                    var $encodedName: $renderedType
+                        get() = throw java.util.NoSuchElementException("JSR-223 binding \"$safeKey\" is no longer available")
+                        set(value) { bindings.put("$safeKey", value) }
+
+                """.trimIndent() + "\n"
+        }
+
+        updatedBindings = currentBindings
     }
     val source = bindingsSnippet.takeIf { it.isNotBlank() }?.toScriptSource(SYNTHETIC_SNIPPET_PREFIX + context.script.name)
     return (
             context.compilationConfiguration.with {
                 rootBindingsConfigured(true)
-                exposedBindings(knownBindings + newBindings)
+                exposedBindings(updatedBindings)
             } to source).asSuccess()
 }
 
