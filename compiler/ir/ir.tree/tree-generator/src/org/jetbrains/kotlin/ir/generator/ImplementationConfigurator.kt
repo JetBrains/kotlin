@@ -186,11 +186,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(file) {
             implementation.putImplementationOptInInConstructor = false
-            implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName")
+            implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName", "module")
             defaultWithErrorOnSet("startOffset", "0")
             defaultWithErrorOnSet("endOffset", "maxOf(fileEntry.maxOffset, 0)")
-            isMutable("module")
-            isLateinit("module")
         }
 
         allImplOf(loop) {

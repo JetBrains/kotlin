@@ -25,6 +25,7 @@ class IrFileImpl(
     override var fileEntry: IrFileEntry,
     override val symbol: IrFileSymbol,
     override var packageFqName: FqName,
+    override var module: IrModuleFragment,
 ) : IrFile() {
     override var startOffset: Int
         get() = 0
@@ -46,8 +47,6 @@ class IrFileImpl(
     override var annotations: List<IrAnnotation> = emptyList()
 
     override var metadata: MetadataSource? = null
-
-    override lateinit var module: IrModuleFragment
 
     init {
         symbol.bind(this)

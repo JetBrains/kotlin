@@ -665,7 +665,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +declaredSymbol(fileSymbol)
         +field("module", moduleFragment, isChild = false) {
-            deepCopyExcludeFromApply = true
+            deepCopyExcludeFromConstructor = true
         }
         +field("fileEntry", type(Packages.tree, "IrFileEntry"))
     }

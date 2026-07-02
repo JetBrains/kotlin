@@ -132,6 +132,9 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                         copyField(element, field)
                         println(",")
                     }
+                    if (element.isSubclassOf(IrTree.file)) {
+                        println("module = transformedModule ?: ${element.visitorParameterName}.module,")
+                    }
                 }
                 val fieldsInApply = implementation.fieldsInBody.filter { !it.deepCopyExcludeFromApply && it !in constructorArguments }
                 printApply(element, fieldsInApply)
@@ -219,9 +222,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
             }
             if (element.isSubclassOf(IrTree.function)) {
                 println("parameters = ${element.visitorParameterName}.parameters.memoryOptimizedMap { it.transform() }")
-            }
-            if (element.isSubclassOf(IrTree.file)) {
-                println("module = transformedModule ?: ${element.visitorParameterName}.module")
             }
             if (element.isSubclassOf(IrTree.moduleFragment)) {
                 println("this@DeepCopyIrTreeWithSymbols.transformedModule = null")

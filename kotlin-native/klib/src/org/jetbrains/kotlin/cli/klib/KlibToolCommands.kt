@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.library.components.bitcode
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
+import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
@@ -221,7 +223,8 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolAr
         val dummyIrFile = IrFileImpl(
                 fileEntry = NaiveSourceBasedFileEntryImpl(name = "<unknown>"),
                 symbol = IrFileSymbolImpl(),
-                packageFqName = FqName.ROOT
+                packageFqName = FqName.ROOT,
+                module = IrModuleFragmentImpl(ErrorModuleDescriptor)
         )
 
         val dumpOptions = DumpIrTreeOptions(
@@ -230,7 +233,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolAr
         )
 
         val irDumps: List<String> = moduleDeserializer.reversedSignatureIndex.keys.mapNotNull { signature: IdSignature ->
-            val preprocessedFunction = moduleDeserializer.deserializeInlineFunction(signature, dummyIrFile)
+            val preprocessedFunction = moduleDeserializer.deserializeInlineFunction(signature, dummyIrFile, dummyIrFile.module)
                     ?: return@mapNotNull null
             val irDump = preprocessedFunction.dump(dumpOptions)
             val irDumpFirstLine = irDump.substringBefore(Printer.LINE_SEPARATOR)

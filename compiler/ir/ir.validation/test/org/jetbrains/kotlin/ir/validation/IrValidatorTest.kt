@@ -118,7 +118,7 @@ class IrValidatorTest {
         maxOffset: Int = 75,
     ): IrFile {
         val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = intArrayOf(0, 10, 25), maxOffset = maxOffset)
-        return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName).also(module::addFile)
+        return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName, module).also(module::addFile)
     }
 
     private fun createTrueConst() = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.booleanType, true)

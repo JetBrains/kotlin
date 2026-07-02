@@ -376,10 +376,10 @@ open class DeepCopyIrTreeWithSymbols(
             packageFqName = declaration.packageFqName,
             symbol = symbolRemapper.getDeclaredFile(declaration.symbol),
             fileEntry = declaration.fileEntry,
+            module = transformedModule ?: declaration.module,
         ).apply {
             declarations.assignFrom(declaration.declarations) { it.transform() }
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
-            module = transformedModule ?: declaration.module
             processAttributes(declaration)
         }
 
