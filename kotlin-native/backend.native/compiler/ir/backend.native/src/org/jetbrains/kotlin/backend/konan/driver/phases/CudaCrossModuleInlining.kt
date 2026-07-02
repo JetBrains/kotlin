@@ -145,9 +145,9 @@ internal val AssignCudaKernelExportNamesPhase = createSimpleNamedCompilerPhase<N
     irModule.files
             .filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
             .flatMap { file -> file.collectKernelHostDeclarations().map { file to it } }
-            .filter { (_, fn) -> fn.visibility.isPublicAPI }
-            .filter { (_, fn) -> !fn.hasAnnotation(RuntimeNames.exportForCppRuntime) }
-            .forEach { (file, fn) ->
+            .filter { [_, fn] -> fn.visibility.isPublicAPI }
+            .filter { [_, fn] -> !fn.hasAnnotation(RuntimeNames.exportForCppRuntime) }
+            .forEach { [file, fn] ->
                 val qualifiedName = fn.qualifiedNameInPackage()
                 val exportName = buildCudaKernelExportName(file.packageFqName.asString(), qualifiedName)
                 fn.annotations = fn.annotations + buildSimpleAnnotation(
