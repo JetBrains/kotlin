@@ -76,7 +76,6 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         val extensionStorage = configuration.extensionsStorage ?: error("Extensions storage is not registered")
 
-        val kotlinPackageUsageIsFine: Boolean
         val analyzedOutput = if (configuration.useLightTree) {
             val groupedSources =
                 collectSources(
@@ -109,9 +108,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 extensionStorage = extensionStorage,
                 useWasmPlatform = isWasm,
-            ).also {
-                kotlinPackageUsageIsFine = it.outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
-            }
+            )
         } else {
             val sourceFiles = environmentForJS.getSourceFiles()
             if (
@@ -125,7 +122,6 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 return null
             }
 
-            kotlinPackageUsageIsFine = checkKotlinPackageUsageForPsi(configuration, sourceFiles)
             compileModuleToAnalyzedFirWithPsi(
                 moduleStructure = moduleStructure,
                 ktFiles = sourceFiles,
@@ -137,8 +133,6 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 useWasmPlatform = isWasm,
             )
         }
-
-        if (!kotlinPackageUsageIsFine) return null
 
         return WebFrontendPipelineArtifact(
             analyzedOutput,

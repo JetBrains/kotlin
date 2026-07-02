@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
 import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -364,8 +363,6 @@ private fun compileImpl(
                     reportFilesAndLines = null
                 )
     }
-
-    checkKotlinPackageUsageForLightTree(compilerConfiguration, rawFir)
 
     val [scopeSession, fir] = session.runResolution(rawFir)
     // checkers
