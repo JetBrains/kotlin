@@ -328,7 +328,6 @@ obj
     }
 
     @Test
-    @Disabled("JVM-safe binding-name encoding for JSR-223 is unresolved. The K1 backslash-escape scheme that this test asserts is rejected by K2's FirJvmNamesChecker, and backtick-wrapping raw names hits illegal-JVM-char errors. Needs sign-off on the encoding contract;")
     fun testEvalWithContextNamesWithSymbols() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
 
@@ -347,21 +346,29 @@ obj
         engine.put(" ", 41)
         engine.put("    ", 43)
 
+        // Binding names that aren't plain Kotlin identifiers are exposed as typed properties. Names
+        // containing a JVM-hard-invalid character (`. ; [ ] / < > : \`, none of which can survive even
+        // backtick-quoting) are reversibly encoded into `__u<hex>__` code-point markers and referenced
+        // without backticks (e.g. `.` -> `u002e`; the same rule already used for non-ASCII code points
+        // like `\u263a` -> `u263a`, so every problematic character uses one uniform scheme). Every other
+        // name (non-ASCII, `$`, spaces, ...) is backtick-quoted verbatim and referenced with backticks;
+        // such properties are declared with a delegate rather than a hardcoded getter/setter (see
+        // `encodeBindingNameToKotlinIdentifier`).
         assertEquals(4, engine.eval("`\u263a` * 2"))
-        assertEquals(5, engine.eval("2 + `a\\,b`"))
-        assertEquals(2, engine.eval("`a\\,b` - 1"))
-        assertEquals(6, engine.eval("1 + `c\\!d`"))
-        assertEquals(7, engine.eval("`e\\?f`"))
-        assertEquals(11, engine.eval("`g\\%h`"))
-        assertEquals(13, engine.eval("`i\\^j`"))
-        assertEquals(17, engine.eval("`k\\_l`"))
-        assertEquals(19, engine.eval("`m\\{n`"))
-        assertEquals(23, engine.eval("`o\\}p`"))
-        assertEquals(29, engine.eval("`q\\|r`"))
-        assertEquals(31, engine.eval("`s\\-t`"))
+        assertEquals(5, engine.eval("2 + a__u002e__b"))
+        assertEquals(2, engine.eval("a__u002e__b - 1"))
+        assertEquals(6, engine.eval("1 + c__u003a__d"))
+        assertEquals(7, engine.eval("e__u003b__f"))
+        assertEquals(11, engine.eval("`g\$h`"))
+        assertEquals(13, engine.eval("i__u003c__j"))
+        assertEquals(17, engine.eval("k__u003e__l"))
+        assertEquals(19, engine.eval("m__u005b__n"))
+        assertEquals(23, engine.eval("o__u005d__p"))
+        assertEquals(29, engine.eval("q__u002f__r"))
+        assertEquals(31, engine.eval("s__u005c__t"))
         assertEquals(37, engine.eval("`u v`"))
-        assertEquals(41, engine.eval("`_`"))
-        assertEquals(43, engine.eval("`____`"))
+        assertEquals(41, engine.eval("` `"))
+        assertEquals(43, engine.eval("`    `"))
     }
 
     @Test

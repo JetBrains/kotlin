@@ -2,7 +2,7 @@
 
 > **When to consult**: before committing to a design answer or claiming a Q* as a task. Q1–Q12 are referenceable IDs; sub-questions Q5a–e, Q10a–f are individually delegate-able.
 > **Cache lifetime**: mutable-per-iteration
-> **Last verified**: 2026-07-01 (Q17 resolved)
+> **Last verified**: 2026-07-02 (Q14 refined — backtick-quote + delegated property replaces marker-only encoding for most special characters)
 
 Items needing brainstorm before they can be acted on.
 
@@ -138,7 +138,7 @@ Side question: should K2 actually unify provided properties + explicit call para
 - Owner: unassigned
 - YT: — (umbrella)
 - Target doc: [`40-jsr223-target.md`](40-jsr223-target.md)
-- Last touched: 2026-05-16
+- Last touched: 2026-07-01
 
 **Settled**: pursue **Option D** in [`40-jsr223-target.md`](40-jsr223-target.md) — implicit-snippets refinement-DSL callback + a JSR-223 binding configurator that emits a delegating-property snippet on binding diffs.
 
@@ -146,8 +146,8 @@ Side question: should K2 actually unify provided properties + explicit call para
 |---|---|---|---|---|---|
 | Q10a | DSL naming: settled as `prependSyntheticSnippets`. See [iterations/2026-05-17_bindings-partial.md](../iterations/2026-05-17_bindings-partial.md) | resolved | unassigned | — | 2026-05-17 |
 | Q10b | Implicit-snippet tagging in `FirReplHistoryProvider`: needs an EP "implicit" tag, or caller-side bookkeeping? | **in-design — sidecar-tag direction locked 2026-05-27** ([iteration](../iterations/2026-05-27_stateless-repl-diagnostics-coverage.md)): `SnippetArtifactSidecar.isImplicit: Boolean` (sidecar v2), read surface via `ArtifactBackedFirReplHistoryProvider.isImplicit(symbol)`. Closes outright once a concrete `prependSyntheticSnippets` consumer exercises the read path. | unassigned | — | 2026-05-27 |
-| Q10c | Removal semantics: when a binding name is removed, what does the next snippet emit? Shadowing marker vs delegate-throws-at-access | open — decide during prototyping | unassigned | — | 2026-05-16 |
-| Q10d | Type stability: if a binding's runtime type changes, re-emit new delegating property (shadow old) vs fail? Probably re-emit; confirm | open — decide during prototyping | unassigned | — | 2026-05-16 |
+| Q10c | Removal semantics: when a binding name is removed, what does the next snippet emit? Shadowing marker vs delegate-throws-at-access | **resolved — landed 2026-07-01d** ([iteration](../iterations/2026-07-01d_jsr223-binding-lifecycle.md)): **shadowing marker** chosen. A removed (or current-context-absent) binding emits a shadowing accessor that keeps the previous declared type (so existing user code still type-checks) but **throws** `NoSuchElementException("JSR-223 binding \"x\" is no longer available")` at access, replacing the cryptic `null cannot be cast to non-null type ...` NPE from the stale getter. Re-adding the binding emits a fresh typed accessor that shadows it again. Repro/guard: `KotlinJsr223ScriptEngineIT.testRebindRemoval`. | unassigned | — | 2026-07-01 |
+| Q10d | Type stability: if a binding's runtime type changes, re-emit new delegating property (shadow old) vs fail? Probably re-emit; confirm | **resolved — landed 2026-07-01d** ([iteration](../iterations/2026-07-01d_jsr223-binding-lifecycle.md)): **re-emit** confirmed. `generateBindingSnippetIfNeeded` diffs the accumulated `exposedBindings` against the current bindings by `KotlinType` (type-name + nullability) and emits a fresh typed accessor for every new-or-retyped name, shadowing the stale one; the old `var x: Int` (whose `as Int` getter would otherwise fail to compile / ClassCastException against the new value) no longer resolves. Repro/guard: `KotlinJsr223ScriptEngineIT.testRebindWithChangedType`. | unassigned | — | 2026-07-01 |
 | Q10e | Bootstrap timing: canonical `bindings` accessor emitted once on first non-empty `Bindings`; clear+rebind edge case | open — decide during impl | unassigned | — | 2026-05-16 |
 | Q10f | Composability with other handlers: registration order, sorted by priority key, or undefined? | open | unassigned | — | 2026-05-16 |
 
@@ -217,20 +217,38 @@ Two sub-questions resolved as part of the umbrella fix:
 
 **Reference**: [iterations/2026-05-18_step1b-fix-landed.md](../iterations/2026-05-18_step1b-fix-landed.md) (third iteration — surfaced as side-effect of G11 fix).
 
-## Q14. JVM-safe binding-name encoding for JSR-223
+## Q14. ~~JVM-safe binding-name encoding for JSR-223~~ — resolved
 
-- Status: open — design needed
+- Status: **resolved — prototype landed 2026-07-01e, refined 2026-07-02, marker alphabet refined again 2026-07-02b** (Option "backtick-quote + delegated property, marker-encode only the JVM-hard-invalid subset, uniform hex code-point marker alphabet")
 - Owner: unassigned
 - YT: —
 - Target doc: [`40-jsr223-target.md`](40-jsr223-target.md)
-- Last touched: 2026-05-18
+- Last touched: 2026-07-02b
 
-K1 contract escaped JSR-223 binding names that aren't Kotlin identifiers using a `\`-prefixed escape table (`.` → `\,`, `:` → `\!`, ...). On K2 the JVM names checker (`FirJvmNamesChecker.INVALID_CHARS`) rejects `\` along with `.`, `:`, `;`, `[`, `]`, `/`, `<`, `>`, so the K1 escape scheme cannot be honoured. Underscore-only fallbacks collide with the parser rule "Names `_`, `__`, `___`, ... are reserved". See [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g8-jvm-identifier-constraints-block---based-binding-name-escaping) (G8).
+**Resolved, 2026-07-02b refinement** ([iteration](../iterations/2026-07-02b_jsr223-binding-name-uniform-codepoint-marker.md)): the user asked to replace the hand-picked mnemonic words (`dot`, `colon`, `lbracket`, ...) with "some more well-known encoding, e.g. html one". HTML5 named character references were researched and found to cover most of the still-marker-encoded characters (`&period;`, `&colon;`, `&semi;`, `&lsqb;`/`&rsqb;`, `&sol;`, `&bsol;`, `&lt;`, `&gt;`) but not backtick or raw newline/CR, and a literal numeric-escape style (`&#46;` / `%2E`) can't be embedded directly (it reintroduces other problematic characters — `&`, `#`, `;`, `%`). Chosen instead: drop `BINDING_NAME_CHAR_MNEMONICS` entirely and uniformly encode every marker-needing character as `__u<hex>__` (its Unicode code point in hex) — the same rule the fallback branch already used for characters with no mnemonic entry (e.g. `☺` → `__u263a__`), now the *only* rule (`a.b` → `a__u002e__b`, `c:d` → `c__u003a__d`, ...). A literal `\uXXXX`-style escape (with a real backslash) is impossible here, since `\` is itself one of the marker-needing characters. `testEvalWithContextNamesWithSymbols` stays PASS, now asserting the `__u<hex>__` spellings.
+
+**Resolved, 2026-07-02 refinement** ([iteration](../iterations/2026-07-02_jsr223-binding-name-delegate-fix.md)): the 2026-07-01e prototype (below) marker-encoded *every* non-plain-identifier name, including ones Kotlin can legally backtick-quote (space, `$`, non-ASCII, JVM-"dangerous" `? * " | %`) — that over-application was actually a workaround for a narrower bug: [`current/80-known-gotchas.md`](../current/80-known-gotchas.md#g12-backtick-quoted-property--getbindings-call-in-the-same-live-repl-snippet-trips-property-getter-or-setter-expected) (G12), a K2 REPL/script-snippet parser bug where a backtick-quoted property with a **hardcoded** `get()`/`set()` body fails to parse if the same snippet also calls `getBindings(...)` (an implicit-receiver call) — reproducible only inside a live incremental REPL session, not a one-shot `.kts` compile. Fix: keep marker-encoding *only* for the JVM-hard-invalid chars (`. ; [ ] / < > : \`, plus backtick/newline — none of which survive even backtick-quoting); every other name is now backtick-quoted **verbatim** (restoring the original K1 spelling) and declared with a generated `__Jsr223BindingDelegate` (`by ...`) instead of a hardcoded accessor, since a delegate expression is parsed by `parsePropertyDelegateOrAssignment()` before the misfiring accessor-parsing code path is ever reached. `testEvalWithContextNamesWithSymbols` stays PASS, now asserting the mixed marker/backtick spellings.
+
+**Resolved, 2026-07-01e prototype** ([iteration](../iterations/2026-07-01e_jsr223-binding-name-encoding.md)): binding names that aren't plain Kotlin identifiers are exposed as typed properties whose JVM-unsafe / non-ASCII characters are reversibly encoded into `__<mnemonic>__` markers (`a.b` → `a__dot__b`, `c:d` → `c__colon__d`, `☺` → `__u263a__`), which are plain identifiers (so no backticks) that pass `FirJvmNamesChecker`. The property getter/setter reaches the value through the raw binding key, so only injectivity — not runtime decode — is required; a pathological binding literally spelled like an emitted marker (e.g. `a__dot__b`) is the documented prototype limitation. `testEvalWithContextNamesWithSymbols` un-`@Disabled` and now PASSes (asserts the new marker spellings rather than the K1 backslash scheme).
+
+**Two root causes fixed** (both in `libraries/scripting/jvm-host/src/.../jsr223/propertiesFromContext.kt`):
+
+1. K1's `\`-prefixed escape table (`.` → `\,`, `:` → `\!`, ...) is unusable on K2 because `\` is itself in `FirJvmNamesChecker.INVALID_CHARS` (`. ; [ ] / < > : \`). Replaced with the `__<mnemonic>__` scheme (`encodeBindingNameToMarkerIdentifier`; unmapped chars → `u<hex>` code-point mnemonic; a leading kept digit is `_`-guarded).
+2. The pre-existing "is this a clean identifier?" gate used `Name.isValidIdentifier`, which is a **JVM-spec** check — it only rejects `. ; [ /` and a leading `<`, so JVM-legal-but-non-Kotlin names like `o]p`, `g$h`, `c:d`, `i<j`, `k>l`, `☺` and space slipped through as **raw** property names and failed to parse (`var <no name provided>`). Replaced with a proper plain-ASCII-identifier check so every non-plain name reaches the encoder.
+
+**Contract note**: after the 2026-07-02 / 2026-07-02b refinements, only the JVM-hard-invalid subset gets a K1 → K2 user-visible spelling change (K1 spelled `a.b` as `` `a\,b` ``; K2 spells it `a__u002e__b`) — every other previously-K1-backtick-quoted name (`` `g$h` ``, `` `u v` ``, `` `☺` ``) keeps its original K1 spelling.
+
+**Options considered** (chosen: hybrid of rows 1, 3, and the uniform code-point alphabet):
 
 | Option | Description |
 |---|---|
-| Prefix-encoded ASCII (e.g. `__dot__`, `__colon__`) | Reversible, JVM-safe; clutters generated source; needs an underscore prefix to dodge the reserved-name rule (e.g. `n__dot__name`). |
+| Prefix-encoded ASCII for every non-plain-identifier name (`__dot__`, `__colon__`, ...) — **2026-07-01e prototype, since narrowed** | Reversible, JVM-safe, readable; clutters generated source; over-applies to names that don't actually need it (see G12). |
+| Named mnemonics for the JVM-hard-invalid subset (`__dot__`, `__colon__`, ...) — **2026-07-02, since replaced 2026-07-02b** | Readable for the handful of hand-picked characters; needs a maintained table; doesn't generalize past the characters someone thought to name. |
+| HTML5 named character references (`period`, `colon`, `semi`, `lsqb`, `rsqb`, `sol`, `bsol`, `lt`, `gt`, ...) — **considered, rejected 2026-07-02b** | "Well-known" vocabulary for web developers; doesn't cover every marker-needing character (no HTML5 name for backtick or raw newline/CR), so it would still need a fallback rule — not actually simpler than a hand-picked table. |
+| Uniform hex code-point marker (`__u<hex>__` for every marker-needing character, no table) — **chosen, 2026-07-02b** | Zero maintenance, fully general over all Unicode, already used as the pre-existing fallback for unmapped characters; markers are less immediately readable than a mnemonic word (`a__u002e__b` vs `a__dot__b`). |
+| JNI native-method name mangling (`_1`/`_2`/`_3`/`_0xxxx`) — **considered, not chosen** | The JDK's own official scheme for this exact problem class; fully general; markers are terser but more cryptic than `__u<hex>__` and diverge from this codebase's existing `u<hex>` convention. |
 | Punycode-style | Reversible, compact, well-specified; verbose for common cases; needs a small Kotlin impl. |
+| Backtick-quote verbatim + delegated property (`__Jsr223BindingDelegate`), marker-encode only the JVM-hard-invalid subset — **chosen, 2026-07-02** | Restores the original K1 spelling for everything Kotlin can legally backtick-quote; needs a generated delegate class instead of a hardcoded accessor (works around G12); marker fallback still needed for the hard-invalid subset. |
 | Bind-only on subset, expose remainder via `bindings["..."]` | Cheapest; some K1 binding scenarios silently lose property access. |
 | Rewrite the contract: drop typed properties for non-identifier names entirely; mute `testEvalWithContextNamesWithSymbols` | Cleanest; explicit K1 → K2 contract change; needs sign-off. |
 

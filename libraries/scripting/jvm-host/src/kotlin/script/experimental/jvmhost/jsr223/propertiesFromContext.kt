@@ -24,15 +24,82 @@ private val ENGINE_INTERNAL_BINDING_KEYS = setOf(
 )
 
 /**
- * Returns a valid Kotlin identifier for a JSR-223 binding name, or null if the name cannot be exposed.
- * All-whitespace names are converted to underscores; all other names must pass Name.isValidIdentifier.
+ * Characters that cannot appear in a Kotlin declaration name under *any* quoting: the JVM member-name
+ * characters `FirJvmNamesChecker`/`JvmSimpleNameBacktickChecker` reject outright (`. ; [ ] / < > : \`),
+ * plus the backtick itself (can't nest inside a backtick-quoted identifier) and raw line breaks (can't
+ * appear inside a source-level identifier at all). A name containing any of these must go through
+ * [encodeBindingNameToMarkerIdentifier]; every other name — including one with spaces, `$`, non-ASCII
+ * characters, or the JVM-"dangerous" `? * " | %` — is JVM- and Kotlin-legal as a backtick-quoted
+ * identifier (see [encodeBindingNameToKotlinIdentifier]).
+ */
+private val NEEDS_MARKER_ENCODING_CHARS: Set<Char> =
+    setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\', '`', '\n', '\r')
+
+private fun Char.isAsciiIdentifierChar(): Boolean =
+    this in 'A'..'Z' || this in 'a'..'z' || this in '0'..'9' || this == '_'
+
+/**
+ * Encodes a binding name that cannot be a plain/backtick-quoted identifier into a plain Kotlin
+ * identifier by replacing every problematic character with a `__u<hex>__` marker carrying its Unicode
+ * code point (e.g. `a.b` -> `a__u002e__b`, `c:d` -> `c__u003a__d`, `☺` -> `__u263a__`) — the same,
+ * single, uniform rule for every character, deliberately close to (but not literally) the familiar
+ * `\uXXXX` escape convention from Kotlin/Java/JS string literals: an actual backslash can't be used
+ * here because `\` is itself one of the [NEEDS_MARKER_ENCODING_CHARS] (a hard JVM-invalid character),
+ * so reusing it would just reintroduce the very character this scheme exists to eliminate. ASCII
+ * letters/digits/underscores are kept verbatim, so the result is a valid identifier that needs no
+ * backtick-quoting.
+ *
+ * Only injectivity is required (distinct raw names must map to distinct identifiers) — the generated
+ * getter/setter reaches the value through the raw binding key, not by decoding this identifier — which
+ * holds for all names except the pathological case of a raw name spelled exactly like an emitted
+ * marker (e.g. a binding literally named `a__u002e__b`); such names are out of scope for this prototype.
+ */
+private fun encodeBindingNameToMarkerIdentifier(name: String): String {
+    val sb = StringBuilder(name.length + 8)
+    for (ch in name) {
+        if (ch.isAsciiIdentifierChar()) {
+            sb.append(ch)
+        } else {
+            sb.append("__u").append(ch.code.toString(16).padStart(4, '0')).append("__")
+        }
+    }
+    // A leading digit is not a legal identifier start; markers begin with `_`, so this only fires when
+    // the name starts with a kept digit (e.g. `1.2` -> `1__u002e__2`).
+    if (sb.isNotEmpty() && sb[0] in '0'..'9') sb.insert(0, '_')
+    return sb.toString()
+}
+
+/**
+ * Returns a Kotlin identifier that references a JSR-223 binding [name] from snippet source, or null if
+ * the name is empty. Plain identifiers are used verbatim; any other name is either backtick-quoted
+ * (verbatim) or, if it contains a character from [NEEDS_MARKER_ENCODING_CHARS], reversibly encoded via
+ * [encodeBindingNameToMarkerIdentifier].
+ *
+ * A backtick-quoted name is *not* safe to declare with a hardcoded `get()`/`set()` accessor block in
+ * this feature's generated snippet: every snippet also declares `val bindings = getBindings(...)`, an
+ * implicit-context-receiver call, and a backtick-quoted property whose accessors are hand-written
+ * makes the K2 REPL/script-snippet compiler fail with a spurious "Property getter or setter expected"
+ * parse error as soon as both are present in the same live REPL session (reproduced only through the
+ * real incremental JSR-223/REPL pipeline — an equivalent one-shot `.kts` compile of the same source
+ * does not reproduce it, so the trigger is specific to REPL-snippet statement-sequence parsing, not to
+ * backtick names or implicit receivers in general). [generateBindingSnippetIfNeeded] sidesteps this by
+ * declaring every backtick-quoted property with a delegate (`by ...`) instead of accessor bodies — a
+ * delegate expression is consumed by `parsePropertyDelegateOrAssignment()`, so the accessor-parsing
+ * code path that misfires is never reached for these properties. Plain (non-backtick) identifiers keep
+ * using ordinary `get()`/`set()`, since they were never part of the failure.
  */
 private fun encodeBindingNameToKotlinIdentifier(name: String): String? =
     when {
         name.isEmpty() -> null
-        name.all { it == ' ' } -> "`" + "_".repeat(name.length) + "`"
-        Name.isValidIdentifier(name) -> name
-        name.contains("`") -> null
+        // A plain Kotlin identifier: only ASCII letters/digits/underscores, not starting with a digit,
+        // and not a reserved all-underscore name. Safe to emit verbatim.
+        name.all { it.isAsciiIdentifierChar() } && name[0] !in '0'..'9' && name.any { it != '_' } -> name
+        // Contains a character that can't survive even backtick-quoting — reversibly encode into a
+        // marker identifier instead.
+        name.any { it in NEEDS_MARKER_ENCODING_CHARS } -> encodeBindingNameToMarkerIdentifier(name)
+        // Everything else (leading-digit / all-underscore ASCII names, spaces, `$`, non-ASCII
+        // characters, the JVM-"dangerous" `? * " | %`, ...) is safe to emit as a backtick-quoted
+        // identifier, declared with a delegate — see the doc comment above.
         else -> "`$name`"
     }
 
@@ -85,6 +152,35 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
     }.asSuccess()
 }
 
+/**
+ * Renders the `var $encodedName: $renderedType ...` declaration for one exposed (or [removed]) binding.
+ * A backtick-quoted [encodedName] is declared with a [__Jsr223BindingDelegate] (`by ...`) instead of a
+ * hardcoded `get()`/`set()` — see the doc comment on [encodeBindingNameToKotlinIdentifier] for why.
+ */
+private fun renderBindingProperty(encodedName: String, renderedType: String, safeKey: String, removed: Boolean): String =
+    if (encodedName.startsWith("`")) {
+        """
+            var $encodedName: $renderedType by __Jsr223BindingDelegate<$renderedType>(bindings, "$safeKey"${if (removed) ", removed = true" else ""})
+
+        """.trimIndent() + "\n"
+    } else if (!removed) {
+        """
+            @Suppress("UNCHECKED_CAST")
+            var $encodedName: $renderedType
+                get() = bindings["$safeKey"] as $renderedType
+                set(value) { bindings.put("$safeKey", value) }
+
+        """.trimIndent() + "\n"
+    } else {
+        """
+            @Suppress("UNCHECKED_CAST")
+            var $encodedName: $renderedType
+                get() = throw java.util.NoSuchElementException("JSR-223 binding \"$safeKey\" is no longer available")
+                set(value) { bindings.put("$safeKey", value) }
+
+        """.trimIndent() + "\n"
+    }
+
 fun generateBindingSnippetIfNeeded(context: ScriptConfigurationRefinementContext):
         ResultWithDiagnostics<Pair<ScriptCompilationConfiguration, SourceCode?>>
 {
@@ -129,6 +225,19 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
     val result = __engine.eval(script, newBindings)
     if (savedState != null) newBindings.put("kotlin.script.state", savedState)
     return result
+}
+
+// A property delegate used (only) for backtick-quoted binding properties — see the doc comment on
+// [encodeBindingNameToKotlinIdentifier] for why these can't be declared with a hardcoded get()/set().
+// [removed] renders the same "no longer available" diagnostic that a removed binding's shadowing
+// accessor used to throw from its getter.
+class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, private val key: String, private val removed: Boolean = false) {
+    @Suppress("UNCHECKED_CAST")
+    operator fun getValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>): T {
+        if (removed) throw java.util.NoSuchElementException("JSR-223 binding \"${'$'}key\" is no longer available")
+        return bindings[key] as T
+    }
+    operator fun setValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>, value: T) { bindings.put(key, value) }
 }
 
 """
@@ -178,14 +287,7 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
             // with a `as kotlin.Any` getter cast that NPEs on the null value, bypassing the user's own
             // null-safety (see plugins/scripting/.ai/target/90-open-questions.md Q17).
             val renderedType = if (type.isNullable) "${type.typeName}?" else type.typeName
-            bindingsSnippet +=
-                """
-                    @Suppress("UNCHECKED_CAST")
-                    var $encodedName: $renderedType
-                        get() = bindings["$safeKey"] as $renderedType
-                        set(value) { bindings.put("$safeKey", value) }
-
-                """.trimIndent() + "\n"
+            bindingsSnippet += renderBindingProperty(encodedName, renderedType, safeKey, removed = false)
         }
 
         // Q10c — a binding that was exposed as a typed property before but is no longer present
@@ -199,14 +301,7 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
             val safeKey = escapeForKotlinStringLiteral(removedName)
             val prevType = knownBindings.getValue(removedName)
             val renderedType = if (prevType.isNullable) "${prevType.typeName}?" else prevType.typeName
-            bindingsSnippet +=
-                """
-                    @Suppress("UNCHECKED_CAST")
-                    var $encodedName: $renderedType
-                        get() = throw java.util.NoSuchElementException("JSR-223 binding \"$safeKey\" is no longer available")
-                        set(value) { bindings.put("$safeKey", value) }
-
-                """.trimIndent() + "\n"
+            bindingsSnippet += renderBindingProperty(encodedName, renderedType, safeKey, removed = true)
         }
 
         updatedBindings = currentBindings
