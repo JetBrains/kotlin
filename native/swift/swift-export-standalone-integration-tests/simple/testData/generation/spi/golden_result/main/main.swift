@@ -222,6 +222,7 @@ public func regularFunctionB() -> Swift.Void {
 public func regularFunctionC() -> lib.RegularLibClass {
     return lib.RegularLibClass.__createClassWrapper(externalRCRef: __root___regularFunctionC())
 }
+@_documentation(visibility: internal)
 extension main.MyInterface where Self : main.__MyInterface {
     public var foo: Swift.String {
         get {
@@ -275,8 +276,10 @@ extension main.MyInterface {
         return { MyInterface_optInFunWithDefault_direct(self.__externalRCRef()); return () }()
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.MyInterface, main.__MyInterface where Wrapped : main._MyInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._MyInterface {
 }
 @_cdecl("MyInterface_bar__reverse_swift")

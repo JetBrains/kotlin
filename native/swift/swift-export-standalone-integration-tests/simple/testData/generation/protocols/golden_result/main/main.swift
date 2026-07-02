@@ -432,6 +432,7 @@ public func nullable(
 ) -> (any main.Foeble)? {
     return { switch __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(value.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any main.Foeble; } }()
 }
+@_documentation(visibility: internal)
 extension main.Barable where Self : main.__Barable {
     public var baz: any main.Foeble {
         get {
@@ -446,26 +447,31 @@ extension main.Barable where Self : main.__Barable {
 }
 extension main.Barable {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.repeating_conformances.Barable where Self : ExportedKotlinPackages.repeating_conformances.__Barable {
 }
 extension ExportedKotlinPackages.repeating_conformances.Barable {
 }
+@_documentation(visibility: internal)
 extension main.Bazzable where Self : main.__Bazzable {
 }
 extension main.Bazzable {
 }
+@_documentation(visibility: internal)
 extension main.ContainerProtocol where Self : main.__ContainerProtocol {
 }
 extension main.ContainerProtocol {
     typealias NestedClass = main._ContainerProtocol_NestedClass
     typealias NestedProtocol = main._ContainerProtocol_NestedProtocol
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.packagewithprotocols.ContainerProtocol where Self : ExportedKotlinPackages.packagewithprotocols.__ContainerProtocol {
 }
 extension ExportedKotlinPackages.packagewithprotocols.ContainerProtocol {
     typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass
     typealias NestedProtocol = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol
 }
+@_documentation(visibility: internal)
 extension main.Foeble where Self : main.__Foeble {
     public var baz: any main.Foeble {
         get {
@@ -480,10 +486,12 @@ extension main.Foeble where Self : main.__Foeble {
 }
 extension main.Foeble {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.repeating_conformances.Foeble where Self : ExportedKotlinPackages.repeating_conformances.__Foeble {
 }
 extension ExportedKotlinPackages.repeating_conformances.Foeble {
 }
+@_documentation(visibility: internal)
 extension main.SealedBazzable where Self : main.__SealedBazzable {
     public func sealedType() -> main.SealedBazzable_SealedType {
         fatalError("must implement sealedType in subclass")
@@ -495,6 +503,7 @@ extension main.SealedBazzable where Self : main.__SealedBazzable {
 }
 extension main.SealedBazzable {
 }
+@_documentation(visibility: internal)
 extension main.SealedFoeble where Self : main.__SealedFoeble {
     public func sealedType() -> main.SealedFoeble_SealedType {
         fatalError("must implement sealedType in subclass")
@@ -508,82 +517,115 @@ extension main.SealedFoeble {
     typealias _SealedFoeble_SomeBarable_SealedType = main._SealedFoeble_SomeBarable_SealedType
     typealias _SealedFoeble_SomeFoeble_SealedType = main._SealedFoeble_SomeFoeble_SealedType
 }
+@_documentation(visibility: internal)
 extension main.SiblingProtocol where Self : main.__SiblingProtocol {
 }
 extension main.SiblingProtocol {
     typealias NestedClass = main._SiblingProtocol_NestedClass
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol where Self : ExportedKotlinPackages.packagewithprotocols.__SiblingProtocol {
 }
 extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol {
     typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
 }
+@_documentation(visibility: internal)
 extension main._ContainerProtocol_NestedProtocol where Self : main.___ContainerProtocol_NestedProtocol {
 }
 extension main._ContainerProtocol_NestedProtocol {
     typealias NestedClass = main.__ContainerProtocol_NestedProtocol_NestedClass
 }
+@_documentation(visibility: internal)
 extension main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Self : main.___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
 }
 extension main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
     typealias NestedClass = main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.ContainerProtocol, main.__ContainerProtocol where Wrapped : main._ContainerProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.SiblingProtocol, main.__SiblingProtocol where Wrapped : main._SiblingProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Foeble, main.__Foeble where Wrapped : main._Foeble {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Barable, main.__Barable where Wrapped : main._Barable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Bazzable, main.__Bazzable where Wrapped : main._Bazzable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.SealedFoeble, main.__SealedFoeble where Wrapped : main._SealedFoeble {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.SealedBazzable, main.__SealedBazzable where Wrapped : main._SealedBazzable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols.__ContainerProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.SiblingProtocol, ExportedKotlinPackages.packagewithprotocols.__SiblingProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._SiblingProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble where Wrapped : ExportedKotlinPackages.repeating_conformances._Foeble {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances.__Barable where Wrapped : ExportedKotlinPackages.repeating_conformances._Barable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main._ContainerProtocol_NestedProtocol, main.___ContainerProtocol_NestedProtocol where Wrapped : main.__ContainerProtocol_NestedProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main._SealedFoeble_SealedBarable, main.___SealedFoeble_SealedBarable where Wrapped : main.__SealedFoeble_SealedBarable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol, main.___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Wrapped : main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._ContainerProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._SiblingProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Foeble {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Barable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Bazzable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._SealedFoeble {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._SealedBazzable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.packagewithprotocols._SiblingProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.repeating_conformances._Foeble {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.repeating_conformances._Barable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main.__ContainerProtocol_NestedProtocol {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main.__SealedFoeble_SealedBarable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
 }
+@_documentation(visibility: internal)
 extension main._SealedFoeble_SealedBarable where Self : main.___SealedFoeble_SealedBarable {
     public func sealedType() -> main.SealedBarable_SealedType {
         fatalError("must implement sealedType in subclass")

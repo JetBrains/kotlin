@@ -45,6 +45,7 @@ open class SelfReferencing: KotlinRuntime.KotlinBase {
         }
     }
 }
+@_documentation(visibility: internal)
 extension f_bounded_type.MyComparable where Self : f_bounded_type.__MyComparable {
     public func compareTo(
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -54,8 +55,10 @@ extension f_bounded_type.MyComparable where Self : f_bounded_type.__MyComparable
 }
 extension f_bounded_type.MyComparable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: f_bounded_type.MyComparable, f_bounded_type.__MyComparable where Wrapped : f_bounded_type._MyComparable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: f_bounded_type._MyComparable {
 }
 @_cdecl("MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")

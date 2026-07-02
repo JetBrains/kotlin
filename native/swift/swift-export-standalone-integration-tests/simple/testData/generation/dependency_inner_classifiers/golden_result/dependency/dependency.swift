@@ -10,29 +10,38 @@ public protocol __ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate
 }
 public protocol ___ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate: KotlinRuntimeSupport._KotlinBridgeable {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.datetime.DateTimeFormat where Self : ExportedKotlinPackages.datetime.__DateTimeFormat {
 }
 extension ExportedKotlinPackages.datetime.DateTimeFormat {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.datetime.DateTimeFormatBuilder where Self : ExportedKotlinPackages.datetime.__DateTimeFormatBuilder {
 }
 extension ExportedKotlinPackages.datetime.DateTimeFormatBuilder {
     typealias WithDate = dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate
 }
+@_documentation(visibility: internal)
 extension dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate where Self : dependency.___ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate {
 }
 extension dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.datetime.DateTimeFormat, ExportedKotlinPackages.datetime.__DateTimeFormat where Wrapped : ExportedKotlinPackages.datetime._DateTimeFormat {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.datetime.DateTimeFormatBuilder, ExportedKotlinPackages.datetime.__DateTimeFormatBuilder where Wrapped : ExportedKotlinPackages.datetime._DateTimeFormatBuilder {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate, dependency.___ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate where Wrapped : dependency.__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.datetime._DateTimeFormat {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.datetime._DateTimeFormatBuilder {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: dependency.__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate {
 }
 extension ExportedKotlinPackages.datetime {

@@ -173,6 +173,7 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
         }
     }
 }
+@_documentation(visibility: internal)
 extension main.Boxed where Self : main.__Boxed {
     public var boxLabel: Swift.String {
         get {
@@ -196,6 +197,7 @@ extension main.Boxed {
         return Boxed_label_direct(self.__externalRCRef())
     }
 }
+@_documentation(visibility: internal)
 extension main.Defaulter where Self : main.__Defaulter {
     public var kind: Swift.String {
         get {
@@ -219,6 +221,7 @@ extension main.Defaulter {
         return Defaulter_describe_direct(self.__externalRCRef())
     }
 }
+@_documentation(visibility: internal)
 extension main.Greeter where Self : main.__Greeter {
     public var mood: Swift.String {
         get {
@@ -239,16 +242,22 @@ extension main.Greeter where Self : main.__Greeter {
 }
 extension main.Greeter {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Greeter, main.__Greeter where Wrapped : main._Greeter {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Defaulter, main.__Defaulter where Wrapped : main._Defaulter {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Boxed, main.__Boxed where Wrapped : main._Boxed {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Greeter {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Defaulter {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Boxed {
 }
 @_cdecl("AbstractBase_abstractMethod__reverse_swift")

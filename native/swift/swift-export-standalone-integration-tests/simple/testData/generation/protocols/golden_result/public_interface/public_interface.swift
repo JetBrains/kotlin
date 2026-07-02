@@ -9,11 +9,14 @@ public protocol _DemoCrossModuleInterface {
 }
 public protocol __DemoCrossModuleInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
+@_documentation(visibility: internal)
 extension public_interface.DemoCrossModuleInterface where Self : public_interface.__DemoCrossModuleInterface {
 }
 extension public_interface.DemoCrossModuleInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: public_interface.DemoCrossModuleInterface, public_interface.__DemoCrossModuleInterface where Wrapped : public_interface._DemoCrossModuleInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: public_interface._DemoCrossModuleInterface {
 }

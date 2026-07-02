@@ -54,6 +54,7 @@ open class Sub: override.Base {
         }
     }
 }
+@_documentation(visibility: internal)
 extension override.P where Self : override.__P {
     public func f() -> Swift.Void {
         return { P_f(self.__externalRCRef()); return () }()
@@ -61,8 +62,10 @@ extension override.P where Self : override.__P {
 }
 extension override.P {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: override.P, override.__P where Wrapped : override._P {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: override._P {
 }
 @_cdecl("Base_g__TypesOfArguments__anyU20override_P____reverse_swift")

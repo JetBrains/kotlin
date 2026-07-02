@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.*
-import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.utils.*
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
@@ -97,8 +96,11 @@ internal abstract class SirAbstractVariableFromKtSymbol(
             }
             ?.apply { parent = this@SirAbstractVariableFromKtSymbol }
     }
-    override val documentation: String? by lazy {
-        ktSymbol.documentation()
+    private val kdocElements: KDocElements? by lazyWithSessions {
+        KDocElements(this)
+    }
+    override val documentation: String? by lazyWithSessions {
+        translateDocumentation(kdocElements)
     }
 
     override var parent: SirDeclarationParent
@@ -114,6 +116,7 @@ internal abstract class SirAbstractVariableFromKtSymbol(
                 add(SirAttribute.NonOverride)
             }
             replaceOrAddPropagatedUnavailability { type.unavailableTypes }
+            addDocumentationVisibility(kdocElements)
         }
     }
 
@@ -272,7 +275,7 @@ internal class SirGetterFromKtSymbol(
     sirSession: SirSession,
 ) : SirAbstractGetter(sirSession), SirFromKtSymbol<KaPropertyGetterSymbol> {
     override val origin: SirOrigin by lazy { KotlinSource(ktSymbol) }
-    override val documentation: String? by lazy { ktSymbol.documentation() }
+    override val documentation: String? get() = null
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
 }
@@ -378,7 +381,7 @@ internal class SirSetterFromKtSymbol(
     sirSession: SirSession,
 ) : SirAbstractSetter(sirSession), SirFromKtSymbol<KaPropertySetterSymbol> {
     override val origin: SirOrigin by lazy { KotlinSource(ktSymbol) }
-    override val documentation: String? by lazy { ktSymbol.documentation() }
+    override val documentation: String? get() = null
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 }
 

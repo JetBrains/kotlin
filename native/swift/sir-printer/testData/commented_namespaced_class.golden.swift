@@ -1,8 +1,6 @@
 public enum NAMESPACE {
-    /**
-    *  demo comment for
-    *  NAMESPACED_CLASS
-    */
+    /// demo comment for
+    /// NAMESPACED_CLASS
     public class Foo {
     }
 }

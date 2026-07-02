@@ -408,6 +408,7 @@ public func takeBoxUpperBoundClosure(
         }
     }()); return () }()
 }
+@_documentation(visibility: internal)
 extension main.A where Self : main.__A {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
@@ -417,6 +418,7 @@ extension main.A where Self : main.__A {
 }
 extension main.A {
 }
+@_documentation(visibility: internal)
 extension main.AFactory where Self : main.__AFactory {
     public func create() -> any main.A {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: AFactory_create(self.__externalRCRef())) as! any main.A
@@ -424,6 +426,7 @@ extension main.AFactory where Self : main.__AFactory {
 }
 extension main.AFactory {
 }
+@_documentation(visibility: internal)
 extension main.B where Self : main.__B {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
@@ -433,6 +436,7 @@ extension main.B where Self : main.__B {
 }
 extension main.B {
 }
+@_documentation(visibility: internal)
 extension main.Consumer where Self : main.__Consumer {
     public func consume(
         item: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -442,10 +446,12 @@ extension main.Consumer where Self : main.__Consumer {
 }
 extension main.Consumer {
 }
+@_documentation(visibility: internal)
 extension main.ConsumerProducer where Self : main.__ConsumerProducer {
 }
 extension main.ConsumerProducer {
 }
+@_documentation(visibility: internal)
 extension main.Processor where Self : main.__Processor {
     public func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -455,6 +461,7 @@ extension main.Processor where Self : main.__Processor {
 }
 extension main.Processor {
 }
+@_documentation(visibility: internal)
 extension main.Producer where Self : main.__Producer {
     public func produce() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch Producer_produce(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
@@ -462,32 +469,46 @@ extension main.Producer where Self : main.__Producer {
 }
 extension main.Producer {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Producer, main.__Producer where Wrapped : main._Producer {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Consumer, main.__Consumer where Wrapped : main._Consumer {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Processor, main.__Processor where Wrapped : main._Processor {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.ConsumerProducer, main.__ConsumerProducer where Wrapped : main._ConsumerProducer {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.A, main.__A where Wrapped : main._A {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.B, main.__B where Wrapped : main._B {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.AFactory, main.__AFactory where Wrapped : main._AFactory {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Producer {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Consumer {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Processor {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._ConsumerProducer {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._A {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._B {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._AFactory {
 }
 @_cdecl("AFactory_create__reverse_swift")

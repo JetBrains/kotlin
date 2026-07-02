@@ -3,6 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.Comparable where Self : ExportedKotlinPackages.kotlin.__Comparable {
     public static func <(
         this: Self,
@@ -36,6 +37,7 @@ extension ExportedKotlinPackages.kotlin.Comparable where Self : ExportedKotlinPa
 }
 extension ExportedKotlinPackages.kotlin.Comparable {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : ExportedKotlinPackages.kotlin.collections.__Iterator {
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
@@ -46,12 +48,16 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Export
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Comparable, ExportedKotlinPackages.kotlin.__Comparable where Wrapped : ExportedKotlinPackages.kotlin._Comparable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._Comparable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
 }
 extension ExportedKotlinPackages.kotlin.collections {

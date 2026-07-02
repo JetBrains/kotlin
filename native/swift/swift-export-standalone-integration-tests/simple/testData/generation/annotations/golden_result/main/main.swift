@@ -1362,7 +1362,7 @@ public func setDeprecatedInterfacePropertyWithContext(
 public func unrenamed() -> Swift.Never {
     return { __root___unrenamed(); fatalError() }()
 }
-@available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
+@available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface") @_documentation(visibility: internal)
 extension main.DeprecatedInterface where Self : main.__DeprecatedInterface {
     public func foo() -> Swift.Void {
         return { DeprecatedInterface_foo(self.__externalRCRef()); return () }()
@@ -1371,6 +1371,7 @@ extension main.DeprecatedInterface where Self : main.__DeprecatedInterface {
 @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
 extension main.DeprecatedInterface {
 }
+@_documentation(visibility: internal)
 extension main.InterfaceWithDeprecatedMembers where Self : main.__InterfaceWithDeprecatedMembers {
     @available(*, deprecated, message: "Deprecated")
     public func deprecatedWarningFunction() -> Swift.Void {
@@ -1389,6 +1390,7 @@ extension main.InterfaceWithDeprecatedMembers {
         return { InterfaceWithDeprecatedMembers_regularFunction_direct(self.__externalRCRef()); return () }()
     }
 }
+@_documentation(visibility: internal)
 extension main.NonDeprecatedInterface where Self : main.__NonDeprecatedInterface {
     public func bar() -> Swift.Void {
         return { NonDeprecatedInterface_bar(self.__externalRCRef()); return () }()
@@ -1399,6 +1401,7 @@ extension main.NonDeprecatedInterface {
         return { NonDeprecatedInterface_bar_direct(self.__externalRCRef()); return () }()
     }
 }
+@_documentation(visibility: internal)
 extension main.SomeInterface where Self : main.__SomeInterface {
     public var barC: Swift.String {
         get {
@@ -1414,7 +1417,7 @@ extension main.SomeInterface where Self : main.__SomeInterface {
 }
 extension main.SomeInterface {
 }
-@available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
+@available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface") @_documentation(visibility: internal)
 extension main.SubDeprecatedInterface where Self : main.__SubDeprecatedInterface {
     public func baz() -> Swift.Void {
         return { SubDeprecatedInterface_baz(self.__externalRCRef()); return () }()
@@ -1423,6 +1426,7 @@ extension main.SubDeprecatedInterface where Self : main.__SubDeprecatedInterface
 @available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
 extension main.SubDeprecatedInterface {
 }
+@_documentation(visibility: internal)
 extension main.SwiftInterfaceC where Self : main.__SwiftInterfaceC {
     public func kotlinFunE(
         _ kotlinParamE: Swift.String
@@ -1437,32 +1441,40 @@ extension main.SwiftInterfaceC where Self : main.__SwiftInterfaceC {
 }
 extension main.SwiftInterfaceC {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithDeprecatedMembers, main.__InterfaceWithDeprecatedMembers where Wrapped : main._InterfaceWithDeprecatedMembers {
 }
-@available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
+@available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface") @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.DeprecatedInterface, main.__DeprecatedInterface where Wrapped : main._DeprecatedInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.NonDeprecatedInterface, main.__NonDeprecatedInterface where Wrapped : main._NonDeprecatedInterface {
 }
-@available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
+@available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface") @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.SubDeprecatedInterface, main.__SubDeprecatedInterface where Wrapped : main._SubDeprecatedInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.SomeInterface, main.__SomeInterface where Wrapped : main._SomeInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.SwiftInterfaceC, main.__SwiftInterfaceC where Wrapped : main._SwiftInterfaceC {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._InterfaceWithDeprecatedMembers {
 }
-@available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
+@available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface") @_documentation(visibility: internal)
 package extension KotlinRuntimeSupport._KotlinExistentialPenBox {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._NonDeprecatedInterface {
 }
-@available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
+@available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface") @_documentation(visibility: internal)
 package extension KotlinRuntimeSupport._KotlinExistentialPenBox {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._SomeInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._SwiftInterfaceC {
 }
 @available(*, deprecated, message: "Deprecated")

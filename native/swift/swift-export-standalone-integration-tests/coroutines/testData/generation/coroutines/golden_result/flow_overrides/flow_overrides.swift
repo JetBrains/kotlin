@@ -21,6 +21,7 @@ public struct _ExportedKotlinPackages_namespace_I1_I2_SealedType: KotlinRuntimeS
         self.value = value
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.namespace.I1 where Self : ExportedKotlinPackages.namespace.__I1 {
     public func sealedType() -> ExportedKotlinPackages.namespace.I1_SealedType {
         fatalError("must implement sealedType in subclass")
@@ -30,6 +31,7 @@ extension ExportedKotlinPackages.namespace.I1 {
     typealias I2 = flow_overrides._ExportedKotlinPackages_namespace_I1_I2
     typealias _ExportedKotlinPackages_namespace_I1_I2_SealedType = flow_overrides._ExportedKotlinPackages_namespace_I1_I2_SealedType
 }
+@_documentation(visibility: internal)
 extension flow_overrides._ExportedKotlinPackages_namespace_I1_I2 where Self : flow_overrides.___ExportedKotlinPackages_namespace_I1_I2 {
     public func sealedType() -> ExportedKotlinPackages.namespace.I1_SealedType {
         .i2(.init(self))
@@ -37,12 +39,16 @@ extension flow_overrides._ExportedKotlinPackages_namespace_I1_I2 where Self : fl
 }
 extension flow_overrides._ExportedKotlinPackages_namespace_I1_I2 {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.namespace.I1, ExportedKotlinPackages.namespace.__I1 where Wrapped : ExportedKotlinPackages.namespace._I1 {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: flow_overrides._ExportedKotlinPackages_namespace_I1_I2, flow_overrides.___ExportedKotlinPackages_namespace_I1_I2 where Wrapped : flow_overrides.__ExportedKotlinPackages_namespace_I1_I2 {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.namespace._I1 {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: flow_overrides.__ExportedKotlinPackages_namespace_I1_I2 {
 }
 extension ExportedKotlinPackages.namespace {

@@ -3,6 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.ranges.ClosedRange where Self : ExportedKotlinPackages.kotlin.ranges.__ClosedRange {
     public var endInclusive: any ExportedKotlinPackages.kotlin.Comparable {
         get {
@@ -39,6 +40,7 @@ extension ExportedKotlinPackages.kotlin.ranges.ClosedRange {
         return kotlin_ranges_ClosedRange_isEmpty_direct(self.__externalRCRef())
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.Comparable where Self : ExportedKotlinPackages.kotlin.__Comparable {
     public static func <(
         this: Self,
@@ -72,12 +74,16 @@ extension ExportedKotlinPackages.kotlin.Comparable where Self : ExportedKotlinPa
 }
 extension ExportedKotlinPackages.kotlin.Comparable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.ranges.ClosedRange, ExportedKotlinPackages.kotlin.ranges.__ClosedRange where Wrapped : ExportedKotlinPackages.kotlin.ranges._ClosedRange {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Comparable, ExportedKotlinPackages.kotlin.__Comparable where Wrapped : ExportedKotlinPackages.kotlin._Comparable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.ranges._ClosedRange {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._Comparable {
 }
 extension ExportedKotlinPackages.kotlin {

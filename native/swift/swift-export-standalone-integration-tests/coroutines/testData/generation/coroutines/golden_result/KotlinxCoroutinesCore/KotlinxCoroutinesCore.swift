@@ -4,10 +4,12 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.Flow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.__Flow {
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.Flow {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.__FlowCollector {
     public func emit(
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -33,6 +35,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector where Sel
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.__MutableSharedFlow {
     public var subscriptionCount: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Int32> {
         get {
@@ -76,6 +79,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow {
         fatalError("'resetReplayCache' is an @_spi requirement that must be implemented by Swift conformers")
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.__MutableStateFlow {
     public var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
@@ -94,6 +98,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow where 
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.__SharedFlow {
     public var replayCache: [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
         get {
@@ -103,6 +108,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow where Self :
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.__StateFlow {
     public var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
@@ -112,28 +118,40 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow where Self : 
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, ExportedKotlinPackages.kotlinx.coroutines.flow.__Flow, KotlinCoroutineSupport.KotlinFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._Flow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.__MutableSharedFlow, KotlinCoroutineSupport.KotlinMutableSharedFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._MutableSharedFlow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.__MutableStateFlow, KotlinCoroutineSupport.KotlinMutableStateFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._MutableStateFlow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.__SharedFlow, KotlinCoroutineSupport.KotlinSharedFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.__StateFlow, KotlinCoroutineSupport.KotlinStateFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlinx.coroutines.flow.__FlowCollector where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._FlowCollector {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._Flow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._MutableSharedFlow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._MutableStateFlow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._FlowCollector {
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow {

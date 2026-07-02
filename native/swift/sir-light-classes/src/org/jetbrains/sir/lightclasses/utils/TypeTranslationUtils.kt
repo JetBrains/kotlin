@@ -57,6 +57,7 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
                 type = sirType,
                 origin = KotlinParameterOrigin.ValueParameter(parameter),
                 isVariadic = parameter.isVararg,
+                kotlinName = parameter.name.asString(),
             )
         }
     }
@@ -86,6 +87,7 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateC
             SirParameter(
                 parameterName = parameter.name.identifierOrNullIfSpecial,
                 type = sirType,
+                kotlinName = parameter.name.asString(),
             )
         }
     }

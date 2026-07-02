@@ -45,12 +45,14 @@ import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
-import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.KDocElements
 import org.jetbrains.sir.lightclasses.utils.baseBridgeName
 import org.jetbrains.sir.lightclasses.utils.bridgeFqName
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
+import org.jetbrains.sir.lightclasses.utils.addDocumentationVisibility
+import org.jetbrains.sir.lightclasses.utils.translateDocumentation
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
 internal fun createSirEnumFromKtSymbol(
@@ -71,8 +73,11 @@ private class SirEnumFromKtSymbol(
     override val visibility: SirVisibility by lazy {
         SirVisibility.PUBLIC
     }
-    override val documentation: String? by lazy {
-        ktSymbol.documentation()
+    private val kdocElements: KDocElements? by lazyWithSessions {
+        KDocElements(this)
+    }
+    override val documentation: String? by lazyWithSessions {
+        translateDocumentation(kdocElements)
     }
     override val name: String by lazyWithSessions {
         (this@SirEnumFromKtSymbol.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
@@ -96,7 +101,12 @@ private class SirEnumFromKtSymbol(
             addAll(syntheticDeclarations())
         }
     }
-    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+    override val attributes: List<SirAttribute> by lazy {
+        buildList {
+            addAll(translatedAttributes)
+            addDocumentationVisibility(kdocElements)
+        }
+    }
     private val cases: List<SirEnumCaseFromKtSymbol> get() = childDeclarations.filterIsInstance<SirEnumCaseFromKtSymbol>()
     private val childDeclarations: List<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
@@ -284,15 +294,22 @@ private class SirEnumCaseFromKtSymbol(
 
     override val visibility: SirVisibility
         get() = SirVisibility.PUBLIC
-    override val documentation: String?
-        get() = (parent as SirEnum).documentation
+    private val kdocElements: KDocElements? by lazyWithSessions {
+        KDocElements(this)
+    }
+    override val documentation: String? by lazy {
+        translateDocumentation(kdocElements)
+    }
     override var parent: SirDeclarationParent = sirSession.withSessions { ktSymbol.getSirParent() as SirEnum }
         set(arg) {
             if (arg === field) return
             error("Changing SirEnumCase.parent is prohibited")
         }
-    override val attributes: List<SirAttribute>
-        get() = emptyList()
+    override val attributes: List<SirAttribute> by lazy {
+        buildList {
+            addDocumentationVisibility(kdocElements)
+        }
+    }
     override val associatedValueTypes: List<SirType>
         get() = emptyList()
 

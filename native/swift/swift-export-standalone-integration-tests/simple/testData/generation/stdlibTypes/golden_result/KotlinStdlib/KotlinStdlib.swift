@@ -3,6 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.text.Appendable where Self : ExportedKotlinPackages.kotlin.text.__Appendable {
     public func append(
         value: Swift.Unicode.UTF16.CodeUnit
@@ -24,6 +25,7 @@ extension ExportedKotlinPackages.kotlin.text.Appendable where Self : ExportedKot
 }
 extension ExportedKotlinPackages.kotlin.text.Appendable {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.CharSequence where Self : ExportedKotlinPackages.kotlin.__CharSequence {
     public var length: Swift.Int32 {
         get {
@@ -51,12 +53,16 @@ extension ExportedKotlinPackages.kotlin.CharSequence where Self : ExportedKotlin
 }
 extension ExportedKotlinPackages.kotlin.CharSequence {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin.__CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.text.Appendable, ExportedKotlinPackages.kotlin.text.__Appendable where Wrapped : ExportedKotlinPackages.kotlin.text._Appendable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._CharSequence {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.text._Appendable {
 }
 extension ExportedKotlinPackages.kotlin.collections {

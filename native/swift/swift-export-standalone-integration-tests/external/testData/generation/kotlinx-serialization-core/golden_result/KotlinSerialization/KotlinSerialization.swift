@@ -3022,14 +3022,18 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         }()); return () }()
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.BinaryFormat where Self : ExportedKotlinPackages.kotlinx.serialization.__BinaryFormat {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._BinaryFormat {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.BinaryFormat, ExportedKotlinPackages.kotlinx.serialization.__BinaryFormat where Wrapped : ExportedKotlinPackages.kotlinx.serialization._BinaryFormat {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.BinaryFormat {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy where Self : ExportedKotlinPackages.kotlinx.serialization.__DeserializationStrategy {
     public var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         get {
@@ -3042,12 +3046,15 @@ extension ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy w
         return { switch kotlinx_serialization_DeserializationStrategy_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(self.__externalRCRef(), decoder.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy, ExportedKotlinPackages.kotlinx.serialization.__DeserializationStrategy where Wrapped : ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.KSerializer where Self : ExportedKotlinPackages.kotlinx.serialization.__KSerializer {
     public var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         get {
@@ -3055,12 +3062,15 @@ extension ExportedKotlinPackages.kotlinx.serialization.KSerializer where Self : 
         }
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._KSerializer {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.KSerializer, ExportedKotlinPackages.kotlinx.serialization.__KSerializer where Wrapped : ExportedKotlinPackages.kotlinx.serialization._KSerializer {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.KSerializer {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.SerialFormat where Self : ExportedKotlinPackages.kotlinx.serialization.__SerialFormat {
     public var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
         get {
@@ -3068,12 +3078,15 @@ extension ExportedKotlinPackages.kotlinx.serialization.SerialFormat where Self :
         }
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.SerialFormat, ExportedKotlinPackages.kotlinx.serialization.__SerialFormat where Wrapped : ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.SerialFormat {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy where Self : ExportedKotlinPackages.kotlinx.serialization.__SerializationStrategy {
     public var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         get {
@@ -3087,20 +3100,26 @@ extension ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy whe
         return { kotlinx_serialization_SerializationStrategy_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), encoder.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil); return () }()
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization.__SerializationStrategy where Wrapped : ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.StringFormat where Self : ExportedKotlinPackages.kotlinx.serialization.__StringFormat {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._StringFormat {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.StringFormat, ExportedKotlinPackages.kotlinx.serialization.__StringFormat where Wrapped : ExportedKotlinPackages.kotlinx.serialization._StringFormat {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.StringFormat {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSerializer where Self : ExportedKotlinPackages.kotlinx.serialization.`internal`.__GeneratedSerializer {
     @_spi(kotlinx$serialization$InternalSerializationApi)
     public func childSerializers() -> ExportedKotlinPackages.kotlin.Array {
@@ -3111,9 +3130,10 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSeria
         return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: kotlinx_serialization_internal_GeneratedSerializer_typeParametersSerializers(self.__externalRCRef()))
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.`internal`._GeneratedSerializer {
 }
-@_spi(kotlinx$serialization$InternalSerializationApi)
+@_spi(kotlinx$serialization$InternalSerializationApi) @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSerializer, ExportedKotlinPackages.kotlinx.serialization.`internal`.__GeneratedSerializer where Wrapped : ExportedKotlinPackages.kotlinx.serialization.`internal`._GeneratedSerializer {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSerializer {
@@ -3122,15 +3142,18 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSeria
         return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: kotlinx_serialization_internal_GeneratedSerializer_typeParametersSerializers_direct(self.__externalRCRef()))
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector where Self : ExportedKotlinPackages.kotlinx.serialization.modules.__SerializersModuleCollector {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.modules._SerializersModuleCollector {
 }
-@_spi(kotlinx$serialization$ExperimentalSerializationApi)
+@_spi(kotlinx$serialization$ExperimentalSerializationApi) @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector, ExportedKotlinPackages.kotlinx.serialization.modules.__SerializersModuleCollector where Wrapped : ExportedKotlinPackages.kotlinx.serialization.modules._SerializersModuleCollector {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor where Self : ExportedKotlinPackages.kotlinx.serialization.descriptors.__SerialDescriptor {
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     public var annotations: [any ExportedKotlinPackages.kotlin.Annotation] {
@@ -3203,8 +3226,10 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescrip
         return kotlinx_serialization_descriptors_SerialDescriptor_isElementOptional__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.descriptors._SerialDescriptor {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, ExportedKotlinPackages.kotlinx.serialization.descriptors.__SerialDescriptor where Wrapped : ExportedKotlinPackages.kotlinx.serialization.descriptors._SerialDescriptor {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
@@ -3279,6 +3304,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescrip
         fatalError("'isElementOptional' is an @_spi requirement that must be implemented by Swift conformers")
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.ChunkedDecoder where Self : ExportedKotlinPackages.kotlinx.serialization.encoding.__ChunkedDecoder {
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     public func decodeStringChunked(
@@ -3294,13 +3320,15 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.ChunkedDecoder w
         }()); return () }()
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.encoding._ChunkedDecoder {
 }
-@_spi(kotlinx$serialization$ExperimentalSerializationApi)
+@_spi(kotlinx$serialization$ExperimentalSerializationApi) @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.ChunkedDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__ChunkedDecoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._ChunkedDecoder {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.ChunkedDecoder {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder where Self : ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeDecoder {
     public var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
         get {
@@ -3387,8 +3415,10 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
         return { kotlinx_serialization_encoding_CompositeDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(self.__externalRCRef(), descriptor.__externalRCRef()); return () }()
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeDecoder {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeDecoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeDecoder {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder {
@@ -3403,6 +3433,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
         return kotlinx_serialization_encoding_CompositeDecoder_decodeSequentially_direct(self.__externalRCRef())
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder where Self : ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeEncoder {
     public var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
         get {
@@ -3491,8 +3522,10 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
         return kotlinx_serialization_encoding_CompositeEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(self.__externalRCRef(), descriptor.__externalRCRef(), index)
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeEncoder {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeEncoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeEncoder {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder {
@@ -3504,6 +3537,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
         return kotlinx_serialization_encoding_CompositeEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct(self.__externalRCRef(), descriptor.__externalRCRef(), index)
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder where Self : ExportedKotlinPackages.kotlinx.serialization.encoding.__Decoder {
     public var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
         get {
@@ -3561,8 +3595,10 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder where Se
         return kotlinx_serialization_encoding_Decoder_decodeString(self.__externalRCRef())
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.encoding._Decoder {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Decoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._Decoder {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder {
@@ -3575,6 +3611,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder {
         fatalError("'decodeNull' is an @_spi requirement that must be implemented by Swift conformers")
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder where Self : ExportedKotlinPackages.kotlinx.serialization.encoding.__Encoder {
     public var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
         get {
@@ -3657,8 +3694,10 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder where Se
         return { kotlinx_serialization_encoding_Encoder_encodeString__TypesOfArguments__Swift_String__(self.__externalRCRef(), value); return () }()
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.encoding._Encoder {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Encoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._Encoder {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder {

@@ -4,12 +4,15 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.list2.MyList where Self : ExportedKotlinPackages.list2.__MyList {
 }
 extension ExportedKotlinPackages.list2.MyList {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.list2.MyList, ExportedKotlinPackages.list2.__MyList where Wrapped : ExportedKotlinPackages.list2._MyList {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.list2._MyList {
 }
 extension ExportedKotlinPackages.list2 {

@@ -402,6 +402,7 @@ public func returnsListOfSuspendNullables() async throws -> [(() async throws ->
         }(), cancellation.__externalRCRef())
     }
 }
+@_documentation(visibility: internal)
 extension main.FunctionalInterfaceWithSuspendFunction where Self : main.__FunctionalInterfaceWithSuspendFunction {
     public func emit() async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
@@ -425,8 +426,10 @@ extension main.FunctionalInterfaceWithSuspendFunction where Self : main.__Functi
 }
 extension main.FunctionalInterfaceWithSuspendFunction {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.FunctionalInterfaceWithSuspendFunction, main.__FunctionalInterfaceWithSuspendFunction where Wrapped : main._FunctionalInterfaceWithSuspendFunction {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._FunctionalInterfaceWithSuspendFunction {
 }
 @_cdecl("FunctionalInterfaceWithSuspendFunction_emit__reverse_swift")
