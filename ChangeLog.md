@@ -1,3 +1,13 @@
+## 2.4.10-RC2
+
+### Tools. Gradle. BCV
+
+- [`KT-87223`](https://youtrack.jetbrains.com/issue/KT-87223) Gradle, BCV: open version range in kotlinAbiValidationCompatClasspath causes kotlin-build-tools-impl to resolve to 2.4.20-Beta1 instead of 2.4.0
+
+### Tools. Gradle. JS
+
+- [`KT-87304`](https://youtrack.jetbrains.com/issue/KT-87304) jsBrowserTest fails with "exited with errors (exit code: 1)"
+
 ## 2.4.10-RC
 
 ### Compiler
