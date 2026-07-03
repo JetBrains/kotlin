@@ -2,6 +2,7 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
+        function append(value?: string): string;
         class ExportedWithCompanionExtensions {
             constructor();
         }
@@ -11,6 +12,5 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => ExportedWithCompanionExtensions;
             }
         }
-        function append(value?: string): string;
     }
 }
