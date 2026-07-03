@@ -261,9 +261,9 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
          * Disable C2 compiler for HotSpot VM to improve compilation speed.
          */
         fun disableC2(): ToolSpec {
-            System.getProperty("java.vm.name")?.let { vmName ->
-                if (vmName.contains("HotSpot", true)) jvmArgs.add("-XX:TieredStopAtLevel=1")
-            }
+//            System.getProperty("java.vm.name")?.let { vmName ->
+//                if (vmName.contains("HotSpot", true)) jvmArgs.add("-XX:TieredStopAtLevel=1")
+//            }
 
             return this
         }
@@ -278,7 +278,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             if (jvmArgs.get().none { it.startsWith("-Xmx") }) {
                 jvmArgs.add("-Xmx3g")
             }
-
+            println("Compiler jvm args: ${jvmArgs.get()}")
             return this
         }
     }
