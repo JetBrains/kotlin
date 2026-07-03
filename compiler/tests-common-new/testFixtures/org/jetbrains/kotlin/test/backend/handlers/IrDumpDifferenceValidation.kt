@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.test.utils.withExtension
 import java.io.File
-import java.util.Locale
 
 /**
  * Validates target-specific IR dump files against the DUMP_IR_DIFFERENCE directive.
@@ -45,13 +44,14 @@ internal fun validateTargetSpecificDumpFile(
     isKotlinLikeDump: Boolean,
 ): Boolean {
     val targetBackend = testServices.defaultsProvider.targetBackend ?: return false
-    val targetBackendName = targetBackend.name.lowercase()
     val targetBackendDirectiveName = targetBackend.name
     val moduleStructure = testServices.moduleStructure
     val dumpDescription = if (isKotlinLikeDump) "Kotlin-like IR dump" else "IR dump"
 
-    val targetSpecificExtension = getTargetSpecificDumpExtension(testServices, baseDumpExtension)
-    if (targetSpecificExtension != null) {
+    val matchedBackend = testServices.getMatchedBackendFromDirective(CodegenTestDirectives.DUMP_IR_DIFFERENCE)
+    if (matchedBackend != null) {
+        val targetSpecificExtension = targetSpecificDumpExtension(baseDumpExtension, matchedBackend)
+        val patchBackendName = targetBackend.directChildOf(matchedBackend).name.lowercase()
         val normalizedActualDump = actualDump.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
         val targetSpecificFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(targetSpecificExtension)
@@ -71,7 +71,7 @@ internal fun validateTargetSpecificDumpFile(
         val expectedPatch = buildPatch(
             baseText = mainDump,
             targetText = normalizedActualDump,
-            targetBackendName = targetBackendName,
+            targetBackendName = patchBackendName,
             mainFileName = mainExpectedFile.name,
         )
         if (expectedPatch.isEmpty()) {
@@ -97,19 +97,28 @@ internal fun validateTargetSpecificDumpFile(
         }
         return true
     } else {
-        val extensionPrefix = baseDumpExtension.removeSuffix(".txt")
         val baseTestFile = moduleStructure.originalTestDataFiles.first()
-        val compatibleBackendNames = targetBackend.compatibleBackendNamesIncludingSelf()
-        val possibleTargetFiles = compatibleBackendNames.map { backendName ->
-            baseTestFile.withExtension("$extensionPrefix.$backendName.patch")
-        }
-        val existingTargetSpecificFile = possibleTargetFiles.firstOrNull { it.exists() }
 
-        checkTestInfrastructure (existingTargetSpecificFile == null) {
-            "Target-specific $dumpDescription file detected but no DUMP_IR_DIFFERENCE directive specified for $targetBackendDirectiveName: $existingTargetSpecificFile"
+        val existingTargetSpecificFile = findTargetSpecificPatchFile(targetBackend, baseTestFile, baseDumpExtension)
+        checkTestInfrastructure(existingTargetSpecificFile == null) {
+            "Target-specific $dumpDescription file detected but no DUMP_IR_DIFFERENCE directive specified for " +
+                    "$targetBackendDirectiveName or its compatible target: $existingTargetSpecificFile"
         }
         return false
     }
+}
+
+private fun findTargetSpecificPatchFile(targetBackend: TargetBackend, baseTestFile: File, baseDumpExtension: String): File? {
+    var current = targetBackend
+    while (current != TargetBackend.ANY) {
+        val ext = targetSpecificDumpExtension(baseDumpExtension, current)
+        val file = baseTestFile.withExtension(ext)
+        if (file.exists()) {
+            return file
+        }
+        current = current.compatibleWith
+    }
+    return null
 }
 
 private const val UNIFIED_CONTEXT_LINES = 3
@@ -165,38 +174,40 @@ private fun applyPatch(baseText: String, patchFile: File): String {
         .trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
 }
 
-private fun TargetBackend.compatibleBackendNamesIncludingSelf(): List<String> {
-    val names = mutableListOf(name.lowercase())
-    var current = compatibleWith
+/**
+ * Returns the direct child of [ancestor] in this backend's compatibility chain,
+ * or this backend itself if it equals [ancestor].
+ *
+ * This determines the backend name for the patch's `+++ b/` line, ensuring that
+ * backends sharing the same patch file (e.g., JKLIB reusing JVM_IR's patch)
+ * produce identical patch content.
+ */
+private fun TargetBackend.directChildOf(ancestor: TargetBackend): TargetBackend {
+    var current = this
     while (current != TargetBackend.ANY) {
-        names += current.name.lowercase()
+        if (current.compatibleWith == ancestor) return current
         current = current.compatibleWith
     }
-    return names
+    return this
 }
 
 internal fun TestServices.getMatchedBackendFromDirective(directive: ValueDirective<TargetBackend>): TargetBackend? {
-    val targetBackend = defaultsProvider.targetBackend ?: return null
-    val dumpIrDifferenceBackends = moduleStructure.allDirectives[directive]
-    return dumpIrDifferenceBackends
-        .filter { targetBackend.isTransitivelyCompatibleWith(it) }
-        .minWithOrNull(compareBy<TargetBackend>({ targetBackend.compatibilityDistanceTo(it) }, { it.name.lowercase(Locale.US) }))
+    val backendsInDirective = moduleStructure.allDirectives[directive].toSet()
+    var current = defaultsProvider.targetBackend ?: return null
+    while (current != TargetBackend.ANY) {
+        if (current in backendsInDirective) return current
+        current = current.compatibleWith
+    }
+    return null
+}
+
+private fun targetSpecificDumpExtension(baseDumpExtension: String, matchedBackend: TargetBackend): String {
+    val extensionPrefix = baseDumpExtension.removeSuffix(".txt")
+    return "$extensionPrefix.${matchedBackend.name.lowercase()}.patch"
 }
 
 internal fun getTargetSpecificDumpExtension(testServices: TestServices, baseDumpExtension: String): String? {
     val matchedBackend = testServices.getMatchedBackendFromDirective(CodegenTestDirectives.DUMP_IR_DIFFERENCE)
         ?: return null
-    val extensionPrefix = baseDumpExtension.removeSuffix(".txt")
-    return "$extensionPrefix.${matchedBackend.name.lowercase()}.patch"
-}
-
-private fun TargetBackend.compatibilityDistanceTo(other: TargetBackend): Int {
-    var distance = 0
-    var current = this
-    while (current != TargetBackend.ANY) {
-        if (current == other) return distance
-        current = current.compatibleWith
-        distance++
-    }
-    return Int.MAX_VALUE
+    return targetSpecificDumpExtension(baseDumpExtension, matchedBackend)
 }

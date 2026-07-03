@@ -1,10 +1,13 @@
 // WITH_STDLIB
 // SKIP_KT_DUMP
 // DUMP_IR_DIFFERENCE: JVM
-//   On non-JVM backendsm, the inferred type of `+` expression is `Comparable<Nothing>` as the intersection of Comparable<Char> and Comparable<String>:
-//   On JVM backend, kotlin.Char is mapped to the Java primitive char boxed as java.lang.Character, and this mapping changes its type hierarchy.
-//     So, the inferred type of `+` is Any as as the closest common supertype for Char and String.
-
+// ^ Expected type inference difference, due to different inheritance chains for kotlin.Char and kotlin.String:
+//   JVM: Char and String are derived from both interfaces
+//        - java.io.Serializable (not via source of K/JVM stdlib, but injected as an additional supertype by FirJvmDeserializationExtension.addSerializableIfNeeded)
+//        - kotlin.Comparable.
+//        Hence, their type intersection are approximated to `Any` as the closest common supertype
+//   Non-JVM: Char and String are derived from kotlin.Comparable only, so their type intersection are approximated as `Comparable<Char & String>`,
+//            which is Comparable<Nothing>
 
 fun test(): Boolean {
     val ref = (listOf('a') + "-")::contains
