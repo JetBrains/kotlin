@@ -296,3 +296,7 @@ public final class org/jetbrains/kotlin/config/WarningLevel$Companion {
 	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/WarningLevel;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/util/OnlyForDefaultLanguageFeatureDisabled : java/lang/annotation/Annotation {
+	public abstract fun languageFeature ()Lorg/jetbrains/kotlin/config/LanguageFeature;
+}
+
