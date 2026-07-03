@@ -311,7 +311,7 @@ internal class CallSiteVisitor(
      */
 
     private fun FirResolvedQualifier.toEnclosingEntity(): EnclosingEntity<FirRegularClass>? {
-        val classSymbol = symbol?.fullyExpandedClass() ?: return null
+        val classSymbol = qualifierSymbol?.fullyExpandedClass() ?: return null
         return if (resolvedToCompanionObject) {
             classSymbol.resolvedCompanionObjectSymbol?.asObjectEntity(classSymbol.asClassEntity())
         } else if (classSymbol.classKind.isObject) {
@@ -459,18 +459,20 @@ internal class CallSiteVisitor(
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: CallSiteVisitContext): Unit =
         resolvedQualifier.visit(data) {
-            val symbol = resolvedQualifier.symbol?.fullyExpandedClass() ?: return@visit
+            val symbol = resolvedQualifier.accessedObjectSymbol ?: return@visit
             if (symbol.isLibraryDeclaration || !symbol.inSameModule()) return@visit
             // If the qualified class can be a value, ...
             // Only objects can be used as values, enum entries are accessible as properties (variables), and (static) classes are not accessible
-            if (resolvedQualifier.canBeValue) {
-                val objectEntity = when {
-                    resolvedQualifier.resolvedToCompanionObject -> symbol.resolvedCompanionObjectSymbol?.asObjectEntity(symbol.asClassEntity())
-                    else -> symbol.asObjectEntity()
-                } ?: return@visit
-                if (objectEntity.isNotPrivate) referenceNode(objectEntity.beginInitializationIndex)
-                if (!objectEntity.symbol.inVisitedFiles) objectEntity.symbol.postponeFileEntity()
-            }
+            val objectEntity = when {
+                resolvedQualifier.resolvedToCompanionObject -> {
+                    // Fail silently
+                    val classEntity = resolvedQualifier.qualifierSymbol?.fullyExpandedClass()?.asClassEntity() ?: return@visit
+                    symbol.asObjectEntity(classEntity)
+                }
+                else -> symbol.asObjectEntity()
+            } ?: return@visit
+            if (objectEntity.isNotPrivate) referenceNode(objectEntity.beginInitializationIndex)
+            if (!objectEntity.symbol.inVisitedFiles) objectEntity.symbol.postponeFileEntity()
         }
 
     private fun Map<FirExpression, FirValueParameter>.reverse(): Map<FirValueParameterSymbol, Set<FirExpression>> =
