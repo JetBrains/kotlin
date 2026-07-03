@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
@@ -64,27 +63,20 @@ class IrPrettyKotlinDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
-        val expectedFile = moduleStructure.originalTestDataFiles.first().withExtension(getDumpExtension())
+        val actualDump = dumper.generateResultingDump()
+        val baseGoldenFile = moduleStructure.originalTestDataFiles.first()
+            .withExtension(DUMP_EXTENSION)
 
+        validateTargetSpecificDumpFile(
+            testServices, baseGoldenFile,
+            baseDumpExtension = DUMP_EXTENSION,
+            actualDump,
+        )
         if (dumper.isEmpty()) {
-            assertions.assertFileDoesntExist(expectedFile, DUMP_KT_IR)
+            assertions.assertFileDoesntExist(baseGoldenFile, DUMP_KT_IR)
         } else {
-            assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
+            assertions.assertEqualsToFile(baseGoldenFile, actualDump)
         }
-    }
-
-    private fun getDumpExtension(): String {
-        return getTargetSpecificDumpExtension() ?: DUMP_EXTENSION
-    }
-
-    private fun getTargetSpecificDumpExtension(): String? {
-        val targetBackend = testServices.defaultsProvider.targetBackend ?: return null
-        val dumpIrDifferenceBackends = testServices.moduleStructure.modules.flatMap {
-            it.directives[CodegenTestDirectives.DUMP_IR_DIFFERENCE]
-        }
-        val matchedBackend = dumpIrDifferenceBackends.firstOrNull { targetBackend.isTransitivelyCompatibleWith(it) }
-            ?: return null
-        return "kt.${matchedBackend.name.lowercase()}.txt"
     }
 }
 

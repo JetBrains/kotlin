@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPath
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransitive
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -170,19 +169,18 @@ class IrTextDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
-        val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(getDumpExtension())
-        checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
-    }
+        val actualDump = baseDumper.generateResultingDump()
+        val baseDumpExtension = getBaseDumpExtension()
+        val baseGoldenFile = moduleStructure.originalTestDataFiles.first()
+            .withExtension(baseDumpExtension)
 
-    private fun getTargetSpecificDumpExtension(): String? {
-        val targetBackend = testServices.defaultsProvider.targetBackend ?: return null
-        val dumpIrDifferenceBackends = testServices.moduleStructure.modules.flatMap {
-            it.directives[CodegenTestDirectives.DUMP_IR_DIFFERENCE]
-        }
-        val matchedBackend = dumpIrDifferenceBackends.firstOrNull { targetBackend.isTransitivelyCompatibleWith(it) }
-            ?: return null
-        return "ir.${matchedBackend.name.lowercase()}.txt"
+        validateTargetSpecificDumpFile(
+            testServices, baseGoldenFile,
+            baseDumpExtension = baseDumpExtension,
+            actualDump,
+        )
+
+        checkOneExpectedFile(baseGoldenFile, actualDump)
     }
 
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
@@ -193,8 +191,14 @@ class IrTextDumpHandler(
         }
     }
 
+    private fun getBaseDumpExtension(): String {
+        return customExtension ?: (if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION)
+    }
+
     private fun getDumpExtension(): String {
-        return customExtension ?: getTargetSpecificDumpExtension() ?: (if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION)
+        return customExtension
+            ?: getTargetSpecificDumpExtension(testServices, getBaseDumpExtension())
+            ?: getBaseDumpExtension()
     }
 }
 
