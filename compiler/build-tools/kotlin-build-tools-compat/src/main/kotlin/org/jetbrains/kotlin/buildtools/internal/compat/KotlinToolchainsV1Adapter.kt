@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.buildtools.internal.compat
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
 import org.jetbrains.kotlin.buildtools.api.jvm.*
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.CompileReplSnippetOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -50,6 +51,21 @@ public class KotlinToolchainsV1Adapter(
 
             override fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperation.Builder {
                 return DiscoverScriptExtensionsOperationV1Adapter(compilationService, classpath)
+            }
+
+            override fun compileReplSnippetOperationBuilder(
+                priorSnippets: List<ByteArray>,
+                snippetSource: String,
+                snippetName: String,
+            ): CompileReplSnippetOperation.Builder {
+                // The stateless K2 REPL compile op has no `CompilationService` (BTA API v1) equivalent
+                // to bridge to (unlike DiscoverScriptExtensionsOperation, which maps to
+                // `getCustomKotlinScriptFilenameExtensions`). It is only reachable through the modern
+                // `KotlinToolchains` implementation shipped with Kotlin 2.4.0+.
+                throw UnsupportedOperationException(
+                    "CompileReplSnippetOperation is not supported in the BTA API v1 fallback " +
+                            "(compiler version ${getCompilerVersion()}); it requires Kotlin compiler version 2.4.0 or newer."
+                )
             }
         }
     }
