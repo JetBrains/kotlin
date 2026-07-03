@@ -17,6 +17,30 @@ public annotation class CudaCompile
 @Target(AnnotationTarget.LOCAL_VARIABLE)
 public annotation class Shared(val size: Int = 0)
 
+/**
+ * On a `@CudaCompile` kernel function, hint the block shape and (optionally) target
+ * occupancy so `ptxas` sizes the per-thread register budget accordingly. Semantically
+ * mirrors CUDA C++'s `__launch_bounds__(maxThreadsPerBlock, minBlocksPerMultiprocessor)`
+ * and is emitted as `.maxntid maxThreadsPerBlock, 1, 1` (+ optional `.minnctapersm`) in
+ * the PTX.
+ *
+ * Without this hint `ptxas` targets a default occupancy that assumes several blocks may
+ * fit per SM, which caps per-thread registers — wide kernels (e.g. 2D block tiling with
+ * `TM*TN` accumulators live across a serial K loop) then spill their accumulator arrays
+ * to `.local` and lose most of the arithmetic throughput. Declaring the exact block size
+ * unlocks `ptxas`'s wider-register schedule; adding `minBlocksPerMultiprocessor` lets you
+ * trade some register headroom back for occupancy.
+ *
+ * Only meaningful on kernels — the top-level functions in a `@CudaCompile` file emitted
+ * as PTX `.entry`. Silently ignored on device helpers (`.func`).
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+public annotation class LaunchBounds(
+        val maxThreadsPerBlock: Int,
+        val minBlocksPerMultiprocessor: Int = 0,
+)
+
 public const val WarpSize: Int = 32
 
 /**

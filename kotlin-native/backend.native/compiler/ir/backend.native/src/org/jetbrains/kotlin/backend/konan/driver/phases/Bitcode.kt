@@ -11,6 +11,7 @@ import kotlinx.cinterop.allocPointerTo
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
+import llvm.LLVMAddTargetDependentFunctionAttr
 import llvm.LLVMCodeGenFileType
 import llvm.LLVMCodeGenOptLevel
 import llvm.LLVMCodeModel
@@ -55,6 +56,7 @@ import llvm.LLVMSetFunctionCallConv
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.getAnnotationArgumentValue
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
@@ -86,21 +88,33 @@ internal data class CompileModuleToPtxInput(
 )
 
 /**
- * Mark each public host-declared function in a `@CudaCompile` file as an NVPTX kernel entry
- * by setting its LLVM calling convention to `PTX_Kernel` (value 71). The NVPTX asm printer
- * checks the calling convention to decide between `.entry` (kernel, host-launchable) and
- * `.func` (device helper, callable from other PTX); private helpers in the same file keep
- * the default convention and stay as `.func`.
+ * Two things per kernel in a `@CudaCompile` file, both consumed by the NVPTX asm printer:
+ *
+ *  1. Mark it as a PTX kernel entry by setting its LLVM calling convention to `PTX_Kernel`
+ *     (value 71). The asm printer checks the calling convention to decide between `.entry`
+ *     (kernel, host-launchable) and `.func` (device helper, callable from other PTX);
+ *     private helpers in the same file keep the default convention and stay as `.func`.
+ *
+ *  2. If the kernel carries `@LaunchBounds`, attach `"nvvm.maxntid"="N,1,1"` (and optionally
+ *     `"nvvm.minctasm"="M"`) function attributes so the asm printer prints `.maxntid`
+ *     (and optionally `.minnctapersm`) PTX directives. `ptxas` uses these to size the
+ *     per-thread register budget — wide kernels (e.g. 2D block tiling with `TM*TN`
+ *     accumulators live across a serial K loop) otherwise spill their accumulator arrays
+ *     to `.local` because `ptxas`'s default occupancy target caps registers per thread too
+ *     aggressively.
  *
  * "Host-declared" means either a top-level function or a user-defined member of a top-level
  * stateless `object`; matches the set built by `IrFile.collectKernelHostDeclarations`, so the
  * names emitted by [AssignCudaKernelExportNamesPhase] and the kernel-entry marking here stay
  * in lockstep.
  *
- * Why calling convention rather than `!nvvm.annotations = !{!{ptr @fn, !"kernel", i32 1}}`:
- * the annotation form depends on a NVPTX-specific lowering pass that `llc`'s default
- * pipeline includes but `LLVMTargetMachineEmitToFile` does not. The calling-convention
- * mark is honored by the asm printer directly, without that pre-pass.
+ * Why (1) uses the calling convention rather than `!nvvm.annotations = !{ptr @fn, !"kernel",
+ * i32 1}`: that annotation form depends on a NVPTX-specific lowering pass that `llc`'s
+ * default pipeline includes but `LLVMTargetMachineEmitToFile` does not. The calling-convention
+ * mark is honored by the asm printer directly, without that pre-pass. For (2) we use the
+ * function-attribute form (`"nvvm.maxntid"`, `"nvvm.minctasm"`) — since LLVM 20 NVPTX reads
+ * launch bounds from function attributes rather than the classic `!nvvm.annotations` metadata
+ * (which was deprecated for these keys and is silently ignored on newer LLVM).
  */
 internal val AnnotateCudaKernelsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "AnnotateCudaKernels",
@@ -113,6 +127,19 @@ internal val AnnotateCudaKernelsPhase = createSimpleNamedCompilerPhase<NativeGen
                 val llvmFn = generationState.llvmDeclarations.forFunctionOrNull(kernelFn)?.asCallback()
                         ?: return@forEach
                 LLVMSetFunctionCallConv(llvmFn, NVPTX_KERNEL_CALL_CONV)
+
+                val maxThreads = kernelFn.getAnnotationArgumentValue<Int>(
+                        KonanFqNames.cudaLaunchBounds, "maxThreadsPerBlock",
+                )
+                if (maxThreads != null) {
+                    LLVMAddTargetDependentFunctionAttr(llvmFn, "nvvm.maxntid", "$maxThreads,1,1")
+                    val minCTAsPerSM = kernelFn.getAnnotationArgumentValue<Int>(
+                            KonanFqNames.cudaLaunchBounds, "minBlocksPerMultiprocessor",
+                    ) ?: 0
+                    if (minCTAsPerSM > 0) {
+                        LLVMAddTargetDependentFunctionAttr(llvmFn, "nvvm.minctasm", "$minCTAsPerSM")
+                    }
+                }
             }
 }
 
