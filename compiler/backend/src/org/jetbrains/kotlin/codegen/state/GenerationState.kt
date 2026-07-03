@@ -40,7 +40,7 @@ class GenerationState(
     val generateDeclaredClassFilter: GenerateClassFilter? = null,
     val targetId: TargetId? = null,
     moduleName: String? = configuration.moduleName,
-    val jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module),
+    val jvmBackendClassResolver: JvmBackendClassResolver,
     val ignoreErrors: Boolean = false,
     diagnosticReporter: DiagnosticReporter? = null,
     compiledCodeProvider: CompiledCodeProvider = CompiledCodeProvider.Empty

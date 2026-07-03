@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.K1JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.MessageCollectorAccess
@@ -170,6 +171,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     snippetKtFile.project,
                     compilationState.analyzerEngine.module,
                     compilerConfiguration,
+                    jvmBackendClassResolver = K1JvmBackendClassResolverForModuleWithDependencies(compilationState.analyzerEngine.module),
                     diagnosticReporter = diagnosticsCollector,
                 )
 

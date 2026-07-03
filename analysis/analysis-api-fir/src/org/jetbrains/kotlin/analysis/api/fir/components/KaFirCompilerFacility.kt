@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
@@ -892,6 +893,7 @@ internal class KaFirCompilerFacility(
             configuration,
             classBuilderFactory,
             generateDeclaredClassFilter = generateClassFilter,
+            jvmBackendClassResolver = FirJvmBackendClassResolver(fir2IrResult.components),
             diagnosticReporter = diagnosticsCollector,
             compiledCodeProvider = compiledCodeProvider
         )

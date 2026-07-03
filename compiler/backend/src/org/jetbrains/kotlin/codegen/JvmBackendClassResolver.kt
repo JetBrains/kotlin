@@ -16,31 +16,13 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.org.objectweb.asm.Type
 
 interface JvmBackendClassResolver {
     fun resolveToClassDescriptors(type: Type): List<ClassDescriptor>
-}
-
-class JvmBackendClassResolverForModuleWithDependencies(
-    private val moduleDescriptor: ModuleDescriptor
-) : JvmBackendClassResolver {
-
-    @OptIn(K1Deprecation::class)
-    override fun resolveToClassDescriptors(type: Type): List<ClassDescriptor> {
-        if (type.sort != Type.OBJECT) return emptyList()
-
-        val platformClass = moduleDescriptor.findClassAcrossModuleDependencies(type.classId) ?: return emptyList()
-
-        return JavaToKotlinClassMapper.mapPlatformClass(platformClass) + platformClass
-    }
 }
 
 val Type.classId: ClassId

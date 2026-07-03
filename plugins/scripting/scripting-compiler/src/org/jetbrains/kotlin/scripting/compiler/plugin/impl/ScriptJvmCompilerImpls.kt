@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createLibraryListForJvm
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.K1JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
@@ -280,6 +280,7 @@ private fun doCompile(
         ktFiles.first().project,
         analysisResult.moduleDescriptor,
         context.environment.configuration,
+        jvmBackendClassResolver = K1JvmBackendClassResolverForModuleWithDependencies(analysisResult.moduleDescriptor),
         diagnosticReporter = diagnosticsReporter,
     )
 

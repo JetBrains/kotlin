@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
