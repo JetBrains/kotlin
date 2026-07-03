@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 interface OnlyInputTypeConstraintPosition
 
@@ -180,6 +181,7 @@ class InferredEmptyIntersectionError(
 
 class OnlyInputTypesDiagnostic(val typeVariable: TypeVariableMarker) : ConstraintSystemError(INAPPLICABLE)
 
+@OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
 class LowerPriorityToPreserveCompatibility(val needToReportWarning: Boolean) :
     ConstraintSystemError(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
 

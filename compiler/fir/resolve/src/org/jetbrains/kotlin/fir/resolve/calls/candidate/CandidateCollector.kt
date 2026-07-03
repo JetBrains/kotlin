@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 open class CandidateCollector(
     val components: BodyResolveComponents,
@@ -65,6 +66,7 @@ open class CandidateCollector(
                 dropOldCandidates()
             }
 
+            @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
             if (currentApplicability == CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY &&
                 applicability > currentApplicability
             ) {

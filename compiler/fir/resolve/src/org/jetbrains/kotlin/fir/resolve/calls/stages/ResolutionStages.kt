@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 
@@ -843,6 +844,7 @@ private fun Candidate.isJavaApplicableCandidate(): Boolean {
 }
 
 internal object EagerResolveOfCallableReferences : ResolutionStage() {
+    @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
     context(sink: CheckerSink, context: ResolutionContext)
     override suspend fun check(candidate: Candidate) {
         if (candidate.postponedAtoms.isEmpty()) return

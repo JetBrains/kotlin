@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 abstract class ResolutionDiagnostic(val applicability: CandidateApplicability)
 
@@ -170,6 +171,7 @@ object InvokeOnHiddenCompanionObject : ResolutionDiagnostic(HIDDEN)
 
 class InapplicableNullableReceiver(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_CALL)
 
+@OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
 object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
 
 object LowerPriorityForDynamic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
