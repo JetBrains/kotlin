@@ -815,16 +815,16 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpressionTypeTestGenerated ext
   }
 
   @Nested
-  @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment")
+  @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignmentLhs")
   @TestDataPath("$PROJECT_ROOT")
-  public class Assignment {
+  public class AssignmentLhs {
     private void run(String fileName) {
-      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/" + fileName);
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignmentLhs/" + fileName);
     }
 
     @Test
-    public void testAllFilesPresentInAssignment() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    public void testAllFilesPresentInAssignmentLhs() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignmentLhs"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test
