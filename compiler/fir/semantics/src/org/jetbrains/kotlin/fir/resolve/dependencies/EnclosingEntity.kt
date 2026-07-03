@@ -32,11 +32,11 @@ sealed class EnclosingEntity<D : FirDeclaration> {
 
     abstract val parentEnclosingEntity: EnclosingEntity<*>?
 
-    abstract val beginInitializationIndex: BeginInitializationIndex<D>
+    abstract val beginInitializationIndex: BeginStaticInitializationIndex<D>
+
+    val endInitializationIndex: EndStaticInitializationIndex<D> = EndStaticInitializationIndex(this)
 
     open val isPrivate: Boolean get() = false
-
-    val endInitializationIndex: EndInitializationIndex<D> by lazy { EndInitializationIndex(beginInitializationIndex) }
 
     data class Class(override val symbol: FirRegularClassSymbol) : EnclosingEntity<FirRegularClass>() {
 
@@ -104,7 +104,8 @@ sealed class EnclosingEntity<D : FirDeclaration> {
             }
         ): Object? = when {
             classKind.isObject -> {
-                outerClass?.let { require(it.symbol == getContainingClassSymbol()) } ?: require(!isCompanion)
+                outerClass?.let { require(it.symbol == getContainingClassSymbol()) { "outerClass.symbol != getContainingClassSymbol()" } }
+                    ?: require(!isCompanion) { "$this `isCompanion" }
                 Object(this, outerClass)
             }
             else -> null

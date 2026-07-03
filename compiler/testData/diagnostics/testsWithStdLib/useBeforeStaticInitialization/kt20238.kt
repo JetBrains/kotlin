@@ -26,7 +26,7 @@ interface ClassTest {
             println("ClassTest.<clinit>")
         }
         val x = "OK"
-        <!POSSIBLY_UNINITIALIZED_PROPERTY!>val z = <!ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS!>Class()<!>.y<!>
+        <!POSSIBLY_UNINITIALIZED_PROPERTY!>val z = <!ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY!>Class().y<!><!>
         val y = "yay"
     }
 }

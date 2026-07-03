@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.isGeneratedStaticEnumMember
+import org.jetbrains.kotlin.fir.resolve.dependencies.AnonymousInitializerIndex
+import org.jetbrains.kotlin.fir.resolve.dependencies.BeginInstanceInitializationIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.ClinitIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.DeclarationIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyGraph
@@ -27,14 +30,16 @@ import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.a
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.asFileEntity
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.asObjectEntity
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnumEntryIndex
+import org.jetbrains.kotlin.fir.resolve.dependencies.PropertyIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.QualifierIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.StaticAnonymousInitializerIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.StaticPropertyIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.TopLevelIndex
+import org.jetbrains.kotlin.fir.resolve.dependencies.dsl.ClassSubgraphBuilder
 import org.jetbrains.kotlin.fir.resolve.dependencies.dsl.DependencyGraphBuilder
 import org.jetbrains.kotlin.fir.resolve.dependencies.dsl.DependencyNodeBuilder
-import org.jetbrains.kotlin.fir.resolve.dependencies.dsl.DependencySubgraphBuilder
+import org.jetbrains.kotlin.fir.resolve.dependencies.dsl.ObjectSubgraphBuilder
+import org.jetbrains.kotlin.fir.resolve.dependencies.dsl.StaticInitializationSubgraphBuilder
 import org.jetbrains.kotlin.fir.resolve.dependencies.dsl.buildGraph
+import org.jetbrains.kotlin.fir.resolve.dependencies.endInitializationIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.inSameModule
 import org.jetbrains.kotlin.fir.resolve.dependencies.isInitializedBySupertypes
 import org.jetbrains.kotlin.fir.resolve.dependencies.isLibraryDeclaration
@@ -76,7 +81,7 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
      * to and connect to those instead
      */
     context(holder: SessionAndScopeSessionHolder)
-    private fun DependencySubgraphBuilder<*>.initializeDirectSupertypes(classSymbol: FirClassSymbol<*>) {
+    private fun StaticInitializationSubgraphBuilder<*, *>.initializeDirectSupertypes(classSymbol: FirClassSymbol<*>) {
         classSymbol.resolvedSuperTypes.forEach { superType ->
             val symbol = superType.fullyExpandedType().toRegularClassSymbol() ?: return@forEach
             // Skip library supertypes, as they cannot have mutual dependencies with the source types, interface types without
@@ -173,7 +178,7 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
                         is QualifierIndex -> {
                             buildObjectEntity(current.enclosingEntity)
                             val constructor = current.enclosingEntity.symbol.primaryConstructorIfAny(holder.session)?.fir ?: continue
-                            constructor.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current, true))
+                            constructor.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current, null, true))
                             val containingFile = current.containingFile ?: continue
                             pendingNodes.put(containingFile, current)
                         }
@@ -183,30 +188,53 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
                                 ?.primaryConstructorIfAny(holder.session)
                                 ?.fir
                                 ?: continue
-                            constructor.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current, true))
+                            constructor.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current, current.enclosingEntity, true))
                             val containingFile = current.containingFile ?: continue
                             pendingNodes.put(containingFile, current)
                         }
-                        is StaticPropertyIndex -> {
+                        is PropertyIndex -> {
                             val propertySymbol = current.symbol
-                            propertySymbol.fir.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current))
+                            propertySymbol.fir.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current, current.enclosingEntity))
                             val containingDeclaration = holder.session.firProvider.getContainingClass(propertySymbol)
                                 ?: holder.session.firProvider.getContainingFile(propertySymbol)?.symbol
-                            if (containingDeclaration == current.enclosingEntity.symbol) {
+                            if (containingDeclaration == current.enclosingEntity?.symbol) {
                                 val containingFile = current.containingFile ?: continue
                                 pendingNodes.put(containingFile, current)
                             }
                         }
-                        is StaticAnonymousInitializerIndex -> {
+                        is AnonymousInitializerIndex -> {
                             val initializedSymbol = current.symbol
-                            current.symbol.fir.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current))
-                            if (holder.session.firProvider.getContainingClass(initializedSymbol) == current.enclosingEntity.symbol) {
+                            current.symbol.fir.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current, current.enclosingEntity))
+                            if (holder.session.firProvider.getContainingClass(initializedSymbol) == current.enclosingEntity?.symbol) {
                                 val containingFile = current.containingFile ?: continue
                                 pendingNodes.put(containingFile, current)
                             }
                         }
                         is DeclarationIndex<*> -> {
                             current.symbol.fir.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current))
+                        }
+                        is BeginInstanceInitializationIndex<*> -> {
+                            current.classSymbol.buildInitSubgraph {
+                                classSymbol.resolvedSuperTypes.forEach { superType ->
+                                    val superClass = superType.fullyExpandedType().toRegularClassSymbol() ?: return@forEach
+                                    if (superClass.isLibraryDeclaration
+                                        || superClass.isInterface
+                                        || !superClass.inSameModule()
+                                    ) return@forEach
+                                    val endNode = superClass.endInitializationIndex
+                                    endNode.buildNode()
+                                    endNode mustHappenBefore lastConstructedNode
+                                    superClass.postponeInitSubgraph()
+                                }
+                                // Find "relatively" static initialized declarations of the instance class,
+                                // i.e., the declarations which have the same value for each instance
+                                classSymbol.declarationSymbols.forEach {
+                                    when (it) {
+                                        is FirPropertySymbol -> PropertyIndex(it).buildSubgraphNode()
+                                        is FirAnonymousInitializerSymbol -> AnonymousInitializerIndex(it).buildSubgraphNode()
+                                    }
+                                }
+                            }
                         }
                         else -> {}
                     }
@@ -223,7 +251,7 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
     context(holder: SessionAndScopeSessionHolder)
     private fun DependencyGraphBuilder.buildFileEntity(file: FirFile) {
         val enclosingEntity = file.symbol.asFileEntity()
-        enclosingEntity.buildSubgraph {
+        enclosingEntity.buildClinitSubgraph {
             // Keep track of which node has been previously constructed as properties and functions reside in different branches
             file.declarations.forEach { declaration ->
                 when (declaration) {
@@ -238,7 +266,7 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
     }
 
     context(holder: SessionAndScopeSessionHolder)
-    private fun DependencySubgraphBuilder<EnclosingEntity.Object>.buildObjectSubgraphNodes() {
+    private fun ObjectSubgraphBuilder.buildObjectSubgraphNodes() {
         val objectSymbol = enclosingEntity.symbol
         initializeDirectSupertypes(objectSymbol)
         // Build all initialized declarations (declared or inherited)
@@ -259,12 +287,12 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
     }
 
     context(holder: SessionAndScopeSessionHolder)
-    private fun DependencyGraphBuilder.buildObjectEntity(enclosingEntity: EnclosingEntity.Object) = enclosingEntity.buildSubgraph {
+    private fun DependencyGraphBuilder.buildObjectEntity(enclosingEntity: EnclosingEntity.Object) = enclosingEntity.buildClinitSubgraph {
         buildObjectSubgraphNodes()
     }
 
     context(holder: SessionAndScopeSessionHolder)
-    private fun DependencySubgraphBuilder<EnclosingEntity.Class>.buildCompanionObjectEntity(companionObject: EnclosingEntity.Object) =
+    private fun ClassSubgraphBuilder.buildCompanionObjectEntity(companionObject: EnclosingEntity.Object) =
         companionObject.buildNestedSubgraph {
             buildObjectSubgraphNodes()
         }
@@ -272,7 +300,7 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
     context(holder: SessionAndScopeSessionHolder)
     private fun DependencyGraphBuilder.buildClassEntity(enclosingEntity: EnclosingEntity.Class) {
         val classSymbol = enclosingEntity.symbol
-        enclosingEntity.buildSubgraph {
+        enclosingEntity.buildClinitSubgraph {
             initializeDirectSupertypes(classSymbol)
             // Store the companion object declaration just in case it appears in the declaration list before enum entries, due to serialization
             var companionObjectEntity: EnclosingEntity.Object? = null
@@ -293,7 +321,7 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
     }
 
     context(holder: SessionAndScopeSessionHolder)
-    private fun DependencySubgraphBuilder<EnclosingEntity.Class>.buildEnumEntryEntity(enclosingEntity: EnclosingEntity.EnumEntry) {
+    private fun ClassSubgraphBuilder.buildEnumEntryEntity(enclosingEntity: EnclosingEntity.EnumEntry) {
         require(enclosingEntity.parentEnclosingEntity == this@buildEnumEntryEntity.enclosingEntity) { "The provided outer entity must match the enum entry's parent!" }
         enclosingEntity.buildNestedSubgraph {
             val symbol = enclosingEntity.symbol.initializerObjectSymbol ?: enclosingEntity.parentEnclosingEntity.symbol
@@ -309,14 +337,14 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
         }
     }
 
-    private fun DependencySubgraphBuilder<*>.buildProperty(propertySymbol: FirPropertySymbol) {
+    private fun StaticInitializationSubgraphBuilder<*, *>.buildProperty(propertySymbol: FirPropertySymbol) {
         if (!propertySymbol.isLocal && propertySymbol.isVal && propertySymbol.hasInitializer) {
-            StaticPropertyIndex(enclosingEntity, propertySymbol).buildSubgraphNode()
+            PropertyIndex(propertySymbol, enclosingEntity).buildSubgraphNode()
         }
     }
 
-    private fun DependencySubgraphBuilder<*>.buildAnonymousInitializer(initializerSymbol: FirAnonymousInitializerSymbol) =
-        StaticAnonymousInitializerIndex(enclosingEntity, initializerSymbol).buildSubgraphNode()
+    private fun StaticInitializationSubgraphBuilder<*, *>.buildAnonymousInitializer(initializerSymbol: FirAnonymousInitializerSymbol) =
+        AnonymousInitializerIndex(initializerSymbol, enclosingEntity).buildSubgraphNode()
 
     fun clear() {
         visitedFiles.clear()

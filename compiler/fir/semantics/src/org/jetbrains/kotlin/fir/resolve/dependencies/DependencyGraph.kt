@@ -17,10 +17,10 @@ import java.util.LinkedList
 import kotlin.collections.plusAssign
 import kotlin.sequences.forEach
 
-class DependencyGraph : FirSessionComponent, Set<DependencyNode> {
+class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<DependencyNode> {
 
     private val nodes: MutableSet<DependencyNode> = mutableSetOf()
-    private val entities: SetMultimap<EnclosingEntity<*>, StaticInitializationIndex> = setMultimapOf()
+    private val entities: SetMultimap<EnclosingEntity<*>, DependencyNodeIndex> = setMultimapOf()
     private val indices: MutableMap<DependencyNodeIndex, DependencyNode> = mutableMapOf()
 
     override val size: Int get() = nodes.size
@@ -35,16 +35,13 @@ class DependencyGraph : FirSessionComponent, Set<DependencyNode> {
 
     operator fun get(index: DependencyNodeIndex): DependencyNode? = indices[index]
 
-    operator fun get(enclosingEntity: EnclosingEntity<*>): Sequence<StaticInitializationIndex> = entities[enclosingEntity].asSequence()
+    operator fun get(enclosingEntity: EnclosingEntity<*>): Sequence<DependencyNodeIndex> = entities[enclosingEntity].asSequence()
 
     internal inline fun getOrCreate(index: DependencyNodeIndex, init: (UnitNode) -> Unit = {}): DependencyNode =
         this[index] ?: UnitNode(index).apply {
             nodes.add(this)
             indices[index] = this
-            enclosingEntity?.let {
-                val staticIndex = index as? StaticInitializationIndex ?: return@let
-                entities.put(it, staticIndex)
-            }
+            enclosingEntity?.let { entities.put(it, index) }
             init(this)
         }
 
@@ -59,7 +56,7 @@ class DependencyGraph : FirSessionComponent, Set<DependencyNode> {
             val visited = mutableSetOf<DependencyNode>()
             val sorted = stackOf<DependencyNode>()
             this@stronglyConnectedComponents.forEach { node ->
-                node.happensBeforeDescendants(visited, TraversalOrder.PostOrder) { it in this }
+                node.happensBeforeDescendants(visited, TraversalOrder.PostOrder) { it in this && !it.isComposite }
                     .forEach(sorted::push)
             }
             visited.clear()
@@ -69,7 +66,7 @@ class DependencyGraph : FirSessionComponent, Set<DependencyNode> {
                 val current = sorted.pop()
                 if (current !in visited) {
                     val component = mutableSetOf<DependencyNode>()
-                    current.happensBeforeAncestors(visited, TraversalOrder.PostOrder) { it in this }
+                    current.happensBeforeAncestors(visited, TraversalOrder.PostOrder) { it in this && !it.isComposite }
                         .forEach { component += it }
                     result += component
                 }
@@ -90,16 +87,31 @@ class DependencyGraph : FirSessionComponent, Set<DependencyNode> {
                             is CompositeNode -> it.index.indices
                         }
                     },
-                    entities = mutableMapOf<EnclosingEntity<*>, MutableSet<DependencyNodeIndex>>().also { entities ->
+                    entities = setMultimapOf<EnclosingEntity<*>, DependencyNodeIndex>().apply {
                         component.forEach { node ->
                             when (node) {
-                                is UnitNode -> node.enclosingEntity?.let { entities.getOrPut(it) { linkedSetOf() }.add(node.index) }
-                                is CompositeNode -> node.enclosingEntities.forEach {
-                                    entities.getOrPut(it) { linkedSetOf() }.addAll(node[it])
+                                is UnitNode -> node.enclosingEntity?.let { put(it, node.index) }
+                                is CompositeNode -> node.enclosingEntities.forEach { entity ->
+                                    node[entity].forEach { put(entity, it) }
                                 }
                             }
                         }
                     },
+                    subgraphFlow = setMultimapOf<DependencyNodeIndex, HappensBeforeEdge>().apply {
+                        component.forEach { node ->
+                            when (node) {
+                                is UnitNode -> node.happensAfterFlow.filter { it.holdsInAllExecutions }.forEach {
+                                    put(node.index, it)
+                                }
+                                is CompositeNode -> node.index.indices.forEach { index ->
+                                    node.subgraphFlowFrom(index).forEach { put(index, it) }
+                                    node.happensAfterFlow.filter { it.holdsInAllExecutions }.forEach { edge ->
+                                        put(index, MustHappenBefore(index, edge.to))
+                                    }
+                                }
+                            }
+                        }
+                    }
                 )
                 component.mergeFlow(condensed)
             }

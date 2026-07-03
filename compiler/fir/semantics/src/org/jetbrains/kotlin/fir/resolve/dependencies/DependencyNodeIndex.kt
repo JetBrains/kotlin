@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dependencies
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
@@ -44,7 +45,7 @@ import org.jetbrains.kotlin.name.FqName
 sealed interface InitializationCycleAccessResult {
     val poisonsInitializers: Boolean
 
-    data class UninitializedPropertyAccess(val node: StaticPropertyIndex) : InitializationCycleAccessResult {
+    data class UninitializedPropertyAccess(val node: PropertyIndex) : InitializationCycleAccessResult {
         override val poisonsInitializers: Boolean = true
     }
 
@@ -76,6 +77,18 @@ sealed interface InitializationCycleAccessResult {
 sealed interface DependencyNodeIndex {
     context(_: SessionHolder)
     val containingFile: FirFileSymbol? get() = null
+
+    companion object {
+        val DependencyNodeIndex.enclosingEntity: EnclosingEntity<*>?
+            get() = when (this) {
+                is BeginStaticInitializationIndex<*> -> enclosingEntity
+                is EndStaticInitializationIndex<*> -> enclosingEntity
+                is PropertyIndex -> enclosingEntity
+                is AnonymousInitializerIndex -> enclosingEntity
+                is FunctionIndex<*> -> lazilyInitialized
+                else -> null
+            }
+    }
 }
 
 sealed interface AccessibleIndex : DependencyNodeIndex {
@@ -85,18 +98,14 @@ sealed interface AccessibleIndex : DependencyNodeIndex {
     val accessAnalysisResult: InitializationCycleAccessResult get() = InitializationCycleAccessResult.Safe
 }
 
-sealed interface StaticInitializationIndex : DependencyNodeIndex {
-    val enclosingEntity: EnclosingEntity<*>
-}
-
 sealed interface DeclarationIndex<D : FirDeclaration> : DependencyNodeIndex {
     val symbol: FirBasedSymbol<D>
 }
 
-data class StaticPropertyIndex(
-    override val enclosingEntity: EnclosingEntity<*>,
-    override val symbol: FirPropertySymbol
-) : DeclarationIndex<FirProperty>, StaticInitializationIndex, AccessibleIndex {
+data class PropertyIndex(
+    override val symbol: FirPropertySymbol,
+    val enclosingEntity: EnclosingEntity<*>? = null,
+) : DeclarationIndex<FirProperty>, AccessibleIndex {
 
     val isConst: Boolean get() = symbol.isConst
 
@@ -104,7 +113,7 @@ data class StaticPropertyIndex(
 
     val hasFunctionType: Boolean = symbol.resolvedReturnType.isSomeFunctionType(symbol.moduleData.session)
 
-    override val lazilyInitialized: EnclosingEntity<*>? = enclosingEntity.parentEnclosingEntityOrSelf
+    override val lazilyInitialized: EnclosingEntity<*>? = enclosingEntity?.parentEnclosingEntityOrSelf
         .takeIf { !isConst && !symbol.isPrivate }
 
     context(_: EnclosingEntity<*>?, _: CompositeNode)
@@ -137,10 +146,10 @@ data class StaticPropertyIndex(
     override fun toString(): String = "${symbol.callableId?.classId?.relativeClassName ?: ""}.${symbol.name.asString()}"
 }
 
-data class StaticAnonymousInitializerIndex(
-    override val enclosingEntity: EnclosingEntity<*>,
-    override val symbol: FirAnonymousInitializerSymbol
-) : DeclarationIndex<FirAnonymousInitializer>, StaticInitializationIndex {
+data class AnonymousInitializerIndex(
+    override val symbol: FirAnonymousInitializerSymbol,
+    val enclosingEntity: EnclosingEntity<*>? = null,
+) : DeclarationIndex<FirAnonymousInitializer> {
 
     context(sessionHolder: SessionHolder)
     override val containingFile: FirFileSymbol? get() = sessionHolder.session.firProvider.getContainingFile(symbol.containingDeclarationSymbol)?.symbol
@@ -209,30 +218,28 @@ data class DefaultedFunctionIndex<D : FirFunction>(
     override val accessAnalysisResult: InitializationCycleAccessResult get() = functionIndex.accessAnalysisResult
 }
 
-sealed interface BeginInitializationIndex<D : FirDeclaration> : StaticInitializationIndex {
-    override val enclosingEntity: EnclosingEntity<D>
+sealed interface BeginStaticInitializationIndex<D : FirDeclaration> : DependencyNodeIndex {
+    val enclosingEntity: EnclosingEntity<D>
 
     context(sessionHolder: SessionHolder)
     override val containingFile: FirFileSymbol? get() = sessionHolder.session.firProvider.getContainingFile(enclosingEntity.symbol)?.symbol
-
 }
 
-data class EndInitializationIndex<D : FirDeclaration>(val beginIndex: BeginInitializationIndex<D>) : StaticInitializationIndex {
-    override val enclosingEntity: EnclosingEntity<*> get() = beginIndex.enclosingEntity
+data class EndStaticInitializationIndex<D : FirDeclaration>(val enclosingEntity: EnclosingEntity<D>) : DependencyNodeIndex {
 
     context(sessionHolder: SessionHolder)
-    override val containingFile: FirFileSymbol? get() = beginIndex.containingFile
+    override val containingFile: FirFileSymbol? get() = sessionHolder.session.firProvider.getContainingFile(enclosingEntity.symbol)?.symbol
 }
 
 data class TopLevelIndex(
     override val enclosingEntity: EnclosingEntity.File
-) : BeginInitializationIndex<FirFile> {
+) : BeginStaticInitializationIndex<FirFile> {
     override fun toString(): String = "<$enclosingEntity>"
 }
 
 data class QualifierIndex(
     override val enclosingEntity: EnclosingEntity.Object
-) : BeginInitializationIndex<FirRegularClass>, AccessibleIndex {
+) : BeginStaticInitializationIndex<FirRegularClass>, AccessibleIndex {
 
     override val lazilyInitialized: EnclosingEntity<*>? =
         enclosingEntity.takeIf { it.isNotPrivate }?.let { it.parentEnclosingEntity ?: it }
@@ -245,7 +252,7 @@ data class QualifierIndex(
 
 data class EnumEntryIndex(
     override val enclosingEntity: EnclosingEntity.EnumEntry
-) : BeginInitializationIndex<FirEnumEntry>, AccessibleIndex {
+) : BeginStaticInitializationIndex<FirEnumEntry>, AccessibleIndex {
 
     override val lazilyInitialized: EnclosingEntity<*>? = enclosingEntity.parentEnclosingEntity.takeIf { it.isNotPrivate }
 
@@ -256,8 +263,18 @@ data class EnumEntryIndex(
     override fun toString(): String = enclosingEntity.toString()
 }
 
-data class ClinitIndex(override val enclosingEntity: EnclosingEntity.Class) : BeginInitializationIndex<FirRegularClass> {
+data class ClinitIndex(override val enclosingEntity: EnclosingEntity.Class) : BeginStaticInitializationIndex<FirRegularClass> {
     override fun toString(): String = "$enclosingEntity.<clinit>"
+}
+
+data class BeginInstanceInitializationIndex<C : FirClass>(val classSymbol: FirClassSymbol<C>) : DependencyNodeIndex {
+
+    override fun toString(): String = "Begin ${classSymbol.classId.asString()}.<init>"
+}
+
+data class EndInstanceInitializationIndex<C : FirClass>(val classSymbol: FirClassSymbol<C>) : DependencyNodeIndex {
+
+    override fun toString(): String = "End ${classSymbol.classId.asString()}.<init>"
 }
 
 data class CompositeIndex(val indices: Set<DependencyNodeIndex>) : DependencyNodeIndex {

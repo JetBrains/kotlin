@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.dependencies.AnalysisResult
+import org.jetbrains.kotlin.fir.resolve.dependencies.AnonymousInitializerIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.ClinitIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyGraphAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity
@@ -21,9 +22,8 @@ import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.p
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnumEntryIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.FunctionIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.InitializationCycleAccessResult
+import org.jetbrains.kotlin.fir.resolve.dependencies.PropertyIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.QualifierIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.StaticAnonymousInitializerIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.StaticPropertyIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.dependencyGraphAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dependencies.logic.dependencyGraphResolver
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -43,8 +43,8 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
                     analyzer.checkDeadlocks(node.enclosingEntity)
                 }
                 is EnumEntryIndex -> analyzer.checkEnumEntry(node.enclosingEntity)
-                is StaticPropertyIndex -> analyzer.checkProperty(node)
-                is StaticAnonymousInitializerIndex -> analyzer.checkAccessesInInitializer(node)
+                is PropertyIndex -> analyzer.checkProperty(node)
+                is AnonymousInitializerIndex -> analyzer.checkAccessesInInitializer(node)
                 else -> {}
             }
         }
@@ -74,7 +74,7 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
                             reporter.reportOn(it, FirErrors.ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS, enumClass.name, node.enclosingEntity.symbol)
                         }
                     }
-                    is FunctionIndex<*>, is StaticPropertyIndex -> {
+                    is FunctionIndex<*>, is PropertyIndex -> {
                         val parent = type.entity.parentEnclosingEntityOrSelf
                         accesses.forEach {
                             reporter.reportOn(it, FirErrors.ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS, parent.name, node.symbol)
@@ -108,7 +108,7 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
         performAccessAnalysis(enclosingEntity.beginInitializationIndex).forEach { reportResultAndPossibleUninitialization(it) }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun DependencyGraphAnalyzer.checkAccessesInInitializer(initializerNode: StaticAnonymousInitializerIndex) =
+    private fun DependencyGraphAnalyzer.checkAccessesInInitializer(initializerNode: AnonymousInitializerIndex) =
         performAccessAnalysis(initializerNode).forEach { reportResultAndPossibleUninitialization(it) }
 
     @OptIn(SymbolInternals::class)
@@ -128,7 +128,7 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
 
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun DependencyGraphAnalyzer.checkProperty(propertyNode: StaticPropertyIndex) {
+    fun DependencyGraphAnalyzer.checkProperty(propertyNode: PropertyIndex) {
         val isUninitialized = performAccessAnalysis(propertyNode).fold(false) { isUninitialized, result ->
             isUninitialized || reportResultAndPossibleUninitialization(result)
         }
@@ -136,7 +136,7 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 propertyNode.symbol.fir.source,
                 FirErrors.POSSIBLY_UNINITIALIZED_PROPERTY,
-                mutuallyDependentEntities(propertyNode.enclosingEntity).mapTo(mutableListOf(), EnclosingEntity<*>::name)
+                mutuallyDependentEntities(propertyNode.enclosingEntity!!).mapTo(mutableListOf(), EnclosingEntity<*>::name)
             )
         }
     }

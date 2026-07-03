@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.getConstructedClass
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -88,11 +89,11 @@ import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.i
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.parentEnclosingEntityOrSelf
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnumEntryIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.FunctionIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.StaticInitializationIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.StaticPropertyIndex
+import org.jetbrains.kotlin.fir.resolve.dependencies.PropertyIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.collectEnumEntries
 import org.jetbrains.kotlin.fir.resolve.dependencies.containingFileSymbol
 import org.jetbrains.kotlin.fir.resolve.dependencies.dsl.DependencyGraphBuilder
+import org.jetbrains.kotlin.fir.resolve.dependencies.endInitializationIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.inSameModule
 import org.jetbrains.kotlin.fir.resolve.dependencies.isLibraryDeclaration
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirStub
@@ -109,7 +110,6 @@ import org.jetbrains.kotlin.fir.scopes.firOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
@@ -135,9 +135,11 @@ internal class CallSiteVisitor(
     private val graphBuilder: DependencyGraphBuilder,
 ) : SessionAndScopeSessionHolder, FirVisitor<Unit, CallSiteVisitor.CallSiteVisitContext>() {
 
-    data class CallSiteVisitContext(val accessingNode: DependencyNodeIndex, val materializeOnlyConstructorArguments: Boolean = false) {
-        val accessingEntity: EnclosingEntity<*>? = (accessingNode as? StaticInitializationIndex)?.enclosingEntity
-    }
+    data class CallSiteVisitContext(
+        val accessingNode: DependencyNodeIndex,
+        val accessingEntity: EnclosingEntity<*>? = null,
+        val materializeOnlyConstructorArguments: Boolean = false
+    )
 
     override fun visitElement(element: FirElement, data: CallSiteVisitContext): Unit = Unit
 
@@ -152,17 +154,7 @@ internal class CallSiteVisitor(
     context(context: CallSiteVisitContext)
     private fun FirElement.visitRecursively() = accept(this@CallSiteVisitor, context)
 
-    private val FirBasedSymbol<*>.inVisitedFile: Boolean get() = session.firProvider.getContainingFile(this)?.symbol in visitedFiles
-
-    private fun DependencyGraphBuilder.postponeFileEntity(accessedSymbol: FirCallableSymbol<*>) {
-        val enclosingEntity = session.firProvider.getContainingFile(accessedSymbol)?.symbol?.asFileEntity() ?: return
-        worklist.add(enclosingEntity.beginInitializationIndex)
-    }
-
-    private fun DependencyGraphBuilder.postponeFileEntity(accessedSymbol: FirClassSymbol<*>) {
-        val enclosingEntity = session.firProvider.getContainingFile(accessedSymbol)?.symbol?.asFileEntity() ?: return
-        worklist.add(enclosingEntity.beginInitializationIndex)
-    }
+    private val FirBasedSymbol<*>.inVisitedFiles: Boolean get() = session.firProvider.getContainingFile(this)?.symbol in visitedFiles
 
     context(context: CallSiteVisitContext, reference: FirExpression)
     private fun DependencyGraphBuilder.referenceNode(node: AccessibleIndex) = apply {
@@ -178,7 +170,7 @@ internal class CallSiteVisitor(
     context(context: CallSiteVisitContext, callSite: FirExpression)
     private fun DependencyGraphBuilder.callNode(node: FunctionIndex<*>) = apply {
         node.buildNode()
-        if (!node.symbol.inVisitedFile) postponeFileEntity(node.symbol)
+        if (!node.symbol.inVisitedFiles) node.symbol.postponeFileEntity()
         context.accessingNode calls node
         if (node !is FunctionIndex.Constructor) {
             val enclosingEntity = node.lazilyInitialized ?: return@apply
@@ -302,24 +294,13 @@ internal class CallSiteVisitor(
         constructor.visit(data) {
             if (constructor.isPrimary && !data.materializeOnlyConstructorArguments) {
                 constructor.symbol.getConstructedClass(session)?.asClassEntity()?.let { classEntity ->
-                    classEntity.endInitializationIndex mustHappenBefore data.accessingNode
+                    classEntity.endInitializationIndex mayHappenBefore data.accessingNode
                 }
             }
             constructor.delegatedConstructor?.visitRecursively()
             val materializeEverythingContext = CallSiteVisitContext(data.accessingNode)
             context(materializeEverythingContext) {
                 constructor.body?.visitRecursively()
-            }
-            if (!data.materializeOnlyConstructorArguments) {
-                context(materializeEverythingContext) {
-                    val constructedClass = constructor.symbol.getConstructedClass(session) ?: return@visit
-                    constructedClass.declarationSymbols.forEach {
-                        when (it) {
-                            is FirPropertySymbol -> it.fir.visitRecursively()
-                            is FirAnonymousInitializerSymbol -> it.fir.visitRecursively()
-                        }
-                    }
-                }
             }
         }
 
@@ -346,6 +327,7 @@ internal class CallSiteVisitor(
     private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> DependencyGraphBuilder.accessNode(
         symbol: S,
         crossinline resolveAccess: context(CallSiteVisitContext, FirQualifiedAccessExpression) DependencyGraphBuilder.(S, EnclosingEntity<*>?) -> Unit,
+        crossinline resolveInstanceAccess: context(CallSiteVisitContext, FirQualifiedAccessExpression) DependencyGraphBuilder.(S) -> Unit,
         processCallables: FirScope.(Name, (S) -> Unit) -> Unit,
         crossinline checkOverride: FirOverrideChecker.(S, S) -> Boolean
     ) {
@@ -395,13 +377,27 @@ internal class CallSiteVisitor(
                         if (!foundOverride) resolveAccess(symbol, enumEntity)
                     } ?: run {
                         receiver.visitRecursively()
-                        resolveAccess(symbol, null)
+                        resolveInstanceAccess(symbol)
                     }
                 }
                 else -> return
             }
         } ?: symbol.containingFileSymbol?.asFileEntity()?.let { resolveAccess(symbol, it) }
     }
+
+    context(context: CallSiteVisitContext, access: FirQualifiedAccessExpression)
+    private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> DependencyGraphBuilder.accessNode(
+        symbol: S,
+        crossinline resolveAccess: context(CallSiteVisitContext, FirQualifiedAccessExpression) DependencyGraphBuilder.(S, EnclosingEntity<*>?) -> Unit,
+        processCallables: FirScope.(Name, (S) -> Unit) -> Unit,
+        crossinline checkOverride: FirOverrideChecker.(S, S) -> Boolean
+    ) = accessNode(
+        symbol = symbol,
+        resolveAccess = resolveAccess,
+        resolveInstanceAccess = { resolveAccess(it, null) },
+        processCallables = processCallables,
+        checkOverride = checkOverride
+    )
 
     override fun visitPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression,
@@ -411,23 +407,43 @@ internal class CallSiteVisitor(
             // Case 1: Accessing an enum entry
             propertyAccessExpression.calleeReference.toResolvedEnumEntrySymbol(discardErrorReference = true)?.let {
                 referenceNode(EnumEntryIndex(it.asEnumEntryEntity()))
-                if (!it.inVisitedFile) postponeFileEntity(it)
+                if (!it.inVisitedFiles) it.postponeFileEntity()
             }
             // Case 2: Accessing a property
             propertyAccessExpression.calleeReference.toResolvedPropertySymbol(discardErrorReference = true)?.let { property ->
+                if (property.isVar) return@visit
                 accessNode(
                     symbol = property,
                     resolveAccess = resolveAccess@{ propertySymbol, enclosingEntity ->
                         val receiverEntity = enclosingEntity ?: return@resolveAccess
-                        val propertyNode = StaticPropertyIndex(receiverEntity, propertySymbol)
+                        val propertyNode = PropertyIndex(propertySymbol, receiverEntity)
                         // If the property has an initializer and no getter, create a reference edge to it
                         if (!propertyNode.isConst && propertyNode.hasInitializer && propertyNode.getter == null) {
                             referenceNode(propertyNode)
-                            if (!propertySymbol.inVisitedFile) postponeFileEntity(propertySymbol)
+                            if (!propertySymbol.inVisitedFiles) propertySymbol.postponeFileEntity()
                         }
                         // If the property has a getter, create a call edge to it
                         val propertyGetter = propertyNode.getter ?: return@resolveAccess
                         callNode(propertyGetter)
+                    },
+                    resolveInstanceAccess = resolveInstanceAccess@{ propertySymbol ->
+                        if (propertySymbol.isConst
+                            || !propertySymbol.hasInitializer
+                            || propertySymbol.resolvedReturnType.isSomeFunctionType(session)
+                        ) return@resolveInstanceAccess
+                        val constructedClass =
+                            propertySymbol.containingClassLookupTag()?.toClassSymbol(session) ?: return@resolveInstanceAccess
+                        constructedClass.postponeInitSubgraph()
+                        val propertyNode = PropertyIndex(propertySymbol)
+                        val endNode = constructedClass.endInitializationIndex
+                        endNode.buildNode()
+                        propertyNode.getter?.let {
+                            callNode(it)
+                            endNode mayHappenBefore it
+                        } ?: run {
+                            referenceNode(propertyNode)
+                            endNode mayHappenBefore data.accessingNode
+                        }
                     },
                     processCallables = { name, processor ->
                         processPropertiesByName(name) { symbol ->
@@ -453,7 +469,7 @@ internal class CallSiteVisitor(
                     else -> symbol.asObjectEntity()
                 } ?: return@visit
                 if (objectEntity.isNotPrivate) referenceNode(objectEntity.beginInitializationIndex)
-                if (!objectEntity.symbol.inVisitedFile) postponeFileEntity(objectEntity.symbol)
+                if (!objectEntity.symbol.inVisitedFiles) objectEntity.symbol.postponeFileEntity()
             }
         }
 
@@ -483,7 +499,7 @@ internal class CallSiteVisitor(
         argumentMapping.forEach { [symbol, expressions] ->
             expressions.forEach { expression ->
                 if (expression is FirAnonymousFunctionExpression) {
-                    if (symbol in callsInPlaceParameters && expression.anonymousFunction.isLambda) {
+                    if (symbol in callsInPlaceParameters) {
                         callNode(FunctionIndex.Closure(expression.anonymousFunction.symbol))
                     }
                 } else {
@@ -510,16 +526,29 @@ internal class CallSiteVisitor(
                 if (namedFunction.isLibraryDeclaration || !namedFunction.inSameModule()) return@visit
                 if (namedFunction.callableId.isFunctionOrSuspendFunctionInvoke()) {
                     functionCall.propertyAccessFromReceiver(namedFunction)?.let { [propertySymbol, propertyAccess] ->
-                        if (!propertySymbol.resolvedReturnType.isSomeFunctionType(session)) return@let
+                        if (propertySymbol.isVar || !propertySymbol.resolvedReturnType.isSomeFunctionType(session)) return@let
+                        // Property getters should not have any default parameters (just in case)
                         if (defaultParameters.isNotEmpty()) return@visit
                         context(propertyAccess) {
                             accessNode(
                                 symbol = propertySymbol,
                                 resolveAccess = resolveAccess@{ propertySymbol, enclosingEntity ->
                                     val receiverEntity = enclosingEntity ?: return@resolveAccess
-                                    val propertyNode = StaticPropertyIndex(receiverEntity, propertySymbol)
+                                    val propertyNode = PropertyIndex(propertySymbol, receiverEntity)
                                     val closure = propertyNode.initializedClosure ?: return@resolveAccess
                                     callNode(closure)
+                                },
+                                resolveInstanceAccess = resolveInstanceAccess@{ propertySymbol ->
+                                    if (!propertySymbol.hasInitializer) return@resolveInstanceAccess
+                                    val constructedClass = propertySymbol.containingClassLookupTag()
+                                        ?.toClassSymbol() ?: return@resolveInstanceAccess
+                                    constructedClass.postponeInitSubgraph()
+                                    val endNode = constructedClass.endInitializationIndex
+                                    endNode.buildNode()
+                                    val propertyNode = PropertyIndex(propertySymbol)
+                                    val closure = propertyNode.initializedClosure ?: return@resolveInstanceAccess
+                                    callNode(closure)
+                                    endNode mayHappenBefore closure
                                 },
                                 processCallables = { name, processor ->
                                     processPropertiesByName(name) { symbol ->
@@ -537,6 +566,16 @@ internal class CallSiteVisitor(
                     symbol = namedFunction,
                     resolveAccess = { functionSymbol, receiverEntity ->
                         callNode(FunctionIndex.MemberFunction(functionSymbol, receiverEntity).defaultedOrSelf(defaultParameters))
+                    },
+                    resolveInstanceAccess = resolveInstanceAccess@{ functionSymbol ->
+                        val constructedClass =
+                            functionSymbol.containingClassLookupTag()?.toClassSymbol(session) ?: return@resolveInstanceAccess
+                        constructedClass.postponeInitSubgraph()
+                        val endNode = constructedClass.endInitializationIndex
+                        endNode.buildNode()
+                        val functionNode = FunctionIndex.MemberFunction(functionSymbol).defaultedOrSelf(defaultParameters)
+                        callNode(functionNode)
+                        endNode mayHappenBefore functionNode
                     },
                     processCallables = FirScope::processFunctionsByName,
                     checkOverride = { overrideCandidate, baseDeclaration ->
