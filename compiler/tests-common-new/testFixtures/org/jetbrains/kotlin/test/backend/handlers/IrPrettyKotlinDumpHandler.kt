@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KT_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 
 /**
  * Uses [dumpKotlinLike] to compare the human-readable representation of an IR tree with
@@ -62,25 +62,12 @@ class IrPrettyKotlinDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val moduleStructure = testServices.moduleStructure
-        val actualDump = dumper.generateResultingDump()
-        val baseGoldenFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(DUMP_EXTENSION)
-
-        val hasTargetSpecificDifferenceDirective = validateTargetSpecificDumpFile(
-            testServices, assertions, baseGoldenFile,
-            baseDumpExtension = DUMP_EXTENSION,
-            actualDump,
-            isKotlinLikeDump = true,
-        )
-
-        if (!hasTargetSpecificDifferenceDirective) {
-            if (dumper.isEmpty()) {
-                assertions.assertFileDoesntExist(baseGoldenFile, DUMP_KT_IR)
-            } else {
-                assertions.assertEqualsToFile(baseGoldenFile, actualDump)
-            }
-        }
+        // When target backend is specified in DUMP_IR_DIFFERENCE test directive, the actual KT-like dump is expected to differ from the golden data
+        // KT-like dumps are not that very useful, so it's simpler just to skip this handler to not create unnecessary `*.kt.<backend>.patch` files
+        if (testServices.getMatchedBackendFromDirective(CodegenTestDirectives.DUMP_IR_DIFFERENCE) != null)
+            return
+        val actualDump = if (dumper.isEmpty()) null else dumper.generateResultingDump()
+        assertEqualsToDump(DUMP_EXTENSION, actualDump)
     }
 }
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -171,12 +172,16 @@ private fun TargetBackend.compatibleBackendNamesIncludingSelf(): List<String> {
     return names
 }
 
-internal fun getTargetSpecificDumpExtension(testServices: TestServices, baseDumpExtension: String): String? {
-    val targetBackend = testServices.defaultsProvider.targetBackend ?: return null
-    val dumpIrDifferenceBackends = testServices.moduleStructure.allDirectives[CodegenTestDirectives.DUMP_IR_DIFFERENCE]
-    val matchedBackend = dumpIrDifferenceBackends
+internal fun TestServices.getMatchedBackendFromDirective(directive: ValueDirective<TargetBackend>): TargetBackend? {
+    val targetBackend = defaultsProvider.targetBackend ?: return null
+    val dumpIrDifferenceBackends = moduleStructure.allDirectives[directive]
+    return dumpIrDifferenceBackends
         .filter { targetBackend.isTransitivelyCompatibleWith(it) }
         .minWithOrNull(compareBy<TargetBackend>({ targetBackend.compatibilityDistanceTo(it) }, { it.name.lowercase(Locale.US) }))
+}
+
+internal fun getTargetSpecificDumpExtension(testServices: TestServices, baseDumpExtension: String): String? {
+    val matchedBackend = testServices.getMatchedBackendFromDirective(CodegenTestDirectives.DUMP_IR_DIFFERENCE)
         ?: return null
     val extensionPrefix = baseDumpExtension.removeSuffix(".txt")
     return "$extensionPrefix.${matchedBackend.name.lowercase()}.patch"
