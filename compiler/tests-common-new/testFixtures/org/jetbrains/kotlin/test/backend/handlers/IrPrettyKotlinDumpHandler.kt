@@ -67,15 +67,19 @@ class IrPrettyKotlinDumpHandler(
         val baseGoldenFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(DUMP_EXTENSION)
 
-        validateTargetSpecificDumpFile(
-            testServices, baseGoldenFile,
+        val hasTargetSpecificDifferenceDirective = validateTargetSpecificDumpFile(
+            testServices, assertions, baseGoldenFile,
             baseDumpExtension = DUMP_EXTENSION,
             actualDump,
+            isKotlinLikeDump = true,
         )
-        if (dumper.isEmpty()) {
-            assertions.assertFileDoesntExist(baseGoldenFile, DUMP_KT_IR)
-        } else {
-            assertions.assertEqualsToFile(baseGoldenFile, actualDump)
+
+        if (!hasTargetSpecificDifferenceDirective) {
+            if (dumper.isEmpty()) {
+                assertions.assertFileDoesntExist(baseGoldenFile, DUMP_KT_IR)
+            } else {
+                assertions.assertEqualsToFile(baseGoldenFile, actualDump)
+            }
         }
     }
 }

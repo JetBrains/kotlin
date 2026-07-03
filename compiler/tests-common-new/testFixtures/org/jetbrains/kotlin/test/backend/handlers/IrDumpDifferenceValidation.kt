@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import com.github.difflib.DiffUtils
+import com.github.difflib.UnifiedDiffUtils
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.checkTestInfrastructure
@@ -33,56 +35,130 @@ import java.util.Locale
  */
 internal fun validateTargetSpecificDumpFile(
     testServices: TestServices,
+    assertions: Assertions,
     mainExpectedFile: File,
     baseDumpExtension: String,
     actualDump: String,
-) {
-    val targetBackend = testServices.defaultsProvider.targetBackend ?: return
+    isKotlinLikeDump: Boolean,
+): Boolean {
+    val targetBackend = testServices.defaultsProvider.targetBackend ?: return false
     val targetBackendName = targetBackend.name.lowercase()
     val targetBackendDirectiveName = targetBackend.name
     val moduleStructure = testServices.moduleStructure
+    val dumpDescription = if (isKotlinLikeDump) "Kotlin-like IR dump" else "IR dump"
 
     val targetSpecificExtension = getTargetSpecificDumpExtension(testServices, baseDumpExtension)
     if (targetSpecificExtension != null) {
+        val normalizedActualDump = actualDump.trimEnd()
         val targetSpecificFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(targetSpecificExtension)
-        val normalizedActualDump = actualDump.trimEnd()
-        val mainDump = mainExpectedFile.takeIf { it.exists() }?.readText()?.trimEnd()
-        if (targetSpecificFile.exists()) {
-            checkTestInfrastructure(normalizedActualDump.isNotEmpty()) {
+
+        if (normalizedActualDump.isEmpty()) {
+            checkTestInfrastructure(!targetSpecificFile.exists()) {
                 "DUMP_IR_DIFFERENCE directive specifies $targetBackendDirectiveName but there is no actual dump"
             }
+            return true
+        }
 
-            val targetSpecificDump = targetSpecificFile.readText().trimEnd()
-            if (targetSpecificDump == mainDump) {
+        checkTestInfrastructure(mainExpectedFile.exists()) {
+            "DUMP_IR_DIFFERENCE directive specifies $targetBackendDirectiveName but neither main dump nor target-specific dump exists"
+        }
+
+        val mainDump = mainExpectedFile.readText().trimEnd()
+        val expectedPatch = buildPatch(
+            baseText = mainDump,
+            targetText = normalizedActualDump,
+            targetBackendName = targetBackendName,
+            mainFileName = mainExpectedFile.name,
+        )
+        if (expectedPatch.isEmpty()) {
+            if (targetSpecificFile.exists()) {
                 checkTestInfrastructure(targetSpecificFile.delete()) {
-                    "Unable to remove redundant target-specific IR dump file: ${targetSpecificFile.absolutePath}"
+                    "Unable to remove redundant target-specific $dumpDescription file: ${targetSpecificFile.absolutePath}"
                 }
-                testInfraError("There are no IR dump differences. Please remove $targetBackendName from DUMP_IR_DIFFERENCE directive")
             }
-        } else {
-            if (normalizedActualDump.isNotEmpty()) {
-                checkTestInfrastructure (mainExpectedFile.exists()) {
-                    "DUMP_IR_DIFFERENCE directive specifies $targetBackendDirectiveName but neither main dump nor target-specific dump exists"
-                }
-                checkTestInfrastructure(normalizedActualDump != mainDump) {
-                    "DUMP_IR_DIFFERENCE directive is specified, but there are no differences between main and target-specific dumps: ${mainExpectedFile.absolutePath}"
-                }
+            if (isKotlinLikeDump) {
+                // Kotlin-like dumps show symbol's simple names, while text IR dumps show fqnames.
+                // When a used symbol's package is changed -> `*ir.<backend>.patch` is not empty, while `*kt.<backend>.patch` may legitimately be empty.
+                return true
+            }
+            assertions.fail {
+                "There are no $dumpDescription differences. Please remove $targetBackendDirectiveName from DUMP_IR_DIFFERENCE directive"
             }
         }
+
+        assertions.assertEqualsToFile(targetSpecificFile, expectedPatch)
+        // Sanity check: patch application must result in the actual dump
+        checkTestInfrastructure(applyPatch(mainDump, targetSpecificFile) == normalizedActualDump) {
+            "Unable to reconstruct target-specific dump from patch: ${targetSpecificFile.absolutePath}"
+        }
+        return true
     } else {
         val extensionPrefix = baseDumpExtension.removeSuffix(".txt")
         val baseTestFile = moduleStructure.originalTestDataFiles.first()
         val compatibleBackendNames = targetBackend.compatibleBackendNamesIncludingSelf()
         val possibleTargetFiles = compatibleBackendNames.map { backendName ->
-            baseTestFile.withExtension("$extensionPrefix.$backendName.txt")
+            baseTestFile.withExtension("$extensionPrefix.$backendName.patch")
         }
         val existingTargetSpecificFile = possibleTargetFiles.firstOrNull { it.exists() }
 
         checkTestInfrastructure (existingTargetSpecificFile == null) {
-            "Target-specific IR dump file detected but no DUMP_IR_DIFFERENCE directive specified for $targetBackendDirectiveName: $existingTargetSpecificFile"
+            "Target-specific $dumpDescription file detected but no DUMP_IR_DIFFERENCE directive specified for $targetBackendDirectiveName: $existingTargetSpecificFile"
         }
+        return false
     }
+}
+
+private const val UNIFIED_CONTEXT_LINES = 3
+private const val ORIGINAL_FILE_LABEL_PREFIX = "a/"
+private const val UPDATED_FILE_LABEL_PREFIX = "b/"
+
+private fun buildPatch(baseText: String, targetText: String, targetBackendName: String, mainFileName: String): String {
+    val baseLines = baseText.lines()
+    val targetLines = targetText.lines()
+    if (baseLines == targetLines) return ""
+
+    val patch = DiffUtils.diff(baseLines, targetLines)
+    val updatedFileName = mainFileName.insertBackendBeforeTxtExtension(targetBackendName)
+    val unifiedDiff = UnifiedDiffUtils.generateUnifiedDiff(
+        "$ORIGINAL_FILE_LABEL_PREFIX$mainFileName",
+        "$UPDATED_FILE_LABEL_PREFIX$updatedFileName",
+        baseLines,
+        patch,
+        UNIFIED_CONTEXT_LINES,
+    )
+    return unifiedDiff
+        .joinToString(System.lineSeparator())
+        .trimEnd()
+}
+
+private fun String.insertBackendBeforeTxtExtension(targetBackendName: String): String {
+    val txtSuffix = ".txt"
+    return if (endsWith(txtSuffix)) {
+        removeSuffix(txtSuffix) + "." + targetBackendName + txtSuffix
+    } else {
+        "$this.$targetBackendName"
+    }
+}
+
+private fun applyPatch(baseText: String, patchFile: File): String {
+    val patchText = patchFile.readText()
+    val lines = patchText.lines().dropLastWhile { it.isEmpty() }
+    checkTestInfrastructure(lines.size >= 3) {
+        "Unknown target-specific patch format: ${patchFile.absolutePath}"
+    }
+    checkTestInfrastructure(lines[0].startsWith("--- ") && lines[1].startsWith("+++ ")) {
+        "Unknown target-specific patch format: ${patchFile.absolutePath}"
+    }
+
+    val patchedLines = try {
+        val patch = UnifiedDiffUtils.parseUnifiedDiff(lines)
+        DiffUtils.patch(baseText.lines(), patch)
+    } catch (e: Throwable) {
+        testInfraError("Unknown target-specific patch format in ${patchFile.absolutePath}: $e")
+    }
+
+    return patchedLines.joinToString(System.lineSeparator()).trimEnd()
 }
 
 private fun TargetBackend.compatibleBackendNamesIncludingSelf(): List<String> {
@@ -103,7 +179,7 @@ internal fun getTargetSpecificDumpExtension(testServices: TestServices, baseDump
         .minWithOrNull(compareBy<TargetBackend>({ targetBackend.compatibilityDistanceTo(it) }, { it.name.lowercase(Locale.US) }))
         ?: return null
     val extensionPrefix = baseDumpExtension.removeSuffix(".txt")
-    return "$extensionPrefix.${matchedBackend.name.lowercase()}.txt"
+    return "$extensionPrefix.${matchedBackend.name.lowercase()}.patch"
 }
 
 private fun TargetBackend.compatibilityDistanceTo(other: TargetBackend): Int {

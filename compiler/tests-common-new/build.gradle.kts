@@ -32,6 +32,7 @@ dependencies {
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(libs.javaDiffUtils)
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)

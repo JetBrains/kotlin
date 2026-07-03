@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPath
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransitive
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
@@ -164,7 +165,7 @@ class IrTextDumpHandler(
 
         @OptIn(InternalSymbolFinderAPI::class)
         return irBuiltIns.symbolFinder.findClass(classId)?.owner
-            ?: assertions.fail { "Can't find a class in external dependencies: $externalClassId" }
+            ?: testInfraError( "Can't find a class in external dependencies: $externalClassId" )
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
@@ -174,13 +175,16 @@ class IrTextDumpHandler(
         val baseGoldenFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(baseDumpExtension)
 
-        validateTargetSpecificDumpFile(
-            testServices, baseGoldenFile,
+        val hasTargetSpecificDifferenceDirective = validateTargetSpecificDumpFile(
+            testServices, assertions, baseGoldenFile,
             baseDumpExtension = baseDumpExtension,
             actualDump,
+            isKotlinLikeDump = false,
         )
 
-        checkOneExpectedFile(baseGoldenFile, actualDump)
+        if (!hasTargetSpecificDifferenceDirective) {
+            checkOneExpectedFile(baseGoldenFile, actualDump)
+        }
     }
 
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {

@@ -1,0 +1,30 @@
+--- a/kt48806.ir.txt
++++ b/kt48806.ir.jvm_ir.txt
+@@ -7,9 +7,9 @@
+           TRY type=kotlin.Int
+             try: BLOCK type=kotlin.Nothing origin=null
+               THROW type=kotlin.Nothing
+-                CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.RuntimeException' type=kotlin.RuntimeException origin=null
+-            CATCH parameter=val e: kotlin.Exception declared in <root>.A.test_1
+-              VAR CATCH_PARAMETER name:e type:kotlin.Exception [val]
++                CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.RuntimeException' type=java.lang.RuntimeException origin=null
++            CATCH parameter=val e: java.lang.Exception declared in <root>.A.test_1
++              VAR CATCH_PARAMETER name:e type:java.lang.Exception [val]
+               BLOCK type=kotlin.Int origin=null
+                 CONST Int type=kotlin.Int value=1
+       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_1> visibility:public modality:FINAL returnType:kotlin.Int
+@@ -25,11 +25,11 @@
+           TRY type=kotlin.Int
+             try: BLOCK type=kotlin.Int origin=null
+               CONST Int type=kotlin.Int value=1
+-            CATCH parameter=val e: kotlin.Exception declared in <root>.A.test_2
+-              VAR CATCH_PARAMETER name:e type:kotlin.Exception [val]
++            CATCH parameter=val e: java.lang.Exception declared in <root>.A.test_2
++              VAR CATCH_PARAMETER name:e type:java.lang.Exception [val]
+               BLOCK type=kotlin.Nothing origin=null
+                 THROW type=kotlin.Nothing
+-                  CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.RuntimeException' type=kotlin.RuntimeException origin=null
++                  CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.RuntimeException' type=java.lang.RuntimeException origin=null
+       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_2> visibility:public modality:FINAL returnType:kotlin.Int
+         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+         correspondingProperty: PROPERTY name:test_2 visibility:public modality:FINAL [val]
