@@ -1,0 +1,38 @@
+# JSR-223 / stateless remote compilation — direct on-daemon `ScriptEngine` (no BTA) — 2026-07-03
+
+## Overview
+
+Per explicit direction: the BTA-backed `KotlinJsr223BtaScriptEngineImpl` (2026-07-02g) is difficult to embed into IntelliJ, where this JSR-223 functionality needs to be available. This iteration adds a **direct on-daemon** variant that talks to the Kotlin compile daemon straight through the daemon-client API (`CompilerId` / `KotlinCompilerRunnerUtils.newDaemonConnection` / `CompileService.compile`) instead of going through the Build Tools API, riding the daemon's regular compile path (now available via stateless snippet compilation) rather than adding any new daemon RMI interface.
+
+## Workstream / Issue
+
+JSR-223 K2 bindings (Option D) / stateless remote REPL compilation (Q5, transport). New deliverable built as a portable **example**, not a fix.
+
+## Decisions made up front
+
+1. **Module placement**: `libraries/examples/scripting/jsr223-daemon` (project `:examples:scripting-jsr223-daemon`), per explicit instruction — unlike `jsr223-bta` (`libraries/scripting/*`), this is meant to be copied wholesale into the IntelliJ repo later, so it lives under `examples`.
+2. **No daemon interface changes**: the snippet rides a plain `CompileService.compile(...)` call switched into snippet mode by the existing scripting-plugin CLI options (`repl-snippet-mode` / `repl-snippet-name` / `repl-snippet-prior-artifact` / `repl-snippet-artifact-output`) — exactly the shape a CLI invocation already produces; only the transport (direct daemon-client call vs. BTA) differs from the K2/BTA implementations.
+3. **Shape mirrors the K2/BTA implementation**: same `AbstractScriptEngine` + `Compilable` shape, same deferred-bindings scope (`$$eval` invoked with no arguments), same "not registered as a `javax.script.ScriptEngineFactory` service" choice, same artifact-replay reimplementation pattern (`DaemonReplSnippetSession`, analogous to `BtaReplSnippetSession`).
+
+## What was built
+
+- **`DaemonReplSnippetCompiler`** (`.../daemon/DaemonReplSnippetCompiler.kt`): builds the CLI-argument-shaped snippet-mode invocation (`-expression` + `plugin:kotlin.scripting:repl-snippet-*` options + prior-artifact/output files), connects to (or spawns) the compile daemon via `CompilerId.makeCompilerId(compilerClasspath)` + `KotlinCompilerRunnerUtils.newDaemonConnection(...)`, and drives a single non-incremental `CompileService.compile(...)` call with a small local no-op `CompilationResults` RMI stub (the real one is `internal`) and a `CollectingMessageCollector` that captures diagnostics as plain strings (used both for compile-failure reporting and for surfacing the underlying cause when the daemon connection itself fails).
+- **`DaemonReplSnippetSession`** (`.../daemon/DaemonReplSnippetSession.kt`): decodes the wire artifact via the public `SnippetArtifactCodec`/`decodeHeader()`, defines its classes incrementally onto one shared classloader, reflectively invokes `$$eval` (hardcoded string literal, per `AGENT_INSTRUCTIONS.md`'s "don't rename/shadow" guidance), and returns the captured result field (or `null`). Essentially the same shape as `BtaReplSnippetSession`, duplicated rather than shared since the decode helpers it needs are `internal` to `:kotlin-scripting-compiler`.
+- **`KotlinJsr223DaemonScriptEngineImpl` / `KotlinJsr223DaemonCompiledScript`** (`.../daemon/KotlinJsr223DaemonScriptEngineImpl.kt`): `AbstractScriptEngine` + `Compilable`; each `eval`/`compile` call compiles the snippet against all prior artifacts (accumulated per engine instance == per REPL session) and either runs it immediately or returns a `CompiledScript` wrapping the artifact for a later `eval()`.
+- **`KotlinJsr223DaemonScriptEngineFactory`** (`.../daemon/KotlinJsr223DaemonScriptEngineFactory.kt`): the `KotlinJsr223JvmScriptEngineFactoryBase` subclass; takes the daemon's own compiler classpath, an additional (snippet-compile) classpath, daemon run/log dirs, and a shutdown-delay knob. Not registered as a `javax.script.ScriptEngineFactory` service.
+- **`KotlinJsr223DaemonScriptEngineTest`** (`libraries/examples/scripting/jsr223-daemon/test/.../daemon/test/...`): 4 tests mirroring `KotlinJsr223BtaScriptEngineTest` exactly (simple eval, cross-snippet reference, separate compile-then-eval, declaration-only snippet → `null`), against a **real** compile daemon spawned by the direct daemon-client transport.
+- **`build.gradle.kts`**: `api(:kotlin-scripting-jvm-host-unshaded)` + `implementation(:kotlin-compiler-runner-unshaded, :kotlin-daemon-client, :daemon-common, :kotlin-scripting-compiler)`; a dedicated `daemonCompilerClasspath` configuration (`:kotlin-compiler` + `:kotlin-daemon` + `:kotlin-scripting-compiler`) resolved and handed to the test JVM via a system property, so the daemon that gets spawned during tests is self-contained and plugin-discoverable without any shaded/relocated jar synthesis (unlike `jsr223-bta`, which needs its BTA impl's shaded jar).
+- Registered the module in `settings.gradle.kts` (include + `projectDir`) and added it to the `notCacheableTestProjects` exemption list in `repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/common-configuration.gradle.kts`, and added `-Xallow-kotlin-package` to the module's `KotlinJvmCompile` tasks (package is `kotlin.script.experimental.jvmhost.jsr223.daemon`, mirroring the K2/BTA sibling packages).
+
+## Bugs hit and fixed along the way
+
+1. **Daemon fails to start — `ClassNotFoundException: org.jetbrains.kotlin.daemon.KotlinCompileDaemon`**: the plain `:kotlin-compiler` project jar does **not** bundle the daemon's own main class or `daemon-common`/`kotlin-daemon-client` — in `prepare/compiler/build.gradle.kts`, `:kotlin-daemon`/`:kotlin-daemon-client` are listed only under `distLibraryProjects` (copied as *separate* jars into `dist/kotlinc/lib/`), not `fatJarContents` (what actually gets baked into the compiler jar). Root-caused by pointing the daemon's log directory at a fixed, inspectable path (the default silently produced no log file at all, meaning the JVM never even started) and by having the connection-failure path surface the `CollectingMessageCollector`'s captured diagnostics instead of a bare `IllegalStateException`. Fixed by adding `project(":kotlin-daemon")` to the `daemonCompilerClasspath` configuration.
+
+## Verification
+
+- `:examples:scripting-jsr223-daemon:test`: **4/4 pass, 0 failures** (`testSimpleEval`, `testCrossSnippetReference`, `testCompileThenEvalSeparately`, `testDeclarationOnlySnippetEvaluatesToNull`), against a real, isolated compile daemon spawned directly (no BTA layer involved).
+
+## Key Learnings
+
+- A project's "compiler jar" and its "daemon-launchable classpath" are not the same thing in this repo: `:kotlin-compiler`'s own artifact never bundles `org.jetbrains.kotlin.daemon.KotlinCompileDaemon` — that only ships as the separate `:kotlin-daemon` (+ `:kotlin-daemon-client`) dist jars. Any direct (non-BTA, non-`dist/kotlinc`) daemon-client integration needs to assemble its own daemon-launch classpath explicitly from project jars — the BTA path sidesteps this because `kotlin-build-tools-impl`'s shaded jar already embeds everything.
+- Silently-null `KotlinCompilerRunnerUtils.newDaemonConnection(...)` results are best debugged by (a) pointing `DaemonLogOptions.logsPath` at a fixed, inspectable directory to see whether the daemon JVM started at all, and (b) capturing the `MessageCollector` passed into the call and rendering its collected messages into the thrown exception — `newDaemonConnection` always reports through that collector on a `null` result, regardless of the `isDebugEnabled` flag.
