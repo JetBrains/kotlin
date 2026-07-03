@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.powerassert.diagram.SourceFile
 import org.jetbrains.kotlin.powerassert.diagram.irExplain
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.compiler.plugin.compileReplSnippet
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptCompilationConfiguration
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -214,6 +216,25 @@ class ScriptingIrExplainGenerationExtension : IrGenerationExtension {
 class ScriptingProcessSourcesBeforeCompilingExtension : ProcessSourcesBeforeCompilingExtension {
 
     override fun processSources(sources: Collection<KtFile>, configuration: CompilerConfiguration): Collection<KtFile> {
+        // Stateless K2 REPL snippet compilation (migration step 3, Q5d), regular-compile-pipeline
+        // entry: driving the snippet through the *regular* JVM source-root pipeline (a plain
+        // source-root `.kts` file, allowed in by `-Xallow-any-scripts-in-source-roots`) rather than
+        // through `-script`/`-expression` (the `ScriptEvaluationExtension` entry, see
+        // `compileReplSnippet`'s other call site in `AbstractScriptEvaluationExtension.kt`) makes it
+        // *structurally* impossible for the source to ever reach `ScriptEvaluationExtension.eval()`'s
+        // `doEval()` fallback -- there simply is no evaluation code path on this pipeline, so a
+        // snippet that throws at runtime can never do so inside the daemon. Each source is compiled
+        // as a snippet directly here (the produced artifact is written to
+        // [ScriptingConfigurationKeys.REPL_SNIPPET_ARTIFACT_OUTPUT] exactly as the other call site
+        // does) and none of them are handed to the regular frontend/backend (which has no notion of
+        // REPL snippets/priors) -- hence the empty return.
+        if (configuration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_COMPILATION_MODE)) {
+            for (ktFile in sources) {
+                compileReplSnippet(KtFileScriptSource(ktFile), configuration)
+            }
+            return emptyList()
+        }
+
         val definitionProvider by lazy(LazyThreadSafetyMode.NONE) { configuration.getCompilerExtensions(ScriptDefinitionProvider).firstOrNull() }
 
         fun KtFile.isStandaloneScript(): Boolean {

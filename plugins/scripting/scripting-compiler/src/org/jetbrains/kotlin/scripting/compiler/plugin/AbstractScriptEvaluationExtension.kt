@@ -303,10 +303,14 @@ internal fun compileReplSnippet(
     // `-expression` it is always synthetically named `script.kts`, which collides across a
     // multi-snippet sequence. An explicit `repl-snippet-name` (REPL_SNIPPET_NAME) lets the caller
     // assign a distinct, deterministic name per snippet so its priors resolve correctly.
+    //
+    // The snippet is always re-wrapped into a plain [StringScriptSource], even when the incoming
+    // source's own name already matches [explicitName] (e.g. when it arrives via `-script <file>`
+    // rather than `-expression`): [K2ReplStatelessCompiler] expects a text-based source and doesn't
+    // support a file/`VirtualFile`-backed one, which -- if let through -- ends up requiring a real
+    // IntelliJ `LocalFileSystem` implementation that isn't on the bare CLI/daemon classpath.
     val explicitName = configuration.get(ScriptingConfigurationKeys.REPL_SNIPPET_NAME)
-    val effectiveSnippet: SourceCode =
-        if (explicitName != null && explicitName != snippet.name) StringScriptSource(snippet.text, explicitName)
-        else snippet
+    val effectiveSnippet: SourceCode = StringScriptSource(snippet.text, explicitName ?: snippet.name)
 
     val classpath = configuration.jvmClasspathRoots
     val scriptCompilationConfiguration = ScriptCompilationConfiguration {
