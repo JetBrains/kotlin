@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.konan.test.services.sourceProviders
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.generateBoxFunctionLauncher
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectivesImpl
 import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -43,6 +45,13 @@ class NativeLauncherAdditionalSourceProvider(testServices: TestServices) : MainF
         val launcherFile = tempDir.resolve(LAUNCHER_FILE_NAME).also {
             it.writeText(launcherContent)
         }
-        return listOf(launcherFile.toTestFile())
+        return listOf(launcherFile.toTestFile(
+                directives = RegisteredDirectivesImpl(
+                    listOf(CodegenTestDirectives.EXTERNAL_FILE), // to be skipped by IrTextDumpHandler
+                    emptyMap(),
+                    emptyMap()
+                )
+            )
+        )
     }
 }

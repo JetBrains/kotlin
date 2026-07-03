@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.js.test
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectivesImpl
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
@@ -28,7 +30,14 @@ class JsAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceP
         if (module.allDependencies.isNotEmpty()) {
             return emptyList()
         }
-        return getAdditionalKotlinFiles(module.files.first().originalFile.parent).map { it.toTestFile() }
+        return getAdditionalKotlinFiles(module.files.first().originalFile.parent).map { it.toTestFile(
+                directives = RegisteredDirectivesImpl(
+                    listOf(CodegenTestDirectives.EXTERNAL_FILE), // to be skipped by IrTextDumpHandler
+                    emptyMap(),
+                    emptyMap()
+                )
+            )
+        }
     }
 
     companion object {

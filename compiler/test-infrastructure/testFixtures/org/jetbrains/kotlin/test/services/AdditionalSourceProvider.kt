@@ -25,7 +25,7 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) : Servic
         return globalDirectives.contains(directive) || module.directives.contains(directive)
     }
 
-    protected fun URL.toTestFile(relativePath: String? = null): TestFile {
+    protected fun URL.toTestFile(relativePath: String? = null, directives: RegisteredDirectives = RegisteredDirectives.Empty): TestFile {
         val name = this.file.substringAfterLast("/")
         val dir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("filesFromResources")
         val originalContent = this.readText()
@@ -39,18 +39,18 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) : Servic
             originalFile = realFile,
             startLineNumberInOriginalFile = 0,
             isAdditional = true,
-            directives = RegisteredDirectives.Empty
+            directives,
         )
     }
 
-    protected fun File.toTestFile(relativePath: String? = null): TestFile {
+    protected fun File.toTestFile(relativePath: String? = null, directives: RegisteredDirectives = RegisteredDirectives.Empty): TestFile {
         return TestFile(
             relativePath = relativePath?.let(Paths::get)?.resolve(name)?.toString() ?: name,
             originalContent = this.useLines { it.joinToString("\n") },
             originalFile = this,
             startLineNumberInOriginalFile = 0,
             isAdditional = true,
-            directives = RegisteredDirectives.Empty
+            directives,
         )
     }
 }

@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.wasm.test
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectivesImpl
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -30,7 +32,13 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
         val matchResult = Regex("^package\\s+([\\w.]+)", RegexOption.MULTILINE).find(fileWithBoxFun.originalContent)
 
         val boxTestRunFile = this::class.java.classLoader.getResource("wasiAdditionalFiles/wasiBoxTestRun.kt")!!
-        val boxTestRunTestFile = boxTestRunFile.toTestFile()
+        val boxTestRunTestFile = boxTestRunFile.toTestFile(
+            directives = RegisteredDirectivesImpl(
+                listOf(CodegenTestDirectives.EXTERNAL_FILE), // to be skipped by IrTextDumpHandler
+                emptyMap(),
+                emptyMap()
+            )
+        )
 
         // no package
         if (matchResult == null) return listOf(boxTestRunTestFile)
@@ -65,7 +73,14 @@ class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourc
     }
 
     private fun getAdditionalGlobalFiles(): List<TestFile> {
-        return GLOBAL_COMMON_FILES.map { this::class.java.classLoader.getResource(it)!!.toTestFile() }
+        return GLOBAL_COMMON_FILES.map { this::class.java.classLoader.getResource(it)!!.toTestFile(
+                directives = RegisteredDirectivesImpl(
+                    listOf(CodegenTestDirectives.EXTERNAL_FILE), // to be skipped by IrTextDumpHandler
+                    emptyMap(),
+                    emptyMap()
+                )
+            )
+        }
     }
 
     private fun getAdditionalLocalFiles(directory: String): List<TestFile> {
