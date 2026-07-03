@@ -538,24 +538,6 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         )
     }
 
-    // TODO: remove after 1.4 release.
-    compilerArgument {
-        name = "Xg0"
-        compilerName = "lightDebugDeprecated"
-        description = ReleaseDependent(
-            "Add light debug information.",
-            KotlinReleaseVersion.v1_5_20..KotlinReleaseVersion.v2_4_0 to
-                    "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead."
-        )
-        valueType = BooleanType.defaultFalse
-        deprecatedMessage = "Use '-Xadd-light-debug=enable' instead."
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-            deprecatedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
     compilerArgument {
         name = "Xg-generate-debug-trampoline"
         compilerName = "generateDebugTrampolineString"

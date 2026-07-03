@@ -16587,7 +16587,7 @@
                                             "introducedVersion": "1.5.20",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": "1.5.20",
-                                            "removedVersion": null
+                                            "removedVersion": "2.4.20"
                                         },
                                         "argumentType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -16600,7 +16600,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "deprecatedMessage": "Use '-Xadd-light-debug=enable' instead."
+                                        "deprecatedMessage": "Light debug information is enabled by default for Darwin platforms. For other targets use '-Xadd-light-debug=enable' instead."
                                     },
                                     {
                                         "name": "Xgc",

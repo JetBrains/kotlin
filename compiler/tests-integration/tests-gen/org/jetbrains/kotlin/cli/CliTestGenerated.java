@@ -2077,12 +2077,6 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("removedArguments.args")
-    public void testRemovedArguments() {
-      run("removedArguments.args");
-    }
-
-    @Test
     @TestMetadata("replLaunchError.args")
     public void testReplLaunchError() {
       run("replLaunchError.args");
@@ -2956,6 +2950,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("optionalExpectationUsage.args")
     public void testOptionalExpectationUsage() {
       run("optionalExpectationUsage.args");
+    }
+
+    @Test
+    @TestMetadata("removedArguments.args")
+    public void testRemovedArguments() {
+      run("removedArguments.args");
     }
 
     @Test

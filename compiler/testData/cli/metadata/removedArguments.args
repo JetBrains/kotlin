@@ -1,6 +1,7 @@
-$TESTDATA_DIR$/firHello.kt
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
 -d
 $TEMP_DIR$
 -Xuse-k2
 -output=path/to/file
 -Xvalue-classes
+-Xg0=true

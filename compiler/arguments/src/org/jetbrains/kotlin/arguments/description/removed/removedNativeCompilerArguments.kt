@@ -6,8 +6,29 @@
 package org.jetbrains.kotlin.arguments.description.removed
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.defaultFalse
+import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 
 val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.nativeArguments) {
+    compilerArgument {
+        name = "Xg0"
+        compilerName = "lightDebugDeprecated"
+        description = ReleaseDependent(
+            "Add light debug information.",
+            KotlinReleaseVersion.v1_5_20..KotlinReleaseVersion.v2_4_0 to
+                    "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead."
+        )
+        valueType = BooleanType.defaultFalse
+        deprecatedMessage = "Light debug information is enabled by default for Darwin platforms. " +
+                "For other targets use '-Xadd-light-debug=enable' instead."
 
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_5_20,
+            removedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+    }
 }

@@ -308,18 +308,6 @@ This library must be one of the ones passed with '-library'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @all:Deprecated("Use '-Xadd-light-debug=enable' instead.")
-    @Argument(
-        value = "-Xg0",
-        description = "Add light debug information.",
-        deprecatedVersion = "1.5.20",
-    )
-    var lightDebugDeprecated: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-Xgc",
         valueDescription = "<gc>",

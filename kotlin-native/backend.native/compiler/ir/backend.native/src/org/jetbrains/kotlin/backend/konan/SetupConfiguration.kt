@@ -82,13 +82,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(LIST_TARGETS, arguments.listTargets)
     put(OPTIMIZATION, arguments.optimization)
     put(DEBUG, arguments.debug)
-    // TODO: remove after 1.4 release.
-    @Suppress("DEPRECATION")
-    if (arguments.lightDebugDeprecated) {
-        report(KONAN_ARGUMENT_WARNING,
-                "-Xg0 is now deprecated and skipped by compiler. Light debug information is enabled by default for Darwin platforms." +
-                        " For other targets, please, use `-Xadd-light-debug=enable` instead.")
-    }
     putIfNotNull(LIGHT_DEBUG, when (val it = arguments.lightDebugString) {
         "enable" -> true
         "disable" -> false
