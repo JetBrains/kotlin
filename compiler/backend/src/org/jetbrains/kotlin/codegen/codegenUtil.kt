@@ -5,21 +5,16 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
@@ -86,53 +81,8 @@ private fun generateNullCheckForNonSafeAs(v: InstructionAdapter, type: IrType, u
 
 class JvmKotlinType(val type: Type, val kotlinType: KotlinTypeMarker? = null)
 
-fun FunctionDescriptor.isGenericToArray(): Boolean {
-    if (name.asString() != "toArray") return false
-    if (valueParameters.size != 1 || typeParameters.size != 1) return false
-
-    val returnType = returnType ?: throw AssertionError(toString())
-    val paramType = valueParameters[0].type
-
-    if (!KotlinBuiltIns.isArray(returnType) || !KotlinBuiltIns.isArray(paramType)) return false
-
-    val elementType = typeParameters[0].defaultType
-    return KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(returnType)) &&
-            KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(paramType))
-}
-
-fun FunctionDescriptor.isNonGenericToArray(): Boolean {
-    if (name.asString() != "toArray") return false
-    if (valueParameters.isNotEmpty() || typeParameters.isNotEmpty()) return false
-
-    val returnType = returnType
-    return returnType != null && KotlinBuiltIns.isArray(returnType)
-}
-
-fun MemberDescriptor.isToArrayFromCollection(): Boolean {
-    if (this !is FunctionDescriptor) return false
-
-    val containingClassDescriptor = containingDeclaration as? ClassDescriptor ?: return false
-    if (containingClassDescriptor.source == SourceElement.NO_SOURCE) return false
-
-    val collectionClass = builtIns.collection
-    if (!isSubclass(containingClassDescriptor, collectionClass)) return false
-
-    return isGenericToArray() || isNonGenericToArray()
-}
-
-val CallableDescriptor.arity: Int
-    get() = valueParameters.size +
-            (if (extensionReceiverParameter != null) 1 else 0) +
-            (if (dispatchReceiverParameter != null) 1 else 0)
-
 fun FqName.topLevelClassInternalName() = JvmClassName.internalNameByClassId(ClassId(parent(), shortName()))
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
-
-inline fun FrameMap.useTmpVar(type: Type, block: (index: Int) -> Unit) {
-    val index = enterTemp(type)
-    block(index)
-    leaveTemp(type)
-}
 
 fun TypeSystemCommonBackendContext.extractReificationArgument(initialType: KotlinTypeMarker): Pair<TypeParameterMarker, ReificationArgument>? {
     var type = initialType

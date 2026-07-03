@@ -17,18 +17,20 @@
 package org.jetbrains.kotlin.codegen
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.org.objectweb.asm.Type
 
-open class FrameMap : FrameMapBase<DeclarationDescriptor>()
+class IrFrameMap {
+    private val typeMap = mutableMapOf<IrSymbol, Type>()
 
-open class FrameMapBase<T : Any> {
-    private val myVarIndex = Object2IntOpenHashMap<T>()
-    private val myVarSizes = Object2IntOpenHashMap<T>()
+    private val myVarIndex = Object2IntOpenHashMap<IrSymbol>()
+    private val myVarSizes = Object2IntOpenHashMap<IrSymbol>()
     var currentSize = 0
         private set
 
-    open fun enter(key: T, type: Type): Int {
+    fun enter(key: IrSymbol, type: Type): Int {
+        typeMap[key] = type
         val index = currentSize
         myVarIndex.put(key, index)
         currentSize += type.size
@@ -36,13 +38,14 @@ open class FrameMapBase<T : Any> {
         return index
     }
 
-    open fun leave(key: T): Int {
+    fun leave(key: IrSymbol): Int {
+        typeMap.remove(key)
         val size = myVarSizes.getValue(key)
         currentSize -= size
         myVarSizes.removeInt(key)
         val oldIndex = myVarIndex.removeInt(key)
         if (oldIndex != currentSize) {
-            throw IllegalStateException("Descriptor can be left only if it is last: $key")
+            throw IllegalStateException("Variable can be left only if it is the last: $key")
         }
         return oldIndex
     }
@@ -57,39 +60,37 @@ open class FrameMapBase<T : Any> {
         currentSize -= type.size
     }
 
-    open fun getIndex(descriptor: T): Int {
-        return if (myVarIndex.contains(descriptor)) myVarIndex.getInt(descriptor) else -1
-    }
-
-    fun mark(): Mark {
-        return Mark(currentSize)
+    fun getIndex(symbol: IrSymbol): Int {
+        return if (myVarIndex.contains(symbol)) myVarIndex.getInt(symbol) else -1
     }
 
     fun skipTo(target: Int): Mark {
-        return mark().also {
+        return Mark(currentSize).also {
             if (currentSize < target)
                 currentSize = target
         }
     }
 
     inner class Mark(private val myIndex: Int) {
-
         fun dropTo() {
-            val descriptorsToDrop = ArrayList<T>()
+            val variablesToDrop = ArrayList<IrSymbol>()
             val iterator = myVarIndex.object2IntEntrySet().fastIterator()
             while (iterator.hasNext()) {
                 val [key, value] = iterator.next()
                 if (value >= myIndex) {
-                    descriptorsToDrop.add(key)
+                    variablesToDrop.add(key)
                 }
             }
-            for (declarationDescriptor in descriptorsToDrop) {
-                myVarIndex.removeInt(declarationDescriptor)
-                myVarSizes.removeInt(declarationDescriptor)
+            for (symbol in variablesToDrop) {
+                myVarIndex.removeInt(symbol)
+                myVarSizes.removeInt(symbol)
             }
             currentSize = myIndex
         }
     }
+
+    fun typeOf(symbol: IrSymbol): Type = typeMap[symbol]
+        ?: error("No mapping for symbol: ${symbol.owner.render()}")
 
     override fun toString(): String {
         val sb = StringBuilder()
@@ -98,26 +99,25 @@ open class FrameMapBase<T : Any> {
             return "inconsistent"
         }
 
-        val descriptors = mutableListOf<Triple<T, Int, Int>>()
+        val symbols = mutableListOf<Triple<IrSymbol, Int, Int>>()
 
-        for (descriptor0 in myVarIndex.keys) {
-            @Suppress("UNCHECKED_CAST") val descriptor = descriptor0 as T
-            val varIndex = myVarIndex.getInt(descriptor)
-            val varSize = myVarSizes.getInt(descriptor)
-            descriptors.add(Triple(descriptor, varIndex, varSize))
+        for (symbol in myVarIndex.keys) {
+            val varIndex = myVarIndex.getInt(symbol)
+            val varSize = myVarSizes.getInt(symbol)
+            symbols.add(Triple(symbol, varIndex, varSize))
         }
 
-        descriptors.sortBy { left -> left.second }
+        symbols.sortBy { left -> left.second }
 
         sb.append("size=").append(currentSize)
 
         var first = true
-        for (t in descriptors) {
+        for ([symbol, varIndex, varSize] in symbols) {
             if (!first) {
                 sb.append(", ")
             }
             first = false
-            sb.append(t.first).append(",i=").append(t.second).append(",s=").append(t.third)
+            sb.append(symbol).append(",i=").append(varIndex).append(",s=").append(varSize)
         }
 
         return sb.toString()

@@ -19,17 +19,10 @@
 package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.suppressWildcardsMode
 
@@ -42,16 +35,6 @@ private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
     FqNames.mutableList.child("addAll"),
     FqNames.mutableMap.child("putAll")
 )
-
-internal fun extractTypeMappingModeFromAnnotation(
-    callableDescriptor: CallableDescriptor?,
-    outerType: KotlinType,
-    isForAnnotationParameter: Boolean,
-    mapTypeAliases: Boolean
-): TypeMappingMode? =
-    SimpleClassicTypeSystemContext.extractTypeMappingModeFromAnnotation(
-        callableDescriptor?.suppressWildcardsMode(), outerType, isForAnnotationParameter, mapTypeAliases
-    )
 
 fun TypeSystemCommonBackendContext.extractTypeMappingModeFromAnnotation(
     callableSuppressWildcardsMode: Boolean?,
@@ -71,12 +54,3 @@ fun TypeSystemCommonBackendContext.extractTypeMappingModeFromAnnotation(
         mapTypeAliases = mapTypeAliases
     )
 }
-
-private fun DeclarationDescriptor.suppressWildcardsMode(): Boolean? =
-    parentsWithSelf.mapNotNull {
-        it.annotations.findAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)
-    }.firstOrNull()?.suppressWildcardsMode()
-
-
-private fun AnnotationDescriptor.suppressWildcardsMode(): Boolean? =
-    allValueArguments.values.firstOrNull()?.value as? Boolean ?: true

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.BackendInput
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.IdeCodegenSettings
+import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
@@ -41,11 +42,13 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -452,7 +455,7 @@ private class DescriptorMetadataSerializer(
     override fun serialize(metadata: MetadataSource, containingFile: MetadataSource.File?): Pair<MessageLite, JvmStringTable>? {
         val localDelegatedProperties = irClass.localDelegatedProperties
         if (localDelegatedProperties != null && localDelegatedProperties.isNotEmpty()) {
-            context.state.localDelegatedProperties.put(
+            serializerExtension.localDelegatedProperties.put(
                 // key for local delegated properties metadata in interfaces depends on jvmDefaultMode
                 if (irClass.isInterface && !context.config.jvmDefaultMode.isEnabled) context.defaultTypeMapper.mapClass(
                     context.cachedDeclarations.getDefaultImplsClass(irClass)
@@ -525,7 +528,7 @@ private class JvmSerializerExtension(
     private val jvmDefaultMode = state.config.jvmDefaultMode
     private val useOldManglingScheme = state.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
     private val signatureSerializer = JvmSignatureSerializerImpl(stringTable)
-    private val localDelegatedProperties = state.localDelegatedProperties
+    internal val localDelegatedProperties: MutableMap<Type, List<VariableDescriptorWithAccessors>> = mutableMapOf()
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
 
@@ -540,7 +543,9 @@ private class JvmSerializerExtension(
         }
         //TODO: support local delegated properties in new defaults scheme
         val containerAsmType =
-            if (DescriptorUtils.isInterface(descriptor) && !jvmDefaultMode.isEnabled) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
+            if (DescriptorUtils.isInterface(descriptor) && !jvmDefaultMode.isEnabled)
+                Type.getObjectType(typeMapper.mapClass(descriptor).internalName + JvmAbi.DEFAULT_IMPLS_SUFFIX)
+            else typeMapper.mapClass(descriptor)
         writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable)
         writeVersionRequirementForJvmDefaultIfNeeded(descriptor, proto, versionRequirementTable)
 
@@ -895,5 +900,14 @@ abstract class ExpectSymbolTransformer : IrVisitorVoid() {
         if (!isTargetDeclaration(oldSymbol.owner)) return
 
         expression.symbol = getActualClass(oldSymbol.descriptor) ?: return
+    }
+}
+
+internal fun KotlinTypeMapperBase.mapClass(classifier: ClassifierDescriptor): Type {
+    this as IrTypeMapper
+    return when (classifier) {
+        is ClassDescriptor -> mapClass(context.referenceClass(classifier).owner)
+        is TypeParameterDescriptor -> mapType(context.referenceTypeParameter(classifier).defaultType)
+        else -> error("Unknown descriptor: $classifier")
     }
 }

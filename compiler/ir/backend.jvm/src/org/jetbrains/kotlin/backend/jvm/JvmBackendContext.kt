@@ -123,7 +123,7 @@ class JvmBackendContext(
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.lazyWrapper.descriptorExtension.referenceClass(descriptor)
 
-    internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
+    fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
         symbolTable.lazyWrapper.descriptorExtension.referenceTypeParameter(descriptor)
 
     override val preferJavaLikeCounterLoop: Boolean

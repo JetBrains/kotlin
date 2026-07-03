@@ -5,22 +5,23 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.*
 
 class GlobalInlineContext {
     // Ordered set of declarations and inline calls being generated right now.
     // No call in it should point to a declaration that's before it in the stack.
-    private val inlineCallsAndDeclarations by threadLocal { LinkedList<Any? /* CallableDescriptor | InlineFunctionSource? */>() }
-    private val inlineDeclarationSet by threadLocal { mutableSetOf<CallableDescriptor>() }
+    private val inlineCallsAndDeclarations by threadLocal { LinkedList<Any? /* IrFunction | InlineFunctionSource? */>() }
+    private val inlineDeclarationSet by threadLocal { mutableSetOf<IrFunction>() }
 
     private val typesUsedInInlineFunctions by threadLocal { LinkedList<MutableSet<String>>() }
 
-    fun enterDeclaration(descriptor: CallableDescriptor) {
-        assert(descriptor.original !in inlineDeclarationSet) { "entered inlining cycle on $descriptor" }
-        inlineDeclarationSet.add(descriptor.original)
-        inlineCallsAndDeclarations.add(descriptor.original)
+    fun enterDeclaration(function: IrFunction) {
+        assert(function !in inlineDeclarationSet) { "entered inlining cycle on ${function.render()}" }
+        inlineDeclarationSet.add(function)
+        inlineCallsAndDeclarations.add(function)
     }
 
     fun exitDeclaration() {
@@ -28,15 +29,15 @@ class GlobalInlineContext {
     }
 
     fun enterIntoInlining(
-        callee: CallableDescriptor?,
+        callee: IrFunction?,
         element: InlineFunctionSource?,
-        reportInlineCallCycle: (InlineFunctionSource, CallableDescriptor) -> Unit,
+        reportInlineCallCycle: (InlineFunctionSource, IrFunction) -> Unit,
     ): Boolean {
-        if (callee != null && callee.original in inlineDeclarationSet) {
-            element?.let { reportInlineCallCycle(it, callee.original) }
-            for ([call, callTarget] in inlineCallsAndDeclarations.dropWhile { it != callee.original }.zipWithNext()) {
-                // Every call element should be followed by the callee's descriptor.
-                if (call is InlineFunctionSource && callTarget is CallableDescriptor) {
+        if (callee != null && callee in inlineDeclarationSet) {
+            element?.let { reportInlineCallCycle(it, callee) }
+            for ([call, callTarget] in inlineCallsAndDeclarations.dropWhile { it != callee }.zipWithNext()) {
+                // Every call element should be followed by the callee's IR function.
+                if (call is InlineFunctionSource && callTarget is IrFunction) {
                     reportInlineCallCycle(call, callTarget)
                 }
             }
