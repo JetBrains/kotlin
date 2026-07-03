@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/firHello.kt
+-d
+$TEMP_DIR$
+-Xuse-k2
+-output=path/to/file
+-Xvalue-classes

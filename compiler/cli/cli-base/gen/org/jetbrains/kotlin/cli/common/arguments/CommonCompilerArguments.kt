@@ -1090,20 +1090,6 @@ Warning: This feature is not yet production-ready.""",
             field = value
         }
 
-    @all:Deprecated("Compiler flag -Xuse-k2 is no more supported. Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier.")
-    @Argument(
-        value = "-Xuse-k2",
-        description = "Compile using the K2 compiler pipeline.",
-        isObsolete = true,
-        deprecatedVersion = "1.9.0",
-        removedVersion = "2.2.0",
-    )
-    var useK2: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-Xverbose-phases",
         description = "Be verbose while performing the given backend phases.",

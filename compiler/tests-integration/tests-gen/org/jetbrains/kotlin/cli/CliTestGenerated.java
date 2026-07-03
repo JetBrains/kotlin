@@ -1837,12 +1837,6 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("firHello20WithFlag.args")
-    public void testFirHello20WithFlag() {
-      run("firHello20WithFlag.args");
-    }
-
-    @Test
     @TestMetadata("firLightTreeOff.args")
     public void testFirLightTreeOff() {
       run("firLightTreeOff.args");
@@ -2080,6 +2074,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("progressiveModeOn.args")
     public void testProgressiveModeOn() {
       run("progressiveModeOn.args");
+    }
+
+    @Test
+    @TestMetadata("removedArguments.args")
+    public void testRemovedArguments() {
+      run("removedArguments.args");
     }
 
     @Test

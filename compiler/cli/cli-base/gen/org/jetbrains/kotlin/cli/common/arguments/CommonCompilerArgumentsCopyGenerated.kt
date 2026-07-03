@@ -115,8 +115,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.useFirIC = from.useFirIC
     @Suppress("DEPRECATION")
     to.useFirLT = from.useFirLT
-    @Suppress("DEPRECATION")
-    to.useK2 = from.useK2
     to.verbosePhases = from.verbosePhases.copyOf()
     to.verifyIr = from.verifyIr
     to.warningLevels = from.warningLevels.copyOf()

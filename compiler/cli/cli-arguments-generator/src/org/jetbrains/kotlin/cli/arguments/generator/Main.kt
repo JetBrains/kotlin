@@ -127,12 +127,6 @@ val levelToClassNameMap = listOf(
     ),
 ).associateBy { it.levelName }
 
-// Removed arguments which are still needed in CLI classes but should be hidden
-private val hiddenArguments = setOf(
-    CompilerArgumentsLevelNames.jsArguments to "output", // Needed by IDEA
-    CompilerArgumentsLevelNames.commonCompilerArguments to "Xuse-k2", // Needed by IDEA
-)
-
 private fun generateArgumentsClass(
     genDir: File,
     level: KotlinCompilerArgumentsLevel,
@@ -195,11 +189,10 @@ private fun SmartPrinter.generateArgumentsClass(
     withIndent {
         generateAdditionalSyntheticArguments(info)
         for (argument in level.arguments) {
-            if (
-                hiddenArguments.none { [argLevelName, name] ->
-                    argLevelName == level.name && argument.name == name
-                } && argument.releaseVersionsMetadata.removedVersion != null
-            ) continue
+            val isAlreadyRemoved = argument.releaseVersionsMetadata.removedVersion?.let {
+                it.toKotlinVersion() <= kotlin.KotlinVersion.CURRENT
+            } == true
+            if (isAlreadyRemoved) continue
             validateLifetime(argument)
             validateLanguageFeaturesConsistency(argument)
             generateDeprecationAnnotation(argument)
@@ -273,13 +266,6 @@ private fun SmartPrinter.generateArgumentAnnotation(
         }
         println("description = $description,")
         argument.delimiter?.let { println("delimiter = Argument.Delimiters.${it.constantName},") }
-
-        if (hiddenArguments.any { [levelName, argName] ->
-                level.name == levelName && argument.name == argName
-            }
-        ) {
-            println("isObsolete = true,")
-        }
 
         argument.releaseVersionsMetadata.deprecatedVersion?.let { println("deprecatedVersion = \"${it.releaseName}\",") }
         argument.releaseVersionsMetadata.removedVersion?.let { println("removedVersion = \"${it.releaseName}\",") }

@@ -26,8 +26,6 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.irSafeExternalBooleanDiagnostic = from.irSafeExternalBooleanDiagnostic
     to.moduleKind = from.moduleKind
     to.optimizeGeneratedJs = from.optimizeGeneratedJs
-    @Suppress("DEPRECATION")
-    to.outputFile = from.outputFile
     to.platformArgumentsProviderJsExpression = from.platformArgumentsProviderJsExpression
     to.target = from.target
     to.useEsArrowFunctions = from.useEsArrowFunctions

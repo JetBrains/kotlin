@@ -134,7 +134,7 @@ fun CompilerConfiguration.reportCompilationException(e: CompilationException) {
  * It's a helper function to parse version strings strictly from a `KotlinReleaseVersion.releaseName` value.
  * Since those values are always correct version strings, the function should never fail.
  */
-internal fun parseKotlinVersion(kotlinReleaseVersion: String): KotlinVersion {
+fun parseKotlinVersion(kotlinReleaseVersion: String): KotlinVersion {
     val components = kotlinReleaseVersion.split('.')
     return KotlinVersion(
         major = components[0].toInt(),

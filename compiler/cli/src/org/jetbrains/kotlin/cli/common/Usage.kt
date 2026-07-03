@@ -65,7 +65,7 @@ object Usage {
     private fun fieldUsage(argumentField: ArgumentField, extraHelp: Boolean) {
         val argument = argumentField.argument
 
-        if (argument.isObsolete || argument.isInternal || extraHelp != argument.isAdvanced) return
+        if (argument.isInternal || extraHelp != argument.isAdvanced) return
 
         with(sb) {
             val startLength = length
