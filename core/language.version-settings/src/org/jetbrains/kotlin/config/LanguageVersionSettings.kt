@@ -538,6 +538,7 @@ enum class LanguageFeature(
     WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
     ForbidOperatorEqualsInEnumEntriesAndAnonymousObjects(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-86143"),
     ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-396"),
+    FixApplicabilityOfEmptyIntersection(sinceVersion = KOTLIN_2_5, "KT-86740"),
     EnhancementsOfSecondIncorporationKind25(KOTLIN_2_5, "KT-85879"),
     NameBasedDestructuring(sinceVersion = KOTLIN_2_5, "KT-19627"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),

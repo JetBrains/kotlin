@@ -13,7 +13,7 @@ fun consumeWrongMouseEvent(event: WrongMouseEvent) {}
 fun consumeEventHandler(handler: EventHandler<Event>) {}
 
 fun test() {
-    consumeEventHandler(<!ARGUMENT_TYPE_MISMATCH!>EventHandler(::consumeWrongMouseEvent)<!>)
+    consumeEventHandler(<!OTHER_ERROR_WITH_REASON!>EventHandler<!>(::<!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>consumeWrongMouseEvent<!>))
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, interfaceDeclaration, typeConstraint,

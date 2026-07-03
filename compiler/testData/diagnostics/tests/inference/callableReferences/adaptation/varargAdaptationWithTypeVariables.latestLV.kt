@@ -63,14 +63,14 @@ fun main(
     <!DEBUG_INFO_EXPRESSION_TYPE("java.io.Serializable")!>myMap1(mySerializable, ::ofAny)<!>
 
     // TODO: The behavior should change for the cases with INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING after KT-81918
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>myMap2(myInString, ::<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>ofString<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & @ParameterName(...) kotlin.Array<out kotlin.String>")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>myMap2<!>(myInString, ::ofString)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("@ParameterName(...) kotlin.Array<out kotlin.Any>")!>myMap2(myInAny, ::ofAny)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>myMap2(myInInt, ::<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>ofInt<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & @ParameterName(...) kotlin.IntArray")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>myMap2<!>(myInInt, ::ofInt)<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.String>")!>myMap2(myInArrayString, ::ofString)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.Any>")!>myMap2(myInArrayAny, ::ofAny)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("@ParameterName(...) kotlin.Array<out kotlin.Any>")!>myMap2(myInArrayOutAny, ::ofAny)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.Int>")!>myMap2(myInArrayInt, ::<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>ofInt<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.Int> & @ParameterName(...) kotlin.IntArray")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>myMap2<!>(myInArrayInt, ::ofInt)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("@ParameterName(...) kotlin.IntArray")!>myMap2(myInIntArray, ::ofInt)<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("@ParameterName(...) kotlin.Array<out kotlin.Any>")!>myMap2(myInSerializable, ::ofAny)<!>

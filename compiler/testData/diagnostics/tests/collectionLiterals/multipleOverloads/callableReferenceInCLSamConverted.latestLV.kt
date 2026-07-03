@@ -61,11 +61,11 @@ fun test(t: Any) {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>bc<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>]<!>)
 
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>ac<!>([::makeString])
-    <!NONE_APPLICABLE!>ac<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materializeNumber<!>]<!>)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>ac<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materializeNumber<!>]<!>)
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>ac<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>]<!>)
 
     acList([::makeString])
-    <!NONE_APPLICABLE!>acList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materializeNumber<!>]<!>)
+    acList([::<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>materializeNumber<!>])
     acList([::materialize])
 }
 

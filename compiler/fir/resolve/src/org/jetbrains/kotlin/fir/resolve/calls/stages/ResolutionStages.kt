@@ -863,6 +863,8 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
                 } else when (applicability) {
                     CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY ->
                         sink.reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
+                    CandidateApplicability.RESOLVED_LOW_PRIORITY ->
+                        sink.reportDiagnostic(ResolvedWithLowPriority)
                     else -> {
                     }
                 }
@@ -980,9 +982,6 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                         emptyIntersectionTypeInfo.casingTypes.toList() as List<ConeKotlinType>,
                         variableWithConstraints.typeVariable.asCone(),
                         emptyIntersectionTypeInfo.kind,
-                        isError = context.session.languageVersionSettings.supportsFeature(
-                            LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
-                        )
                     )
                 )
             }
