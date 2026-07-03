@@ -241,6 +241,8 @@ dependencies {
         exclude(group = "*")
     }
 
+    embedded(libs.org.tukaani.xz)
+
     commonCompileOnly(libs.apache.commons.compress)
     embedded(libs.apache.commons.compress)
 
