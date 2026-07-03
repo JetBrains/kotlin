@@ -1,8 +1,7 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR, WASM_JS
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM invokes `println (message: kotlin.Int)` instead of `println (message: kotlin.Any?)`
 
-// KT-61141: `println (message: kotlin.Any?)` instead of `println (message: kotlin.Int)`
-// IGNORE_BACKEND: NATIVE
 fun expectsString(s: String) {}
 fun expectsInt(i: Int) {}
 

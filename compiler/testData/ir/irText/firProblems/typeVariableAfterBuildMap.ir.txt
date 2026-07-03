@@ -131,8 +131,8 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         BLOCK_BODY
           THROW type=kotlin.Nothing
-            CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.String?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
-              ARG p0: CONST String type=kotlin.String value="This method shouldn't be invoked for INHERITED visibility"
+            CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.String?) declared in kotlin.IllegalStateException' type=kotlin.IllegalStateException origin=null
+              ARG message: CONST String type=kotlin.String value="This method shouldn't be invoked for INHERITED visibility"
       PROPERTY FAKE_OVERRIDE name:externalDisplayName visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open externalDisplayName: kotlin.String declared in <root>.Visibility
@@ -618,8 +618,8 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
           public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
         BLOCK_BODY
           THROW type=kotlin.Nothing
-            CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.String?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
-              ARG p0: CONST String type=kotlin.String value="This method shouldn't be invoked for UNKNOWN visibility"
+            CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.String?) declared in kotlin.IllegalStateException' type=kotlin.IllegalStateException origin=null
+              ARG message: CONST String type=kotlin.String value="This method shouldn't be invoked for UNKNOWN visibility"
       PROPERTY FAKE_OVERRIDE name:externalDisplayName visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open externalDisplayName: kotlin.String declared in <root>.Visibility

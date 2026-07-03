@@ -1,0 +1,158 @@
+FILE fqName:<root> fileName:/classLevelProperties.kt
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
+    PROPERTY name:test1 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>.C'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test1>' type=<root>.C origin=null
+    PROPERTY name:test3 visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Int declared in <root>.C'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test3>' type=<root>.C origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test3>' type=<root>.C origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-test3>' type=kotlin.Int origin=null
+    PROPERTY name:test4 visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Int declared in <root>.C'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test4>' type=<root>.C origin=null
+      FUN name:<set-test4> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
+            receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test4>' type=<root>.C origin=IMPLICIT_ARGUMENT
+            value: GET_VAR 'value: kotlin.Int declared in <root>.C.<set-test4>' type=kotlin.Int origin=null
+    PROPERTY name:test5 visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.Int declared in <root>.C'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test5>' type=<root>.C origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test5> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test5>' type=<root>.C origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-test5>' type=kotlin.Int origin=null
+    PROPERTY name:test6 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.Int declared in <root>.C'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test6>' type=<root>.C origin=null
+    PROPERTY name:test7 visibility:public modality:FINAL [delegated,val]
+      FIELD PROPERTY_DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Int> origin=null
+            TYPE_ARG T: kotlin.Int
+            ARG initializer: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.C.test7$delegate'
+                    CONST Int type=kotlin.Int value=42
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY name:test7 visibility:public modality:FINAL [delegated,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Int declared in <root>.C'
+            CALL 'public final fun getValue <T> (<this>: kotlin.Lazy<T of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin' type=kotlin.Int origin=null
+              TYPE_ARG T: kotlin.Int
+              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final] declared in <root>.C' type=kotlin.Lazy<kotlin.Int> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test7>' type=<root>.C origin=IMPLICIT_ARGUMENT
+              ARG thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test7>' type=<root>.C origin=null
+              ARG property: PROPERTY_REFERENCE 'public final test7: kotlin.Int declared in <root>.C' field=null getter='public final fun <get-test7> (): kotlin.Int declared in <root>.C' setter=null type=kotlin.reflect.KProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
+      FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> declared in kotlin.collections' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+            TYPE_ARG K: kotlin.String
+            TYPE_ARG V: kotlin.Int
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test8> (): kotlin.Int declared in <root>.C'
+            CALL 'public final fun getValue <V, V1> (<this>: kotlin.collections.MutableMap<in kotlin.String, out V of kotlin.collections.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Int origin=null
+              TYPE_ARG V: kotlin.Int
+              TYPE_ARG V1: kotlin.Int
+              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final] declared in <root>.C' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test8>' type=<root>.C origin=IMPLICIT_ARGUMENT
+              ARG thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test8>' type=<root>.C origin=null
+              ARG property: PROPERTY_REFERENCE 'public final test8: kotlin.Int declared in <root>.C' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>.C' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C'
+            CALL 'public final fun setValue <V> (<this>: kotlin.collections.MutableMap<in kotlin.String, in V of kotlin.collections.setValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
+              TYPE_ARG V: kotlin.Int
+              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final] declared in <root>.C' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=IMPLICIT_ARGUMENT
+              ARG thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=null
+              ARG property: PROPERTY_REFERENCE 'public final test8: kotlin.Int declared in <root>.C' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>.C' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-test8>' type=kotlin.Int origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:test2 visibility:public modality:FINAL [val]
+      FUN name:<get-test2> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+        correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>.C'
+            CONST Int type=kotlin.Int value=0

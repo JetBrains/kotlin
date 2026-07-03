@@ -1,8 +1,7 @@
 // ISSUE: KT-52677
-// IGNORE_BACKEND: JS_IR, WASM_JS
-
-// KT-61141: throws kotlin.RuntimeException instead of java.lang.RuntimeException
-// IGNORE_BACKEND: NATIVE
+// WITH_STDLIB
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM throws java.lang.RuntimeException instead of kotlin.RuntimeException
 
 @Target(AnnotationTarget.TYPE)
 annotation class MySerializable(val c: kotlin.reflect.KClass<*>)

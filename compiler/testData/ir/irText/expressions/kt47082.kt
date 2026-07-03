@@ -1,4 +1,3 @@
-// TARGET_BACKEND: JVM
 // WITH_STDLIB
 // OPT_IN: kotlin.experimental.ExperimentalTypeInference
 

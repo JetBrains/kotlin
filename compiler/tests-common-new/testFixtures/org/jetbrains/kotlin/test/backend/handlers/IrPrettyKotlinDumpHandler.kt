@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KT_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
-import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
+import org.jetbrains.kotlin.test.utils.withExtension
 
 /**
  * Uses [dumpKotlinLike] to compare the human-readable representation of an IR tree with
@@ -62,8 +63,28 @@ class IrPrettyKotlinDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val actualDump = if (dumper.isEmpty()) null else dumper.generateResultingDump()
-        assertEqualsToDump(DUMP_EXTENSION, actualDump)
+        val moduleStructure = testServices.moduleStructure
+        val expectedFile = moduleStructure.originalTestDataFiles.first().withExtension(getDumpExtension())
+
+        if (dumper.isEmpty()) {
+            assertions.assertFileDoesntExist(expectedFile, DUMP_KT_IR)
+        } else {
+            assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
+        }
+    }
+
+    private fun getDumpExtension(): String {
+        return getTargetSpecificDumpExtension() ?: DUMP_EXTENSION
+    }
+
+    private fun getTargetSpecificDumpExtension(): String? {
+        val targetBackend = testServices.defaultsProvider.targetBackend ?: return null
+        val dumpIrDifferenceBackends = testServices.moduleStructure.modules.flatMap {
+            it.directives[CodegenTestDirectives.DUMP_IR_DIFFERENCE]
+        }
+        val matchedBackend = dumpIrDifferenceBackends.firstOrNull { targetBackend.isTransitivelyCompatibleWith(it) }
+            ?: return null
+        return "kt.${matchedBackend.name.lowercase()}.txt"
     }
 }
 

@@ -1,8 +1,6 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR, WASM_JS
-
-// KT-61141: `println (message: kotlin.Any?)` instead of `println (message: kotlin.Int)`
-// IGNORE_BACKEND: NATIVE
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM invokes `println (kotlin.Int)` instead of `println (message: kotlin.Any?)`
 
 object FiveTimes
 
