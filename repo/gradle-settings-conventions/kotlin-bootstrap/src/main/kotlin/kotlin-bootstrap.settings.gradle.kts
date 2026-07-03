@@ -330,6 +330,20 @@ private fun Settings.applyBootstrapConfiguration(
                         .because("Override commonizer classpath with bootstrap")
                 }
             }
+
+            // The ABI validation toolchain classpath inside the Kotlin Gradle plugin requests `kotlin-build-tools-impl` with a
+            // version range (`[2.4.0-Beta2, 2.5.0)`, see `DefaultKotlinBasePlugin.addKotlinCompilerConfiguration`).
+            // When building Kotlin using the bootstrap KGP, that range resolves to whatever is available in the public repository,
+            // making the build non-reproducible. This pins the `kotlin-build-tools-impl` dependency so it is aligned with the bootstrap.
+            // In the `master` branch, the range is already replaced with `versionConstraint.strictly("2.4.0")` (KT-87223),
+            // yet its effect can only be visible after the next bootstrap update.
+            if (name == "kotlinAbiValidationCompatClasspath") {
+                resolutionStrategy.dependencySubstitution {
+                    substitute(module("org.jetbrains.kotlin:kotlin-build-tools-impl"))
+                        .using(module("org.jetbrains.kotlin:kotlin-build-tools-impl:$bootstrapVersion"))
+                        .because("Override ABI validation toolchain classpath with bootstrap")
+                }
+            }
         }
 
         logBootstrapApplied(logMessage)
