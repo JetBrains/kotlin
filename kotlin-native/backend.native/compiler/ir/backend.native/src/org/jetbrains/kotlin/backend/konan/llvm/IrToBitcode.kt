@@ -1235,6 +1235,7 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     private fun evaluateWhileLoop(loop: IrWhileLoop): LLVMValueRef {
+        val shouldFullyUnroll = loop.hasUnrollAnnotation()
         val loopScope = LoopScope(loop)
         using(loopScope) {
             val loopBody = functionGenerationContext.basicBlock("while_loop", loop.startLocation)
@@ -1249,7 +1250,8 @@ internal class CodeGeneratorVisitor(
                 call(llvm.Kotlin_mm_safePointWhileLoopBody, emptyList())
             loop.body?.generate()
 
-            functionGenerationContext.br(loopScope.loopCheck)
+            val backEdge = functionGenerationContext.br(loopScope.loopCheck)
+            if (shouldFullyUnroll) attachFullUnrollLoopMetadata(backEdge)
             functionGenerationContext.positionAtEnd(loopScope.loopExit)
         }
 
@@ -1260,6 +1262,7 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     private fun evaluateDoWhileLoop(loop: IrDoWhileLoop): LLVMValueRef {
+        val shouldFullyUnroll = loop.hasUnrollAnnotation()
         val loopScope = LoopScope(loop)
         using(loopScope) {
             val loopBody = functionGenerationContext.basicBlock("do_while_loop", loop.body?.startLocation ?: loop.startLocation)
@@ -1273,13 +1276,62 @@ internal class CodeGeneratorVisitor(
 
             functionGenerationContext.positionAtEnd(loopScope.loopCheck)
             val condition = evaluateExpression(loop.condition)
-            functionGenerationContext.condBr(condition, loopBody, loopScope.loopExit)
+            val backEdge = functionGenerationContext.condBr(condition, loopBody, loopScope.loopExit)
+            if (shouldFullyUnroll && backEdge != null) attachFullUnrollLoopMetadata(backEdge)
 
             functionGenerationContext.positionAtEnd(loopScope.loopExit)
         }
 
         assert(loop.type.isUnit())
         return codegen.theUnitInstanceRef.llvm
+    }
+
+    /**
+     * True if any `IrVariable` declared inside this loop's body (excluding nested loops)
+     * carries `@kotlin.native.Unroll`. Matches the shape produced by the `for`-loop
+     * lowering — the loop parameter becomes a variable inside the loop body — and also
+     * accepts a marker `@Unroll var _ = …` sitting alongside a plain `while`.
+     */
+    private fun IrLoop.hasUnrollAnnotation(): Boolean {
+        val body = this.body ?: return false
+        var found = false
+        val visitor = object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                if (!found) element.acceptChildrenVoid(this)
+            }
+            override fun visitVariable(declaration: IrVariable) {
+                if (found) return
+                if (declaration.hasAnnotation(KonanFqNames.unroll)) {
+                    found = true
+                    return
+                }
+                super.visitVariable(declaration)
+            }
+            override fun visitLoop(loop: IrLoop) {
+                // Nested-loop @Unroll belongs to that loop, not this one — don't recurse.
+            }
+        }
+        body.acceptChildrenVoid(visitor)
+        return found
+    }
+
+    /**
+     * Attach `!llvm.loop { !"llvm.loop.unroll.full" }` metadata to the loop's back-edge
+     * branch. The outer MDNode has to reference itself in operand 0 — that's how LLVM's
+     * `LoopInfo` identifies it as loop metadata — so we build it via `LLVMTemporaryMDNode`
+     * + `LLVMMetadataReplaceAllUsesWith`, the canonical LLVM-C-API dance for constructing
+     * a self-referential MDNode.
+     */
+    private fun attachFullUnrollLoopMetadata(latch: LLVMValueRef) {
+        val ctx = llvm.llvmContext
+        val kindName = "llvm.loop"
+        val kindId = LLVMGetMDKindIDInContext(ctx, kindName, kindName.length)
+        val unrollProp = node(ctx, "llvm.loop.unroll.full".mdString(ctx))!!
+        val temp = LLVMTemporaryMDNode(ctx, null, 0)!!
+        val tempAsValue = LLVMMetadataAsValue(ctx, temp)!!
+        val loopMDValue = node(ctx, tempAsValue, unrollProp)
+        LLVMMetadataReplaceAllUsesWith(temp, LLVMValueAsMetadata(loopMDValue))
+        LLVMSetMetadata(latch, kindId, loopMDValue)
     }
 
     //-------------------------------------------------------------------------//

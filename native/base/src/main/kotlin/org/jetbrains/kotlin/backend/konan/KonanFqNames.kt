@@ -50,5 +50,6 @@ object KonanFqNames {
     val shouldRefineInSwift = FqName("kotlin.native.ShouldRefineInSwift")
     val reflectionPackageName = FqName("kotlin.native.internal.ReflectionPackageName")
     val noInline = FqName("kotlin.native.NoInline")
+    val unroll = FqName("kotlin.native.Unroll")
     val transparentForDebugger = FqName("kotlin.native.internal.TransparentForDebugger")
 }

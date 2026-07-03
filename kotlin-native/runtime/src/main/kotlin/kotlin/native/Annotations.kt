@@ -112,6 +112,32 @@ public annotation class EagerInitialization
 public annotation class NoInline
 
 /**
+ * Force full unrolling of the enclosing `for`/`while` loop. Placed on the loop parameter:
+ *
+ *     for (@Unroll i in 0..<8) { ... }
+ *
+ * Emits `!llvm.loop { !"llvm.loop.unroll.full" }` metadata on the loop's back-edge
+ * branch, telling LLVM to fully unroll regardless of its default cost heuristic. Only
+ * meaningful when the trip count is statically known.
+ *
+ * Motivating use case (also the reason the hint exists): LLVM's default loop-unroll
+ * thresholds are CPU-tuned and often refuse to unroll a small-body loop that indexes
+ * into a local array. When it doesn't, the array can't be SROA-scalarized, LLVM keeps
+ * the `alloca`, and downstream register allocation spills it to stack — on NVPTX targets
+ * that shows up as `.local` spill in the emitted PTX. `@Unroll` bypasses the cost model
+ * so every index becomes a compile-time constant, the alloca scalarizes, and no spill
+ * remains. Equivalent to `#pragma unroll` in nvcc/CUDA C++.
+ *
+ * The annotation attaches to the loop parameter (rather than the loop statement) because
+ * Kotlin has no statement-level `AnnotationTarget` and expression-level annotations must
+ * have `SOURCE` retention, which wouldn't survive to codegen.
+ */
+@ExperimentalNativeApi
+@Target(AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+public annotation class Unroll
+
+/**
  * Makes top level function available from C/C++ code with the given name.
  *
  * [externName] controls the name of top level function, [shortName] controls the short name.
