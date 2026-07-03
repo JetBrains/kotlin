@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.KOTLIN_PACKAGE_USAGE
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentField
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentLifecycleStatus
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
 
 fun incrementalCompilationIsEnabled(arguments: CommonCompilerArguments): Boolean {
@@ -131,14 +134,63 @@ fun CompilerConfiguration.reportCompilationException(e: CompilationException) {
 }
 
 /**
- * It's a helper function to parse version strings strictly from a `KotlinReleaseVersion.releaseName` value.
- * Since those values are always correct version strings, the function should never fail.
+ * Returns a warning message and status if the argument is deprecated or removed, null otherwise.
  */
-fun parseKotlinVersion(kotlinReleaseVersion: String): KotlinVersion {
-    val components = kotlinReleaseVersion.split('.')
-    return KotlinVersion(
-        major = components[0].toInt(),
-        minor = components[1].toInt(),
-        patch = components[2].toInt(),
-    )
+internal fun ArgumentField.generateLifecycleWarning(forExtraHelp: Boolean): Pair<String, ArgumentLifecycleStatus>? {
+    val status = status
+    if (status == ArgumentLifecycleStatus.REGULAR ||
+        // Don't report a diagnostic about future deprecation/removing
+        !forExtraHelp && (status == ArgumentLifecycleStatus.WILL_BE_DEPRECATED || status == ArgumentLifecycleStatus.WILL_BE_REMOVED) ||
+        // It doesn't make sense to show a warning for removed arguments in extra help
+        forExtraHelp && status >= ArgumentLifecycleStatus.REMOVED
+    ) {
+        return null
+    }
+
+    val argument = argument
+    val message = buildString {
+        if (forExtraHelp) {
+            append("The option ")
+        } else {
+            append("The argument '")
+            append(argument.value)
+            append("' ")
+        }
+
+        when (status) {
+            ArgumentLifecycleStatus.REGULAR -> shouldNotBeCalled()
+            ArgumentLifecycleStatus.WILL_BE_DEPRECATED,
+            ArgumentLifecycleStatus.WILL_BE_REMOVED -> {
+                append("will be ")
+                append(if (status == ArgumentLifecycleStatus.WILL_BE_DEPRECATED) "deprecated" else "removed")
+                append(" in ")
+                append(if (status == ArgumentLifecycleStatus.WILL_BE_DEPRECATED) argument.deprecatedVersion else argument.removedVersion)
+                append('.')
+            }
+            ArgumentLifecycleStatus.DEPRECATED,
+            ArgumentLifecycleStatus.DEPRECATED_AND_WILL_BE_REMOVED,
+                -> {
+                append("is deprecated since Kotlin ")
+                append(argument.deprecatedVersion)
+                append(". It will be removed in ")
+                if (status == ArgumentLifecycleStatus.DEPRECATED) {
+                    append("one of the future releases")
+                } else {
+                    append(argument.removedVersion)
+                }
+                append('.')
+                deprecatedAnnotation?.message?.takeIf { it.isNotEmpty() }?.let {
+                    append(' ')
+                    append(it)
+                }
+            }
+            ArgumentLifecycleStatus.REMOVED -> {
+                append("was removed in Kotlin ")
+                append(argument.removedVersion)
+                append(". It has no effect.")
+            }
+        }
+    }
+
+    return message to status
 }

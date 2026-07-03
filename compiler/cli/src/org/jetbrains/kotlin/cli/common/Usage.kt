@@ -96,22 +96,10 @@ object Usage {
 
             appendLine(argument.description.replace("\n", "\n" + PADDING_STRING))
 
-            val deprecatedAnnotation = argumentField.deprecatedAnnotation
-            if (deprecatedAnnotation != null) {
+            val messageWithStatus = argumentField.generateLifecycleWarning(forExtraHelp = true)
+            if (messageWithStatus != null) {
                 append(PADDING_STRING)
-                append("The option is ")
-                // The value is generated automatically based on KotlinReleaseVersion entries, thus it's expected to be always valid.
-                val argDeprecatedVersion = parseKotlinVersion(argument.deprecatedVersion)
-                val isAlreadyDeprecated = argDeprecatedVersion <= KotlinVersion.CURRENT
-                append(if (isAlreadyDeprecated) "deprecated since " else "will be deprecated in ")
-                append("Kotlin ").append(argDeprecatedVersion).append('.')
-                if (isAlreadyDeprecated) {
-                    append(" It will be removed in one of the future releases.")
-                }
-                val message = deprecatedAnnotation.message
-                if (message.isNotEmpty()) {
-                    append(' ').append(message.replace("\n", "\n" + PADDING_STRING))
-                }
+                append(messageWithStatus.first)
                 append('\n')
             }
         }

@@ -409,7 +409,7 @@ fun SmartPrinter.generateDeprecationAnnotation(argument: KotlinCompilerArgument)
         // Mark deprecated/removed arguments with warning/error deprecation level according to the specified version.
         generateAnnotation(
             Deprecated(
-                argument.deprecatedMessage ?: "",
+                message = argument.deprecatedMessage ?: "",
                 level = deprecationLevel,
             ),
             kind = AnnotationKind.Gradle,

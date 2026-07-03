@@ -138,3 +138,16 @@ fun KProperty1<out CommonCompilerArguments, *>.cliArgument(value: String): Strin
 }
 
 fun K2NativeCompilerArguments.isNativeSecondStage(): Boolean = produce != "library"
+
+/**
+ * It's a helper function to parse version strings strictly from a `KotlinReleaseVersion.releaseName` value.
+ * Since those values are always correct version strings, the function should never fail.
+ */
+internal fun parseKotlinVersion(kotlinReleaseVersion: String): KotlinVersion {
+    val components = kotlinReleaseVersion.split('.')
+    return KotlinVersion(
+        major = components[0].toInt(),
+        minor = components[1].toInt(),
+        patch = components[2].toInt(),
+    )
+}
