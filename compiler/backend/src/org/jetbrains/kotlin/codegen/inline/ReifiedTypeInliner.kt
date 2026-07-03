@@ -135,6 +135,7 @@ class ReifiedTypeInliner(
     }
 
     private var maxStackSize = 0
+    private var maxLocals = 0
 
     private val hasReifiedParameters = parametersMapping?.hasReifiedParameters() ?: false
 
@@ -147,6 +148,7 @@ class ReifiedTypeInliner(
         if (!hasReifiedParameters) return ReifiedTypeParametersUsages()
 
         maxStackSize = 0
+        maxLocals = 0
         val result = ReifiedTypeParametersUsages()
         for (insn in node.instructions.toArray()) {
             if (isOperationReifiedMarker(insn)) {
@@ -157,7 +159,8 @@ class ReifiedTypeInliner(
             }
         }
 
-        node.maxStack = node.maxStack + maxStackSize
+        node.maxStack += maxStackSize
+        node.maxLocals += maxLocals
         return result
     }
 
@@ -189,7 +192,7 @@ class ReifiedTypeInliner(
                 OperationKind.IS -> processIs(insn, instructions, type, asmType)
                 OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
                 OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, type, asmType)
-                OperationKind.TYPE_OF -> processTypeOf(insn, instructions, type)
+                OperationKind.TYPE_OF -> processTypeOf(insn, node, type)
                 OperationKind.CATCH -> processCatch(insn, node, asmType)
             }
 
@@ -272,15 +275,16 @@ class ReifiedTypeInliner(
 
     private fun processTypeOf(
         insn: MethodInsnNode,
-        instructions: InsnList,
+        node: MethodNode,
         type: IrType,
     ): Boolean = rewriteNextTypeInsn(insn, Opcodes.ACONST_NULL) { stubConstNull: AbstractInsnNode ->
         val newMethodNode = newMethodNodeWithCorrectStackSize {
-            typeSystem.generateTypeOf(it, type, intrinsicsSupport)
+            val localsUsed = typeSystem.generateTypeOf(it, type, intrinsicsSupport, node.maxLocals)
+            maxLocals = max(maxLocals, localsUsed)
         }
 
-        instructions.insert(insn, newMethodNode.instructions)
-        instructions.remove(stubConstNull)
+        node.instructions.insert(insn, newMethodNode.instructions)
+        node.instructions.remove(stubConstNull)
 
         maxStackSize = max(maxStackSize, newMethodNode.maxStack)
         return true

@@ -334,7 +334,7 @@ val IrClass.reifiedTypeParameters: ReifiedTypeParametersUsages
     get() {
         val tempReifiedTypeParametersUsages = ReifiedTypeParametersUsages()
         fun processTypeParameters(type: IrType) {
-            for (supertypeArgument in (type as? IrSimpleType)?.arguments ?: emptyList()) {
+            for (supertypeArgument in type.arguments.orEmpty()) {
                 if (supertypeArgument is IrTypeProjection) {
                     val typeArgument = supertypeArgument.type
                     if (typeArgument.isReifiedTypeParameter) {
