@@ -34,7 +34,7 @@ object TypeIntrinsics {
         val functionTypeArity = getFunctionTypeArity(type)
         if (functionTypeArity >= 0) {
             v.iconst(functionTypeArity)
-            v.typeIntrinsic(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR)
+            v.typeIntrinsic(IS_FUNCTION_OF_ARITY_METHOD_NAME, IS_FUNCTION_OF_ARITY_DESCRIPTOR)
             return
         }
 
@@ -48,7 +48,7 @@ object TypeIntrinsics {
                 instanceOf(AsmTypes.SUSPEND_FUNCTION_TYPE)
                 ifeq(notSuspendLambda)
                 iconst(suspendFunctionTypeArity + 1)
-                typeIntrinsic(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR)
+                typeIntrinsic(IS_FUNCTION_OF_ARITY_METHOD_NAME, IS_FUNCTION_OF_ARITY_DESCRIPTOR)
                 goTo(end)
 
                 mark(notSuspendLambda)
@@ -84,7 +84,7 @@ object TypeIntrinsics {
             instructions.insertBefore(instanceofInsn, iconstNode(functionTypeArity))
             instructions.insertBefore(
                 instanceofInsn,
-                typeIntrinsicNode(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR),
+                typeIntrinsicNode(IS_FUNCTION_OF_ARITY_METHOD_NAME, IS_FUNCTION_OF_ARITY_DESCRIPTOR),
             )
             instructions.remove(instanceofInsn)
             return
@@ -137,9 +137,9 @@ object TypeIntrinsics {
 
     private const val INTRINSICS_CLASS = "kotlin/jvm/internal/TypeIntrinsics"
 
-    private const val IS_FUNCTON_OF_ARITY_METHOD_NAME = "isFunctionOfArity"
+    private const val IS_FUNCTION_OF_ARITY_METHOD_NAME = "isFunctionOfArity"
 
-    private val IS_FUNCTON_OF_ARITY_DESCRIPTOR =
+    private val IS_FUNCTION_OF_ARITY_DESCRIPTOR =
         Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"), Type.INT_TYPE)
 
     private val MUTABLE_COLLECTION_TYPE_FQ_NAMES = setOf(

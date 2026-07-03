@@ -49,8 +49,6 @@ private fun FqName.identifiedChild(name: String) = child(Name.identifier(name)).
 private val coroutinesIntrinsicsFileFacadeInternalName: Type =
     COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("IntrinsicsKt")).topLevelClassAsmType()
 
-val CONTINUATION_PARAMETER_NAME = Name.identifier("continuation")
-
 const val CONTINUATION_VARIABLE_NAME = "\$continuation"
 
 private val DEBUG_PROBES_INTERNAL_NAME =

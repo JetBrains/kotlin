@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.org.objectweb.asm.Type
@@ -29,7 +30,8 @@ class IrFrameMap {
     var currentSize = 0
         private set
 
-    fun enter(key: IrSymbol, type: Type): Int {
+    fun enter(declaration: IrSymbolOwner, type: Type): Int {
+        val key = declaration.symbol
         typeMap[key] = type
         val index = currentSize
         myVarIndex.put(key, index)

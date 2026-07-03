@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm
+package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
  * to that built-in, regardless of whether that descriptor's instance matches with the descriptor of the built-in.
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class SymbolTableWithBuiltInsDeduplication(
+class K1SymbolTableWithBuiltInsDeduplication(
     signaturer: IdSignatureComposer,
     irFactory: IrFactory,
 ) : SymbolTable(signaturer, irFactory) {

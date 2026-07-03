@@ -72,7 +72,7 @@ class ClassFileFactory(
 
     fun setModuleMapping(moduleProto: JvmModuleProtoBuf.Module) {
         generators.put(
-            JvmCodegenUtil.getMappingFileName(generationState.moduleName),
+            ModuleNameUtil.getMappingFileName(generationState.moduleName),
             object : OutAndSourceFileList(sourceFiles.toList()) {
                 override fun asBytes(factory: ClassBuilderFactory): ByteArray {
                     var flags = 0

@@ -7,33 +7,12 @@ package org.jetbrains.kotlin.codegen;
 
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassKind;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.KotlinType;
 
-import static org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS;
-import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
-
-public class JvmCodegenUtil {
-
-    private JvmCodegenUtil() {
-    }
-
-    public static boolean isJvmInterface(@Nullable DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ClassDescriptor) {
-            ClassKind kind = ((ClassDescriptor) descriptor).getKind();
-            return kind == INTERFACE || kind == ANNOTATION_CLASS;
-        }
-        return false;
-    }
-
-    public static boolean isJvmInterface(KotlinType type) {
-        return isJvmInterface(type.getConstructor().getDeclarationDescriptor());
+public class ModuleNameUtil {
+    private ModuleNameUtil() {
     }
 
     @NotNull

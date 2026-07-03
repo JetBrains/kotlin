@@ -707,7 +707,7 @@ class ExpressionCodegen(
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
         val varType = typeMapper.mapType(declaration)
-        val index = frameMap.enter(declaration.symbol, varType)
+        val index = frameMap.enter(declaration, varType)
 
         val initializer = declaration.initializer
         if (initializer != null) {

@@ -10,10 +10,7 @@ package org.jetbrains.kotlin.resolve.jvm.diagnostics
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.OTHER
 
-open class JvmDeclarationOrigin(val originKind: JvmDeclarationOriginKind, val declaration: IrDeclaration?) {
-    open val originalSourceElement: Any?
-        get() = declaration?.attributeOwnerId
-
+class JvmDeclarationOrigin(val originKind: JvmDeclarationOriginKind, val declaration: IrDeclaration?) {
     override fun toString(): String = when (this) {
         NO_ORIGIN -> "NO_ORIGIN"
         NO_ORIGIN_SUSPEND_FOR_INLINE -> "NO_ORIGIN_SUSPEND_FOR_INLINE"

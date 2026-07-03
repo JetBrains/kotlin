@@ -25,7 +25,6 @@ open class ParameterInfo(
     val index: Int,
     var remapValue: StackValue?, //in case when parameter could be extracted from outer context (e.g. from local var)
     val declarationIndex: Int,
-    val typeOnStack: Type = type
 ) {
     // Parameters of an anonymous object constructor are all represented as locals, but some of them
     // are also stored in fields.

@@ -52,12 +52,6 @@ abstract class ReferenceTrackingInterpreter : OptimizationBasicInterpreter() {
             }
         )
 
-    protected fun createMergedValue(v: TrackedReferenceValue, w: TrackedReferenceValue): TrackedReferenceValue =
-        if (v is TaintedTrackedReferenceValue || w is TaintedTrackedReferenceValue)
-            createTaintedValue(v, w)
-        else
-            MergedTrackedReferenceValue(getMergedValueType(v.type, w.type), mergeDescriptors(v, w))
-
     protected open fun createPossiblyMergedValue(v: TrackedReferenceValue, w: TrackedReferenceValue): TrackedReferenceValue =
         createTaintedValue(v, w)
 
@@ -118,4 +112,3 @@ abstract class ReferenceTrackingInterpreter : OptimizationBasicInterpreter() {
 
     protected abstract fun processRefValueUsage(value: TrackedReferenceValue, insn: AbstractInsnNode, position: Int)
 }
-

@@ -30,9 +30,9 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.GENERATE_SMAP;
 
 public abstract class AbstractClassBuilder implements ClassBuilder {
-    protected static final MethodVisitor EMPTY_METHOD_VISITOR = new MethodVisitor(Opcodes.API_VERSION) {};
+    private static final MethodVisitor EMPTY_METHOD_VISITOR = new MethodVisitor(Opcodes.API_VERSION) {};
     public static final RecordComponentVisitor EMPTY_RECORD_VISITOR = new RecordComponentVisitor(Opcodes.API_VERSION) {};
-    protected static final FieldVisitor EMPTY_FIELD_VISITOR = new FieldVisitor(Opcodes.API_VERSION) {};
+    private static final FieldVisitor EMPTY_FIELD_VISITOR = new FieldVisitor(Opcodes.API_VERSION) {};
 
     private String thisName;
 

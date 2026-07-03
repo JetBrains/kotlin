@@ -151,7 +151,7 @@ class K1JvmIrCodegenFactory(
 
         // Built-ins deduplication must be enabled immediately so that there is no chance for duplicate built-in symbols to occur. For
         // example, the creation of `IrPluginContextImpl` might already lead to duplicate built-in symbols via `BuiltinSymbolsBase`.
-        if (symbolTable is SymbolTableWithBuiltInsDeduplication) {
+        if (symbolTable is K1SymbolTableWithBuiltInsDeduplication) {
             symbolTable.bindBuiltIns(psi2irContext.moduleDescriptor.builtIns)
         }
 

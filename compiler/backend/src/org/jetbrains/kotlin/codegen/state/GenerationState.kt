@@ -65,7 +65,7 @@ class GenerationState(
         components.getIncrementalCache(targetId)
     }
 
-    val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
+    val moduleName: String = moduleName ?: ModuleNameUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
 
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext()

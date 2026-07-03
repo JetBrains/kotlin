@@ -41,20 +41,6 @@ class ProperTrackedReferenceValue(type: Type, val descriptor: ReferenceValueDesc
         "[$descriptor]"
 }
 
-
-class MergedTrackedReferenceValue(type: Type, override val descriptors: Set<ReferenceValueDescriptor>) : TrackedReferenceValue(type) {
-    override fun equals(other: Any?): Boolean =
-        other === this ||
-                other is MergedTrackedReferenceValue && other.descriptors == this.descriptors
-
-    override fun hashCode(): Int =
-        descriptors.hashCode()
-
-    override fun toString(): String =
-        descriptors.toString()
-}
-
-
 class TaintedTrackedReferenceValue(type: Type, override val descriptors: Set<ReferenceValueDescriptor>) : TrackedReferenceValue(type) {
     override fun equals(other: Any?): Boolean =
         other === this ||

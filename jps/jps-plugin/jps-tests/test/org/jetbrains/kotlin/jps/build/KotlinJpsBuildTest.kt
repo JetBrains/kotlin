@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.cli.common.Usage
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.ModuleNameUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.KotlinFacetSettings
@@ -99,7 +99,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         @JvmStatic
         protected fun module(moduleName: String): String {
-            return "out/production/$moduleName/${JvmCodegenUtil.getMappingFileName(moduleName)}"
+            return "out/production/$moduleName/${ModuleNameUtil.getMappingFileName(moduleName)}"
         }
     }
 

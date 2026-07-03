@@ -83,7 +83,7 @@ abstract class BoxingInterpreter(
                 val firstArgType = firstArg.type
                 if (isProgressionClass(firstArgType)) {
                     progressionIterators.getOrPut(insn) {
-                        ProgressionIteratorBasicValue.byProgressionClassType(insn, firstArgType)!!
+                        ProgressionIteratorBasicValue.byProgressionClassType(firstArgType)!!
                     }
                 } else {
                     progressionIterators[insn]?.taint()

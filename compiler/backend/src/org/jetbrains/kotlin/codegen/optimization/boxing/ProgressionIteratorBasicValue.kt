@@ -20,11 +20,8 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 
-class ProgressionIteratorBasicValue
-private constructor(
-    val iteratorCallInsn: AbstractInsnNode,
+class ProgressionIteratorBasicValue private constructor(
     val nextMethodName: String,
     iteratorType: Type,
     private val primitiveElementType: Type,
@@ -64,30 +61,20 @@ private constructor(
         private val INT_PROGRESSION_FQN = StandardNames.FqNames.intProgression.asString()
         private val LONG_PROGRESSION_FQN = StandardNames.FqNames.longProgression.asString()
 
-        private fun progressionIteratorValue(
-            iteratorCallInsn: AbstractInsnNode,
-            typeName: String,
-            valuesPrimitiveType: Type,
-            valuesBoxedType: Type = AsmUtil.boxType(valuesPrimitiveType)
-        ): ProgressionIteratorBasicValue =
+        private fun progressionIteratorValue(typeName: String, valuesPrimitiveType: Type): ProgressionIteratorBasicValue =
             ProgressionIteratorBasicValue(
-                iteratorCallInsn,
                 "next$typeName",
                 Type.getObjectType("kotlin/collections/${typeName}Iterator"),
                 valuesPrimitiveType,
-                valuesBoxedType
+                AsmUtil.boxType(valuesPrimitiveType),
             )
 
-        fun byProgressionClassType(iteratorCallInsn: AbstractInsnNode, progressionClassType: Type): ProgressionIteratorBasicValue? =
+        fun byProgressionClassType(progressionClassType: Type): ProgressionIteratorBasicValue? =
             when (progressionClassType.className) {
-                CHAR_RANGE_FQN, CHAR_PROGRESSION_FQN ->
-                    progressionIteratorValue(iteratorCallInsn, "Char", Type.CHAR_TYPE)
-                INT_RANGE_FQN, INT_PROGRESSION_FQN ->
-                    progressionIteratorValue(iteratorCallInsn, "Int", Type.INT_TYPE)
-                LONG_RANGE_FQN, LONG_PROGRESSION_FQN ->
-                    progressionIteratorValue(iteratorCallInsn, "Long", Type.LONG_TYPE)
-                else ->
-                    null
+                CHAR_RANGE_FQN, CHAR_PROGRESSION_FQN -> progressionIteratorValue("Char", Type.CHAR_TYPE)
+                INT_RANGE_FQN, INT_PROGRESSION_FQN -> progressionIteratorValue("Int", Type.INT_TYPE)
+                LONG_RANGE_FQN, LONG_PROGRESSION_FQN -> progressionIteratorValue("Long", Type.LONG_TYPE)
+                else -> null
             }
     }
 }
