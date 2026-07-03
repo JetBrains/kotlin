@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.REPL_SIDECAR_PLUGIN_ID
 
 val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier("\$\$eval")
 val REPL_SNIPPET_RESULT_PROP_NAME = Name.identifier("\$\$result")
@@ -152,6 +153,31 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
 
         // TODO: find out what problems could arise from copying annotations applicable to file only (KT-74176)
         irSnippetClass.annotations += (irSnippetClass.parent as IrFile).annotations
+
+        embedReplSidecarMetadata(irSnippet, irSnippetClass)
+    }
+
+    /**
+     * On the **stateless** REPL compile path, embed the protobuf-wire `SnippetArtifactSidecar`
+     * bytes — assembled by `Fir2IrReplSnippetConfiguratorExtensionImpl.prepareSnippet` from the
+     * frontend and stashed on [irSnippet] via [replSidecarMetadataAttr] — into the snippet wrapper
+     * class's `.kotlin_metadata`. The bytes ride the generic `ProtoBuf.CompilerPluginData` channel
+     * keyed by [REPL_SIDECAR_PLUGIN_ID], so no metadata `.proto` is changed and no metadata-version
+     * bump is needed; every other metadata consumer ignores the unknown plugin id.
+     *
+     * The read side (`ClasspathBackedFirReplHistoryProvider.materialize`) recovers the bytes from a
+     * reconstructed prior snippet via `firClass.compilerPluginMetadata[REPL_SIDECAR_PLUGIN_ID]`.
+     *
+     * No-op when the attribute is absent (the stateful/golden path never sets it), leaving that
+     * path's metadata bit-for-bit unchanged.
+     */
+    private fun embedReplSidecarMetadata(irSnippet: IrReplSnippet, irSnippetClass: IrClass) {
+        val sidecarBytes = irSnippet.replSidecarMetadataAttr ?: return
+        context.metadataDeclarationRegistrar.addCustomMetadataExtension(
+            irSnippetClass,
+            REPL_SIDECAR_PLUGIN_ID,
+            sidecarBytes,
+        )
     }
 }
 

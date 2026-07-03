@@ -188,7 +188,7 @@ class ScriptingCompilerPluginTest {
 
                 messageCollector.clear()
 
-                val scriptFiles = scriptsSrc.listFiles { file: File -> file.extension == "kts" }.map { it.canonicalPath }
+                val scriptFiles = scriptsSrc.listFiles { file: File -> file.extension == "kts" }?.map { it.canonicalPath }.orEmpty()
 
                 val scriptsCompileEnv = createEnvironment(scriptFiles, scriptsOut, messageCollector, disposable) {
                     addJvmClasspathRoots(runtimeClasspath)

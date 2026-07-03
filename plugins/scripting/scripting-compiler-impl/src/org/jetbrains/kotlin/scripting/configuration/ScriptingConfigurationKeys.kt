@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.configuration
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 
@@ -42,4 +43,25 @@ object ScriptingConfigurationKeys {
     // Do not attempt to use script compilation cache, even if provided by the definition
     val DISABLE_SCRIPT_COMPILATION_CACHE: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create("DISABLE_SCRIPT_COMPILATION_CACHE")
+
+    // Ordered ClassIds (1..N-1) of prior REPL snippets already compiled through the *regular*
+    // pipeline (a plain `.repl.kts` source root file, `-Xallow-any-scripts-in-source-roots`, `-d`
+    // output), whose compiled classes reach this compile purely via the regular classpath. Only
+    // meaningful when [REPL_SNIPPET_REGULAR_MODE] is set; see its doc for the overall mechanism.
+    val REPL_SNIPPET_PRIOR_CLASSES: CompilerConfigurationKey<List<ClassId>> =
+        CompilerConfigurationKey.create("REPL_SNIPPET_PRIOR_CLASSES")
+
+    // Enables compiling `.repl.kts` sources as chained REPL snippets on the *regular* JVM
+    // frontend/backend pipeline (used together with `-Xallow-any-scripts-in-source-roots`): a
+    // `.repl.kts` source is marked via `KtScript.markAsReplSnippet()` in
+    // `ScriptingProcessSourcesBeforeCompilingExtension` and passed through unmodified; the FIR
+    // REPL-snippet extensions are additionally registered, configured with a dedicated
+    // `ScriptDefinition` (resultField-capturing `ScriptCompilationConfiguration` matching
+    // `.repl.kts`) and a `ClasspathBackedFirReplHistoryProvider` built from
+    // [REPL_SNIPPET_PRIOR_CLASSES]. This is the same-machine CLI/daemon caller's way of getting
+    // chained-snippet compilation with no bespoke artifact format — prior snippets are just
+    // classpath entries plus their ClassIds; see the on-daemon JSR-223 example
+    // (`:examples:scripting-jsr223-daemon`)'s `DaemonReplCompiler`.
+    val REPL_SNIPPET_REGULAR_MODE: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("REPL_SNIPPET_REGULAR_MODE")
 }

@@ -45,6 +45,9 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecarProtoCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.buildReplSidecarFromFir
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.replSidecarMetadataAttr
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
 import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -143,16 +146,73 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             )
 
         irSnippet.stateObject = stateObject.symbol
+
+        stashReplSidecarMetadataIfStateless(firReplSnippet, irSnippet)
+    }
+
+    /**
+     * On the **stateless** REPL compile path, assemble the frontend-derivable
+     * `SnippetArtifactSidecar` (the `isReplSnippetDeclaration` member refs with their visibilities
+     * plus the file-level imports) and stash its protobuf-wire bytes on [irSnippet] so that
+     * `ReplSnippetsToClassesLowering.finalizeReplSnippetClass` can embed them into the wrapper
+     * class's `.kotlin_metadata` (via the generic `ProtoBuf.CompilerPluginData` channel).
+     *
+     * This is a no-op on the stateful/golden path — detected by the host configuration carrying a
+     * [ClasspathBackedFirReplHistoryProvider] (the only provider that reconstructs prior snippets
+     * purely from a compiled class, so it needs the embedded sidecar) — so stateful snippet
+     * `.kotlin_metadata` is left bit-for-bit unchanged.
+     *
+     * For that provider the embedded sidecar is the sole carrier of the reconstruction payload;
+     * everything else a consumer needs (class id, snippet name) is either recoverable from the
+     * wrapper class itself or already known out-of-band via its `ClassId`.
+     */
+    private fun stashReplSidecarMetadataIfStateless(firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
+        val historyProvider = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]
+        if (historyProvider !is ClasspathBackedFirReplHistoryProvider) return
+
+        val sidecar = buildReplSidecarFromFir(firSnippet = firReplSnippet, session = session)
+        irSnippet.replSidecarMetadataAttr = SnippetArtifactSidecarProtoCodec.encode(sidecar)
     }
 
     private fun Fir2IrComponents.getOrBuildActualParent(
         symbol: FirBasedSymbol<*>, parentClassOrSnippet: IrClass, irSnippet: IrReplSnippet
     ): IrClass =
         symbol.getContainingClassSymbol()?.let {
-            if (it is FirRegularClassSymbol && it.origin != FirDeclarationOrigin.Synthetic.ReplContainerClass)
+            if (it is FirRegularClassSymbol &&
+                it.origin != FirDeclarationOrigin.Synthetic.ReplContainerClass &&
+                !it.isReconstructedSnippetContainerFor(symbol)
+            )
                 createClassFromOtherSnippet(it, parentClassOrSnippet, irSnippet)
             else null
         } ?: parentClassOrSnippet
+
+    /**
+     * Recognises a **stateless**-reconstructed REPL snippet wrapper as a snippet container.
+     *
+     * In the stateful path the snippet wrapper carries
+     * [FirDeclarationOrigin.Synthetic.ReplContainerClass], so the `origin` check in
+     * [getOrBuildActualParent] already treats a top-level snippet declaration's container as the
+     * snippet and parents the reconstructed declaration directly on the earlier-snippet IR class.
+     *
+     * In the stateless path the wrapper is **deserialized** from a prior snippet's
+     * `.kotlin_metadata`, so its origin is [FirDeclarationOrigin.Library] — indistinguishable by
+     * `origin` from a regular user class declared *inside* a prior snippet (e.g. `class Foo`).
+     * Treating the wrapper like such a user class makes `createClassFromOtherSnippet` re-nest the
+     * declaration under a freshly-built `Wrapper$Wrapper` class that is never emitted, surfacing at
+     * eval time as `NoClassDefFoundError: <Wrapper>$<Wrapper>`.
+     *
+     * The discriminator is identity: [ClasspathBackedFirReplHistoryProvider] tags every reconstructed
+     * top-level snippet declaration with [originalReplSnippetSymbol], whose `snippetClass` *is* the
+     * wrapper. So [accessedSymbol] is a direct member of the wrapper iff its
+     * `originalReplSnippetSymbol`'s snippet-class symbol equals `this`. A member of a user class
+     * declared inside a snippet (`Foo.bar`) has `Foo` as its container, which never equals the
+     * wrapper — so such accesses still nest correctly.
+     */
+    @OptIn(SymbolInternals::class)
+    private fun FirRegularClassSymbol.isReconstructedSnippetContainerFor(accessedSymbol: FirBasedSymbol<*>): Boolean {
+        val ownerSnippetClassSymbol = accessedSymbol.fir.originalReplSnippetSymbol?.fir?.snippetClass?.symbol
+        return ownerSnippetClassSymbol == this
+    }
 
     @OptIn(SymbolInternals::class, DelicateDeclarationStorageApi::class)
     private fun Fir2IrComponents.createClassFromOtherSnippet(

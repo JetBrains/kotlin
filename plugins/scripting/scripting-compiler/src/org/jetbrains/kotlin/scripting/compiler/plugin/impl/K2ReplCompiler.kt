@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationCo
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -128,8 +129,28 @@ class K2ReplCompiler(
                 add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
             }
 
+            // Build a `ScriptCompilationConfigurationProvider` that resolves this REPL session's own
+            // (single, host-provided) script definition/configuration by the standard
+            // `ScriptDefinition.FromConfigurationsBase.isScript` extension check: every source compiled
+            // in this session -- including REPL snippets -- is named with a `.repl.<fileExtension>` (or
+            // plain `.<fileExtension>`) suffix that matches this definition's own
+            // [ScriptCompilationConfiguration.fileExtension] (e.g. `.repl.main.kts` for `MainKtsScript`),
+            // see `KotlinJsr223ScriptEngineImpl.compile`.
+            val compilerConfiguration = compilerContext.environment.configuration
+            compilerConfiguration.add(
+                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+                ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
+            )
+            val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
+            val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
+            val scriptDefinitionProvider = CliScriptDefinitionProvider(
+                compilerConfiguration.disableStandardScriptDefinition
+            ).also {
+                it.setScriptDefinitionsSources(definitionSources)
+                it.setScriptDefinitions(definitions)
+            }
             val hostConfigurationWithProvider = hostConfiguration.with {
-                scriptCompilationConfigurationProvider(SingleScriptCompilationConfigurationProvider(scriptCompilationConfiguration))
+                scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
                 scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
             }
 
@@ -260,7 +281,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         ).also { moduleDataHistory.add(it) }
 }
 
-@OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class, KtNonPublicApi::class, SessionConfiguration::class)
+@OptIn(LegacyK2CliPipeline::class, SessionConfiguration::class, K1SpecificScriptingServiceAccessor::class, KtNonPublicApi::class)
 private fun compileImpl(
     state: K2ReplCompilationState,
     snippet: SourceCode,
@@ -415,7 +436,6 @@ private fun compileImpl(
     }
 
     val irInput = convertAnalyzedFirToIr(compilerConfiguration, targetId, frontendOutput, compilerEnvironment)
-
     val generationState = generateCodeFromIr(irInput, compilerEnvironment)
 
     diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
