@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonLoweredIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -277,7 +278,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
     }
 
     configureLoweredIrHandlersStep {
-        commonIrHandlersForCodegenTest()
+        commonLoweredIrHandlersForCodegenTest()
     }
 
     configureKlibArtifactsHandlersStep {

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
-import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonLoweredIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -60,7 +60,7 @@ abstract class AbstractNativeLoadCompiledKotlinTest :
         facadeStep(::NativePreSerializationLoweringCliFacade)
 
         loweredIrHandlersStep {
-            commonIrHandlersForCodegenTest()
+            commonLoweredIrHandlersForCodegenTest()
             useHandlers(::IrDiagnosticsHandler)
         }
 

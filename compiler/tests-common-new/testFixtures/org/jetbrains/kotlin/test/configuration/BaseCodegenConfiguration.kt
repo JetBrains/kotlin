@@ -186,9 +186,21 @@ fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<FirOutputArtifact, Fron
 }
 
 /**
- * Adds a handler which checks that there are no compilation errors reported at the K2 frontend step
+ * Adds handlers which check IR and errors reported after the K2 frontend step
  */
 fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<IrBackendInput, BackendKinds.IrBackend>.commonIrHandlersForCodegenTest() {
+    useHandlers(
+        ::NoIrCompilationErrorsHandler,
+    )
+    useHandlers(
+        ::IrTextDumpHandler
+    )
+}
+
+/**
+ * Adds a handler which checks that there are no compilation errors reported after pre-serialization lowerings
+ */
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<IrBackendInput, BackendKinds.IrBackend>.commonLoweredIrHandlersForCodegenTest() {
     useHandlers(
         ::NoIrCompilationErrorsHandler,
     )

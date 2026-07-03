@@ -77,7 +77,7 @@ fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessorsTest(
     }
     facadeStep(irInliningFacade)
     loweredIrHandlersStep {
-        commonIrHandlersForCodegenTest()
+        commonLoweredIrHandlersForCodegenTest()
     }
 
     enableMetaInfoHandler()

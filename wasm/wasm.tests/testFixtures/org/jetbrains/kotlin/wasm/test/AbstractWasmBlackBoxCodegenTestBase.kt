@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonLoweredIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
@@ -176,7 +177,7 @@ fun TestConfigurationBuilder.setupStepsForWasmFirstStageUpToSerialization(
 
     facadeStep(::WasmPreSerializationLoweringFacade)
     loweredIrHandlersStep {
-        commonIrHandlersForCodegenTest()
+        commonLoweredIrHandlersForCodegenTest()
     }
 
     facadeStep(::FirKlibSerializerCliWasmFacade)
