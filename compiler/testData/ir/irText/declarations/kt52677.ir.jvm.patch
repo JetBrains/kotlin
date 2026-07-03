@@ -1,6 +1,6 @@
 --- a/kt52677.ir.txt
 +++ b/kt52677.ir.jvm_ir.txt
-@@ -182,5 +182,5 @@
+@@ -182,6 +182,6 @@
    FUN name:foo visibility:public modality:FINAL returnType:@[MySerializable(c = UuidSerializer::class)] <root>.Uuid1
      BLOCK_BODY
        THROW type=kotlin.Nothing

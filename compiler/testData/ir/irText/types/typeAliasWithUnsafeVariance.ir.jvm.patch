@@ -1,6 +1,6 @@
 --- a/typeAliasWithUnsafeVariance.ir.txt
 +++ b/typeAliasWithUnsafeVariance.ir.jvm_ir.txt
-@@ -98,6 +98,6 @@
+@@ -98,7 +98,7 @@
    FUN name:getTag visibility:public modality:FINAL returnType:<root>.Tag<*>
      BLOCK_BODY
        THROW type=kotlin.Nothing

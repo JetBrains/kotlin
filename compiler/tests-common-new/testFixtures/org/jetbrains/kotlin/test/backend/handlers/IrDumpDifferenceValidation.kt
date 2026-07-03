@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.testInfraError
+import org.jetbrains.kotlin.test.util.convertLineSeparators
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.test.utils.withExtension
 import java.io.File
 import java.util.Locale
@@ -50,7 +52,7 @@ internal fun validateTargetSpecificDumpFile(
 
     val targetSpecificExtension = getTargetSpecificDumpExtension(testServices, baseDumpExtension)
     if (targetSpecificExtension != null) {
-        val normalizedActualDump = actualDump.trimEnd()
+        val normalizedActualDump = actualDump.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
         val targetSpecificFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(targetSpecificExtension)
 
@@ -65,7 +67,7 @@ internal fun validateTargetSpecificDumpFile(
             "DUMP_IR_DIFFERENCE directive specifies $targetBackendDirectiveName but neither main dump nor target-specific dump exists"
         }
 
-        val mainDump = mainExpectedFile.readText().trimEnd()
+        val mainDump = mainExpectedFile.readText().trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
         val expectedPatch = buildPatch(
             baseText = mainDump,
             targetText = normalizedActualDump,
@@ -130,7 +132,7 @@ private fun buildPatch(baseText: String, targetText: String, targetBackendName: 
     )
     return unifiedDiff
         .joinToString(System.lineSeparator())
-        .trimEnd()
+        .trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
 }
 
 private fun String.insertBackendBeforeTxtExtension(targetBackendName: String): String {
@@ -159,7 +161,8 @@ private fun applyPatch(baseText: String, patchFile: File): String {
         testInfraError("Unknown target-specific patch format in ${patchFile.absolutePath}: $e")
     }
 
-    return patchedLines.joinToString(System.lineSeparator()).trimEnd()
+    return patchedLines.joinToString(System.lineSeparator())
+        .trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
 }
 
 private fun TargetBackend.compatibleBackendNamesIncludingSelf(): List<String> {

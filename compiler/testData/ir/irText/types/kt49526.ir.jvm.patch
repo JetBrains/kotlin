@@ -1,6 +1,6 @@
 --- a/kt49526.ir.txt
 +++ b/kt49526.ir.jvm_ir.txt
-@@ -1,15 +1,15 @@
+@@ -1,16 +1,16 @@
  FILE fqName:<root> fileName:/kt49526.kt
    FUN name:test visibility:public modality:FINAL returnType:kotlin.Boolean
      BLOCK_BODY
