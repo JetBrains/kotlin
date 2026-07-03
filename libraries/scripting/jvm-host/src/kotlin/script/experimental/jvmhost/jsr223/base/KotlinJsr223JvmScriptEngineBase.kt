@@ -16,13 +16,15 @@
 
 package kotlin.script.experimental.jvmhost.jsr223.base
 
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import java.io.Reader
 import java.io.Serializable
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.*
 import kotlin.reflect.KClass
+import kotlin.script.experimental.api.CompiledSnippet
+import kotlin.script.experimental.api.ReplCompiler
+import kotlin.script.experimental.api.ReplEvaluator
+import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 
 /**
  * Keep args and arg types together, so as a whole they are present or absent
@@ -45,8 +47,14 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
     protected val myFactory: ScriptEngineFactory
 ) : AbstractScriptEngine(), ScriptEngine, Compilable {
 
-    protected abstract val replCompiler: K2ReplCompiler
-    protected abstract val replEvaluator: K2ReplEvaluator
+    // Loosened from the concrete `K2ReplCompiler`/`K2ReplEvaluator` types to their common
+    // interfaces so that alternative `ReplCompiler`/`ReplEvaluator` implementations -- e.g. one
+    // that drives snippet compilation through an out-of-process compile daemon rather than an
+    // in-process K2 REPL compiler (see `kotlin.script.experimental.jvmhost.jsr223.daemon`) -- can
+    // reuse this base class and its stock `compile`/`eval`/state-management scaffolding, while
+    // still substituting only the compiler (and, if ever needed, the evaluator).
+    protected abstract val replCompiler: ReplCompiler<CompiledSnippet>
+    protected abstract val replEvaluator: ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet>
 
     override fun eval(script: String, context: ScriptContext): Any? = compileAndEval(script, context)
 
