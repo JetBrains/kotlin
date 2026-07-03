@@ -22,6 +22,7 @@ private val temporaryExceptions: Set<String> = setOf(
     "Xcontext-receivers",
     "Xsuppress-deprecated-jvm-target-warning",
     "Xklib-normalize-absolute-path",
+    "Xworker-exception-handling",
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {

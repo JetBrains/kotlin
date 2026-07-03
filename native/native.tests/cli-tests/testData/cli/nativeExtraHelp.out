@@ -78,9 +78,6 @@ where advanced options include:
   -Xtemporary-files-dir=<path> Save temporary files to the given directory.
   -Xverify-bitcode           Verify LLVM bitcode after each method.
   -Xverify-compiler          Verify the compiler.
-  -Xworker-exception-handling=<mode>
-                             Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.
-                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases.
   -Xwrite-dependencies-of-produced-klib-to=<path>
                              Write file containing the paths of dependencies used during klib compilation to the provided path
   -Xwrite-dependencies-to    Path for writing backend dependencies.

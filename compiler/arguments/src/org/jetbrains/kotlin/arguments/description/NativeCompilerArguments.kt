@@ -895,21 +895,6 @@ The default value is 1.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xworker-exception-handling"
-        description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.".asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "<mode>".asReleaseDependent()
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_0,
-            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
-            // The CLI arguments generation is broken if use a future `removedVersion`.
-            // TODO: uncomment after switching to 2.5 or after fixing of KT-87495
-            // removedVersion = KotlinReleaseVersion.v2_5_0,
-        )
-    }
-
-    compilerArgument {
         name = "Xllvm-variant"
         description = "Choose the LLVM distribution that will be used during compilation.".asReleaseDependent()
         valueType = StringType.defaultNull

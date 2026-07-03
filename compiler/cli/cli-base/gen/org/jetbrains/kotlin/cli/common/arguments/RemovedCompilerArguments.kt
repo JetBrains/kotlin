@@ -295,6 +295,22 @@ It has no effect when -language-version is 2.0 or higher.""",
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xworker-exception-handling",
+        valueDescription = "<mode>",
+        description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.",
+        deprecatedVersion = "2.4.20",
+        removedVersion = "2.5.0",
+    )
+    var workerExceptionHandling: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-library-version",
         shortName = "-lv",
         valueDescription = "<version>",

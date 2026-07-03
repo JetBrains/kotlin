@@ -18427,7 +18427,7 @@
                                             "introducedVersion": "1.6.0",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": "2.4.20",
-                                            "removedVersion": null
+                                            "removedVersion": "2.5.0"
                                         },
                                         "argumentType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",

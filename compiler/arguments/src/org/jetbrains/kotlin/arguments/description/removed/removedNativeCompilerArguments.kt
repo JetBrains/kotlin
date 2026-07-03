@@ -72,4 +72,17 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             removedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
+
+    compilerArgument {
+        name = "Xworker-exception-handling"
+        description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "<mode>".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }

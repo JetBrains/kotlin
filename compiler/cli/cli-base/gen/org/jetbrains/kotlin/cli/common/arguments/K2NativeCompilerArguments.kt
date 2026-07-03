@@ -642,19 +642,6 @@ This library must be one of the ones passed with '-library'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @all:Deprecated("")
-    @Argument(
-        value = "-Xworker-exception-handling",
-        valueDescription = "<mode>",
-        description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.",
-        deprecatedVersion = "2.4.20",
-    )
-    var workerExceptionHandling: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
     @Argument(
         value = "-Xwrite-dependencies-of-produced-klib-to",
         valueDescription = "<path>",
