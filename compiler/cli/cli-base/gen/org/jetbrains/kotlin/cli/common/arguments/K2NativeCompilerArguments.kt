@@ -889,18 +889,6 @@ This library must be one of the ones passed with '-library'.""",
             field = value
         }
 
-    @all:Deprecated("The dist no longer has any endorsed libraries.")
-    @Argument(
-        value = "-no-endorsed-libs",
-        description = "Don't link endorsed libraries from the dist automatically.",
-        deprecatedVersion = "1.9.20",
-    )
-    var noendorsedlibs: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-nomain",
         description = "Assume the 'main' entry point will be provided by external libraries.",

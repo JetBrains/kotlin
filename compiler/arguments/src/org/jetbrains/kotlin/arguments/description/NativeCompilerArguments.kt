@@ -212,24 +212,6 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     }
 
     compilerArgument {
-        name = "no-endorsed-libs"
-        compilerName = "noendorsedlibs"
-        description = ReleaseDependent(
-            "Don't link endorsed libraries from the dist automatically.",
-            KotlinReleaseVersion.v1_9_20..KotlinReleaseVersion.v2_4_0 to
-                    "Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries."
-        )
-        valueType = BooleanType.defaultFalse
-        deprecatedMessage = "The dist no longer has any endorsed libraries."
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
-            deprecatedVersion = KotlinReleaseVersion.v1_9_20,
-        )
-    }
-
-    compilerArgument {
         name = "nomain"
         description = "Assume the 'main' entry point will be provided by external libraries.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

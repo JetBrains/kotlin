@@ -65,8 +65,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.nativeLibraries = from.nativeLibraries.copyOf()
     to.noObjcGenerics = from.noObjcGenerics
     to.nodefaultlibs = from.nodefaultlibs
-    @Suppress("DEPRECATION")
-    to.noendorsedlibs = from.noendorsedlibs
     to.nomain = from.nomain
     to.nopack = from.nopack
     to.nostdlib = from.nostdlib
