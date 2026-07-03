@@ -42,6 +42,7 @@ class JKlibIrLinker(
         get() = false
 
     private val javaName = Name.identifier("java")
+    private val isCompilingStdlib = module.name.asString().contains("kotlin-stdlib")
 
     private fun DeclarationDescriptor.isJavaDescriptor(): Boolean {
         if (this is PackageFragmentDescriptor) {
@@ -70,7 +71,8 @@ class JKlibIrLinker(
         // TODO(KT-86172): Investigate the issue around property fake override and remove this filter.
         platformSpecificClassFilter = object : FakeOverrideClassFilter {
             override fun needToConstructFakeOverrides(clazz: IrClass): Boolean =
-                clazz.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+                clazz.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB &&
+                    (isCompilingStdlib || clazz.origin != IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
         },
     )
 

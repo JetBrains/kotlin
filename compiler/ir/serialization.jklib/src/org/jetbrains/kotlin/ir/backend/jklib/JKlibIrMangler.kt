@@ -28,8 +28,13 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
-import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
+import org.jetbrains.kotlin.ir.util.resolveFakeOverrideMaybeAbstract
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
@@ -53,15 +58,29 @@ import org.jetbrains.kotlin.utils.DFS.ifAny as ifAnyDFS
  * directly reuse manglers from Kotlin/JVM.
  */
 
-class JKlibIrMangler : BaseJvmIrMangler() {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun IrDeclaration.signatureString(compatibleMode: Boolean): String {
-        if (!getPackageFragment().packageFqName.asString().isKotlinPackage() && isJavaBackedCallable()) {
-            (descriptor as? CallableDescriptor)?.computeJvmSignatureSafe()?.let {
-                return it
+        val target =
+            if (this is IrOverridableDeclaration<*> && isFakeOverride) {
+                resolveFakeOverrideMaybeAbstract() as? IrDeclaration ?: this
+            } else {
+                this
             }
+
+        if (target.shouldUseJvmSignature()) {
+            val jvmSig = (target.descriptor as? CallableDescriptor)?.computeJvmSignatureSafe()
+            if (jvmSig != null) return jvmSig
+        } else if (
+            this is IrProperty &&
+                getter == null &&
+                setter == null &&
+                (isFakeOverride || backingField == null)
+        ) {
+            val parentSig = (parent as? IrDeclaration)?.signatureString(compatibleMode)
+            if (parentSig != null) return "$parentSig.${name.asString()}"
         }
-        return getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
+
+        return getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(target)
     }
 
     private class JKlibIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean) :
@@ -93,12 +112,22 @@ class JKlibIrMangler : BaseJvmIrMangler() {
 class JKlibDescriptorMangler(private val mainDetector: MainFunctionDetector?) : JvmDescriptorMangler(mainDetector) {
 
     override fun DeclarationDescriptor.signatureString(compatibleMode: Boolean): String {
-        if (this.containingPackage()?.asString()
-                ?.isKotlinPackage() == false && this is JavaCallableMemberDescriptor || containingDeclaration is JavaClassDescriptor
-        ) {
-            (this as? CallableDescriptor)?.computeJvmSignatureSafe()?.let {
+        val containingClass = containingDeclaration as? ClassDescriptor
+        val classFqName = containingClass?.fqNameOrNull()
+        val isAnyOrThrowable =
+            classFqName != null &&
+                (classFqName.asString() == "kotlin.Any" || classFqName.asString() == "kotlin.Throwable")
+
+        val isJavaBacked =
+            containingPackage()?.asString()?.isKotlinPackage() == false && !isAnyOrThrowable
+
+        if (isJavaBacked && shouldUseJvmSignature()) {
+            val target =
+                if (this is CallableMemberDescriptor) DescriptorUtils.unwrapFakeOverride(this) else this
+            (target as? CallableDescriptor)?.computeJvmSignatureSafe()?.let {
                 return it
             }
+            return getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(target)
         }
         return getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
     }
@@ -221,36 +250,86 @@ private fun CallableDescriptor.computeJvmSignatureSafe(): String? {
     }
 }
 
-private fun IrDeclaration.isDeclaredInJava(): Boolean {
-    if (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return true
-    val ownerClass = parentClassOrNull
-    return ownerClass?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+private fun isKotlinOnlyClass(fqName: FqName): Boolean {
+    val str = fqName.asString()
+    if (str == "kotlin.Any" || str == "kotlin.Throwable") return true
+    if (!str.startsWith("kotlin.")) return false
+    return JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe()) == null
 }
 
-@OptIn(UnsafeDuringIrConstructionAPI::class)
-private fun IrDeclaration.isJavaBackedCallable(): Boolean {
-    if (isDeclaredInJava()) return true
-
-    val functions = when (this) {
-        is IrSimpleFunction -> {
-            // Check if the function a fake override of a Java declaration.
-            listOf(this)
-        }
-        is IrProperty -> {
-            // Check property accessors.
-            listOfNotNull(getter, setter)
-        }
-        else -> emptyList()
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrDeclaration.shouldUseJvmSignature(): Boolean {
+    if (getPackageFragment().packageFqName.asString().isKotlinPackage()) return false
+    if (hasKotlinOnlyRoot()) return false
+    if (this is IrFunction) {
+        if (origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL)
+            return false
+        if (origin.isSynthetic && !isEnumSyntheticMethod()) return false
     }
-
-    if (functions.any { it.isFakeOverride }) {
-        return ifAnyDFS(
-            functions,
-            { current ->
-                if (current.isFakeOverride) current.overriddenSymbols.map { it.owner } else emptyList()
-            },
-            { current -> current.isDeclaredInJava() },
-        )
-    }
-    return false
+    return true
 }
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrDeclaration.hasKotlinOnlyRoot(): Boolean {
+    val overridable = this as? IrOverridableDeclaration<*> ?: return false
+    return overridable.findRoots().any { root ->
+        val fqName = ((root as? IrDeclaration)?.parent as? IrClass)?.descriptor?.fqNameOrNull()
+        fqName != null && isKotlinOnlyClass(fqName)
+    }
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrOverridableDeclaration<*>.findRoots(): Set<IrOverridableDeclaration<*>> {
+    if (overriddenSymbols.isEmpty()) return setOf(this)
+    val roots = mutableSetOf<IrOverridableDeclaration<*>>()
+    val visited = mutableSetOf<IrOverridableDeclaration<*>>()
+    fun dfs(decl: IrOverridableDeclaration<*>) {
+        if (!visited.add(decl)) return
+        if (decl.overriddenSymbols.isEmpty()) roots.add(decl)
+        else decl.overriddenSymbols.forEach { (it.owner as? IrOverridableDeclaration<*>)?.let(::dfs) }
+    }
+    dfs(this)
+    return roots
+}
+
+private fun IrDeclaration.isEnumSyntheticMethod(): Boolean =
+    this is IrFunction &&
+        (parent as? IrClass)?.kind == ClassKind.ENUM_CLASS &&
+        (name.asString() == "values" || name.asString() == "valueOf")
+
+private fun DeclarationDescriptor.shouldUseJvmSignature(): Boolean {
+    if (containingPackage()?.asString()?.isKotlinPackage() == true) return false
+    if ((this as? CallableMemberDescriptor)?.hasKotlinOnlyRoot() == true) return false
+    if (this is IrBasedDeclarationDescriptor<*>) {
+        return !owner.origin.isSynthetic || owner.isEnumSyntheticMethod()
+    }
+    if (this is CallableMemberDescriptor) {
+        if (kind == CallableMemberDescriptor.Kind.SYNTHESIZED && !isEnumSyntheticMethod()) return false
+        if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return false
+    }
+    return true
+}
+
+private fun CallableMemberDescriptor.hasKotlinOnlyRoot(): Boolean =
+    findRoots().any { root ->
+        val fqName = (root.containingDeclaration as? ClassDescriptor)?.fqNameOrNull()
+        fqName != null && isKotlinOnlyClass(fqName)
+    }
+
+private fun CallableMemberDescriptor.findRoots(): Set<CallableMemberDescriptor> {
+    if (overriddenDescriptors.isEmpty()) return setOf(this)
+    val roots = mutableSetOf<CallableMemberDescriptor>()
+    val visited = mutableSetOf<CallableMemberDescriptor>()
+    fun dfs(desc: CallableMemberDescriptor) {
+        if (!visited.add(desc)) return
+        if (desc.overriddenDescriptors.isEmpty()) roots.add(desc)
+        else desc.overriddenDescriptors.forEach(::dfs)
+    }
+    dfs(this)
+    return roots
+}
+
+private fun DeclarationDescriptor.isEnumSyntheticMethod(): Boolean =
+    this is FunctionDescriptor &&
+        (containingDeclaration as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS &&
+        (name.asString() == "values" || name.asString() == "valueOf")
