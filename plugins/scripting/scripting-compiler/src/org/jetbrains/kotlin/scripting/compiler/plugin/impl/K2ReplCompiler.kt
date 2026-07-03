@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.disableStandardScriptDefinition
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -43,6 +42,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.ReplSnippetsToClassesLowering
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
@@ -141,19 +141,13 @@ class K2ReplCompiler(
                 add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
             }
 
-            // Register this REPL session's own (single, host-provided) script definition/configuration
-            // on the compiler configuration, so that `FirScriptDefinitionProviderService` (used e.g. by
-            // `FirReplSnippetConfiguratorExtensionImpl` to resolve implicit receivers for `$$eval`)
-            // resolves it directly, instead of falling back to classpath-based script-definition
-            // rediscovery (`ScriptDefinitionsFromClasspathDiscoverySource`). Matching relies on the
-            // standard `ScriptDefinition.FromConfigurationsBase.isScript` extension check: every
-            // synthetic per-snippet source name (e.g. `snippet_N.repl.kts`, or `snippet_N.repl.main.kts`
-            // for `MainKtsScript`) is generated with a `.repl.<fileExtension>` suffix that matches this
-            // definition's own [ScriptCompilationConfiguration.fileExtension] -- see
-            // `KotlinJsr223ScriptEngineImpl.compile`. Without that, this definition (or any
-            // classpath-rediscovered one) would fail to match such a source, falling through to the
-            // generic, host-configuration-less default `ScriptDefinition` and silently dropping this
-            // session's compile-time refinements (e.g. JSR-223's implicit receivers).
+            // Build a `ScriptCompilationConfigurationProvider` that resolves this REPL session's own
+            // (single, host-provided) script definition/configuration by the standard
+            // `ScriptDefinition.FromConfigurationsBase.isScript` extension check: every source compiled
+            // in this session -- including REPL snippets -- is named with a `.repl.<fileExtension>` (or
+            // plain `.<fileExtension>`) suffix that matches this definition's own
+            // [ScriptCompilationConfiguration.fileExtension] (e.g. `.repl.main.kts` for `MainKtsScript`),
+            // see `KotlinJsr223ScriptEngineImpl.compile`.
             val compilerConfiguration = compilerContext.environment.configuration
             compilerConfiguration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
@@ -171,7 +165,14 @@ class K2ReplCompiler(
                 scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
                 scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
             }
-            compilerConfiguration.scriptingHostConfiguration = hostConfigurationWithProvider
+            // `hostConfigurationWithProvider` is handed to each per-snippet FIR session directly via
+            // `FirScriptCompilationComponent` (see `compileImpl`) rather than stashed indirectly on
+            // `compilerConfiguration.scriptingHostConfiguration` -- `FirScriptDefinitionProviderService`
+            // (used e.g. by `FirReplSnippetConfiguratorExtensionImpl` to resolve implicit receivers for
+            // `$$eval`) prefers a session's own `scriptCompilationComponent.hostConfiguration` over its
+            // lazily-cached, classpath-discovery-based `defaultHostConfiguration` fallback -- so this way
+            // the correctly-wired configuration is always picked up unambiguously, the same direct
+            // mechanism `ScriptJvmK2CompilerImpl` already uses for one-shot script compiles.
 
             val project = compilerContext.environment.project
             val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
@@ -450,6 +451,16 @@ private fun compileImpl(
         needRegisterJavaElementFinder = true,
         kmpModuleKind = KmpModuleKind.SingleModule,
         init = {},
+    )
+
+    // Register this REPL session's own, correctly-wired `hostConfiguration` (see
+    // `K2ReplCompiler.createCompilationState`) directly on the per-snippet FIR session, so that
+    // `FirScriptDefinitionProviderService.hostConfiguration` picks it up unambiguously via
+    // `session.scriptCompilationComponent` instead of falling back to its own lazily-cached,
+    // classpath-discovery-based default.
+    session.register(
+        FirScriptCompilationComponent::class,
+        FirScriptCompilationComponent(state.hostConfiguration)
     )
 
     // Stateless-prototype early capture hook (no-op when not installed). Fires *before* FIR
