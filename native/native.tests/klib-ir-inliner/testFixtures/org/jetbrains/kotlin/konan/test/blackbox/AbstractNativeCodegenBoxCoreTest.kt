@@ -17,12 +17,15 @@ import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.IrPreprocessedInlineFunctionDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonLoweredIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
@@ -82,6 +85,24 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
 
             configureLoweredIrHandlersStep {
                 commonLoweredIrHandlersForCodegenTest()
+                // TODO KT-76825: Investigate why in case the following handler is enabled, IR dump has extra folder prefix `libraries/stdlib/`
+                //      in `inlinedFunctionFileEntry` field in test `compiler/testData/codegen/box/delegatedProperty/lazyDelegateInObject.kt`.
+//                useHandlers(
+//                    { testServices, artifactKind ->
+//                        IrTextDumpHandler(
+//                            testServices = testServices,
+//                            artifactKind = artifactKind,
+//                            customExtension = "inlined.ir",
+//                            directive = DUMP_IR_AFTER_INLINE,
+//                            showOffsets = true,
+//                        )
+//                    },
+//                )
+                // TODO Before KT-71896, cross-module inlining in this testrunner causes preprocessed IR dumps to be different from golden data
+                //      Uncomment it after KT-71896 is implemented (cross-module inliner will be enabled by default)
+//                useHandlers(
+//                    ::IrPreprocessedInlineFunctionDumpHandler,
+//                )
             }
 
             facadeStep(::KlibSerializerNativeCliFacade)

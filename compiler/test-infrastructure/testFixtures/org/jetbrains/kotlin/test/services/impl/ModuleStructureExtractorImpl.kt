@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.defaultDirectives
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
@@ -347,6 +348,10 @@ class ModuleStructureExtractorImpl(
             // Don't rename if current or previous modules have def files. Reason: cinterop test data relies on non-renamed modules.
             if (filesOfCurrentModule.any { it.name.endsWith(".def")}) return name
             if (mutableFilesListPerModule.any { it.value.any { file -> file.name.endsWith(".def") } }) return name
+            // Don't rename the module if the test uses IR dump directives, because the dump content depends on the module name.
+            // These tests should also be isolated by NativeGroupingTestIsolator, so no name clashes would happen.
+            // Note: cannot directly call GroupingTestIsolator's functions here since ModuleStructure is not yet fully constructed.
+            if ((moduleDirectivesBuilder.build() + globalDirectives).any { it.name.startsWith("DUMP_IR") }) return name
 
             (val className, val methodName, val _ = tags) = testServices.testInfo
             val classPart = className.substringAfter("$").replace("$", ".")

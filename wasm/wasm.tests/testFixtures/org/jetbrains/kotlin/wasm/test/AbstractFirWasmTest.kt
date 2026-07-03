@@ -13,14 +13,19 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.backend.handlers.IrPreprocessedInlineFunctionDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonLoweredIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.*
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
@@ -157,6 +162,21 @@ open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
                 LANGUAGE with listOf(
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
+            }
+            configureLoweredIrHandlersStep {
+                commonLoweredIrHandlersForCodegenTest()
+                useHandlers(
+                    { testServices, artifactKind ->
+                        IrTextDumpHandler(
+                            testServices = testServices,
+                            artifactKind = artifactKind,
+                            customExtension = "inlined.ir",
+                            directive = DUMP_IR_AFTER_INLINE,
+                            showOffsets = true,
+                        )
+                    },
+                    ::IrPreprocessedInlineFunctionDumpHandler,
                 )
             }
         }
