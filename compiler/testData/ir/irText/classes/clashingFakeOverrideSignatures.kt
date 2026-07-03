@@ -1,6 +1,8 @@
 // IGNORE_BACKEND: JKLIB
 // DUMP_IR_DIFFERENCE: JVM
-//   KT-65504 KT-42020: Fake overrides for `Derived` are built differently on JVM and non-JVM, see comment to [FakeOverrideBuilderStrategy.isGenericClashFromSameSupertypeAllowed]
+//   Probably, fake overrides for non-JVM targets are built incorrectly, like `FUN FAKE_OVERRIDE name:foo` in class Derived with `VALUE_PARAMETER name:x` overrides both
+//     - public final fun foo (x: T of <root>.Base): kotlin.Unit declared in <root>.Base
+//     - public final fun foo (y: kotlin.String): kotlin.Unit declared in <root>.Base
 // KOTLIN_REFLECT_DUMP_MISMATCH
 
 open class Base<T> {

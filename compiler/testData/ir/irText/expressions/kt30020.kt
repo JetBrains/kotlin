@@ -1,6 +1,6 @@
 // LANGUAGE: -ForbidParenthesizedLhsInAssignments
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// DUMP_IR_DIFFERENCE: JS_IR
 // ^ MutableList has js specific methods
 
 interface X {

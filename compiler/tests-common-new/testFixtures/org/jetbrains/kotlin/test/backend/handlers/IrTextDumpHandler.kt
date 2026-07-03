@@ -177,7 +177,9 @@ class IrTextDumpHandler(
 
     private fun getTargetSpecificDumpExtension(): String? {
         val targetBackend = testServices.defaultsProvider.targetBackend ?: return null
-        val dumpIrDifferenceBackends = testServices.moduleStructure.allDirectives[CodegenTestDirectives.DUMP_IR_DIFFERENCE]
+        val dumpIrDifferenceBackends = testServices.moduleStructure.modules.flatMap {
+            it.directives[CodegenTestDirectives.DUMP_IR_DIFFERENCE]
+        }
         val matchedBackend = dumpIrDifferenceBackends.firstOrNull { targetBackend.isTransitivelyCompatibleWith(it) }
             ?: return null
         return "ir.${matchedBackend.name.lowercase()}.txt"
