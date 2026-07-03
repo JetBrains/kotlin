@@ -1,5 +1,8 @@
 // WITH_STDLIB
 // DUMP_IR
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM uses java.util.StringBuilder, not kotlin.StringBuilder
+//   K/JVM throws java.lang.Exception, not kotlin.Exception
 
 import kotlin.test.*
 

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.SyntheticAccessorsDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*

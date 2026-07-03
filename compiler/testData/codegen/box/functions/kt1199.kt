@@ -1,4 +1,6 @@
 // DUMP_IR
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM throws java.lang.NoSuchElementException, not kotlin.NoSuchElementException
 interface MyIterator<T> {
     operator fun hasNext() : Boolean
     operator fun next() : T

@@ -1,4 +1,7 @@
 // DUMP_IR
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM: extra IMPLICIT_CAST inside SAM_CONVERSION
+//   SAM_CONVERSION type is on K/JVM: `Consumer<kotlin.Any?>`, on non-JVM: `Consumer<out kotlin.Any>`
 // CHECK_BYTECODE_TEXT
 // 1 java/lang/invoke/LambdaMetafactory
 
