@@ -1,0 +1,281 @@
+Usage: kotlinc-native <options> <source files>
+where advanced options include:
+  -Xadd-cache=<path>         Path to a library to be added to the cache.
+  -Xadd-light-debug={disable|enable}
+                             Add light debug information for optimized builds. This option is skipped in debug builds.
+                             It's enabled by default on Darwin platforms where collected debug information is stored in a .dSYM file.
+                             Currently this option is disabled by default on other platforms.
+  -Xallocator=std | mimalloc | custom
+                             Allocator used at runtime.
+  -Xauto-cache-dir=<path>    Path to the directory where caches for auto-cacheable dependencies should be put.
+  -Xauto-cache-from=<path>   Path to the root directory from which dependencies are to be cached automatically.
+                             By default caches will be placed into the kotlin-native system cache directory.
+  -Xbackend-threads=<N>      Run codegen by file in N parallel threads.
+                             0 means use one thread per processor core.
+                             The default value is 1.
+  -Xbinary=<option=value>    Specify a binary option.
+  -Xbundle-id=<id>           Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'.
+  -Xcache-directory=<path>   Path to the directory containing caches.
+  -Xcached-library=<library path>,<cache path>
+                             Paths to a library and its cache, separated by a comma.
+  -Xcheck-dependencies       Check dependencies and download the missing ones.
+  -Xcheck-state-at-external-calls
+                             Ensure that all calls of possibly long external functions are done in the native thread state.
+  -Xcompile-from-bitcode=<path> Continue compilation from the given bitcode file.
+  -Xdebug-info-version       Generate debug info of the given version (1, 2).
+  -Xdebug-prefix-map=<old1=new1,old2=new2,...>
+                             Remap file source directory paths in debug info.
+  -Xdestroy-runtime-mode=<mode> When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.
+  -Xdump-built-caches-to=<path> Path to a file where the list of all cache archives produced by this build should be written.
+  -Xdump-tests-to=<path>     Path to a file for dumping the list of all available tests.
+  -Xemit-lazy-objc-header
+  -Xexport-kdoc              Export KDoc entries in the framework header.
+  -Xexport-library=<path>    A library to be included in the produced framework API.
+                             This library must be one of the ones passed with '-library'.
+  -Xexternal-dependencies=<path> Path to the file containing external dependencies.
+  -Xfake-override-validator  Enable the IR fake override validator.
+  -Xfile-to-cache=<path>     Path to the file to cache.
+  -Xframework-import-header=<header>
+                             Add an additional header import to the framework header.
+  -Xg-generate-debug-trampoline={disable|enable}
+                             Generate trampolines to make debugger breakpoint resolution more accurate (inlines, 'when', etc.).
+  -Xgc=<gc>                  GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.
+  -Xheader-klib-path         Save a klib that only contains the public ABI to the given path.
+  -Xic-cache-dir=<path>      Path to the directory where incremental build caches should be put.
+  -Xinclude=<path>           A path to an intermediate library that should be processed in the same manner as source files.
+  -Xir-property-lazy-initialization={disable|enable}
+                             Initialize top level properties lazily per file.
+  -Xkonan-data-dir           Custom path to the location of konan distributions.
+  -Xllvm-lto-passes          Custom set of LLVM passes to run as the LTOOptimizationPipeline.
+  -Xllvm-module-passes       Custom set of LLVM passes to run as the ModuleOptimizationPipeline.
+  -Xllvm-variant={dev|user|absolute path to llvm}
+                             Choose the LLVM distribution that will be used during compilation.
+  -Xmake-per-file-cache      Force the compiler to produce per-file caches.
+  -Xmanifest-native-targets  Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.
+  -Xno-objc-generics         Disable generics support for framework header.
+  -Xomit-framework-binary    Omit binary when compiling the framework.
+  -Xoverride-clang-options=<arg1,arg2,...>
+                             Explicit list of Clang options.
+  -Xoverride-konan-properties=key1=value1;key2=value2;...
+                             Override values from 'konan.properties' with the given ones.
+  -Xpre-link-caches={disable|enable}
+                             Perform caches pre-linking.
+  -Xprint-bitcode            Print LLVM bitcode.
+  -Xprint-files              Print files.
+  -Xprint-ir                 Print IR.
+  -Xpurge-user-libs          Don't link unused libraries even if explicitly specified.
+  -Xread-dependencies-from=<path>
+                             Serialized dependencies to use for linking.
+  -Xrefines-paths=<path>     Paths to output directories for refined modules (modules whose 'expect' declarations this module can actualize).
+  -Xruntime=<path>           Override the standard 'runtime.bc' location.
+  -Xruntime-logs=<tag1=level1,tag2=level2,...>
+                             Enable logging of Native runtime internals.
+  -Xsave-llvm-ir-after       Save the result of the Kotlin IR to LLVM IR translation to '-Xsave-llvm-ir-directory'.
+  -Xsave-llvm-ir-directory   Directory that should contain the results of '-Xsave-llvm-ir-after=<phase>'.
+  -Xshort-module-name=<name> A short name used to denote this library in the IDE and in a generated Objective-C header.
+  -Xstatic-framework         Create a framework with a static library instead of a dynamic one.
+  -Xtemporary-files-dir=<path> Save temporary files to the given directory.
+  -Xverify-bitcode           Verify LLVM bitcode after each method.
+  -Xverify-compiler          Verify the compiler.
+  -Xworker-exception-handling=<mode>
+                             Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.
+                             The option is deprecated since Kotlin 2.4.20. It will be removed in $ABI_VERSION_NEXT$.
+  -Xwrite-dependencies-of-produced-klib-to=<path>
+                             Write file containing the paths of dependencies used during klib compilation to the provided path
+  -Xwrite-dependencies-to    Path for writing backend dependencies.
+  -Xklib-abi-version=<version> Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
+                             Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
+                             The only observable effect is that a custom ABI version is written to KLIB manifest file.
+  -Xklib-duplicated-unique-name-strategy={deny|allow-all-with-warning|allow-first-with-warning}
+                             Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.
+  -Xklib-enable-signature-clash-checks
+                             Enable signature uniqueness checks.
+  -Xklib-ir-inliner={intra-module|full|disabled|default}
+                             Set the mode of the experimental IR inliner on the first compilation stage.
+                             - `intra-module` mode enforces inlining of the functions only from the compiled module
+                             - `full` mode enforces inlining of all functions (from the compiled module and from all dependencies)
+                                Warning: This mode will trigger setting the `pre-release` flag for the compiled library.
+                             - `disabled` mode completely disables the IR inliner
+                             - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
+
+  -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
+                             The option is deprecated since Kotlin 2.4.20. It will be removed in $ABI_VERSION_NEXT$.
+  -Xklib-relative-path-base  Relativize all the paths stored in a klib using the given path prefixes.
+                             The supplied prefixes should be absolute paths to the directories containing the source code files.
+                             Note: The prefixes are applied in the same order as they are passed in this CLI argument.
+  -Xklib-zip-file-accessor-cache-limit
+                             Maximum number of klibs that can be cached during compilation. Default is 64.
+  -Xpartial-linkage={enable|disable}
+                             Enables partial linkage mode.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. The partial linkage engine is always turned on. If you want to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
+  -Xpartial-linkage-loglevel={silent|info|warning|error}
+                             Define the compile-time log level for partial linkage.
+  -Xskip-library-special-compatibility-checks
+                             Skip library compatibility checks for stdlib and kotlin.test library.
+  -Xallow-any-scripts-in-source-roots
+                             Allow compiling scripts along with regular Kotlin sources.
+  -Xallow-condition-implies-returns-contracts
+                             Allow contracts that specify a limited conditional returns postcondition.
+  -Xallow-contracts-on-more-functions
+                             Allow contracts on some operators and accessors, and allow checks for erased types.
+  -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
+  -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
+  -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
+  -Xallow-returns-result-of  Allows to use `returnsResultOf()` in `contract {}` block of function body. This contract provides additional information for return value checker. Enabling this feature will force compiler to produce pre-release binaries, because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.
+  -Xannotation-default-target=first-only|first-only-warn|param-property
+                             Change the default annotation targets for constructor properties:
+                             -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
+                             -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
+                             -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
+                             default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.
+  -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
+  -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
+  -Xcollection-literals      Enable experimental language support for collection literals.
+  -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
+                             They should be a subset of sources passed as free arguments.
+  -Xcompanion-blocks-and-extensions
+                             Enables companion blocks and extensions.
+  -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
+                             Register a compiler plugin.
+  -Xcompiler-plugin-order=<pluginId1>><pluginId2>
+                             Specify an execution order constraint for compiler plugins.
+                             Order constraint can be specified using the 'pluginId' of compiler plugins.
+                             The first specified plugin will be executed before the second plugin.
+                             Multiple constraints can be specified by repeating this option. Cycles in constraints will cause an error.
+  -Xconsistent-data-class-copy-visibility
+                             The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
+  -Xcontext-parameters       Enable experimental context parameters.
+  -Xcontext-receivers        Enable experimental context receivers.
+  -Xcontext-sensitive-resolution Enable experimental context-sensitive resolution.
+  -Xdata-flow-based-exhaustiveness
+                             Enable `when` exhaustiveness improvements that rely on data-flow analysis.
+  -Xdetailed-perf            Enable more detailed performance statistics (Experimental).
+                             For Native, the performance report includes execution time and lines processed per second for every individual lowering.
+                             For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+  -Xdirect-java-actualization Enable experimental direct Java actualization support.
+  -Xdisable-default-scripting-plugin
+                             Don't enable the scripting plugin by default.
+  -Xdisable-ir-checkers=<checker1>,<checker2>
+                             A list of IR checkers to disable, specified by a simple name of the checker class. A name of an annotation can also be used to match all tagged checkers.
+                             Only has effect if '-Xverify-ir' is not 'none'.
+  -Xdisable-phases           Disable backend phases.
+  -Xdont-sort-source-files   Disable automatic sorting of source files.
+  -Xdont-warn-on-error-suppression
+                             Don't report warnings when errors are suppressed. This only affects K2.
+  -Xdump-directory           Dump the backend state into this directory.
+  -Xdump-fqname              Dump the declaration with the given FqName.
+  -Xdump-perf=<path>         Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).
+                             Also, it supports the placeholder `*` and directory for generating file names based on the module being compiled and the current time stamp.
+                             Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20-12-22-32.log` in plain text format, `path/to/dir/` creates logs like `path/to/dir/my-log_2025-06-20-12-22-32.json`.
+  -Xeager-lambda-analysis    Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.
+  -Xenable-additional-ir-checkers=<checker1>,<checker2>
+                             A list of IR checkers to enable, specified by a simple name of the checker class.
+                             It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.
+  -Xenable-incremental-compilation
+                             Enable incremental compilation.
+  -Xescaping-functions=<+|-><fq.name>
+                             Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.
+  -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
+                             Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
+  -Xexplicit-api={strict|warning|disable}
+                             Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
+                             Use the 'warning' level to issue warnings instead of errors.
+  -Xexplicit-backing-fields  Enable experimental language support for explicit backing fields.
+  -Xexplicit-context-arguments Enable explicit passing of context arguments using named argument syntax.
+  -Xfragment-dependency=<fragment name>:<path>
+                             Declare common klib dependencies for the specific fragment.
+                             This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
+                             The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+  -Xfragment-friend-dependency=<fragment name>:<path>
+                             Declare common klib friend dependencies for the specific fragment.
+                             This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
+                             The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+  -Xfragment-incremental-classpath=<fragment name>:<path>
+                             Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.
+                             This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
+                               dependencies from the platform specific incremental service.
+  -Xfragment-refines=<fromModuleName>:<onModuleName>
+                             Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
+  -Xfragment-sources=<fragment name>:<path>
+                             Add sources to a specific fragment of a multiplatform compilation.
+  -Xfragments=<fragment name> Declare all known fragments of a multiplatform compilation.
+  -Xheader-mode              Enable header compilation mode.
+                             In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
+                             compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation
+                             build systems where header libraries can be used to replace downstream dependencies for which we only need to
+                             see the type names and method signatures required to compile a given translation unit. Inline functions are still kept
+                             with bodies.
+  -Xheader-mode-type={any|compilation}
+                             Generates output based on what it is used for:
+                             -Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
+                             -Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
+  -Xignore-const-optimization-errors
+                             Ignore all compilation exceptions while optimizing some constant expressions.
+  -Xinline-classes           Enable experimental inline classes.
+  -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases.
+  -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
+  -Xlist-phases              List backend phases.
+  -Xlocal-type-aliases       Enable experimental language support for local type aliases.
+  -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.
+  -Xmetadata-version         Change the metadata version of the generated binary files.
+  -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
+  -Xmulti-platform           Enable language support for multiplatform projects.
+  -Xname-based-destructuring=only-syntax|name-mismatch|complete
+                             Enables the following destructuring features:
+                             -Xname-based-destructuring=only-syntax:   Enables syntax for positional destructuring with square brackets and the full form of name-based destructuring with parentheses;
+                             -Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
+                             -Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;
+  -Xnested-type-aliases      Enable experimental language support for nested type aliases.
+  -Xnew-inference            Enable the new experimental generic type inference algorithm.
+  -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
+  -Xno-inline                Disable method inlining.
+  -Xnon-local-break-continue Enable experimental non-local break and continue.
+  -Xphases-to-dump           Dump the backend's state both before and after these phases.
+  -Xphases-to-dump-after     Dump the backend's state after these phases.
+  -Xphases-to-dump-before    Dump the backend's state before these phases.
+  -Xphases-to-validate       Validate the backend's state both before and after these phases.
+  -Xphases-to-validate-after Validate the backend's state after these phases.
+  -Xphases-to-validate-before Validate the backend's state before these phases.
+  -Xplugin=<path>            Load plugins from the given classpath.
+  -Xprint-configuration      Print compiler configuration.
+  -Xprofile-phases           Profile backend phases.
+  -Xrender-internal-diagnostic-names
+                             Render the internal names of warnings and errors.
+  -Xrepl                     Run Kotlin REPL (deprecated)
+  -Xreport-all-warnings      Report all warnings even if errors are found.
+  -Xreport-output-files      Report the source-to-output file mapping.
+  -Xreport-perf              Report detailed performance statistics.
+  -Xreturn-value-checker={check|full|disable}
+                             Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
+  -Xseparate-kmp-compilation Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
+  -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
+  -Xskip-prerelease-check    Allow loading pre-release classes.
+  -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
+  -Xsuppress-api-version-greater-than-language-version-error
+                             Suppress error about API version greater than language version.
+                             Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
+  -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
+  -Xsuppress-warning=<WARNING_NAME>
+                             Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
+  -Xunrestricted-builder-inference
+                             Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
+  -Xuse-fir-experimental-checkers
+                             Enable experimental frontend IR checkers that are not yet ready for production.
+                             The option is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases.
+  -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
+                             Warning: This feature is not yet production-ready.
+  -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
+                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.
+  -Xverbose-phases           Be verbose while performing the given backend phases.
+  -Xverify-ir={none|warning|error}
+                             IR verification mode (no verification by default).
+  -Xwarning-level=<WARNING_NAME>:(error|warning|disabled)
+                             Set the severity of the given warning.
+                             - `error` level raises the severity of a warning to error level (similar to -Werror but more granular)
+                             - `disabled` level suppresses reporting of a warning (similar to -nowarn but more granular)
+                             - `warning` level overrides -nowarn and -Werror for this specific warning (the warning will be reported/won't be considered as an error)
+  -Xwhen-guards              Enable experimental language support for when guards.
+
+Advanced options are non-standard and may be changed or removed without any notice.
+OK
