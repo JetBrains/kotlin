@@ -780,20 +780,6 @@ This library must be one of the ones passed with '-library'.""",
             field = value
         }
 
-    @all:Deprecated("")
-    @Argument(
-        value = "-library-version",
-        shortName = "-lv",
-        valueDescription = "<version>",
-        description = "The library version.",
-        deprecatedVersion = "2.0.20",
-    )
-    var libraryVersion: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
     @Argument(
         value = "-linker-option",
         valueDescription = "<arg>",

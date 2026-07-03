@@ -48,8 +48,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.konanDataDir = from.konanDataDir
     to.libraries = from.libraries.copyOf()
     to.libraryToAddToCache = from.libraryToAddToCache
-    @Suppress("DEPRECATION")
-    to.libraryVersion = from.libraryVersion
     to.lightDebugString = from.lightDebugString
     to.linkerArguments = from.linkerArguments.copyOf()
     to.listTargets = from.listTargets

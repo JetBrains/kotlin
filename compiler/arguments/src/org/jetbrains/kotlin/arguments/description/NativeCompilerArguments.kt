@@ -114,24 +114,6 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     }
 
     compilerArgument {
-        name = "library-version"
-        shortName = "lv"
-        description = ReleaseDependent(
-            "The library version.",
-            KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_4_0 to
-                    "The library version.\nNote: This option is deprecated and will be removed in one of the future releases."
-        )
-        valueType = StringType.defaultNull
-        valueDescription = "<version>".asReleaseDependent()
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
-            deprecatedVersion = KotlinReleaseVersion.v2_0_20,
-        )
-    }
-
-    compilerArgument {
         name = "list-targets"
         deprecatedName = "list_targets"
         description = "List available hardware targets.".asReleaseDependent()

@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.arguments.description.removed
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
+import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
 val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.nativeArguments) {
     compilerArgument {
@@ -47,6 +50,25 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_9_20,
+            removedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+    }
+
+    compilerArgument {
+        name = "library-version"
+        shortName = "lv"
+        description = ReleaseDependent(
+            "The library version.",
+            KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_4_0 to
+                    "The library version.\nNote: This option is deprecated and will be removed in one of the future releases."
+        )
+        valueType = StringType.defaultNull
+        valueDescription = "<version>".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_0_20,
             removedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }

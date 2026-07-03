@@ -213,6 +213,23 @@ class RemovedCompilerArguments {
         }
 
     @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-library-version",
+        shortName = "-lv",
+        valueDescription = "<version>",
+        description = "The library version.",
+        deprecatedVersion = "2.0.20",
+        removedVersion = "2.4.20",
+    )
+    var libraryVersion: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @all:Deprecated(
         message = "The dist no longer has any endorsed libraries.",
         level = DeprecationLevel.ERROR,
     )

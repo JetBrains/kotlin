@@ -6,3 +6,4 @@ $TEMP_DIR$
 -Xvalue-classes
 -Xg0=true
 -no-endorsed-libs=true
+-library-version=2
