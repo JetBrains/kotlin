@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
+import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -251,7 +252,11 @@ class WebStaticInitializersDeclarationLowering(private val context: JsCommonBack
                     statements += irSetField(null, initCalledVar, irBoolean(true))
                 }
 
-                container.dependencySuperClasses
+                val [dependencySuperInterfaces, dependencySuperClasses] =
+                    container.dependencySuperClasses.partition { it.isInterface }
+
+                // Super class should be initialized before super interfaces, regardless of class placement in the super type list
+                (dependencySuperClasses + dependencySuperInterfaces)
                     .mapNotNull { it.staticInitFunction }
                     .forEach { statements += builder.irCall(it.symbol) }
 
