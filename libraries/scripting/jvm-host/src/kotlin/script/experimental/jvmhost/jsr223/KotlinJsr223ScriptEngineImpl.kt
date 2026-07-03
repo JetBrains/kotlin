@@ -116,7 +116,13 @@ class KotlinJsr223ScriptEngineImpl(
 
     private suspend fun compile(line: String, lineNo: Int): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
         val lineId = LineId(lineNo, 0, line.hashCode())
-        val snippet = line.toScriptSource("snippet_$lineNo.repl.kts")
+        // The snippet's file extension is derived from (i.e. suffixed onto) the host template's own
+        // `fileExtension` (e.g. `main.kts` for `MainKtsScript`, or the default `kts`), so that the
+        // synthetic per-snippet source name still ends with an extension the host's own script
+        // definition matches (see `ScriptDefinition.FromConfigurationsBase.isScript`) instead of always
+        // hard-coding the default `.kts`.
+        val fileExtension = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]
+        val snippet = line.toScriptSource("snippet_$lineNo.repl.$fileExtension")
 
         return replCompiler.compile(
             snippet,

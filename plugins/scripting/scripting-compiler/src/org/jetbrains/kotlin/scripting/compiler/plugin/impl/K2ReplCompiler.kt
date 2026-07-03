@@ -145,17 +145,19 @@ class K2ReplCompiler(
             // on the compiler configuration, so that `FirScriptDefinitionProviderService` (used e.g. by
             // `FirReplSnippetConfiguratorExtensionImpl` to resolve implicit receivers for `$$eval`)
             // resolves it directly, instead of falling back to classpath-based script-definition
-            // rediscovery (`ScriptDefinitionsFromClasspathDiscoverySource`). That rediscovery -- or even
-            // this session's own definition, without the `ReplSessionScriptDefinition.isScript` override
-            // -- can silently fail to match a synthetic per-snippet source name (e.g. `...repl.kts`)
-            // that doesn't share the file extension of the template the session was created for (e.g.
-            // `main.kts`), falling through to the generic, host-configuration-less default
-            // `ScriptDefinition` and silently dropping this session's compile-time refinements (e.g.
-            // JSR-223's implicit receivers).
+            // rediscovery (`ScriptDefinitionsFromClasspathDiscoverySource`). Matching relies on the
+            // standard `ScriptDefinition.FromConfigurationsBase.isScript` extension check: every
+            // synthetic per-snippet source name (e.g. `snippet_N.repl.kts`, or `snippet_N.repl.main.kts`
+            // for `MainKtsScript`) is generated with a `.repl.<fileExtension>` suffix that matches this
+            // definition's own [ScriptCompilationConfiguration.fileExtension] -- see
+            // `KotlinJsr223ScriptEngineImpl.compile`. Without that, this definition (or any
+            // classpath-rediscovered one) would fail to match such a source, falling through to the
+            // generic, host-configuration-less default `ScriptDefinition` and silently dropping this
+            // session's compile-time refinements (e.g. JSR-223's implicit receivers).
             val compilerConfiguration = compilerContext.environment.configuration
             compilerConfiguration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                ReplSessionScriptDefinition(hostConfiguration, scriptCompilationConfiguration)
+                ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
             )
             val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
             val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)

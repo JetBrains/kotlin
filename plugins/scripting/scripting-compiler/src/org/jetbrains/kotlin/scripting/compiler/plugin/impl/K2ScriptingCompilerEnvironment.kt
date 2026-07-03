@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.with
@@ -170,33 +169,6 @@ fun createCompilerStateFromEnvironment(
     return createCompilerState(compilerContext, messageCollector, hostConfiguration)
 }
 
-/**
- * The `ScriptDefinition` registered for a `K2ReplCompiler` session's own (single, host-provided)
- * [ScriptCompilationConfiguration]. Unlike a regular [ScriptDefinition.FromConfigurations], `isScript`
- * always matches, regardless of the configured [ScriptCompilationConfiguration.fileExtension].
- *
- * This is required because a REPL session compiles synthetic per-snippet sources named by convention
- * (e.g. `...repl.kts`, `$$synthetic_jsr223_snippet_N.repl.kts`) that don't necessarily share the file
- * extension of the template the session was created for (e.g. `main.kts` for `MainKtsScript`). Without
- * this override, `CliScriptDefinitionProvider.findDefinition` would fail to match this definition (or
- * any classpath-rediscovered one, e.g. via `ScriptDefinitionsFromClasspathDiscoverySource`, which faces
- * the exact same extension mismatch) for such a source, and silently fall back to the generic
- * `ScriptTemplateWithArgs`-based default definition — one that carries none of the host's wiring (e.g.
- * JSR-223's `getScriptContext`), silently dropping compile-time refinements such as implicit receivers.
- *
- * Since a REPL session only ever compiles snippets belonging to its own configuration, and this
- * definition is always tried first (`CliScriptDefinitionProvider.currentDefinitions` checks the
- * explicitly-registered `definitions` before any `definitionsFromSources`), this also means classpath-
- * based rediscovery of another (stale, host-configuration-less) definition for the same template is
- * never consulted for matching purposes.
- */
-internal class ReplSessionScriptDefinition(
-    hostConfiguration: ScriptingHostConfiguration,
-    compilationConfiguration: ScriptCompilationConfiguration,
-) : ScriptDefinition.FromConfigurations(hostConfiguration, compilationConfiguration, null) {
-    override fun isScript(script: SourceCode): Boolean = true
-}
-
 fun createCompilerState(
     compilerContext: SharedScriptCompilationContext,
     messageCollector: ScriptDiagnosticsMessageCollector,
@@ -212,9 +184,18 @@ fun createCompilerState(
 
     val scriptCompilationConfiguration = compilerContext.baseScriptCompilationConfiguration
 
+    // Register this session's own (single, host-provided) script definition/configuration on the
+    // compiler configuration, so that `FirScriptDefinitionProviderService` resolves it directly
+    // instead of falling back to classpath-based script-definition rediscovery
+    // (`ScriptDefinitionsFromClasspathDiscoverySource`). Matching relies on the standard
+    // `ScriptDefinition.FromConfigurationsBase.isScript` extension check: every source compiled in
+    // this session -- including REPL snippets -- is named with a `.repl.<fileExtension>` (or plain
+    // `.<fileExtension>`) suffix that matches this definition's own
+    // [ScriptCompilationConfiguration.fileExtension] (e.g. `.repl.main.kts` for `MainKtsScript`), see
+    // `KotlinJsr223ScriptEngineImpl.compile`.
     compilerConfiguration.add(
         ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-        ReplSessionScriptDefinition(hostConfiguration, scriptCompilationConfiguration)
+        ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
     )
 
     val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
