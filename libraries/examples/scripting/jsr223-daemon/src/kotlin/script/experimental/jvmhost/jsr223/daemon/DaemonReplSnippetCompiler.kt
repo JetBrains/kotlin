@@ -101,8 +101,8 @@ class DaemonReplSnippetCompiler(
             }
             val outputFile = File(workDir, "snippet-out.artifact")
             // See buildSnippetCompilerArguments's KDoc for why the source is written to a temp file
-            // (named after the snippet itself) rather than smuggled through a `-expression` CLI
-            // argument.
+            // (named after the snippet itself) and delivered as a plain source-root file rather than
+            // smuggled through a `-expression` CLI argument or handed to `-script`.
             val scriptFile = File(workDir, snippetName).also { it.writeText(source) }
             val arguments = buildSnippetCompilerArguments(scriptFile, snippetName, priorFiles, outputFile)
 
@@ -124,27 +124,44 @@ class DaemonReplSnippetCompiler(
      * regular compile path -- the same invocation shape a CLI `kotlinc` call would carry, so the
      * daemon needs no REPL-specific transport.
      *
-     * The snippet source is written to [scriptFile] on disk and passed as `-script <path>` rather
-     * than smuggled inline via `-expression <source>`. Two reasons:
+     * The snippet source is written to [scriptFile] on disk and passed as a **plain source-root
+     * file** (a free/positional argument, *not* `-script <path>` and *not* `-expression <source>`),
+     * with `-Xallow-any-scripts-in-source-roots` letting a `.kts` file be accepted on that path.
+     * Three reasons, in order of importance:
+     *  * `-script`/`-expression` both route through `ScriptEvaluationExtension.eval()` -- the same
+     *    entry point `kotlinc script.kts` uses to *run* a script. `REPL_SNIPPET_COMPILATION_MODE`
+     *    short-circuits that entry before it ever evaluates anything (see `compileReplSnippet` in
+     *    `AbstractScriptEvaluationExtension.kt`), but that safety is a *runtime flag check inside an
+     *    evaluate-capable entry point*, not a structural guarantee -- a snippet that throws must
+     *    never risk running inside the daemon. The plain source-root pipeline
+     *    (`ScriptingProcessSourcesBeforeCompilingExtension`, this plugin's other
+     *    `compileReplSnippet` call site) has no evaluation code path *at all*, so this risk cannot
+     *    exist on it structurally, regardless of how any flag is set.
      *  * `-expression` hands the whole snippet body through as a single CLI argument string, which
      *    a sufficiently pathological source (very long, or containing characters that a given
      *    transport happens to be sensitive to) could in principle corrupt; a file path is always a
      *    short, plain string.
-     *  * `-expression` is *semantically* an eval-a-string entry point; `-script <file>` is *this
-     *    module's* only way to say "here is a `.kts` file to compile", making the intent (compile,
-     *    not run) explicit even though both ultimately reach the same
-     *    [ScriptingConfigurationKeys.REPL_SNIPPET_COMPILATION_MODE] compile-only short-circuit (see
-     *    `compileReplSnippet` in `AbstractScriptEvaluationExtension.kt`), which never evaluates the
-     *    snippet regardless of how its source arrived.
-     *
-     * (Plain `-Xallow-any-scripts-in-source-roots` plus a bare source-root file was considered, but
-     * that flag only affects the *regular*, non-script compile pipeline: `repl-snippet-mode`'s
-     * `REPL_SNIPPET_COMPILATION_MODE` check lives exclusively on the `-script`/`-expression`
-     * `ScriptEvaluationExtension` entry point, so a bare source-root `.kts` would never reach
-     * [K2ReplStatelessCompiler] at all.)
+     *  * `-expression`/`-script` are both semantically "run this"; a plain source-root file is
+     *    unambiguously "compile this", matching what this call actually does.
      *
      * [scriptFile] is named after [snippetName] itself, so `repl-snippet-name` is set purely for
      * documentation/robustness -- the file's own name already disambiguates the snippet.
+     *
+     * Two more flags are required to make this actually work:
+     *  * `-Xuse-fir-lt=false` -- `ScriptingProcessSourcesBeforeCompilingExtension` (the plugin
+     *    extension point that intercepts `REPL_SNIPPET_COMPILATION_MODE` sources on this pipeline,
+     *    right alongside its pre-existing `-Xallow-any-scripts-in-source-roots` handling) only ever
+     *    runs on the *PSI-based* `KotlinCoreEnvironment.getSourceFiles()` source-collection path.
+     *    The JVM pipeline's *other*, default (`useLightTree = true`) source-collection path
+     *    (`collectSources`) has no equivalent extension point at all, so with the default light-tree
+     *    mode this source would be silently accepted and silently produce nothing -- no artifact, no
+     *    diagnostic, and (misleadingly) exit code `0`. This flag is deprecated (scheduled for
+     *    removal once light-tree mode becomes the compiler's *only* mode) and is the one piece of
+     *    this design most likely to need revisiting in a future compiler version.
+     *  * `-Xallow-no-source-files` -- once intercepted, the snippet is deliberately *not* handed to
+     *    the regular frontend/backend (there is nothing for them to usefully do with a REPL
+     *    snippet), so the source set the rest of the pipeline sees is empty; without this flag the
+     *    JVM pipeline reports a hard "no source files" error for exactly that reason.
      */
     private fun buildSnippetCompilerArguments(
         scriptFile: File,
@@ -158,6 +175,9 @@ class DaemonReplSnippetCompiler(
                 add("-cp")
                 add(additionalClasspath.joinToString(File.pathSeparator) { it.toAbsolutePath().toString() })
             }
+            add("-Xallow-any-scripts-in-source-roots")
+            add("-Xuse-fir-lt=false")
+            add("-Xallow-no-source-files")
             add("-P")
             add(pluginOption("repl-snippet-mode", "true"))
             add("-P")
@@ -169,9 +189,6 @@ class DaemonReplSnippetCompiler(
             add("-P")
             add(pluginOption("repl-snippet-artifact-output", outputFile.absolutePath))
             add("-Xsuppress-version-warnings")
-            // `-script <path>` must be the last argument: everything after it on the free-args list
-            // would otherwise be read as *script arguments* rather than compiler options.
-            add("-script")
             add(scriptFile.absolutePath)
         }
     }
