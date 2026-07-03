@@ -351,6 +351,7 @@ fun Project.configureTests() {
             ":kotlin-scripting-dependencies-maven",
             ":kotlin-scripting-dependencies-maven-all",
             ":kotlin-scripting-ide-services-test",
+            ":kotlin-scripting-jsr223-bta",
             ":kotlin-scripting-jsr223-test",
             ":kotlin-scripting-jvm",
             ":kotlin-scripting-jvm-host-test",
