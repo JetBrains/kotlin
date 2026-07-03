@@ -285,18 +285,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             AllocationMode.CUSTOM
         }
     })
-    when (arguments.workerExceptionHandling) {
-        null -> {}
-        "legacy" -> {
-            report(KONAN_ARGUMENT_ERROR, "Legacy exception handling in workers is deprecated")
-        }
-        "use-hook" -> {
-            report(KONAN_ARGUMENT_STRONG_WARNING, "-Xworker-exception-handling is deprecated")
-        }
-        else -> {
-            report(KONAN_ARGUMENT_ERROR, "Unsupported worker exception handling mode ${arguments.workerExceptionHandling}")
-        }
-    }
 
     arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
     putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {
