@@ -11,7 +11,6 @@ plugins {
 
 dependencies {
     implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization"))
     api(project(":compiler:frontend.common"))
     implementation(project(":compiler:util"))
     testFixturesImplementation(project(":core:descriptors"))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,19 +17,19 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
-val ParameterDescriptor.indexOrMinusOne: Int
-    get() = if (this is ValueParameterDescriptor) index else -1
-
+@K1Deprecation
 val ParameterDescriptor.varargElementType: KotlinType?
     get() = (this as? ValueParameterDescriptor)?.varargElementType
 
+@K1Deprecation
 val ParameterDescriptor.isCrossinline: Boolean
     get() = this is ValueParameterDescriptor && isCrossinline
 
+@K1Deprecation
 val ParameterDescriptor.isNoinline: Boolean
     get() = this is ValueParameterDescriptor && isNoinline
 
-@OptIn(K1Deprecation::class)
+@K1Deprecation
 fun IrFactory.createIrClassFromDescriptor(
         startOffset: Int,
         endOffset: Int,
