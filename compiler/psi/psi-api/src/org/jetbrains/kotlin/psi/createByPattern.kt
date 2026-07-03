@@ -127,7 +127,7 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
  * preserves the PSI identity of spliced-in elements.
  *
  * Supported argument types are [KtExpression], [KtTypeReference], [String], [Name], and
- * [org.jetbrains.kotlin.psi.psiUtil.PsiChildRange].
+ * [PsiChildRange][org.jetbrains.kotlin.psi.psiUtil.PsiChildRange].
  *
  * Prefer the specialized entry points ([KtPsiFactory.createExpressionByPattern] and friends) when creating a known kind
  * of element.

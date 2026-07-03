@@ -22,8 +22,8 @@ import java.util.List;
  *
  * <h3>Example:</h3>
  * <pre>{@code
- * fun <T> List<T>.second(index: Int): T = this[index]
- * //     ^________________________________________________^
+ *        fun <T> List<T>.second(index: Int): T = this[index]
+ * //     ^_________________________________________________^
  * // Receiver 'List<T>', type parameter 'T', value parameter 'index', and return type 'T'
  * }</pre>
  *
@@ -104,10 +104,6 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
         return contextParameterList.getContextParameters();
     }
 
-    /**
-     * Returns the type reference for the declared return type, or {@code null} when the return type is omitted and
-     * inferred by the compiler.
-     */
     @Override
     @Nullable
     KtTypeReference getTypeReference();

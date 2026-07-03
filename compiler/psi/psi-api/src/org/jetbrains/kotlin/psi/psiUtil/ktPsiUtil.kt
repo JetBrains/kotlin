@@ -242,8 +242,9 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
 /**
  * Returns the annotation entries applied to this expression through an enclosing annotated (or labeled) expression, or
  * an empty list if there are none.
+ *
+ * Annotations on labeled expressions lie on their base expressions.
  */
-// Annotations on labeled expressions lie on their base expressions.
 fun KtExpression.getAnnotationEntries(): List<KtAnnotationEntry> {
     val parent = parent
     return when (parent) {
@@ -609,8 +610,6 @@ fun KtStringTemplateExpression.isPlainWithEscapes() =
  * The class or object that declares this declaration as a member (including constructors and nested classes), or `null`
  * if it is not a class member — for example, a member function's parameter or local, or a property accessor.
  */
-// Correct for class members only (including constructors and nested classes)
-// Returns null e.g. for member function parameters, member function locals, property accessors
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
     get() = when (val parent = parent) {
         is KtClassBody -> parent.containingClassOrObject
