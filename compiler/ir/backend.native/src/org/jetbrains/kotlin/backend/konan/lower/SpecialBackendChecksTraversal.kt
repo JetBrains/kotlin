@@ -45,6 +45,20 @@ import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 
 /**
+ * Same as [tryGetIntrinsicType], but treats an intrinsic `kind` that isn't a value in this compiler's [IntrinsicType] enum
+ * as "unknown" (returns `null`) instead of propagating [IllegalArgumentException] from [Enum.valueOf].
+ *
+ * Reserved for the stdlib-build traversal: the stdlib is compiled by a pinned bootstrap K/N distribution whose
+ * `IntrinsicType` enum may lag behind the current source. Without this tolerance, adding new `@TypedIntrinsic` kind
+ * to the runtime would require a bootstrap bump before the runtime can actually use it.
+ */
+private fun tryGetIntrinsicTypeIgnoringUnknown(function: IrFunction): IntrinsicType? = try {
+    tryGetIntrinsicType(function)
+} catch (_: IllegalArgumentException) {
+    null
+}
+
+/**
  * Kotlin/Native-specific language checks. Most importantly, it checks C/Objective-C interop restrictions.
  * TODO: Should be moved to compiler frontend after K2.
  */
@@ -452,7 +466,7 @@ private class BackendChecker(
         if (callee.isCFunctionOrGlobalAccessor())
             checkCanGenerateCFunctionCallOrGlobalAccess(expression, isInvoke = false)
 
-        when (val intrinsicType = tryGetIntrinsicType(expression)) {
+        when (val intrinsicType = tryGetIntrinsicTypeIgnoringUnknown(callee)) {
             IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
                 (val target = function, val captures) = getUnboundReferencedFunction(expression.arguments[0]!!)
 
