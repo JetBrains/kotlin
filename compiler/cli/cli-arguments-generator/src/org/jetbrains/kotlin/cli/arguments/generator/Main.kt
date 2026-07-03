@@ -25,14 +25,26 @@ private const val ORIGIN_FILE_PATH = "compiler/arguments/src/org/jetbrains/kotli
 
 fun main(args: Array<String>) {
     val genDir = File(args[0])
-    for (level in args.drop(1)) {
-        generateLevel(genDir, level)
-    }
-}
 
-private fun generateLevel(genDir: File, levelName: String) {
-    val [level, parent] = findLevelWithParent(levelName)
-    generateArgumentsClass(genDir, level, parent)
+    val alreadyRemovedArguments = mutableSetOf<KotlinCompilerArgument>()
+    for (level in args.drop(1)) {
+        val [level, parent] = findLevelWithParent(level)
+        generateArgumentsClass(genDir, level, parent)
+
+        for (argument in level.arguments) {
+            if (argument.isAlreadyRemoved) {
+                alreadyRemovedArguments.add(argument)
+            }
+        }
+    }
+
+    val removedArgumentsLevel = KotlinCompilerArgumentsLevel(
+        name = removedCompilerArgumentsSpecialLevelName,
+        arguments = alreadyRemovedArguments,
+        nestedLevels = emptySet(),
+        modifiers = setOf(Modifier.DEPRECATED),
+    )
+    generateArgumentsClass(genDir, removedArgumentsLevel, parent = null)
 }
 
 private fun findLevelWithParent(name: String): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?> {
@@ -64,6 +76,11 @@ val ArgumentsInfo.isCommonCompilerArgs: Boolean
     get() = levelName == CompilerArgumentsLevelNames.commonCompilerArguments
 
 val levelToClassNameMap = listOf(
+    ArgumentsInfo(
+        levelName = removedCompilerArgumentsSpecialLevelName,
+        className = "RemovedCompilerArguments",
+        levelIsFinal = true,
+    ),
     ArgumentsInfo(
         levelName = CompilerArgumentsLevelNames.commonToolArguments,
         className = "CommonToolArguments",
@@ -151,6 +168,8 @@ private fun SmartPrinter.generateArgumentsClass(
     parent: KotlinCompilerArgumentsLevel?,
     info: ArgumentsInfo,
 ) {
+    val generateAlreadyRemovedArguments = info.levelName == removedCompilerArgumentsSpecialLevelName
+
     println(COPYRIGHT)
     println("package org.jetbrains.kotlin.cli.common.arguments")
     println()
@@ -163,12 +182,23 @@ private fun SmartPrinter.generateArgumentsClass(
 
     print(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
     println("generator in :compiler:cli:cli-arguments-generator")
-    println("// Please declare arguments in $ORIGIN_FILE_PATH/${info.originFileName}.kt")
+    if (!generateAlreadyRemovedArguments) {
+        println("// Please declare arguments in $ORIGIN_FILE_PATH/${info.originFileName}.kt")
+    }
     println(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX)
     println()
 
     if (Modifier.DEPRECATED in level.modifiers) {
-        println("@Deprecated(\"This class was deprecated and will be removed soon.\", level = DeprecationLevel.WARNING)")
+        val message: String
+        val level: DeprecationLevel
+        if (generateAlreadyRemovedArguments) {
+            message = "This class exists solely to facilitate detailed error reporting."
+            level = DeprecationLevel.ERROR
+        } else {
+            message = "This class was deprecated and will be removed soon."
+            level = DeprecationLevel.WARNING
+        }
+        println("@Deprecated(\"$message\", level = DeprecationLevel.$level)")
     }
     if (Modifier.DEPRECATED in (parent?.modifiers ?: emptySet())) {
         println("@Suppress(\"DEPRECATION\")")
@@ -181,18 +211,21 @@ private fun SmartPrinter.generateArgumentsClass(
         }
     }
     print("class ${info.className}")
-    val supertypes = when (parent) {
-        null -> "Freezable(), Serializable"
-        else -> "${levelToClassNameMap.getValue(parent.name).className}()"
+    if (!generateAlreadyRemovedArguments) {
+        val supertypes = when (parent) {
+            null -> "Freezable(), Serializable"
+            else -> "${levelToClassNameMap.getValue(parent.name).className}()"
+        }
+        print(" : $supertypes")
     }
-    println(" : $supertypes {")
+    println(" {")
     withIndent {
         generateAdditionalSyntheticArguments(info)
         for (argument in level.arguments) {
-            val isAlreadyRemoved = argument.releaseVersionsMetadata.removedVersion?.let {
-                it.toKotlinVersion() <= kotlin.KotlinVersion.CURRENT
-            } == true
-            if (isAlreadyRemoved) continue
+            if (generateAlreadyRemovedArguments xor argument.isAlreadyRemoved) {
+                continue
+            }
+
             validateLifetime(argument)
             validateLanguageFeaturesConsistency(argument)
             generateDeprecationAnnotation(argument)
@@ -202,8 +235,10 @@ private fun SmartPrinter.generateArgumentsClass(
             generateProperty(argument)
             println()
         }
-        generateConfigurator(info)
-        generateCopyOf(info)
+        if (!generateAlreadyRemovedArguments) {
+            generateConfigurator(info)
+            generateCopyOf(info)
+        }
         info.additionalGenerator.invoke(this)
     }
     println("}")
@@ -212,7 +247,7 @@ private fun SmartPrinter.generateArgumentsClass(
 private fun KotlinCompilerArgumentsLevel.collectImports(info: ArgumentsInfo): List<String> {
     val rawImports = buildSet {
         add("org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator")
-        if (info.levelIsFinal || info.isCommonCompilerArgs) {
+        if ((info.levelIsFinal || info.isCommonCompilerArgs) && info.levelName != removedCompilerArgumentsSpecialLevelName) {
             add("com.intellij.util.xmlb.annotations.Transient")
         }
         if (info.isCommonToolsArgs) {
@@ -359,13 +394,23 @@ fun SmartPrinter.generateDeprecationAnnotation(argument: KotlinCompilerArgument)
         error("Deprecated message is specified for argument '${argument.name}' but deprecated version is not set")
     }
 
-    val deprecatedOrRemovedVersion = releaseVersionsMetadata.deprecatedVersion ?: releaseVersionsMetadata.removedVersion
-    if (deprecatedOrRemovedVersion.let { it != null && it.toKotlinVersion() <= kotlin.KotlinVersion.CURRENT }) {
-        // Mark deprecated/removed arguments with warning/error deprecation level.
+    val deprecationLevel = when {
+        argument.isAlreadyRemoved -> {
+            DeprecationLevel.ERROR
+        }
+        releaseVersionsMetadata.deprecatedVersion.let { it != null && it.toKotlinVersion() <= kotlin.KotlinVersion.CURRENT } -> {
+            DeprecationLevel.WARNING
+        }
+        else -> {
+            null
+        }
+    }
+    if (deprecationLevel != null) {
+        // Mark deprecated/removed arguments with warning/error deprecation level according to the specified version.
         generateAnnotation(
             Deprecated(
                 argument.deprecatedMessage ?: "",
-                level = DeprecationLevel.WARNING,
+                level = deprecationLevel,
             ),
             kind = AnnotationKind.Gradle,
         )
@@ -462,7 +507,9 @@ private fun SmartPrinter.generateSetter(type: String, argument: KotlinCompilerAr
     withIndent {
         println("set(value) {")
         withIndent {
-            println("checkFrozen()")
+            if (argument?.isAlreadyRemoved != true) {
+                println("checkFrozen()")
+            }
             if (type == "String?") {
                 println("field = if (value.isNullOrEmpty()) ${argument?.defaultValueInArgs} else value")
             } else {
@@ -542,3 +589,15 @@ private val KotlinCompilerArgument.defaultValueInArgs: String
     }
 
 private const val tripleQuote = "\"\"\""
+
+/**
+ * Represents the special level name solely for removed compiler arguments.
+ *
+ * This constant is used to identify a specific `KotlinCompilerArgumentsLevel`
+ * that aggregates compiler arguments marked as removed. It acts as a unique identifier.
+ */
+private const val removedCompilerArgumentsSpecialLevelName = "removedCompilerArguments"
+
+private val KotlinCompilerArgument.isAlreadyRemoved: Boolean
+    get() = releaseVersionsMetadata.removedVersion.let { it != null && it.toKotlinVersion() <= kotlin.KotlinVersion.CURRENT }
+
