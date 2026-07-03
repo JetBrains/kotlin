@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.dependencies
 
+import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyNodeIndex.Companion.enclosingEntity
+import org.jetbrains.kotlin.fir.util.SetMultimap
 import kotlin.collections.forEach
 import kotlin.collections.set
 
@@ -107,8 +109,7 @@ sealed class DependencyNode {
 }
 
 data class UnitNode(override val index: DependencyNodeIndex) : DependencyNode() {
-    val enclosingEntity: EnclosingEntity<*>? = (index as? StaticInitializationIndex)?.enclosingEntity
-
+    val enclosingEntity: EnclosingEntity<*>? = index.enclosingEntity
     private val incomingInformationFlow: InformationFlowMap = mutableMapOf()
 
     val informationFlow: Sequence<InformationEdge> get() = incomingInformationFlow.asSequence().map { it.value }
@@ -143,7 +144,8 @@ data class UnitNode(override val index: DependencyNodeIndex) : DependencyNode() 
 
 data class CompositeNode(
     private val indices: Set<DependencyNodeIndex>,
-    private val entities: MutableMap<EnclosingEntity<*>, MutableSet<DependencyNodeIndex>>,
+    private val entities: SetMultimap<EnclosingEntity<*>, DependencyNodeIndex>,
+    private val subgraphFlow: SetMultimap<DependencyNodeIndex, HappensBeforeEdge>,
 ) : DependencyNode(), Set<DependencyNodeIndex> by indices {
 
     val enclosingEntities: Set<EnclosingEntity<*>> get() = entities.keys
@@ -153,8 +155,9 @@ data class CompositeNode(
     fun informationFlowInto(index: DependencyNodeIndex): Sequence<InformationEdge> =
         incomingInformationFlow[index]?.asSequence()?.map { it.value } ?: emptySequence()
 
-    operator fun get(enclosingEntity: EnclosingEntity<*>): Sequence<DependencyNodeIndex> =
-        entities[enclosingEntity]?.asSequence() ?: emptySequence()
+    fun subgraphFlowFrom(index: DependencyNodeIndex): Sequence<HappensBeforeEdge> = subgraphFlow[index].asSequence()
+
+    operator fun get(enclosingEntity: EnclosingEntity<*>): Sequence<DependencyNodeIndex> = entities[enclosingEntity].asSequence()
 
     operator fun contains(enclosingEntity: EnclosingEntity<*>): Boolean = enclosingEntity in enclosingEntities
 
@@ -213,5 +216,23 @@ data class CompositeNode(
         super.reset()
         incomingInformationFlow.forEach { it.value.clear() }
         incomingInformationFlow.clear()
+    }
+
+    companion object {
+        context(cycle: CompositeNode)
+        fun DependencyNodeIndex.subgraphFlowDescendants(): Sequence<DependencyNodeIndex> =
+            TraversalOrder.PreOrder.traverse(
+                start = this@subgraphFlowDescendants,
+                predicate = { it in cycle },
+                neighbours = {
+                    cycle.subgraphFlowFrom(it).flatMap { edge ->
+                        if (edge.to is CompositeIndex) {
+                            (edge.to as CompositeIndex).indices
+                        } else {
+                            setOf(edge.to)
+                        }
+                    }
+                }
+            )
     }
 }

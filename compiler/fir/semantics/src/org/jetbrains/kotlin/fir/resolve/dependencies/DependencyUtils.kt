@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -145,6 +146,12 @@ val FirCallableSymbol<*>.isPrivate: Boolean
         is EffectiveVisibility.Local -> true
         else -> false
     }
+
+val <C : FirClass> FirClassSymbol<C>.beginInitializationIndex: BeginInstanceInitializationIndex<C>
+    get() = BeginInstanceInitializationIndex(this)
+
+val <C : FirClass> FirClassSymbol<C>.endInitializationIndex: EndInstanceInitializationIndex<C>
+    get() = EndInstanceInitializationIndex(this)
 
 infix operator fun <T> List<T>.plus(element: T?): List<T> = toMutableList().apply { element?.let(::add) }
 

@@ -252,7 +252,7 @@ fun FirSession.registerCliCompilerOnlyResolveComponents() {
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerModuleData(moduleData: FirModuleData) {
     register(FirModuleData::class, moduleData)
-    val dependencyGraph = DependencyGraph()
+    val dependencyGraph = DependencyGraph(this)
     register(DependencyGraph::class, dependencyGraph)
     register(DependencyGraphAnalyzer::class, DependencyGraphAnalyzer(dependencyGraph))
     register(DependencyGraphResolver::class, DependencyGraphResolver(dependencyGraph))
