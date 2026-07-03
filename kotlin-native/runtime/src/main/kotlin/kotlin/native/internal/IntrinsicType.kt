@@ -31,6 +31,8 @@ internal class IntrinsicType {
         const val NOT                   = "NOT"
         const val REINTERPRET           = "REINTERPRET"
         const val EXTRACT_ELEMENT       = "EXTRACT_ELEMENT"
+        const val CREATE_VECTOR4_FLOAT  = "CREATE_VECTOR4_FLOAT"
+        const val CREATE_VECTOR4_INT    = "CREATE_VECTOR4_INT"
         const val ARE_EQUAL_BY_VALUE    = "ARE_EQUAL_BY_VALUE"
         const val IEEE_754_EQUALS       = "IEEE_754_EQUALS"
 

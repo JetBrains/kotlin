@@ -115,6 +115,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.NOT -> emitNot(args)
                 IntrinsicType.REINTERPRET -> emitReinterpret(callSite, args)
                 IntrinsicType.EXTRACT_ELEMENT -> emitExtractElement(callSite, args)
+                IntrinsicType.CREATE_VECTOR4_FLOAT -> emitCreateVector4(args, llvm.floatType)
+                IntrinsicType.CREATE_VECTOR4_INT -> emitCreateVector4(args, llvm.int32Type)
                 IntrinsicType.SIGN_EXTEND -> emitSignExtend(callSite, args)
                 IntrinsicType.ZERO_EXTEND -> emitZeroExtend(callSite, args)
                 IntrinsicType.INT_TRUNCATE -> emitIntTruncate(callSite, args)
@@ -547,6 +549,24 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         return extractElement(
                 (if (targetType == vector.type) vector else bitcast(targetType, vector)),
                 index)
+    }
+
+    /**
+     * Build a 4-lane vector from 4 scalar args via an `insertelement` chain over `undef`. Used as
+     * the intrinsic body for `kotlinx.cinterop.vectorOf(f0..f3)` — both the Float and Int
+     * overloads. Replaces the historical `@GCUnsafeCall("Kotlin_Interop_Vector4{f,i32}_of")` route
+     * which required a C++ runtime symbol and therefore couldn't be called from a device (NVPTX)
+     * fragment, where the K/N C++ runtime isn't linked. The scalar-to-vector path is InstCombine-
+     * folded into a single `mov` or constant when the lanes are constants, so this is at worst as
+     * fast as the old C++ call and typically faster (one call boundary elided).
+     */
+    private fun FunctionGenerationContext.emitCreateVector4(args: List<LLVMValueRef>, elementType: LLVMTypeRef): LLVMValueRef {
+        val vectorType = LLVMVectorType(elementType, 4)!!
+        var acc: LLVMValueRef = LLVMGetUndef(vectorType)!!
+        for (i in 0..3) {
+            acc = LLVMBuildInsertElement(builder, acc, args[i], llvm.int32(i), "")!!
+        }
+        return acc
     }
 
     private fun FunctionGenerationContext.emitNot(args: List<LLVMValueRef>) =

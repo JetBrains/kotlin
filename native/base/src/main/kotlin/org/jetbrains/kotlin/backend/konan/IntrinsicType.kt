@@ -34,6 +34,8 @@ enum class IntrinsicType {
     NOT,
     REINTERPRET,
     EXTRACT_ELEMENT,
+    CREATE_VECTOR4_FLOAT,
+    CREATE_VECTOR4_INT,
     ARE_EQUAL_BY_VALUE,
     IEEE_754_EQUALS,
     // OBJC

@@ -4,7 +4,6 @@
  */
 package kotlinx.cinterop
 
-import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -54,12 +53,12 @@ public final class Vector128 private constructor() {
 
 @SinceKotlin("1.9")
 @ExperimentalForeignApi
-@GCUnsafeCall("Kotlin_Interop_Vector4f_of")
+@TypedIntrinsic(IntrinsicType.CREATE_VECTOR4_FLOAT)
 public external fun vectorOf(f0: Float, f1: Float, f2: Float, f3: Float): Vector128
 
 @SinceKotlin("1.9")
 @ExperimentalForeignApi
-@GCUnsafeCall("Kotlin_Interop_Vector4i32_of")
+@TypedIntrinsic(IntrinsicType.CREATE_VECTOR4_INT)
 public external fun vectorOf(f0: Int, f1: Int, f2: Int, f3: Int): Vector128
 
 
