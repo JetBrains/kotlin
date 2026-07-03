@@ -1,0 +1,133 @@
+KClass: class Base : Any
+  constructors:
+    public final <T> fun `<init>`(): Base<T>
+  members:
+    public open operator fun Base<T>.equals(kotlin.Any?): kotlin.Boolean
+    public final fun Base<T>.foo(T): kotlin.Unit
+    public final fun Base<T>.foo(kotlin.String): kotlin.Unit
+    public open fun Base<T>.hashCode(): kotlin.Int
+    public open fun Base<T>.toString(): kotlin.String
+    public final val Base<T>.(T.)bar: kotlin.Int
+    public final val Base<T>.(kotlin.String.)bar: kotlin.Int
+  declaredMembers:
+    public final fun Base<T>.foo(T): kotlin.Unit
+    public final fun Base<T>.foo(kotlin.String): kotlin.Unit
+    public final val Base<T>.(T.)bar: kotlin.Int
+    public final val Base<T>.(kotlin.String.)bar: kotlin.Int
+KClass: class BaseXY : Any
+  constructors:
+    public final <X, Y> fun `<init>`(): BaseXY<X, Y>
+  members:
+    public open operator fun BaseXY<X, Y>.equals(kotlin.Any?): kotlin.Boolean
+    public final fun BaseXY<X, Y>.foo(X, kotlin.String): kotlin.Unit
+    public final fun BaseXY<X, Y>.foo(kotlin.String, Y): kotlin.Unit
+    public open fun BaseXY<X, Y>.hashCode(): kotlin.Int
+    public open fun BaseXY<X, Y>.toString(): kotlin.String
+  declaredMembers:
+    public final fun BaseXY<X, Y>.foo(X, kotlin.String): kotlin.Unit
+    public final fun BaseXY<X, Y>.foo(kotlin.String, Y): kotlin.Unit
+KPackage: ClashingFakeOverrideSignaturesKt
+  public final fun outerFun(): kotlin.Unit
+  public final fun test(Base<kotlin.String>, Derived, Derived2): kotlin.Unit
+KClass: class ClashingFakeOverrideSignaturesKt$outerFun$LocalBase : Any
+  constructors:
+    public final <T> fun `<init>`(): `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>
+  members:
+    public open operator fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.equals(kotlin.Any?): kotlin.Boolean
+    public final fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.foo(T): kotlin.Unit
+    public final fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.foo(kotlin.String): kotlin.Unit
+    public open fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.hashCode(): kotlin.Int
+    public open fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.toString(): kotlin.String
+    public final val `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.(T.)bar: kotlin.Int
+    public final val `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.(kotlin.String.)bar: kotlin.Int
+  declaredMembers:
+    public final fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.foo(T): kotlin.Unit
+    public final fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.foo(kotlin.String): kotlin.Unit
+    public final val `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.(T.)bar: kotlin.Int
+    public final val `ClashingFakeOverrideSignaturesKt$outerFun$LocalBase`<T>.(kotlin.String.)bar: kotlin.Int
+KClass: class ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived : LocalBase
+  constructors:
+    public final fun `<init>`(): `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived`
+  members:
+    public open operator fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived`.equals(kotlin.Any?): kotlin.Boolean
+    public final fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived`.foo(kotlin.String): kotlin.Unit
+    public open fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived`.hashCode(): kotlin.Int
+    public open fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived`.toString(): kotlin.String
+    public final val `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived`.(kotlin.String.)bar: kotlin.Int
+  declaredMembers:
+KClass: class ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived2 : LocalDerived
+  constructors:
+    public final fun `<init>`(): `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived2`
+  members:
+    public open operator fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived2`.equals(kotlin.Any?): kotlin.Boolean
+    public final fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived2`.foo(kotlin.String): kotlin.Unit
+    public open fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived2`.hashCode(): kotlin.Int
+    public open fun `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived2`.toString(): kotlin.String
+    public final val `ClashingFakeOverrideSignaturesKt$outerFun$LocalDerived2`.(kotlin.String.)bar: kotlin.Int
+  declaredMembers:
+KClass: class Derived : Base
+  constructors:
+    public final fun `<init>`(): Derived
+  members:
+    public open operator fun Derived.equals(kotlin.Any?): kotlin.Boolean
+    public final fun Derived.foo(kotlin.String): kotlin.Unit
+    public open fun Derived.hashCode(): kotlin.Int
+    public open fun Derived.toString(): kotlin.String
+    public final val Derived.(kotlin.String.)bar: kotlin.Int
+  declaredMembers:
+KClass: class Derived2 : Derived
+  constructors:
+    public final fun `<init>`(): Derived2
+  members:
+    public open operator fun Derived2.equals(kotlin.Any?): kotlin.Boolean
+    public final fun Derived2.foo(kotlin.String): kotlin.Unit
+    public open fun Derived2.hashCode(): kotlin.Int
+    public open fun Derived2.toString(): kotlin.String
+    public final val Derived2.(kotlin.String.)bar: kotlin.Int
+  declaredMembers:
+KClass: class DerivedXY : BaseXY
+  constructors:
+    public final fun `<init>`(): DerivedXY
+  members:
+    public open operator fun DerivedXY.equals(kotlin.Any?): kotlin.Boolean
+    public final fun DerivedXY.foo(kotlin.String, kotlin.String): kotlin.Unit
+    public open fun DerivedXY.hashCode(): kotlin.Int
+    public open fun DerivedXY.toString(): kotlin.String
+  declaredMembers:
+KClass: class Outer : Any
+  constructors:
+    public final <T> fun `<init>`(): Outer<T>
+  members:
+    public open operator fun Outer<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Outer<T>.hashCode(): kotlin.Int
+    public open fun Outer<T>.toString(): kotlin.String
+  declaredMembers:
+KClass: class Outer.Inner : Any
+  constructors:
+    public final fun Outer<T>.`<init>`(): Outer<T>.Inner
+  members:
+    public open operator fun Outer<T>.Inner.equals(kotlin.Any?): kotlin.Boolean
+    public final fun Outer<T>.Inner.foo(T): kotlin.Unit
+    public final fun Outer<T>.Inner.foo(kotlin.String): kotlin.Unit
+    public open fun Outer<T>.Inner.hashCode(): kotlin.Int
+    public open fun Outer<T>.Inner.toString(): kotlin.String
+  declaredMembers:
+    public final fun Outer<T>.Inner.foo(T): kotlin.Unit
+    public final fun Outer<T>.Inner.foo(kotlin.String): kotlin.Unit
+KClass: class OuterDerived : Outer
+  constructors:
+    public final fun `<init>`(): OuterDerived
+  members:
+    public open operator fun OuterDerived.equals(kotlin.Any?): kotlin.Boolean
+    public open fun OuterDerived.hashCode(): kotlin.Int
+    public open fun OuterDerived.toString(): kotlin.String
+  declaredMembers:
+KClass: class OuterDerived.InnerDerived : Inner
+  constructors:
+    public final fun OuterDerived.`<init>`(): OuterDerived.InnerDerived
+  members:
+    public open operator fun OuterDerived.InnerDerived.equals(kotlin.Any?): kotlin.Boolean
+    public final fun OuterDerived.InnerDerived.foo(kotlin.String): kotlin.Unit
+    public open fun OuterDerived.InnerDerived.hashCode(): kotlin.Int
+    public open fun OuterDerived.InnerDerived.toString(): kotlin.String
+  declaredMembers:
