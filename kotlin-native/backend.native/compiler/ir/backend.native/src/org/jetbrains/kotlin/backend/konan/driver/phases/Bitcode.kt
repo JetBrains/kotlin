@@ -209,7 +209,7 @@ internal val StripDeadDeviceIrPhase = createSimpleNamedCompilerPhase<NativeGener
     try {
         val err = LLVMRunPasses(
                 module,
-                "default<O2>,lto<O2>,strip-dead-prototypes,globaldce",
+                "default<O3>,lto<O3>,strip-dead-prototypes,globaldce",
                 null,
                 options,
         )
