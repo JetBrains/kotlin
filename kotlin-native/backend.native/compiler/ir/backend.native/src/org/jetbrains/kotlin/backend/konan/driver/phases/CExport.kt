@@ -24,7 +24,7 @@ internal val BuildCExports = createSimpleNamedCompilerPhase<LinkKlibsContext, Fr
 
     @OptIn(K1Deprecation::class)
     val typeTranslator = CAdapterTypeTranslator(prefix, context.builtIns)
-    CAdapterGenerator(context, input.environment.configuration, typeTranslator).buildExports(input.moduleDescriptor)
+    CAdapterGenerator(context, typeTranslator).buildExports(input.moduleDescriptor)
 }
 
 internal data class CExportGenerateApiInput(
