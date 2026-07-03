@@ -39,6 +39,9 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
             TestDirectives.FILECHECK_STAGE,
             TestDirectives.EXPECTED_TIMEOUT_FAILURE,
             TestDirectives.MUTED,
+            CodegenTestDirectives.DUMP_IR,
+            CodegenTestDirectives.DUMP_IR_AFTER_INLINE,
+            CodegenTestDirectives.DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS,
         )
 
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.
