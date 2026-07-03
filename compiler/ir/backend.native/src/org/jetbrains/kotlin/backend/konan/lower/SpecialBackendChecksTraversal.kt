@@ -452,7 +452,7 @@ private class BackendChecker(
         if (callee.isCFunctionOrGlobalAccessor())
             checkCanGenerateCFunctionCallOrGlobalAccess(expression, isInvoke = false)
 
-        when (val intrinsicType = tryGetIntrinsicType(expression)) {
+        when (val intrinsicType = tryGetIntrinsicTypeIgnoringUnknown(expression)) {
             IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
                 (val target = function, val captures) = getUnboundReferencedFunction(expression.arguments[0]!!)
 
@@ -920,3 +920,21 @@ private fun BackendChecker.reportUnsupportedType(reason: String, type: IrType, l
     reportError(location.element, "type ${type.render()} $typeLocation is not supported here" +
             if (reason.isNotEmpty()) ": $reason" else "")
 }
+
+/**
+ * Same as [tryGetIntrinsicType], but treats an intrinsic `kind` that isn't a value in this
+ * compiler's [IntrinsicType] enum as "unknown" (returns `null`) instead of propagating
+ * [IllegalArgumentException] from [Enum.valueOf].
+ *
+ * Reserved for stdlib-build traversals: the runtime is compiled by a pinned bootstrap K/N
+ * distribution whose `IntrinsicType` enum may lag behind the current source. Without this
+ * tolerance, adding any new `@TypedIntrinsic` kind to the runtime would require a bootstrap
+ * bump before the runtime can reference it. Codegen and later lowerings still route through
+ * plain [tryGetIntrinsicType], so an unknown kind reaching them is still a compiler bug.
+ */
+private fun tryGetIntrinsicTypeIgnoringUnknown(callSite: IrFunctionAccessExpression): IntrinsicType? =
+        try {
+            tryGetIntrinsicType(callSite)
+        } catch (_: IllegalArgumentException) {
+            null
+        }
