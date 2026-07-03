@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>kotlinx-collections-immutable-jvm</artifactId>
-      <version>0.5.0</version>
+      <version>0.5.1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
