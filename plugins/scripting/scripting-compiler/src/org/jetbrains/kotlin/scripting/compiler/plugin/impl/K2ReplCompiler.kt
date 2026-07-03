@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -650,8 +651,7 @@ private fun elideErrorBodiedEvalFunctions(moduleFragment: org.jetbrains.kotlin.i
         val visitor = object : org.jetbrains.kotlin.ir.visitors.IrVisitorVoid() {
             override fun visitElement(element: org.jetbrains.kotlin.ir.IrElement) {
                 if (found) return
-                if (element is org.jetbrains.kotlin.ir.expressions.IrErrorExpression ||
-                    element is org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
+                if (element is org.jetbrains.kotlin.ir.expressions.IrErrorExpression
                 ) {
                     found = true
                     return
@@ -664,6 +664,7 @@ private fun elideErrorBodiedEvalFunctions(moduleFragment: org.jetbrains.kotlin.i
     }
 
     fun processClass(irClass: org.jetbrains.kotlin.ir.declarations.IrClass) {
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         for (member in irClass.declarations) {
             when (member) {
                 is org.jetbrains.kotlin.ir.declarations.IrSimpleFunction -> {
@@ -684,6 +685,7 @@ private fun elideErrorBodiedEvalFunctions(moduleFragment: org.jetbrains.kotlin.i
     }
 
     for (file in moduleFragment.files) {
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         for (decl in file.declarations) {
             if (decl is org.jetbrains.kotlin.ir.declarations.IrClass) processClass(decl)
         }
