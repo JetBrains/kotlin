@@ -46,17 +46,14 @@ internal open class TCServiceMessagesClient(
         return result
     }
 
-    fun <T> GroupNode.suite(id: String, actions: () -> T): T {
+    fun <T> GroupNode.suite(id: String, actions: SuiteNode.() -> T): T {
         val tsStart = System.currentTimeMillis()
         val group = SuiteNode(this,id)
         open(tsStart, group)
-        val result = try {
-            actions()
-        } finally {
+        return group.actions().also {
             val tsEnd = System.currentTimeMillis()
             close(tsEnd, id)
         }
-        return result
     }
 
     override fun parseException(e: ParseException, text: String) {
@@ -563,6 +560,30 @@ internal open class TCServiceMessagesClient(
         }
 
         return null
+    }
+
+    /**
+     * Should be called in cases when a failing test brings down the entire suite (e.g. when a single JS times out which leads to the
+     * whole web page being torn down).
+     *
+     * @param failingTestCause The exception representing the original test failure. Will be attached to every [TestNode] that sits on top
+     * of the [SuiteNode] in the stack.
+     */
+    fun closeSuiteWithFailingTestCause(suiteNode: SuiteNode, ts: Long, failingTestCause: Throwable) {
+        var attachedFailureToTestNode = false
+        do {
+            val currentLeaf = leaf ?: return
+            if (currentLeaf is TestNode) {
+                currentLeaf.failure(TestFailed(currentLeaf.cleanName, failingTestCause), false)
+                attachedFailureToTestNode = true
+            }
+            close(ts, currentLeaf.localId)
+        } while (currentLeaf.localId != suiteNode.localId)
+        // If there are no TestNodes on the stack, we have to re-throw the throwable, as otherwise we'd be swallowing it and incorrectly
+        // reporting the test suite as passing.
+        if (!attachedFailureToTestNode) {
+            throw failingTestCause
+        }
     }
 
     private fun requireLeaf() = leaf ?: error("test out of group")

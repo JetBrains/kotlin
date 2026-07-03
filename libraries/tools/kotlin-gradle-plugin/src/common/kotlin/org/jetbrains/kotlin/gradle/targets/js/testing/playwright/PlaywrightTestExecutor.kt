@@ -74,7 +74,12 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                     root {
                         for (runner in spec.runners) {
                             suite(id = runner.name) {
-                                executeRunner(playwright, runner, handler)
+                                try {
+                                    executeRunner(playwright, runner, handler)
+                                } catch (t: Throwable) {
+                                    val tsEnd = System.currentTimeMillis()
+                                    closeSuiteWithFailingTestCause(suiteNode = this, tsEnd, failingTestCause = t)
+                                }
                             }
                         }
                     }
