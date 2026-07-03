@@ -12,6 +12,6 @@ enum class HairType {
         LONG -> true
         FLOAT,
         DOUBLE -> false
-        else -> true // FIXME error("Should not reach here $this")
+        else -> error("Should not reach here $this")
     }
 }

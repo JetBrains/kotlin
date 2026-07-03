@@ -55,7 +55,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                         return Const(op.op(lhs.numberValue, rhs.numberValue))
 
                     // a op identity => a
-                    if (op.identity != null && rhs.numberValue == op.identity)
+                    if (rhs.numberValue == op.identity)
                         return lhs
                 }
 
