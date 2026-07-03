@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -17,7 +17,7 @@ internal class InternalHashMap<K, V> private constructor(
     private var valuesArray: Array<V>?,
     // hash of a key by its index, -1 if a key at that index was removed
     private var presenceArray: IntArray,
-    // (index + 1) of a key by its hash, 0 if there is no key with that hash
+    // (index + 1) of a key by its hash, 0 if there is no key with that hash, -1 if collision chain continues to the hash-1
     private var hashArray: IntArray,
     // max length of a collision chain
     private var maxProbeDistance: Int,
@@ -260,34 +260,36 @@ internal class InternalHashMap<K, V> private constructor(
     }
 
     private fun rehash(newHashSize: Int) {
-//        require(newHashSize > hashSize) { "Rehash can only be executed with a grown hash array" }
-
+        // Rebuilds the hash array from scratch and recomputes maxProbeDistance: a layout that
+        // reused tombstone slots is not always rebuildable within the previous bound, because
+        // reuse can place a key closer to its ideal slot than a greedy first-empty fit would.
         registerModification()
         if (length > _size) compact(updateHashArray = false)
         hashArray = IntArray(newHashSize)
         hashShift = computeShift(newHashSize)
-
+        var maxOffset = INITIAL_MAX_PROBE_DISTANCE
         var i = 0
         while (i < length) {
-            if (!putRehash(i++)) {
-                throw IllegalStateException(
-                    "This cannot happen with fixed magic multiplier and grow-only hash array. Have object hashCodes changed?"
-                )
-            }
+            val offset = putRehash(i++)
+            if (offset > maxOffset) maxOffset = offset
         }
+        maxProbeDistance = maxOffset
     }
 
-    private fun putRehash(i: Int): Boolean {
+    private fun putRehash(i: Int): Int {
+        // unbounded first-empty placement; returns the achieved probe offset.
         var hash = hash(keysArray[i])
-        var probesLeft = maxProbeDistance
+        var offset = 0
         while (true) {
             val index = hashArray[hash]
             if (index == 0) {
                 hashArray[hash] = i + 1
                 presenceArray[i] = hash
-                return true
+                return offset
             }
-            if (--probesLeft < 0) return false
+            if (++offset >= hashSize) {
+                throw IllegalStateException("Hash array overflow during rehash. This cannot happen: size <= capacity < hashSize.")
+            }
             if (hash-- == 0) hash = hashSize - 1
         }
     }
@@ -298,7 +300,7 @@ internal class InternalHashMap<K, V> private constructor(
         while (true) {
             val index = hashArray[hash]
             if (index == 0) return TOMBSTONE
-            if (keysArray[index - 1] == key) return index - 1
+            if (index > 0 && keysArray[index - 1] == key) return index - 1
             if (--probesLeft < 0) return TOMBSTONE
             if (hash-- == 0) hash = hashSize - 1
         }
@@ -320,24 +322,40 @@ internal class InternalHashMap<K, V> private constructor(
             // put is allowed to grow maxProbeDistance with some limits (resize hash on reaching limits)
             val tentativeMaxProbeDistance = (maxProbeDistance * 2).coerceAtMost(hashSize / 2)
             var probeDistance = 0
-            while (true) {
+            // the first tombstone seen on the probe path - a candidate slot for the insertion.
+            var reusableSlot = -1
+            var reusableProbeDistance = 0
+            var insertSlot: Int
+            var insertProbeDistance: Int
+            probe@ while (true) {
                 val index = hashArray[hash]
-                if (index == 0) { // claim or reuse hash slot
-                    if (length >= capacity) {
-                        ensureExtraCapacity(1)
-                        continue@retry
+                if (index < 0) {
+                    // a tombstone. Remember the first one, but keep scanning: the key may
+                    // exist further down the chain (claiming it immediately was the KT-82783 bug).
+                    if (reusableSlot < 0) {
+                        reusableSlot = hash
+                        reusableProbeDistance = probeDistance
                     }
-                    val putIndex = length++
-                    keysArray[putIndex] = key
-                    presenceArray[putIndex] = hash
-                    hashArray[hash] = putIndex + 1
-                    _size++
-                    registerModification()
-                    if (probeDistance > maxProbeDistance) maxProbeDistance = probeDistance
-                    return putIndex
-                }
-                if (keysArray[index - 1] == key) {
+                } else if (index == 0) {
+                    // End of chain: the key is absent. Insert into the earliest tombstone, if seen.
+                    if (reusableSlot >= 0) {
+                        insertSlot = reusableSlot
+                        insertProbeDistance = reusableProbeDistance
+                    } else {
+                        insertSlot = hash
+                        insertProbeDistance = probeDistance
+                    }
+                    break@probe
+                } else if (keysArray[index - 1] == key) {
                     return -index
+                }
+                if (reusableSlot >= 0 && probeDistance >= maxProbeDistance) {
+                    // all offsets 0..maxProbeDistance are checked, so the key is absent
+                    // (no live key is farther than maxProbeDistance from its ideal slot),
+                    // and there is a tombstone to reuse.
+                    insertSlot = reusableSlot
+                    insertProbeDistance = reusableProbeDistance
+                    break@probe
                 }
                 if (++probeDistance > tentativeMaxProbeDistance) {
                     rehash(hashSize * 2) // cannot find room even with extra "tentativeMaxProbeDistance" -- grow hash
@@ -345,6 +363,18 @@ internal class InternalHashMap<K, V> private constructor(
                 }
                 if (hash-- == 0) hash = hashSize - 1
             }
+            if (length >= capacity) {
+                ensureExtraCapacity(1)
+                continue@retry
+            }
+            val putIndex = length++
+            keysArray[putIndex] = key
+            presenceArray[putIndex] = insertSlot
+            hashArray[insertSlot] = putIndex + 1
+            _size++
+            registerModification()
+            if (insertProbeDistance > maxProbeDistance) maxProbeDistance = insertProbeDistance
+            return putIndex
         }
     }
 
@@ -367,32 +397,50 @@ internal class InternalHashMap<K, V> private constructor(
 
     private fun removeHashAt(removedHash: Int) {
         var hash = removedHash
-        var hole = removedHash // will try to patch the hole in the hash array
+        var hole = removedHash // will try to patch the hole in hash array
         var probeDistance = 0
+        var patchAttemptsLeft = (maxProbeDistance * 2).coerceAtMost(hashSize / 2) // don't spend too much effort
         while (true) {
             if (hash-- == 0) hash = hashSize - 1
-            val index = hashArray[hash]
             if (++probeDistance > maxProbeDistance) {
-                // too far away - can release the hole, a bad case will not happen
+                // too far away -- can release the hole, bad case will not happen
                 hashArray[hole] = 0
                 return
             }
+            val index = hashArray[hash]
             if (index == 0) {
-                // end of chain - can release the hole, a bad case will not happen
+                // end of chain -- can release the hole, bad case will not happen
                 hashArray[hole] = 0
                 return
             }
-            val otherHash = hash(keysArray[index - 1])
-            // Bad case:
-            //   - <--- [hash] ------ [hole] ------ [otherHash] ---> +
-            //             \------------/
-            //             probeDistance
-            if ((otherHash - hash) and (hashSize - 1) >= probeDistance) {
-                // move otherHash into the hole, move the hole
-                hashArray[hole] = index
-                presenceArray[index - 1] = hole
+            if (index < 0) {
+                // TOMBSTONE FOUND
+                //   - <--- [ TS ] ------ [hole] ---> +
+                //             \------------/
+                //             probeDistance
+                // move tombstone into the hole
+                hashArray[hole] = TOMBSTONE
                 hole = hash
                 probeDistance = 0
+            } else {
+                val otherHash = hash(keysArray[index - 1])
+                // Bad case:
+                //   - <--- [hash] ------ [hole] ------ [otherHash] ---> +
+                //             \------------/
+                //             probeDistance
+                if ((otherHash - hash) and (hashSize - 1) >= probeDistance) {
+                    // move otherHash into the hole, move the hole
+                    hashArray[hole] = index
+                    presenceArray[index - 1] = hole
+                    hole = hash
+                    probeDistance = 0
+                }
+            }
+            // check how long we're patching holes
+            if (--patchAttemptsLeft < 0) {
+                // just place tombstone into the hole
+                hashArray[hole] = TOMBSTONE
+                return
             }
         }
     }
