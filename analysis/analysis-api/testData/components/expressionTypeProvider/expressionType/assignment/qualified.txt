@@ -1,0 +1,3 @@
+expression: this.value = "bar"
+expression PSI: KtBinaryExpression
+type: kotlin.Unit

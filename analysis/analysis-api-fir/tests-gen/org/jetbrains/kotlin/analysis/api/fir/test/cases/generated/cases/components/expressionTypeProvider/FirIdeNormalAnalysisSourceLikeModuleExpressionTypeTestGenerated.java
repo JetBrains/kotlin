@@ -815,6 +815,56 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpressionTypeTestGenerated ext
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Assignment {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInAssignment() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("arrayAssignment.kt")
+    public void testArrayAssignment() {
+      run("arrayAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("augmented.kt")
+    public void testAugmented() {
+      run("augmented.kt");
+    }
+
+    @Test
+    @TestMetadata("incorrectValueType.kt")
+    public void testIncorrectValueType() {
+      run("incorrectValueType.kt");
+    }
+
+    @Test
+    @TestMetadata("qualified.kt")
+    public void testQualified() {
+      run("qualified.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      run("simple.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedTarget.kt")
+    public void testUnresolvedTarget() {
+      run("unresolvedTarget.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignmentLhs")
   @TestDataPath("$PROJECT_ROOT")
   public class AssignmentLhs {
@@ -891,6 +941,56 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpressionTypeTestGenerated ext
     @TestMetadata("readArrayElement.kt")
     public void testReadArrayElement() {
       run("readArrayElement.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignmentRhs")
+  @TestDataPath("$PROJECT_ROOT")
+  public class AssignmentRhs {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignmentRhs/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInAssignmentRhs() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignmentRhs"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("arrayAssignment.kt")
+    public void testArrayAssignment() {
+      run("arrayAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("augmented.kt")
+    public void testAugmented() {
+      run("augmented.kt");
+    }
+
+    @Test
+    @TestMetadata("expectedType.kt")
+    public void testExpectedType() {
+      run("expectedType.kt");
+    }
+
+    @Test
+    @TestMetadata("incorrectValueType.kt")
+    public void testIncorrectValueType() {
+      run("incorrectValueType.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      run("simple.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedValue.kt")
+    public void testUnresolvedValue() {
+      run("unresolvedValue.kt");
     }
   }
 
