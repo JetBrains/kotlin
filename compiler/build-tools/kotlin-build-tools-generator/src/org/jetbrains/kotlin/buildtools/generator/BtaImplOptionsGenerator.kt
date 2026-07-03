@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import java.io.Serializable
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -87,6 +88,7 @@ internal class BtaImplOptionsGenerator(
                         addSuperclassConstructorParameter("restrictedArgViolations")
                     }
                 } else {
+                    addSuperinterface(Serializable::class)
                     property(
                         "internalArguments",
                         ClassName("kotlin.collections", "MutableSet").parameterizedBy(typeNameOf<String>()),

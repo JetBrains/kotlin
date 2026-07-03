@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
+import java.io.Serializable
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
@@ -44,7 +45,8 @@ internal abstract class CommonToolArgumentsImpl(
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
 ) : ArgumentsCommonToolArguments,
-    ArgumentsCommonToolArguments.Builder {
+    ArgumentsCommonToolArguments.Builder,
+    Serializable {
   protected val internalArguments: MutableSet<String> = mutableSetOf()
 
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()

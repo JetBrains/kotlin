@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
+import java.io.Serializable
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class)
-internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder {
+internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder, Serializable {
+
     protected abstract val options: Options
     private val executionStarted = AtomicBoolean(false)
 

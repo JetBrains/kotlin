@@ -10,19 +10,22 @@ import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import java.io.File
+import java.io.Serializable
+import java.nio.file.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
 internal class Options(
     private val optionsName: String,
-) : DeepCopyable<Options> {
+) : DeepCopyable<Options>, Serializable {
     constructor(typeForName: KClass<*>) : this(typeForName.qualifiedName ?: typeForName.jvmName)
 
     private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
     @UseFromImplModuleRestricted
     operator fun <V> set(key: BaseOption<V>, value: Any?) {
-        optionsMap[key.id] = value
+        set(key.id, value)
     }
 
     @UseFromImplModuleRestricted
@@ -32,18 +35,21 @@ internal class Options(
     operator fun <V> get(key: BaseOptionWithDefault<V>): V = get(key.id)
 
     operator fun <V> set(key: BaseOptionWithDefault<V>, value: Any?) {
-        optionsMap[key.id] = value
+        set(key.id, value)
     }
 
     operator fun set(key: String, value: Any?) {
-        optionsMap[key] = value
+        optionsMap[key] = value?.let { if (it is Path) it.toFile() else it }
     }
 
     operator fun <V> get(key: String): V {
         @Suppress("UNCHECKED_CAST")
         return when (key) {
-            in optionsMap -> optionsMap[key] as V
+            in optionsMap -> optionsMap[key]
             else -> error("$key was not set in $optionsName")
+        }.let {
+            if (it is File) it.toPath() as V
+            else it as V
         }
     }
 
@@ -69,7 +75,11 @@ internal fun initializeOptions(klazz: KClass<*>, options: Options) {
     while (jClass != null && jClass != Any::class.java) {
         val companionClass = jClass.declaredClasses.firstOrNull { it.simpleName == "Companion" }
         if (companionClass != null) {
-            val companionField = try { jClass.getDeclaredField("Companion") } catch (_: NoSuchFieldException) { null }
+            val companionField = try {
+                jClass.getDeclaredField("Companion")
+            } catch (_: NoSuchFieldException) {
+                null
+            }
             val companionInstance = companionField?.also { it.isAccessible = true }?.get(null)
             if (companionInstance != null) {
                 companionClass.declaredMethods.filter { method ->

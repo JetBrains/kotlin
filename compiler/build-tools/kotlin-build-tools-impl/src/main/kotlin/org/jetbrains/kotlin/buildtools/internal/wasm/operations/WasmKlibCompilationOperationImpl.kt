@@ -52,9 +52,8 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     override val sources: List<Path>,
     override val destination: Path,
     compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
     WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
     DeepCopyable<WasmKlibCompilationOperationImpl> {
     constructor(
@@ -68,7 +67,6 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         sources = sources,
         destination = destination,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile,
         compilerVersion = compilerVersion,
     ) {
         initializeOptions(this::class, options)
@@ -91,7 +89,6 @@ internal class WasmKlibCompilationOperationImpl private constructor(
             sources,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
             compilerVersion
         )
     }

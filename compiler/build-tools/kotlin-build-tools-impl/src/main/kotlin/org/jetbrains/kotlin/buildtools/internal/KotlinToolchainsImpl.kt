@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.incremental.clearJarCaches
 import java.io.File
 import java.util.concurrent.*
 
-internal class KotlinToolchainsImpl() : KotlinToolchains {
+internal class KotlinToolchainsImpl : KotlinToolchains {
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
 
@@ -53,9 +53,9 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)"),
         level = DeprecationLevel.HIDDEN
     )
-    fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
+    fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl(buildIdToSessionFlagFile)
 
-    override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = DaemonExecutionPolicyImpl()
+    override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = DaemonExecutionPolicyImpl(buildIdToSessionFlagFile)
 
     override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 

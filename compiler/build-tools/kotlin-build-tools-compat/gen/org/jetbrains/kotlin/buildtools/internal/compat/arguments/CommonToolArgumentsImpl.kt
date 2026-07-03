@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.`internal`.compat.arguments
 
+import java.io.Serializable
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
@@ -35,7 +36,8 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 internal abstract class CommonToolArgumentsImpl(
   private val adapter: CommonToolArgumentValueAdapter? = null,
 ) : ArgumentsCommonToolArguments,
-    ArgumentsCommonToolArguments.Builder {
+    ArgumentsCommonToolArguments.Builder,
+    Serializable {
   protected val internalArguments: MutableSet<String> = mutableSetOf()
 
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()

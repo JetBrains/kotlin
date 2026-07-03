@@ -27,8 +27,7 @@ internal class JsLinkingOperationImpl private constructor(
     override val klib: Path,
     override val destination: Path,
     compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments),
     JsLinkingOperation, JsLinkingOperation.Builder,
     DeepCopyable<JsLinkingOperationImpl> {
     constructor(
@@ -40,8 +39,7 @@ internal class JsLinkingOperationImpl private constructor(
         options = Options(JsKlibCompilationOperation::class),
         klib = klib,
         destination = destination,
-        compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile
+        compilerArguments = compilerArguments
     ) {
         initializeOptions(this::class, options)
     }
@@ -54,7 +52,6 @@ internal class JsLinkingOperationImpl private constructor(
             klib,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
         )
     }
 

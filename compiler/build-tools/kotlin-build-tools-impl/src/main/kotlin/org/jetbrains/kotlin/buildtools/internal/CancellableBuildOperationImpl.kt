@@ -21,6 +21,8 @@ import kotlin.concurrent.atomics.incrementAndFetch
 @OptIn(ExperimentalAtomicApi::class)
 internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>(), CancellableBuildOperation<R> {
     private val isCancelled: AtomicBoolean = AtomicBoolean(false)
+
+    @Transient
     private val onCancelAction: AtomicReference<(() -> Unit)?> = AtomicReference(null)
     protected val compilationId: Int = compilationIdCounter.incrementAndFetch()
 
@@ -36,6 +38,7 @@ internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>
         check(actionWasSet) { "onCancel action was already set. Setting it again is an error." }
     }
 
+    @Transient
     protected val cancellationHandle = object : CompilationCanceledStatus {
         override fun checkCanceled() {
             if (isCancelled.load()) {

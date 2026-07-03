@@ -6,19 +6,27 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_COUNT_LIMIT
 import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_DIRECTORY
 import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_SIZE_LIMIT
 import org.jetbrains.kotlin.daemon.common.DaemonOptions
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
 
 internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
-internal class DaemonExecutionPolicyImpl private constructor(private val options: Options = Options(ExecutionPolicy.WithDaemon::class)) :
+internal class DaemonExecutionPolicyImpl private constructor(
+    private val options: Options = Options(ExecutionPolicy.WithDaemon::class),
+    val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+) :
     ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder, DeepCopyable<DaemonExecutionPolicyImpl> {
 
-    constructor() : this(Options(ExecutionPolicy.WithDaemon::class)) {
+    constructor(buildIdToSessionFlagFile: MutableMap<ProjectId, File>) : this(
+        Options(ExecutionPolicy.WithDaemon::class),
+        buildIdToSessionFlagFile
+    ) {
         initializeOptions(this::class, options)
     }
 
@@ -43,7 +51,7 @@ internal class DaemonExecutionPolicyImpl private constructor(private val options
     }
 
     override fun deepCopy(): DaemonExecutionPolicyImpl {
-        return DaemonExecutionPolicyImpl(options.deepCopy())
+        return DaemonExecutionPolicyImpl(options.deepCopy(), buildIdToSessionFlagFile)
     }
 
     class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)

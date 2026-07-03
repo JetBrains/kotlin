@@ -28,13 +28,13 @@ internal class JvmPlatformToolchainImpl(
         sources: List<Path>,
         destinationDirectory: Path,
     ): JvmCompilationOperation =
-        JvmCompilationOperationImpl(sources, destinationDirectory, buildIdToSessionFlagFile = buildIdToSessionFlagFile, compilerVersion = compilerVersion)
+        JvmCompilationOperationImpl(sources, destinationDirectory, compilerVersion = compilerVersion)
 
     override fun jvmCompilationOperationBuilder(
         sources: List<Path>,
         destinationDirectory: Path,
     ): JvmCompilationOperation.Builder =
-        JvmCompilationOperationImpl(sources, destinationDirectory, buildIdToSessionFlagFile = buildIdToSessionFlagFile, compilerVersion = compilerVersion)
+        JvmCompilationOperationImpl(sources, destinationDirectory, compilerVersion = compilerVersion)
 
     @Deprecated(
         "Use `classpathSnapshottingOperationBuilder` instead",

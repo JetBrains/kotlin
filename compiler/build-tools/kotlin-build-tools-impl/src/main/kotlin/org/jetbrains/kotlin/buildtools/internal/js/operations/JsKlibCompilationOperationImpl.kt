@@ -52,9 +52,8 @@ internal class JsKlibCompilationOperationImpl private constructor(
     override val sources: List<Path>,
     override val destination: Path,
     compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments),
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
     DeepCopyable<JsKlibCompilationOperationImpl> {
     constructor(
@@ -68,7 +67,6 @@ internal class JsKlibCompilationOperationImpl private constructor(
         sources = sources,
         destination = destination,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile,
         compilerVersion = compilerVersion,
     ) {
         initializeOptions(this::class, options)
@@ -91,7 +89,6 @@ internal class JsKlibCompilationOperationImpl private constructor(
             sources,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
             compilerVersion
         )
     }

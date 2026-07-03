@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
@@ -49,33 +48,77 @@ import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileLocations
-import java.io.File
+import java.io.*
 import java.nio.file.Path
 
-internal class JvmCompilationOperationImpl private constructor(
-    override val options: Options = Options(JvmCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destinationDirectory: Path,
-    compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(JvmCompilerArgumentValueAdapter.getOrNull()),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+internal class JvmCompilationOperationData(
+    val options: Options,
+    val sources: List<File>,
+    val destinationDirectory: File,
+    @Transient
+    val compilerArguments: JvmCompilerArgumentsImpl,
+) : DeepCopyable<JvmCompilationOperationData>, Serializable {
+    override fun deepCopy(): JvmCompilationOperationData {
+        return JvmCompilationOperationData(
+            options.deepCopy(),
+            sources,
+            destinationDirectory,
+            compilerArguments.deepCopy(),
+        )
+    }
+
+    @Throws(IOException::class)
+    private fun writeObject(out: ObjectOutputStream) {
+
+    }
+
+    @Throws(IOException::class, ClassNotFoundException::class)
+    private fun readObject(inputStream: ObjectInputStream) {
+
+    }
+
+}
+
+internal class JvmCompilationOperationImpl(
+    private val data: JvmCompilationOperationData,
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(data.compilerArguments),
     JvmCompilationOperation,
     JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationImpl> {
+
+    override val options: Options by data::options
+    override val sources: List<Path> get() = data.sources.map { it.toPath() }
+    override val destinationDirectory: Path get() = data.destinationDirectory.toPath()
+    override val compilerArguments: JvmCompilerArgumentsImpl by data::compilerArguments
+
+//    private constructor(
+//        options: Options = Options(JvmCompilationOperation::class),
+//        sources: List<Path>,
+//        destinationDirectory: Path,
+//        compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(JvmCompilerArgumentValueAdapter.getOrNull()),
+//        buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+//        compilerVersion: String,
+//    ) : super(compilerArguments, buildIdToSessionFlagFile) {
+//        this.options = options
+//        this.sources = sources
+//        this.destinationDirectory = destinationDirectory
+//        this.compilerArguments = compilerArguments
+//        this.compilerVersion = compilerVersion
+//    }
 
     constructor(
         sources: List<Path>,
         destinationDirectory: Path,
         compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(JvmCompilerArgumentValueAdapter.getOrNull()),
-        buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
         compilerVersion: String,
     ) : this(
-        options = Options(JvmCompilationOperation::class),
-        sources = sources,
-        destinationDirectory = destinationDirectory,
-        compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile,
+        data = JvmCompilationOperationData(
+            Options(JvmCompilationOperation::class),
+            sources = sources.map { it.toFile() },
+            destinationDirectory = destinationDirectory.toFile(),
+            compilerArguments = compilerArguments,
+        ),
         compilerVersion = compilerVersion,
     ) {
         initializeOptions(this::class, options)
@@ -87,11 +130,7 @@ internal class JvmCompilationOperationImpl private constructor(
 
     override fun deepCopy(): JvmCompilationOperationImpl {
         return JvmCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
-            destinationDirectory,
-            compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
+            data.deepCopy(),
             compilerVersion,
         )
     }

@@ -27,9 +27,8 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
     override val sources: List<Path>,
     override val destination: Path,
     compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(compilerArguments),
     KotlinMetadataKlibCompilationOperation, KotlinMetadataKlibCompilationOperation.Builder,
     DeepCopyable<KotlinMetadataKlibCompilationOperationImpl> {
     constructor(
@@ -43,7 +42,6 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
         sources = sources,
         destination = destination,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile,
         compilerVersion = compilerVersion,
     ) {
         initializeOptions(this::class, options)
@@ -57,7 +55,6 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
             sources,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
             compilerVersion
         )
     }
