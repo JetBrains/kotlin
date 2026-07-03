@@ -5,7 +5,6 @@
 
 package kotlin.script.experimental.jvmhost.jsr223
 
-import com.google.common.base.Throwables
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
@@ -231,5 +230,5 @@ fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String 
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "UsePropertyAccessSyntax")
     (cause as java.lang.Throwable).setStackTrace(resultingTrace.toTypedArray())
 
-    return Throwables.getStackTraceAsString(cause).trimEnd()
+    return cause.stackTraceToString().trimEnd()
 }
