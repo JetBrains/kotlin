@@ -44,6 +44,7 @@ annotation class Argument(
     val description: String,
     val isObsolete: Boolean = false,
     val deprecatedVersion: String = "",
+    val removedVersion: String = "",
 ) {
     @RequiresOptIn(
         message = "The raw delimiter value needs to be resolved. See 'resolvedDelimiter'. Using the raw value requires opt-in",

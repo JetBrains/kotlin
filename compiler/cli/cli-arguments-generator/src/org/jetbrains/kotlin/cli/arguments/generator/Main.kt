@@ -282,6 +282,7 @@ private fun SmartPrinter.generateArgumentAnnotation(
         }
 
         argument.releaseVersionsMetadata.deprecatedVersion?.let { println("deprecatedVersion = \"${it.releaseName}\",") }
+        argument.releaseVersionsMetadata.removedVersion?.let { println("removedVersion = \"${it.releaseName}\",") }
     }
     println(")")
 }
@@ -367,14 +368,22 @@ fun SmartPrinter.generateDeprecationAnnotation(argument: KotlinCompilerArgument)
         error("Remove deprecated annotation for '${argument.name}' because it's generated automatically based on 'deprecatedVersion' and 'deprecatedMessage'")
     }
 
-    if (argument.releaseVersionsMetadata.deprecatedVersion == null) {
-        if (argument.deprecatedMessage != null) {
-            error("Deprecated message is specified for argument '${argument.name}' but deprecated version is not set")
-        }
-        return
+    val releaseVersionsMetadata = argument.releaseVersionsMetadata
+    if (releaseVersionsMetadata.deprecatedVersion == null && argument.deprecatedMessage != null) {
+        error("Deprecated message is specified for argument '${argument.name}' but deprecated version is not set")
     }
 
-    generateAnnotation(Deprecated(argument.deprecatedMessage ?: ""), kind = AnnotationKind.Gradle)
+    val deprecatedOrRemovedVersion = releaseVersionsMetadata.deprecatedVersion ?: releaseVersionsMetadata.removedVersion
+    if (deprecatedOrRemovedVersion.let { it != null && it.toKotlinVersion() <= kotlin.KotlinVersion.CURRENT }) {
+        // Mark deprecated/removed arguments with warning/error deprecation level.
+        generateAnnotation(
+            Deprecated(
+                argument.deprecatedMessage ?: "",
+                level = DeprecationLevel.WARNING,
+            ),
+            kind = AnnotationKind.Gradle,
+        )
+    }
 }
 
 private fun SmartPrinter.generateGradleAnnotations(argument: KotlinCompilerArgument) {
@@ -426,6 +435,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
                         }
                     }
                 }
+                print(')')
             } else {
                 print("\"${annotation.message}\")")
             }
