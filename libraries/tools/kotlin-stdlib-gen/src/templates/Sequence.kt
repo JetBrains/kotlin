@@ -25,6 +25,10 @@ object SequenceOps : TemplateGroupBase() {
             """
         }
 
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.asIterable")
+        }
+
         specialFor(Iterables, Maps) { inlineOnly() }
         specialFor(Iterables) {
             doc { "Returns this collection as an [Iterable]." }
@@ -45,6 +49,10 @@ object SequenceOps : TemplateGroupBase() {
         }
         specialFor(ArraysOfPrimitives, ArraysOfObjects, Iterables, Maps) {
             sample("samples.collections.Sequences.Building.sequenceFrom${f.doc.collection.capitalize()}")
+        }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.asSequence")
         }
 
         returns("Sequence<T>")
