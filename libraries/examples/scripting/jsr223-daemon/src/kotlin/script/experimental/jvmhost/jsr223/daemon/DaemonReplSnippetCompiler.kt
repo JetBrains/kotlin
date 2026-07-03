@@ -100,7 +100,11 @@ class DaemonReplSnippetCompiler(
                 File(workDir, "prior-$index.artifact").also { it.writeBytes(bytes) }
             }
             val outputFile = File(workDir, "snippet-out.artifact")
-            val arguments = buildSnippetCompilerArguments(source, snippetName, priorFiles, outputFile)
+            // See buildSnippetCompilerArguments's KDoc for why the source is written to a temp file
+            // (named after the snippet itself) rather than smuggled through a `-expression` CLI
+            // argument.
+            val scriptFile = File(workDir, snippetName).also { it.writeText(source) }
+            val arguments = buildSnippetCompilerArguments(scriptFile, snippetName, priorFiles, outputFile)
 
             val messageCollector = CollectingMessageCollector()
             val exitCode = runDaemonCompile(messageCollector, arguments)
@@ -116,12 +120,34 @@ class DaemonReplSnippetCompiler(
     }
 
     /**
-     * Builds the CLI argument list that compiles [source] as a stateless REPL snippet on the
+     * Builds the CLI argument list that compiles [scriptFile] as a stateless REPL snippet on the
      * regular compile path -- the same invocation shape a CLI `kotlinc` call would carry, so the
      * daemon needs no REPL-specific transport.
+     *
+     * The snippet source is written to [scriptFile] on disk and passed as `-script <path>` rather
+     * than smuggled inline via `-expression <source>`. Two reasons:
+     *  * `-expression` hands the whole snippet body through as a single CLI argument string, which
+     *    a sufficiently pathological source (very long, or containing characters that a given
+     *    transport happens to be sensitive to) could in principle corrupt; a file path is always a
+     *    short, plain string.
+     *  * `-expression` is *semantically* an eval-a-string entry point; `-script <file>` is *this
+     *    module's* only way to say "here is a `.kts` file to compile", making the intent (compile,
+     *    not run) explicit even though both ultimately reach the same
+     *    [ScriptingConfigurationKeys.REPL_SNIPPET_COMPILATION_MODE] compile-only short-circuit (see
+     *    `compileReplSnippet` in `AbstractScriptEvaluationExtension.kt`), which never evaluates the
+     *    snippet regardless of how its source arrived.
+     *
+     * (Plain `-Xallow-any-scripts-in-source-roots` plus a bare source-root file was considered, but
+     * that flag only affects the *regular*, non-script compile pipeline: `repl-snippet-mode`'s
+     * `REPL_SNIPPET_COMPILATION_MODE` check lives exclusively on the `-script`/`-expression`
+     * `ScriptEvaluationExtension` entry point, so a bare source-root `.kts` would never reach
+     * [K2ReplStatelessCompiler] at all.)
+     *
+     * [scriptFile] is named after [snippetName] itself, so `repl-snippet-name` is set purely for
+     * documentation/robustness -- the file's own name already disambiguates the snippet.
      */
     private fun buildSnippetCompilerArguments(
-        source: String,
+        scriptFile: File,
         snippetName: String,
         priorFiles: List<File>,
         outputFile: File,
@@ -132,12 +158,6 @@ class DaemonReplSnippetCompiler(
                 add("-cp")
                 add(additionalClasspath.joinToString(File.pathSeparator) { it.toAbsolutePath().toString() })
             }
-            // `-expression` reliably enters the scripting eval path without needing a recognised
-            // script file; the snippet's identifying name is supplied separately via
-            // `repl-snippet-name` (an `-expression` source is otherwise always named `script.kts`,
-            // which would collide across a multi-snippet sequence).
-            add("-expression")
-            add(source)
             add("-P")
             add(pluginOption("repl-snippet-mode", "true"))
             add("-P")
@@ -149,6 +169,10 @@ class DaemonReplSnippetCompiler(
             add("-P")
             add(pluginOption("repl-snippet-artifact-output", outputFile.absolutePath))
             add("-Xsuppress-version-warnings")
+            // `-script <path>` must be the last argument: everything after it on the free-args list
+            // would otherwise be read as *script arguments* rather than compiler options.
+            add("-script")
+            add(scriptFile.absolutePath)
         }
     }
 

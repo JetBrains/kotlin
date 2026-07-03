@@ -73,6 +73,73 @@ class KotlinJsr223DaemonScriptEngineTest {
         val engine = newEngine()
         assertEquals(null, engine.eval("val onlyADeclaration = 1"))
     }
+
+    // The tests below exercise snippet sources that are awkward to smuggle through a single CLI
+    // argument (as `-expression` does): embedded quotes, backslashes, `$`, newlines, tabs and
+    // non-ASCII characters. If passing the source string as a raw CLI argument value ever regresses
+    // to something quoting-sensitive (e.g. a response/args file that splits on whitespace/newlines),
+    // these are the tests expected to catch it.
+
+    @Test
+    fun testMultilineSnippetWithQuotesAndEscapes() {
+        val engine = newEngine()
+        val snippet = """
+            val greeting = "She said \"hello, world!\"\nLine2\tTabbed"
+            val path = "C:\\Users\\test\\file.kt"
+            greeting.length + path.length
+        """.trimIndent()
+        assertEquals("She said \"hello, world!\"\nLine2\tTabbed".length + "C:\\Users\\test\\file.kt".length, engine.eval(snippet))
+    }
+
+    @Test
+    fun testSnippetWithDollarSignsAndBackticks() {
+        val engine = newEngine()
+        val snippet = """
+            val price = "cost: ${'$'}5 (not a template)"
+            val `backtick name` = 7
+            price.length + `backtick name`
+        """.trimIndent()
+        assertEquals("cost: $5 (not a template)".length + 7, engine.eval(snippet))
+    }
+
+    @Test
+    fun testSnippetWithTripleQuotedStringContainingNewlines() {
+        val engine = newEngine()
+        val snippet = "\n" +
+                "val block = \"\"\"\n" +
+                "line one\n" +
+                "line \"two\" with quotes\n" +
+                "line three\n" +
+                "\"\"\".trimIndent()\n" +
+                "block.lines().size\n"
+        assertEquals(3, engine.eval(snippet))
+    }
+
+    @Test
+    fun testSnippetWithUnicodeAndSpecialCharacters() {
+        val engine = newEngine()
+        val snippet = """
+            val text = "unicode: \u00e9\u00e8\u00ea, emoji: \ud83d\ude00, quotes: '\u2018single\u2019' \u201cdouble\u201d"
+            text.length
+        """.trimIndent()
+        val expected = "unicode: \u00e9\u00e8\u00ea, emoji: \ud83d\ude00, quotes: '\u2018single\u2019' \u201cdouble\u201d".length
+        assertEquals(expected, engine.eval(snippet))
+    }
+
+    @Test
+    fun testLongComplexMultilineSnippet() {
+        val engine = newEngine()
+        val snippet = """
+            fun greet(name: String): String {
+                val punctuation = if (name.contains("\"")) "!" else "."
+                return "Hello, ${'$'}name${'$'}punctuation"
+            }
+            val names = listOf("Alice", "Bob \"the builder\"", "Eve\\Mallory")
+            val greetings = names.map { greet(it) }
+            greetings.joinToString(separator = "\n") { it }.lines().size
+        """.trimIndent()
+        assertEquals(3, engine.eval(snippet))
+    }
 }
 
 private fun classpathFromSystemProperty(propertyName: String): List<File> =
