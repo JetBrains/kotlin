@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2026 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,112 +33,113 @@ object Usage {
 
     fun <A : CommonCompilerArguments> render(compiler: CLICompiler<A>, arguments: A): String {
         val extraHelp = arguments.extraHelp
-        val sb = StringBuilder()
-        appendln(sb, "Usage: " + compiler.executableScriptFileName() + " <options> <source files>")
-        appendln(sb, "where " + (if (extraHelp) "advanced" else "possible") + " options include:")
+        return buildString {
+            appendLine("Usage: " + compiler.executableScriptFileName() + " <options> <source files>")
+            appendLine("where " + (if (extraHelp) "advanced" else "possible") + " options include:")
 
-        // Use distinct because same arguments can be bound to different names (shortName, deprecatedName)
-        val argumentFields = getArgumentsInfo(arguments.javaClass).cliArgNameToArguments.values.distinct()
-        argumentFields.forEach { argumentField -> fieldUsage(sb, argumentField, extraHelp) }
+            // Use distinct because same arguments can be bound to different names (shortName, deprecatedName)
+            val argumentFields = getArgumentsInfo(arguments.javaClass).cliArgNameToArguments.values.distinct()
+            argumentFields.forEach { argumentField -> fieldUsage(argumentField, extraHelp) }
 
-        if (extraHelp) {
-            appendln(sb, "")
-            appendln(sb, "Advanced options are non-standard and may be changed or removed without any notice.")
-        } else {
-            renderOptionJUsage(sb)
-            renderArgfileUsage(sb)
+            if (extraHelp) {
+                appendLine()
+                appendLine("Advanced options are non-standard and may be changed or removed without any notice.")
+            } else {
+                renderOptionJUsage()
+                renderArgfileUsage()
+            }
+
+            if (SystemInfo.isWindows) {
+                appendLine()
+                appendLine(BAT_DELIMITER_CHARACTERS_NOTE)
+            }
+
+            if (!extraHelp) {
+                appendLine()
+                appendLine("For details, see https://kotl.in/cli")
+            }
         }
-
-        if (SystemInfo.isWindows) {
-            appendln(sb, "")
-            appendln(sb, BAT_DELIMITER_CHARACTERS_NOTE)
-        }
-
-        if (!extraHelp) {
-            appendln(sb, "")
-            appendln(sb, "For details, see https://kotl.in/cli")
-        }
-
-        return sb.toString()
     }
 
-    private fun fieldUsage(sb: StringBuilder, argumentField: ArgumentField, extraHelp: Boolean) {
+    context(sb: StringBuilder)
+    private fun fieldUsage(argumentField: ArgumentField, extraHelp: Boolean) {
         val argument = argumentField.argument
 
-        if (argument.isObsolete) return
-        if (argument.isInternal) return
-        if (extraHelp != argument.isAdvanced) return
+        if (argument.isObsolete || argument.isInternal || extraHelp != argument.isAdvanced) return
 
-        val startLength = sb.length
-        sb.append("  ")
-        sb.append(argument.value)
+        with(sb) {
+            val startLength = length
+            append("  ")
+            append(argument.value)
 
-        if (!argument.shortName.isEmpty()) {
-            sb.append(" (")
-            sb.append(argument.shortName)
-            sb.append(")")
-        }
-
-        if (!argument.valueDescription.isEmpty()) {
-            sb.append(if (argument.isAdvanced) "=" else " ")
-            sb.append(argument.valueDescription)
-        }
-
-        var margin = startLength + OPTION_NAME_PADDING_WIDTH - 1
-        if (sb.length >= margin + 5) { // Break the line if it's too long
-            sb.append("\n")
-            margin += sb.length - startLength
-        }
-        while (sb.length < margin) {
-            sb.append(" ")
-        }
-
-        sb.append(" ")
-
-        appendln(sb, argument.description.replace("\n", "\n" + PADDING_STRING))
-
-        val deprecatedAnnotation = argumentField.deprecatedAnnotation
-        if (deprecatedAnnotation != null) {
-            sb.append(PADDING_STRING)
-            sb.append("The option is ")
-            // The value is generated automatically based on KotlinReleaseVersion entries, thus it's expected to be always valid.
-            val argDeprecatedVersion = parseKotlinVersion(argument.deprecatedVersion)
-            val isAlreadyDeprecated = argDeprecatedVersion <= KotlinVersion.CURRENT
-            sb.append(if (isAlreadyDeprecated) "deprecated since " else "will be deprecated in ")
-            sb.append("Kotlin ").append(argDeprecatedVersion).append('.')
-            if (isAlreadyDeprecated) {
-                sb.append(" It will be removed in one of the future releases.")
+            if (argument.shortName.isNotEmpty()) {
+                append(" (")
+                append(argument.shortName)
+                append(')')
             }
-            val message = deprecatedAnnotation.message
-            if (!message.isEmpty()) {
-                sb.append(' ').append(message.replace("\n", "\n" + PADDING_STRING))
+
+            if (argument.valueDescription.isNotEmpty()) {
+                append(if (argument.isAdvanced) '=' else ' ')
+                append(argument.valueDescription)
             }
-            sb.append('\n')
+
+            var margin = startLength + OPTION_NAME_PADDING_WIDTH - 1
+            if (length >= margin + 5) { // Break the line if it's too long
+                appendLine()
+                margin += length - startLength
+            }
+            while (length < margin) {
+                append(' ')
+            }
+
+            append(' ')
+
+            appendLine(argument.description.replace("\n", "\n" + PADDING_STRING))
+
+            val deprecatedAnnotation = argumentField.deprecatedAnnotation
+            if (deprecatedAnnotation != null) {
+                append(PADDING_STRING)
+                append("The option is ")
+                // The value is generated automatically based on KotlinReleaseVersion entries, thus it's expected to be always valid.
+                val argDeprecatedVersion = parseKotlinVersion(argument.deprecatedVersion)
+                val isAlreadyDeprecated = argDeprecatedVersion <= KotlinVersion.CURRENT
+                append(if (isAlreadyDeprecated) "deprecated since " else "will be deprecated in ")
+                append("Kotlin ").append(argDeprecatedVersion).append('.')
+                if (isAlreadyDeprecated) {
+                    append(" It will be removed in one of the future releases.")
+                }
+                val message = deprecatedAnnotation.message
+                if (message.isNotEmpty()) {
+                    append(' ').append(message.replace("\n", "\n" + PADDING_STRING))
+                }
+                append('\n')
+            }
         }
     }
 
-    private fun renderOptionJUsage(sb: StringBuilder) {
-        val descriptionStart = sb.length + OPTION_NAME_PADDING_WIDTH
-        sb.append("  -J<option>")
-        while (sb.length < descriptionStart) {
-            sb.append(" ")
+    context(sb: StringBuilder)
+    private fun renderOptionJUsage() {
+        with(sb) {
+            val descriptionStart = length + OPTION_NAME_PADDING_WIDTH
+            append("  -J<option>")
+            while (length < descriptionStart) {
+                append(" ")
+            }
+            appendLine("Pass an option directly to JVM.")
         }
-        appendln(sb, "Pass an option directly to JVM.")
     }
 
-    private fun renderArgfileUsage(sb: StringBuilder) {
-        val descriptionStart = sb.length + OPTION_NAME_PADDING_WIDTH
-        sb.append("  ")
-        sb.append(ARGFILE_ARGUMENT)
-        sb.append("<argfile>")
-        while (sb.length < descriptionStart) {
-            sb.append(" ")
+    context(sb: StringBuilder)
+    private fun renderArgfileUsage() {
+        with(sb) {
+            val descriptionStart = sb.length + OPTION_NAME_PADDING_WIDTH
+            append("  ")
+            append(ARGFILE_ARGUMENT)
+            append("<argfile>")
+            while (length < descriptionStart) {
+                append(' ')
+            }
+            appendLine("Read compiler arguments and file paths from the given file.")
         }
-        appendln(sb, "Read compiler arguments and file paths from the given file.")
-    }
-
-    private fun appendln(sb: StringBuilder, string: String) {
-        sb.append(string)
-        sb.append('\n')
     }
 }
