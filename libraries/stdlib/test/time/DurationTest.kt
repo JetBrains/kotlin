@@ -831,6 +831,14 @@ class DurationTest {
             "4602453423018496273ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
         )
         testDefaultParsing(Long.MAX_VALUE.microseconds, "106751991d 4h 0m 54.775s", "${Long.MAX_VALUE}.99999999999us")
+
+        // KT-80129: an over-Long numeric component is converted to a finite duration when representable,
+        // so the same magnitude parses identically regardless of the unit it is expressed in.
+        testDefaultParsing(
+            10_000_000_000.seconds, "115740d 17h 46m 40s",
+            "10000000000s", "10000000000000ms", "10000000000000000us", "10000000000000000000ns"
+        )
+        testDefaultParsing(1234567890123456L.milliseconds, "14288980d 5h 2m 3.456s", "1234567890123456789012ns")
         testDefaultParsing(
             1.days + 2.hours + 3.minutes + 4.seconds + 5.milliseconds + 6.microseconds + 7.nanoseconds,
             "1d 2h 3m 4.005006007s",
@@ -897,7 +905,7 @@ class DurationTest {
     fun parseDefaultFailing() {
         for (invalidValue in listOf(
             "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something", "P,D",
-            "1234567890123456789012ns", "Inf", "-Infinity value",
+            "10000000000000000000x", "Inf", "-Infinity value",
             "1s ", " 1s",
             "1d 1m 1h", "1s 2s",
             "-12m 15s", "-12m -15s", "-()", "-(12m 30s",
@@ -917,6 +925,60 @@ class DurationTest {
                 assertContains(e.message!!, "'$invalidValue'")
             }
         }
+    }
+
+    @Test
+    fun parseDefaultOverflow() {
+        // KT-80129: default-format components whose integer part exceeds Long.MAX_VALUE are handled
+        // gracefully (converted to milliseconds, saturating to INFINITE) instead of failing to parse.
+
+        // Continuity across the Long.MAX_VALUE boundary: the first over-Long value equals the last in-Long
+        // value (they differ only in digits below millisecond precision, dropped for such large durations).
+        assertEquals(Duration.parse("9223372036854775807ns"), Duration.parse("9223372036854775808ns"))
+        assertEquals(Duration.parse("9223372036854775807us"), Duration.parse("9223372036854775808us"))
+
+        // Over-Long but still representable as a finite duration.
+        assertEquals(10_000_000_000.seconds, Duration.parse("10000000000000000000ns"))
+        assertEquals(10_000_000_000.seconds, Duration.parseOrNull("10000000000000000000ns"))
+        assertEquals(10_000_000_000_000.seconds, Duration.parse("10000000000000000000us"))
+
+        // Exact millisecond saturation boundary: MAX_MILLIS encodes INFINITE, MAX_MILLIS - 1 is max finite.
+        assertEquals((MAX_MILLIS - 1).milliseconds, Duration.parseOrNull("4611686018427387902999999ns"))
+        assertEquals(Duration.INFINITE, Duration.parse("4611686018427387903000000ns"))
+        assertEquals((MAX_MILLIS - 1).milliseconds, Duration.parseOrNull("4611686018427387902999us"))
+        assertEquals(Duration.INFINITE, Duration.parse("4611686018427387903000us"))
+
+        // Too large to represent even in millisecond range -> INFINITE (and its negation).
+        assertEquals(Duration.INFINITE, Duration.parse("9999999999999999999999999ns"))
+        assertEquals(Duration.INFINITE, Duration.parse("9999999999999999999999us"))
+        assertEquals(Duration.INFINITE, Duration.parse("9223372036854775808000ms"))
+        assertEquals(-Duration.INFINITE, Duration.parse("-(9999999999999999999999999ns)"))
+        assertEquals(-Duration.INFINITE, Duration.parse("-9999999999999999999999999ns"))
+        for (unit in listOf("s", "m", "h", "d")) {
+            assertEquals(Duration.INFINITE, Duration.parse("9223372036854775808$unit"), unit)
+        }
+
+        // The overflow path preserves the integer-digit boundary: a trailing fraction is ignored (not folded
+        // into the number), leading zeros are harmless, and a non-terminal fraction is still rejected.
+        assertEquals(Duration.parse("10000000000000000000ns"), Duration.parse("10000000000000000000.5ns"))
+        assertEquals(10_000_000_000.seconds, Duration.parse("00010000000000000000000ns"))
+        assertNull(Duration.parseOrNull("10000000000000000000.5ns 1s"))
+
+        // An overflow component followed by later components: a finite reduction keeps accumulating,
+        // a saturated total absorbs later additions (including via the uncoerced ns/us arms), and
+        // finite values summing past MAX_MILLIS saturate at the overflow addition itself.
+        assertEquals(10000000000000999L.milliseconds, Duration.parse("10000000000000000000us 999999999ns"))
+        assertEquals(Duration.INFINITE, Duration.parse("99999999999999999999s 500ms"))
+        assertEquals(Duration.INFINITE, Duration.parse("9223372036854775808ms 2000us"))
+        assertEquals(Duration.INFINITE, Duration.parse("53375995583d 4611686018427387902000000ns"))
+
+        // Regression for the intermediate millisecond addition: a non-overflow `us` that alone pushes the
+        // running total past MAX_MILLIS, followed by an overflow `ns` with a large finite millisecond value,
+        // must saturate to +INFINITE (not wrap to -INFINITE).
+        assertEquals(
+            Duration.INFINITE,
+            Duration.parse("53375995583d 9223372036854775807us 4611686018427387902000000ns")
+        )
     }
 
     @Test
