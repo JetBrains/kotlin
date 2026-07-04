@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import java.io.File
+import java.io.ObjectStreamException
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
@@ -14,6 +15,7 @@ import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
+import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
 import kotlin.collections.Set
@@ -21,10 +23,13 @@ import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.joinToString
 import kotlin.collections.map
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlin.io.path.Path
+import kotlin.jvm.Throws
+import kotlin.jvm.Transient
 import kotlin.text.split
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
@@ -49,6 +54,7 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class MetadataArgumentsImpl(
+  @Transient
   private val adapter: MetadataArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
@@ -57,6 +63,8 @@ internal class MetadataArgumentsImpl(
     MetadataArguments.Builder,
     DeepCopyable<MetadataArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  private val optionsMapForSerialization: MutableList<String> = mutableListOf()
   init {
     applyCompilerArguments(K2MetadataCompilerArguments())
   }
@@ -83,6 +91,23 @@ internal class MetadataArgumentsImpl(
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  @Throws(ObjectStreamException::class)
+  private fun writeReplace(): Any = deepCopy().prepareForSerialization()
+
+  @Throws(ObjectStreamException::class)
+  private fun readResolve(): Any {
+    applyArgumentStrings(optionsMapForSerialization)
+    optionsMapForSerialization.clear()
+    return this
+  }
+
+  protected override fun prepareForSerialization() {
+    optionsMapForSerialization.clear()
+    optionsMapForSerialization.addAll(toArgumentStrings())
+    optionsMap.clear()
+    super.prepareForSerialization()
   }
 
   override fun deepCopy(): MetadataArgumentsImpl = MetadataArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }

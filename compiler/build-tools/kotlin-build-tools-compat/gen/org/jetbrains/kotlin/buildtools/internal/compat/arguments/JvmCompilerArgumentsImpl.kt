@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.`internal`.compat.arguments
 
 import java.io.File
+import java.io.ObjectStreamException
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Array
@@ -17,15 +18,19 @@ import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
+import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
 import kotlin.collections.emptyList
 import kotlin.collections.joinToString
 import kotlin.collections.map
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlin.io.path.Path
+import kotlin.jvm.Throws
+import kotlin.jvm.Transient
 import kotlin.text.split
 import org.jetbrains.kotlin.buildtools.`internal`.compat.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.CLASSPATH
@@ -132,12 +137,15 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class JvmCompilerArgumentsImpl(
+  @Transient
   private val adapter: JvmCompilerArgumentValueAdapter? = null,
 ) : CommonCompilerArgumentsImpl(adapter),
     JvmCompilerArguments,
     JvmCompilerArguments.Builder,
     DeepCopyable<JvmCompilerArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  private val optionsMapForSerialization: MutableList<String> = mutableListOf()
   init {
     applyCompilerArguments(K2JVMCompilerArguments())
   }
@@ -170,6 +178,23 @@ internal class JvmCompilerArgumentsImpl(
     level = DeprecationLevel.WARNING,
   )
   override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
+
+  @Throws(ObjectStreamException::class)
+  private fun writeReplace(): Any = deepCopy().prepareForSerialization()
+
+  @Throws(ObjectStreamException::class)
+  private fun readResolve(): Any {
+    applyArgumentStrings(optionsMapForSerialization)
+    optionsMapForSerialization.clear()
+    return this
+  }
+
+  protected override fun prepareForSerialization() {
+    optionsMapForSerialization.clear()
+    optionsMapForSerialization.addAll(toArgumentStrings())
+    optionsMap.clear()
+    super.prepareForSerialization()
+  }
 
   override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 

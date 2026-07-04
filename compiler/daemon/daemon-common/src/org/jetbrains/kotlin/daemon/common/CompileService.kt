@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+import org.jetbrains.kotlin.buildtools.api.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
@@ -68,7 +70,8 @@ interface CompileService : Remote {
 
             override fun get(): Nothing = throw Exception(message, cause)
             override fun equals(other: Any?): Boolean = other is Error && this.message == other.message && this.cause == other.cause
-            override fun hashCode(): Int = this::class.java.hashCode() + (cause?.hashCode() ?: 1) + (message?.hashCode() ?: 2) // see comment to Ok.hashCode
+            override fun hashCode(): Int =
+                this::class.java.hashCode() + (cause?.hashCode() ?: 1) + (message?.hashCode() ?: 2) // see comment to Ok.hashCode
         }
 
         val isGood: Boolean get() = this is Good<*>
@@ -119,11 +122,11 @@ interface CompileService : Remote {
 
     @Throws(RemoteException::class)
     fun compile(
-            sessionId: Int,
-            compilerArguments: Array<out String>,
-            compilationOptions: CompilationOptions,
-            servicesFacade: CompilerServicesFacadeBase,
-            compilationResults: CompilationResults?
+        sessionId: Int,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBase,
+        compilationResults: CompilationResults?,
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
@@ -136,13 +139,17 @@ interface CompileService : Remote {
         compilationId: Int?,
     ): CallResult<Int>
 
+    @ExperimentalBuildToolsApi
+    @Throws(RemoteException::class)
+    fun <T> executeOperation(buildOperation: BuildOperation<T>): CallResult<T>
+
     @Throws(RemoteException::class)
     fun cancelCompilation(sessionId: Int, compilationId: Int): CallResult<Nothing>
 
     @Throws(RemoteException::class)
     fun classesFqNamesByFiles(
         sessionId: Int,
-        sourceFiles: Set<File>
+        sourceFiles: Set<File>,
     ): CallResult<Set<String>>
 
     @Throws(RemoteException::class)
@@ -153,12 +160,12 @@ interface CompileService : Remote {
 
     @Throws(RemoteException::class)
     fun leaseReplSession(
-            aliveFlagPath: String?,
-            compilerArguments: Array<out String>,
-            compilationOptions: CompilationOptions,
-            servicesFacade: CompilerServicesFacadeBase,
-            templateClasspath: List<File>,
-            templateClassName: String
+        aliveFlagPath: String?,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBase,
+        templateClasspath: List<File>,
+        templateClassName: String,
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
@@ -166,15 +173,15 @@ interface CompileService : Remote {
 
     @Throws(RemoteException::class)
     fun replCheck(
-            sessionId: Int,
-            replStateId: Int,
-            codeLine: ReplCodeLine
+        sessionId: Int,
+        replStateId: Int,
+        codeLine: ReplCodeLine,
     ): CallResult<ReplCheckResult>
 
     @Throws(RemoteException::class)
     fun replCompile(
-            sessionId: Int,
-            replStateId: Int,
-            codeLine: ReplCodeLine
+        sessionId: Int,
+        replStateId: Int,
+        codeLine: ReplCodeLine,
     ): CallResult<ReplCompileResult>
 }

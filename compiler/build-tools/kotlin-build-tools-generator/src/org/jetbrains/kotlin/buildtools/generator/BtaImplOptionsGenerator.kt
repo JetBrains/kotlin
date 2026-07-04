@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.jvm.throws
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import java.io.ObjectStreamException
 import java.io.Serializable
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
@@ -122,6 +124,8 @@ internal class BtaImplOptionsGenerator(
                     }
                 }
 
+                generateSerializationRelatedFunctions(level.isLeaf(), parentClass == null)
+
                 addType(TypeSpec.companionObjectBuilder().apply {
                     property(
                         "knownArguments",
@@ -209,6 +213,62 @@ internal class BtaImplOptionsGenerator(
         return GeneratorOutputs(ClassName(targetPackage, implClassName), outputs)
     }
 
+    private fun TypeSpec.Builder.generateSerializationRelatedFunctions(isLeaf: Boolean, isRoot: Boolean) {
+        if (isLeaf) {
+            property(
+                "optionsMapForSerialization",
+                ClassName("kotlin.collections", "MutableList").parameterizedBy(String::class.asTypeName()),
+                KModifier.PRIVATE
+            ) {
+                initializer("%M()", MemberName("kotlin.collections", "mutableListOf"))
+            }
+
+
+            function("writeReplace") {
+                returns(Any::class)
+                addModifiers(KModifier.PRIVATE)
+                addCode("return deepCopy().prepareForSerialization()\n")
+                throws(ObjectStreamException::class)
+            }
+
+            function("readResolve") {
+                returns(Any::class)
+                addModifiers(KModifier.PRIVATE)
+                addCode(
+                    """
+                    applyArgumentStrings(optionsMapForSerialization)
+                    optionsMapForSerialization.clear()
+                    return this
+                    
+                """.trimIndent()
+                )
+                throws(ObjectStreamException::class)
+            }
+        }
+        function("prepareForSerialization") {
+            addModifiers(KModifier.PROTECTED)
+            if (isLeaf) {
+                addCode(
+                    """
+                    optionsMapForSerialization.clear()
+                    optionsMapForSerialization.addAll(toArgumentStrings())
+                    
+                """.trimIndent()
+                )
+            }
+
+            addCode("optionsMap.clear()\n")
+            if (!isRoot) {
+                addModifiers(KModifier.OVERRIDE)
+                addCode("super.prepareForSerialization()\n")
+            } else {
+                addModifiers(KModifier.OPEN)
+            }
+        }
+
+
+    }
+
     private fun TypeSpec.Builder.constructorSpecBuilder(
         argumentTypeNameString: String,
     ): FunSpec.Builder = FunSpec.constructorBuilder().apply {
@@ -220,13 +280,15 @@ internal class BtaImplOptionsGenerator(
                 .defaultValue("null")
                 .build()
         )
-
         addProperty(
-            PropertySpec.builder("adapter", adapterType)
-                .addModifiers(KModifier.PRIVATE)
-                .initializer("adapter")
-                .build()
-        )
+            property(
+                "adapter",
+                adapterType,
+                KModifier.PRIVATE
+            ) {
+                initializer("adapter")
+                annotation<Transient>()
+            })
 
         if (!generateCompatLayer) {
             addParameter(
@@ -644,7 +706,11 @@ internal class BtaImplOptionsGenerator(
         initializer("%M()", MemberName("kotlin.collections", "mutableMapOf"))
     }
 
-    fun TypeSpec.Builder.generateOwnGetPutFunctions(implParameter: ClassName, mapProperty: PropertySpec, level: KotlinCompilerArgumentsLevel) {
+    fun TypeSpec.Builder.generateOwnGetPutFunctions(
+        implParameter: ClassName,
+        mapProperty: PropertySpec,
+        level: KotlinCompilerArgumentsLevel,
+    ) {
         function("get") {
             val typeParameter = TypeVariableName("V")
             annotation<Suppress> {

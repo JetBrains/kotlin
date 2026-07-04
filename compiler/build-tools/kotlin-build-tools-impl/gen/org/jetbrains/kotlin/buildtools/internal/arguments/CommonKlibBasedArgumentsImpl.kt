@@ -23,6 +23,7 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlin.io.path.Path
+import kotlin.jvm.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ABI_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonKlibBasedArgumentsImpl(
+  @Transient
   private val adapter: CommonKlibBasedArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
@@ -113,6 +115,11 @@ internal abstract class CommonKlibBasedArgumentsImpl(
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  protected override fun prepareForSerialization() {
+    optionsMap.clear()
+    super.prepareForSerialization()
   }
 
   abstract override fun build(): CommonKlibBasedArgumentsImpl

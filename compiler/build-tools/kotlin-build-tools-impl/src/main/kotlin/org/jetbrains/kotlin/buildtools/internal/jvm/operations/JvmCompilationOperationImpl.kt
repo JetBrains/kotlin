@@ -55,7 +55,7 @@ internal class JvmCompilationOperationData(
     val options: Options,
     val sources: List<File>,
     val destinationDirectory: File,
-    @Transient
+//    @Transient
     val compilerArguments: JvmCompilerArgumentsImpl,
 ) : DeepCopyable<JvmCompilationOperationData>, Serializable {
     override fun deepCopy(): JvmCompilationOperationData {
@@ -67,15 +67,15 @@ internal class JvmCompilationOperationData(
         )
     }
 
-    @Throws(IOException::class)
-    private fun writeObject(out: ObjectOutputStream) {
-
-    }
-
-    @Throws(IOException::class, ClassNotFoundException::class)
-    private fun readObject(inputStream: ObjectInputStream) {
-
-    }
+//    @Throws(IOException::class)
+//    private fun writeObject(out: ObjectOutputStream) {
+//
+//    }
+//
+//    @Throws(IOException::class, ClassNotFoundException::class)
+//    private fun readObject(inputStream: ObjectInputStream) {
+//
+//    }
 
 }
 

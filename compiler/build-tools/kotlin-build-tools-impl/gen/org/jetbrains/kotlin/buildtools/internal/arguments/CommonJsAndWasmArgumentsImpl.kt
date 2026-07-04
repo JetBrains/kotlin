@@ -23,6 +23,7 @@ import kotlin.collections.map
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.io.path.Path
+import kotlin.jvm.Transient
 import kotlin.text.split
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.IR_OUTPUT_DIR
@@ -66,6 +67,7 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonJsAndWasmArgumentsImpl(
+  @Transient
   private val adapter: CommonJsAndWasmArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
@@ -130,6 +132,11 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  protected override fun prepareForSerialization() {
+    optionsMap.clear()
+    super.prepareForSerialization()
   }
 
   abstract override fun build(): CommonJsAndWasmArgumentsImpl

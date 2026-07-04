@@ -24,6 +24,7 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlin.io.path.Path
+import kotlin.jvm.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.API_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.COMPILER_PLUGINS
@@ -152,6 +153,7 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonCompilerArgumentsImpl(
+  @Transient
   private val adapter: CommonCompilerArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
@@ -189,6 +191,11 @@ internal abstract class CommonCompilerArgumentsImpl(
     level = DeprecationLevel.WARNING,
   )
   override operator fun contains(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>): Boolean = key.id in optionsMap
+
+  protected override fun prepareForSerialization() {
+    optionsMap.clear()
+    super.prepareForSerialization()
+  }
 
   abstract override fun build(): CommonCompilerArgumentsImpl
 

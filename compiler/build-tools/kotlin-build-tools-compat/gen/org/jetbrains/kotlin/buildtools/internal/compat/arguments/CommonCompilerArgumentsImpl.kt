@@ -22,6 +22,7 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlin.io.path.Path
+import kotlin.jvm.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.API_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
@@ -122,6 +123,7 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonCompilerArgumentsImpl(
+  @Transient
   private val adapter: CommonCompilerArgumentValueAdapter? = null,
 ) : CommonToolArgumentsImpl(adapter),
     ArgumentsCommonCompilerArguments,
@@ -156,6 +158,11 @@ internal abstract class CommonCompilerArgumentsImpl(
     level = DeprecationLevel.WARNING,
   )
   override operator fun contains(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>): Boolean = key.id in optionsMap
+
+  protected override fun prepareForSerialization() {
+    optionsMap.clear()
+    super.prepareForSerialization()
+  }
 
   abstract override fun build(): CommonCompilerArgumentsImpl
 
