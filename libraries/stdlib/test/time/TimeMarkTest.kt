@@ -244,6 +244,7 @@ class TimeMarkTest {
     private class LongTimeSource(unit: DurationUnit) : AbstractLongTimeSource(unit) {
         var reading: Long = 0L
         override fun read(): Long = reading
+        fun mark(reading: Long): ComparableTimeMark = timeMarkAt(reading)
     }
 
     @OptIn(ExperimentalTime::class)
@@ -342,6 +343,142 @@ class TimeMarkTest {
     }
 
 
+
+    @Test
+    fun timeMarkAtElapsedAndDifference() {
+        val timeSource = LongTimeSource(DurationUnit.MILLISECONDS)
+        timeSource.markNow() // fix zero reading
+        timeSource.reading = 5000
+
+        val markPast = timeSource.mark(3000)
+        val markPresent = timeSource.mark(5000)
+        val markFuture = timeSource.mark(7000)
+
+        assertEquals(2.seconds, markPast.elapsedNow())
+        assertEquals(Duration.ZERO, markPresent.elapsedNow())
+        assertEquals((-2).seconds, markFuture.elapsedNow())
+
+        markPast.assertHasPassed(true)
+        markFuture.assertHasPassed(false)
+
+        assertEquals(4.seconds, markFuture - markPast)
+        assertTrue(markPast < markFuture)
+
+        assertEquals(2.seconds, timeSource.markNow() - markPast)
+        assertDifferentMarks(timeSource.markNow(), markPast, 1)
+        assertEqualMarks(timeSource.markNow(), markPresent)
+    }
+
+    @Test
+    fun timeMarkAtEquivalentToMarkNow() {
+        for (unit in units) {
+            val timeSource = LongTimeSource(unit)
+            timeSource.markNow() // fix zero reading
+            for (reading in listOf(0L, 1L, -1L, 1000L, -1000L, Long.MAX_VALUE / 2, Long.MIN_VALUE / 2)) {
+                timeSource.reading = reading
+                assertEqualMarks(timeSource.mark(reading), timeSource.markNow())
+            }
+        }
+    }
+
+    @Test
+    fun timeMarkAtFixesZeroReading() {
+        for (unit in units) {
+            val timeSource = LongTimeSource(unit)
+            timeSource.reading = 100
+            // the first obtained time mark fixes the zero reading, the same way as the first markNow() call does
+            val mark = timeSource.mark(40)
+            assertEquals(60.toDuration(unit), mark.elapsedNow())
+
+            timeSource.reading = 150
+            assertEquals(110.toDuration(unit), mark.elapsedNow())
+            assertEquals(110.toDuration(unit), timeSource.markNow() - mark)
+            assertEqualMarks(timeSource.mark(150), timeSource.markNow())
+        }
+    }
+
+    @Test
+    fun timeMarkAtAdjustment() {
+        val timeSource = LongTimeSource(DurationUnit.MILLISECONDS)
+        timeSource.markNow() // fix zero reading
+
+        assertEqualMarks(timeSource.mark(3000), timeSource.mark(1000) + 2.seconds)
+        assertEqualMarks(timeSource.mark(0), timeSource.mark(1000) - 1.seconds)
+        assertEqualMarks(timeSource.mark(1000), timeSource.mark(1000) + 1.5.seconds - 1.5.seconds)
+
+        val infiniteFutureMark = timeSource.mark(1000) + Duration.INFINITE
+        assertEquals(-Duration.INFINITE, infiniteFutureMark.elapsedNow())
+        assertFailsWith<IllegalArgumentException> { infiniteFutureMark - Duration.INFINITE }
+    }
+
+    @Test
+    fun timeMarkAtDifferentSources() {
+        // Two instances over the same underlying clock are still different time sources:
+        // equal readings do not make their marks equal or comparable.
+        // Cross-source checks against other mark types are covered by timeMarkDifferenceAndComparison.
+        val timeSource1 = LongTimeSource(DurationUnit.MILLISECONDS)
+        val timeSource2 = LongTimeSource(DurationUnit.MILLISECONDS)
+        val mark1 = timeSource1.mark(1000)
+        val mark2 = timeSource2.mark(1000)
+        assertNotEquals(mark1, mark2)
+        assertFailsWith<IllegalArgumentException> { mark1 - mark2 }
+        assertFailsWith<IllegalArgumentException> { mark1 < mark2 }
+    }
+
+    @Test
+    fun timeMarkAtExtremeReadings() {
+        for (unit in units) {
+            val timeSource = LongTimeSource(unit)
+            timeSource.markNow() // fix zero reading
+
+            val futureMark = timeSource.mark(Long.MAX_VALUE)
+            assertEquals(-Duration.INFINITE, futureMark.elapsedNow())
+            assertTrue(futureMark.hasNotPassedNow())
+            assertEqualMarks(futureMark, timeSource.markNow() + Duration.INFINITE)
+
+            val pastMark = timeSource.mark(Long.MIN_VALUE + 1)
+            if (unit >= DurationUnit.MILLISECONDS) {
+                assertEquals(Duration.INFINITE, pastMark.elapsedNow())
+            }
+            assertTrue(pastMark.hasPassedNow())
+            assertDifferentMarks(pastMark, futureMark, -1)
+
+            val infinitePastMark = timeSource.mark(Long.MIN_VALUE)
+            assertEquals(Duration.INFINITE, infinitePastMark.elapsedNow())
+            assertTrue(infinitePastMark.hasPassedNow())
+            assertEqualMarks(infinitePastMark, timeSource.markNow() - Duration.INFINITE)
+            assertDifferentMarks(infinitePastMark, futureMark, -1)
+
+            timeSource.reading = Long.MIN_VALUE + 1
+            assertEqualMarks(timeSource.mark(Long.MIN_VALUE + 1), timeSource.markNow())
+        }
+    }
+
+    @Test
+    fun timeMarkAtOutOfRangeReadings() {
+        // Out-of-contract readings: the reading - zero adjustment is plain,
+        // so it degenerates exactly like markNow() does when read() drifts out of the documented range.
+        val timeSource = LongTimeSource(DurationUnit.MILLISECONDS)
+        timeSource.reading = 1000
+        timeSource.markNow() // fix zero reading at 1000
+
+        // a reading Long.MAX_VALUE + 1 units below the zero reading lands on the infinitely distant past sentinel
+        val sentinelPastMark = timeSource.mark(Long.MIN_VALUE + 1000)
+        assertEquals(Duration.INFINITE, sentinelPastMark.elapsedNow())
+        assertEqualMarks(sentinelPastMark, timeSource.markNow() - Duration.INFINITE)
+
+        // an even farther reading wraps over: a distant-past reading produces a far-future mark
+        val wrappedMark = timeSource.mark(Long.MIN_VALUE)
+        assertTrue(wrappedMark.hasNotPassedNow())
+        assertDifferentMarks(sentinelPastMark, wrappedMark, -1)
+
+        // and symmetrically in the other direction
+        val timeSource2 = LongTimeSource(DurationUnit.MILLISECONDS)
+        timeSource2.reading = -1000
+        timeSource2.markNow() // fix zero reading at -1000
+        val wrappedPastMark = timeSource2.mark(Long.MAX_VALUE)
+        assertTrue(wrappedPastMark.hasPassedNow())
+    }
 
     @Test
     fun defaultTimeMarkAdjustment() {

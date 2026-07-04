@@ -1342,6 +1342,7 @@ abstract class kotlin.time/AbstractLongTimeSource : kotlin.time/TimeSource.WithC
         final fun <get-unit>(): kotlin.time/DurationUnit // kotlin.time/AbstractLongTimeSource.unit.<get-unit>|<get-unit>(){}[0]
 
     abstract fun read(): kotlin/Long // kotlin.time/AbstractLongTimeSource.read|read(){}[0]
+    final fun timeMarkAt(kotlin/Long): kotlin.time/ComparableTimeMark // kotlin.time/AbstractLongTimeSource.timeMarkAt|timeMarkAt(kotlin.Long){}[0]
     open fun markNow(): kotlin.time/ComparableTimeMark // kotlin.time/AbstractLongTimeSource.markNow|markNow(){}[0]
 }
 

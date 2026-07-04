@@ -30,10 +30,10 @@ public abstract class AbstractLongTimeSource(protected val unit: DurationUnit) :
      * This protected method should be overridden to return the current reading of the time source expressed as a [Long] number
      * in the unit specified by the [unit] property.
      *
-     * Note that the value returned by this method when [markNow] is called the first time is used as "zero" reading
-     * and the difference from this "zero" reading is calculated for subsequent values.
-     * Therefore, it's not recommended to return values farther than `±Long.MAX_VALUE` from the first returned reading
-     * as this will cause this time source flip over future/past boundary for the returned time marks.
+     * Note that the value returned by this method when [markNow] or [timeMarkAt] is called the first time
+     * is used as "zero" reading and the difference from this "zero" reading is calculated for subsequent values.
+     * Therefore, it's not recommended to return values `±Long.MAX_VALUE` or farther from the first returned reading
+     * as this may cause the returned time marks to flip over the future/past boundary or to become infinitely distant.
      */
     protected abstract fun read(): Long
 
@@ -85,6 +85,31 @@ public abstract class AbstractLongTimeSource(protected val unit: DurationUnit) :
     }
 
     override fun markNow(): ComparableTimeMark = LongTimeMark(adjustedRead(), this, Duration.ZERO)
+
+    /**
+     * Creates a time mark that corresponds to the specified [reading] of this time source.
+     *
+     * The [reading] value is interpreted the same way as the values returned by the [read] function:
+     * as a [Long] number expressed in the unit specified by the [unit] property.
+     * It must originate from the same source of time that the [read] function of this time source queries.
+     * A time mark created from a reading of a foreign origin, for example, a reading of another time source
+     * or a reading captured on another device, bears no meaningful relation to the time marks of this time source.
+     *
+     * The returned time mark is interchangeable with the time marks created by this class's
+     * implementation of [markNow]: it is equal to the time mark that [markNow] would return
+     * at the moment when [read] returns the specified [reading], and it can be compared
+     * for difference with other time marks obtained from the same time source.
+     *
+     * Note that if no time mark was obtained from this time source yet, calling this function
+     * fixes the "zero" reading of this time source the same way as the first [markNow] call does.
+     * It's not recommended to pass values `±Long.MAX_VALUE` or farther from the "zero" reading
+     * as this may cause the returned time mark to flip over the future/past boundary or to become infinitely distant.
+     *
+     * @sample samples.time.TimeSources.timeMarkAt
+     */
+    @SinceKotlin("2.4")
+    @ExperimentalTime
+    protected fun timeMarkAt(reading: Long): ComparableTimeMark = LongTimeMark(reading - zero, this, Duration.ZERO)
 }
 
 /**

@@ -6424,6 +6424,7 @@ public abstract class kotlin/time/AbstractLongTimeSource : kotlin/time/TimeSourc
 	public fun markNow ()Lkotlin/time/ComparableTimeMark;
 	public synthetic fun markNow ()Lkotlin/time/TimeMark;
 	protected abstract fun read ()J
+	protected final fun timeMarkAt (J)Lkotlin/time/ComparableTimeMark;
 }
 
 public abstract interface class kotlin/time/Clock {
