@@ -109,7 +109,18 @@ public abstract class AbstractLongTimeSource(protected val unit: DurationUnit) :
      */
     @SinceKotlin("2.4")
     @ExperimentalTime
-    protected fun timeMarkAt(reading: Long): ComparableTimeMark = LongTimeMark(reading - zero, this, Duration.ZERO)
+    protected fun timeMarkAt(reading: Long): ComparableTimeMark {
+        // EXPERIMENT (KT-76762): saturate the adjustment on overflow instead of wrapping,
+        // so an out-of-contract reading degrades to an infinitely distant mark.
+        val adjusted = reading - zero
+        val saturated =
+            if ((reading xor zero) and (reading xor adjusted) < 0) {
+                if (reading < 0) Long.MIN_VALUE else Long.MAX_VALUE
+            } else {
+                adjusted
+            }
+        return LongTimeMark(saturated, this, Duration.ZERO)
+    }
 }
 
 /**

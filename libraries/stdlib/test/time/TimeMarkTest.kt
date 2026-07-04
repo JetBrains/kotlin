@@ -456,8 +456,8 @@ class TimeMarkTest {
 
     @Test
     fun timeMarkAtOutOfRangeReadings() {
-        // Out-of-contract readings: the reading - zero adjustment is plain,
-        // so it degenerates exactly like markNow() does when read() drifts out of the documented range.
+        // EXPERIMENT DIVERGENCE vs the main branch: the saturating adjustment clamps instead of
+        // wrapping, so out-of-range readings collapse onto the infinitely distant sentinels.
         val timeSource = LongTimeSource(DurationUnit.MILLISECONDS)
         timeSource.reading = 1000
         timeSource.markNow() // fix zero reading at 1000
@@ -467,17 +467,17 @@ class TimeMarkTest {
         assertEquals(Duration.INFINITE, sentinelPastMark.elapsedNow())
         assertEqualMarks(sentinelPastMark, timeSource.markNow() - Duration.INFINITE)
 
-        // an even farther reading wraps over: a distant-past reading produces a far-future mark
-        val wrappedMark = timeSource.mark(Long.MIN_VALUE)
-        assertTrue(wrappedMark.hasNotPassedNow())
-        assertDifferentMarks(sentinelPastMark, wrappedMark, -1)
+        // on the main branch this wraps to a far-future mark; here it clamps to the same past sentinel
+        val clampedMark = timeSource.mark(Long.MIN_VALUE)
+        assertTrue(clampedMark.hasPassedNow())
+        assertEqualMarks(sentinelPastMark, clampedMark)
 
-        // and symmetrically in the other direction
+        // and symmetrically: a far-past mark on the main branch, the infinitely distant future sentinel here
         val timeSource2 = LongTimeSource(DurationUnit.MILLISECONDS)
         timeSource2.reading = -1000
         timeSource2.markNow() // fix zero reading at -1000
-        val wrappedPastMark = timeSource2.mark(Long.MAX_VALUE)
-        assertTrue(wrappedPastMark.hasPassedNow())
+        val clampedFutureMark = timeSource2.mark(Long.MAX_VALUE)
+        assertTrue(clampedFutureMark.hasNotPassedNow())
     }
 
     @Test
