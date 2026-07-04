@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
@@ -51,8 +52,10 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.with
 import kotlin.script.experimental.impl._isSyntheticSnippet
 import kotlin.script.experimental.jvm.*
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
@@ -124,10 +127,29 @@ class K2ReplCompiler(
             ) {
                 add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
             }
+
+            val hostConfigurationWithProvider = hostConfiguration.with {
+                scriptCompilationConfigurationProvider(SingleScriptCompilationConfigurationProvider(scriptCompilationConfiguration))
+                scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
+            }
+
             val project = compilerContext.environment.project
             val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
             val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
-                (it as? JvmDependency)?.classpath ?: emptyList()
+                when (it) {
+                    is JvmDependency -> it.classpath
+                    // JvmDependencyFromClassLoader (e.g. when
+                    // `kotlin.jsr223.experimental.resolve.dependencies.from.context.classloader=true`)
+                    // is honored in K1 via PackageFragmentFromClassLoaderProviderExtension. K2 FIR doesn't
+                    // use that extension point, so eagerly extract the classpath from the classloader.
+                    // Drops the K1 laziness for K2 but lets stdlib (HashMap etc.) resolve in FIR.
+                    is JvmDependencyFromClassLoader -> scriptCompilationClasspathFromContext(
+                        classLoader = it.getClassLoader(scriptCompilationConfiguration),
+                        wholeClasspath = true,
+                        unpackJarCollections = true,
+                    )
+                    else -> emptyList()
+                }
             }
             compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
             val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
@@ -158,7 +180,7 @@ class K2ReplCompiler(
 
             return K2ReplCompilationState(
                 scriptCompilationConfiguration,
-                hostConfiguration,
+                hostConfigurationWithProvider,
                 projectEnvironment,
                 moduleDataProvider,
                 messageCollector,
@@ -238,7 +260,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         ).also { moduleDataHistory.add(it) }
 }
 
-@OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class, KtNonPublicApi::class)
+@OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class, KtNonPublicApi::class, SessionConfiguration::class)
 private fun compileImpl(
     state: K2ReplCompilationState,
     snippet: SourceCode,
@@ -364,6 +386,12 @@ private fun compileImpl(
         kmpModuleKind = KmpModuleKind.SingleModule,
         init = {},
     )
+
+    session.register(
+        FirScriptCompilationComponent::class,
+        FirScriptCompilationComponent(state.hostConfiguration)
+    )
+
     val rawFir = allSourceFiles.partition { it is KtFileScriptSource }.let { [ktSources, otherSources] ->
         // TODO: implement LT support, similarly as for the scripting (KT-83498)
         session.buildFirFromKtFiles(ktSources.map { it.getKtFile(definition, project) }) +

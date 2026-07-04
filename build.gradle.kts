@@ -426,6 +426,7 @@ tasks {
         // see comments on the task in kotlin-scripting-jvm-host-test
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
+        dependsOn(":kotlin-scripting-jsr223-test:test")
     }
 
     testLifecycleTask("scriptingTest") {

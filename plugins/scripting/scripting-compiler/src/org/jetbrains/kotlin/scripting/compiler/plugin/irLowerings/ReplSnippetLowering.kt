@@ -9,7 +9,10 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings
 
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.jvm.classNameOverride
+import org.jetbrains.kotlin.backend.jvm.createJvmFileFacadeClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addField
@@ -27,6 +30,10 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
@@ -47,6 +54,17 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
         snippets.sortBy { it.name }
         for (irSnippet in snippets) {
             finalizeReplSnippetClass(irSnippet, symbolRemapper)
+        }
+
+        // Patch IrExternalPackageFragment parents on external Kotlin top-level callees referenced from
+        // each snippet's `$$eval` body. Mirrors the K2 JVM `ExternalPackageParentPatcherLowering`, but
+        // runs eagerly on the snippet's `targetClass` so that the JVM codegen's
+        // `require(callee.parent is IrClass)` check at `ExpressionCodegen.visitCall` does not fail
+        // when a snippet references e.g. a classpath-loaded Kotlin top-level `val`/`fun` or an
+        // `@InlineOnly` stdlib operator.
+        for (irSnippet in snippets) {
+            val irSnippetClass = irSnippet.targetClass?.owner ?: continue
+            irSnippetClass.acceptVoid(ReplSnippetExternalPackageParentPatcher())
         }
     }
 
@@ -274,3 +292,61 @@ private fun makeImplicitReceiversFieldsWithParameters(
             isFinal = true
         } to param
     }
+
+/**
+ * Patches the parent of external Kotlin top-level callables referenced from a snippet's body so that
+ * `ExpressionCodegen.visitCall` does not fail the `require(callee.parent is IrClass)` check.
+ *
+ * Mirrors `org.jetbrains.kotlin.backend.jvm.lower.ExternalPackageParentPatcherLowering` (K2 JVM
+ * file-class facade patching), but runs eagerly as part of REPL snippet→class lowering so the
+ * snippet body's IR is rewritten before any later JVM lowering observes the
+ * `IrExternalPackageFragment` parent.
+ *
+ * The patcher only fires for callees that:
+ *  - implement [IrMemberWithContainerSource]; and
+ *  - have a [FacadeClassSource] container; and
+ *  - currently have an [IrExternalPackageFragment] parent.
+ *
+ * The facade name is taken from the deserialised source's `className` / `facadeClassName`, so the
+ * resulting JVM bytecode references the real `*Kt` (or multifile facade) class on the classpath.
+ */
+private class ReplSnippetExternalPackageParentPatcher : IrVisitorVoid() {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
+        visitElement(expression)
+        val callee = expression.symbol.owner as? IrMemberWithContainerSource ?: return
+        if (callee.parent is IrExternalPackageFragment) {
+            val parentClass = generateOrGetFacadeClass(callee) ?: return
+            parentClass.parent = callee.parent
+            callee.parent = parentClass
+            when (callee) {
+                is IrProperty -> handleProperty(callee, parentClass)
+                is IrSimpleFunction -> callee.correspondingPropertySymbol?.owner?.let { handleProperty(it, parentClass) }
+            }
+        }
+    }
+
+    private fun generateOrGetFacadeClass(declaration: IrMemberWithContainerSource): IrClass? {
+        val deserializedSource = declaration.containerSource ?: return null
+        if (deserializedSource !is FacadeClassSource) return null
+        val facadeName = deserializedSource.facadeClassName ?: deserializedSource.className
+        return createJvmFileFacadeClass(
+            if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
+            facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
+            deserializedSource,
+        ).also {
+            it.createThisReceiverParameter()
+            it.classNameOverride = facadeName
+        }
+    }
+
+    private fun handleProperty(property: IrProperty, newParent: IrClass) {
+        property.parent = newParent
+        property.getter?.parent = newParent
+        property.setter?.parent = newParent
+        property.backingField?.parent = newParent
+    }
+}
