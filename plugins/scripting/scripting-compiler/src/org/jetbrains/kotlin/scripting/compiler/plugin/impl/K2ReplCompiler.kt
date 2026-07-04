@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.jvmTarget
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -37,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
@@ -52,10 +51,8 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.jvm
-import kotlin.script.experimental.jvm.jvmTarget
+import kotlin.script.experimental.impl._isSyntheticSnippet
+import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
@@ -71,15 +68,29 @@ class K2ReplCompiler(
         snippets: Iterable<SourceCode>,
         configuration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
-        snippets.forEach { snippet ->
-            // Messages from earlier snippets should not leak into the next snippet
-            state.messageCollector.clear()
-            when (val res = compileImpl(state, snippet, configuration)) {
-                is ResultWithDiagnostics.Success -> {
-                    state.lastCompiledSnippet = state.lastCompiledSnippet.add(res.value)
-                }
-                is ResultWithDiagnostics.Failure -> {
-                    return res
+        snippets.forEach { mainSnippet ->
+            val [updatedConfiguration, syntheticSnippets] = configuration.prependSyntheticSnippets(mainSnippet).valueOr { return it }
+            val snippetsWithSynthetics = syntheticSnippets + mainSnippet
+            snippetsWithSynthetics.forEach { snippet ->
+                // Messages from earlier snippets should not leak into the next snippet
+                state.messageCollector.clear()
+                val res =
+                    compileImpl(
+                        state, snippet,
+                        if (snippet == mainSnippet) updatedConfiguration.with { reset(repl._isSyntheticSnippet) }
+                        else updatedConfiguration.with {
+                            resultField("")
+                            repl.resultFieldPrefix("")
+                            repl._isSyntheticSnippet(true)
+                        }
+                    )
+                when (res) {
+                    is ResultWithDiagnostics.Success -> {
+                        state.lastCompiledSnippet = state.lastCompiledSnippet.add(res.value)
+                    }
+                    is ResultWithDiagnostics.Failure -> {
+                        return res
+                    }
                 }
             }
         }
@@ -91,7 +102,6 @@ class K2ReplCompiler(
 
     companion object {
 
-        @OptIn(K1SpecificScriptingServiceAccessor::class)
         fun createCompilationState(
             messageCollector: ScriptDiagnosticsMessageCollector,
             rootDisposable: Disposable,
@@ -228,7 +238,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         ).also { moduleDataHistory.add(it) }
 }
 
-@OptIn(LegacyK2CliPipeline::class, SessionConfiguration::class, K1SpecificScriptingServiceAccessor::class, KtNonPublicApi::class)
+@OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class, KtNonPublicApi::class)
 private fun compileImpl(
     state: K2ReplCompilationState,
     snippet: SourceCode,
