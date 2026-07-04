@@ -7,6 +7,9 @@
 #include "KotlinPlugin.h"
 #include "PassesProfileHandler.h"
 
+#include "llvm/IR/InstrTypes.h"
+#include "llvm/IR/Intrinsics.h"
+#include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/StandardInstrumentations.h"
@@ -51,6 +54,39 @@ void LLVMKotlinSetNoTailCall(LLVMValueRef Call) {
 int LLVMKotlinInlineCall(LLVMValueRef Call) {
   InlineFunctionInfo IFI;
   return InlineFunction(*unwrap<CallBase>(Call), IFI).isSuccess();
+}
+
+void LLVMKotlinBuildAlignAssume(LLVMBuilderRef Builder, LLVMValueRef Ptr,
+                                uint64_t Align) {
+  IRBuilder<> *B = unwrap(Builder);
+  Module *M = B->GetInsertBlock()->getModule();
+  Function *AssumeFn =
+      Intrinsic::getOrInsertDeclaration(M, Intrinsic::assume);
+  Value *True = ConstantInt::getTrue(B->getContext());
+  OperandBundleDef AlignBundle(
+      "align",
+      ArrayRef<Value *>{
+          unwrap(Ptr),
+          ConstantInt::get(Type::getInt64Ty(B->getContext()), Align),
+      });
+  B->CreateCall(AssumeFn, {True}, {AlignBundle});
+}
+
+void LLVMKotlinEnableFPContractInModule(LLVMModuleRef M) {
+  Module *Mod = unwrap(M);
+  for (Function &F : *Mod) {
+    for (BasicBlock &BB : F) {
+      for (Instruction &I : BB) {
+        unsigned Op = I.getOpcode();
+        if (Op == Instruction::FMul || Op == Instruction::FAdd ||
+            Op == Instruction::FSub) {
+          FastMathFlags FMF = I.getFastMathFlags();
+          FMF.setAllowContract(true);
+          I.setFastMathFlags(FMF);
+        }
+      }
+    }
+  }
 }
 
 namespace {

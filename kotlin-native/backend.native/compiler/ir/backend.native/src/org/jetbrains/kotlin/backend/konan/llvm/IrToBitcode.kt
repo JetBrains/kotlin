@@ -1462,10 +1462,20 @@ internal class CodeGeneratorVisitor(
             LLVMSetLinkage(global, LLVMLinkage.LLVMExternalLinkage)
         }
         LLVMSetAlignment(global, CUDA_SHARED_ALIGNMENT)
-        return LLVMBuildAddrSpaceCast(
+        val cast = LLVMBuildAddrSpaceCast(
                 functionGenerationContext.builder, global,
                 variable.type.toLLVMType(llvm), "cuda_shared_cast"
         )!!
+        // `LoadStoreVectorizer` needs to see the ≥16-byte alignment on the cast pointer
+        // to collapse consecutive scalar `ld.shared.b32`s into a single `ld.shared.v4.b32`.
+        // But LLVM's alignment analysis (`Value::getPointerAlignment`) does not propagate
+        // alignment through `addrspacecast`, so the alignment attribute set on the shared
+        // global above is invisible at the load sites — the loads stay `align 4` and LSV
+        // gives up. Emitting an `llvm.assume(i1 true) [ "align"(cast, N) ]` immediately
+        // after the cast surfaces the alignment via the `AlignmentFromAssumptions` pass
+        // (part of `default<O3>`), which does propagate to downstream loads/stores.
+        LLVMKotlinBuildAlignAssume(functionGenerationContext.builder, cast, CUDA_SHARED_ALIGNMENT.toLong())
+        return cast
     }
 
     private fun CodeContext.genDeclareVariable(

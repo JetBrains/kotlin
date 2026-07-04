@@ -25,6 +25,7 @@ import llvm.LLVMGetErrorMessage
 import llvm.LLVMGetTargetFromTriple
 import llvm.LLVMGetValueName
 import llvm.LLVMIsDeclaration
+import llvm.LLVMKotlinEnableFPContractInModule
 import llvm.LLVMModuleRef
 import llvm.LLVMRelocMode
 import llvm.LLVMRunPasses
@@ -232,6 +233,15 @@ internal val StripDeadDeviceIrPhase = createSimpleNamedCompilerPhase<NativeGener
         name = "StripDeadDeviceIr",
 ) { _, module ->
     LLVMStripModuleDebugInfo(module)
+    // Enable FP-op fusion so ptxas emits `fma.rn.f32` instead of separate `mul.rn.f32` +
+    // `add.rn.f32` for `acc += a*b`. Setting `contract` FMF per `fmul`/`fadd`/`fsub` is the
+    // narrowest possible enable: only fusion, no reassociation, no other relaxations. The
+    // function-attribute alternative (`unsafe-fp-math=true`) additionally permits
+    // reassociation, which reorders summation and breaks numerical parity with host
+    // references beyond the per-op fma-vs-mul+add difference (naive matmul at N=4096
+    // diverges by |delta|≈2^-6). This shim matches nvcc's `-ffp-contract=fast
+    // -fno-fast-math` default for device code.
+    LLVMKotlinEnableFPContractInModule(module)
     val options = LLVMCreatePassBuilderOptions()!!
     try {
         val err = LLVMRunPasses(
