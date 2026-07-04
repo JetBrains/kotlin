@@ -23,6 +23,7 @@ import javax.script.*
 const val KOTLIN_SCRIPT_STATE_BINDINGS_KEY = "kotlin.script.state"
 const val KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY = "kotlin.script.engine"
 
+@Deprecated("Deprecated. Use K2-based implementation instead.", ReplaceWith("kotlin.script.experimental.jvmhost.jsr223.base.KotlinJsr223JvmScriptEngineBase"))
 abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable {
 
     protected abstract val replCompiler: ReplCompilerWithoutCheck
@@ -108,7 +109,11 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
         }
     }
 
-    class CompiledKotlinScript(val engine: KotlinJsr223JvmScriptEngineBase, val codeLine: ReplCodeLine, val compiledData: ReplCompileResult.CompiledClasses) : CompiledScript() {
+    class CompiledKotlinScript(
+        @Suppress("DEPRECATION") val engine: KotlinJsr223JvmScriptEngineBase,
+        val codeLine: ReplCodeLine,
+        val compiledData: ReplCompileResult.CompiledClasses
+    ) : CompiledScript() {
         override fun eval(context: ScriptContext): Any? = engine.eval(this, context)
         override fun getEngine(): ScriptEngine = engine
     }
