@@ -8,12 +8,12 @@ class MemberScope {
     class TestTailrecFunctionVsConstructor {
         @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
     }
-    tailrec fun TestTailrecFunctionVsConstructor() {}
+    <!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun TestTailrecFunctionVsConstructor() {}<!>
 
     class TestTailrecFunctionVsConstructorReverse {
         constructor()
     }
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec fun TestTailrecFunctionVsConstructorReverse() {}
+    <!NO_TAIL_CALLS_FOUND_IN_IR!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec fun TestTailrecFunctionVsConstructorReverse() {}<!>
 
 
 }

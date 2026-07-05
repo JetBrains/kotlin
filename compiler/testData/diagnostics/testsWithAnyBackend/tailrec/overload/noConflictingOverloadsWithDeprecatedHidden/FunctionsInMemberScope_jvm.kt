@@ -6,13 +6,13 @@
 
 
 class MemberScope {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testIdenticalPresenceOfTailrecModifier() {}<!>
-    tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testIdenticalPresenceOfTailrecModifier() {}<!>
+    <!NO_TAIL_CALLS_FOUND_IN_IR!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testIdenticalPresenceOfTailrecModifier() {}<!><!>
+    <!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testIdenticalPresenceOfTailrecModifier() {}<!><!>
 
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresence() {}<!>
+    <!NO_TAIL_CALLS_FOUND_IN_IR!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresence() {}<!><!>
     <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresence() {}<!>
 
-    tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!>
+    <!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!><!>
     @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!>
 }
 

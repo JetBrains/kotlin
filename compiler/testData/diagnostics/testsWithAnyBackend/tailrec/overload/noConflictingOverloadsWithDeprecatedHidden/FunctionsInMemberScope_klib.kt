@@ -6,13 +6,13 @@
 
 
 class MemberScope {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testIdenticalPresenceOfTailrecModifier() {}<!>
-    tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testIdenticalPresenceOfTailrecModifier() {}<!>
+    <!NO_TAIL_CALLS_FOUND_IN_IR!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testIdenticalPresenceOfTailrecModifier() {}<!><!>
+    <!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testIdenticalPresenceOfTailrecModifier() {}<!><!>
 
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresence() {}<!>
+    <!NO_TAIL_CALLS_FOUND_IN_IR!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresence() {}<!><!>
     <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresence() {}<!>
 
-    tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!>
+    <!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!><!>
     @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!>
 }
 
