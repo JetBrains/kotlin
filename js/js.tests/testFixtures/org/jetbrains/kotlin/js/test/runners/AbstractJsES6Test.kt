@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.runners
 
+import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
 abstract class AbstractJsES6Test(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
@@ -32,17 +34,21 @@ abstract class AbstractJsES6Test(
 }
 
 
-abstract class AbstractJsES6BoxTest : AbstractJsES6Test(
+abstract class AbstractJsES6BoxTest : AbstractJsES6CodegenBoxTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix = "es6Box/"
 )
 
-abstract class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
-    pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "codegen/es6Box/"
-) {
+abstract class AbstractJsES6CodegenBoxTest(
+    pathToTestDir : String = "compiler/testData/codegen/box/",
+    testGroupOutputDirPrefix : String = "codegen/es6Box/"
+) : AbstractJsES6Test(pathToTestDir, testGroupOutputDirPrefix) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
+        builder.useAdditionalSourceProviders(
+            ::JsAdditionalSourceProvider,
+            ::CoroutineHelpersSourceFilesProvider,
+        )
         builder.configureFirHandlersStep {
             commonFirHandlersForCodegenTest()
         }
@@ -57,12 +63,12 @@ abstract class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
     }
 }
 
-abstract class AbstractJsES6CodegenInlineTest : AbstractJsES6Test(
+abstract class AbstractJsES6CodegenInlineTest : AbstractJsES6CodegenBoxTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = "codegen/es6BoxInline/"
 )
 
-abstract class AbstractJsES6CodegenWasmJsInteropTest : AbstractJsES6Test(
+abstract class AbstractJsES6CodegenWasmJsInteropTest : AbstractJsES6CodegenBoxTest(
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop",
     testGroupOutputDirPrefix = "codegen/boxWasmJsInteropEs6",
 )

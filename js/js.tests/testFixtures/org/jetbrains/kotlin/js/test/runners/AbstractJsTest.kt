@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.runners
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
 import org.jetbrains.kotlin.js.test.handlers.JsLineNumberHandler
 import org.jetbrains.kotlin.js.test.handlers.JsSizeHandler
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
 import org.jetbrains.kotlin.test.services.SplittingTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import java.lang.Boolean.getBoolean
 
 
@@ -107,6 +109,10 @@ abstract class AbstractJsCodegenBoxTestBase(
 ) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
+        builder.useAdditionalSourceProviders(
+            ::JsAdditionalSourceProvider,
+            ::CoroutineHelpersSourceFilesProvider,
+        )
         builder.configureFirHandlersStep {
             commonFirHandlersForCodegenTest()
         }
