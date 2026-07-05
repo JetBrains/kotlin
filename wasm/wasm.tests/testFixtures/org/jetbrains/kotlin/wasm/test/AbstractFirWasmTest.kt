@@ -148,7 +148,7 @@ open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingTest(
     }
 }
 
-open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
+open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTestBase(
     pathToTestDir: String = "compiler/testData/codegen/",
     testGroupOutputDirPrefix: String = "codegen/boxInlKlib/"
 ) : AbstractFirWasmJsCodegenBoxTest(
@@ -164,6 +164,20 @@ open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
                 )
             }
+        }
+    }
+}
+
+open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
+    pathToTestDir: String = "compiler/testData/codegen/",
+    testGroupOutputDirPrefix: String = "codegen/boxInlKlib/"
+) : AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTestBase(
+    pathToTestDir = pathToTestDir,
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
             configureLoweredIrHandlersStep {
                 commonLoweredIrHandlersForCodegenTest()
                 useHandlers(
@@ -191,7 +205,8 @@ open class AbstractFirWasmJsSyntheticAccessorsTest(
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
 
-open class AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest() : AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
+// Make sure base classes don't use IrTextDumpHandler, since generated IR dumps would not match to golden data due to different module structure
+open class AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest : AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTestBase(
     testGroupOutputDirPrefix = "codegen/boxSplitted/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?

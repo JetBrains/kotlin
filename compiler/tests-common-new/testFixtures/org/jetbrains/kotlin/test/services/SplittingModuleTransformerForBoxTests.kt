@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.WITH_COROUTINES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -29,6 +27,7 @@ import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
  * If the test is already multimodule, do nothing.
  * If the test is single-module, single-file, do nothing.
  * NOTE: Make sure SplittingTestConfigurator is also added to metaTestConfigurators to skip running such non-split tests.
+ * MOTE: Make sure IrTextDumpHandler is not used, since IR dumps would be different to golden data due to different module structure
  */
 @TestInfrastructureInternals
 class SplittingModuleTransformerForBoxTests(
