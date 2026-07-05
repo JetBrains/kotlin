@@ -11,18 +11,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.symbol
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.constructClassType
+import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
@@ -32,19 +28,12 @@ object FirJavaClassOnCompanionChecker : FirPropertyAccessExpressionChecker(MppCh
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
         if ((reference.symbol as? FirCallableSymbol)?.callableId != JvmStandardClassIds.Callables.JavaClass) return
 
-        val actualType = expression.resolvedType as? ConeClassLikeType ?: return
-        val projectionType = (actualType.typeArguments.singleOrNull() as? ConeKotlinTypeProjection)?.type ?: return
-        val projectionClassSymbol = projectionType.toRegularClassSymbol()
-        if (projectionClassSymbol?.isCompanion != true) return
-
-        val containingClassSymbol = projectionClassSymbol.getContainingClassSymbol() ?: return
-
         val receiver = expression.extensionReceiver as? FirResolvedQualifier ?: return
-        if (receiver.qualifierSymbol != containingClassSymbol) return
+        if (!receiver.resolvedToCompanionObject) return
+        val qualifierSymbol = receiver.qualifierSymbol ?: return
 
-        val expectedType = actualType.lookupTag.constructClassType(
-            arrayOf(containingClassSymbol.defaultType()), isMarkedNullable = actualType.isMarkedNullable
-        )
+        val actualType = expression.resolvedType as? ConeClassLikeType ?: return
+        val expectedType = actualType.lookupTag.constructClassType(arrayOf(qualifierSymbol.constructStarProjectedType()))
 
         reporter.reportOn(expression.source, FirJvmErrors.JAVA_CLASS_ON_COMPANION, actualType, expectedType)
     }

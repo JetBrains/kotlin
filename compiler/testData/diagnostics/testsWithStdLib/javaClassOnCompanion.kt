@@ -21,9 +21,9 @@ enum class E {
 }
 
 val a0 = A.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
-val a01 = T.javaClass
+val a01 = T.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
 val a1 = test.A.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
-val a11 = test.T.javaClass
+val a11 = test.T.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
 val a2 = A.Companion.javaClass
 val a21 = A.Companion.let { it.javaClass }
 val a22 = A.Companion.run { javaClass }
