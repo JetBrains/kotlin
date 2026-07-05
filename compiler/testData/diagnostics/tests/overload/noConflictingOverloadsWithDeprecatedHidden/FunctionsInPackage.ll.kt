@@ -4,7 +4,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
-// DIAGNOSTICS: -MISPLACED_TYPE_PARAMETER_CONSTRAINTS, -NOTHING_TO_INLINE, -NO_TAIL_CALLS_FOUND
+// DIAGNOSTICS: -MISPLACED_TYPE_PARAMETER_CONSTRAINTS, -NOTHING_TO_INLINE
 
 package pkg
 
@@ -440,16 +440,6 @@ operator fun UserKlassB.unaryMinus() {}
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun UserKlassB.unaryMinus() {}
 
 
-@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec fun testIdenticalPresenceOfTailrecModifier() {}
-tailrec fun testIdenticalPresenceOfTailrecModifier() {}
-
-@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec fun testDifferencesInTailrecModifierPresence() {}
-fun testDifferencesInTailrecModifierPresence() {}
-
-tailrec fun testDifferencesInTailrecModifierPresenceReverse() {}
-@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun testDifferencesInTailrecModifierPresenceReverse() {}
-
-
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN) private fun testIdenticalPrivateVisibility() {}
 private fun testIdenticalPrivateVisibility() {}
 
@@ -503,4 +493,4 @@ typealias SameUserInterfaceB = UserInterfaceB
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection, infix, inline,
 interfaceDeclaration, nullableType, operator, outProjection, propertyDeclaration, reified, starProjection, stringLiteral,
-tailrec, typeAliasDeclaration, typeConstraint, typeParameter */
+typeAliasDeclaration, typeConstraint, typeParameter */
