@@ -212,6 +212,11 @@ fun main(args: Array<String>) {
                     excludeDirs = listOf("native"),
                     pattern = KT_OR_KTS.canFreezeIDE,
                 )
+                model(
+                    "diagnostics/testsWithAnyBackend/tailrec",
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                    pattern = KT_OR_KTS.canFreezeIDE,
+                )
             }
 
             testClass<AbstractLLDiagnosticsTest> {
