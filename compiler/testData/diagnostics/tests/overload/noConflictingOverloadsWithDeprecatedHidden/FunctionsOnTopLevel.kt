@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
-// DIAGNOSTICS: -MISPLACED_TYPE_PARAMETER_CONSTRAINTS, -NOTHING_TO_INLINE, -NO_TAIL_CALLS_FOUND
+// DIAGNOSTICS: -MISPLACED_TYPE_PARAMETER_CONSTRAINTS, -NOTHING_TO_INLINE
 
 
 <!CONFLICTING_JVM_DECLARATIONS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun testBasic()<!> {}
@@ -435,16 +435,6 @@ fun <T: UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsBB(arg: 
 <!CONFLICTING_JVM_DECLARATIONS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun UserKlassB.unaryMinus()<!> {}
 
 
-<!CONFLICTING_JVM_DECLARATIONS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec fun testIdenticalPresenceOfTailrecModifier()<!> {}
-<!CONFLICTING_JVM_DECLARATIONS!>tailrec fun testIdenticalPresenceOfTailrecModifier()<!> {}
-
-<!CONFLICTING_JVM_DECLARATIONS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec fun testDifferencesInTailrecModifierPresence()<!> {}
-<!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresence()<!> {}
-
-<!CONFLICTING_JVM_DECLARATIONS!>tailrec fun testDifferencesInTailrecModifierPresenceReverse()<!> {}
-<!CONFLICTING_JVM_DECLARATIONS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun testDifferencesInTailrecModifierPresenceReverse()<!> {}
-
-
 <!CONFLICTING_JVM_DECLARATIONS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) private fun testIdenticalPrivateVisibility()<!> {}
 <!CONFLICTING_JVM_DECLARATIONS!>private fun testIdenticalPrivateVisibility()<!> {}
 
@@ -498,4 +488,4 @@ typealias SameUserInterfaceB = UserInterfaceB
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection, infix, inline,
 interfaceDeclaration, nullableType, operator, outProjection, propertyDeclaration, reified, starProjection, stringLiteral,
-tailrec, typeAliasDeclaration, typeConstraint, typeParameter */
+typeAliasDeclaration, typeConstraint, typeParameter */
