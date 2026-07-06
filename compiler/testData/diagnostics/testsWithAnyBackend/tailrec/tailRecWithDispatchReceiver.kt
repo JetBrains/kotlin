@@ -1,8 +1,9 @@
+// DONT_TARGET_EXACT_BACKEND: JVM_IR
 // RUN_PIPELINE_TILL: BACKEND
 class A(val a: A) {
-    <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
+    <!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
         a.<!NON_TAIL_RECURSIVE_CALL!>foo1<!>()
-    }
+    }<!>
 
     tailrec fun foo2() {
         this.foo2()
@@ -12,12 +13,12 @@ class A(val a: A) {
         foo3()
     }
 
-    <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo4() {
+    <!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo4() {
         with(a) {
             <!NON_TAIL_RECURSIVE_CALL!>foo4<!>()
             return
         }
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, primaryConstructor, propertyDeclaration,

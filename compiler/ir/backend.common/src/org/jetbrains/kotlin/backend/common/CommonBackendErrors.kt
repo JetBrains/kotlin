@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.diagnostics.warning0
 import org.jetbrains.kotlin.diagnostics.warningWithoutSource
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -20,6 +21,8 @@ object CommonBackendErrors : KtDiagnosticsContainer() {
     val EVALUATION_ERROR by error1<PsiElement, String>()
 
     val INLINE_CALL_CYCLE by error1<PsiElement, IrFunction>()
+
+    val NO_TAIL_CALLS_FOUND_IN_IR by warning0<PsiElement>()
 
     val IR_DUMP_WARNING by warningWithoutSource()
 
@@ -39,6 +42,10 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
             CommonBackendErrors.INLINE_CALL_CYCLE,
             "The ''{0}'' invocation is part of an inline cycle.",
             IrDiagnosticRenderers.DECLARATION_NAME,
+        )
+        map.put(
+            CommonBackendErrors.NO_TAIL_CALLS_FOUND_IN_IR,
+            "KT-87442: A function is marked as tail-recursive but compiler backend fails to perform tail-recursive optimization.",
         )
         map.put(
             CommonBackendErrors.IR_DUMP_WARNING,

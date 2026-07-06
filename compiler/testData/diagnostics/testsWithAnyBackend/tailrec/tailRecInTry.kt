@@ -1,7 +1,8 @@
+// DONT_TARGET_EXACT_BACKEND: JVM_IR
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUES: KT-81932
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
+<!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
     try {
         <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo1<!>()
     } catch (e: Exception) {
@@ -9,9 +10,9 @@
     } finally {
         <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo1<!>()
     }
-}
+}<!>
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo2() {
+<!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo2() {
     try {
         <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo2<!>()
         foo1()
@@ -22,9 +23,9 @@
         <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo2<!>()
         foo1()
     }
-}
+}<!>
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo3() {
+<!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo3() {
     try {
         try {
             <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo3<!>()
@@ -41,9 +42,9 @@
         } finally {
         }
     }
-}
+}<!>
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo4() {
+<!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo4() {
     try {
         if (true) {
             <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo4<!>()
@@ -63,7 +64,7 @@
             foo1()
         }
     }
-}
+}<!>
 
 tailrec fun foo5(param: Int) {
     if (true) {
