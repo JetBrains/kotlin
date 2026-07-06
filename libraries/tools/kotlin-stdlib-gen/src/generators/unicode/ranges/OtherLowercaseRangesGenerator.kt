@@ -41,9 +41,9 @@ internal class OtherLowercaseRangesGenerator(
     }
 
     fun isOtherLowercaseImpl(strategy: RangesWritingStrategy) = """
-        internal fun Int.isOtherLowercase(): Boolean {
-            val index = binarySearchRange(${strategy.rangeRef("otherLowerStart")}, this)
-            return index >= 0 && this < ${strategy.rangeRef("otherLowerStart")}[index] + ${strategy.rangeRef("otherLowerLength")}[index]
+        internal actual fun isOtherLowercase(code: Int): Boolean {
+            val index = binarySearchRange(${strategy.rangeRef("otherLowerStart")}, code)
+            return index >= 0 && code < ${strategy.rangeRef("otherLowerStart")}[index] + ${strategy.rangeRef("otherLowerLength")}[index]
         }
     """.trimIndent()
 }

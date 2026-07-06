@@ -105,6 +105,7 @@ val commonNonJvmMainSources = tasks.register<Sync>("commonNonJvmMainSources") {
     from {
         exclude(
             "libraries/stdlib/common-non-jvm/src/kotlin/reflect/KTypeImpl.kt",
+            "libraries/stdlib/common-non-jvm/src/kotlin/text/**",
         )
         commonNonJvmMainFullSources.get().outputs.files.singleFile
     }
