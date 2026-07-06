@@ -76,11 +76,6 @@ internal class StringLowercaseGenerator(
             writer.appendLine()
             writer.appendLine(isCaseIgnorable())
             writer.appendLine()
-            writer.appendLine(codePointBefore())
-            writer.appendLine()
-            writer.appendLine(isFinalSigmaAt())
-            writer.appendLine()
-            writer.appendLine(lowercaseImpl())
         }
     }
 
@@ -118,94 +113,6 @@ internal class StringLowercaseGenerator(
             }
             val index = binarySearchRange(caseIgnorableStart, code)
             return index >= 0 && code <= caseIgnorableEnd[index]
-        }
-    """.trimIndent()
-
-    private fun codePointBefore(): String = """
-        private fun String.codePointBefore(index: Int): Int {
-            val low = this[index]
-            if (low.isLowSurrogate() && index - 1 >= 0) {
-                val high = this[index - 1]
-                if (high.isHighSurrogate()) {
-                    return Char.toCodePoint(high, low)
-                }
-            }
-            return low.code
-        }
-    """.trimIndent().prependOptInExperimentalNativeApi(target)
-
-    private fun isFinalSigmaAt(): String = """
-        // \p{cased} (\p{case-ignorable})* Sigma !( (\p{case-ignorable})* \p{cased} )
-        // The regular-expression operator * is "possessive", consuming as many characters as possible, with no backup.
-        // This is significant in the case of Final_Sigma, because the sets of case-ignorable and cased characters are not disjoint.
-        private fun String.isFinalSigmaAt(index: Int): Boolean {
-            if (this[index] == '\u03A3' && index > 0) {
-                var i = index - 1
-                var codePoint: Int = 0
-                while (i >= 0) {
-                    codePoint = codePointBefore(i)
-                    if (isCaseIgnorable(codePoint)) {
-                        i -= codePoint.charCount()
-                    } else {
-                        break
-                    }
-                }
-                if (i >= 0 && isCased(codePoint)) {
-                    var j = index + 1
-                    while (j < length) {
-                        codePoint = codePointAt(j)
-                        if (isCaseIgnorable(codePoint)) {
-                            j += codePoint.charCount()
-                        } else {
-                            break
-                        }
-                    }
-                    if (j >= length || !isCased(codePoint)) {
-                        return true
-                    }
-                }
-            }
-            return false
-        }
-    """.trimIndent()
-
-    private fun lowercaseImpl(): String = """
-        internal fun String.lowercaseImpl(): String {
-            var unchangedIndex = 0
-            while (unchangedIndex < this.length) {
-                val codePoint = codePointAt(unchangedIndex)
-                if (lowercaseCodePoint(codePoint) != codePoint) { // '\u0130' and '\u03A3' have lowercase corresponding mapping in UnicodeData.txt, no need to check them separately
-                    break
-                }
-                unchangedIndex += codePoint.charCount()
-            }
-            if (unchangedIndex == this.length) {
-                return this
-            }
-
-            val sb = StringBuilder(this.length)
-            sb.appendRange(this, 0, unchangedIndex)
-
-            var index = unchangedIndex
-
-            while (index < this.length) {
-                if (this[index] == '\u0130') {
-                    sb.append("\u0069\u0307")
-                    index++
-                    continue
-                }
-                if (isFinalSigmaAt(index)) {
-                    sb.append('\u03C2')
-                    index++
-                    continue
-                }
-                val codePoint = codePointAt(index)
-                val lowercaseCodePoint = lowercaseCodePoint(codePoint)
-                sb.appendCodePoint(lowercaseCodePoint)
-                index += codePoint.charCount()
-            }
-
-            return sb.toString()
         }
     """.trimIndent()
 }
