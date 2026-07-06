@@ -189,28 +189,28 @@ internal class HairToBitcode(
         // Arithmetic
 
         override fun visitAdd(node: Add): LLVMValueRef = emit {
-            if (node.type.isIntegral()) add(node.lhs.value(), node.rhs.value())
+            if (node.type.isIntegral) add(node.lhs.value(), node.rhs.value())
             else fadd(node.lhs.value(), node.rhs.value())
         }
 
         override fun visitSub(node: Sub): LLVMValueRef = emit {
-            if (node.type.isIntegral()) sub(node.lhs.value(), node.rhs.value())
+            if (node.type.isIntegral) sub(node.lhs.value(), node.rhs.value())
             else fsub(node.lhs.value(), node.rhs.value())
         }
 
         override fun visitMul(node: Mul): LLVMValueRef = emit {
             // TODO use FGC helpers once mul/fmul are promoted
-            if (node.type.isIntegral()) LLVMBuildMul(builder, node.lhs.value(), node.rhs.value(), "")!!
+            if (node.type.isIntegral) LLVMBuildMul(builder, node.lhs.value(), node.rhs.value(), "")!!
             else LLVMBuildFMul(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
         override fun visitDiv(node: Div): LLVMValueRef = emit {
-            if (node.type.isIntegral()) LLVMBuildSDiv(builder, node.lhs.value(), node.rhs.value(), "")!!
+            if (node.type.isIntegral) LLVMBuildSDiv(builder, node.lhs.value(), node.rhs.value(), "")!!
             else LLVMBuildFDiv(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
         override fun visitRem(node: Rem): LLVMValueRef = emit {
-            if (node.type.isIntegral()) LLVMBuildSRem(builder, node.lhs.value(), node.rhs.value(), "")!!
+            if (node.type.isIntegral) LLVMBuildSRem(builder, node.lhs.value(), node.rhs.value(), "")!!
             else LLVMBuildFRem(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
@@ -232,7 +232,7 @@ internal class HairToBitcode(
         override fun visitCmp(node: Cmp): LLVMValueRef {
             val lhs = node.lhs.value()
             val rhs = node.rhs.value()
-            return if (node.type.isIntegral()) {
+            return if (node.type.isIntegral) {
                 adaptToHair(emit {
                     when (node.op) {
                         CmpOp.EQ -> icmpEq(lhs, rhs)
