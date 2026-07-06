@@ -19,7 +19,7 @@ private object OtherLowercase {
     )
 }
 
-internal fun Int.isOtherLowercase(): Boolean {
-    val index = binarySearchRange(OtherLowercase.otherLowerStart, this)
-    return index >= 0 && this < OtherLowercase.otherLowerStart[index] + OtherLowercase.otherLowerLength[index]
+internal actual fun isOtherLowercase(code: Int): Boolean {
+    val index = binarySearchRange(OtherLowercase.otherLowerStart, code)
+    return index >= 0 && code < OtherLowercase.otherLowerStart[index] + OtherLowercase.otherLowerLength[index]
 }

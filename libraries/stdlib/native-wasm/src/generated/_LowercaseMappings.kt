@@ -35,17 +35,17 @@ private val rangeLength = intArrayOf(
     0x120b, 0x1101, -0x2feff, -0xa542eff, -0x8a37eff, 0x1203, 0x1101, 0x2011a, 0x28128, 0x28124, 0x40133, 0x20120, 0x20120, 0x22122, 
 )
 
-internal fun Int.lowercaseCodePoint(): Int {
-    if (this in 0x41..0x5a) {
-        return this + 32
+internal fun lowercaseCodePoint(code: Int): Int {
+    if (code in 0x41..0x5a) {
+        return code + 32
     }
-    if (this < 0x80) {
-        return this
+    if (code < 0x80) {
+        return code
     }
-    val index = binarySearchRange(rangeStart, this)
-    return equalDistanceMapping(this, rangeStart[index], rangeLength[index])
+    val index = binarySearchRange(rangeStart, code)
+    return equalDistanceMapping(code, rangeStart[index], rangeLength[index])
 }
 
 internal fun Char.lowercaseCharImpl(): Char {
-    return code.lowercaseCodePoint().toChar()
+    return lowercaseCodePoint(code).toChar()
 }

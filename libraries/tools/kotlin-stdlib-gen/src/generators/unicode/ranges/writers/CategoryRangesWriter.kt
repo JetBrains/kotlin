@@ -68,13 +68,11 @@ internal open class CategoryRangesWriter(protected val strategy: RangesWritingSt
         /**
          * Returns the Unicode general category of this character as an Int.
          */
-        internal fun Char.getCategoryValue(): Int {
-            val ch = this.code
-
-            val index = ${indexOf("ch")}
+        internal actual fun getCategoryValue(code: Int): Int {
+            val index = ${indexOf("code")}
             val start = ${startAt("index")}
-            val code = ${categoryAt("index")}
-            val value = categoryValueFrom(code, ch - start)
+            val categoryCode = ${categoryAt("index")}
+            val value = categoryValueFrom(categoryCode, code - start)
 
             return if (value == $UNASSIGNED_CATEGORY_VALUE_REPLACEMENT) CharCategory.UNASSIGNED.value else value
         }
