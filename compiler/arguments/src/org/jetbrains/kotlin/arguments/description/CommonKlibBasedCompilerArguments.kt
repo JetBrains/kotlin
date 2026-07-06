@@ -48,8 +48,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
             deprecatedVersion = KotlinReleaseVersion.v2_4_20,
-            // TODO(KT-85591): Uncomment when 2.4.20 becomes the latest stable
-            // removedVersion = KotlinReleaseVersion.v2_5_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }

@@ -65,6 +65,7 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         value = "-Xklib-normalize-absolute-path",
         description = "Normalize absolute paths in klibs.",
         deprecatedVersion = "2.4.20",
+        removedVersion = "2.5.0",
     )
     var normalizeAbsolutePath: Boolean = false
         set(value) {
