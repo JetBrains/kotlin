@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.name.FqName
+import kotlin.io.path.Path
+import kotlin.io.path.name
 
 sealed class CacheDeserializationStrategy {
     abstract fun contains(filePath: String): Boolean
@@ -26,13 +27,13 @@ sealed class CacheDeserializationStrategy {
         override fun contains(filePath: String) = filePath == this.filePath
 
         override fun contains(fqName: FqName, fileName: String) =
-                fqName.asString() == this.fqName && File(filePath).name == fileName
+                fqName.asString() == this.fqName && Path(filePath).name == fileName
     }
 
     class MultipleFiles(filePaths: List<String>, fqNames: List<String>) : CacheDeserializationStrategy() {
         private val filePaths = filePaths.toSet()
 
-        private val fqNamesWithNames = fqNames.mapIndexed { i: Int, fqName: String -> Pair(fqName, File(filePaths[i]).name) }.toSet()
+        private val fqNamesWithNames = fqNames.mapIndexed { i: Int, fqName: String -> Pair(fqName, Path(filePaths[i]).name) }.toSet()
 
         override fun contains(filePath: String) = filePath in filePaths
 
