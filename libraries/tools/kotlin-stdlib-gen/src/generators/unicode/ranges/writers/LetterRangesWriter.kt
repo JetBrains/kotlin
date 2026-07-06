@@ -53,58 +53,36 @@ internal open class LetterRangesWriter(protected val strategy: RangesWritingStra
 
     private fun getLetterType(): String = """
         /**
-         * Returns `true` if this character is a letter.
-         */
-        internal fun Char.isLetterImpl(): Boolean {
-            return getLetterType() != 0
-        }
-
-        /**
-         * Returns `true` if this character is a lower case letter, or it has contributory property `Other_Lowercase`.
-         */
-        internal fun Char.isLowerCaseImpl(): Boolean {
-            return getLetterType() == 1 || code.isOtherLowercase()
-        }
-
-        /**
-         * Returns `true` if this character is an upper case letter, or it has contributory property `Other_Uppercase`.
-         */
-        internal fun Char.isUpperCaseImpl(): Boolean {
-            return getLetterType() == 2 || code.isOtherUppercase()
-        }
-
-        /**
          * Returns
          *   - `1` if the character is a lower case letter,
          *   - `2` if the character is an upper case letter,
          *   - `3` if the character is a letter but not a lower or upper case letter,
          *   - `0` otherwise.
          */
-        private fun Char.getLetterType(): Int {
-            val ch = this.code
-            val index = ${indexOf("ch")}
+        internal actual fun getLetterType(code: Int): Int {
+            val index = ${indexOf("code")}
 
             val rangeStart = ${startAt("index")}
             val rangeEnd = rangeStart + ${lengthAt("index")} - 1
-            val code = ${categoryAt("index")}
+            val letterCode = ${categoryAt("index")}
 
-            if (ch > rangeEnd) {
+            if (code > rangeEnd) {
                 return 0
             }
 
-            val lastTwoBits = code and 0x3
+            val lastTwoBits = letterCode and 0x3
 
             if (lastTwoBits == 0) { // gap pattern
                 var shift = 2
                 var threshold = rangeStart
                 for (i in 0..1) {
-                    threshold += (code shr shift) and 0x${((1 shl GapRangePattern.CHARS_BITS) - 1).toString(16)}
-                    if (threshold > ch) {
+                    threshold += (letterCode shr shift) and 0x${((1 shl GapRangePattern.CHARS_BITS) - 1).toString(16)}
+                    if (threshold > code) {
                         return 3
                     }
                     shift += ${GapRangePattern.CHARS_BITS}
-                    threshold += (code shr shift) and 0x${((1 shl GapRangePattern.GAP_BITS) - 1).toString(16)}
-                    if (threshold > ch) {
+                    threshold += (letterCode shr shift) and 0x${((1 shl GapRangePattern.GAP_BITS) - 1).toString(16)}
+                    if (threshold > code) {
                         return 0
                     }
                     shift += ${GapRangePattern.GAP_BITS}
@@ -112,13 +90,13 @@ internal open class LetterRangesWriter(protected val strategy: RangesWritingStra
                 return 3
             }
 
-            if (code <= 0x7) {
+            if (letterCode <= 0x7) {
                 return lastTwoBits
             }
 
-            val distance = (ch - rangeStart)
-            val shift = if (code <= 0x1F) distance % 2 else distance
-            return (code shr (2 * shift)) and 0x3
+            val distance = (code - rangeStart)
+            val shift = if (letterCode <= 0x1F) distance % 2 else distance
+            return (letterCode shr (2 * shift)) and 0x3
         }
         """.trimIndent()
 

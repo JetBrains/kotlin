@@ -41,11 +41,11 @@ internal class OtherUppercaseRangesGenerator(
             if (i != 0) {
                 builder.appendLine().append(indent).append("|| ")
             }
-            builder.append(otherUpperRanges[i].rangeCheck("this", indent))
+            builder.append(otherUpperRanges[i].rangeCheck("code", indent))
         }
 
         return """
-        internal fun Int.isOtherUppercase(): Boolean {
+        internal actual fun isOtherUppercase(code: Int): Boolean {
             return $builder
         }
         """.trimIndent()
