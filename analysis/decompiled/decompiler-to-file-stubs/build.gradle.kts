@@ -21,7 +21,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 sourceSets {

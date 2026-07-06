@@ -167,8 +167,6 @@ dependencies {
     }
 
     testImplementation("org.jetbrains.kotlinx:atomicfu:0.25.0")
-
-    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 optInToExperimentalCompilerApi()

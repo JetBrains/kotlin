@@ -22,7 +22,6 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesApi(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 }
