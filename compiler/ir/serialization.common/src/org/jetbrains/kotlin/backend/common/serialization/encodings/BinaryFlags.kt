@@ -187,13 +187,6 @@ value class TypeAliasFlags(val flags: Long) {
     val isActual: Boolean get() = IrFlags.IS_ACTUAL.get(flags.toInt())
 
     companion object {
-        fun encode(typeAlias: IrTypeAlias): Long {
-            return typeAlias.run {
-                val visibility = ProtoEnumFlags.visibility(visibility.normalize().delegate)
-                IrFlags.getTypeAliasFlags(annotations.isNotEmpty(), visibility, isActual).toLong()
-            }
-        }
-
         fun decode(code: Long) = TypeAliasFlags(code)
     }
 }

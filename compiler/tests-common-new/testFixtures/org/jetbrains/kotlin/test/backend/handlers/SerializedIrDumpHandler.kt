@@ -216,6 +216,9 @@ open class SerializedIrDumpHandler(
                      * As a much simpler approach, fake overrides in local classes are not dumped both before and after serialization.
                      */
                     true
+                } else if (declaration is IrTypeAlias && !isAfterDeserialization) {
+                    /** KT-86632: Type aliases are not serialized into KLIBs. */
+                    true
                 } else {
                     false
                 }

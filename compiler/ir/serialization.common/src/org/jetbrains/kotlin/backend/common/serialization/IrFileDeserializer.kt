@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
@@ -39,7 +38,7 @@ abstract class IrFileDeserializer {
     abstract val declarationDeserializer: IrDeclarationDeserializer
     abstract val reversedSignatureIndex: Map<IdSignature, Int>
 
-    abstract fun deserializeDeclaration(idSig: IdSignature): IrDeclaration
+    abstract fun deserializeDeclaration(idSig: IdSignature): IrDeclaration?
 
     /**
      * Deserializes file-level annotations for the current [IrFile].
@@ -75,11 +74,11 @@ class IrFileDeserializerImpl(
     /** Once deserialized this property is set to `null`. */
     private var protoAnnotationsPendingDeserialization: List<ProtoAnnotation>? = fileProto.annotationList
 
-    override fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
-        return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig), file.startOffset).also {
-            // Type alias can be accidentally deserialized twice. We shouldn't add it into the declaration list for the second time.
-            // It would be better to avoid type alias deserialization all together, but we don't know that until we parse proto.
-            if (it is IrTypeAlias && file.declarations.contains(it)) return@also
+    override fun deserializeDeclaration(idSig: IdSignature): IrDeclaration? {
+        val proto = loadTopLevelDeclarationProto(idSig)
+        if (!declarationDeserializer.deserializeTypeAliases && proto.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_TYPE_ALIAS)
+            return null
+        return declarationDeserializer.deserializeDeclaration(proto, file.startOffset).also {
             file.declarations += it
         }
     }
@@ -237,10 +236,10 @@ class FileDeserializationStateImpl(
             val topLevelDeclarationSymbol = symbolDeserializer.deserializedSymbolsWithOwnersInCurrentFile[topLevelDeclarationSignature]
             if (topLevelDeclarationSymbol == null || !topLevelDeclarationSymbol.isBound) {
                 // Perform actual deserialization:
-                val topLevelDeclaration = fileDeserializer.deserializeDeclaration(topLevelDeclarationSignature)
-
-                // Enqueue the deserialized declaration to the PL engine for further processing.
-                linker.partialLinkageSupport.enqueueDeclaration(topLevelDeclaration)
+                fileDeserializer.deserializeDeclaration(topLevelDeclarationSignature)?.let {
+                    // Enqueue the deserialized declaration to the PL engine for further processing.
+                    linker.partialLinkageSupport.enqueueDeclaration(it)
+                }
             }
 
             // Remove it from the queue:

@@ -99,7 +99,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBodyKi
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow as ProtoThrow
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTry as ProtoTry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias as ProtoTypeAlias
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp as ProtoTypeOp
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOperator as ProtoTypeOperator
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter as ProtoTypeParameter
@@ -1520,19 +1519,6 @@ open class IrFileSerializer(
             underlyingPropertyType = serializeIrType(representation.underlyingType)
         }.build()
 
-    private fun serializeIrTypeAlias(typeAlias: IrTypeAlias, parent: IrElement?): ProtoTypeAlias {
-        val proto = ProtoTypeAlias.newBuilder()
-
-        proto.setBase(serializeIrDeclarationBase(typeAlias, parent, TypeAliasFlags.encode(typeAlias))).nameType =
-            serializeNameAndType(typeAlias.name, typeAlias.expandedType)
-
-        typeAlias.typeParameters.forEach {
-            proto.addTypeParameter(serializeIrTypeParameter(it, typeAlias))
-        }
-
-        return proto.build()
-    }
-
     private fun serializeIrEnumEntry(enumEntry: IrEnumEntry, parent: IrElement?): ProtoEnumEntry {
         val proto = ProtoEnumEntry.newBuilder()
             .setBase(serializeIrDeclarationBase(enumEntry, parent, null))
@@ -1573,10 +1559,8 @@ open class IrFileSerializer(
                 proto.irProperty = serializeIrProperty(declaration, parent)
             is IrLocalDelegatedProperty ->
                 proto.irLocalDelegatedProperty = serializeIrLocalDelegatedProperty(declaration, parent)
-            is IrTypeAlias ->
-                proto.irTypeAlias = serializeIrTypeAlias(declaration, parent)
             else ->
-                TODO("Declaration serialization not supported yet: $declaration")
+                error("Serialization of ${declaration::class.java} is not supported: $declaration")
         }
 
         return proto.build()
@@ -1654,12 +1638,13 @@ open class IrFileSerializer(
         settings.publicAbiOnly
                 && !isInsideInline
                 && (declaration as? IrDeclarationWithVisibility)?.let { !it.visibility.isPublicAPI && it.visibility != INTERNAL } == true
-                // Always keep private interfaces and type aliases as they can be part of public type hierarchies.
-                && (declaration as? IrClass)?.isInterface != true && declaration !is IrTypeAlias
+                // Always keep private interfaces as they can be part of public type hierarchies.
+                && (declaration as? IrClass)?.isInterface != true
 
     open fun memberNeedsSerialization(member: IrDeclaration): Boolean {
         val parent = member.parent
         require(parent is IrClass)
+        if (member is IrTypeAlias) return false
         if (backendSpecificSerializeAllMembers(parent)) return true
         if (settings.bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != DescriptorVisibilities.LOCAL)
             return false
@@ -1674,6 +1659,7 @@ open class IrFileSerializer(
 
         if (backendSpecificExplicitRoot(file)) {
             for (declaration in file.declarations) {
+                if (declaration is IrTypeAlias) continue
                 if (backendSpecificExplicitRootExclusion(declaration)) continue
                 proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
             }
@@ -1727,6 +1713,10 @@ open class IrFileSerializer(
             .addAllAnnotation(serializeAnnotations(file.annotations, file))
 
         file.declarations.forEach {
+            if (it is IrTypeAlias) {
+                // KT-86632: Type aliases are not serialized into klibs.
+                return@forEach
+            }
             if (skipIfPrivate(it)) {
                 // Skip the declaration if producing header klib and the declaration is not public.
                 return@forEach

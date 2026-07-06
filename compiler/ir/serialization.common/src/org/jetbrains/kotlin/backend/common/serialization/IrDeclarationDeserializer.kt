@@ -383,6 +383,7 @@ class IrDeclarationDeserializer(
                     val oldDeclarations = declarations.toSet()
                     proto.declarationList
                         .asSequence()
+                        .filterNot { !settings.deserializeTypeAliases && it.declaratorCase == IR_TYPE_ALIAS }
                         .filterNot { isSkippedFakeOverride(it, this) }
                         // On JVM, deserialization may fill bodies of existing declarations, so avoid adding duplicates.
                         .mapNotNullTo(declarations) { declProto -> deserializeDeclaration(declProto, startOffset).takeIf { it !in oldDeclarations } }
@@ -415,6 +416,8 @@ class IrDeclarationDeserializer(
         val ctor = irClass.primaryConstructor ?: error("Full value class has no primary constructor: ${irClass.render()}")
         return FullValueClassRepresentation(ctor.parameters.map { it.name to it.type as IrSimpleType })
     }
+
+    internal val deserializeTypeAliases: Boolean get() = settings.deserializeTypeAliases
 
     private fun deserializeIrTypeAlias(proto: ProtoTypeAlias, parentStart: Int?): IrTypeAlias =
         withDeserializedIrDeclarationBase(proto.base, parentStart, setParent = false) { symbol, uniqId, startOffset, endOffset, origin, fcode ->

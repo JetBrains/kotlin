@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.ir.types.IrType
  * @property fixSwappedKProperty2TypeParameterOrder If `true`, the type parameter order of `KProperty2`/`KMutableProperty2`
  *   in deserialized property references is swapped to compensate for the legacy order that was used in KLIBs
  *   compiled with Kotlin <= 2.1 (ABI version <= 1.201.0). See KT-75112, KT-86180.
+ * @property deserializeTypeAliases Whether to deserialize [org.jetbrains.kotlin.ir.declarations.IrTypeAlias] declarations.
+ *   Type aliases don't need to be (de)serialized anymore. See KT-86632.
+ *   The only case for enabling it is the klib tool and its ability to dump (even older) KLIBs.
  */
 class IrDeserializationSettings(
     val allowErrorNodes: Boolean = false,
@@ -37,6 +40,7 @@ class IrDeserializationSettings(
     val deserializeFunctionBodies: DeserializeFunctionBodies = DeserializeFunctionBodies.ALL,
     val nullableAnyAsAnnotationConstructorCallType: IrType? = null,
     val fixSwappedKProperty2TypeParameterOrder: Boolean = false,
+    val deserializeTypeAliases: Boolean = false,
 ) {
     enum class DeserializeFunctionBodies { ALL, ONLY_INLINE, NONE }
 }

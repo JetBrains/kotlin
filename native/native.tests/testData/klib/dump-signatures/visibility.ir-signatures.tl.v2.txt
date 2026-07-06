@@ -1,9 +1,8 @@
-// Declared signatures: 25
+// Declared signatures: 23
 visibility/InternalClass|null[0]
 visibility/InternalPAClassInternalMembers|null[0]
 visibility/InternalPAClassInternalPAMembers|null[0]
 visibility/InternalPAClass|null[0]
-visibility/InternalTypeAlias|null[0]
 visibility/PublicAbstractClassProtectedMembers|null[0]
 visibility/PublicClassInternalMembers|null[0]
 visibility/PublicClassInternalPAMembers|null[0]
@@ -11,7 +10,6 @@ visibility/PublicClassPrivateMembers|null[0]
 visibility/PublicClassProtectedMembers|null[0]
 visibility/PublicClass|null[0]
 visibility/PublicOpenClassProtectedMembers|null[0]
-visibility/PublicTypeAlias|null[0]
 visibility/internalFun|internalFun(){}[0]
 visibility/internalPAFun|internalPAFun(){}[0]
 visibility/internalPAVal|{}internalPAVal[0]
