@@ -1,5 +1,9 @@
 ## 2.4.10-RC2
 
+### Backend. Wasm
+
+- [`KT-87066`](https://youtrack.jetbrains.com/issue/KT-87066) K/Wasm: Not all files are presented in compiler output directory with multimodule-closed-world and incremental compilation
+
 ### Tools. Gradle. BCV
 
 - [`KT-87223`](https://youtrack.jetbrains.com/issue/KT-87223) Gradle, BCV: open version range in kotlinAbiValidationCompatClasspath causes kotlin-build-tools-impl to resolve to 2.4.20-Beta1 instead of 2.4.0
