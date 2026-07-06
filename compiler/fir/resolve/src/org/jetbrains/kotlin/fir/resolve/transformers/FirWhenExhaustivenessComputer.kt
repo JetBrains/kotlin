@@ -499,12 +499,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 else -> return
             }
             val argument = equalityOperatorCall.arguments[1].unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
-            val firClass = (argument.qualifierSymbol as? FirRegularClassSymbol)?.fir
-            val symbol = if (firClass?.classKind == ClassKind.OBJECT) {
-                firClass.symbol
-            } else {
-                firClass?.companionObjectSymbol
-            } ?: return
+            val symbol = argument.accessedObjectSymbol ?: return
 
             processBranch(symbol, isNegated, data)
         }
