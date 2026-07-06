@@ -19,7 +19,7 @@ data object I : H, F
 fun check(a: A) {
     require(a is D || a is H)
 
-    when (a) {
+    <!NO_ELSE_IN_WHEN!>when<!> (a) {
         is E -> println("E")
         is F -> println("F")
 
@@ -38,7 +38,7 @@ fun check(a: A) {
 
 fun checkTraversalAcrossParallelSealedPath(a: A) {
     when (a) {
-        is D -> when (a) {
+        is D -> <!NO_ELSE_IN_WHEN!>when<!> (a) {
             is E -> {}
             // Must be `is I`
         }
