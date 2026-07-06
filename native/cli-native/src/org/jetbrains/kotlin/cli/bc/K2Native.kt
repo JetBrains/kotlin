@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticC
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
@@ -204,7 +205,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             // - intermediate Klib is compiled to binary by K2/Native backend
             if (isOneStageCompilation(arguments)) {
                 val intermediateKlib = createIntermediateKlib()
-                val klibArgs = prepareKlibArgumentsForOneStage(arguments, intermediateKlib.canonicalPath)
+                val klibArgs = prepareKlibArgumentsForOneStage(arguments, intermediateKlib.canonicalPathString())
                 val klibCompilationExitCode = doExecutePhasedKlibCompilation(
                     klibArgs, Services.EMPTY, @OptIn(MessageCollectorAccess::class) configuration.messageCollector,
                     isOneStageCompilation = true

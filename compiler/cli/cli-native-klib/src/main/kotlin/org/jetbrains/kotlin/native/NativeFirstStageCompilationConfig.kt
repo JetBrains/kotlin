@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.konan.config.konanManifestAddend
 import org.jetbrains.kotlin.konan.config.konanTarget
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.util.Properties
 import kotlin.io.path.Path
+import kotlin.io.path.name
 
 class NativeFirstStageCompilationConfig(
     override val configuration: CompilerConfiguration,
@@ -34,7 +34,7 @@ class NativeFirstStageCompilationConfig(
 ) : NativeCompilationConfig {
 
     override val moduleId: String
-        get() = configuration.moduleName ?: File(outputPath).name
+        get() = configuration.moduleName ?: Path(outputPath).name
 
     override val manifestProperties: Properties?
         get() = configuration.konanManifestAddend?.let {
