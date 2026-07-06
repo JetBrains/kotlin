@@ -69,7 +69,6 @@ abstract class AbstractWasmJsCodegenSingleModuleTestBase(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
-        builder.configureCodegenIrHandlerSteps()
         builder.enableByConfigurationKey(WASM_INCLUDED_MODULE_ONLY)
     }
 }

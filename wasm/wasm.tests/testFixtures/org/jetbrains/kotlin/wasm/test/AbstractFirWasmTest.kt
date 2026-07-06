@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
@@ -55,6 +56,9 @@ fun TestConfigurationBuilder.configureCodegenFirHandlerSteps() {
 
 fun TestConfigurationBuilder.configureCodegenIrHandlerSteps() {
     configureIrHandlersStep {
+        commonIrHandlersForCodegenTest()
+    }
+    configureLoweredIrHandlersStep {
         commonIrHandlersForCodegenTest()
     }
 }
@@ -194,7 +198,6 @@ open class AbstractFirWasmWasiCodegenBoxTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
-        builder.configureCodegenIrHandlerSteps()
     }
 }
 
