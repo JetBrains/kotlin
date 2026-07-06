@@ -10,15 +10,17 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 class WasmTailrecCheckerLowering<Context : LoweringContext>(context: Context): TailrecCheckerLowering<Context>(context) {
-    // Similar to WasmTailrecLowering
+    // WasmTailrecLowering has a condition `reference.origin == IrStatementOrigin.LAMBDA`, however here it would break the following tests:
+    // - recursiveCallInInlineLambda.kt
+    // - recursiveCallInInlineLambdaWithCapture
+    // TODO: KT-83995: investigate why "lambda origin" is needed in WasmTailrecLowering, when it would break tests
     override fun followRichFunctionReference(reference: IrRichFunctionReference): Boolean =
-        reference.origin == IrStatementOrigin.LAMBDA
+        false//
 }
 
 open class TailrecCheckerLowering<Context : LoweringContext>(val context: Context) : ModuleLoweringPass {
