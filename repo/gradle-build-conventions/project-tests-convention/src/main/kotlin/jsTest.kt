@@ -6,7 +6,6 @@
 import com.github.gradle.node.NodeExtension
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.build.d8.D8Extension
 
@@ -32,11 +31,6 @@ fun ProjectTestsExtension.jsTestTask(
 
     with(project.the<D8Extension>()) {
         setupV8()
-    }
-
-    jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(project.rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
-        property.set("javascript.engine.path.repl")
     }
 
     val node = project.the<NodeExtension>()
