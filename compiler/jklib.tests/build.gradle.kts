@@ -15,10 +15,18 @@ dependencies {
     testFixturesImplementation(project(":compiler:ir.serialization.jklib"))
 
     testFixturesApi("org.junit.jupiter:junit-jupiter")
+
+    testImplementation(project(":compiler:cli-jklib"))
+    testImplementation(project(":compiler:cli-jvm"))
+    testImplementation(testFixtures(project(":compiler:tests-integration")))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 sourceSets {
     "main" { }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 

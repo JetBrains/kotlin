@@ -214,6 +214,11 @@ public class ForTestCompileRuntime {
         return getFileFromProperty(KOTLIN_JS_STDLIB_KLIB_PATH);
     }
 
+    @NotNull
+    public static File jklibStdlibForTests() {
+        return getFileFromProperty(KOTLIN_JKLIB_STDLIB_PATH);
+    }
+
     public static File stdlibWebForTests() {
         return getFileFromProperty(KOTLIN_WEB_STDLIB_KLIB_PATH);
     }
