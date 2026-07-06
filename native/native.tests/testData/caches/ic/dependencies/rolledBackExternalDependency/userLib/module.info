@@ -1,0 +1,17 @@
+STEP 0:
+    dependencies: externalLib
+    modifications:
+        U : file1.kt -> file1.kt
+        U : file2.kt -> file2.kt
+    added cache: file1.kt, file2.kt
+
+STEP 1:
+    dependencies: externalLib
+    modified cache: file1.kt, file2.kt
+
+// KT-87194: the external library is rolled back to a version whose auto-cache already exists,
+// so the library files themselves don't change, but the caches still must be rebuilt:
+// file2.kt has the body of the external inline function baked in.
+STEP 2:
+    dependencies: externalLib
+    modified cache: file1.kt, file2.kt
