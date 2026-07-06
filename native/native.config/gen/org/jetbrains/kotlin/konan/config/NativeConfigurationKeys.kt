@@ -86,6 +86,10 @@ object NativeConfigurationKeys {
     @JvmField
     val MAKE_PER_FILE_CACHE = CompilerConfigurationKey.create<Boolean>("MAKE_PER_FILE_CACHE")
 
+    // Combined fingerprint of external cached dependencies of the library being cached.
+    @JvmField
+    val CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT = CompilerConfigurationKey.create<String>("CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT")
+
     @JvmField
     val FRAMEWORK_IMPORT_HEADERS = CompilerConfigurationKey.create<List<String>>("FRAMEWORK_IMPORT_HEADERS")
 
@@ -351,6 +355,10 @@ var CompilerConfiguration.filesToCache: List<String>
 var CompilerConfiguration.makePerFileCache: Boolean
     get() = getBoolean(NativeConfigurationKeys.MAKE_PER_FILE_CACHE)
     set(value) { put(NativeConfigurationKeys.MAKE_PER_FILE_CACHE, value) }
+
+var CompilerConfiguration.cachedLibraryDependenciesFingerprint: String?
+    get() = get(NativeConfigurationKeys.CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT)
+    set(value) { put(NativeConfigurationKeys.CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.frameworkImportHeaders: List<String>
     get() = getList(NativeConfigurationKeys.FRAMEWORK_IMPORT_HEADERS)

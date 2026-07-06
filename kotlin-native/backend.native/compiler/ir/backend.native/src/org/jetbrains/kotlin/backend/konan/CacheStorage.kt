@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.konan.serialization.CacheMetadata
 import org.jetbrains.kotlin.backend.konan.serialization.CacheMetadataSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyRefere
 import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersSerializer
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.runtimeFingerprint
+import org.jetbrains.kotlin.konan.config.cachedLibraryDependenciesFingerprint
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.javaFile
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -31,6 +33,7 @@ private fun NativeGenerationState.generateCacheMetadata(): CacheMetadata {
             target = config.target,
             compilerFingerprint = config.distribution.compilerFingerprint,
             runtimeFingerprint = runtimeFingerprint,
+            dependenciesFingerprint = config.configuration.cachedLibraryDependenciesFingerprint?.let { FingerprintHash.fromString(it) },
     )
 }
 

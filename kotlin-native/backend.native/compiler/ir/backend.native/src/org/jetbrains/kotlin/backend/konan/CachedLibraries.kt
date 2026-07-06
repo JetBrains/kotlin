@@ -283,6 +283,17 @@ class CachedLibraries(
                     hashComputer.digest()
                 }
 
+        fun computeDependenciesFingerprint(
+                dependencies: List<KotlinLibrary>,
+                librariesHashes: MutableMap<String, FingerprintHash>,
+        ): FingerprintHash {
+            val hashComputer = LibraryHashComputer()
+            dependencies.sortedBy { it.uniqueName }.forEach {
+                hashComputer.update(computeLibraryHash(it, librariesHashes))
+            }
+            return hashComputer.digest()
+        }
+
         fun computeLibraryCacheDirectory(
                 baseCacheDirectory: File,
                 library: KotlinLibrary,
@@ -290,14 +301,8 @@ class CachedLibraries(
                 librariesHashes: MutableMap<String, FingerprintHash>,
         ): File {
             val dependencies = library.getAllTransitiveDependencies(allLibraries)
-            val hashComputer = LibraryHashComputer()
-            hashComputer.update(computeLibraryHash(library, librariesHashes))
-            dependencies.sortedBy { it.uniqueName }.forEach {
-                hashComputer.update(computeLibraryHash(it, librariesHashes))
-            }
-
-            val hashString = hashComputer.digest().toString()
-            return baseCacheDirectory.child(library.uniqueName).child(hashString)
+            val fingerprintHash = computeDependenciesFingerprint(listOf(library) + dependencies, librariesHashes)
+            return baseCacheDirectory.child(library.uniqueName).child(fingerprintHash.toString())
         }
 
         const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"
