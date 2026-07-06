@@ -7,6 +7,7 @@ package kotlin.js
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.boxedLong.BoxedLongApi
+import kotlin.reflect.KFunction
 
 internal external interface Ctor {
     var Symbol: dynamic
@@ -52,7 +53,7 @@ internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
 
     if (objTypeOf == "function") {
         @Suppress("DEPRECATED_IDENTITY_EQUALS")
-        return obj.`$arity`.unsafeCast<Int>() === arity
+        return obj.`$suspendArity`.unsafeCast<Int>() === arity
     }
 
     val suspendArity = obj?.constructor.unsafeCast<Ctor?>()?.`$metadata$`?.suspendArity ?: return false
@@ -66,6 +67,18 @@ internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
         }
     }
     return result
+}
+
+@UsedFromCompilerGeneratedCode
+internal fun isKFunctionN(obj: dynamic, expectedArity: Int): Boolean {
+    return isInterface(obj, KFunction::class.js) &&
+            (expectedArity >= obj.`$minimalArity`.unsafeCast<Int>() && expectedArity <= obj.`$arity`.unsafeCast<Int>())
+}
+
+@UsedFromCompilerGeneratedCode
+internal fun isFunctionN(obj: dynamic, expectedArity: Int): Boolean {
+    val actualArity = obj.`$arity` ?: obj.length
+    return js("typeof obj === 'function'") && actualArity === expectedArity
 }
 
 internal fun isJsArray(obj: Any): Boolean {

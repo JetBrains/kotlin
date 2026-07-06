@@ -7,6 +7,7 @@ package kotlin.js
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.internal.throwUnsupportedOperationException
+import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
 
 @UsedFromCompilerGeneratedCode
@@ -21,6 +22,9 @@ internal fun getPropertyCallableRef(
     getter.get = getter
     getter.set = setter
     getter.callableName = name
+
+    // Since KProperty is not KFunction
+    getter[KFunction::class.js.asDynamic().Symbol] = false
 
     return getPropertyRefClass(
         getter,
@@ -64,19 +68,42 @@ private val propertyRefClassMetadataCache: Array<Array<dynamic>> = arrayOf<Array
     arrayOf<dynamic>(metadataObject(), metadataObject())  // 2
 )
 
+@OptIn(JsIntrinsic::class)
 @UsedFromCompilerGeneratedCode
 internal fun constructCallableReference(
     callable: dynamic,
     arity: Int,
-    flags: Int?,
+    minimalArity: Int,
+    flags: dynamic,
     signatureId: Any?,
     name: String?,
     bounds: Array<Any>?
 ): dynamic {
     callable.callableName = name
     callable.`$flags` = flags
-    callable.`$arity` = arity
     callable.`$id` = signatureId
     callable.`$bound` = bounds
+    callable.`$minimalArity` = minimalArity
+
+    // We also use `constructCallableReference` for setting $arity of suspend lambdas
+    // (while they are not implementing KFunction)
+    // So that, to not accidentally make them KFunction we check if signatureId is provided
+    val isKFunction = signatureId !== VOID
+
+    if (isKFunction) {
+        val kFunctionClass = KFunction::class.js
+        callable[kFunctionClass.asDynamic().Symbol] = true
+        js("Object.assign(callable, kFunctionClass.prototype)")
+    }
+
+    // It's either a suspend lambda or a suspend function KFunction
+    if (!isKFunction || jsBitAnd(flags, 1) === 1) {
+        // Extracting continuation from the arity
+        callable.`$arity` = arity + 1
+        callable.`$suspendArity` = arity
+    } else {
+        callable.`$arity` = arity
+    }
+
     return callable
 }

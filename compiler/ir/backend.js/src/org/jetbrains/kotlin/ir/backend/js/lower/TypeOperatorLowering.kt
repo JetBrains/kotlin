@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -60,6 +62,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val isInterfaceSymbol get() = context.symbols.isInterfaceSymbol
     private val isArraySymbol get() = context.symbols.isArraySymbol
     private val isSuspendFunctionSymbol = context.symbols.isSuspendFunctionSymbol
+    private val isFunctionNSymbol = context.symbols.isFunctionNSymbol
+    private val isKFunctionNSymbol = context.symbols.isKFunctionNSymbol
 
     //    private val isCharSymbol get() = context.symbols.isCharSymbol
 
@@ -172,7 +176,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                         type.isDouble() ||
                         (type.isLong() && context.configuration.compileLongAsBigint) ||
                         type.isBoolean() ||
-                        type.isFunctionOrKFunction() ||
+                        type.isFunction() ||
                         type.isString()
 
             fun lowerInstanceOf(
@@ -268,7 +272,9 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     toType is IrDynamicType -> argument
                     toType.isAny() -> generateIsObjectCheck(argument)
                     toType.isNothing() -> JsIrBuilder.buildComposite(context.irBuiltIns.booleanType, listOf(argument, litFalse))
-                    toType.isSuspendFunction() -> generateSuspendFunctionCheck(argument, toType)
+                    toType.isSuspendFunction() -> generateCheckForFunctionType(isSuspendFunctionSymbol, argument, toType)
+                    toType.isNumberedFunction() -> generateCheckForFunctionType(isFunctionNSymbol, argument, toType)
+                    toType.isNumberedKFunction() -> generateCheckForFunctionType(isKFunctionNSymbol, argument, toType)
                     isTypeOfCheckingType(toType) -> generateTypeOfCheck(argument, toType)
 //                    toType.isChar() -> generateCheckForChar(argument)
                     toType.isNumber() -> generateNumberCheck(argument)
@@ -324,11 +330,15 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 //            private fun generateCheckForChar(argument: IrExpression) =
 //                JsIrBuilder.buildCall(isCharSymbol).apply { dispatchReceiver = argument }
 
-            private fun generateSuspendFunctionCheck(argument: IrExpression, toType: IrType): IrExpression {
-                val arity = (toType.classifierOrFail.owner as IrClass).typeParameters.size - 1 // drop return type
+            private fun generateCheckForFunctionType(
+                predicateSymbol: IrSimpleFunctionSymbol,
+                argument: IrExpression,
+                functionalType: IrType,
+            ): IrCall {
+                val arity = (functionalType.classifierOrFail.owner as IrClass).typeParameters.size - 1 // drop return type
 
                 val irBuiltIns = context.irBuiltIns
-                return JsIrBuilder.buildCall(isSuspendFunctionSymbol, irBuiltIns.booleanType).apply {
+                return JsIrBuilder.buildCall(predicateSymbol, irBuiltIns.booleanType).apply {
                     arguments[0] = argument
                     arguments[1] = JsIrBuilder.buildInt(irBuiltIns.intType, arity)
                 }
@@ -336,7 +346,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
             private fun generateTypeOfCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val marker = when {
-                    toType.isFunctionOrKFunction() -> functionMarker
+                    toType.isFunction() -> functionMarker
                     toType.isBoolean() -> booleanMarker
                     toType.isString() -> stringMarker
                     toType.isLong() -> bigintMarker
