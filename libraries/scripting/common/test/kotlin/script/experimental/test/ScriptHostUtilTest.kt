@@ -10,55 +10,95 @@
 
 package kotlin.script.experimental.test
 
-import junit.framework.TestCase
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Named
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.host.toScriptSource
 
-@RunWith(Parameterized::class)
-class ScriptHostUtilTest : TestCase() {
-
-    @Parameterized.Parameter(0)
-    lateinit var testName: String
-
-    @Parameterized.Parameter(1)
-    lateinit var params: MergedScriptTextTestParams
+class ScriptHostUtilTest {
 
     companion object {
-        @Parameterized.Parameters(name = "{0}")
         @JvmStatic
-        fun parameters(): List<Array<Any>> = listOf(
-            arrayOf("first and last fragments included", MergedScriptTextTestParams(listOf(0, 2))),
-            arrayOf("first fragment is included and last is excluded", MergedScriptTextTestParams(listOf(0, 1))),
-            arrayOf("first fragment is excluded and last is included", MergedScriptTextTestParams(listOf(1, 2))),
-            arrayOf("first and last fragments are excluded", MergedScriptTextTestParams(listOf(1))),
+        fun parameters() = listOf(
+            Arguments.of(Named.of("first and last fragments included", MergedScriptTextTestParams(listOf(0, 2)))),
+            Arguments.of(Named.of("first fragment is included and last is excluded", MergedScriptTextTestParams(listOf(0, 1)))),
+            Arguments.of(Named.of("first fragment is excluded and last is included", MergedScriptTextTestParams(listOf(1, 2)))),
+            Arguments.of(Named.of("first and last fragments are excluded", MergedScriptTextTestParams(listOf(1)))),
 
-            arrayOf("first and last fragments included, random char pool", MergedScriptTextTestParams(listOf(0, 2), randomCharPool = true)),
-            arrayOf(
-                "first fragment is included and last is excluded, random char pool",
-                MergedScriptTextTestParams(listOf(0, 1), randomCharPool = true)
+            Arguments.of(
+                Named.of(
+                    "first and last fragments included, random char pool",
+                    MergedScriptTextTestParams(listOf(0, 2), randomCharPool = true)
+                )
             ),
-            arrayOf(
-                "first fragment is excluded and last is included, random char pool",
-                MergedScriptTextTestParams(listOf(1, 2), randomCharPool = true)
+            Arguments.of(
+                Named.of(
+                    "first fragment is included and last is excluded, random char pool",
+                    MergedScriptTextTestParams(listOf(0, 1), randomCharPool = true)
+                )
             ),
-            arrayOf(
-                "first and last fragments are excluded, random char pool",
-                MergedScriptTextTestParams(listOf(1), randomCharPool = true)
+            Arguments.of(
+                Named.of(
+                    "first fragment is excluded and last is included, random char pool",
+                    MergedScriptTextTestParams(listOf(1, 2), randomCharPool = true)
+                )
+            ),
+            Arguments.of(
+                Named.of(
+                    "first and last fragments are excluded, random char pool",
+                    MergedScriptTextTestParams(listOf(1), randomCharPool = true)
+                )
             ),
 
-            arrayOf("first and last fragments included, with multiple lines", MergedScriptTextTestParams(listOf(0, 2), "a\nb\nc")),
-            arrayOf("first included, last excluded, with multiple lines", MergedScriptTextTestParams(listOf(0, 1), "a\nb\nc")),
-            arrayOf("first excluded, last included, with multiple lines", MergedScriptTextTestParams(listOf(1, 2), "a\nb\nc")),
-            arrayOf("first and last fragments are excluded, with multiple lines", MergedScriptTextTestParams(listOf(1), "a\nb\nc")),
+            Arguments.of(
+                Named.of(
+                    "first and last fragments included, with multiple lines",
+                    MergedScriptTextTestParams(listOf(0, 2), "a\nb\nc")
+                )
+            ),
+            Arguments.of(
+                Named.of(
+                    "first included, last excluded, with multiple lines",
+                    MergedScriptTextTestParams(listOf(0, 1), "a\nb\nc")
+                )
+            ),
+            Arguments.of(
+                Named.of(
+                    "first excluded, last included, with multiple lines",
+                    MergedScriptTextTestParams(listOf(1, 2), "a\nb\nc")
+                )
+            ),
+            Arguments.of(
+                Named.of(
+                    "first and last fragments are excluded, with multiple lines",
+                    MergedScriptTextTestParams(listOf(1), "a\nb\nc")
+                )
+            ),
 
-            arrayOf("first and last fragments included, duplicate fragments", MergedScriptTextTestParams(listOf(0, 2), "aaa")),
-            arrayOf("first included, last excluded, duplicate fragments", MergedScriptTextTestParams(listOf(0, 1), "aaa")),
-            arrayOf("first is excluded,last is included, duplicate fragments", MergedScriptTextTestParams(listOf(1, 2), "aaa")),
-            arrayOf("first and last fragments are excluded, duplicate fragments", MergedScriptTextTestParams(listOf(1), "aaa")),
+            Arguments.of(
+                Named.of(
+                    "first and last fragments included, duplicate fragments",
+                    MergedScriptTextTestParams(listOf(0, 2), "aaa")
+                )
+            ),
+            Arguments.of(Named.of("first included, last excluded, duplicate fragments", MergedScriptTextTestParams(listOf(0, 1), "aaa"))),
+            Arguments.of(
+                Named.of(
+                    "first is excluded,last is included, duplicate fragments",
+                    MergedScriptTextTestParams(listOf(1, 2), "aaa")
+                )
+            ),
+            Arguments.of(
+                Named.of(
+                    "first and last fragments are excluded, duplicate fragments",
+                    MergedScriptTextTestParams(listOf(1), "aaa")
+                )
+            ),
         )
     }
 
@@ -66,7 +106,7 @@ class ScriptHostUtilTest : TestCase() {
     data class MergedScriptTextTestParams(
         val fragmentsToInclude: List<Int>,
         val intiCharPool: CharSequence = "abc",
-        val randomCharPool: Boolean = false
+        val randomCharPool: Boolean = false,
     )
 
     class FragmentedText {
@@ -82,7 +122,7 @@ class ScriptHostUtilTest : TestCase() {
 
         data class TextFragment(
             val text: String,
-            val textRange: SourceCode.Range
+            val textRange: SourceCode.Range,
         ) {
             fun toScriptSourceNamedFragment(index: Int) = ScriptSourceNamedFragment("fragment$index", textRange)
         }
@@ -111,9 +151,9 @@ class ScriptHostUtilTest : TestCase() {
         }
     }
 
-    @Test
-    fun `test `() {
-
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("parameters")
+    fun `test `(params: MergedScriptTextTestParams) {
         val fragmentedText = initFragmentedScript(params.intiCharPool, params.randomCharPool)
         val textFragments = fragmentedText.fragments()
         val includedFragments = params.fragmentsToInclude.map(textFragments::get)
@@ -142,7 +182,7 @@ class ScriptHostUtilTest : TestCase() {
     private fun initFragmentedScript(
         charSeq: CharSequence = "abc",
         randomCharPool: Boolean,
-        lines: Int = charSeq.length
+        lines: Int = charSeq.length,
     ): FragmentedText {
         val generateFragment: FragmentedText.(Int) -> FragmentedText = when {
             randomCharPool -> { _ -> addRandomFragment() }
@@ -159,15 +199,15 @@ class ScriptHostUtilTest : TestCase() {
 
     private fun runValidations(originalText: String, mergedText: String, includedFragments: List<FragmentedText.TextFragment>) {
         // Check that line count is the same
-        assertEquals("Line count differ.", originalText.lines().count(), mergedText.lines().count())
+        assertEquals(originalText.lines().count(), mergedText.lines().count(), "Line count differ.")
         // Check that char count is the same
-        assertEquals("Char count differ.", originalText.length, mergedText.length)
+        assertEquals(originalText.length, mergedText.length, "Char count differ.")
         includedFragments.forEach {
             // Check that every included fragment is included in correct position
             assertEquals(
-                "Incorrect fragment in position.",
                 it.text,
-                mergedText.substring(it.textRange.start.absolutePos!!, it.textRange.end.absolutePos!! - 1)
+                mergedText.substring(it.textRange.start.absolutePos!!, it.textRange.end.absolutePos!! - 1),
+                "Incorrect fragment in position."
             )
         }
         // Check that after removing included fragments there are only whitespaces
@@ -180,11 +220,10 @@ class ScriptHostUtilTest : TestCase() {
             )
         }.also {
             assertTrue(
-                "Either incorrect fragment was included OR excluded fragments were not cleaned properly.",
-                it.matches("\\s*".toRegex())
+                it.matches("\\s*".toRegex()),
+                "Either incorrect fragment was included OR excluded fragments were not cleaned properly."
             )
         }
     }
 
 }
-

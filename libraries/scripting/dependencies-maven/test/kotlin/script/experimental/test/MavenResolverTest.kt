@@ -6,8 +6,10 @@
 package kotlin.script.experimental.test
 
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
-import org.junit.Ignore
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import java.io.File
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
@@ -39,11 +41,11 @@ class MavenResolverTest : ResolversTestBase() {
         val resolver = MavenDependenciesResolver()
         val result = runBlocking { resolver.resolve(coordinates, options) }
         if (result is ResultWithDiagnostics.Failure) {
-            Assert.fail(result.reports.joinToString("\n") { it.exception?.toString() ?: it.message })
+            fail(result.reports.joinToString("\n") { it.exception?.toString() ?: it.message })
         }
         val files = result.valueOrThrow()
         if (!checkBody(files)) {
-            Assert.fail("Unexpected resolving results:\n  ${files.joinToString("\n  ")}")
+            fail("Unexpected resolving results:\n  ${files.joinToString("\n  ")}")
         }
         return files
     }
@@ -58,17 +60,20 @@ class MavenResolverTest : ResolversTestBase() {
 
     private val resolvedKotlinVersion = "1.5.31"
 
+    @Test
     fun testDefaultSettings() {
         val settings = createMavenSettings()
         assertNotNull(settings.localRepository)
     }
 
+    @Test
     fun testResolveSimple() {
         resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:$resolvedKotlinVersion") { files ->
             files.any { it.name.startsWith("kotlin-annotations-jvm") }
         }
     }
 
+    @Test
     fun testResolveWithRuntime() {
         // Need a minimal library with an extra runtime dependency
         val lib = "org.jetbrains.kotlin:kotlin-util-io:$resolvedKotlinVersion"
@@ -76,13 +81,14 @@ class MavenResolverTest : ResolversTestBase() {
         val compileRuntimeFiles = resolveAndCheck(lib, buildOptions(DependenciesResolverOptionsName.SCOPE to "compile,runtime"))
 
         assertTrue(
+            compileOnlyFiles.count() < compileRuntimeFiles.count(),
             "Compile only dependencies count should be less than compile + runtime\n" +
                     "${compileOnlyFiles.joinToString(prefix = "Compile dependencies:\n\t", separator = "\n\t")}\n" +
                     compileRuntimeFiles.joinToString(prefix = "Compile + Runtime dependencies:\n\t", separator = "\n\t"),
-            compileOnlyFiles.count() < compileRuntimeFiles.count()
         )
     }
 
+    @Test
     fun testTransitiveOption() {
         val dependency = "junit:junit:4.11"
 
@@ -107,6 +113,7 @@ class MavenResolverTest : ResolversTestBase() {
         assertEquals("jar", artifact.extension)
     }
 
+    @Test
     fun testDeepTransitive() {
         // The test tries to ensure that transitive dependencies beyond the immediate ones are resolved
         // It was discovered (see KT-76424) that updating org.apache.maven:maven-core beyond v3.8.8
@@ -125,9 +132,10 @@ class MavenResolverTest : ResolversTestBase() {
 
         val tCount = transitiveFiles.count()
 
-        assertTrue("expected at least $expectedThreshold artefacts, got $tCount", tCount > expectedThreshold)
+        assertTrue(tCount > expectedThreshold, "expected at least $expectedThreshold artefacts, got $tCount")
     }
 
+    @Test
     fun testSourcesResolution() {
         resolveAndCheck("junit:junit:4.11", options = parseOptions("classifier=sources extension=jar")) { files ->
             assertEquals(2, files.count())
@@ -138,10 +146,12 @@ class MavenResolverTest : ResolversTestBase() {
         }
     }
 
+    @Test
     fun testResolveVersionsRange() {
         resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:(1.3.40,$resolvedKotlinVersion)")
     }
 
+    @Test
     fun testResolveDifferentType() {
         resolveAndCheck("org.javamoney:moneta:pom:1.3") { files ->
             files.any { it.extension == "pom" }
@@ -150,7 +160,8 @@ class MavenResolverTest : ResolversTestBase() {
 
     // Ignored - tests with custom repos often break the CI due to the caching issues
     // TODO: find a way to enable it back
-    @Ignore
+    @Test
+    @Disabled
     fun ignore_testAuth() {
         val resolver = MavenDependenciesResolver()
         val options = buildOptions(
@@ -164,6 +175,7 @@ class MavenResolverTest : ResolversTestBase() {
         assertTrue(files.any { it.name.startsWith("space-sdk") })
     }
 
+    @Test
     fun testAuthFailure() {
         val resolver = MavenDependenciesResolver()
         val options = buildOptions(
@@ -187,6 +199,7 @@ class MavenResolverTest : ResolversTestBase() {
         assertNotNull(diagnostic.exception)
     }
 
+    @Test
     fun testAuthIncorrectEnvUsage() {
         val resolver = MavenDependenciesResolver()
         val options = buildOptions(
@@ -205,6 +218,7 @@ class MavenResolverTest : ResolversTestBase() {
         )
     }
 
+    @Test
     fun testMultipleDependencies() {
         val resolver = MavenDependenciesResolver()
         val sourceOptions = buildOptions(
@@ -240,7 +254,8 @@ class MavenResolverTest : ResolversTestBase() {
         assertEquals(14, result.size)
     }
 
-    @Ignore("ignored because spark is a very heavy dependency")
+    @Test
+    @Disabled("ignored because spark is a very heavy dependency")
     fun ignore_testPartialResolution() {
         val resolver = MavenDependenciesResolver()
         val options = buildOptions(
@@ -260,7 +275,8 @@ class MavenResolverTest : ResolversTestBase() {
 
     // Ignored - tests with custom repos often break the CI due to the caching issues
     // TODO: find a way to enable it back
-    @Ignore
+    @Test
+    @Disabled
     fun ignore_testCustomRepositoryId() {
         val resolver = MavenDependenciesResolver()
         resolver.addRepository("https://repo.osgeo.org/repository/release/")
@@ -272,7 +288,8 @@ class MavenResolverTest : ResolversTestBase() {
 
     // Ignored - tests with custom repos often break the CI due to the caching issues
     // TODO: find a way to enable it back
-    @Ignore
+    @Test
+    @Disabled
     fun ignore_testResolveFromAnnotationsWillResolveTheSameRegardlessOfAnnotationOrder() {
         val dependsOnConstructor = DependsOn::class.primaryConstructor!!
         val repositoryConstructor = Repository::class.primaryConstructor!!

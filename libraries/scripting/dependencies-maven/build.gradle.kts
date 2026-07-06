@@ -21,7 +21,12 @@ dependencies {
     implementation(libs.apache.commons.io)
 
     testImplementation(projectTests(":kotlin-scripting-dependencies"))
-    testImplementation(libs.junit4)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.36")
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(libs.kotlinx.coroutines.core)
@@ -51,6 +56,10 @@ sourceSets {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 publish()

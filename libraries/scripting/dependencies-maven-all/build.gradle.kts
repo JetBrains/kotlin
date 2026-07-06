@@ -42,7 +42,11 @@ dependencies {
     embedded("org.apache.maven:maven-core:3.9.16")
     embedded(libs.apache.commons.io)
 
-    testImplementation(libs.junit4)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.36")
     testImplementation(project(":kotlin-scripting-dependencies-maven-all"))
 
@@ -60,6 +64,10 @@ publish()
 
 sourcesJar()
 javadocJar()
+
+tasks.test {
+    useJUnitPlatform()
+}
 
 val mavenPackagesToRelocate = listOf(
     "org.eclipse",

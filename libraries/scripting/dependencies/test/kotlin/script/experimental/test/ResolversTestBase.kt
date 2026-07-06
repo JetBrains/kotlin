@@ -5,16 +5,15 @@
 
 package kotlin.script.experimental.test
 
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions.*
 import java.io.File
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
-import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
-import kotlin.script.experimental.dependencies.acceptsRepository
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.valueOrThrow
+import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
+import kotlin.script.experimental.dependencies.acceptsRepository
 
 @ExperimentalContracts
 fun <T> assertIsFailure(r: ResultWithDiagnostics<T>) {
@@ -22,7 +21,7 @@ fun <T> assertIsFailure(r: ResultWithDiagnostics<T>) {
         returns() implies (r is ResultWithDiagnostics.Failure)
     }
 
-    Assert.assertTrue(r is ResultWithDiagnostics.Failure)
+    assertTrue(r is ResultWithDiagnostics.Failure)
 }
 
 @ExperimentalContracts
@@ -31,15 +30,15 @@ fun <T> assertIsSuccess(r: ResultWithDiagnostics<T>) {
         returns() implies (r is ResultWithDiagnostics.Success<T>)
     }
 
-    TestCase.assertTrue(r is ResultWithDiagnostics.Success<T>)
+    assertTrue(r is ResultWithDiagnostics.Success<T>)
 }
 
 @ExperimentalContracts
-abstract class ResolversTestBase : TestCase() {
+abstract class ResolversTestBase {
     fun ExternalDependenciesResolver.assertNotResolve(expectedReportsCount: Int, path: String) {
         val result = runBlocking { resolve(path) }
         assertIsFailure(result)
-        assertEquals("Actual reports:\n${result.reports.joinToString("\n")}", expectedReportsCount, result.reports.count())
+        assertEquals(expectedReportsCount, result.reports.count(), "Actual reports:\n${result.reports.joinToString("\n")}")
     }
 
     fun ExternalDependenciesResolver.assertAcceptsArtifact(path: String) = assertTrue(acceptsArtifact(path))
