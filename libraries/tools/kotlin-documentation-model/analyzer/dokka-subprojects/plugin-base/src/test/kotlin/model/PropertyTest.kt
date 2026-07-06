@@ -152,6 +152,34 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
     }
 
     @Test
+    fun `accessors of override property should get docs from override`() {
+        inlineModelTest(
+            """
+            |open class Parent {
+            |    /** parent property docs */
+            |    open var v = 0
+            |}
+            |class Child : Parent() {
+            |    /** child property docs */
+            |    override var v = 0
+            |}
+            """
+        ) {
+            with((this / "property").cast<DPackage>()) {
+                with((this / "Child" / "v").cast<DProperty>()) {
+                    documentation.values.single().children.single().text().trim() equals "child property docs"
+                    with(getter.assertNotNull("Getter")) {
+                        documentation.values.single().children.single().text().trim() equals "child property docs"
+                    }
+                    with(setter.assertNotNull("Setter")) {
+                        documentation.values.single().children.single().text().trim() equals "child property docs"
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     fun propertyInherited() {
         inlineModelTest(
             """
