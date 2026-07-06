@@ -12,7 +12,6 @@ gradlePlugin-kotlin = "2.3.21"
 gradlePlugin-android = "7.3.1"
 
 kotlinx-coroutines = "1.7.3"
-kotlinx-collections-immutable = "0.3.6"
 kotlinx-serialization = "1.6.0"
 kotlinx-bcv = "0.17.0"
 
@@ -21,7 +20,7 @@ ktor = "2.3.11"
 javaDiffUtils = "4.12"
 
 ## Analysis
-kotlin-compiler-k2 = "2.4.20-dev-5364"
+kotlin-compiler-k2 = "2.4.20-dev-8332"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
@@ -81,7 +80,6 @@ kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
 
 #### Kotlin Libs ####
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm", version.ref = "kotlinx-collections-immutable" }
 kotlinxSerialization-bom = { module = "org.jetbrains.kotlinx:kotlinx-serialization-bom", version.ref = "kotlinx-serialization" }
 kotlinxSerialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
 
