@@ -143,7 +143,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     }
     if (X_CACHE_DIRECTORY in this) { arguments.cacheDirectory = get(X_CACHE_DIRECTORY)?.absolutePathStringOrThrow()}
     if (X_FAKE_OVERRIDE_VALIDATOR in this) { arguments.fakeOverrideValidator = get(X_FAKE_OVERRIDE_VALIDATOR)}
-    if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (X_FRIEND_MODULES_DISABLED in this) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED)}
     if (X_GENERATE_DTS in this) { arguments.generateDts = get(X_GENERATE_DTS)}
     if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE)?.absolutePathStringOrThrow()}
@@ -159,11 +159,11 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (X_STRICT_IMPLICIT_EXPORT_TYPES in this) { arguments.strictImplicitExportType = get(X_STRICT_IMPLICIT_EXPORT_TYPES)}
     if (IR_OUTPUT_DIR in this) { arguments.outputDir = get(IR_OUTPUT_DIR)?.absolutePathStringOrThrow()}
     if (IR_OUTPUT_NAME in this) { arguments.moduleName = get(IR_OUTPUT_NAME)}
-    if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (MAIN in this) { arguments.main = get(MAIN)?.stringValue}
     if (NOPACK in this) { arguments.nopack = get(NOPACK)}
     if (SOURCE_MAP in this) { arguments.sourceMap = get(SOURCE_MAP)}
-    if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (SOURCE_MAP_EMBED_SOURCES in this) { arguments.sourceMapEmbedSources = get(SOURCE_MAP_EMBED_SOURCES)?.stringValue}
     if (SOURCE_MAP_NAMES_POLICY in this) { arguments.sourceMapNamesPolicy = get(SOURCE_MAP_NAMES_POLICY)?.stringValue}
     if (SOURCE_MAP_PREFIX in this) { arguments.sourceMapPrefix = get(SOURCE_MAP_PREFIX)}
@@ -207,7 +207,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     super.toCompilerArgumentsAffectingOutcome(arguments)
     if (X_CACHE_DIRECTORY in this) { arguments.cacheDirectory = get(X_CACHE_DIRECTORY)?.absolutePathStringOrThrow()}
     if (X_FAKE_OVERRIDE_VALIDATOR in this) { arguments.fakeOverrideValidator = get(X_FAKE_OVERRIDE_VALIDATOR)}
-    if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (X_FRIEND_MODULES_DISABLED in this) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED)}
     if (X_GENERATE_DTS in this) { arguments.generateDts = get(X_GENERATE_DTS)}
     if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE)?.absolutePathStringOrThrow()}
@@ -222,11 +222,11 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (X_STRICT_IMPLICIT_EXPORT_TYPES in this) { arguments.strictImplicitExportType = get(X_STRICT_IMPLICIT_EXPORT_TYPES)}
     if (IR_OUTPUT_DIR in this) { arguments.outputDir = get(IR_OUTPUT_DIR)?.absolutePathStringOrThrow()}
     if (IR_OUTPUT_NAME in this) { arguments.moduleName = get(IR_OUTPUT_NAME)}
-    if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (MAIN in this) { arguments.main = get(MAIN)?.stringValue}
     if (NOPACK in this) { arguments.nopack = get(NOPACK)}
     if (SOURCE_MAP in this) { arguments.sourceMap = get(SOURCE_MAP)}
-    if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (SOURCE_MAP_EMBED_SOURCES in this) { arguments.sourceMapEmbedSources = get(SOURCE_MAP_EMBED_SOURCES)?.stringValue}
     if (SOURCE_MAP_NAMES_POLICY in this) { arguments.sourceMapNamesPolicy = get(SOURCE_MAP_NAMES_POLICY)?.stringValue}
     if (SOURCE_MAP_PREFIX in this) { arguments.sourceMapPrefix = get(SOURCE_MAP_PREFIX)}

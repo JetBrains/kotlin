@@ -97,12 +97,12 @@ internal class MetadataArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
+    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
     if (X_LEGACY_METADATA_JAR_K2 in this) { arguments.legacyMetadataJar = get(X_LEGACY_METADATA_JAR_K2)}
-    if (X_REFINES_PATHS in this) { arguments.refinesPaths = get(X_REFINES_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
+    if (X_REFINES_PATHS in this) { arguments.refinesPaths = get(X_REFINES_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_TARGET_PLATFORM in this) { arguments.targetPlatform = get(X_TARGET_PLATFORM).map { it.stringValue }.toTypedArray()}
-    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (D in this) { arguments.destination = get(D)}
     if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
     arguments.internalArguments = parseCommandLineArguments<K2MetadataCompilerArguments>(internalArguments.toList()).internalArguments
@@ -117,7 +117,7 @@ internal class MetadataArgumentsImpl(
     try { this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
     try { this[X_LEGACY_METADATA_JAR_K2] = arguments.legacyMetadataJar } catch (_: NoSuchMethodError) {  }
     try { this[X_REFINES_PATHS] = arguments.refinesPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_TARGET_PLATFORM] = arguments.targetPlatform.map { MetadataTargetPlatform.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_TARGET_PLATFORM] = arguments.targetPlatform.map { MetadataTargetPlatform.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[CLASSPATH] = arguments.classpath?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[D] = arguments.destination } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
@@ -127,12 +127,12 @@ internal class MetadataArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: K2MetadataCompilerArguments = K2MetadataCompilerArguments()): K2MetadataCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
-    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
+    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
     if (X_LEGACY_METADATA_JAR_K2 in this) { arguments.legacyMetadataJar = get(X_LEGACY_METADATA_JAR_K2)}
-    if (X_REFINES_PATHS in this) { arguments.refinesPaths = get(X_REFINES_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
+    if (X_REFINES_PATHS in this) { arguments.refinesPaths = get(X_REFINES_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_TARGET_PLATFORM in this) { arguments.targetPlatform = get(X_TARGET_PLATFORM).map { it.stringValue }.toTypedArray()}
-    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (D in this) { arguments.destination = get(D)}
     if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
     return arguments

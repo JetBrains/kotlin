@@ -110,35 +110,12 @@ internal class CommonJsAndWasmCompilerArgumentConversionTest : BaseCompilationTe
         )
     }
 
-    // Kept @Disabled because the JS/Wasm SearchPathType arguments do not reject a path containing File.pathSeparator (KT-87212).
-    // The current buggy behavior is pinned by testPathSeparatorInValueCurrentlyAccepted below; once the
-    // validation is added, that test will fail - then enable this test and delete it.
-    @Disabled("KT-87212: enable once File.pathSeparator validation is added for JS/Wasm SearchPathType arguments")
     @InvalidArgumentValueCommonJsAndWasmCompilerArgumentsWithBtaVersionsTest
     @DisplayName("BTA argument with non-existent argument value fails conversion")
     fun <T> CommonJsAndWasmArgumentConfiguration<T>.testInvalidArgumentConversionFails() {
         assumeArgumentSupported()
         for (invalidValue in invalidArgumentValues) {
             assertThrows<CompilerArgumentsParseException> {
-                buildArguments {
-                    setArgument(this, invalidValue)
-                }
-            }
-        }
-    }
-
-    // Exact mirror of the @Disabled testInvalidArgumentConversionFails above,
-    // but asserting the current buggy behavior: the conversion does NOT reject a path containing
-    // File.pathSeparator. Runs only for the three SearchPathType arguments that have invalidArgumentValues.
-    @InvalidArgumentValueCommonJsAndWasmCompilerArgumentsWithBtaVersionsTest
-    @DisplayName("KNOWN BUG (KT-87212): a path containing File.pathSeparator is silently accepted, not rejected")
-    fun <T> CommonJsAndWasmArgumentConfiguration<T>.testPathSeparatorInvalidValuesAccepted() {
-        assumeArgumentSupported()
-        for (invalidValue in invalidArgumentValues) {
-            // BUG: once File.pathSeparator validation is added there, this will throw CompilerArgumentsParseException
-            // and this assertion will fail - the signal to delete this test and enable
-            // testInvalidArgumentConversionFails above (remove its @Disabled).
-            assertDoesNotThrow {
                 buildArguments {
                     setArgument(this, invalidValue)
                 }

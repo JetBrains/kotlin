@@ -129,7 +129,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS in this) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)}
     if (X_KLIB_IR_INLINER in this) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER).stringValue}
     if (X_KLIB_NORMALIZE_ABSOLUTE_PATH in this) { arguments.normalizeAbsolutePath = get(X_KLIB_NORMALIZE_ABSOLUTE_PATH)}
-    if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE).map { it.absolutePathStringOrThrow() }.toTypedArray()}
+    if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
     if (X_PARTIAL_LINKAGE in this) { arguments.partialLinkageMode = get(X_PARTIAL_LINKAGE)?.stringValue}
     if (X_PARTIAL_LINKAGE_LOGLEVEL in this) { arguments.partialLinkageLogLevel = get(X_PARTIAL_LINKAGE_LOGLEVEL)?.stringValue}
@@ -161,7 +161,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS in this) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)}
     if (X_KLIB_IR_INLINER in this) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER).stringValue}
     if (X_KLIB_NORMALIZE_ABSOLUTE_PATH in this) { arguments.normalizeAbsolutePath = get(X_KLIB_NORMALIZE_ABSOLUTE_PATH)}
-    if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE).map { it.absolutePathStringOrThrow() }.toTypedArray()}
+    if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
     if (X_PARTIAL_LINKAGE in this) { arguments.partialLinkageMode = get(X_PARTIAL_LINKAGE)?.stringValue}
     if (X_PARTIAL_LINKAGE_LOGLEVEL in this) { arguments.partialLinkageLogLevel = get(X_PARTIAL_LINKAGE_LOGLEVEL)?.stringValue}

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.*
@@ -111,7 +113,15 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
     @InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsTest
     @DisplayName("BTA argument with non-existent argument value fails conversion")
     fun <T> JvmArgumentConfiguration<T>.testInvalidArgumentConversionFails() {
-        assumeArgumentSupported()
+        @OptIn(ExperimentalCompilerArgument::class)
+        assumeTrue(
+            kotlinToolchain.getCompilerVersion() >= "2.4.20" || this.argumentKey !in listOf<JvmCompilerArguments.JvmCompilerArgument<*>>(
+                JvmCompilerArguments.X_FRIEND_PATHS,
+                JvmCompilerArguments.X_JAVA_SOURCE_ROOTS
+            ),
+            "Some arguments were not checked before 2.4.20"
+        )
+
         for (invalidValue in invalidArgumentValues) {
             assertThrows<CompilerArgumentsParseException> {
                 kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {

@@ -108,10 +108,6 @@ internal class MetadataCompilerArgumentConversionTest : BaseCompilationTest() {
         )
     }
 
-    // Kept @Disabled because the Metadata SearchPathType argument CLASSPATH does NOT yet reject a path containing File.pathSeparator (KT-87212).
-    // The current buggy behavior is pinned by testPathSeparatorInvalidValuesAccepted below; once the validation
-    // is added, that test will fail - then enable this test and delete it.
-    @Disabled("KT-87212: enable once File.pathSeparator validation is added for the Metadata CLASSPATH argument")
     @InvalidArgumentValueMetadataCompilerArgumentsWithBtaVersionsTest
     @DisplayName("BTA argument with non-existent argument value fails conversion")
     fun <T> MetadataArgumentConfiguration<T>.testInvalidArgumentConversionFails() {
@@ -125,26 +121,6 @@ internal class MetadataCompilerArgumentConversionTest : BaseCompilationTest() {
         }
     }
 
-    @InvalidArgumentValueMetadataCompilerArgumentsWithBtaVersionsTest
-    @DisplayName("KNOWN BUG (KT-87212): a path containing File.pathSeparator is silently accepted, not rejected")
-    fun <T> MetadataArgumentConfiguration<T>.testPathSeparatorInvalidValuesAccepted() {
-        assumeArgumentSupported()
-        for (invalidValue in invalidArgumentValues) {
-            // BUG: once File.pathSeparator validation is added there, this will throw CompilerArgumentsParseException
-            // and this assertion will fail - the signal to delete this test and enable
-            // testInvalidArgumentConversionFails above (remove its @Disabled).
-            assertDoesNotThrow {
-                kotlinToolchain.metadata.metadataKlibCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-                    compilerArguments[argumentKey] = invalidValue
-                }.build()
-            }
-        }
-    }
-
-    // Checks the EXPECTED (deferred) behavior: an invalid enum raw value should be reported at execution
-    // (COMPILATION_ERROR), not thrown from applyArgumentStrings. Kept @Disabled because Metadata
-    // X_TARGET_PLATFORM (enum-list) currently throws eagerly (see testInvalidRawArgumentThrowsEagerly).
-    @Disabled("KT-87218: Metadata X_TARGET_PLATFORM (enum-list) throws from applyArgumentStrings instead of deferring the error to execution")
     @InvalidRawValueMetadataCompilerArgumentsBtaV2StrategyAgnosticTest
     @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
     fun testInvalidRawArgumentCompilationFails(config: Pair<MetadataArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>) {
@@ -162,22 +138,6 @@ internal class MetadataCompilerArgumentConversionTest : BaseCompilationTest() {
                     expectFail()
                     assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))
                 }
-            }
-        }
-    }
-
-    @InvalidRawValueMetadataCompilerArgumentsWithBtaVersionsTest
-    @DisplayName("KNOWN BUG (KT-87218): an invalid enum value should be deferred to execution, but applyArgumentStrings rejects it eagerly")
-    fun <T> MetadataArgumentConfiguration<T>.testInvalidRawArgumentThrowsEagerly() {
-        assumeArgumentSupported()
-        for (invalidValue in invalidRawValues) {
-            // BUG: per the BTA contract the error should be deferred to execution (like other enum arguments),
-            // but applyArgumentStrings throws eagerly. When fixed this assertThrows will fail - the signal to
-            // delete this test and enable testInvalidRawArgumentCompilationFails above.
-            assertThrows<CompilerArgumentsParseException> {
-                kotlinToolchain.metadata.metadataKlibCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-                    compilerArguments.applyArgumentStrings(expectedArgumentStringsFor(invalidValue))
-                }.build()
             }
         }
     }
