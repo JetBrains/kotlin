@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-87189
 
 sealed interface A
@@ -10,7 +10,7 @@ data object Y : B, A
 fun Any.test(): String =
     when (this) {
         is B -> {
-             when (this) {
+             <!NO_ELSE_IN_WHEN!>when<!> (this) {
                 is X -> "is X"
             }
         }
