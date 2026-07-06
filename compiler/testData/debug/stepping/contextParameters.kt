@@ -30,10 +30,6 @@ fun box() {
 // test.kt:6 <init>
 // test.kt:21 box
 // test.kt:22 box
-// test.kt:21 box
-// test.kt:22 box
-// test.kt:11 caller
-// test.kt:9 caller
 // test.kt:11 caller
 // test.kt:16 target
 // test.kt:5 getId

@@ -137,7 +137,7 @@ internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
 ): T {
     val startOffset: Int
     val endOffset: Int
-    if (isCompiledElement(psi)) {
+    if (isCompiledElement(psi) || calleeReference.source?.kind == KtFakeSourceElementKind.ImplicitContextParameterArgument) {
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {
