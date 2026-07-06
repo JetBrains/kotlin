@@ -14,7 +14,8 @@ where advanced options include:
                              0 means use one thread per processor core.
                              The default value is 1.
   -Xbinary=<option=value>    Specify a binary option.
-  -Xbundle-id=<id>           Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'.
+  -Xbundle-id=<id>           Bundle ID to be set in the Info.plist file of the produced framework.
+                             The option is deprecated since Kotlin 1.7.20. It will be removed in one of the future releases. Use '-Xbinary=bundleId=<id>'.
   -Xcache-directory=<path>   Path to the directory containing caches.
   -Xcached-library=<library path>,<cache path>
                              Paths to a library and its cache, separated by a comma.

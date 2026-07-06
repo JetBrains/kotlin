@@ -97,10 +97,12 @@ The default value is 1.""",
             field = value
         }
 
+    @all:Deprecated("Use '-Xbinary=bundleId=<id>'.")
     @Argument(
         value = "-Xbundle-id",
         valueDescription = "<id>",
-        description = "Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'.",
+        description = "Bundle ID to be set in the Info.plist file of the produced framework.",
+        deprecatedVersion = "1.7.20",
     )
     var bundleId: String? = null
         set(value) {

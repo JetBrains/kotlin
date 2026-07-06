@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultOne
+import org.jetbrains.kotlin.arguments.dsl.previous
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
@@ -324,12 +325,22 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
 
     compilerArgument {
         name = "Xbundle-id"
-        description = "Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'.".asReleaseDependent()
+        val introducedVersion = KotlinReleaseVersion.v1_6_20
+        val deprecatedVersion = KotlinReleaseVersion.v1_7_20 // According to https://github.com/JetBrains/kotlin/commit/ef499fedbb90760b82aabd2346ababd9aefd2d32
+        val commonDescriptionPart = "Bundle ID to be set in the Info.plist file of the produced framework."
+        description = ReleaseDependent(
+            commonDescriptionPart,
+            deprecatedVersion..KotlinReleaseVersion.v2_4_20 to
+                    "$commonDescriptionPart This option is deprecated. Please use '-Xbinary=bundleId=<id>'.",
+            introducedVersion..deprecatedVersion.previous!! to commonDescriptionPart
+        )
         valueType = StringType.defaultNull
         valueDescription = "<id>".asReleaseDependent()
+        deprecatedMessage = "Use '-Xbinary=bundleId=<id>'."
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_20,
+            introducedVersion = introducedVersion,
+            deprecatedVersion = deprecatedVersion,
         )
     }
 

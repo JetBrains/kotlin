@@ -16056,8 +16056,19 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'.",
-                                            "valueInVersions": []
+                                            "current": "Bundle ID to be set in the Info.plist file of the produced framework.",
+                                            "valueInVersions": [
+                                                {
+                                                    "minReleaseVersion": "1.7.20",
+                                                    "maxReleaseVersion": "2.4.20",
+                                                    "value": "Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'."
+                                                },
+                                                {
+                                                    "minReleaseVersion": "1.6.20",
+                                                    "maxReleaseVersion": "1.7.0",
+                                                    "value": "Bundle ID to be set in the Info.plist file of the produced framework."
+                                                }
+                                            ]
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
@@ -16080,7 +16091,7 @@
                                         "releaseVersionsMetadata": {
                                             "introducedVersion": "1.6.20",
                                             "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
+                                            "deprecatedVersion": "1.7.20",
                                             "removedVersion": null
                                         },
                                         "argumentType": {
@@ -16094,7 +16105,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "deprecatedMessage": null
+                                        "deprecatedMessage": "Use '-Xbinary=bundleId=<id>'."
                                     },
                                     {
                                         "name": "Xcache-directory",
