@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_REFLECT
+// WITH_STDLIB
 // LANGUAGE: +JvmSupportRecursiveTypeOf
 
 package test
@@ -36,14 +36,14 @@ inline fun <reified R, T: Comparable<T>> reifiedMixedWithRecursive(): List<KType
 fun box(): String {
     run {
         val t = selfRecursive<Int>()
-        assertEquals("kotlin.Comparable<T>", t.upperBound.toString())
+        assertEquals("java.lang.Comparable<T> (Kotlin reflection is not available)", t.upperBound.toString())
         assertEquals(t, t.upperBound.argumentType.asTp)
     }
 
     run {
         val (t, u) = C<Int, Int>().makeTU()
-        assertEquals("kotlin.Comparable<U>", t.upperBound.toString())
-        assertEquals("kotlin.Comparable<T>", u.upperBound.toString())
+        assertEquals("java.lang.Comparable<U> (Kotlin reflection is not available)", t.upperBound.toString())
+        assertEquals("java.lang.Comparable<T> (Kotlin reflection is not available)", u.upperBound.toString())
         assertEquals(u, t.upperBound.argumentType.asTp)
         assertEquals(t, u.upperBound.argumentType.asTp)
     }
@@ -58,8 +58,8 @@ fun box(): String {
     run {
         val (a0, t, a1) = repeatedNonCyclic<Any, Int>()
         assertEquals(a0, a1)
-        assertEquals("kotlin.Any?", a0.upperBound.toString())
-        assertEquals("kotlin.Comparable<T>", t.upperBound.toString())
+        assertEquals("java.lang.Object? (Kotlin reflection is not available)", a0.upperBound.toString())
+        assertEquals("java.lang.Comparable<T> (Kotlin reflection is not available)", t.upperBound.toString())
         assertEquals(t, t.upperBound.argumentType.asTp)
     }
 
@@ -68,16 +68,16 @@ fun box(): String {
         assertEquals("U", u.toString())
         val t = u.upperBound.asTp
         assertEquals("T", t.toString())
-        assertEquals("kotlin.Comparable<T>", t.upperBound.toString())
+        assertEquals("java.lang.Comparable<T> (Kotlin reflection is not available)", t.upperBound.toString())
         assertEquals(t, t.upperBound.argumentType.asTp)
     }
 
     run {
         val args = reifiedMixedWithRecursive<String, Int>()
-        assertEquals("kotlin.String", args[0].toString())
-        assertEquals("kotlin.String", args[2].toString())
+        assertEquals("java.lang.String (Kotlin reflection is not available)", args[0].toString())
+        assertEquals("java.lang.String (Kotlin reflection is not available)", args[2].toString())
         val t = args[1]!!.asTp
-        assertEquals("kotlin.Comparable<T>", t.upperBound.toString())
+        assertEquals("java.lang.Comparable<T> (Kotlin reflection is not available)", t.upperBound.toString())
         assertEquals(t, t.upperBound.argumentType.asTp)
     }
 
