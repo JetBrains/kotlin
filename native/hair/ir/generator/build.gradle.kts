@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("common-configuration")
 }
 
 val main by sourceSets.getting {
