@@ -1,3 +1,4 @@
+// DONT_TARGET_EXACT_BACKEND: JVM_IR
 // RUN_PIPELINE_TILL: BACKEND
 
 tailrec fun foo1(x: Int): Int {
@@ -12,13 +13,13 @@ tailrec fun foo2(x: Int): Boolean {
 
 fun condition(x: Int): Boolean = x == 0
 
-tailrec fun Int.foo3a(): Int {
+<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun Int.foo3a(): Int {
     return boo()?.foo3a() ?: 1
-}
+}<!>
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun Int.foo3b(): Int {
+<!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun Int.foo3b(): Int {
     return boo()?.<!NON_TAIL_RECURSIVE_CALL!>foo3b<!>()?.boo() ?: 1
-}
+}<!>
 
 fun Int.boo(): Int? = this + 1
 

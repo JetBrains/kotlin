@@ -1,3 +1,4 @@
+// DONT_TARGET_EXACT_BACKEND: JVM_IR
 // RUN_PIPELINE_TILL: BACKEND
 object O {
     // tailrec since `O` is a singleton
@@ -5,7 +6,7 @@ object O {
 }
 
 class A {
-    <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo(i: Int) = if (i < 0) 0 else A.foo(i - 1)
+    <!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo(i: Int) = if (i < 0) 0 else A.foo(i - 1)<!>
 
     companion object {
         fun foo(i: Int) = 42 + i
@@ -13,7 +14,7 @@ class A {
 }
 
 class B {
-    <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo(i: Int) = if (i < 0) 0 else O.foo(i - 1)
+    <!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo(i: Int) = if (i < 0) 0 else O.foo(i - 1)<!>
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, comparisonExpression, functionDeclaration,
