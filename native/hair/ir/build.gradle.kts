@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    // TODO kotlin("plugin.serialization") version "2.2.20"
+    id("common-configuration")
     idea
 }
 
