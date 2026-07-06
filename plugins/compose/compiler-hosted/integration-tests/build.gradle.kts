@@ -35,7 +35,6 @@ optInToK1Deprecation()
 
 dependencies {
     // junit
-    testImplementation(libs.junit4)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.platform.launcher)

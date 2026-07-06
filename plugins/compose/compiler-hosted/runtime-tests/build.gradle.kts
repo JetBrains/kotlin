@@ -39,7 +39,6 @@ kotlin {
 
             dependencies {
                 // junit
-                implementation(libs.junit4)
                 implementation(project.dependencies.platform(libs.junit.bom))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
