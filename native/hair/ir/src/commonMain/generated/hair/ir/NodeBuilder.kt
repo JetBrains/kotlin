@@ -204,6 +204,9 @@ context(nodeBuilder: NodeBuilder)
 operator fun Rem.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Rem(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
+fun Neg(operand: Node?): Node = nodeBuilder.onNodeBuilt(Neg(nodeBuilder.session.negForm, operand))
+
+context(nodeBuilder: NodeBuilder)
 fun And(type: HairType): And.Form = And.Form(nodeBuilder.session.andMetaForm, type).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
@@ -240,7 +243,7 @@ context(nodeBuilder: NodeBuilder)
 operator fun Ushr.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Ushr(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Neg(operand: Node?): Node = nodeBuilder.onNodeBuilt(Neg(nodeBuilder.session.negForm, operand))
+fun Inv(operand: Node?): Node = nodeBuilder.onNodeBuilt(Inv(nodeBuilder.session.invForm, operand))
 
 context(nodeBuilder: NodeBuilder)
 fun Cmp(type: HairType, op: CmpOp): Cmp.Form = Cmp.Form(nodeBuilder.session.cmpMetaForm, type, op).ensureFormUniq()
