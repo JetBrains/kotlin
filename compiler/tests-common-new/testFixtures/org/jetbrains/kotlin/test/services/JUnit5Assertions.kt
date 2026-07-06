@@ -109,7 +109,7 @@ object JUnit5Assertions : AssertionsService() {
     }
 
     override fun <T> assertSameElements(expected: Collection<T>, actual: Collection<T>, message: (() -> String)?) {
-        JUnit5PlatformAssertions.assertIterableEquals(expected, actual, message)
+        JUnit5PlatformAssertions.assertEquals(expected.toSet(), actual.toSet(), message)
     }
 
     override fun fail(message: () -> String): Nothing {
