@@ -39,6 +39,7 @@ fun DescriptorVisibility.isVisibleOutside() =
     this != DescriptorVisibilities.PRIVATE && this != DescriptorVisibilities.PRIVATE_TO_THIS && this != DescriptorVisibilities.INVISIBLE_FAKE
 
 @K1Deprecation
+@OptIn(ObsoleteDescriptorBasedApi::class)
 fun syntheticVisibility(originalDescriptor: DeclarationDescriptorWithVisibility, isUsedForExtension: Boolean): DescriptorVisibility {
     return when (val originalVisibility = originalDescriptor.visibility) {
         DescriptorVisibilities.PUBLIC -> DescriptorVisibilities.PUBLIC

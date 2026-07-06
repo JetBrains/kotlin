@@ -41,6 +41,7 @@ abstract class DescriptorVisibility protected constructor() {
      *
      * Also it's important that implementation that take receiver into account do aware about these special values.
      */
+    @ObsoleteDescriptorBasedApi
     abstract fun isVisible(
         receiver: ReceiverValue?,
         what: DeclarationDescriptorWithVisibility,

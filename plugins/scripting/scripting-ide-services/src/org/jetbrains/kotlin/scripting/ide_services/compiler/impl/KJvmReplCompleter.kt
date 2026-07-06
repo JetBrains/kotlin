@@ -370,6 +370,7 @@ private class KJvmReplCompleter(
     private class VisibilityFilter(
         private val inDescriptor: DeclarationDescriptor
     ) : (DeclarationDescriptor) -> Boolean {
+        @OptIn(ObsoleteDescriptorBasedApi::class)
         override fun invoke(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor is TypeParameterDescriptor) return isTypeParameterVisible(descriptor)
 
