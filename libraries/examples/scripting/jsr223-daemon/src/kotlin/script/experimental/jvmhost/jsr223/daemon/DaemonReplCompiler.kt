@@ -325,6 +325,15 @@ class DaemonReplCompiler(
      * have to wait out a real idle-shutdown delay for a clean daemon exit between runs. Not meant
      * for production use: an embedder sharing the daemon with other clients should use [close]
      * instead, which only releases this compiler's own session.
+     *
+     * `CompileService.shutdown()` is asynchronous -- it only schedules the daemon process's own
+     * exit ([org.jetbrains.kotlin.daemon.CompileServiceImpl.shutdownWithDelay]) and returns before
+     * that exit actually happens, so this also waits a bit for the process to actually go away,
+     * exactly as `BaseDaemonSessionTest.stopDaemons` does. Without this, a caller relying on a
+     * JUnit `@TempDir` for `daemonOptions.runFilesPath`/`daemonLogOptions.logsPath` can have JUnit
+     * try to delete that directory while the daemon process is still exiting and holding its own
+     * log file open -- harmless on most platforms, but a real (and otherwise flaky) failure on
+     * Windows, where an open file cannot be deleted at all.
      */
     @TestOnly
     fun forceShutdownDaemon() {
@@ -334,6 +343,7 @@ class DaemonReplCompiler(
         } catch (e: RemoteException) {
             // The daemon might already be down.
         }
+        Thread.sleep(500) // wait a bit so that the daemon is actually shut down
     }
 
     /**
