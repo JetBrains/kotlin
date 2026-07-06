@@ -84,7 +84,7 @@ internal class PsiConditionParser(
             descriptor.isEqualsDescriptor() -> {
                 val left = dispatcher.parseValue((resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression) ?: return null
                 val right = dispatcher.parseValue(resolvedCall.firstArgumentAsExpressionOrNull()) ?: return null
-                val isNegated = (element as? KtBinaryExpression)?.operationToken == KtTokens.EXCLEQ
+                val isNegated = (element as? KtBinaryExpression)?.operationToken == KtTokens.EXCLEQ ?: false
 
                 return processEquals(left, right, isNegated, element)
             }
