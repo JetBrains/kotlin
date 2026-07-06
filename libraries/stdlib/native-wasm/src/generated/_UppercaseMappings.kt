@@ -54,17 +54,17 @@ internal fun equalDistanceMapping(code: Int, start: Int, pattern: Int): Int {
     return code + mapping
 }
 
-internal fun Int.uppercaseCodePoint(): Int {
-    if (this in 0x61..0x7a) {
-        return this - 32
+internal fun uppercaseCodePoint(code: Int): Int {
+    if (code in 0x61..0x7a) {
+        return code - 32
     }
-    if (this < 0x80) {
-        return this
+    if (code < 0x80) {
+        return code
     }
-    val index = binarySearchRange(rangeStart, this)
-    return equalDistanceMapping(this, rangeStart[index], rangeLength[index])
+    val index = binarySearchRange(rangeStart, code)
+    return equalDistanceMapping(code, rangeStart[index], rangeLength[index])
 }
 
 internal fun Char.uppercaseCharImpl(): Char {
-    return code.uppercaseCodePoint().toChar()
+    return uppercaseCodePoint(code).toChar()
 }
