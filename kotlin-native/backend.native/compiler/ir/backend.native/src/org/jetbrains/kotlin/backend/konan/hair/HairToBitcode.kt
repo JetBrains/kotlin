@@ -23,22 +23,16 @@ import org.jetbrains.kotlin.backend.konan.llvm.ExceptionHandler
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionGenerationContext
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
+import org.jetbrains.kotlin.backend.konan.llvm.node
 import org.jetbrains.kotlin.backend.konan.llvm.theUnitInstanceRef
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
+import org.jetbrains.kotlin.backend.konan.llvm.type
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.isNothing
 
 // TODO move to utils
 context(gcm: GCMResult)
 val gcm get() = gcm
-
-val HairType.isIntegral get() = when (this) {
-    HairType.INT,
-    HairType.LONG -> true
-    HairType.FLOAT,
-    HairType.DOUBLE -> false
-    else -> true // FIXME error("Should not reach here $this")
-}
 
 internal class HairToBitcode(
         val generationState: NativeGenerationState,
@@ -95,6 +89,17 @@ internal class HairToBitcode(
             llvm.int8Type,
             llvm.int16Type -> fgc.trunc(value, targetType)
             else -> value
+        }
+
+        // TODO: copied from IntrinsicGenerator
+        fun makeConstOfType(value: Int, targetType: LLVMTypeRef) = when (targetType) {
+            llvm.int8Type -> llvm.int8(value.toByte())
+            llvm.int16Type -> llvm.char16(value.toChar())
+            llvm.int32Type -> llvm.int32(value)
+            llvm.int64Type -> llvm.int64(value.toLong())
+            llvm.floatType -> llvm.float32(value.toFloat())
+            llvm.doubleType -> llvm.float64(value.toDouble())
+            else -> error("Unexpected primitive type: $targetType")
         }
 
         /** Retrieves the already-emitted LLVM value for an operand node. */
@@ -199,12 +204,27 @@ internal class HairToBitcode(
             else LLVMBuildFMul(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
-        // TODO divs
-        // TODO shifts
+        override fun visitDiv(node: Div): LLVMValueRef = emit {
+            if (node.type.isIntegral) LLVMBuildSDiv(builder, node.lhs.value(), node.rhs.value(), "")!!
+            else LLVMBuildFDiv(builder, node.lhs.value(), node.rhs.value(), "")!!
+        }
+
+        override fun visitRem(node: Rem): LLVMValueRef = emit {
+            if (node.type.isIntegral) LLVMBuildSRem(builder, node.lhs.value(), node.rhs.value(), "")!!
+            else LLVMBuildFRem(builder, node.lhs.value(), node.rhs.value(), "")!!
+        }
+
+        override fun visitNeg(node: Neg): LLVMValueRef = emit { LLVMBuildNeg(builder, node.value(), "")!! }
 
         override fun visitAnd(node: And): LLVMValueRef = emit { and(node.lhs.value(), node.rhs.value()) }
         override fun visitOr(node: Or): LLVMValueRef = emit { or(node.lhs.value(), node.rhs.value()) }
         override fun visitXor(node: Xor): LLVMValueRef = emit { xor(node.lhs.value(), node.rhs.value()) }
+
+        override fun visitShl(node: Shl): LLVMValueRef = emit { LLVMBuildShl(builder, node.lhs.value(), node.rhs.value(), "")!! }
+        override fun visitShr(node: Shr): LLVMValueRef = emit { LLVMBuildAShr(builder, node.lhs.value(), node.rhs.value(), "")!! }
+        override fun visitUshr(node: Ushr): LLVMValueRef = emit { LLVMBuildLShr(builder, node.lhs.value(), node.rhs.value(), "")!! }
+
+        override fun visitInv(node: Inv): LLVMValueRef = emit { xor(node.value(), makeConstOfType(-1, node.value().type), "") }
 
         override fun visitNot(node: Not): LLVMValueRef =
                 adaptToHair(emit { not(adaptFromHair(node.operand.value(), llvm.int1Type)) })

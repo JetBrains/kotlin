@@ -213,6 +213,21 @@ class Rem internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 }
 
 
+class Neg internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)) {
+    val operandIndex: Int = 0
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "operand"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNeg(this)
+    companion object {
+        internal fun form(session: Session) = SimpleValueForm(session, "Neg")
+    }
+}
+
+
 class And internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(form, listOf(lhs, rhs)) {
     class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
@@ -339,7 +354,7 @@ class Ushr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(f
 }
 
 
-class Neg internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)) {
+class Inv internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)) {
     val operandIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {
@@ -347,9 +362,9 @@ class Neg internal constructor(form: Form, operand: Node?) : NodeBase(form, list
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNeg(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitInv(this)
     companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "Neg")
+        internal fun form(session: Session) = SimpleValueForm(session, "Inv")
     }
 }
 

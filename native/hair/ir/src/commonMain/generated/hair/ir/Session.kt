@@ -42,6 +42,8 @@ class Session: SessionBase() {
 
     internal val negForm = Neg.form(this).also { register(it) }
 
+    internal val invForm = Inv.form(this).also { register(it) }
+
     internal val notForm = Not.form(this).also { register(it) }
 
     internal val typeInfoForm = TypeInfo.form(this).also { register(it) }

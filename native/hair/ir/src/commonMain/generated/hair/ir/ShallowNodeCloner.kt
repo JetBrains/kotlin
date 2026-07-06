@@ -68,6 +68,8 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitRem(node: Rem): Rem = context(nodeBuilder, NoControlFlowBuilder) { Rem(node.type)(null, null) } as Rem
 
+    override fun visitNeg(node: Neg): Neg = context(nodeBuilder, NoControlFlowBuilder) { Neg(null) } as Neg
+
     override fun visitAnd(node: And): And = context(nodeBuilder, NoControlFlowBuilder) { And(node.type)(null, null) } as And
 
     override fun visitOr(node: Or): Or = context(nodeBuilder, NoControlFlowBuilder) { Or(node.type)(null, null) } as Or
@@ -80,7 +82,7 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitUshr(node: Ushr): Ushr = context(nodeBuilder, NoControlFlowBuilder) { Ushr(node.type)(null, null) } as Ushr
 
-    override fun visitNeg(node: Neg): Neg = context(nodeBuilder, NoControlFlowBuilder) { Neg(null) } as Neg
+    override fun visitInv(node: Inv): Inv = context(nodeBuilder, NoControlFlowBuilder) { Inv(null) } as Inv
 
     override fun visitCmp(node: Cmp): Cmp = context(nodeBuilder, NoControlFlowBuilder) { Cmp(node.type, node.op)(null, null) } as Cmp
 

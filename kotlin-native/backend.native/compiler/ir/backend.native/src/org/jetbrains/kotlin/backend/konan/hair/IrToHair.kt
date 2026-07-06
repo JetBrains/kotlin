@@ -185,16 +185,26 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         IntrinsicType.PLUS -> Add(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.MINUS -> Sub(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.TIMES -> Mul(resType)(args[0]!!, args[1]!!)
-                        // FIXME signed vs unsigned
-                        // IntrinsicType.SIGNED_DIV -> Div(resType)(args[0]!!, args[1]!!)
-                        // IntrinsicType.SIGNED_REM -> Rem(resType)(args[0]!!, args[1]!!)
+                        // TODO: Throwing on division by zero not yet supported
+//                        IntrinsicType.SIGNED_DIV -> Div(resType)(args[0]!!, args[1]!!)
+//                        IntrinsicType.SIGNED_REM -> Rem(resType)(args[0]!!, args[1]!!)
 
+                        IntrinsicType.INC -> Add(resType)(args[0]!!, Const(resType, 1))
+                        IntrinsicType.DEC -> Sub(resType)(args[0]!!, Const(resType, 1))
+
+                        IntrinsicType.UNARY_PLUS -> args[0]!!
+                        IntrinsicType.UNARY_MINUS -> Neg(args[0]!!)
+
+                        IntrinsicType.SHL -> Shl(resType)(args[0]!!, args[1]!!)
+                        IntrinsicType.SHR -> Shr(resType)(args[0]!!, args[1]!!)
+                        IntrinsicType.USHR -> Ushr(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.AND -> And(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.OR -> Or(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.XOR -> Xor(resType)(args[0]!!, args[1]!!)
-                        // IntrinsicType.SHL -> Shl(resType)(args[0]!!, args[1]!!)
-                        // IntrinsicType.SHR -> Shr(resType)(args[0]!!, args[1]!!)
-                        // IntrinsicType.USHR -> Ushr(resType)(args[0]!!, args[1]!!)
+
+                        IntrinsicType.INV -> Inv(args[0]!!)
+
+                        IntrinsicType.NOT -> Not(args[0]!!)
 
                         IntrinsicType.THE_UNIT_INSTANCE -> UnitValue()
 
@@ -207,9 +217,6 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         IntrinsicType.REINTERPRET -> Reinterpret(resType)(args[0]!!)
 
                         IntrinsicType.IDENTITY -> args[0]!!
-
-                        IntrinsicType.INC -> Add(resType)(args[0]!!, Const(resType, 1))
-                        IntrinsicType.DEC -> Sub(resType)(args[0]!!, Const(resType, 1))
 
                         IntrinsicType.ARE_EQUAL_BY_VALUE -> notImplemented(HairTODO.ARE_EQUAL_BY_VALUE)
                         IntrinsicType.FLOAT_TRUNCATE -> notImplemented(HairTODO.FLOAT_TRUNCATE)

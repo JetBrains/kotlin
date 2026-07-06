@@ -32,6 +32,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
             // Arithmetic
 
             override fun visitNeg(node: Neg): Node = when (val operand = node.operand) {
+                // -const[x] => const[-x]
                 is ConstAny -> Const(
                     when (val value = operand.numberValue) {
                         is Int -> -value
@@ -41,45 +42,54 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                         else -> error("Should not reach here $value")
                     }
                 )
+                // - -a => a
                 is Neg -> operand.operand
+
                 else -> node
             }
 
             private fun normalizeBinary(op: BinaryOpKind, node: BinaryOp, lhs: Node, rhs: Node, builder: (Node, Node) -> Node): Node {
-                // fold constant
-                if (lhs is ConstAny && rhs is ConstAny) {
-                    return Const(op.op(lhs.numberValue, rhs.numberValue))
+                if (rhs is ConstAny) {
+                    // const[a] op const[b] => const[a op b]
+                    if (lhs is ConstAny)
+                        return Const(op.op(lhs.numberValue, rhs.numberValue))
+
+                    // a op identity => a
+                    if (rhs.numberValue == op.identity)
+                        return lhs
                 }
 
-                // fold with identity
-                if (rhs is ConstAny && rhs == op.identity) return lhs
+                if (op.associative && lhs is BinaryOp && lhs.form == node.form) {
+                    // (a op const[b]) op const[c] => a op const[b op c]
+                    if (lhs.rhs is ConstAny && rhs is ConstAny)
+                        return builder(lhs.lhs, Const(op.op((lhs.rhs as ConstAny).numberValue, rhs.numberValue)))
 
-                // TODO use associativity and commutativity for complex trees
-
-                // try to reorder operands
-                if (op.commutative) {
-                    val [newLhs, newRhs] = if (lhs is ConstAny) {
-                        rhs to lhs
-                    } else if (rhs is Add && lhs !is Add) {
-                        rhs to lhs
-                    } else {
-                        // FIXME de we want to order arbitrary operands? e.g. to GVN Add(x, y) and Add(y, x)? How?
-                        return node
-                    }
-                    // TODO would be nice to do just: node.form(rhs, lhs)
-                    return builder(newLhs, newRhs)
+                    // (a op b) op (c op d) => ((a op b) op c) op d
+                    if (rhs is BinaryOp && rhs.form == node.form)
+                        return builder(builder(builder(lhs.lhs, lhs.rhs), rhs.lhs), rhs.rhs)
                 }
+
+                // When callers "swap" their operands, they just reorder parameters to this function (lhs == node.rhs).
+                // In that case, we should rebuild this node.
+                if (lhs != node.lhs || rhs != node.rhs)
+                    return builder(lhs, rhs)
 
                 return node
             }
 
+            private fun canonicalArgs(lhs: Node, rhs: Node): Pair<Node, Node> =
+                if (needSwap(lhs, rhs)) rhs to lhs else lhs to rhs
+
+            private fun needSwap(lhs: Node, rhs: Node): Boolean = when {
+                rhs is ConstAny -> false
+                lhs is ConstAny -> true
+                rhs is BinaryOp && lhs !is BinaryOp -> true
+                lhs is BinaryOp -> false
+                rhs.id > lhs.id -> true
+                else -> false
+            }
+
             override fun visitAdd(node: Add): Node {
-                if (node.lhs is Neg) {
-                    return Sub(node.type)(node.rhs, (node.lhs as Neg).operand)
-                }
-                if (node.rhs is Neg) {
-                    return Sub(node.type)(node.lhs, (node.rhs as Neg).operand)
-                }
                 val opKind = when (node.type) {
                     HairType.INT -> BinaryOpKind.ADD_INT
                     HairType.LONG -> BinaryOpKind.ADD_LONG
@@ -87,15 +97,28 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                     HairType.DOUBLE -> BinaryOpKind.ADD_DOUBLE
                     else -> error("Should not reach here $node")
                 }
-                return normalizeBinary(opKind, node, node.lhs, node.rhs) { lhs, rhs -> Add(node.type)(lhs, rhs) }
+
+                val [lhs, rhs] = canonicalArgs(node.lhs, node.rhs)
+
+                // -a + b => b - a
+                if (lhs is Neg) {
+                    return Sub(node.type)(rhs, lhs.operand)
+                }
+
+                // a + -b => a - b
+                if (rhs is Neg) {
+                    return Sub(node.type)(lhs, rhs.operand)
+                }
+
+                // a + a => a << const[1]
+                if (node.type.isIntegral && lhs == rhs) {
+                    return Shl(node.type)(lhs, ConstI(1))
+                }
+
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Add(node.type)(lhs, rhs) }
             }
 
             override fun visitSub(node: Sub): Node {
-                if (node.rhs == node.lhs) return Const(node.type, 0)
-                // TODO what is lhs is Neg?
-                if (node.rhs is Neg) {
-                    return Add(node.type)(node.lhs, (node.rhs as Neg).operand)
-                }
                 val opKind = when (node.type) {
                     HairType.INT -> BinaryOpKind.SUB_INT
                     HairType.LONG -> BinaryOpKind.SUB_LONG
@@ -103,7 +126,226 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                     HairType.DOUBLE -> BinaryOpKind.SUB_DOUBLE
                     else -> error("Should not reach here $node")
                 }
-                return normalizeBinary(opKind, node, node.lhs, node.rhs) { lhs, rhs -> Sub(node.type)(lhs, rhs) }
+
+                val [lhs, rhs] = node.lhs to node.rhs
+
+                // a - a => const[0]
+                if (node.type.isIntegral && rhs == lhs)
+                    return Const(node.type, 0)
+
+                // a - -b => a + b
+                if (rhs is Neg)
+                    return Add(node.type)(lhs, rhs.operand)
+
+                // -a - b => -(a + b)
+                if (node.type.isIntegral && lhs is Neg)
+                    return Neg(Add(node.type)(lhs, rhs))
+
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Sub(node.type)(lhs, rhs) }
+            }
+
+            override fun visitMul(node: Mul): Node {
+                val opKind = when (node.type) {
+                    HairType.INT -> BinaryOpKind.MUL_INT
+                    HairType.LONG -> BinaryOpKind.MUL_LONG
+                    HairType.FLOAT -> BinaryOpKind.MUL_FLOAT
+                    HairType.DOUBLE -> BinaryOpKind.MUL_DOUBLE
+                    else -> error("Should not reach here $node")
+                }
+
+                val [lhs, rhs] = canonicalArgs(node.lhs, node.rhs)
+
+                // TODO: Support for NaN and infinities
+                // a * const[0] => const[0]
+                if (node.type.isIntegral && rhs is ConstAny && rhs.numberValue == 0)
+                    return Const(node.type, 0)
+
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Mul(node.type)(lhs, rhs) }
+            }
+
+            override fun visitDiv(node: Div): Node {
+                val opKind = when (node.type) {
+                    HairType.INT -> BinaryOpKind.DIV_INT
+                    HairType.LONG -> BinaryOpKind.DIV_LONG
+                    HairType.FLOAT -> BinaryOpKind.DIV_FLOAT
+                    HairType.DOUBLE -> BinaryOpKind.DIV_DOUBLE
+                    else -> error("Should not reach here $node")
+                }
+
+                val [lhs, rhs] = node.lhs to node.rhs
+
+                // TODO: a / const[0] => throwable
+
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Div(node.type)(lhs, rhs) }
+            }
+
+            override fun visitRem(node: Rem): Node {
+                val opKind = when (node.type) {
+                    HairType.INT -> BinaryOpKind.REM_INT
+                    HairType.LONG -> BinaryOpKind.REM_LONG
+                    HairType.FLOAT -> BinaryOpKind.REM_FLOAT
+                    HairType.DOUBLE -> BinaryOpKind.REM_DOUBLE
+                    else -> error("Should not reach here $node")
+                }
+
+                val [lhs, rhs] = node.lhs to node.rhs
+
+                // TODO: a / const[0] => throwing - float and double return NaN?
+
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Rem(node.type)(lhs, rhs) }
+            }
+
+            override fun visitInv(node: Inv): Node = when (val operand = node.operand) {
+                is ConstAny -> Const(
+                    when (val value = operand.numberValue) {
+                        is Int -> value.inv()
+                        is Long -> value.inv()
+                        else -> error("Should not reach here $node")
+                    }
+                )
+
+                // ~ ~a => a
+                is Inv -> operand.operand
+
+                else -> node
+            }
+
+            override fun visitAnd(node: And): Node {
+                val opKind = when (node.type) {
+                    HairType.INT -> BinaryOpKind.AND_INT
+                    HairType.LONG -> BinaryOpKind.AND_LONG
+                    else -> error("Should not reach here $node")
+                }
+
+                val [lhs, rhs] = canonicalArgs(node.lhs, node.rhs)
+
+                // a & const[0] => const[0]
+                if (rhs is ConstAny && rhs.numberValue == 0)
+                    return Const(node.type, 0)
+
+                // a & a => a
+                if (lhs == rhs)
+                    return lhs
+
+                if (rhs is Inv) {
+                    // a & ~a => const[0]
+                    if (rhs.operand == lhs)
+                        return Const(node.type, 0)
+
+                    // ~a & ~b => ~(a | b)
+                    if (lhs is Inv)
+                        return Inv(Or(node.type)(lhs.operand, rhs.operand))
+                }
+
+                // (a | b) & a => a
+                if (lhs is Or && (lhs.lhs == rhs || lhs.rhs == rhs))
+                    return rhs
+
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> And(node.type)(lhs, rhs) }
+            }
+
+            override fun visitOr(node: Or): Node {
+                val opKind = when (node.type) {
+                    HairType.INT -> BinaryOpKind.OR_INT
+                    HairType.LONG -> BinaryOpKind.OR_LONG
+                    else -> error("Should not reach here $node")
+                }
+
+                val [lhs, rhs] = canonicalArgs(node.lhs, node.rhs)
+
+                // a | const[-1] => const[-1]
+                if (rhs is ConstAny && rhs.numberValue == -1)
+                    return Const(node.type, -1)
+
+                // a | a => a
+                if (lhs == rhs)
+                    return lhs
+
+                if (rhs is Inv) {
+                    // a | ~a => -1
+                    if (rhs.operand == lhs)
+                        return Const(node.type, -1)
+
+                    // ~a | ~b => ~(a | b)
+                    if (lhs is Inv)
+                        return Inv(And(node.type)(lhs.operand, rhs.operand))
+                }
+
+                // (a & b) | a => a
+                if (lhs is And && (lhs.lhs == rhs || lhs.rhs == rhs))
+                    return rhs
+
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Or(node.type)(lhs, rhs) }
+            }
+
+            override fun visitXor(node: Xor): Node {
+                val opKind = when (node.type) {
+                    HairType.INT -> BinaryOpKind.XOR_INT
+                    HairType.LONG -> BinaryOpKind.XOR_LONG
+                    else -> error("Should not reach here $node")
+                }
+
+                val [lhs, rhs] = canonicalArgs(node.lhs, node.rhs)
+
+                // a ^ const[-1] => ~a
+                if (rhs is ConstAny && rhs.numberValue == -1)
+                    return Inv(lhs)
+
+                // a ^ a => const[0]
+                if (lhs == rhs)
+                    return Const(node.type, 0)
+
+                // (a ^ b) ^ a => b
+                if (lhs is Xor) {
+                    if (lhs.lhs == rhs)
+                        return lhs.rhs
+
+                    if (lhs.rhs == rhs)
+                        return lhs.lhs
+                }
+
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Xor(node.type)(lhs, rhs) }
+            }
+
+            override fun visitShl(node: Shl): Node {
+                val opKind = when (node.type) {
+                    HairType.INT -> BinaryOpKind.SHL_INT
+                    HairType.LONG -> BinaryOpKind.SHL_LONG
+                    else -> error("Should not reach here $node")
+                }
+
+                val [lhs, rhs] = node.lhs to node.rhs
+
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Shl(node.type)(lhs, rhs) }
+            }
+
+            override fun visitShr(node: Shr): Node {
+                val opKind = when (node.type) {
+                    HairType.INT -> BinaryOpKind.SHR_INT
+                    HairType.LONG -> BinaryOpKind.SHR_LONG
+                    else -> error("Should not reach here $node")
+                }
+
+                return normalizeBinary(opKind, node, node.lhs, node.rhs) { lhs, rhs -> Shr(node.type)(lhs, rhs) }
+            }
+
+            override fun visitUshr(node: Ushr): Node {
+                val opKind = when (node.type) {
+                    HairType.INT -> BinaryOpKind.USHR_INT
+                    HairType.LONG -> BinaryOpKind.USHR_LONG
+                    else -> error("Should not reach here $node")
+                }
+
+                val [lhs, rhs] = node.lhs to node.rhs
+
+                return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Ushr(node.type)(lhs, rhs) }
+            }
+
+            override fun visitNot(node: Not): Node = when (val operand = node.operand) {
+                // !!a => a
+                is Not -> operand.operand
+
+                else -> node
             }
 
             // TODO the rest
@@ -136,22 +378,52 @@ val ConstAny.numberValue: Number
         else -> error("Should not reach here $this")
     }
 
-enum class BinaryOpKind(val associative: Boolean, val commutative: Boolean, val identity: Number, val op: (Number, Number) -> Number) {
+enum class BinaryOpKind(
+    val associative: Boolean,
+    val identity: Number?,
+    val op: (Number, Number) -> Number,
+) {
     // FIXME toInt
-    ADD_INT(true, true, 0, { l, r -> l.toInt() + r.toInt() }),
-    ADD_LONG(true, true, 0L, { l, r -> l.toLong() + r.toLong() }),
-    ADD_FLOAT(false, true, 0.0f, { l, r -> l.toFloat() + r.toFloat() }),
-    ADD_DOUBLE(false, true, 0.0, { l, r -> l.toDouble() + r.toDouble() }),
+    ADD_INT(true, 0, { l, r -> l.toInt() + r.toInt() }),
+    ADD_LONG(true, 0L, { l, r -> l.toLong() + r.toLong() }),
+    ADD_FLOAT(false, 0.0f, { l, r -> l.toFloat() + r.toFloat() }),
+    ADD_DOUBLE(false, 0.0, { l, r -> l.toDouble() + r.toDouble() }),
 
-    SUB_INT(false, false, 0, { l, r -> l.toInt() - r.toInt() }),
-    SUB_LONG(false, false, 0L, { l, r -> l.toLong() - r.toLong() }),
-    SUB_FLOAT(false, false, 0.0f, { l, r -> l.toFloat() - r.toFloat() }),
-    SUB_DOUBLE(false, false, 0.0, { l, r -> l.toDouble() - r.toDouble() }),
+    SUB_INT(false, 0, { l, r -> l.toInt() - r.toInt() }),
+    SUB_LONG(false, 0L, { l, r -> l.toLong() - r.toLong() }),
+    SUB_FLOAT(false, 0.0f, { l, r -> l.toFloat() - r.toFloat() }),
+    SUB_DOUBLE(false, 0.0, { l, r -> l.toDouble() - r.toDouble() }),
 
-    MUL_INT(true, true, 1, { l, r -> l.toInt() * r.toInt() }),
-    MUL_LONG(true, true, 1L, { l, r -> l.toLong() * r.toLong() }),
-    MUL_FLOAT(false, true, 1.0f, { l, r -> l.toFloat() * r.toFloat() }),
-    MUL_DOUBLE(false, true, 1.0, { l, r -> l.toDouble() * r.toDouble() }),
+    MUL_INT(true, 1, { l, r -> l.toInt() * r.toInt() }),
+    MUL_LONG(true, 1L, { l, r -> l.toLong() * r.toLong() }),
+    MUL_FLOAT(false, 1.0f, { l, r -> l.toFloat() * r.toFloat() }),
+    MUL_DOUBLE(false, 1.0, { l, r -> l.toDouble() * r.toDouble() }),
 
-    // TODO the rest
+    DIV_INT(false, 1, { l, r -> l.toInt() / r.toInt() }),
+    DIV_LONG(false, 1L, { l, r -> l.toLong() / r.toLong() }),
+    DIV_FLOAT(false, 1.0f, { l, r -> l.toFloat() / r.toFloat() }),
+    DIV_DOUBLE(false, 1.0, { l, r -> l.toDouble() / r.toDouble() }),
+
+    REM_INT(false, null, { l, r -> l.toInt() % r.toInt() }),
+    REM_LONG(false, null, { l, r -> l.toLong() % r.toLong() }),
+    REM_FLOAT(false, null, { l, r -> l.toFloat() % r.toFloat() }),
+    REM_DOUBLE(false, null, { l, r -> l.toDouble() % r.toDouble() }),
+
+    AND_INT(true, -1, { l, r -> l.toInt() and r.toInt() }),
+    AND_LONG(true, -1L, { l, r -> l.toLong() and r.toLong() }),
+
+    OR_INT(true, 0, { l, r -> l.toInt() or r.toInt() }),
+    OR_LONG(true, 0L, { l, r -> l.toLong() or r.toLong() }),
+
+    XOR_INT(true, 0, { l, r -> l.toInt() xor r.toInt() }),
+    XOR_LONG(true, 0L, { l, r -> l.toLong() xor r.toLong() }),
+
+    SHL_INT(false, 0, { l, r -> l.toInt() shl r.toInt() }),
+    SHL_LONG(false, 0L, { l, r -> l.toLong() shl r.toInt() }),
+
+    SHR_INT(false, 0, { l, r -> l.toInt() shr r.toInt() }),
+    SHR_LONG(false, 0L, { l, r -> l.toLong() shr r.toInt() }),
+
+    USHR_INT(false, 0, { l, r -> l.toInt() ushr r.toInt() }),
+    USHR_LONG(false, 0L, { l, r -> l.toLong() ushr r.toInt() }),
 }
