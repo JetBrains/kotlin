@@ -1,6 +1,6 @@
 # Java-Direct: Iteration Results Log
 
-**Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%). No known won't-fix.
+**Current status**: `:compiler:java-direct:test` full suite green, 2830/2830 (100%). No known won't-fix.
 
 **Last archived**: `implDocs/archive/ITERATION_RESULTS_2026_06_01.md` (entries through 2026-06-01).
 
@@ -35,6 +35,71 @@ This log is read into the agent's context every session, so **entries must stay 
 ---
 
 <!-- Add new entries below, newest first. -->
+
+### 2026-07-06 — Unify per-level lookup in findClassInCurrentScope / computeClassifier (collapse step 4)
+- **Change**: Step 4 (last of the requested 1-4) of the resolution-pipeline collapse. New
+  `declaredOrFullyInherited(cls, name)` = `declaredOrSameFileInherited` (same-file) +
+  `JavaInheritedMemberResolver.findInnerClassFromSupertypes` (cross-file source/binary/Kotlin, now
+  capable per step 3). `findClassInCurrentScope`'s previously asymmetric 4-step ladder (full lookup
+  only at the innermost level, same-file-only for outer levels) collapses into one loop over
+  `self, outerClass, outerClass.outerClass, ...` applying `declaredOrFullyInherited` at every
+  level. `JavaTypeOverAst.computeClassifier`'s multi-part navigation loop now calls the same
+  function per hop instead of the same-file-only helper, so an intermediate segment inherited from
+  a cross-file/Kotlin/binary supertype navigates correctly (previously same-file only, despite the
+  KDoc's unqualified claim).
+- **Files**: `resolution/JavaScopeResolver.kt` (+`declaredOrFullyInherited`, unified
+  `findClassInCurrentScope` loop), `model/JavaTypeOverAst.kt` (multi-part loop + KDoc).
+- **Tests**: `:compiler:java-direct:test` full suite green, 2830/2830 (0 failures).
+- **Result**: green. Steps 1-4 of `implDocs/COLLAPSE_RESOLUTION_PIPELINES_2026_07_06.md` are now
+  landed; steps 5-6 (dead-parameter removal, truncation-bug fixes, new regression tests, doc
+  updates) are tracked there for a follow-up session.
+
+### 2026-07-06 — findInnerClassFromSupertypes gains a binary/Kotlin tail (collapse step 3)
+- **Change**: Step 3 of the resolution-pipeline collapse. `JavaInheritedMemberResolver.findInnerClassFromSupertypes`
+  — the structural `JavaClass`-returning pipeline, previously same-file + cross-file-source only —
+  now falls through to a binary/Kotlin tail (only when the same-file/cross-file-source arms found
+  nothing) that reuses `resolveInheritedInnerClassToClassId`'s generic `ClassId` BFS (exposed
+  `internal`) and materializes the result via `classifierAdapterFor` (steps 1-2). A Java source
+  class inheriting a nested class from a Kotlin or binary superclass is now visible through this
+  structural entry point (`findClassInCurrentScope`), not just the `resolve()`/`ClassId` one.
+- **Regression fixed during this step**: the new tail must not run when the cross-file-source arm's
+  `collectInheritedInnerClasses` map already reports an *ambiguous* (`size > 1`) candidate for the
+  name — falling through in that case let the tail's differently-shaped BFS silently pick one
+  candidate, masking the ambiguity (caught by 3 pre-existing `MISSING_DEPENDENCY_CLASS` tests:
+  `Clash.kt`, `InheritanceAmbiguity2.kt`, `InheritanceAmbiguity4.kt`).
+- **Files**: `resolution/JavaInheritedMemberResolver.kt` (`findInnerClassFromSupertypes` signature
+  + tail), `resolution/JavaScopeResolver.kt` (call site wiring), `resolution/JavaTypeResolver.kt`
+  (`resolveInheritedInnerClassToClassId` made `internal`); test
+  `JavaParsingTypeResolutionTest.kt` (updated call site, no-op callbacks for the parsing-only test).
+- **Tests**: `:compiler:java-direct:test` full suite green, 2830/2830 (0 failures) after the
+  ambiguity fix.
+- **Result**: green.
+
+### 2026-07-06 — classifierAdapterFor routes source-backed ClassIds to canonical JavaClassOverAst (collapse step 2)
+- **Change**: Step 2 of the resolution-pipeline collapse. `classifierAdapterFor` no longer
+  unconditionally builds a fresh `FirBackedJavaClassAdapter`. It first checks
+  `classFinder.isClassInIndex(classId)` (the same check `directSupertypeClassIds` arm 1 already
+  performs) and, if source-backed, returns the finder's canonical `JavaClassOverAst` via
+  `finder.findClass(...)`. Fixes the identity break where a same-file/other-file source class
+  reached via the generic `ClassId` ladder (e.g. `computeClassifier`'s `resolve()` fallback) came
+  back as a second, non-navigable wrapper instead of the live, identity-preserving instance.
+- **Files**: `resolution/JavaTypeResolver.kt` (`classifierAdapterFor`).
+- **Tests**: `:compiler:java-direct:test` full suite green, 2830/2830 (0 failures).
+- **Result**: green; routing-only change, no new FIR laziness.
+
+### 2026-07-06 — FirBackedJavaClassAdapter gains real findInnerClass/innerClassNames (collapse step 1)
+- **Change**: Step 1 of the resolution-pipeline collapse (see
+  `implDocs/COLLAPSE_RESOLUTION_PIPELINES_2026_07_06.md`). `FirBackedJavaClassAdapter` — the uniform
+  `JavaClass` façade over binary/Kotlin FIR targets — no longer hardcodes `findInnerClass`/
+  `innerClassNames` to null/empty. `FirJavaClass` targets enumerate the now-public
+  `existingNestedClassifierNames`; other `FirRegularClass` targets (Kotlin/deserialized) enumerate
+  `declarations` (safe there; the KT-74097 hazard is `FirJavaClass`-specific). Existence is probed via
+  `cycleSafeClassLikeSymbol`, no enhancement/phase-forcing.
+- **Files**: `resolution/FirBackedJavaClassAdapter.kt` (+`findInnerClass`/`innerClassNames`/
+  `nestedClassifierNames` helper); fir-jvm `java/declarations/FirJavaClass.kt`
+  (`existingNestedClassifierNames` made public, mirroring `directSupertypeClassIds()`).
+- **Tests**: `:compiler:java-direct:test` full suite green, 2830/2830 (0 failures).
+- **Result**: green; this only adds a new capability, no caller wired to it yet (steps 2-3 do that).
 
 ### 2026-06-16 — Inherited inner type shadows an enclosing-declared one (JLS 6.4.1 parity)
 - **Change**: A member type *inherited* by an inner class now shadows one merely *declared* in a

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.FirBackedJavaClassAdapter
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
-import org.jetbrains.kotlin.java.direct.resolution.declaredOrSameFileInherited
+import org.jetbrains.kotlin.java.direct.resolution.declaredOrFullyInherited
 import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
 import org.jetbrains.kotlin.java.direct.resolution.findInheritedTypeParameter
 import org.jetbrains.kotlin.java.direct.resolution.findTypeParameter
@@ -137,14 +137,16 @@ class JavaClassifierTypeOverAst(
             }
 
             // Multi-part names: navigate from base class through inner classes. Each hop resolves
-            // declared members plus same-file inherited member types (findInnerClass is declared-only),
-            // so an intermediate segment inherited from a supertype still navigates correctly.
+            // declared members plus the class's full inherited member types (same-file, cross-file
+            // Java source, binary Java, and Kotlin — [declaredOrFullyInherited]), so an
+            // intermediate segment inherited from any of those supertype representations still
+            // navigates correctly.
             var current: JavaClassifier? = findClassInCurrentScope(Name.identifier(parts[0]))
 
             if (current is JavaClass) {
                 for (i in 1 until parts.size) {
                     val part = Name.identifier(parts[i])
-                    current = (current as JavaClass).declaredOrSameFileInherited(part)
+                    current = declaredOrFullyInherited(current as JavaClass, part)
                         ?: return null
                 }
                 return current

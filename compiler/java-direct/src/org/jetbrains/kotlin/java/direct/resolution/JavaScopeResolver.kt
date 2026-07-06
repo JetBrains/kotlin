@@ -36,17 +36,14 @@ internal fun findInheritedTypeParameter(name: String): JavaTypeParameter? =
  * Finds a [JavaClass] for a simple name in the AST-side scope.
  *
  * Checks (in order):
- * 1. Inner classes of the containing class — declared members ([JavaClass.findInnerClass]) plus
- *    same-file inherited member types ([findInnerClassInSameFileSupertypes], JLS 8.5).
- * 2. Inherited inner classes from the containing class's supertypes
- *    ([JavaInheritedMemberResolver.findInnerClassFromSupertypes], JLS 6.5.2) — the cross-file /
- *    resolved-supertype path. This runs *before* the sibling/outer-declared step (3) because, per
- *    JLS 6.4.1, a member type inherited by the containing class shadows one merely declared in a
- *    lexically-enclosing class.
- * 3. Sibling inner classes — declared and same-file-inherited members of the immediate outer class.
- * 4. Inner classes (declared + same-file-inherited) of each outer class up the containing chain
- *    (so deeply-nested classes see siblings of every enclosing class).
- * 5. Top-level classes declared in the same file (`sameFileTopLevelClassProvider`).
+ * 1. Declared-plus-fully-inherited member types ([declaredOrFullyInherited]) at every level of
+ *    the containing-class chain, innermost to outermost — the containing class itself, then its
+ *    outer class, then that class's outer class, and so on. Per JLS 6.4.1, a member type declared
+ *    or inherited at an inner level shadows one declared or inherited at an enclosing level, so
+ *    this single loop (rather than a special-cased innermost level) preserves that shadowing for
+ *    every representation the inherited half of the lookup reaches: same-file supertypes,
+ *    cross-file Java source, binary Java, and Kotlin.
+ * 2. Top-level classes declared in the same file (`sameFileTopLevelClassProvider`).
  *
  *  - [org.jetbrains.kotlin.java.direct.model.JavaTypeOverAst]'s `computeClassifier` reads the
  *    result as a [org.jetbrains.kotlin.load.java.structure.JavaClassifier], which must be a
@@ -59,28 +56,13 @@ internal fun findInheritedTypeParameter(name: String): JavaTypeParameter? =
 context(c: JavaResolutionContext)
 internal fun findClassInCurrentScope(name: Name): JavaClass? {
     val scope = c.scopeContext
-    val inheritedMemberResolver = c.fileContext.inheritedMemberResolver
-    // 1. Inner classes of the containing class — declared members (purely syntactic AST query)
-    // plus the same-file supertype walk for inherited member types ([findInnerClassInSameFileSupertypes]).
-    scope.containingClass?.declaredOrSameFileInherited(name)?.let { return it }
-    // 2. Inherited inner classes from the containing class's supertypes; cross-file Java-source path.
-    // The resolver is read from [JavaFileContext] (per-file, scope-invariant); the scope data holds
-    // no reference to it.
-    (scope.containingClass as? JavaClassOverAst)?.let { cls ->
-        inheritedMemberResolver.findInnerClassFromSupertypes(name, cls, mutableSetOf())?.let { return it }
+    // 1. Declared-plus-fully-inherited lookup at every level of the containing-class chain.
+    var current = scope.containingClass
+    while (current != null) {
+        declaredOrFullyInherited(current, name)?.let { return it }
+        current = current.outerClass
     }
-    // 3. Sibling inner classes — declared and same-file-inherited members of the immediate outer class.
-    // Handles cases like: class J { class AImpl {} class A extends AImpl {} }
-    scope.containingClass?.outerClass?.declaredOrSameFileInherited(name)?.let { return it }
-    // 4. Inner classes of each outer class up the containing chain.
-    // For deeply-nested classes (Outer { Inner1 { Inner2 { ... } } }) Inner2 must
-    // see siblings of every enclosing class.
-    var outer = scope.containingClass?.outerClass
-    while (outer != null) {
-        outer.outerClass?.declaredOrSameFileInherited(name)?.let { return it }
-        outer = outer.outerClass
-    }
-    // 5. Top-level classes declared in the same file.
+    // 2. Top-level classes declared in the same file.
     return scope.sameFileTopLevelClassProvider(name)
 }
 
@@ -92,6 +74,29 @@ internal fun findClassInCurrentScope(name: Name): JavaClass? {
 internal fun JavaClass.declaredOrSameFileInherited(name: Name): JavaClass? =
     findInnerClass(name)
         ?: (this as? JavaClassOverAst)?.let { findInnerClassInSameFileSupertypes(it, name, mutableSetOf()) }
+
+/**
+ * [declaredOrSameFileInherited] extended with cross-file Java source, binary Java, and Kotlin
+ * inherited member types ([JavaInheritedMemberResolver.findInnerClassFromSupertypes]) — the full
+ * declared-plus-inherited lookup for one level of a containing-class chain.
+ *
+ * Used by [findClassInCurrentScope] at every level of the chain, and by
+ * [org.jetbrains.kotlin.java.direct.model.JavaTypeOverAst]'s multi-part navigation loop for the
+ * same reason: an intermediate segment of a qualified reference can be inherited from any of
+ * those representations, not just a same-file supertype.
+ */
+context(c: JavaResolutionContext)
+internal fun declaredOrFullyInherited(cls: JavaClass, name: Name): JavaClass? {
+    cls.declaredOrSameFileInherited(name)?.let { return it }
+    val astClass = cls as? JavaClassOverAst ?: return null
+    return c.fileContext.inheritedMemberResolver.findInnerClassFromSupertypes(
+        name, astClass, mutableSetOf(),
+        resolveBinaryOrKotlinInherited = { containingClass, innerName ->
+            resolveInheritedInnerClassToClassId(innerName.asString(), { tryResolve(it) }, containingClass, includeOuterClasses = false)
+        },
+        classifierAdapterFor = { classifierAdapterFor(it) },
+    )
+}
 
 /**
  * Searches for an inner class in the supertypes of [cls], working purely on raw AST text

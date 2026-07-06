@@ -60,7 +60,11 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
             sameFileTopLevelClassProvider = { name -> topLevelClasses[name.asString()] },
         )
 
-        val found = resolver.findInnerClassFromSupertypes(Name.identifier("Target"), derived, mutableSetOf())
+        val found = resolver.findInnerClassFromSupertypes(
+            Name.identifier("Target"), derived, mutableSetOf(),
+            resolveBinaryOrKotlinInherited = { _, _ -> null },
+            classifierAdapterFor = { null },
+        )
         assert(found != null) {
             "Expected to resolve inherited inner class 'Target' through nested generic supertype " +
                     "Outer<String>.Inner, but resolution returned null"

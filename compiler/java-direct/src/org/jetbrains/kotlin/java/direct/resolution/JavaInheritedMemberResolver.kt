@@ -24,7 +24,11 @@ import org.jetbrains.kotlin.name.Name
  * - [findInnerClassFromSupertypes] returns a [JavaClass] with its full AST-side outer-class
  *   chain, so the AST pipeline can thread outer-class type arguments through the chain — the
  *   substitution context FIR needs for inherited inner classes of generic outer classes.
- *   Cross-file Java-source supertypes are handled via the [classFinder].
+ *   Cross-file Java-source supertypes are handled via the [classFinder]; binary Java and Kotlin
+ *   supertypes are handled by a final tail that reuses [resolveInheritedInnerClassToClassId]
+ *   (via the caller-supplied `resolveBinaryOrKotlinInherited` callback) and materializes the
+ *   result through the caller-supplied `classifierAdapterFor` callback — see the parameter docs
+ *   on [findInnerClassFromSupertypes] itself.
  *
  * - [resolveInheritedInnerClassToClassId] returns a `ClassId` via a two-pass BFS:
  *   [walkJavaSourceSupertypes] walks Java-source supertypes through the [classFinder] source
@@ -35,7 +39,10 @@ import org.jetbrains.kotlin.name.Name
  * The passes are kept separate by design:
  * - the source pass must not depend on FIR phase state, unlike the binary pass;
  * - the source pass yields a bare `ClassId`, while [findInnerClassFromSupertypes] must also
- *   recover the AST-side `JavaClass` for outer-class type-argument substitution.
+ *   recover the AST-side `JavaClass` for outer-class type-argument substitution — which the
+ *   binary/Kotlin tail achieves by materializing its `ClassId` result via `classifierAdapterFor`
+ *   instead (a [FirBackedJavaClassAdapter] for binary/Kotlin, or the canonical source
+ *   `JavaClassOverAst` if `classifierAdapterFor`'s routing finds the result is source-backed).
  */
 internal class JavaInheritedMemberResolver(
     private val classFinder: LeanJavaClassFinder?,
@@ -50,26 +57,60 @@ internal class JavaInheritedMemberResolver(
      * available) to detect cross-file ambiguities and to materialize the inherited
      * `JavaClass` for cross-file Java-source supertypes; falls back to
      * [sameFileTopLevelClassProvider] for same-file supertypes.
+     *
+     * @param resolveBinaryOrKotlinInherited the binary/Kotlin tail, tried only after the
+     *        same-file and cross-file-source arms above have found nothing for [javaClass]
+     *        itself: resolves an inherited inner class of [javaClass] to a `ClassId` by reusing
+     *        [resolveInheritedInnerClassToClassId]'s generic ladder (already binary/Kotlin-aware
+     *        via [directSupertypeClassIds]).
+     * @param classifierAdapterFor materializes the `ClassId` found by
+     *        [resolveBinaryOrKotlinInherited] back into a navigable [JavaClass] — routes
+     *        source-backed results to their canonical [JavaClassOverAst], wraps binary/Kotlin
+     *        results in a [FirBackedJavaClassAdapter].
      */
-    fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClassOverAst, visited: MutableSet<JavaClass>): JavaClass? {
+    fun findInnerClassFromSupertypes(
+        name: Name,
+        javaClass: JavaClassOverAst,
+        visited: MutableSet<JavaClass>,
+        resolveBinaryOrKotlinInherited: (JavaClass, Name) -> ClassId?,
+        classifierAdapterFor: (ClassId) -> JavaClass?,
+    ): JavaClass? {
         if (!visited.add(javaClass)) return null
 
         var foundInnerClass: JavaClass? = null
 
-        // Same-file supertypes — local resolution by simple name. Cross-file supertypes are
-        // handled by the classFinder fallback below.
+        // Same-file supertypes — local resolution by simple name. Cross-file source supertypes
+        // are handled by the classFinder fallback below; binary/Kotlin supertypes by the tail.
         for (supertype in javaClass.supertypes) {
             val supertypeClass = resolveSameFileSupertype(supertype) ?: continue
-            (supertypeClass.findInnerClass(name) ?: findInnerClassFromSupertypes(name, supertypeClass, visited))?.let {
+            (
+                supertypeClass.findInnerClass(name)
+                    ?: findInnerClassFromSupertypes(name, supertypeClass, visited, resolveBinaryOrKotlinInherited, classifierAdapterFor)
+                )?.let {
                 if (foundInnerClass == null) foundInnerClass = it else return null
             }
         }
 
-        if (foundInnerClass != null || classFinder == null) return foundInnerClass
+        if (foundInnerClass != null) return foundInnerClass
 
-        val containingClassId = javaClass.classId ?: return foundInnerClass
-        val candidates = classFinder.collectInheritedInnerClasses(containingClassId)[name.asString()]
-        return candidates?.singleOrNull()?.let { classFinder.findClass(JavaClassFinder.Request(it)) }
+        val containingClassId = javaClass.classId ?: return null
+        if (classFinder != null) {
+            val candidates = classFinder.collectInheritedInnerClasses(containingClassId)[name.asString()]
+            // A non-null `candidates` means the source-supertype hierarchy has an opinion on
+            // [name] — including ambiguity (`size > 1`, `singleOrNull()` then `null`), which must
+            // NOT fall through to the binary/Kotlin tail below (that would silently pick one of
+            // the ambiguous candidates via a differently-shaped BFS, masking the ambiguity).
+            // Only a `null` map entry (no source-side candidate at all) defers to the tail.
+            if (candidates != null) {
+                return candidates.singleOrNull()?.let { classFinder.findClass(JavaClassFinder.Request(it)) }
+            }
+        }
+
+        // Binary/Kotlin tail — the same-file and cross-file-source arms above found nothing for
+        // `javaClass`'s own supertypes; fall through to the generic ClassId ladder, which is
+        // already binary/Kotlin-aware.
+        val inheritedId = resolveBinaryOrKotlinInherited(javaClass, name) ?: return null
+        return classifierAdapterFor(inheritedId)
     }
 
     /**

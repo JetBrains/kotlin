@@ -64,7 +64,10 @@ class FirJavaClass @FirImplementationDetail internal constructor(
      * @see javaTypeParameterStack
      */
     val classJavaTypeParameterStack: MutableJavaTypeParameterStack,
-    internal val existingNestedClassifierNames: List<Name>,
+    // Exposed (not internal) so java-direct's `FirBackedJavaClassAdapter.innerClassNames` can
+    // enumerate nested classifiers without forcing `declarations` (KT-74097-safe primitive, same
+    // spirit as `directSupertypeClassIds()`).
+    val existingNestedClassifierNames: List<Name>,
     internal val containingClassSymbol: FirClassSymbol<*>?,
 ) : FirRegularClass() {
     init {

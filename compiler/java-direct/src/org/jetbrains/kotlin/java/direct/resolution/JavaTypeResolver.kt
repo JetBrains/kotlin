@@ -438,9 +438,13 @@ private fun resolveFromStaticStarImports(
  * When [includeOuterClasses] is `false` only [containingClass]'s own supertypes are searched, so
  * the caller ([resolveFromLocalScope]) can interleave declared and inherited lookups level by level
  * (JLS 6.4.1).
+ *
+ * Not private: also used as the binary/Kotlin tail of
+ * [JavaInheritedMemberResolver.findInnerClassFromSupertypes] (the structural, `JavaClass`-returning
+ * sibling of this `ClassId`-returning ladder), via [findClassInCurrentScope].
  */
 context(c: JavaResolutionContext)
-private fun resolveInheritedInnerClassToClassId(
+internal fun resolveInheritedInnerClassToClassId(
     simpleName: String,
     tryResolve: (ClassId) -> Boolean,
     containingClass: JavaClass?,
@@ -551,13 +555,27 @@ internal fun resolveConstFieldValue(classId: ClassId, fieldName: Name): Any? =
     c.fileContext.session.resolveConstFieldValue(classId, fieldName)
 
 /**
- * Wraps [classId] in a [FirBackedJavaClassAdapter] backed by this context's session, or `null`
- * when the session has no `FirSymbolProvider` (parsing-level unit fixtures): the adapter could
- * not materialise its fields, and FIR-side `findClassIdByFqNameString` handles such references
- * instead.
+ * Materialises [classId] into a navigable [JavaClass], preferring the canonical source-backed
+ * instance over a generic FIR-backed wrapper:
+ *
+ *  1. **Source Java arm** — same check [directSupertypeClassIds] arm 1 uses
+ *     (`classFinder.isClassInIndex`): if [classId] is source-backed, return the finder's
+ *     canonical [org.jetbrains.kotlin.java.direct.model.JavaClassOverAst] instance. This
+ *     preserves object identity for consumers reached via the generic `ClassId` ladder — FIR
+ *     matches `FirJavaTypeParameter` to `JavaTypeParameter` by reference identity, so a
+ *     same-file class reached this way must be the *same* object as the one obtained via direct
+ *     same-file navigation, not a second, non-navigable [FirBackedJavaClassAdapter] wrapper.
+ *  2. **Binary Java / Kotlin arm** — otherwise, wrap [classId] in a [FirBackedJavaClassAdapter],
+ *     or return `null` when the session has no `FirSymbolProvider` (parsing-level unit fixtures):
+ *     the adapter could not materialise its fields, and FIR-side `findClassIdByFqNameString`
+ *     handles such references instead.
  */
 context(c: JavaResolutionContext)
 internal fun classifierAdapterFor(classId: ClassId): JavaClass? {
+    val finder = c.fileContext.classFinder
+    if (finder != null && finder.isClassInIndex(classId)) {
+        finder.findClass(JavaClassFinder.Request(classId))?.let { return it }
+    }
     val session = c.fileContext.session
     return if (session.nullableSymbolProvider != null) FirBackedJavaClassAdapter(classId, session) else null
 }
