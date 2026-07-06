@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGr
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxCoreTest
 import org.jetbrains.kotlin.konan.test.diagnostics.*
-import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrSignaturesTest
+import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpSignaturesTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpMetadataTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibComparisonTest
@@ -100,7 +100,7 @@ fun main(args: Array<String>) {
 
         // Dump KLIB signatures tests
         testGroup(testsRoot, "native/native.tests/testData/klib/dump-signatures") {
-            testClass<AbstractNativeKlibDumpIrSignaturesTest>(
+            testClass<AbstractNativeKlibDumpSignaturesTest>(
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
