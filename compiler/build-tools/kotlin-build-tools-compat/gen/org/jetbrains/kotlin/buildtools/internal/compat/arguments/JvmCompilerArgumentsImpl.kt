@@ -180,7 +180,7 @@ internal class JvmCompilerArgumentsImpl(
   override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
   @Throws(ObjectStreamException::class)
-  private fun writeReplace(): Any = deepCopy().prepareForSerialization()
+  private fun writeReplace(): Any = deepCopy().apply { prepareForSerialization() }
 
   @Throws(ObjectStreamException::class)
   private fun readResolve(): Any {

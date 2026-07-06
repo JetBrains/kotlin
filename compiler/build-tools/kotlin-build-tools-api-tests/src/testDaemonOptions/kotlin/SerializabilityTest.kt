@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jv
 import org.jetbrains.kotlin.buildtools.api.jvm.jvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.*
@@ -23,14 +22,13 @@ class SerializabilityTest : BaseCompilationTest() {
     fun testSerializability() {
         val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
         val operation = toolchains.jvm.jvmCompilationOperation(emptyList(), Path(".")) {
-            compilerArguments[JvmCompilerArguments.CLASSPATH] = listOf(Path("abc.jar"))
+            compilerArguments[JvmCompilerArguments.CLASSPATH] = listOf(Path("/abc.jar"))
         }
         val baos = ByteArrayOutputStream()
         ObjectOutputStream(baos).use { it.writeObject(operation) }
         val operation2: JvmCompilationOperation =
             BtaObjectInputStream(baos.toByteArray().inputStream()).use { it.readObject() as JvmCompilationOperation }
-        assertEquals(listOf(Path("abc.jar")), operation2.compilerArguments[JvmCompilerArguments.CLASSPATH]?.joinToString())
-
+        assertEquals(listOf(Path("/abc.jar")), operation2.compilerArguments[JvmCompilerArguments.CLASSPATH])
     }
 
     class BtaObjectInputStream(inputStream: InputStream) : ObjectInputStream(inputStream) {

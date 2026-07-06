@@ -48,18 +48,28 @@ import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileLocations
+import java.io.File
 import java.nio.file.Path
 
 internal class JvmCompilationOperationImpl private constructor(
     override val options: Options = Options(JvmCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destinationDirectory: Path,
+    sources: List<Path>,
+    destinationDirectory: Path,
     compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(JvmCompilerArgumentValueAdapter.getOrNull()),
     private val compilerVersion: String,
 ) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(compilerArguments),
     JvmCompilationOperation,
     JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationImpl> {
+
+    override val sources: List<Path>
+        get() = _sources.map(File::toPath)
+
+    override val destinationDirectory: Path
+        get() = _destinationDirectory.toPath()
+
+    val _sources: List<File> = sources.map { it.toFile() }
+    val _destinationDirectory: File = destinationDirectory.toFile()
 
     constructor(
         sources: List<Path>,
