@@ -130,6 +130,7 @@ private val metadataCompilerArguments: List<MetadataArgumentTestDescriptor<*>> =
                 testBaseDir.resolve("path/to/friend2"),
             ).joinToString(",") { it.toFile().absolutePath }
         ),
+        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with,comma"))),
         valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xfriend-paths=$value") },
     ),
@@ -148,6 +149,7 @@ private val metadataCompilerArguments: List<MetadataArgumentTestDescriptor<*>> =
                 testBaseDir.resolve("path/to/refines2"),
             ).joinToString(",") { it.toFile().absolutePath }
         ),
+        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with,comma"))),
         valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xrefines-paths=$value") },
     ),

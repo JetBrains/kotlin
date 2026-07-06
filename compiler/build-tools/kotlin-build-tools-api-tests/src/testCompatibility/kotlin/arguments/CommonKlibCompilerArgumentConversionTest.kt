@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.AllCommonKlibCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentConfiguration
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKl
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.JS_LINKING
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.WASM_KLIB
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.WASM_LINKING
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.InvalidArgumentValueCommonKlibCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.InvalidRawValueCommonKlibCompilerArgumentsBtaV2StrategyAgnosticTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.NullableCommonKlibCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.wasmProject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertThrows
 
 internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() {
     @AllCommonKlibCompilerArgumentsWithBtaVersionsTest
@@ -100,6 +103,19 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
         assertEquals(
             getDefaultValueString(), getValueString(getArgument(arguments))
         )
+    }
+
+    @InvalidArgumentValueCommonKlibCompilerArgumentsWithBtaVersionsTest
+    @DisplayName("BTA argument with non-existent argument value fails conversion")
+    fun <T> CommonKlibArgumentConfiguration<T>.testInvalidArgumentConversionFails() {
+        assumeArgumentSupported()
+        for (invalidValue in invalidArgumentValues) {
+            assertThrows<CompilerArgumentsParseException> {
+                buildArguments {
+                    setArgument(this, invalidValue)
+                }
+            }
+        }
     }
 
     @InvalidRawValueCommonKlibCompilerArgumentsBtaV2StrategyAgnosticTest

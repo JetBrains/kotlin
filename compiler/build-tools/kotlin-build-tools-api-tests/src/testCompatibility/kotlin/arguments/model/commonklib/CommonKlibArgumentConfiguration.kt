@@ -32,6 +32,7 @@ internal class CommonKlibArgumentConfiguration<T>(
     val availableSinceVersion: KotlinReleaseVersion = descriptor.availableSinceVersion
     val argumentValues: List<T> = descriptor.argumentValues
     val argumentRawValues: List<String> = descriptor.argumentRawValues
+    val invalidArgumentValues: List<T> = descriptor.invalidArgumentValues
     val invalidRawValues: List<String> = descriptor.invalidRawValues
 
     fun isPlatformSupported(): Boolean = when (operationKind) {

@@ -17,6 +17,12 @@ annotation class AllCommonKlibCompilerArgumentsWithBtaVersionsTest
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(InvalidArgumentValueCommonKlibCompilerArgumentsWithBtaVersionsArgumentProvider::class)
+annotation class InvalidArgumentValueCommonKlibCompilerArgumentsWithBtaVersionsTest
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(InvalidRawValueCommonKlibCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider::class)
 annotation class InvalidRawValueCommonKlibCompilerArgumentsBtaV2StrategyAgnosticTest
 
