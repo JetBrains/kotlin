@@ -7,8 +7,6 @@ package generators.unicode.mappings.string
 
 import generators.requireExistingDir
 import generators.unicode.PropertyLine
-import generators.unicode.hexToInt
-import generators.unicode.toHexIntLiteral
 import generators.unicode.writeHeader
 import java.io.File
 import java.io.FileWriter
@@ -71,15 +69,15 @@ internal class StringCasingTestGenerator(private val outputDir: File) {
                 var lastChecked = -1
                 for (range in $rangesArrayName) {
                     for (codePoint in lastChecked + 1 until range.first) {
-                        assertFalse(codePoint.$functionName())
+                        assertFalse($functionName(codePoint))
                     }
-                    for (codePoint in range.first..range.last) {
-                        assertTrue(codePoint.$functionName())
+                    for (codePoint in range) {
+                        assertTrue($functionName(codePoint))
                     }
                     lastChecked = range.last
                 }
                 for (codePoint in lastChecked + 1..0x10FFFF) {
-                    assertFalse(codePoint.$functionName())
+                    assertFalse($functionName(codePoint))
                 }
             }
         }

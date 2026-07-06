@@ -53,13 +53,11 @@ private fun categoryValueFrom(code: Int, ch: Int): Int {
 /**
  * Returns the Unicode general category of this character as an Int.
  */
-internal fun Char.getCategoryValue(): Int {
-    val ch = this.code
-
-    val index = binarySearchRange(Category.decodedRangeStart, ch)
+internal actual fun getCategoryValue(code: Int): Int {
+    val index = binarySearchRange(Category.decodedRangeStart, code)
     val start = Category.decodedRangeStart[index]
-    val code = Category.decodedRangeCategory[index]
-    val value = categoryValueFrom(code, ch - start)
+    val categoryCode = Category.decodedRangeCategory[index]
+    val value = categoryValueFrom(categoryCode, code - start)
 
     return if (value == 17) CharCategory.UNASSIGNED.value else value
 }

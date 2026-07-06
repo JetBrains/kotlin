@@ -14,18 +14,17 @@ package kotlin.text
 /**
  * Returns `true` if this character is a whitespace.
  */
-internal fun Char.isWhitespaceImpl(): Boolean {
-    val ch = this.code
-    return ch in 0x0009..0x000d
-            || ch in 0x001c..0x0020
-            || ch == 0x00a0
-            || ch > 0x1000 && (
-                ch == 0x1680
-                || ch in 0x2000..0x200a
-                || ch == 0x2028
-                || ch == 0x2029
-                || ch == 0x202f
-                || ch == 0x205f
-                || ch == 0x3000
+internal actual fun isWhitespaceImpl(code: Int): Boolean {
+    return code in 0x0009..0x000d
+            || code in 0x001c..0x0020
+            || code == 0x00a0
+            || code > 0x1000 && (
+                code == 0x1680
+                || code in 0x2000..0x200a
+                || code == 0x2028
+                || code == 0x2029
+                || code == 0x202f
+                || code == 0x205f
+                || code == 0x3000
             )
 }

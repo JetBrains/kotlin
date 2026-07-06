@@ -87,28 +87,28 @@ internal class StringLowercaseGenerator(
     private fun isCased(): String = """
         // Lu + Ll + Lt + Other_Lowercase + Other_Uppercase (PropList.txt of Unicode Character Database files)
         // Declared internal for testing
-        internal fun Int.isCased(): Boolean {
-            if (this <= Char.MAX_VALUE.code) {
-                when (toChar().getCategoryValue()) {
+        internal fun isCased(code: Int): Boolean {
+            if (code <= Char.MAX_VALUE.code) {
+                when (getCategoryValue(code)) {
                     CharCategory.UPPERCASE_LETTER.value,
                     CharCategory.LOWERCASE_LETTER.value,
                     CharCategory.TITLECASE_LETTER.value -> return true
                 }
             }
-            if (isOtherUppercase() || isOtherLowercase()) {
+            if (isOtherUppercase(code) || isOtherLowercase(code)) {
                 return true
             }
-            val index = binarySearchRange(casedStart, this)
-            return index >= 0 && this <= casedEnd[index]
+            val index = binarySearchRange(casedStart, code)
+            return index >= 0 && code <= casedEnd[index]
         }
     """.trimIndent()
 
     private fun isCaseIgnorable(): String = """
         // Mn + Me + Cf + Lm + Sk + Word_Break=MidLetter + Word_Break=MidNumLet + Word_Break=Single_Quote (WordBreakProperty.txt of Unicode Character Database files)
         // Declared internal for testing
-        internal fun Int.isCaseIgnorable(): Boolean {
-            if (this <= Char.MAX_VALUE.code) {
-                when (toChar().getCategoryValue()) {
+        internal fun isCaseIgnorable(code: Int): Boolean {
+            if (code <= Char.MAX_VALUE.code) {
+                when (getCategoryValue(code)) {
                     CharCategory.NON_SPACING_MARK.value,
                     CharCategory.ENCLOSING_MARK.value,
                     CharCategory.FORMAT.value,
@@ -116,8 +116,8 @@ internal class StringLowercaseGenerator(
                     CharCategory.MODIFIER_SYMBOL.value -> return true
                 }
             }
-            val index = binarySearchRange(caseIgnorableStart, this)
-            return index >= 0 && this <= caseIgnorableEnd[index]
+            val index = binarySearchRange(caseIgnorableStart, code)
+            return index >= 0 && code <= caseIgnorableEnd[index]
         }
     """.trimIndent()
 
@@ -144,23 +144,23 @@ internal class StringLowercaseGenerator(
                 var codePoint: Int = 0
                 while (i >= 0) {
                     codePoint = codePointBefore(i)
-                    if (codePoint.isCaseIgnorable()) {
+                    if (isCaseIgnorable(codePoint)) {
                         i -= codePoint.charCount()
                     } else {
                         break
                     }
                 }
-                if (i >= 0 && codePoint.isCased()) {
+                if (i >= 0 && isCased(codePoint)) {
                     var j = index + 1
                     while (j < length) {
                         codePoint = codePointAt(j)
-                        if (codePoint.isCaseIgnorable()) {
+                        if (isCaseIgnorable(codePoint)) {
                             j += codePoint.charCount()
                         } else {
                             break
                         }
                     }
-                    if (j >= length || !codePoint.isCased()) {
+                    if (j >= length || !isCased(codePoint)) {
                         return true
                     }
                 }
@@ -174,7 +174,7 @@ internal class StringLowercaseGenerator(
             var unchangedIndex = 0
             while (unchangedIndex < this.length) {
                 val codePoint = codePointAt(unchangedIndex)
-                if (codePoint.lowercaseCodePoint() != codePoint) { // '\u0130' and '\u03A3' have lowercase corresponding mapping in UnicodeData.txt, no need to check them separately
+                if (lowercaseCodePoint(codePoint) != codePoint) { // '\u0130' and '\u03A3' have lowercase corresponding mapping in UnicodeData.txt, no need to check them separately
                     break
                 }
                 unchangedIndex += codePoint.charCount()
@@ -200,7 +200,7 @@ internal class StringLowercaseGenerator(
                     continue
                 }
                 val codePoint = codePointAt(index)
-                val lowercaseCodePoint = codePoint.lowercaseCodePoint()
+                val lowercaseCodePoint = lowercaseCodePoint(codePoint)
                 sb.appendCodePoint(lowercaseCodePoint)
                 index += codePoint.charCount()
             }
