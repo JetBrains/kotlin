@@ -176,15 +176,15 @@ class IsCasedTest {
         var lastChecked = -1
         for (range in casedRanges) {
             for (codePoint in lastChecked + 1 until range.first) {
-                assertFalse(codePoint.isCased())
+                assertFalse(isCased(codePoint))
             }
-            for (codePoint in range.first..range.last) {
-                assertTrue(codePoint.isCased())
+            for (codePoint in range) {
+                assertTrue(isCased(codePoint))
             }
             lastChecked = range.last
         }
         for (codePoint in lastChecked + 1..0x10FFFF) {
-            assertFalse(codePoint.isCased())
+            assertFalse(isCased(codePoint))
         }
     }
 }

@@ -15,13 +15,12 @@ internal class WhitespaceRangesWriter : RangesWriter {
     }
 
     private fun isWhitespaceImpl(rangeStart: List<Int>, rangeEnd: List<Int>): String {
-        val checks = rangeChecks(rangeStart, rangeEnd, "ch")
+        val checks = rangeChecks(rangeStart, rangeEnd, "code")
         return """
         /**
          * Returns `true` if this character is a whitespace.
          */
-        internal fun Char.isWhitespaceImpl(): Boolean {
-            val ch = this.code
+        internal actual fun isWhitespaceImpl(code: Int): Boolean {
             return $checks
         }
         """.trimIndent()

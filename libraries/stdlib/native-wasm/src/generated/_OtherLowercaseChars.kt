@@ -17,7 +17,7 @@ private val otherLowerLength = intArrayOf(
     1, 1, 9, 2, 5, 1, 1, 63, 1, 37, 1, 1, 13, 16, 26, 2, 2, 1, 2, 4, 
 )
 
-internal fun Int.isOtherLowercase(): Boolean {
-    val index = binarySearchRange(otherLowerStart, this)
-    return index >= 0 && this < otherLowerStart[index] + otherLowerLength[index]
+internal actual fun isOtherLowercase(code: Int): Boolean {
+    val index = binarySearchRange(otherLowerStart, code)
+    return index >= 0 && code < otherLowerStart[index] + otherLowerLength[index]
 }
