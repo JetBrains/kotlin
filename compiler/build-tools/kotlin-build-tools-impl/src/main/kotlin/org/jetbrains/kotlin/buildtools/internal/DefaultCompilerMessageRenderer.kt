@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import java.io.File
+import java.io.Serializable
 
-internal object DefaultCompilerMessageRenderer : CompilerMessageRenderer {
+internal object DefaultCompilerMessageRenderer : CompilerMessageRenderer, Serializable {
+    private fun readResolve(): Any = DefaultCompilerMessageRenderer
+
     // This is a temporary solution specifically for the Kotlin Playground and should not be used by anyone else.
     // It should be deleted after KT-80963 is implemented and the Kotlin Playground migrates to this new API.
     private val extendedLocations: Boolean by lazy(LazyThreadSafetyMode.NONE) {
