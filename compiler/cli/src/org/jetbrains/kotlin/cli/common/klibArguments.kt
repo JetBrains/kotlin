@@ -168,16 +168,17 @@ fun CompilerConfiguration.setupKlibAbiCompatibilityLevel() {
 
 private val LANGUAGE_VERSION_TO_ABI_COMPATIBILITY_LEVEL: Map<LanguageVersion, KlibAbiCompatibilityLevel> =
     buildMap {
-        this[LanguageVersion.KOTLIN_2_3] = KlibAbiCompatibilityLevel.ABI_LEVEL_2_3
-        this[LanguageVersion.KOTLIN_2_4] = KlibAbiCompatibilityLevel.ABI_LEVEL_2_4
-        this[LanguageVersion.KOTLIN_2_5] = KlibAbiCompatibilityLevel.ABI_LEVEL_2_5
-
-        check(size == KlibAbiCompatibilityLevel.entries.size) {
-            "All declared ${KlibAbiCompatibilityLevel::class.java.simpleName} entries should be mapped to language versions"
-        }
-
         for (languageVersion in LanguageVersion.entries) {
-            if (languageVersion > LanguageVersion.LATEST_STABLE) {
+            if (languageVersion <= LanguageVersion.LATEST_STABLE) {
+                // KlibAbiCompatibilityLevel starts with ABI_LEVEL_2_3, which corresponds to language version 2.3.
+                // Language versions earlier than 2.3 are skipped (`foundCompatibilityLevel` is null).
+                val foundCompatibilityLevel = KlibAbiCompatibilityLevel.entries.firstOrNull {
+                    it.major == languageVersion.major && it.minor == languageVersion.minor
+                }
+                if (foundCompatibilityLevel != null) {
+                    this[languageVersion] = foundCompatibilityLevel
+                }
+            } else {
                 // A new language version, for which we don't have the matching ABI compatibility level yet.
                 // So, use the latest stable ABI compatibility level.
                 // Skip old, unsupported language versions - not having them in the map will cause an error to be reported.
