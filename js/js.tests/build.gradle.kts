@@ -159,7 +159,7 @@ projectTests {
         setUpJsBoxTests()
     }
 
-    testTask("invalidationTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
+    testTask("invalidationTest", skipInLocalBuild = true) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         include("org/jetbrains/kotlin/incremental/*")
         forwardProperties()

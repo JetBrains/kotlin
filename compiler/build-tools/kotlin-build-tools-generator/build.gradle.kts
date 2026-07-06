@@ -31,7 +31,5 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        useJUnitPlatform()
-    }
+    testTask()
 }

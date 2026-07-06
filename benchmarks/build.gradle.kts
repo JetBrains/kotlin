@@ -74,7 +74,7 @@ tasks.withType<JmhBytecodeGeneratorTask>().configureEach {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         workingDir = rootDir
     }
 

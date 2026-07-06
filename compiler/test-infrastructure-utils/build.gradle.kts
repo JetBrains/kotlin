@@ -37,5 +37,5 @@ optInToK1Deprecation()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }

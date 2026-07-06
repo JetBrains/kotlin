@@ -169,7 +169,6 @@ artifacts {
 
 projectTests {
     testTask(
-        jUnitMode = JUnitMode.JUnit5,
         javaLauncher = JdkMajorVersion.JDK_1_8,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {

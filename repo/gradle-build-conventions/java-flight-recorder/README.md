@@ -28,7 +28,7 @@ plugins {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         javaFlightRecorder {
             jfcFile.set(layout.projectDirectory.file("custom-settings.jfc"))
             jfrFile.setFrom(layout.buildDirectory.file("custom-snapshot.jfr"))

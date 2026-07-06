@@ -122,7 +122,6 @@ tasks.compileKotlin {
 
 projectTests {
     testTask(
-        jUnitMode = JUnitMode.JUnit5,
         javaLauncher = JdkMajorVersion.JDK_17_0,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {

@@ -58,7 +58,7 @@ runtimeJar(tasks.register<ShadowJar>("embeddable")) {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }
 
 /* Setup configuration for binary compatibility tests */

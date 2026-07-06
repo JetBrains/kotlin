@@ -26,5 +26,5 @@ nativeInteropPlugin {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }

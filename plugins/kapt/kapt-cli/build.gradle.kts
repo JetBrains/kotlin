@@ -32,7 +32,7 @@ sourceSets {
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8)) {
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8)) {
         val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
         doFirst {
             environment("JAVA_HOME", jdkHome.get())

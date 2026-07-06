@@ -45,7 +45,7 @@ tasks.named<KotlinCompile>("compileTestKotlin") {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }
 
 generatedSourcesTask(

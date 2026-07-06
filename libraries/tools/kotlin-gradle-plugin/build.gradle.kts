@@ -497,7 +497,7 @@ tasks.named("validatePlugins") {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, javaLauncher = JdkMajorVersion.JDK_17_0) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_17_0) {
         workingDir = rootDir
     }
 }

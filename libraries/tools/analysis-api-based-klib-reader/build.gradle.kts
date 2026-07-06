@@ -29,7 +29,7 @@ kotlin {
 projectTests {
     testData(isolated, "testData")
 
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         val testProjectKlib = configurations.create("testProjectKlib") {
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))

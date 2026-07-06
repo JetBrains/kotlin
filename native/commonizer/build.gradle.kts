@@ -73,7 +73,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         // Use the bootstrap K/N stdlib for compiling test code samples.
         val nativeDistributionDownloader = NativeCompilerDownloader(project).also { it.downloadIfNeeded() }
         val compilerDirectory = project.layout.dir(providers.provider { nativeDistributionDownloader.compilerDirectory })
