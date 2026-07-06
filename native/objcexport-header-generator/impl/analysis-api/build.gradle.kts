@@ -33,6 +33,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":native:objcexport-header-generator")))
     testFixturesApi(project(":native:analysis-api-based-test-utils"))
     testImplementation(project(":analysis:analysis-api-standalone"))
+    testFixturesImplementation(libs.junit4)
 }
 
 sourceSets {

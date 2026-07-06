@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameLinesWithFile
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -203,7 +204,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         }
 
         buildLogFinder.findBuildLog(testDir)?.let { expectedBuildLog ->
-            UsefulTestCase.assertSameLinesWithFile(expectedBuildLog.canonicalPath, sb.toString())
+            assertSameLinesWithFile(expectedBuildLog.canonicalPath, sb.toString())
         }
 
         assertEquals(steps.size + 1, filesToLookups.size)

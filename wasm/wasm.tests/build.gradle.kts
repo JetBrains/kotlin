@@ -1,7 +1,6 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.util.*
 
@@ -187,6 +186,7 @@ dependencies {
     testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
+    testFixturesImplementation(libs.junit4)
     testImplementation(project(":wasm:wasm.frontend"))
     testRuntimeOnly(libs.junit.jupiter.engine)
 

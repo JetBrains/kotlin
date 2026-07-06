@@ -57,6 +57,7 @@ dependencies {
     testImplementation(project(":kotlin-tooling-core"))
     testImplementation(project(":native:native.config"))
     testImplementation(intellijCore())
+    testImplementation(libs.junit4)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)

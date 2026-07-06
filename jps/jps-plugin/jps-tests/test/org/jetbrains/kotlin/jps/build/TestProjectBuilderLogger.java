@@ -6,10 +6,10 @@ package org.jetbrains.kotlin.jps.build;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.containers.FileCollectionFactory;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +66,7 @@ public final class TestProjectBuilderLogger extends ProjectBuilderLoggerBase {
       }
       relativePaths.add(FileUtil.toSystemIndependentName(path));
     }
-    UsefulTestCase.assertSameElements(relativePaths, expected);
+    KtUsefulTestCase.assertSameElements(relativePaths, expected);
   }
 
   @Override
