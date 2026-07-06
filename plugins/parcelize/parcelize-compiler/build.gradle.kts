@@ -68,7 +68,6 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(project(":plugins:parcelize:parcelize-compiler:parcelize.cli"))
 
@@ -81,7 +80,7 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(toolsJar())
-    testFixturesApi(libs.junit4)
+    testFixturesImplementation(libs.junit4) // needed for runtime of box tests, see `ParcelizeMainClassProvider`
 
     // Must be kept in sync with ANDROID_API_VERSION in ParcelizeRuntimeClasspathProvider.
     // The dependency version defined here determines the Android API version.

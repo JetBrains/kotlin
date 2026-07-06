@@ -9,8 +9,6 @@ plugins {
 
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
-
-    testImplementation(libs.junit4)
 }
 
 gradlePlugin {

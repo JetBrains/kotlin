@@ -22,7 +22,6 @@ dependencies {
     compileOnly(intellijCore())
 
     testFixturesApi(platform(libs.junit.bom))
-    testFixturesApi(libs.junit4)
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))

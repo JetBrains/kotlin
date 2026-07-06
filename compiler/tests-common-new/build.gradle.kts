@@ -55,7 +55,6 @@ dependencies {
     testFixturesApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testFixturesApi(jpsModel()) { isTransitive = false }
     testFixturesApi(jpsModelImpl()) { isTransitive = false }
-    testFixturesApi(libs.junit4)
 
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
