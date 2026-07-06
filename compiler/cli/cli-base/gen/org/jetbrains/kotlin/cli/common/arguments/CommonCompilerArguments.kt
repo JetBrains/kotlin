@@ -1067,10 +1067,11 @@ Warning: This is temporary solution (see KT-63712) intended to be used only for 
             field = value
         }
 
+    @all:Deprecated("")
     @Argument(
         value = "-Xuse-fir-ic",
-        description = """Compile using frontend IR internal incremental compilation.
-Warning: This feature is not yet production-ready.""",
+        description = "Compile using frontend IR internal incremental compilation.",
+        deprecatedVersion = "2.4.20",
     )
     var useFirIC: Boolean = false
         set(value) {

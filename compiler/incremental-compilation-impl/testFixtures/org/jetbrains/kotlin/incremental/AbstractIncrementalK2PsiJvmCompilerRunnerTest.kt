@@ -13,7 +13,6 @@ abstract class AbstractIncrementalK2PsiJvmCompilerRunnerTest : AbstractIncrement
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
             languageVersion = "2.0"
-            useFirIC = false
             @Suppress("DEPRECATION")
             useFirLT = false
         }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.util
 
+import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
@@ -22,7 +23,7 @@ fun Scenario<JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompila
     moduleName = moduleName,
     dependencies = dependencies,
     compilationConfigAction = {
-        it.compilerArguments[CommonCompilerArguments.X_USE_FIR_IC] = true
+        it.compilerArguments[@OptIn(DeprecatedCompilerArgument::class) CommonCompilerArguments.X_USE_FIR_IC] = true
         compilationOperationConfig(it)
     },
     icOptionsConfigAction = {

@@ -247,6 +247,7 @@ abstract class KotlinCompile @Inject constructor(
                     )
                 }
 
+                @Suppress("DEPRECATION")
                 args.useFirIC = true
             }
 

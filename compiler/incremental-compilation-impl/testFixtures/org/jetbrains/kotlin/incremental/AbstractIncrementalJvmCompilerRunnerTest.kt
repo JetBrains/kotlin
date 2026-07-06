@@ -83,7 +83,10 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
             val k2Mode = (args.languageVersion ?: LanguageVersion.LATEST_STABLE.versionString) >= LanguageVersion.KOTLIN_2_0.versionString
 
             val compiler =
-                if (k2Mode && args.useFirIC && @Suppress("DEPRECATION") args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
+                if (k2Mode &&
+                    @Suppress("DEPRECATION") args.useFirIC &&
+                    @Suppress("DEPRECATION") args.useFirLT // TODO by @Ilya.Chernikov: move LT check into runner
+                ) {
                     IncrementalFirJvmCompilerTestRunner(
                         cachesDir,
                         buildReporter,
