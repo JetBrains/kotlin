@@ -1,0 +1,50 @@
+FILE fqName:test fileName:/jklibJavaInteropSignatures.kt
+  CLASS CLASS name:KotlinSubClass modality:FINAL visibility:public superTypes:[test.JavaBase]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.KotlinSubClass
+    CONSTRUCTOR visibility:public returnType:test.KotlinSubClass [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in test.JavaBase'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinSubClass modality:FINAL visibility:public superTypes:[test.JavaBase]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:javaMethod visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.String? [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.JavaBase
+      overridden:
+        public open fun javaMethod (): @[FlexibleNullability] kotlin.String? declared in test.JavaBase
+    FUN name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.KotlinSubClass
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in test.JavaBase
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in test.KotlinSubClass'
+          TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=test.KotlinSubClass
+            GET_VAR 'other: kotlin.Any? declared in test.KotlinSubClass.equals' type=kotlin.Any? origin=null
+    FUN name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.KotlinSubClass
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in test.JavaBase
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in test.KotlinSubClass'
+          CONST Int type=kotlin.Int value=42
+    FUN name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.KotlinSubClass
+      overridden:
+        public open fun toString (): @[EnhancedNullability] kotlin.String declared in test.JavaBase
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in test.KotlinSubClass'
+          CONST String type=kotlin.String value="KotlinSubClass"
+  FUN name:testFakeOverride visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:sub index:0 type:test.KotlinSubClass
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun javaMethod (): @[FlexibleNullability] kotlin.String? declared in test.KotlinSubClass' type=@[FlexibleNullability] kotlin.String? origin=null
+          ARG <this>: GET_VAR 'sub: test.KotlinSubClass declared in test.testFakeOverride' type=test.KotlinSubClass origin=null
+  FUN name:testMapMerge visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:map index:0 type:java.util.HashMap<kotlin.String, kotlin.String>
+    VALUE_PARAMETER kind:Regular name:remapper index:1 type:java.util.function.BiFunction<in kotlin.String, in kotlin.String, out kotlin.String>
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun merge (p0: @[EnhancedNullability] K of java.util.HashMap, p1: @[EnhancedNullability] {V of java.util.HashMap & Any}, p2: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] {V of java.util.HashMap & Any}, in @[EnhancedNullability] {V of java.util.HashMap & Any}, out @[EnhancedNullability] V of java.util.HashMap?>): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap' type=@[EnhancedNullability] kotlin.String? origin=null
+          ARG <this>: GET_VAR 'map: java.util.HashMap<kotlin.String, kotlin.String> declared in test.testMapMerge' type=java.util.HashMap<kotlin.String, kotlin.String> origin=null
+          ARG p0: CONST String type=kotlin.String value="key"
+          ARG p1: CONST String type=kotlin.String value="val"
+          ARG p2: GET_VAR 'remapper: java.util.function.BiFunction<in kotlin.String, in kotlin.String, out kotlin.String> declared in test.testMapMerge' type=java.util.function.BiFunction<in kotlin.String, in kotlin.String, out kotlin.String> origin=null
