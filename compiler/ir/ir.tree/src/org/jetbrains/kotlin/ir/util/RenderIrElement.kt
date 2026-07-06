@@ -481,11 +481,10 @@ class RenderIrElementVisitor(
                 "${expression.renderOffsets(options)} " +
                 "'${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
-    @OptIn(DeprecatedCompilerApi::class)
     override fun visitAnnotation(expression: IrAnnotation, data: Nothing?): String =
-        "CONSTRUCTOR_CALL" +
+        "ANNOTATION" +
                 "${expression.renderOffsets(options)} " +
-                "'${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+                "'${expression.classSymbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
         "DELEGATING_CONSTRUCTOR_CALL${expression.renderOffsets(options)} '${expression.symbol.renderReference()}'"
@@ -1020,15 +1019,45 @@ private fun renderTypeAnnotations(annotations: List<IrAnnotation>, renderer: Ren
             }
     }
 
-@OptIn(DeprecatedCompilerApi::class)
 private fun StringBuilder.renderAsAnnotation(
-    irAnnotation: IrConstructorCall, // TODO change to IrAnnotation when KT-74200 is Fixed
+    irAnnotation: IrAnnotation,
     renderer: RenderIrElementVisitor?,
     options: DumpIrTreeOptions,
 ) {
-    val annotationClassName = irAnnotation.symbol.getOwnerIfBound()?.parentAsClass?.name?.asString()
+    renderAsAnnotation(
+        @OptIn(DeprecatedCompilerApi::class)
+        irAnnotation.symbol,
+        irAnnotation.typeArguments,
+        irAnnotation.argumentMapping.map { it.key.asString() to it.value }.toList(),
+        renderer,
+        options
+    )
+}
+
+private fun StringBuilder.renderAsAnnotation(
+    irAnnotation: IrConstructorCall,
+    renderer: RenderIrElementVisitor?,
+    options: DumpIrTreeOptions,
+) {
+    renderAsAnnotation(
+        irAnnotation.symbol,
+        irAnnotation.typeArguments,
+        irAnnotation.getValueParameterNamesForDebug(options).zip(irAnnotation.arguments),
+        renderer,
+        options
+    )
+}
+
+private fun StringBuilder.renderAsAnnotation(
+    symbol: IrConstructorSymbol,
+    typeArguments: List<IrType?>,
+    args: List<Pair<String, IrExpression?>>,
+    renderer: RenderIrElementVisitor?,
+    options: DumpIrTreeOptions,
+) {
+    val annotationClassName = symbol.getOwnerIfBound()?.parentAsClass?.name?.asString()
         ?: run {
-            val nameSegments = (irAnnotation.symbol.signature as? CommonSignature)?.nameSegments.orEmpty()
+            val nameSegments = (symbol.signature as? CommonSignature)?.nameSegments.orEmpty()
             runIf(nameSegments.size >= 2 && nameSegments[nameSegments.lastIndex] == SpecialNames.INIT.asString()) {
                 nameSegments[nameSegments.lastIndex - 1]
             }
@@ -1037,26 +1066,25 @@ private fun StringBuilder.renderAsAnnotation(
 
     append(annotationClassName)
 
-    if (irAnnotation.typeArguments.isNotEmpty()) {
-        irAnnotation.typeArguments.joinTo(this, ", ", "<", ">") {
+    if (typeArguments.isNotEmpty()) {
+        typeArguments.joinTo(this, ", ", "<", ">") {
             it?.renderTypeWithRenderer(renderer, options) ?: "null"
         }
     }
 
-    if (irAnnotation.arguments.isEmpty()) return
+    if (args.isEmpty()) return
 
-    val valueParameterNames = irAnnotation.getValueParameterNamesForDebug(options)
-    appendIterableWith(irAnnotation.arguments.indices, separator = ", ", prefix = "(", postfix = ")") {
-        append(valueParameterNames[it])
+    appendIterableWith(args.indices, separator = ", ", prefix = "(", postfix = ")") {
+        append(args[it].first)
         append(" = ")
-        renderAsAnnotationArgument(irAnnotation.arguments[it], renderer, options)
+        renderAsAnnotationArgument(args[it].second, renderer, options)
     }
 }
 
 private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) {
     when (irElement) {
         null -> append("<null>")
-        is IrAnnotation, is IrConstructorCall -> renderAsAnnotation(irElement, renderer, options)
+        is IrConstructorCall -> renderAsAnnotation(irElement, renderer, options)
         is IrConst -> {
             renderIrConstAsAnnotationArgument(irElement)
         }
