@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+import org.jetbrains.kotlin.buildtools.api.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
@@ -135,6 +137,10 @@ interface CompileService : Remote {
         compilationResults: CompilationResults?,
         compilationId: Int?,
     ): CallResult<Int>
+
+    @ExperimentalBuildToolsApi
+    @Throws(RemoteException::class)
+    fun <T> executeOperation(buildOperation: BuildOperation<T>): CallResult<T>
 
     @Throws(RemoteException::class)
     fun cancelCompilation(sessionId: Int, compilationId: Int): CallResult<Nothing>

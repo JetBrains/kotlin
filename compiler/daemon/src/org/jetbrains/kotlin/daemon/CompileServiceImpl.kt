@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteReporter
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
+import org.jetbrains.kotlin.buildtools.api.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -55,12 +59,19 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
 import org.jetbrains.kotlin.util.getLinesPerSecond
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.InputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.ObjectStreamClass
+import java.nio.file.Paths
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
 import java.util.*
 import java.util.concurrent.ConcurrentSkipListSet
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -955,6 +966,36 @@ class CompileServiceImpl(
             getICReporter = { a, b, c -> getBuildReporter(a, b, c) },
             compilationId,
         )
+    }
+
+    @ExperimentalBuildToolsApi
+    override fun <T> executeOperation(buildOperation: BuildOperation<T>): CompileService.CallResult<T> {
+        val toolchain = KotlinToolchains.loadImplementation(compilerId.compilerClasspath.map { Path(it) })
+        val baos = ByteArrayOutputStream()
+        ObjectOutputStream(baos).use { it.writeObject(buildOperation) }
+        val operation2: BuildOperation<*> =
+            BtaObjectInputStream(
+                toolchain::class.java.classLoader,
+                baos.toByteArray().inputStream()
+            ).use { it.readObject() as BuildOperation<*> }
+        return try {
+            toolchain.createBuildSession().use {
+                @Suppress("UNCHECKED_CAST")
+                CompileService.CallResult.Good(it.executeOperation(operation2) as T)
+            }
+        } catch (e: Exception) {
+            CompileService.CallResult.Error(e)
+        }
+    }
+
+    class BtaObjectInputStream(private val classloader: ClassLoader, inputStream: InputStream) : ObjectInputStream(inputStream) {
+        override fun resolveClass(desc: ObjectStreamClass): Class<*>? {
+            return try {
+                classloader.loadClass(desc.name)
+            } catch (e: ClassNotFoundException) {
+                super.resolveClass(desc)
+            }
+        }
     }
 
     override fun cancelCompilation(sessionId: Int, compilationId: Int): CompileService.CallResult<Nothing> = ifAlive {
