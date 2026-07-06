@@ -7,7 +7,7 @@ enum class HairType {
     // TODO i128?
     EXCEPTION;
 
-    fun isIntegral() = when (this) {
+    val isIntegral get() = when (this) {
         INT,
         LONG -> true
         FLOAT,

@@ -111,7 +111,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                 }
 
                 // a + a => a << const[1]
-                if (node.type.isIntegral() && lhs == rhs) {
+                if (node.type.isIntegral && lhs == rhs) {
                     return Shl(node.type)(lhs, ConstI(1))
                 }
 
@@ -130,7 +130,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                 val [lhs, rhs] = node.lhs to node.rhs
 
                 // a - a => const[0]
-                if (node.type.isIntegral() && rhs == lhs)
+                if (node.type.isIntegral && rhs == lhs)
                     return Const(node.type, 0)
 
                 // a - -b => a + b
@@ -138,7 +138,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                     return Add(node.type)(lhs, rhs.operand)
 
                 // -a - b => -(a + b)
-                if (node.type.isIntegral() && lhs is Neg)
+                if (node.type.isIntegral && lhs is Neg)
                     return Neg(Add(node.type)(lhs, rhs))
 
                 return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Sub(node.type)(lhs, rhs) }
@@ -157,7 +157,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
                 // TODO: Support for NaN and infinities
                 // a * const[0] => const[0]
-                if (node.type.isIntegral() && rhs is ConstAny && rhs.numberValue == 0)
+                if (node.type.isIntegral && rhs is ConstAny && rhs.numberValue == 0)
                     return Const(node.type, 0)
 
                 return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Mul(node.type)(lhs, rhs) }
