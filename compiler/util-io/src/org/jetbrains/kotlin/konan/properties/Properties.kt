@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.properties
 
 import org.jetbrains.kotlin.konan.file.*
-import java.io.StringWriter
 
 typealias Properties = java.util.Properties
 

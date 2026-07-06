@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.konan.util
 
 import org.jetbrains.kotlin.io.propertyList
-import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.properties.Properties
 import java.io.File
