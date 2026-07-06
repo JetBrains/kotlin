@@ -253,7 +253,7 @@ fun deserializeClassToSymbol(
                 context.typeTable,
                 context.typeDeserializer::rigidType,
             ) { name ->
-                val member = declarations.singleOrNull { it is FirProperty && it.receiverParameter == null && it.name == name }
+                val member = declarations.singleOrNull { it is FirProperty && it.receiverParameter == null && it.contextParameters.isEmpty() && it.name == name }
                 (member as FirProperty?)?.returnTypeRef?.coneType as ConeRigidType
             } ?: computeValueClassRepresentation(this, session)
 
