@@ -46,9 +46,4 @@ fun Test.useJsIrBoxTests(
     addClasspathProperty(stdlibJsIrMinimalForTestClasses, "kotlin.js.reduced.stdlib.path")
 
     systemProperty("kotlin.js.test.root.out.dir", "${buildDir.get().asFile.relativeTo(project.projectDir)}/")
-
-    jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(project.rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
-        property.set("javascript.engine.path.repl")
-    }
 }
