@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
@@ -99,7 +100,8 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
                 )
             },
             mustBeDocumented = mustBeDocumented(annotation),
-            scope = annotation.useSiteTarget?.toDokkaAnnotationScope() ?: Annotations.AnnotationScope.DIRECT
+            scope = (annotation.psi as? KtAnnotationEntry)?.useSiteTarget?.getAnnotationUseSiteTarget()
+                ?.toDokkaAnnotationScope() ?: Annotations.AnnotationScope.DIRECT
         )
 
     @OptIn(ExperimentalUnsignedTypes::class)
