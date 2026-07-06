@@ -25,19 +25,17 @@ internal abstract class KotlinKProperty<out V>(
     private val extensionReceiverType: KmType? get() = kmProperty.receiverParameterType
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
-        computeParameters(
-            kmProperty.contextParameters, extensionReceiverType, valueParameters = emptyList(), typeParameterTable.value,
-            includeReceivers = true,
-        )
+        computeParameters(this, includeReceivers = true)
     }
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
-        if (isBound) computeParameters(
-            kmProperty.contextParameters, extensionReceiverType, valueParameters = emptyList(), typeParameterTable.value,
-            includeReceivers = false,
-        )
-        else allParameters
+        if (isBound) computeParameters(this, includeReceivers = false) else allParameters
     }
+
+    private fun computeParameters(propertyOrAccessor: KotlinKCallable<*>, includeReceivers: Boolean): List<KParameter> =
+        propertyOrAccessor.computeParameters(
+            kmProperty.contextParameters, extensionReceiverType, valueParameters = emptyList(), typeParameterTable.value, includeReceivers,
+        )
 
     override val returnType: KType by lazy(PUBLICATION) {
         kmProperty.returnType.toKType(
@@ -146,8 +144,12 @@ internal abstract class KotlinKProperty<out V>(
         override val accessor: KmPropertyAccessorAttributes?
             get() = property.kmProperty.getter
 
-        override val allParameters: List<KParameter> get() = property.allParameters
-        override val parameters: List<KParameter> get() = property.parameters
+        override val allParameters: List<KParameter> by lazy(PUBLICATION) {
+            property.computeParameters(this, includeReceivers = true)
+        }
+        override val parameters: List<KParameter> by lazy(PUBLICATION) {
+            if (isBound) property.computeParameters(this, includeReceivers = false) else allParameters
+        }
 
         override val returnType: KType get() = property.returnType
 
@@ -166,16 +168,21 @@ internal abstract class KotlinKProperty<out V>(
         override val accessor: KmPropertyAccessorAttributes?
             get() = property.kmProperty.setter
 
-        override val allParameters: List<KParameter>
-            get() = property.allParameters + setterParameter.value
-        override val parameters: List<KParameter>
-            get() = property.parameters + setterParameter.value
-
-        private val setterParameter: Lazy<KParameter> = lazy(PUBLICATION) {
-            property.kmProperty.setterParameter?.let {
-                KotlinKParameter(this, it, property.allParameters.size, KParameter.Kind.VALUE, property.typeParameterTable.value)
-            } ?: DefaultSetterValueParameter(property)
+        override val allParameters: List<KParameter> by lazy(PUBLICATION) {
+            val propertyParameters = property.computeParameters(this, includeReceivers = true)
+            propertyParameters + createSetterParameter(propertyParameters.size)
         }
+        override val parameters: List<KParameter> by lazy(PUBLICATION) {
+            if (isBound) {
+                val propertyParameters = property.computeParameters(this, includeReceivers = false)
+                propertyParameters + createSetterParameter(propertyParameters.size)
+            } else allParameters
+        }
+
+        private fun createSetterParameter(index: Int): KParameter =
+            property.kmProperty.setterParameter?.let {
+                KotlinKParameter(this, it, index, KParameter.Kind.VALUE, property.typeParameterTable.value)
+            } ?: DefaultSetterValueParameter(property, index)
 
         override val returnType: KType get() = StandardKTypes.UNIT_RETURN_TYPE
 

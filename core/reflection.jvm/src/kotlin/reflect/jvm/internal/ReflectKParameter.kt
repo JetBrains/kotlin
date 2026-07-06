@@ -65,9 +65,8 @@ private fun ReflectKParameter.loadAnnotationsOnAnnotationParameter(): List<Annot
     return kmParameter.annotations.map { it.toAnnotation(callable.container.jClass.safeClassLoader) }
 }
 
-internal class DefaultSetterValueParameter(private val property: ReflectKProperty<*>) : ReflectKParameter() {
+internal class DefaultSetterValueParameter(private val property: ReflectKProperty<*>, override val index: Int) : ReflectKParameter() {
     override val callable: ReflectKCallable<*> get() = (property as KMutableProperty<*>).setter as ReflectKCallable<*>
-    override val index: Int get() = 0
     override val name: String? get() = null
     override val type: KType get() = property.returnType
     override val kind: KParameter.Kind get() = KParameter.Kind.VALUE
