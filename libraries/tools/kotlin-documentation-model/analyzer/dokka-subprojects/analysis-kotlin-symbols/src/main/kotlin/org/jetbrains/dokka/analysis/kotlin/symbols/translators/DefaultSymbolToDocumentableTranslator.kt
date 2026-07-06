@@ -914,6 +914,7 @@ internal class DokkaSymbolVisitor(
             bounds = upperBoundsOrNullableAny.map { toBoundFrom(it, typeParameterSymbol) },
             sourceSets = setOf(sourceSet),
             extra = PropertyContainer.withAll(
+                typeParameterSymbol.additionalExtras()?.toSourceSetDependent()?.toAdditionalModifiers(),
                 getDokkaAnnotationsFrom(typeParameterSymbol)?.toSourceSetDependent()?.toAnnotations()
             )
         )
@@ -1124,6 +1125,10 @@ internal class DokkaSymbolVisitor(
         ExtraModifiers.KotlinOnlyModifiers.NoInline.takeIf { isNoinline },
         ExtraModifiers.KotlinOnlyModifiers.CrossInline.takeIf { isCrossinline },
         ExtraModifiers.KotlinOnlyModifiers.VarArg.takeIf { isVararg }
+    ).toSet().takeUnless { it.isEmpty() }
+
+    private fun KaTypeParameterSymbol.additionalExtras() = listOfNotNull(
+        ExtraModifiers.KotlinOnlyModifiers.Reified.takeIf { isReified }
     ).toSet().takeUnless { it.isEmpty() }
 
     private fun KaPropertyAccessorSymbol.additionalExtras() = listOfNotNull(
