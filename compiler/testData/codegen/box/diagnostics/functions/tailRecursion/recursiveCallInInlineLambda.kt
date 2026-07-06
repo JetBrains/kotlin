@@ -6,7 +6,7 @@ class TailInline {
 
     private var countDown = 100000
 
-    <!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun test(): Int {
+    tailrec fun test(): Int {
         if (countDown < 5) return countDown
         act {
             countDown--
@@ -16,7 +16,7 @@ class TailInline {
                 return test()  // GOTO countDown--
         }
         return countDown
-    }<!>
+    }
 }
 
 // FILE: main.kt

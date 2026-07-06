@@ -32,35 +32,35 @@ class A {
     }<!>
 }
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun foo5() {
+tailrec fun foo5() {
     run {
         return foo5()
     }
-}<!>
+}
 
 // Non-local return with `let`
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun nonLocalReturnLet(x: Int): Int {
+tailrec fun nonLocalReturnLet(x: Int): Int {
     x.let { return nonLocalReturnLet(it - 1) }
-}<!>
+}
 
 // Non-local return with `also`
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun nonLocalReturnAlso(x: Int): Int {
+tailrec fun nonLocalReturnAlso(x: Int): Int {
     x.also { return nonLocalReturnAlso(it - 1) }
-}<!>
+}
 
 // Non-local return with `apply`
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun nonLocalReturnApply(x: Int): Int {
+tailrec fun nonLocalReturnApply(x: Int): Int {
     x.apply { return nonLocalReturnApply(this - 1) }
-}<!>
+}
 
 // Nested `run` blocks with non-local return
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun nestedRunReturn(x: Int): Int {
+tailrec fun nestedRunReturn(x: Int): Int {
     run {
         run {
             return nestedRunReturn(x - 1)
         }
     }
-}<!>
+}
 
 // Nested `run` blocks without non-local return — not a tail call
 <!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun nestedRunNoReturn(x: Int): Int {
@@ -98,24 +98,24 @@ class B {
 }<!>
 
 // Inline lambda with conditional non-local return
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun conditionalNonLocalReturn(x: Int): Int {
+tailrec fun conditionalNonLocalReturn(x: Int): Int {
     run {
         if (x > 0) return conditionalNonLocalReturn(x - 1)
     }
     return 0
-}<!>
+}
 
 // Multiple inline lambdas, only one has a non-local return tail call
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun multipleInlineLambdas(x: Int): Int {
+tailrec fun multipleInlineLambdas(x: Int): Int {
     run { <!NON_TAIL_RECURSIVE_CALL!>multipleInlineLambdas<!>(x) }
     run { return multipleInlineLambdas(x - 1) }
-}<!>
+}
 
 // `forEach` with non-local return
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun forEachReturn(x: Int): Int {
+tailrec fun forEachReturn(x: Int): Int {
     listOf(x).forEach { return forEachReturn(it - 1) }
     return 0
-}<!>
+}
 
 // Nested local class with call inside — not a tail call
 <!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun localClassCall(x: Int): Int {
@@ -141,17 +141,17 @@ class B {
 }<!>
 
 // `if` inside `run` with non-local return in both branches
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun ifInRunBothBranches(x: Int): Int {
+tailrec fun ifInRunBothBranches(x: Int): Int {
     run {
         if (x > 0)
             return ifInRunBothBranches(x - 1)
         else
             return ifInRunBothBranches(0)
     }
-}<!>
+}
 
 // `when` inside `run` with non-local return
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun whenInRun(x: Int): Int {
+tailrec fun whenInRun(x: Int): Int {
     run {
         when {
             x > 10 -> return whenInRun(x - 2)
@@ -159,7 +159,7 @@ class B {
             else -> return whenInRun(0)
         }
     }
-}<!>
+}
 
 // Crossinline lambda — cannot have non-local return, so call is not a tail call
 inline fun myCrossinlineRun(crossinline f: () -> Unit) = f()
