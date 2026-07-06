@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -34,7 +35,8 @@ class BuiltInWithDifferentJvmName(
     val isOverriding: Boolean = true
 )
 
-class SpecialBridgeMethods(val context: CommonBackendContext) {
+class SpecialBridgeMethods(val irBuiltIns: IrBuiltIns) {
+    constructor(context: CommonBackendContext): this(context.irBuiltIns)
     private data class SpecialMethodDescription(val kotlinFqClassName: FqName?, val name: Name, val arity: Int)
 
     private fun makeDescription(classFqName: FqName, funName: String, arity: Int = 0): SpecialMethodDescription =
@@ -55,15 +57,15 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
 
     @Suppress("UNUSED_PARAMETER")
     private fun constFalse(bridge: IrSimpleFunction) =
-        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.booleanType, IrConstKind.Boolean, false)
+        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.booleanType, IrConstKind.Boolean, false)
 
     @Suppress("UNUSED_PARAMETER")
     private fun constNull(bridge: IrSimpleFunction) =
-        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.anyNType, IrConstKind.Null, null)
+        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.anyNType, IrConstKind.Null, null)
 
     @Suppress("UNUSED_PARAMETER")
     private fun constMinusOne(bridge: IrSimpleFunction) =
-        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, IrConstKind.Int, -1)
+        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.intType, IrConstKind.Int, -1)
 
     private fun getSecondArg(bridge: IrSimpleFunction) =
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.parameters[2].symbol)

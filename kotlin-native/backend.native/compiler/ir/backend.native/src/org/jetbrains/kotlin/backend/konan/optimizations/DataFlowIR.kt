@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
-import org.jetbrains.kotlin.backend.konan.lower.getDefaultValueForOverriddenBuiltinFunction
 import org.jetbrains.kotlin.backend.konan.lower.isEagerStaticInitializer
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
 import org.jetbrains.kotlin.descriptors.Modality
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.objcinterop.getExternalObjCMethodInfo
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.types.IrType
@@ -662,11 +662,10 @@ internal object DataFlowIR {
                 else -> {
                     val isAbstract = it.modality == Modality.ABSTRACT
                     val irClass = it.parent as? IrClass
-                    val bridgeTarget = it.bridgeTarget
-                    val isSpecialBridge = bridgeTarget.let {
-                        it != null && it.getDefaultValueForOverriddenBuiltinFunction() != null
-                    }
-                    val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
+                    // Don't inline bridge, if it's more complicated that just returning
+                    // This can happen around special builtins
+                    val bridgeTarget = if (it.body?.statements?.getOrNull(0) is IrReturn) it.bridgeTarget else null
+                    val bridgeTargetSymbol = if (bridgeTarget == null) null else mapFunction(bridgeTarget)
                     val placeToFunctionsTable = !isAbstract && irClass != null
                             && (it.isOverridableOrOverrides || bridgeTarget != null || function.isSpecial || !irClass.isFinalClass)
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
