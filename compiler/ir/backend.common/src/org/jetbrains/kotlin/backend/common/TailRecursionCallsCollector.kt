@@ -159,20 +159,22 @@ fun collectTailRecursionCalls(
             //   }
             // Whether crossinline lambdas are matched is unimportant, as they can't contain any returns
             // from `foo` anyway.
-            if (followFunctionReference(expression)) {
-                // If control reaches end of lambda, it will *not* end the current function by default,
-                // so the lambda's body itself is not a tail statement.
-                expression.symbol.owner.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = true))
-            }
+            val inOtherFunction = !followFunctionReference(expression)
+            // If control reaches end of lambda, it will *not* end the current function by default,
+            // so the lambda's body itself is not a tail statement.
+            // Even when not following the reference, we still visit the body to find non-local returns
+            // that target the enclosing tailrec function (e.g. `run { return foo() }`).
+            expression.symbol.owner.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = inOtherFunction || data.inOtherFunction))
         }
 
         override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: VisitorState) {
             expression.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
-            if (followRichFunctionReference(expression)) {
-                // If control reaches end of lambda, it will *not* end the current function by default,
-                // so the lambda's body itself is not a tail statement.
-                expression.invokeFunction.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = true))
-            }
+            val inOtherFunction = !followRichFunctionReference(expression)
+            // If control reaches end of lambda, it will *not* end the current function by default,
+            // so the lambda's body itself is not a tail statement.
+            // Even when not following the reference, we still visit the body to find non-local returns
+            // that target the enclosing tailrec function.
+            expression.invokeFunction.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = inOtherFunction || data.inOtherFunction))
         }
     }
 
