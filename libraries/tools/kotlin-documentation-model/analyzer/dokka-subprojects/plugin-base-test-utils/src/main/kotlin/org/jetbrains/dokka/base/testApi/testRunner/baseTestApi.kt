@@ -8,7 +8,6 @@ import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaGenerator
 import org.jetbrains.dokka.base.generation.SingleModuleGeneration
-import org.jetbrains.dokka.base.resolvers.shared.PackageList
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext
@@ -29,45 +28,51 @@ public class BaseDokkaTestGenerator(
     additionalPlugins: List<DokkaPlugin> = emptyList()
 ) : DokkaTestGenerator<BaseTestMethods>(configuration, logger, testMethods, additionalPlugins) {
 
-    override fun generate(): Unit = try {
-        with(testMethods) {
-            val dokkaGenerator = DokkaGenerator(configuration, logger)
+    override fun generate(): Unit {
+        var singleModuleGenerationForCleanUp: SingleModuleGeneration? = null
+        try {
+            with(testMethods) {
+                val dokkaGenerator = DokkaGenerator(configuration, logger)
 
-            val context =
-                dokkaGenerator.initializePlugins(configuration, logger, additionalPlugins)
-            pluginsSetupStage(context)
+                val context =
+                    dokkaGenerator.initializePlugins(configuration, logger, additionalPlugins)
+                pluginsSetupStage(context)
 
-            val singleModuleGeneration = context.single(CoreExtensions.generation) as SingleModuleGeneration
+                val singleModuleGeneration = context.single(CoreExtensions.generation) as SingleModuleGeneration
+                singleModuleGenerationForCleanUp = singleModuleGeneration
 
-            verificationStage { singleModuleGeneration.validityCheck(context) }
+                verificationStage { singleModuleGeneration.validityCheck(context) }
 
-            val modulesFromPlatforms = singleModuleGeneration.createDocumentationModels()
-            documentablesCreationStage(modulesFromPlatforms)
+                val modulesFromPlatforms = singleModuleGeneration.createDocumentationModels()
+                documentablesCreationStage(modulesFromPlatforms)
 
-            val filteredModules = singleModuleGeneration.transformDocumentationModelBeforeMerge(modulesFromPlatforms)
-            documentablesFirstTransformationStep(filteredModules)
+                val filteredModules =
+                    singleModuleGeneration.transformDocumentationModelBeforeMerge(modulesFromPlatforms)
+                documentablesFirstTransformationStep(filteredModules)
 
-            val documentationModel = singleModuleGeneration.mergeDocumentationModels(filteredModules)
-            documentablesMergingStage(documentationModel!!)
+                val documentationModel = singleModuleGeneration.mergeDocumentationModels(filteredModules)
+                documentablesMergingStage(documentationModel!!)
 
-            val transformedDocumentation = singleModuleGeneration.transformDocumentationModelAfterMerge(documentationModel)
-            documentablesTransformationStage(transformedDocumentation)
+                val transformedDocumentation =
+                    singleModuleGeneration.transformDocumentationModelAfterMerge(documentationModel)
+                documentablesTransformationStage(transformedDocumentation)
 
-            val pages = singleModuleGeneration.createPages(transformedDocumentation)
-            pagesGenerationStage(pages)
+                val pages = singleModuleGeneration.createPages(transformedDocumentation)
+                pagesGenerationStage(pages)
 
-            val transformedPages = singleModuleGeneration.transformPages(pages)
-            pagesTransformationStage(transformedPages)
+                val transformedPages = singleModuleGeneration.transformPages(pages)
+                pagesTransformationStage(transformedPages)
 
-            singleModuleGeneration.render(transformedPages)
-            renderingStage(transformedPages, context)
+                singleModuleGeneration.render(transformedPages)
+                renderingStage(transformedPages, context)
 
-            singleModuleGeneration.runPostActions()
+                singleModuleGeneration.runPostActions()
 
-            singleModuleGeneration.reportAfterRendering()
+                singleModuleGeneration.reportAfterRendering()
+            }
+        } finally {
+            singleModuleGenerationForCleanUp?.cleanUp()
         }
-    } finally {
-        PackageList.clearCache()
     }
 }
 

@@ -246,11 +246,12 @@ internal object TestProjectAnalyzer {
 
     /**
      * Cleans up memory used during analysis by invoking all Dokka post-actions
-     * which will dispose KotlinAnalysis sessions for both K1 and K2 analysis.
-     * After this, [context] should not be used.
+     * and clean-up actions which will dispose KotlinAnalysis sessions for both
+     * K1 and K2 analysis. After this, [context] should not be used.
      */
     private fun cleanup(context: DokkaContext) {
         context[CoreExtensions.postActions].forEach { action -> action.invoke() }
+        context[CoreExtensions.cleanUpActions].forEach { action -> action.invoke() }
     }
 
 }
