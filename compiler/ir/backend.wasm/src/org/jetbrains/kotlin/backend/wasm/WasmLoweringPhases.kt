@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.WasmTailrecCheckerLowering
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
@@ -112,6 +113,7 @@ fun wasmLoweringsOfTheFirstPhase(
             this += ::createUpgradeCallableReferences
         }
         this += loweringsOfTheFirstPhase(languageVersionSettings)
+        this += ::WasmTailrecCheckerLowering
     }
     return createModulePhases(*phases.toTypedArray())
 }

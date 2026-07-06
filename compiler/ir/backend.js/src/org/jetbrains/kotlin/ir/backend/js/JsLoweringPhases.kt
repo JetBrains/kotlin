@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.TailrecCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -125,6 +126,7 @@ fun jsLoweringsOfTheFirstPhase(
             this += ::createJsCodeOutliningPhaseOnFirstStage
         }
         this += loweringsOfTheFirstPhase(languageVersionSettings)
+        this += ::TailrecCheckerLowering
     }
     return createModulePhases(*phases.toTypedArray())
 }

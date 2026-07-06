@@ -1,10 +1,10 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo() {
+<!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo() {
     bar {
         <!NON_TAIL_RECURSIVE_CALL!>foo<!>()
     }
-}
+}<!>
 
 fun bar(a: Any) {}
 

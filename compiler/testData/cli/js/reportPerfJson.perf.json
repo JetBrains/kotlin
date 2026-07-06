@@ -84,6 +84,15 @@
     },
     {
       "parentPhaseType": IrPreLowering,
+      "name": "TailrecCheckerLowering",
+      "time": {
+        "nanos": $UINT$,
+        "userNanos": $UINT$,
+        "cpuNanos": $UINT$
+      }
+    },
+    {
+      "parentPhaseType": IrPreLowering,
       "name": "LateinitLowering",
       "time": {
         "nanos": $UINT$,
