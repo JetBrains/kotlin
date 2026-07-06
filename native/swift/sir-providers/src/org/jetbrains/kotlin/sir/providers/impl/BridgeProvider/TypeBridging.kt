@@ -277,6 +277,9 @@ internal sealed interface BidirectionalBridge : SwiftToKotlinBridge, KotlinToSwi
 internal sealed interface Bridge {
     val swiftType: SirType
 
+    fun kotlinReverseParameterTypeFqName(typeNamer: SirTypeNamer): String =
+        typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+
     context(sir: SirSession)
     fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> = emptyList()
 
@@ -724,21 +727,24 @@ internal sealed interface Bridge {
     }
 
     class AsNSArrayForVariadic(swiftType: SirNominalType, elementBridge: BidirectionalBridge) : AsNSArray(swiftType, elementBridge) {
+        private val elementType get() = (swiftType as SirNominalType).typeArguments.single()
+
+        private fun arrayKind(typeNamer: SirTypeNamer): String? = typeNamer.kotlinPrimitiveFqNameIfAny(elementType)
+
+        override fun kotlinReverseParameterTypeFqName(typeNamer: SirTypeNamer): String =
+            arrayKind(typeNamer)?.let { "kotlin.${it}Array" }
+                ?: "kotlin.Array<out ${typeNamer.kotlinFqName(elementType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}>"
+
         override val inKotlinSources: ValueConversion = object : ValueConversion {
             context(session: SirSession)
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                val arrayKind = typeNamer.kotlinPrimitiveFqNameIfAny(swiftType.typeArguments.single()) ?: "Typed"
-                return "interpretObjCPointer<${
-                    typeNamer.kotlinFqName(
-                        swiftType,
-                        SirTypeNamer.KotlinNameType.PARAMETRIZED
-                    )
-                }>($valueExpression).to${arrayKind}Array()"
-            }
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "interpretObjCPointer<${
+                    typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+                }>($valueExpression).to${arrayKind(typeNamer) ?: "Typed"}Array()"
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "$valueExpression.objcPtr()"
+                "$valueExpression.toList().objcPtr()"
         }
     }
 

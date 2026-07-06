@@ -493,7 +493,7 @@ private class BridgeFunctionDescriptor(
         }.joinToString()
 
         val trampolineParams = cLevelParams.joinToString { param ->
-            "${param.name.kotlinIdentifier}: ${typeNamer.kotlinFqName(param.bridge.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}"
+            "${param.name.kotlinIdentifier}: ${param.bridge.kotlinReverseParameterTypeFqName(typeNamer)}"
         }
         val trampolineReturnType = typeNamer.kotlinFqName(returnType.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
 
@@ -630,7 +630,7 @@ private class BridgeFunctionDescriptor(
             add("@${reverseBridgeAnnotationFqName.substringAfterLast('.')}($targetClassFqName::class, \"$targetMethodName\")")
 
             val trampolineParams = cLevelParams.joinToString { param ->
-                "${param.name.kotlinIdentifier}: ${typeNamer.kotlinFqName(param.bridge.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}"
+                "${param.name.kotlinIdentifier}: ${param.bridge.kotlinReverseParameterTypeFqName(typeNamer)}"
             }
             val trampolineReturnType = typeNamer.kotlinFqName(returnType.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
             add("public fun $cBridgeName($trampolineParams): $trampolineReturnType {")

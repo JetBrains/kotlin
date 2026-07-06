@@ -41,3 +41,9 @@ open class AsyncThrower {
 }
 
 suspend fun callBoom(t: AsyncThrower): String = t.boom()
+
+open class AsyncVararg {
+    open suspend fun join(vararg parts: String): String = "Kotlin: " + parts.joinToString(",")
+}
+
+suspend fun callJoin(v: AsyncVararg): String = v.join("a", "b", "c")

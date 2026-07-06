@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.swiftFqName
+import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -166,17 +167,28 @@ internal open class SirFunctionFromKtSymbol(
                 targetMethodName = ktSymbol.name?.asString() ?: "",
                 swiftDynamicCall = { selfExpr, paramExprs ->
                     val methodName = this@SirFunctionFromKtSymbol.name
-                    val args = this@SirFunctionFromKtSymbol.parameters
-                        .zip(paramExprs)
-                        .joinToString(", ") { [param, expr] ->
-                            param.argumentName?.takeIf { it.isNotEmpty() }?.let { "$it: $expr" } ?: expr
-                        }
+                    val params = this@SirFunctionFromKtSymbol.parameters
                     val tryPrefix = when {
                         isAsync -> "try await "
                         errorType != SirType.never -> "try! "
                         else -> ""
                     }
-                    "$tryPrefix$selfExpr.$methodName($args)"
+                    if (params.any { it.isVariadic }) {
+                        val destType = SirFunctionalType(
+                            parameterTypes = params.map { if (it.isVariadic) SirArrayType(it.type) else it.type },
+                            isAsync = isAsync,
+                            returnType = returnType,
+                            errorType = errorType,
+                        ).swiftName
+                        "${tryPrefix}unsafeBitCast($selfExpr.$methodName, to: ($destType).self)(${paramExprs.joinToString(", ")})"
+                    } else {
+                        val args = params
+                            .zip(paramExprs)
+                            .joinToString(", ") { [param, expr] ->
+                                param.argumentName?.takeIf { it.isNotEmpty() }?.let { "$it: $expr" } ?: expr
+                            }
+                        "$tryPrefix$selfExpr.$methodName($args)"
+                    }
                 },
                 swiftDeprecation = effectiveReverseBridgeDeprecation(),
             ).orEmpty()
