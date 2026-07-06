@@ -32,7 +32,7 @@ class TailrecCheckerLowering<Context : LoweringContext>(val context: Context) : 
                     followRichFunctionReference = { _: IrRichFunctionReference -> false },
                 )
 
-                if (tailCalls.ir.isEmpty()) {
+                if (tailCalls.ir.isEmpty() && !tailCalls.hasUncollectedTailCalls) {
                     context.diagnosticReporter
                         .at(declaration, declaration.file)
                         .report(CommonBackendErrors.NO_TAIL_CALLS_FOUND_IN_IR)

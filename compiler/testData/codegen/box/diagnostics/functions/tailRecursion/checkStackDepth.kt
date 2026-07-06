@@ -24,6 +24,18 @@ fun checkShallowStackDepth(lambda: () -> Unit) {
         error("Test source issue: vmStackDepth was not changed after tailrec call. Insert `vmStackDepthSnapShot()` as the first operator in tailrec fun")
 }
 
+// Similar to test "non-local return and capture" in compiler/testData/codegen/box/diagnostics/functions/tailRecursion/recursiveCallInInlineLambdaWithCapture.kt
+fun listOfFactor(number: Int): List<Int> {
+    tailrec fun listOfFactor(number: Int, acc: List<Int>): List<Int> {
+        vmStackDepthSnapShot()
+        (2..number).forEach {
+            if (number % it == 0) return listOfFactor(number / it, acc + it)
+        }
+        return acc
+    }
+    return listOfFactor(number, emptyList())
+}
+
 tailrec fun addNodeTest1(node: IntArray, level: Int) {
     vmStackDepthSnapShot()
     if (level <= 0) {
@@ -159,6 +171,7 @@ tailrec fun test13(n: Int): Base {
 
 fun box(): String {
     val intArray = IntArray(42) { 42 }
+    checkShallowStackDepth { listOfFactor(10) }
     checkShallowStackDepth { addNodeTest1(intArray, 10) }
     checkShallowStackDepth { addNodeTest2(intArray, 10) }
     checkShallowStackDepth { addNodeTest3(intArray, 10) }
