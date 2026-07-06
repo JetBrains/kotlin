@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.config.konanDontCompressKlib
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.writer.includeBitcode
 import org.jetbrains.kotlin.konan.library.writer.includeNativeIncludedBinaries
 import org.jetbrains.kotlin.konan.library.writer.legacyNativeDependenciesInManifest
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.util.metadataVersion
 import java.util.Properties
 import kotlin.io.path.Path
+import kotlin.io.path.writeLines
 
 fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
     val suffix = ".klib"
@@ -68,10 +68,9 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
     else input.serializerOutput.neededLibraries
 
     config.writeDependenciesOfProducedKlibTo?.let { path ->
-        val usedDependenciesFile = File(path)
         // We write out the absolute path instead of canonical here to avoid resolving symbolic links
         // as that can make it difficult to map the dependencies back to the command line arguments.
-        usedDependenciesFile.writeLines(linkDependencies.map { it.path.toAbsolutePath().toString() }.sorted())
+        Path(path).writeLines(linkDependencies.map { it.path.toAbsolutePath().toString() }.sorted())
     }
 
     val nativeTargetsForManifest = config.nativeTargetsForManifest?.map { it.visibleName }
