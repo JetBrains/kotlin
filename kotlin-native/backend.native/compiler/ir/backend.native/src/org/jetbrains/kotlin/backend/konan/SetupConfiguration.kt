@@ -309,7 +309,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, this@setupFromArguments))
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
 
-    setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_STRONG_WARNING, KONAN_ARGUMENT_ERROR)
+    setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_ERROR)
 
     put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
     putIfNotNull(COMPILE_FROM_BITCODE, parseCompileFromBitcode(arguments, this@setupFromArguments, outputKind))

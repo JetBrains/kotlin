@@ -130,7 +130,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             configuration.konanManifestNativeTargets = parseManifestNativeTargets(it, configuration)
         }
 
-        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_STRONG_WARNING, KONAN_ARGUMENT_ERROR)
+        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_ERROR)
     }
 
     private fun parseManifestNativeTargets(
