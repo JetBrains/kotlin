@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
-import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.regex.Pattern
 
@@ -21,7 +20,7 @@ fun TestGroupSuite.forEachTestClassParallel(f: (TestGroup.TestClass) -> Unit) {
         .forEach(f)
 }
 
-class TestGroupSuite(val testInfraRevision: TestInfraRevision, val defaultSkipTestAllFilesCheck: Boolean) {
+class TestGroupSuite(val defaultSkipTestAllFilesCheck: Boolean) {
     val testGroups: List<TestGroup>
         field = mutableListOf<TestGroup>()
 
@@ -35,7 +34,6 @@ class TestGroupSuite(val testInfraRevision: TestInfraRevision, val defaultSkipTe
             testsRoot,
             testDataRoot,
             testRunnerMethodName,
-            testInfraRevision,
             defaultSkipTestAllFilesCheck,
         ).apply(init)
     }
@@ -45,7 +43,6 @@ class TestGroup(
     private val testsRoot: String,
     val testDataRoot: String,
     val testRunnerMethodName: String,
-    val testInfraRevision: TestInfraRevision,
     val defaultSkipTestAllFilesCheck: Boolean,
 ) {
     val testClasses: List<TestClass>
@@ -94,7 +91,6 @@ class TestGroup(
             extension: String? = "kt",
             excludeParentDirs: Boolean = false,
             recursive: Boolean = true,
-            targetBackend: TargetBackend? = null,
             excludedPattern: String? = null,
         ) {
             model(
@@ -102,7 +98,6 @@ class TestGroup(
                 extension = extension,
                 recursive = recursive,
                 excludeParentDirs = excludeParentDirs,
-                targetBackend = targetBackend,
                 excludedPattern = excludedPattern,
                 testClassName = testDirectoryName.replaceFirstChar { it.uppercaseChar() } + testKClass.simpleName,
             )
@@ -126,7 +121,6 @@ class TestGroup(
             excludedPattern: String? = null,
             testMethod: String = "doTest",
             testClassName: String? = null,
-            targetBackend: TargetBackend? = null,
             excludeDirs: List<String> = listOf(),
             excludeDirsRecursively: List<String> = listOf(),
             skipTestAllFilesCheck: Boolean = defaultSkipTestAllFilesCheck,
@@ -137,19 +131,13 @@ class TestGroup(
             val compiledPattern = Pattern.compile(pattern)
             val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
-            require(targetBackend != TargetBackend.ANY) { "TargetBackend.ANY is not allowed, please specify target backend explicitly" }
-            if (testInfraRevision == TestInfraRevision.StandardJUnit5) {
-                require(targetBackend == null) { "TargetBackend shouldn't be defined for JUnit5" }
-            }
 
             testModels.add(
                 SimpleTestClassModel(
-                    testInfraRevision, File(testDataRoot), rootFile, recursive, excludeParentDirs,
-                    compiledPattern, compiledExcludedPattern, testMethod, className,
-                    targetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
-                    extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck, testKClass,
-                    isSmokeTest = smokeTest,
-                    smokeTestLimit = smokeTestLimit
+                    File(testDataRoot), rootFile, recursive, excludeParentDirs, compiledPattern,
+                    compiledExcludedPattern, testMethod, className, excludeDirs,
+                    excludeDirsRecursively, testRunnerMethodName, annotations, extractTagsFromDirectory(rootFile), methodModels,
+                    skipTestAllFilesCheck, testKClass, isSmokeTest = smokeTest, smokeTestLimit = smokeTestLimit
                 )
             )
         }

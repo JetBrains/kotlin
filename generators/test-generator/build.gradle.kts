@@ -13,7 +13,6 @@ dependencies {
 
     testFixturesApi(kotlinStdlib())
     testFixturesApi(platform(libs.junit.bom))
-    testFixturesImplementation(libs.junit4)
     testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(intellijCore())
 
