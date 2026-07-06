@@ -212,16 +212,10 @@ open class CommonCompilerArgumentsConfigurator {
 
     private fun HashMap<AnalysisFlag<*>, Any>.fillWarningLevelMap(arguments: CommonCompilerArguments, reporter: Reporter) {
         val result = buildMap {
-            val suppressedDiagnostics = arguments.suppressedDiagnostics.orEmpty()
+            @Suppress("DEPRECATION")
+            val suppressedDiagnostics = arguments.suppressedDiagnostics
             suppressedDiagnostics.associateWithTo(this) { WarningLevel.Disabled }
-            if (suppressedDiagnostics.isNotEmpty()) {
-                val replacement = "-Xwarning-level=${suppressedDiagnostics.first()}:disabled"
-                val suffix = if (suppressedDiagnostics.size > 1) " (and the same for other warnings)" else ""
-                reporter.reportWarning(
-                    """Argument "-Xsuppress-warning" is deprecated. Use "$replacement" instead$suffix"""
-                )
-            }
-            for (rawArgument in arguments.warningLevels.orEmpty()) {
+            for (rawArgument in arguments.warningLevels) {
                 val split = rawArgument.split(":", limit = 2)
                 if (split.size < 2) {
                     reporter.reportError(

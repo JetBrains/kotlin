@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.common
 
+import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.OPT_IN
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_ANNOTATION_DEFAULT_TARGET
@@ -146,7 +147,7 @@ internal val commonCompilerArguments: List<CommonArgumentTestDescriptor<*>> = li
     ),
     CommonArgumentTestDescriptor(
         argumentName = "Xsuppress-warning",
-        argument = X_SUPPRESS_WARNING,
+        argument = @OptIn(DeprecatedCompilerArgument::class) X_SUPPRESS_WARNING,
         argumentValues = listOf(listOf("warning1", "warning2", "warning3")),
         argumentRawValues = listOf(listOf("warning1", "warning2", "warning3").joinToString(",")),
         valueString = { value -> value?.joinToString(",") },

@@ -1,2 +1,2 @@
-warning: [COMPILER_ARGUMENTS_WARNING] Argument "-Xsuppress-warning" is deprecated. Use "-Xwarning-level=UNCHECKED_CAST:disabled" instead
+warning: [DEPRECATED_CLI_ARG] The argument '-Xsuppress-warning' is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
 OK

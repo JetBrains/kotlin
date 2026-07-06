@@ -1054,10 +1054,12 @@ Warning: This is temporary solution (see KT-63712) intended to be used only for 
             field = value
         }
 
+    @all:Deprecated("Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).")
     @Argument(
         value = "-Xsuppress-warning",
         valueDescription = "<WARNING_NAME>",
-        description = "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag",
+        description = "Suppress specified warning module-wide.",
+        deprecatedVersion = "2.2.0",
     )
     var suppressedDiagnostics: Array<String> = emptyArray()
         set(value) {

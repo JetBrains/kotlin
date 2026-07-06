@@ -797,12 +797,15 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_SUPPRESS_VERSION_WARNINGS", KotlinReleaseVersion(1, 5, 0))
 
     /**
-     * Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
+     * Suppress specified warning module-wide.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.2.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_SUPPRESS_WARNING: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_SUPPRESS_WARNING", KotlinReleaseVersion(2, 1, 0))
 

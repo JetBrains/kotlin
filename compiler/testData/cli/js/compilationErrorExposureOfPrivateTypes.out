@@ -1,4 +1,4 @@
-warning: argument "-Xsuppress-warning" is deprecated. Use "-Xwarning-level=NOTHING_TO_INLINE:disabled" instead
+warning: the argument '-Xsuppress-warning' is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
 compiler/testData/cli/js/compilationErrorExposureOfPrivateTypes.kt:14:43: error: public-API inline function accesses a non Public-API class 'A'. This can happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineFun1()
 private inline fun privateInlineFun2()

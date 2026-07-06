@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
+import org.jetbrains.kotlin.arguments.dsl.previous
 import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
@@ -1168,16 +1169,24 @@ The argument should be used only if the new compilation scheme is enabled with -
 
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
+        val introducedVersion = KotlinReleaseVersion.v2_1_0
+        val deprecatedVersion = KotlinReleaseVersion.v2_2_0 // According to https://github.com/JetBrains/kotlin/commit/533d2f5ba6e6d2759d92d59b6004ee433214e262
+        val commonDescriptionPart = "Suppress specified warning module-wide."
         name = "Xsuppress-warning"
         compilerName = "suppressedDiagnostics"
-        description =
-            "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag".asReleaseDependent()
+        description = ReleaseDependent(
+            commonDescriptionPart,
+            deprecatedVersion..KotlinReleaseVersion.v2_4_20 to "$commonDescriptionPart This option is deprecated in favor of \"-Xwarning-level\" flag",
+            introducedVersion..deprecatedVersion.previous!! to commonDescriptionPart,
+        )
         valueDescription = "<WARNING_NAME>".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         argumentType = StringListType.defaultEmpty
+        deprecatedMessage = "Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings)."
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_0,
+            introducedVersion = introducedVersion,
+            deprecatedVersion = deprecatedVersion,
         )
     }
 

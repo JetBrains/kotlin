@@ -6247,8 +6247,19 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag",
-                            "valueInVersions": []
+                            "current": "Suppress specified warning module-wide.",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.2.0",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag"
+                                },
+                                {
+                                    "minReleaseVersion": "2.1.0",
+                                    "maxReleaseVersion": "2.1.21",
+                                    "value": "Suppress specified warning module-wide."
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
@@ -6271,7 +6282,7 @@
                         "releaseVersionsMetadata": {
                             "introducedVersion": "2.1.0",
                             "stabilizedVersion": null,
-                            "deprecatedVersion": null,
+                            "deprecatedVersion": "2.2.0",
                             "removedVersion": null
                         },
                         "argumentType": {
@@ -6285,7 +6296,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "deprecatedMessage": null
+                        "deprecatedMessage": "Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings)."
                     },
                     {
                         "name": "Xunrestricted-builder-inference",
