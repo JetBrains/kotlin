@@ -674,7 +674,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field X_KLIB_ABI_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments$CommonKlibBasedArgumentsKlibArgument;
 	public static final field X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments$CommonKlibBasedArgumentsKlibArgument;
 	public static final field X_KLIB_IR_INLINER Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments$CommonKlibBasedArgumentsKlibArgument;
-	public static final field X_KLIB_NORMALIZE_ABSOLUTE_PATH Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments$CommonKlibBasedArgumentsKlibArgument;
 	public static final field X_KLIB_RELATIVE_PATH_BASE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments$CommonKlibBasedArgumentsKlibArgument;
 	public static final field X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments$CommonKlibBasedArgumentsKlibArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments$CommonKlibBasedArgumentsKlibArgument;)Ljava/lang/Object;

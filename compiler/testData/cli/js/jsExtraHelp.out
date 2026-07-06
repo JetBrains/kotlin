@@ -98,8 +98,6 @@ where advanced options include:
                              - `disabled` mode completely disables the IR inliner
                              - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
 
-  -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
-                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases.
   -Xklib-relative-path-base  Relativize all the paths stored in a klib using the given path prefixes.
                              The supplied prefixes should be absolute paths to the directories containing the source code files.
                              Note: The prefixes are applied in the same order as they are passed in this CLI argument.

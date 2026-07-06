@@ -11093,7 +11093,7 @@
                                     "introducedVersion": "2.0.20",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": "2.4.20",
-                                    "removedVersion": null
+                                    "removedVersion": "2.5.0"
                                 },
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",

@@ -8,7 +8,6 @@ import kotlin.Boolean
 import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
-import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KlibIrInlinerMode
 
@@ -72,19 +71,6 @@ public interface CommonKlibBasedArgumentsKlibArguments : CommonKlibBasedArgument
     @ExperimentalCompilerArgument
     public val X_KLIB_RELATIVE_PATH_BASE: CommonKlibBasedArgumentsKlibArgument<List<Path>> =
         CommonKlibBasedArgumentsKlibArgument("X_KLIB_RELATIVE_PATH_BASE", KotlinReleaseVersion(2, 0, 20))
-
-    /**
-     * Normalize absolute paths in klibs.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     *
-     * Deprecated in Kotlin version 2.4.20.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    @DeprecatedCompilerArgument
-    public val X_KLIB_NORMALIZE_ABSOLUTE_PATH: CommonKlibBasedArgumentsKlibArgument<Boolean> =
-        CommonKlibBasedArgumentsKlibArgument("X_KLIB_NORMALIZE_ABSOLUTE_PATH", KotlinReleaseVersion(2, 0, 20))
 
     /**
      * Enable signature uniqueness checks.
