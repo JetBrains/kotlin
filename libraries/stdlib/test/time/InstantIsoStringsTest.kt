@@ -427,6 +427,63 @@ class InstantIsoStringsTest {
         }
     }
 
+    @Test
+    fun parseVsParseOrNullAgree() {
+        // parse and parseOrNull must make the same accept/reject decision for every input.
+        fun assertAgrees(input: String) {
+            val viaOrNull = Instant.parseOrNull(input)
+            if (viaOrNull == null) {
+                assertInvalidFormat(input) { Instant.parse(input) }
+            } else {
+                assertEquals(viaOrNull, Instant.parse(input), input)
+            }
+        }
+        val inputs = listOf(
+            // valid
+            "2020-08-30T18:43:00Z", "2020-08-30T18:43:00.50Z", "2020-08-30T18:43:00.123456789Z",
+            "2020-08-30T18:40:00+03:00", "2020-08-30T18:40:00+03:30:20", "+12020-01-31T23:59:59Z",
+            "2020-08-30t18:43:00z", Instant.MAX.toString(), Instant.MIN.toString(),
+            // invalid
+            "", "Ten o'clock today", "2020-08-32T15:40:00Z", "+10000000000000-08-01T15:40:00Z",
+            "+1000000001-12-31T23:59:59.000000000Z", "2020-08-30T18:43:00.1234567890Z",
+            "2020-08-30T18:43:00", "1970-01-01T23:59:60Z", "2020-13-01T00:00:00Z",
+        )
+        inputs.forEach(::assertAgrees)
+    }
+
+    @Test
+    fun parseCanonicalMinMaxBoundary() {
+        for (boundary in listOf(Instant.MAX, Instant.MIN)) {
+            val str = boundary.toString()
+            assertEquals(boundary, Instant.parse(str), str)
+            assertEquals(boundary, Instant.parseOrNull(str), str)
+        }
+    }
+
+    @Test
+    fun parseErrorMessages() {
+        // Every parse error carries the "... when parsing an Instant from \"...\"" suffix exactly once.
+        assertParseMessage(
+            "An empty string is not a valid Instant when parsing an Instant from \"\"",
+            ""
+        )
+        // Single suffix: fails on pre-fix code, which appended the suffix twice (guards the de-duplication).
+        assertParseMessage(
+            "Expected a month number in 1..12, got 13 when parsing an Instant from \"2020-13-01T00:00:00Z\"",
+            "2020-13-01T00:00:00Z"
+        )
+        assertParseMessage(
+            "Expected 'T' or 't', but got 'X' at position 10 when parsing an Instant from \"2020-01-01X00:00:00Z\"",
+            "2020-01-01X00:00:00Z"
+        )
+        // Out-of-range: the message now carries the single suffix it lacked before (0 -> 1).
+        assertParseMessage(
+            "The parsed date is outside the range representable by Instant (Unix epoch second 31556889864467999) " +
+                "when parsing an Instant from \"+1000000000-12-31T23:59:59-18:00\"",
+            "+1000000000-12-31T23:59:59-18:00"
+        )
+    }
+
 }
 
 private inline fun <T> assertInvalidFormat(message: String? = null, f: () -> T) {
@@ -434,4 +491,10 @@ private inline fun <T> assertInvalidFormat(message: String? = null, f: () -> T) 
         val result = f()
         fail(result.toString())
     }
+}
+
+private fun assertParseMessage(expected: String, input: String) {
+    val exception = assertFailsWith<IllegalArgumentException> { Instant.parse(input) }
+    assertEquals(expected, exception.message, "message of Instant.parse(\"$input\")")
+    assertNull(Instant.parseOrNull(input), input)
 }
