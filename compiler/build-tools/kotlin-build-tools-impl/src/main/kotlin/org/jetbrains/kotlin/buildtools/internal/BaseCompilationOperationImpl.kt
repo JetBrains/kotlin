@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.net.URLClassLoader
@@ -51,7 +50,6 @@ import java.rmi.RemoteException
 
 internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments>(
     override val compilerArguments: BtaCompilerArgs,
-    protected val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
 ) : CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder {
 
     @UseFromImplModuleRestricted
@@ -148,7 +146,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
         val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
-        val sessionIsAliveFlagFile = buildIdToSessionFlagFile.computeIfAbsent(projectId) {
+        val sessionIsAliveFlagFile = executionPolicy.buildIdToSessionFlagFile.computeIfAbsent(projectId) {
             createSessionIsAliveFlagFile()
         }
 

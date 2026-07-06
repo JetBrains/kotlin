@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
@@ -27,21 +26,18 @@ internal class JsLinkingOperationImpl private constructor(
     override val klib: Path,
     override val destination: Path,
     compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments),
     JsLinkingOperation, JsLinkingOperation.Builder,
     DeepCopyable<JsLinkingOperationImpl> {
     constructor(
         klib: Path,
         destination: Path,
         compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-        buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
     ) : this(
         options = Options(JsKlibCompilationOperation::class),
         klib = klib,
         destination = destination,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile
     ) {
         initializeOptions(this::class, options)
     }
@@ -54,7 +50,6 @@ internal class JsLinkingOperationImpl private constructor(
             klib,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
         )
     }
 

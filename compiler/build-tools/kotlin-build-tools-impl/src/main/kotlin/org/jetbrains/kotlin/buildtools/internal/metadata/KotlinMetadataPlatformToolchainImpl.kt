@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.buildtools.internal.metadata
 
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.metadata.operations.KotlinMetadataKlibCompilationOperationImpl
-import java.io.File
 import java.nio.file.Path
 
-internal class KotlinMetadataPlatformToolchainImpl(private val compilerVersion: String, private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>) : KotlinMetadataPlatformToolchain {
-    override fun metadataKlibCompilationOperationBuilder(sources: List<Path>, destination: Path): KotlinMetadataKlibCompilationOperation.Builder =
+internal class KotlinMetadataPlatformToolchainImpl(private val compilerVersion: String) : KotlinMetadataPlatformToolchain {
+    override fun metadataKlibCompilationOperationBuilder(
+        sources: List<Path>,
+        destination: Path,
+    ): KotlinMetadataKlibCompilationOperation.Builder =
         KotlinMetadataKlibCompilationOperationImpl(
             sources,
             destination,
-            buildIdToSessionFlagFile = buildIdToSessionFlagFile,
             compilerVersion = compilerVersion
         )
 }

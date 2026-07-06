@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.wasm.IncrementalModule
@@ -44,7 +43,6 @@ import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
-import java.io.File
 import java.nio.file.Path
 
 internal class WasmKlibCompilationOperationImpl private constructor(
@@ -52,23 +50,20 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     override val sources: List<Path>,
     override val destination: Path,
     compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
     WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
     DeepCopyable<WasmKlibCompilationOperationImpl> {
     constructor(
         sources: List<Path>,
         destination: Path,
         compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-        buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
         compilerVersion: String,
     ) : this(
         options = Options(WasmKlibCompilationOperation::class),
         sources = sources,
         destination = destination,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile,
         compilerVersion = compilerVersion,
     ) {
         initializeOptions(this::class, options)
@@ -91,7 +86,6 @@ internal class WasmKlibCompilationOperationImpl private constructor(
             sources,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
             compilerVersion
         )
     }

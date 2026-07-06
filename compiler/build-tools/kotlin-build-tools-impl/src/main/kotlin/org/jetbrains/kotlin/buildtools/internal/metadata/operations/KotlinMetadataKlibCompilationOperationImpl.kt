@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.buildtools.internal.metadata.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
-import java.io.File
 import java.nio.file.Path
 
 internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
@@ -27,23 +25,20 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
     override val sources: List<Path>,
     override val destination: Path,
     compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(compilerArguments),
     KotlinMetadataKlibCompilationOperation, KotlinMetadataKlibCompilationOperation.Builder,
     DeepCopyable<KotlinMetadataKlibCompilationOperationImpl> {
     constructor(
         sources: List<Path>,
         destination: Path,
         compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
-        buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
         compilerVersion: String,
     ) : this(
         options = Options(KotlinMetadataKlibCompilationOperation::class),
         sources = sources,
         destination = destination,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile,
         compilerVersion = compilerVersion,
     ) {
         initializeOptions(this::class, options)
@@ -57,7 +52,6 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
             sources,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
             compilerVersion
         )
     }

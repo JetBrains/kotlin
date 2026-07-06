@@ -32,13 +32,10 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         @Suppress("UNCHECKED_CAST")
         return toolchains.computeIfAbsent(type) { type ->
             when (type) {
-                JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
-                JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
-                WasmPlatformToolchain::class.java -> WasmPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
-                KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainImpl(
-                    getCompilerVersion(),
-                    buildIdToSessionFlagFile
-                )
+                JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(getCompilerVersion())
+                JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(getCompilerVersion())
+                WasmPlatformToolchain::class.java -> WasmPlatformToolchainImpl(getCompilerVersion())
+                KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainImpl(getCompilerVersion())
                 CriToolchain::class.java -> CriToolchainImpl()
                 AbiValidationToolchain::class.java -> AbiValidationToolchainImpl()
                 else -> error("Unsupported platform toolchain type: $type.")
@@ -53,9 +50,9 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)"),
         level = DeprecationLevel.HIDDEN
     )
-    fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
+    fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl(buildIdToSessionFlagFile)
 
-    override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = DaemonExecutionPolicyImpl()
+    override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = DaemonExecutionPolicyImpl(buildIdToSessionFlagFile)
 
     override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 
