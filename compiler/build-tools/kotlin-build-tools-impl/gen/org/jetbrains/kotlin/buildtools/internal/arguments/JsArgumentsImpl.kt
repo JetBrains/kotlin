@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
+import java.io.ObjectStreamException
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
@@ -12,13 +13,17 @@ import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
+import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
 import kotlin.collections.Set
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.jvm.Throws
+import kotlin.jvm.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.MODULE_KIND
@@ -60,6 +65,7 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class JsArgumentsImpl(
+  @Transient
   private val adapter: JsArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
@@ -72,6 +78,8 @@ internal class JsArgumentsImpl(
     JsCompilerLinkingArguments.Builder,
     DeepCopyable<JsArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  private val optionsMapForSerialization: MutableList<String> = mutableListOf()
   init {
     applyCompilerArguments(K2JSCompilerArguments())
   }
@@ -128,6 +136,23 @@ internal class JsArgumentsImpl(
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  @Throws(ObjectStreamException::class)
+  private fun writeReplace(): Any = deepCopy().apply { prepareForSerialization() }
+
+  @Throws(ObjectStreamException::class)
+  private fun readResolve(): Any {
+    applyArgumentStrings(optionsMapForSerialization)
+    optionsMapForSerialization.clear()
+    return this
+  }
+
+  protected override fun prepareForSerialization() {
+    optionsMapForSerialization.clear()
+    optionsMapForSerialization.addAll(toArgumentStrings())
+    optionsMap.clear()
+    super.prepareForSerialization()
   }
 
   override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }

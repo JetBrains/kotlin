@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
+import java.io.Serializable
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
@@ -24,6 +25,7 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toMutableList
 import kotlin.collections.toMutableSet
+import kotlin.jvm.Transient
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.HELP
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.NOWARN
@@ -40,11 +42,13 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonToolArgumentsImpl(
+  @Transient
   private val adapter: CommonToolArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
 ) : ArgumentsCommonToolArguments,
-    ArgumentsCommonToolArguments.Builder {
+    ArgumentsCommonToolArguments.Builder,
+    Serializable {
   protected val internalArguments: MutableSet<String> = mutableSetOf()
 
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -90,6 +94,10 @@ internal abstract class CommonToolArgumentsImpl(
     level = DeprecationLevel.WARNING,
   )
   override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
+
+  protected open fun prepareForSerialization() {
+    optionsMap.clear()
+  }
 
   abstract override fun build(): CommonToolArgumentsImpl
 

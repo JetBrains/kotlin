@@ -51,8 +51,14 @@ inline fun <reified T : Annotation> FunSpec.Builder.annotation(
     annotationSpec: AnnotationSpec.Builder.() -> Unit = {},
 ): FunSpec.Builder = annotation(T::class.asTypeName(), annotationSpec)
 
+inline fun <reified T : Annotation> TypeSpec.Builder.annotation(
+    annotationSpec: AnnotationSpec.Builder.() -> Unit = {},
+): TypeSpec.Builder = annotation(T::class.asTypeName(), annotationSpec)
 
 inline fun FunSpec.Builder.annotation(typeName: ClassName, annotationSpec: AnnotationSpec.Builder.() -> Unit): FunSpec.Builder =
+    addAnnotation(AnnotationSpec.builder(typeName).apply(annotationSpec).build())
+
+inline fun TypeSpec.Builder.annotation(typeName: ClassName, annotationSpec: AnnotationSpec.Builder.() -> Unit): TypeSpec.Builder =
     addAnnotation(AnnotationSpec.builder(typeName).apply(annotationSpec).build())
 
 inline fun FileSpec.Builder.interfaceType(name: String, funSpec: TypeSpec.Builder.() -> Unit) {
