@@ -81,6 +81,12 @@ internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
         }
     }
 
+    data class MoreThanOneLinkerCallDiscovered(
+        val linkerCalls: List<File>
+    ) : Exception("More than one linker call discovered: ${linkerCalls.joinToString()}")
+
+    class NoLinkerCallsDiscovered : Exception("More than one linker call discovered")
+
     private fun executeXcodebuildAndParse(
         sdk: String,
         architectures: Set<AppleArchitecture>,
@@ -205,6 +211,13 @@ internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
                 val ldArgs = it.readLines().single()
                 ("@rpath/lib${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.dylib" in ldArgs || "@rpath/${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.framework" in ldArgs)
                         && "-arch${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}${DUMP_FILE_ARGS_SEPARATOR}" in ldArgs
+            }
+
+            if (architectureSpecificProductLdCalls.isEmpty()) {
+                throw NoLinkerCallsDiscovered()
+            }
+            if (architectureSpecificProductLdCalls.size > 1) {
+                throw MoreThanOneLinkerCallDiscovered(architectureSpecificProductLdCalls)
             }
 
             val parsedLdCall = XcodebuildDefFileUtils.parseLdCall(architectureSpecificProductLdCalls.single())

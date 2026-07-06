@@ -250,19 +250,34 @@ internal object XcodebuildDefFileUtils {
     fun clangArgsDumpScript(): String = argsDumpScript("clang", KOTLIN_CLANG_ARGS_DUMP_FILE_ENV)
     fun ldArgsDumpScript(): String = argsDumpScript("ld", KOTLIN_LD_ARGS_DUMP_FILE_ENV)
 
+    /**
+     * This script is used as a shim for the linker and the clang calls. When there is 1 argument (i.e. 2 argv) then we also follow the
+     * response file which has the actual arguments in a quote-separated list.
+     */
     private fun argsDumpScript(
         targetCli: String,
         dumpPathEnv: String,
     ) = """
-        #!/bin/bash
-
-        DUMP_FILE="${'$'}{${dumpPathEnv}}/${'$'}(/usr/bin/uuidgen)"
-        for arg in "$@"
-        do
-           echo -n "${'$'}arg" >> "${'$'}{DUMP_FILE}"
-           echo -n "$DUMP_FILE_ARGS_SEPARATOR" >> "${'$'}{DUMP_FILE}"
-        done
-
-        $targetCli "$@"
+        #!/usr/bin/python3
+        import os
+        import shlex
+        import sys
+        import uuid
+        
+        if __name__ == "__main__":
+            dump_file = os.path.join(os.getenv('$dumpPathEnv'), str(uuid.uuid4()).upper())
+        
+            # If argv count is 2 and second arg starts with @, then it's a response file we will follow
+            args = list('<empty>')
+            if len(sys.argv) == 2 and sys.argv[1][0] == '@' and os.getenv('FOLLOW_RESP_FILES', 'true').lower() != 'false':
+                with open(sys.argv[1][1:], 'r', encoding='utf8') as f:
+                    args = shlex.split(f.read())
+            else:
+                args = sys.argv[1:]
+        
+            with open(dump_file, 'w', encoding='utf8') as w:
+                w.write(str('$DUMP_FILE_ARGS_SEPARATOR'.join(args)))
+        
+            os.execvp('${targetCli}', sys.argv)
     """.trimIndent()
 }
