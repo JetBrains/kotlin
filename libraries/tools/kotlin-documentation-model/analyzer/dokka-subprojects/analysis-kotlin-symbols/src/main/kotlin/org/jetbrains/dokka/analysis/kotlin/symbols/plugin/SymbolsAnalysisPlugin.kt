@@ -20,9 +20,9 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.services.*
 import org.jetbrains.dokka.analysis.kotlin.symbols.services.KotlinDocumentableSourceLanguageParser
 import org.jetbrains.dokka.analysis.kotlin.symbols.services.SymbolExternalDocumentablesProvider
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.DefaultSymbolToDocumentableTranslator
+import org.jetbrains.dokka.generation.CleanUpAction
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.plugability.*
-import org.jetbrains.dokka.renderers.PostAction
 import org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
@@ -41,10 +41,9 @@ public class SymbolsAnalysisPlugin : DokkaPlugin() {
         }
     }
 
-
     internal val disposeKotlinAnalysisPostAction by extending {
-        CoreExtensions.postActions providing { context ->
-            PostAction {
+        CoreExtensions.cleanUpActions providing { context ->
+            CleanUpAction {
                 querySingle { kotlinAnalysis }.close()
                 if (context.configuration.finalizeCoroutines) {
                     /**
