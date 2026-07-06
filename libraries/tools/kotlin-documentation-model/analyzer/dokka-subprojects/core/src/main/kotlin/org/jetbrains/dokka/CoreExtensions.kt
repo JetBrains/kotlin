@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka
 
+import org.jetbrains.dokka.generation.CleanUpAction
 import org.jetbrains.dokka.generation.Generation
 import org.jetbrains.dokka.plugability.ExtensionPoint
 import org.jetbrains.dokka.renderers.PostAction
@@ -35,6 +36,8 @@ public object CoreExtensions {
     public val renderer: ExtensionPoint<Renderer> by coreExtensionPoint<Renderer>()
 
     public val postActions: ExtensionPoint<PostAction> by coreExtensionPoint<PostAction>()
+
+    public val cleanUpActions: ExtensionPoint<CleanUpAction> by coreExtensionPoint<CleanUpAction>()
 
     private fun <T : Any> coreExtensionPoint() = object {
         operator fun provideDelegate(thisRef: CoreExtensions, property: KProperty<*>): Lazy<ExtensionPoint<T>> =

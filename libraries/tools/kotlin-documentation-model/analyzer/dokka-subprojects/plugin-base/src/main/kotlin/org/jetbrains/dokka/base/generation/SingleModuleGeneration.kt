@@ -58,7 +58,8 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
 
         reportAfterRendering()
     } finally {
-        PackageList.clearCache()
+        report("Cleaning up")
+        cleanUp()
     }
 
     override val generationName: String = "documentation for ${context.configuration.moduleName}"
@@ -99,6 +100,18 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
 
     public fun runPostActions() {
         context[CoreExtensions.postActions].forEach { it() }
+    }
+
+    public fun cleanUp() {
+        // Don't allow errors to block other clean up steps from running.
+        context[CoreExtensions.cleanUpActions].forEach {
+            try {
+                it()
+            } catch (e: Exception) {
+                context.logger.error("Failed to run ${it.javaClass.name}: ${e.message}")
+            }
+        }
+        PackageList.clearCache()
     }
 
     public fun validityCheck(context: DokkaContext) {
