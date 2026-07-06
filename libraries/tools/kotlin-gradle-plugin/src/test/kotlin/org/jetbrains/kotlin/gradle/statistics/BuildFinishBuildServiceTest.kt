@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import kotlin.io.path.name
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
