@@ -179,6 +179,22 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
     }
 
     @Test
+    fun functionWithReifiedTypeParameter() {
+        inlineModelTest(
+            """
+                |inline fun <reified T> f(): T? = null
+        """
+        ) {
+            with((this / "function" / "f").cast<DFunction>()) {
+                generics counts 1
+                with(generics.single().extra[AdditionalModifiers]!!.content.entries.single().value) {
+                    this exists ExtraModifiers.KotlinOnlyModifiers.Reified
+                }
+            }
+        }
+    }
+
+    @Test
     fun suspendFunction() {
         inlineModelTest(
             """
