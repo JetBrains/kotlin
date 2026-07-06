@@ -3,88 +3,88 @@
 // ===== Original test: forEach with non-local return and capture =====
 
 fun listOfFactor(number: Int): List<Int> {
-    <!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun listOfFactor(number: Int, acc: List<Int>): List<Int> {
+    tailrec fun listOfFactor(number: Int, acc: List<Int>): List<Int> {
         (2..number).forEach {
             if (number % it == 0) return listOfFactor(number / it, acc + it)
         }
         return acc
-    }<!>
+    }
     return listOfFactor(number, emptyList())
 }
 
 // ===== run {} with non-local return capturing parameter =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun countDownRun(n: Int, acc: StringBuilder): String {
+tailrec fun countDownRun(n: Int, acc: StringBuilder): String {
     if (n <= 0) return acc.toString()
     run {
         acc.append(n)
         return countDownRun(n - 1, acc)
     }
-}<!>
+}
 
 // ===== let {} with non-local return capturing parameter =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun countDownLet(n: Int, acc: StringBuilder): String {
+tailrec fun countDownLet(n: Int, acc: StringBuilder): String {
     if (n <= 0) return acc.toString()
     n.let {
         acc.append(it)
         return countDownLet(it - 1, acc)
     }
-}<!>
+}
 
 // ===== also {} with non-local return capturing parameter =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun countDownAlso(n: Int, acc: StringBuilder): String {
+tailrec fun countDownAlso(n: Int, acc: StringBuilder): String {
     if (n <= 0) return acc.toString()
     n.also {
         acc.append(it)
         return countDownAlso(it - 1, acc)
     }
-}<!>
+}
 
 // ===== Nested inline lambdas with captures =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun nestedInlineLambdas(n: Int, acc: Int): Int {
+tailrec fun nestedInlineLambdas(n: Int, acc: Int): Int {
     if (n <= 0) return acc
     run {
         run {
             return nestedInlineLambdas(n - 1, acc + n)
         }
     }
-}<!>
+}
 
 // ===== Conditional non-local return inside inline lambda =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun conditionalReturnInLambda(n: Int, acc: Int): Int {
+tailrec fun conditionalReturnInLambda(n: Int, acc: Int): Int {
     run {
         if (n <= 0) return acc
         return conditionalReturnInLambda(n - 1, acc + n)
     }
-}<!>
+}
 
 // ===== forEach with index-based capture =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun findFirst(items: List<Int>, index: Int): Int {
+tailrec fun findFirst(items: List<Int>, index: Int): Int {
     if (index >= items.size) return -1
     items.subList(index, items.size).forEach {
         if (it > 10) return it
         return findFirst(items, index + 1)
     }
     return -1
-}<!>
+}
 
 // ===== Multiple captured parameters mutated between calls =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun multiCapture(a: Int, b: Int, c: String): String {
+tailrec fun multiCapture(a: Int, b: Int, c: String): String {
     if (a <= 0) return "$c:$b"
     run {
         return multiCapture(a - 1, b + a, c + a)
     }
-}<!>
+}
 
 // ===== when expression inside inline lambda with non-local return =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun whenInRun(n: Int, acc: Int): Int {
+tailrec fun whenInRun(n: Int, acc: Int): Int {
     run {
         when {
             n <= 0 -> return acc
@@ -92,110 +92,110 @@ fun listOfFactor(number: Int): List<Int> {
             else -> return whenInRun(n - 1, acc)
         }
     }
-}<!>
+}
 
 // ===== Inline lambda with capture in local tailrec function =====
 
 fun localTailrecWithCapture(items: List<Int>): Int {
-    <!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun helper(index: Int, acc: Int): Int {
+    tailrec fun helper(index: Int, acc: Int): Int {
         if (index >= items.size) return acc
         items.subList(index, items.size).forEach {
             return helper(index + 1, acc + it)
         }
         return acc
-    }<!>
+    }
     return helper(0, 0)
 }
 
 // ===== Non-local return from nested let/run chain =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun chainedInline(n: Int, acc: Int): Int {
+tailrec fun chainedInline(n: Int, acc: Int): Int {
     if (n <= 0) return acc
     n.let { x ->
         run {
             return chainedInline(x - 1, acc + x)
         }
     }
-}<!>
+}
 
 // ===== Inline lambda with early return before recursive call =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun earlyReturnInLambda(n: Int): String {
+tailrec fun earlyReturnInLambda(n: Int): String {
     run {
         if (n < 0) return "negative"
         if (n == 0) return "zero"
         return earlyReturnInLambda(n - 1)
     }
-}<!>
+}
 
 // ===== Large iteration count to verify actual tail-call optimization (no StackOverflow) =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun deepRecursionInRun(n: Int): Int {
+tailrec fun deepRecursionInRun(n: Int): Int {
     if (n <= 0) return 0
     run {
         return deepRecursionInRun(n - 1)
     }
-}<!>
+}
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun deepRecursionInForEach(n: Int): Int {
+tailrec fun deepRecursionInForEach(n: Int): Int {
     if (n <= 0) return 0
     listOf(n).forEach {
         return deepRecursionInForEach(it - 1)
     }
     return 0
-}<!>
+}
 
 // ===== Inline lambda capturing mutable accumulator (StringBuilder) =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun buildStringTailrec(n: Int, sb: StringBuilder): String {
+tailrec fun buildStringTailrec(n: Int, sb: StringBuilder): String {
     if (n <= 0) return sb.toString()
     run {
         sb.append(if (n % 2 == 0) "E" else "O")
         return buildStringTailrec(n - 1, sb)
     }
-}<!>
+}
 
 // ===== Multiple non-local returns in different branches of inline lambda =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun branchingInLambda(n: Int, acc: Int): Int {
+tailrec fun branchingInLambda(n: Int, acc: Int): Int {
     run {
         if (n <= 0) return acc
         if (n % 3 == 0) return branchingInLambda(n - 1, acc + 3)
         if (n % 3 == 1) return branchingInLambda(n - 1, acc + 1)
         return branchingInLambda(n - 1, acc + 2)
     }
-}<!>
+}
 
 // ===== forEach on range with non-local return =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun forEachOnRange(n: Int, acc: Int): Int {
+tailrec fun forEachOnRange(n: Int, acc: Int): Int {
     if (n <= 0) return acc
     (1..1).forEach {
         return forEachOnRange(n - 1, acc + n)
     }
     return acc
-}<!>
+}
 
 // ===== Inline lambda with captured variable modified before recursive call =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun capturedVarModified(n: Int, list: MutableList<Int>): List<Int> {
+tailrec fun capturedVarModified(n: Int, list: MutableList<Int>): List<Int> {
     if (n <= 0) return list
     run {
         list.add(n)
         return capturedVarModified(n - 1, list)
     }
-}<!>
+}
 
 // ===== if-else inside run with non-local returns in both branches =====
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec fun ifElseInRun(n: Int, acc: Int): Int {
+tailrec fun ifElseInRun(n: Int, acc: Int): Int {
     run {
         if (n <= 0)
             return acc
         else
             return ifElseInRun(n - 1, acc + n)
     }
-}<!>
+}
 
 fun box(): String {
     // Original test
