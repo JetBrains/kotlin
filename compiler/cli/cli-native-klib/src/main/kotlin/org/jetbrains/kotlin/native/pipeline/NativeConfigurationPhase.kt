@@ -107,6 +107,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration.konanRefinesModules = arguments.refinesPaths.filterNot(String::isEmpty)
 
         configuration.konanIncludedBinaries = arguments.includeBinaries.toList()
+        configuration.konanNativeLibraries = arguments.nativeLibraries.toList()
 
         arguments.manifestFile?.let { configuration.konanManifestAddend = it }
         arguments.headerKlibPath?.let { configuration.konanGeneratedHeaderKlibPath = it }

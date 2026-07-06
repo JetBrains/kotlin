@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
-import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 @TestDataPath("\$PROJECT_ROOT")
@@ -164,10 +163,14 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             expectedArtifact = TestCompilationArtifact.Executable(
                 buildDir.resolve("main." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix)
             ),
-        ).result
+        ).result.assertSuccess()
 
-        // Fails because of KT-87123.
-        assertIs<TestCompilationResult.Failure>(executableResult)
+        val testExecutable = TestExecutable(
+            executableResult.resultingArtifact,
+            executableResult.loggedData,
+            listOf(TestName("nativeLibraries"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
     }
 
     @Test
