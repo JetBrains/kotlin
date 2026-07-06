@@ -203,22 +203,3 @@ fun createTempFile(name: String, suffix: String? = null): File = Files.createTem
 fun createTempDir(name: String): File = Files.createTempDirectory(name).File()
 
 fun bufferedReader(errorStream: InputStream): BufferedReader = BufferedReader(InputStreamReader(errorStream))
-
-// stdlib `use` function adapted for AutoCloseable.
-inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
-    var closed = false
-    try {
-        return block(this)
-    } catch (e: Exception) {
-        closed = true
-        try {
-            this?.close()
-        } catch (closeException: Exception) {
-        }
-        throw e
-    } finally {
-        if (!closed) {
-            this?.close()
-        }
-    }
-}
