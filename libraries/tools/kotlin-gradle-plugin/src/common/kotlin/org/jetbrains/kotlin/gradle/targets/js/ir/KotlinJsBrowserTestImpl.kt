@@ -64,15 +64,16 @@ internal abstract class KotlinJsBrowserTestImpl
     private val objects: ObjectFactory,
     providers: ProviderFactory,
 ) : KotlinJsBrowserTestDsl {
+
+    override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
+        chromiumRunners + firefoxRunners + webkitRunners
+    }
+
     override val defaultTestsLocation: Provider<KotlinDefaultJsTestLocation> = testCompilation
         .locateOrRegisterBrowserTestBundleTask {
             // enabled when at least one browser runner is enabled. So the user has an intention to test via the browser pipeline.
             browserRunnersDeclared.set(allBrowserRunners.map { it.isNotEmpty() })
         }.map { it.kotlinJsTestLocation }
-
-    override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
-        chromiumRunners + firefoxRunners + webkitRunners
-    }
 
     val chromiumRunners = mutableMapOf<String, KotlinChromiumTestRunner>()
     override fun chromium(
