@@ -46,6 +46,10 @@ object Arithmetics : ModelDSL() {
     val div by node(binaryOp)
     val rem by node(binaryOp)
 
+    val neg by node {
+        param("operand")
+    }
+
     // TODO
     val and by node(binaryOp)
     val or by node(binaryOp)
@@ -54,7 +58,7 @@ object Arithmetics : ModelDSL() {
     val shr by node(binaryOp)
     val ushr by node(binaryOp)
 
-    val Neg by node {
+    val inv by node {
         param("operand")
     }
 
@@ -63,6 +67,7 @@ object Arithmetics : ModelDSL() {
         formParam("op", CmpOp::class)
     }
 
+    // Boolean negation
     val not by node {
         param("operand")
     }

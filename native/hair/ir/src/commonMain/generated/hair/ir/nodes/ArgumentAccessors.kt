@@ -113,6 +113,11 @@ val Neg.operand: Node
 val Neg.operandOrNull: Node?
     get() = args.getOrNull(operandIndex)
 
+val Inv.operand: Node
+    get() = args[operandIndex]
+val Inv.operandOrNull: Node?
+    get() = args.getOrNull(operandIndex)
+
 val Not.operand: Node
     get() = args[operandIndex]
 val Not.operandOrNull: Node?
@@ -349,6 +354,14 @@ interface ArgumentAccessor {
         get() = args[operandIndex]
 
     val Neg.operandOrNull: Node?
+        get() = args.getOrNull(operandIndex)
+
+    
+
+    val Inv.operand: Node
+        get() = args[operandIndex]
+
+    val Inv.operandOrNull: Node?
         get() = args.getOrNull(operandIndex)
 
     
@@ -614,6 +627,16 @@ interface ArgumentUpdater : ArgumentAccessor, ArgumentUpdaterBase {
         set(value) { args[operandIndex] = value }
 
     override var Neg.operandOrNull: Node?
+        get() = args.getOrNull(operandIndex)
+        set(value) { args[operandIndex] = value }
+
+    
+
+    override var Inv.operand: Node
+        get() = args[operandIndex]
+        set(value) { args[operandIndex] = value }
+
+    override var Inv.operandOrNull: Node?
         get() = args.getOrNull(operandIndex)
         set(value) { args[operandIndex] = value }
 
