@@ -109,7 +109,7 @@ fun main(args: Array<String>) {
         1 -> {
             val baseDir = File(args.first())
 
-            val categoryTestFile = baseDir.resolve("libraries/stdlib/js/test/text/unicodeData/_CharCategoryTest.kt")
+            val categoryTestFile = baseDir.resolve("libraries/stdlib/test/text/unicodeData/_CharCategoryTest.kt")
             categoryTestGenerator = CharCategoryTestGenerator(categoryTestFile)
 
             val commonGeneratedDir = baseDir.resolve("libraries/stdlib/common/src/generated")
