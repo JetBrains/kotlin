@@ -1,10 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
 package kotlin.text
 
+/**
+ * Represents the character general category in the Unicode specification.
+ */
 @SinceKotlin("1.5")
 public actual enum class CharCategory(internal val value: Int, public actual val code: String) {
     /**
@@ -160,7 +162,7 @@ public actual enum class CharCategory(internal val value: Int, public actual val
     /**
      * Returns `true` if [char] character belongs to this category.
      */
-    public actual operator fun contains(char: Char): Boolean = char.getCategoryValue() == this.value
+    public actual operator fun contains(char: Char): Boolean = getCategoryValue(char.code) == this.value
 
     public companion object {
         internal fun valueOf(category: Int): CharCategory =

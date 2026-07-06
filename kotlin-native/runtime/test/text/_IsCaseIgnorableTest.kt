@@ -481,15 +481,15 @@ class IsCaseIgnorableTest {
         var lastChecked = -1
         for (range in caseIgnorableRanges) {
             for (codePoint in lastChecked + 1 until range.first) {
-                assertFalse(codePoint.isCaseIgnorable())
+                assertFalse(isCaseIgnorable(codePoint))
             }
-            for (codePoint in range.first..range.last) {
-                assertTrue(codePoint.isCaseIgnorable())
+            for (codePoint in range) {
+                assertTrue(isCaseIgnorable(codePoint))
             }
             lastChecked = range.last
         }
         for (codePoint in lastChecked + 1..0x10FFFF) {
-            assertFalse(codePoint.isCaseIgnorable())
+            assertFalse(isCaseIgnorable(codePoint))
         }
     }
 }
