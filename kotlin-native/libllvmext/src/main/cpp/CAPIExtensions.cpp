@@ -72,6 +72,62 @@ void LLVMKotlinBuildAlignAssume(LLVMBuilderRef Builder, LLVMValueRef Ptr,
   B->CreateCall(AssumeFn, {True}, {AlignBundle});
 }
 
+namespace {
+
+// Owns the cl::Option overrides raised by LLVMKotlinBeginAggressiveLoopUnroll; the
+// destructor restores each touched option to its default value. Same pattern as
+// KotlinRunPassesCommandLineHolder below; kept separate because that class is scoped to a
+// single LLVMKotlinRunPasses invocation whereas this one has an externally controlled
+// lifetime (Kotlin-side try/finally).
+class AggressiveUnrollScope {
+public:
+  AggressiveUnrollScope() {
+    auto &Opts = cl::getRegisteredOptions();
+    // If a value fails to parse (e.g. LLVM renamed an option in a future rebase), the
+    // Set() helper reports it via errs() and skips — we deliberately don't fail the
+    // compile: PTX would still be correct, just with default LLVM unroll heuristics.
+    Set(Opts, "unroll-threshold", "5000");
+    Set(Opts, "unroll-partial-threshold", "5000");
+    Set(Opts, "unroll-full-max-count", "10000");
+    Set(Opts, "unroll-max-iteration-count-to-analyze", "1000");
+  }
+
+  ~AggressiveUnrollScope() {
+    for (auto *Opt : Modified) {
+      Opt->setDefault();
+    }
+  }
+
+private:
+  void Set(StringMap<cl::Option *> &Opts, const char *Name, const char *Val) {
+    auto It = Opts.find(Name);
+    if (It == Opts.end()) {
+      errs() << "LLVMKotlinBeginAggressiveLoopUnroll: option '" << Name
+             << "' not registered; skipping.\n";
+      return;
+    }
+    cl::Option *Opt = It->second;
+    if (Opt->addOccurrence(0, Opt->ArgStr, Val)) {
+      errs() << "LLVMKotlinBeginAggressiveLoopUnroll: failed to set '" << Name
+             << "=" << Val << "'; skipping.\n";
+      return;
+    }
+    Modified.push_back(Opt);
+  }
+
+  SmallVector<cl::Option *> Modified;
+};
+
+} // namespace
+
+LLVMKotlinUnrollScopeRef LLVMKotlinBeginAggressiveLoopUnroll(void) {
+  return reinterpret_cast<LLVMKotlinUnrollScopeRef>(new AggressiveUnrollScope());
+}
+
+void LLVMKotlinEndAggressiveLoopUnroll(LLVMKotlinUnrollScopeRef scope) {
+  delete reinterpret_cast<AggressiveUnrollScope *>(scope);
+}
+
 void LLVMKotlinEnableFPContractInModule(LLVMModuleRef M) {
   Module *Mod = unwrap(M);
   for (Function &F : *Mod) {

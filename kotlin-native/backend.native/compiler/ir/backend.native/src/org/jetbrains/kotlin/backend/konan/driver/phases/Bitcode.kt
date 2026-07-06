@@ -25,7 +25,9 @@ import llvm.LLVMGetErrorMessage
 import llvm.LLVMGetTargetFromTriple
 import llvm.LLVMGetValueName
 import llvm.LLVMIsDeclaration
+import llvm.LLVMKotlinBeginAggressiveLoopUnroll
 import llvm.LLVMKotlinEnableFPContractInModule
+import llvm.LLVMKotlinEndAggressiveLoopUnroll
 import llvm.LLVMModuleRef
 import llvm.LLVMRelocMode
 import llvm.LLVMRunPasses
@@ -242,6 +244,14 @@ internal val StripDeadDeviceIrPhase = createSimpleNamedCompilerPhase<NativeGener
     // diverges by |delta|≈2^-6). This shim matches nvcc's `-ffp-contract=fast
     // -fno-fast-math` default for device code.
     LLVMKotlinEnableFPContractInModule(module)
+    // Raise LLVM's loop-unroll cost knobs to nvcc-like aggressiveness so small-trip inner
+    // loops (16/32-iter dot products, TM/TN accumulator writes) fully unroll under the O3
+    // pipeline without needing per-loop `@Unroll` annotations. See the shim's header comment
+    // for the exact knobs and rationale. The scope handle must be released after
+    // `LLVMRunPasses` (whether it succeeds or throws) — the underlying cl::Option state is
+    // process-global, and any leaked aggressive setting would bleed into subsequent host
+    // bitcode post-processing on the same JVM.
+    val unrollScope = LLVMKotlinBeginAggressiveLoopUnroll()
     val options = LLVMCreatePassBuilderOptions()!!
     try {
         val err = LLVMRunPasses(
@@ -257,6 +267,7 @@ internal val StripDeadDeviceIrPhase = createSimpleNamedCompilerPhase<NativeGener
         }
     } finally {
         LLVMDisposePassBuilderOptions(options)
+        LLVMKotlinEndAggressiveLoopUnroll(unrollScope)
     }
 }
 

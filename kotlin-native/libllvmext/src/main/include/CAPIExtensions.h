@@ -38,6 +38,35 @@ int LLVMKotlinInlineCall(LLVMValueRef Call);
 void LLVMKotlinBuildAlignAssume(LLVMBuilderRef Builder, LLVMValueRef Ptr,
                                 uint64_t Align);
 
+typedef struct LLVMKotlinOpaqueUnrollScope *LLVMKotlinUnrollScopeRef;
+
+/// Raise LLVM's loop-unroll cost knobs to nvcc-like aggressiveness for the caller's scope.
+///
+/// LLVM's O3 defaults (`unroll-threshold=150`, `unroll-max-iteration-count-to-analyze=10`)
+/// were tuned for CPU-icache-sensitive workloads; on GPU register-resident kernels they leave
+/// small-trip loops (16/32-iter dot products, TM/TN inner loops) partially or not unrolled,
+/// which forces accumulator arrays into `.local` and cuts throughput. nvcc explores much
+/// deeper and full-unrolls small loops by default — this shim replicates that behavior for
+/// the CUDA device fragment without requiring per-loop `@Unroll` annotations everywhere.
+///
+/// Options set (all via `cl::Option::addOccurrence` so they behave identically to `-mllvm`
+/// flags on `opt`):
+///   - `unroll-threshold=5000`                     (default 150)
+///   - `unroll-partial-threshold=5000`             (default 150)
+///   - `unroll-full-max-count=10000`               (default 100)
+///   - `unroll-max-iteration-count-to-analyze=1000` (default 10)
+///
+/// The returned handle owns a stack of touched `cl::Option`s; pass it to
+/// `LLVMKotlinEndAggressiveLoopUnroll` to restore defaults. Options are process-global
+/// (LLVM's CLI machinery is), so the End call is mandatory — otherwise the aggressive
+/// unroll leaks into any subsequent LLVM pass invocation (including host bitcode
+/// post-processing on the same JVM process).
+LLVMKotlinUnrollScopeRef LLVMKotlinBeginAggressiveLoopUnroll(void);
+
+/// Restore the unroll-related `cl::Option`s to their defaults and free the scope handle.
+/// Safe to call with a NULL handle (no-op).
+void LLVMKotlinEndAggressiveLoopUnroll(LLVMKotlinUnrollScopeRef scope);
+
 /// Set the `contract` fast-math flag on every `fmul`/`fadd`/`fsub` instruction in `M`.
 ///
 /// Reason this exists: K/N's IR emitter produces plain `fmul`/`fadd` without any FMF, and
