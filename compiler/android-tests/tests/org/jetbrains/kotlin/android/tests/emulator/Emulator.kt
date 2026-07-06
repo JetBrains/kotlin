@@ -72,7 +72,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
                 commandLine.exePath = pathManager.emulatorFolderInAndroidSdk + "/emulator"
             }
 
-            commandLine.addParameters("-avd", AVD_NAME, "-no-audio", "-no-window", "-gpu", "swiftshader_indirect", "-verbose")
+            commandLine.addParameters("-avd", AVD_NAME, "-no-audio", "-no-window", "-gpu", "swiftshader_indirect", "-use-system-libs", "-verbose")
             if (isRunningInCi) {
 //                println("Disabling emulator hardware acceleration in CI")
 //                commandLine.addParameter("-no-accel")
