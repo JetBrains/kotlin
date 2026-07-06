@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-86905
 
 sealed class SealedWithCompanion {
@@ -8,7 +8,7 @@ sealed class SealedWithCompanion {
 
 fun test1(s: SealedWithCompanion) {
     if (s != SealedWithCompanion) return
-    <!NO_ELSE_IN_WHEN!>when<!> (s) {
+    when (s) {
         SealedWithCompanion -> 1
     }
 }
@@ -22,7 +22,7 @@ fun test2(s: SealedWithCompanion) {
 
 fun test3(s: SealedWithCompanion) {
     if (s != SealedWithCompanion) return
-    <!NO_ELSE_IN_WHEN!>when<!> (s) {
+    when (s) {
         SealedWithCompanion.Companion -> 1
     }
 }
