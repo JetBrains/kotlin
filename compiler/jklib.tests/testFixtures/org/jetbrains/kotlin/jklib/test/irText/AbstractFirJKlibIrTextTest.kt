@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives.DUMP_CLASSIFIER
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyKind

@@ -21,7 +21,7 @@ class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfi
         configuration.addSourcesForDependsOnClosure(module, testServices)
 
         val stdlibKlib = System.getProperty("kotlin.stdlib.jklib.for.test")
-            ?: error("kotlin.stdlib.jvm.ir.klib system property is not set")
+            ?: error("kotlin.stdlib.jklib.for.test system property is not set")
         configuration.klibPaths += stdlibKlib
 
         val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("klib-output")
@@ -34,7 +34,9 @@ class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfi
         // we map each module dependency to its expected, deterministic JKLIB output path.
         // Since these dependencies are compiled sequentially, these KLib binaries will exist on disk
         // by the time this module's compilation phase actually executes.
-        val klibs = module.regularDependencies.map { File(tempDir, "${it.dependencyModule.name}.klib") }
+        val klibs = module.regularDependencies
+            .filter { it.dependencyModule.files.any { file -> file.name.endsWith(".kt") || file.name.endsWith(".kts") } }
+            .map { File(tempDir, "${it.dependencyModule.name}.klib") }
         if (klibs.isNotEmpty()) {
             configuration.klibPaths += klibs.map { it.absolutePath }
         }

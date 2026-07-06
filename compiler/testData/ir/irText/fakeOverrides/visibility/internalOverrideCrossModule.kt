@@ -1,6 +1,8 @@
+// IGNORE_BACKEND: JKLIB
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JKLIB
+// FAILS_IN: JKLIB (KT-56386: JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY when loaded from KLIB)
 
 // K1 reflect behavior is wrong.
 // In 'I' class:

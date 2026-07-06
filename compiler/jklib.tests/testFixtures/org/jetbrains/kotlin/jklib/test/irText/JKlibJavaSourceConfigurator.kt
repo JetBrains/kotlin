@@ -21,10 +21,14 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.javaFiles
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.CompiledLibraryCache
+import java.io.File
 
 class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
@@ -35,21 +39,14 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
         get() = listOf(JvmEnvironmentConfigurationDirectives, ForeignAnnotationsDirectives)
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        val registeredDirectives = module.directives
-        val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(registeredDirectives)
-        JvmEnvironmentConfigurator.getJdkHome(jdkKind)?.let { configuration.put(JVMConfigurationKeys.JDK_HOME, it) }
+        if (testServices.moduleStructure.modules.none { it.javaFiles.isNotEmpty() }) return
 
-        when (jdkKind) {
-            TestJdkKind.MOCK_JDK, TestJdkKind.MODIFIED_MOCK_JDK -> {
-                configuration.put(JVMConfigurationKeys.NO_JDK, true)
-                configuration.addJvmClasspathRoot(KtTestUtil.findMockJdkRtJar())
-            }
-            else -> {
-                JvmEnvironmentConfigurator.getJdkClasspathRoot(jdkKind)?.let { configuration.addJvmClasspathRoot(it) }
-            }
+        // Compile all dependencies (Kotlin or Java) to JVM Jars and add them to classpath
+        val compiledJars = mutableMapOf<TestModule, File>()
+        for (dependency in module.allDependencies) {
+            compileDependencyToJvm(dependency.dependencyModule, configuration, compiledJars)
         }
-
-        configuration.configureJdkClasspathRoots()
+        compiledJars.values.forEach { configuration.addJvmClasspathRoot(it) }
 
         val javaFiles = module.javaFiles
         if (javaFiles.isEmpty()) return
@@ -90,5 +87,67 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
                         "Underlying error: ${e.message}"
             }
         }
+    }
+
+    private fun compileDependencyToJvm(
+        module: TestModule,
+        configuration: CompilerConfiguration,
+        compiledJars: MutableMap<TestModule, File>
+    ) {
+        if (compiledJars.containsKey(module)) return
+
+        for (dependency in module.allDependencies) {
+            compileDependencyToJvm(dependency.dependencyModule, configuration, compiledJars)
+        }
+
+        val kotlinFiles = module.files.filter { it.name.endsWith(".kt") || it.name.endsWith(".kts") }
+        val javaFiles = module.javaFiles
+        if (kotlinFiles.isEmpty() && javaFiles.isEmpty()) return
+
+        val classpath = mutableListOf<String>()
+        classpath += configuration.jvmClasspathRoots.map { it.absolutePath }
+        for (dependency in module.allDependencies) {
+            compiledJars[dependency.dependencyModule]?.let { classpath += it.absolutePath }
+        }
+
+        val compiledJar = if (kotlinFiles.isNotEmpty() && javaFiles.isNotEmpty()) {
+            val mixedSourcesDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("mixed-sources-${module.name}")
+            
+            val kotlinDir = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(module)
+            kotlinFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
+            kotlinDir.listFiles()?.forEach { it.copyRecursively(File(mixedSourcesDir, it.name), overwrite = true) }
+
+            val javaDir = testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module)
+            javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
+            javaDir.listFiles()?.forEach { it.copyRecursively(File(mixedSourcesDir, it.name), overwrite = true) }
+
+            MockLibraryUtil.compileJvmLibraryToJar(
+                mixedSourcesDir.path,
+                "${module.name}-jvm-binaries",
+                extraOptions = listOf("-no-stdlib"),
+                extraClasspath = classpath + ForTestCompileRuntime.runtimeJarForTests().absolutePath,
+                useJava11 = true
+            )
+        } else if (kotlinFiles.isNotEmpty()) {
+            val kotlinDir = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(module)
+            kotlinFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
+            MockLibraryUtil.compileJvmLibraryToJar(
+                kotlinDir.path,
+                "${module.name}-jvm-binaries",
+                extraOptions = listOf("-no-stdlib"),
+                extraClasspath = classpath + ForTestCompileRuntime.runtimeJarForTests().absolutePath
+            )
+        } else {
+            val javaDir = testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module)
+            javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
+            MockLibraryUtil.compileJavaFilesLibraryToJar(
+                javaDir.path,
+                "${module.name}-java-binaries",
+                extraClasspath = classpath,
+                assertions = testServices.assertions,
+                useJava11 = true
+            )
+        }
+        compiledJars[module] = compiledJar
     }
 }
