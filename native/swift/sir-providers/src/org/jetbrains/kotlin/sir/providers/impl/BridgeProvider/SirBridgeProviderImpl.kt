@@ -312,7 +312,7 @@ private class BridgeFunctionDescriptor(
             add("let (${contextParameters.joinToString { it.name.swiftIdentifier }}) = context")
         }
         if (isAsync) {
-            add(descriptor.swiftAsyncCall(typeNamer, argumentOverrides))
+            add(descriptor.swiftAsyncCall(typeNamer, argumentOverrides, useDirectDispatch))
         } else if (errorParameter != null) {
             add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
             add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvocationLineForCBridge(typeNamer, argumentOverrides, useDirectDispatch))
@@ -348,6 +348,45 @@ private class BridgeFunctionDescriptor(
                 returnType is BidirectionalBridge
         if (!allBridgesBidirectional) return emptyList()
 
+        if (isAsync) {
+            val [continuation, exception, cancellation] = asyncContinuationBridges(returnType as SwiftToKotlinBridge)
+            return buildList {
+                add(
+                    SirReverseFunctionBridge(
+                        name = cBridgeName,
+                        kotlinFunctionBridge = createReverseAsyncKotlinBridge(
+                            cLevelParams = cLevelParams,
+                            continuation = continuation,
+                            exception = exception,
+                            cancellation = cancellation,
+                            cBridgeName = cBridgeName,
+                            swiftBridgeName = swiftBridgeName,
+                            targetClassFqName = targetClassFqName,
+                            targetMethodName = targetMethodName
+                        ),
+                        swiftFunctionBridge = createReverseAsyncSwiftBridge(
+                            cLevelParams = cLevelParams,
+                            continuation = continuation,
+                            exception = exception,
+                            cancellation = cancellation,
+                            swiftBridgeName = swiftBridgeName,
+                            swiftDynamicCall = swiftDynamicCall,
+                            swiftDeprecation = swiftDeprecation
+                        ),
+                        cDeclarationBridge = createReverseAsyncCBridge(
+                            cLevelParams = cLevelParams,
+                            continuation = continuation,
+                            exception = exception,
+                            cancellation = cancellation,
+                            swiftBridgeName = swiftBridgeName
+                        ),
+                    )
+                )
+                addAll(continuation.helperBridges(typeNamer))
+                addAll(exception.helperBridges(typeNamer))
+            }.distinct()
+        }
+
         return listOf(
             SirReverseFunctionBridge(
                 name = cBridgeName,
@@ -355,6 +394,151 @@ private class BridgeFunctionDescriptor(
                 swiftFunctionBridge = createReverseSwiftBridge(cLevelParams, swiftBridgeName, swiftDynamicCall, swiftDeprecation),
                 cDeclarationBridge = createReverseCBridge(cLevelParams, swiftBridgeName)
             )
+        )
+    }
+
+    context(session: SirSession)
+    private fun createReverseAsyncCBridge(
+        cLevelParams: List<BridgedParameter>,
+        continuation: KotlinToSwiftBridge,
+        exception: KotlinToSwiftBridge,
+        cancellation: KotlinToSwiftBridge,
+        swiftBridgeName: String,
+    ): CFunctionBridge {
+        val cParams = buildList {
+            cLevelParams.forEach { add(it.bridge.cType.render(it.name.cIdentifier)) }
+            add(continuation.cType.render("continuation"))
+            add(exception.cType.render("exception"))
+            add(cancellation.cType.render("cancellation"))
+        }.joinToString()
+        val cDecl = CType.Bool.render("$swiftBridgeName($cParams)") + ";"
+        return CFunctionBridge(listOf(cDecl), listOf(foundationHeader, stdintHeader))
+    }
+
+    context(session: SirSession)
+    private fun createReverseAsyncSwiftBridge(
+        cLevelParams: List<BridgedParameter>,
+        continuation: KotlinToSwiftBridge,
+        exception: KotlinToSwiftBridge,
+        cancellation: KotlinToSwiftBridge,
+        swiftBridgeName: String,
+        swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
+        swiftDeprecation: SirAttribute.Available?,
+    ): SwiftFunctionBridge {
+        val swiftCParams = buildList {
+            cLevelParams.forEach { add("_ ${it.name.swiftIdentifier}: ${it.bridge.cType.toSwiftTypeName()}") }
+            add("_ continuation: ${continuation.cType.toSwiftTypeName()}")
+            add("_ exception: ${exception.cType.toSwiftTypeName()}")
+            add("_ cancellation: ${cancellation.cType.toSwiftTypeName()}")
+        }.joinToString()
+
+        val selfBridge = selfParameter
+        val selfConversion = if (selfBridge != null) {
+            val bridge = selfBridge.bridge
+            require(bridge is BidirectionalBridge) { "Receiver parameter bridge must be bidirectional" }
+            bridge.inSwiftSources.kotlinToSwift(typeNamer, selfBridge.name.swiftIdentifier)
+        } else {
+            ""
+        }
+        val convertedParamExprs = parameters.map { param ->
+            val bridge = param.bridge
+            require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
+            bridge.inSwiftSources.kotlinToSwift(typeNamer, param.name.swiftIdentifier)
+        }
+        val callExpr = swiftDynamicCall(if (selfBridge != null) "_self" else selfConversion, convertedParamExprs)
+
+        val deprecationPrefix = swiftDeprecation?.let { "${it.renderAsSwiftSourceLine()}\n" }.orEmpty()
+        val selfDeclaration = if (selfBridge != null) {
+            val forceUnwrap = if (selfBridge.bridge is Bridge.AsObject) "!" else ""
+            "    let _self = $selfConversion$forceUnwrap\n"
+        } else {
+            ""
+        }
+
+        val swiftSource = """
+            |$deprecationPrefix@_cdecl("$swiftBridgeName")
+            |package func $swiftBridgeName($swiftCParams) -> Swift.Bool {
+            |$selfDeclaration    let __continuation: ${typeNamer.swiftFqName(continuation.swiftType)} = ${continuation.inSwiftSources.kotlinToSwift(typeNamer, "continuation")}
+            |    let __exception: ${typeNamer.swiftFqName(exception.swiftType)} = ${exception.inSwiftSources.kotlinToSwift(typeNamer, "exception")}
+            |    let __cancellation: ${typeNamer.swiftFqName(cancellation.swiftType)} = ${cancellation.inSwiftSources.kotlinToSwift(typeNamer, "cancellation")}
+            |    withKotlinTask(__continuation, __exception, __cancellation) {
+            |        $callExpr
+            |    }
+            |    return true
+            |}
+        """.trimMargin()
+
+        return SwiftFunctionBridge(swiftSource.lines())
+    }
+
+    context(session: SirSession)
+    private fun createReverseAsyncKotlinBridge(
+        cLevelParams: List<BridgedParameter>,
+        continuation: KotlinToSwiftBridge,
+        exception: KotlinToSwiftBridge,
+        cancellation: KotlinToSwiftBridge,
+        cBridgeName: String,
+        swiftBridgeName: String,
+        targetClassFqName: String,
+        targetMethodName: String,
+    ): KotlinFunctionBridge {
+        val importAnnotation = importAnnotationFqName.substringAfterLast('.')
+        val reverseBridgeAnnotation = reverseBridgeAnnotationFqName.substringAfterLast('.')
+
+        val importParams = buildList {
+            cLevelParams.forEach { add("${it.name.kotlinIdentifier}: ${it.bridge.kotlinType.repr}") }
+            add("continuation: ${continuation.kotlinType.repr}")
+            add("exception: ${exception.kotlinType.repr}")
+            add("cancellation: ${cancellation.kotlinType.repr}")
+        }.joinToString()
+
+        val trampolineParams = cLevelParams.joinToString { param ->
+            "${param.name.kotlinIdentifier}: ${typeNamer.kotlinFqName(param.bridge.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}"
+        }
+        val trampolineReturnType = typeNamer.kotlinFqName(returnType.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+
+        val shadowDeclarations = mutableListOf<String>()
+        val callArgs = cLevelParams.map { param ->
+            val bridge = param.bridge
+            require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
+            val paramName = param.name.kotlinIdentifier
+            val shadowedName = "__${param.name}".kotlinIdentifier
+            val converted = bridge.inKotlinSources.kotlinToSwift(typeNamer, paramName)
+            if (converted != paramName) {
+                shadowDeclarations.add("    val $shadowedName = $converted")
+                shadowedName
+            } else {
+                paramName
+            }
+        }
+
+        val shadowDeclarationLines = shadowDeclarations.joinToString("") { "$it\n" }
+
+        val continuationKotlinType = typeNamer.kotlinFqName(continuation.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+        val exceptionKotlinType = typeNamer.kotlinFqName(exception.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+
+        val swiftBridgeArgs = (callArgs + listOf("__continuationPtr", "__exceptionPtr", "__cancellationPtr")).joinToString()
+
+        val kotlinSource = """
+            |@$importAnnotation("$swiftBridgeName")
+            |internal external fun $swiftBridgeName($importParams): Boolean
+            |
+            |@$reverseBridgeAnnotation($targetClassFqName::class, "$targetMethodName")
+            |public suspend fun $cBridgeName($trampolineParams): $trampolineReturnType {
+            |${shadowDeclarationLines}    return awaitSwiftCoroutine { __resume, __cancellation ->
+            |        val __continuation: $continuationKotlinType = { _result -> __resume(kotlin.Result.success(_result)) }
+            |        val __exception: $exceptionKotlinType = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
+            |        val __continuationPtr = ${continuation.inKotlinSources.kotlinToSwift(typeNamer, "__continuation")}
+            |        val __exceptionPtr = ${exception.inKotlinSources.kotlinToSwift(typeNamer, "__exception")}
+            |        val __cancellationPtr = ${cancellation.inKotlinSources.kotlinToSwift(typeNamer, "__cancellation")}
+            |        $swiftBridgeName($swiftBridgeArgs)
+            |    }
+            |}
+        """.trimMargin()
+
+        return KotlinFunctionBridge(
+            kotlinSource.lines(),
+            listOf(reverseBridgeAnnotationFqName, importAnnotationFqName, cinterop)
         )
     }
 
@@ -586,7 +770,7 @@ private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(t
 }
 
 context(session: SirSession)
-private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap()): String {
+private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap(), useDirectDispatch: Boolean = false): String {
     val [continuation, exception, cancellation] = asyncParameters ?: error("Async function must have a continuation & cancellation")
     val errorParameter = errorParameter ?: error("Async function must have an error parameter")
     val indent = "            "
@@ -595,8 +779,8 @@ private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer, arg
     val exceptionName = exception.name.swiftIdentifier
     val cancellationName = cancellation.name.swiftIdentifier
     return """
-        try await withKotlinContinuation { $continuationName, $exceptionName, $cancellationName in 
-            let _: Bool = ${swiftInvocationLineForCBridge(typeNamer, argumentOverrides).prependIndentToTrailingLines(indent)}
+        try await withKotlinContinuation { $continuationName, $exceptionName, $cancellationName in
+            let _: Bool = ${swiftInvocationLineForCBridge(typeNamer, argumentOverrides, useDirectDispatch).prependIndentToTrailingLines(indent)}
         }
     """.trimIndent()
 }

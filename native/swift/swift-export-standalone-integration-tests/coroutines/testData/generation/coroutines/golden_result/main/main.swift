@@ -429,3 +429,20 @@ extension KotlinRuntimeSupport._KotlinExistential: main.FunctionalInterfaceWithS
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._FunctionalInterfaceWithSuspendFunction {
 }
+@_cdecl("FunctionalInterfaceWithSuspendFunction_emit__reverse_swift")
+package func FunctionalInterfaceWithSuspendFunction_emit__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.FunctionalInterfaceWithSuspendFunction
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1 ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await _self.emit()
+    }
+    return true
+}

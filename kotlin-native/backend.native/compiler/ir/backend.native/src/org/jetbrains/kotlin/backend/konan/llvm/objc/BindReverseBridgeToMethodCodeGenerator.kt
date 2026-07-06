@@ -41,9 +41,10 @@ private fun CodeGenerator.resolveReverseBridgeAdapter(
     bridge: BindReverseBridgeToMethod,
 ): KotlinToObjCMethodAdapter? {
     val targetFunction = irClass.declarations
-        .filterIsInstance<IrSimpleFunction>()
-        .firstOrNull { it.name.asString() == bridge.targetMethod }
-        ?: return null
+            .filterIsInstance<IrSimpleFunction>()
+            .firstOrNull { it.name.asString() == bridge.targetMethod }
+            ?.let { with(layoutBuilder) { it.getLoweredVersion() } }
+            ?: return null
 
     val isInterfaceMethod = irClass.isInterface
     val vtableIndex = if (isInterfaceMethod) {

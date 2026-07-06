@@ -171,7 +171,11 @@ internal open class SirFunctionFromKtSymbol(
                         .joinToString(", ") { [param, expr] ->
                             param.argumentName?.takeIf { it.isNotEmpty() }?.let { "$it: $expr" } ?: expr
                         }
-                    val tryPrefix = if (errorType != SirType.never) "try! " else ""
+                    val tryPrefix = when {
+                        isAsync -> "try await "
+                        errorType != SirType.never -> "try! "
+                        else -> ""
+                    }
                     "$tryPrefix$selfExpr.$methodName($args)"
                 },
                 swiftDeprecation = effectiveReverseBridgeDeprecation(),
@@ -193,8 +197,6 @@ internal open class SirFunctionFromKtSymbol(
     private fun needsReverseBridge(): Boolean = withSessions {
         if (!isInstance) return@withSessions false
         if (isUnavailable) return@withSessions false
-        // TODO: Implement async reverse bridges with regular continuation machinery.
-        if (isAsync) return@withSessions false
         when (val containingDecl = parent) {
             is SirClass -> {
                 if (modality != SirModality.OPEN) return@withSessions false

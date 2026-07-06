@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool FunctionalInterfaceWithSuspendFunction_emit__reverse_swift(void * self, void * continuation, void * exception, void * cancellation);
+
 _Bool FunctionalInterfaceWithSuspendFunction_emit(void * self, _Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
 void * __root___Foo_init_allocate();

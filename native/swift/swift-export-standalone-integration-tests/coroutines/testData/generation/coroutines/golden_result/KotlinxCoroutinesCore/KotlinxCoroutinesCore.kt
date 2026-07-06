@@ -17,6 +17,40 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch as kotlinx_coroutines_launch
 
+@ImportedBridge("kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.FlowCollector::class, "emit")
+public suspend fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>, value: kotlin.Any?): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
+    return awaitSwiftCoroutine { __resume, __cancellation ->
+        val __continuation: Function1<Unit, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
+        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
+        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
+        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
+        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
+        kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __value, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    }
+}
+
+@ImportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.MutableSharedFlow::class, "emit")
+public suspend fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>, value: kotlin.Any?): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
+    return awaitSwiftCoroutine { __resume, __cancellation ->
+        val __continuation: Function1<Unit, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
+        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
+        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
+        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
+        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
+        kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __value, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    }
+}
+
 @ImportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse_swift")
 internal external fun kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 

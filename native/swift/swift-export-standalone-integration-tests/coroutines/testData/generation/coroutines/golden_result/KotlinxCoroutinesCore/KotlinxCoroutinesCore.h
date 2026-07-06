@@ -3,6 +3,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable value, void * continuation, void * exception, void * cancellation);
+
+_Bool kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable value, void * continuation, void * exception, void * cancellation);
+
 _Bool kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse_swift(void * self);
 
 _Bool kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable value);
