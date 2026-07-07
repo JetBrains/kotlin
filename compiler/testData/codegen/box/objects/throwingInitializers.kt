@@ -48,12 +48,13 @@ fun box(): String {
         if (e.message != null) return "FAIL 1.4: message must be null, got ${e.message}"
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         C()
         return "FAIL 2.1: should throw"
-    } catch (e: Error) {
+    } catch (e: NoClassDefFoundError) {
         if (e.cause != null) return "FAIL 2.2: cause must be null, got ${e.cause}"
-        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "There was an error during file or class initialization" else "Could not initialize class C"
+        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "Could not initialize file" else "Could not initialize class C"
         if (e.message !=expectedMessage) return "FAIL 2.3: message must be '$expectedMessage', was '${e.message}'"
     }
 
@@ -68,21 +69,23 @@ fun box(): String {
         if (e.message != null) return "FAIL 3.4: message must be null, got ${e.message}"
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         Child()
         return "FAIL 4.1: should throw"
-    } catch (e: Error) {
+    } catch (e: NoClassDefFoundError) {
         if (e.cause != null) return "FAIL 4.2: cause must be null, got ${e.cause}"
-        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "There was an error during file or class initialization" else "Could not initialize class Child"
+        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "Could not initialize file" else "Could not initialize class Child"
         if (e.message != expectedMessage) return "FAIL 4.3: message must be '$expectedMessage', was '${e.message}'"
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         Parent()
         return "FAIL 5.1: should throw"
-    } catch (e: Throwable) {
+    } catch (e: NoClassDefFoundError) {
         if (e.cause != null) return "FAIL 5.2: cause must be null, got ${e.cause}"
-        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "There was an error during file or class initialization" else "Could not initialize class Parent"
+        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "Could not initialize file" else "Could not initialize class Parent"
         if (e.message != expectedMessage) return "FAIL 5.3: message must be '$expectedMessage', was '${e.message}'"
     }
 
@@ -97,12 +100,13 @@ fun box(): String {
         if (e.message != null) return "FAIL 6.4: message must be null, got ${e.message}"
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         O.foo()
         return "FAIL 7.1: should throw"
-    } catch (e: Error) {
+    } catch (e: NoClassDefFoundError) {
         if (e.cause != null) return "FAIL 7.2: cause must be null, got ${e.cause}"
-        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "There was an error during file or class initialization" else "Could not initialize class O"
+        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "Could not initialize file" else "Could not initialize class O"
         if (e.message != expectedMessage) return "FAIL 7.3: message must be '$expectedMessage', was '${e.message}'"
     }
 
@@ -114,15 +118,15 @@ fun box(): String {
         if (e.message != "ThrowsErrorWithCompanion.never") return "FAIL 8.3: message must be 'ThrowsErrorWithCompanion.never', was '${e.message}'"
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         ThrowsErrorWithCompanion()
         return "FAIL 9.1: should throw"
-    } catch (e: Error) {
+    } catch (e: NoClassDefFoundError) {
         if (e.cause != null) return "FAIL 9.2: cause must be null, got ${e.cause}"
-        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "There was an error during file or class initialization" else "Could not initialize class ThrowsErrorWithCompanion"
+        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "Could not initialize file" else "Could not initialize class ThrowsErrorWithCompanion"
         if (e.message != expectedMessage) return "FAIL 9.3: message must be '$expectedMessage', was '${e.message}'"
     }
-
 
     try {
         ThrowsErrorObject.foo()
@@ -132,12 +136,13 @@ fun box(): String {
         if (e.message != "ThrowsErrorObject.never") return "FAIL 10.3: message must be 'ThrowsErrorObject.never', was '${e.message}'"
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         ThrowsErrorObject.foo()
         return "FAIL 11.1: should throw"
-    } catch (e: Error) {
+    } catch (e: NoClassDefFoundError) {
         if (e.cause != null) return "FAIL 11.2: cause must be null, got ${e.cause}"
-        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "There was an error during file or class initialization" else "Could not initialize class ThrowsErrorObject"
+        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "Could not initialize file" else "Could not initialize class ThrowsErrorObject"
         if (e.message != expectedMessage) return "FAIL 11.3: message must be '$expectedMessage', was '${e.message}'"
     }
 

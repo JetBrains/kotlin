@@ -24,6 +24,7 @@ package kotlin
 @SinceKotlin("1.1") public actual typealias AssertionError = java.lang.AssertionError
 
 internal actual typealias ExceptionInInitializerError = java.lang.ExceptionInInitializerError
+internal actual typealias NoClassDefFoundError = java.lang.NoClassDefFoundError
 
 @SinceKotlin("1.1") public actual typealias NoSuchElementException = java.util.NoSuchElementException
 
