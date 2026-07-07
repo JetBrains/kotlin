@@ -3,7 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
+package org.jetbrains.kotlin.analysis.api.standalone.projectStructure
+
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.LibraryScopeConstructionMode
 
 /**
  * The strategy used to build a library module's content scope from its binary roots in Standalone mode.
@@ -18,7 +21,8 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
  *
  * The mode can be set per module on the module builder, or as a default for all modules on the module provider builder.
  */
-sealed class StandaloneLibraryScopeConstructionMode {
+@StandaloneWorkaroundApi
+public sealed class StandaloneLibraryScopeConstructionMode {
     /**
      * Determines containment by walking a file's parents until one of them is a library root.
      *
@@ -27,7 +31,8 @@ sealed class StandaloneLibraryScopeConstructionMode {
      *
      * This is the default mode.
      */
-    data object ParentTraversal : StandaloneLibraryScopeConstructionMode()
+    @StandaloneWorkaroundApi
+    public data object ParentTraversal : StandaloneLibraryScopeConstructionMode()
 
     /**
      * Determines containment by matching a file's path segments against a trie built from the library root paths.
@@ -38,7 +43,8 @@ sealed class StandaloneLibraryScopeConstructionMode {
      * Because the trie relies on on-disk paths, this mode falls back to [Enumeration] when a library root lacks one (for example, with an
      * in-memory file system).
      */
-    data object Trie : StandaloneLibraryScopeConstructionMode()
+    @StandaloneWorkaroundApi
+    public data object Trie : StandaloneLibraryScopeConstructionMode()
 
     /**
      * Determines containment by checking a file against a precomputed set of all files reachable from the library roots.
@@ -46,12 +52,29 @@ sealed class StandaloneLibraryScopeConstructionMode {
      * This mode is inefficient, as it eagerly enumerates and retains every file under each library root. It should only be used as a last
      * resort.
      */
-    data object Enumeration : StandaloneLibraryScopeConstructionMode()
+    @StandaloneWorkaroundApi
+    public data object Enumeration : StandaloneLibraryScopeConstructionMode()
 
     /**
      * A dummy private subtype to force `else` branches in client code so that new modes can be added in the future without breaking
      * compatibility.
      */
+    @StandaloneWorkaroundApi
     @Suppress("unused")
     private data object Unknown : StandaloneLibraryScopeConstructionMode()
 }
+
+/**
+ * Maps this public [StandaloneLibraryScopeConstructionMode] to the internal [LibraryScopeConstructionMode] understood by the Standalone
+ * implementation.
+ */
+@OptIn(StandaloneWorkaroundApi::class)
+internal fun StandaloneLibraryScopeConstructionMode.toInternalLibraryScopeConstructionMode(): LibraryScopeConstructionMode =
+    when (this) {
+        StandaloneLibraryScopeConstructionMode.ParentTraversal -> LibraryScopeConstructionMode.ParentTraversal
+        StandaloneLibraryScopeConstructionMode.Trie -> LibraryScopeConstructionMode.Trie
+        StandaloneLibraryScopeConstructionMode.Enumeration -> LibraryScopeConstructionMode.Enumeration
+
+        // The sealed hierarchy has a private subtype to keep `when` expressions non-exhaustive for API evolution; it is never passed here.
+        else -> error("Unexpected library scope construction mode: $this")
+    }

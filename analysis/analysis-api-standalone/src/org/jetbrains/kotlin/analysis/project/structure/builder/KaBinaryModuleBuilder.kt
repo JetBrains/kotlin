@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
 import java.nio.file.Path
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneLibraryScopeConstructionMode
+import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.StandaloneLibraryScopeConstructionMode
 
 @KtModuleBuilderDsl
 public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
