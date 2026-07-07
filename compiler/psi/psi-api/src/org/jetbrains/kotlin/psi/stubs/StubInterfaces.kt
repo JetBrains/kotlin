@@ -129,9 +129,8 @@ interface KotlinAnnotationUseSiteTargetStub : KotlinStubElement<KtAnnotationUseS
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : KotlinStubElement<T> {
     /**
-     * Whether the declaration may have a contract.
-     * **false** means that the declaration is definitely having no contract,
-     * but **true** doesn't guarantee that the declaration has a contract.
+     * Whether the declaration may have a contract. **false** means that the declaration definitely has no contract, but **true** doesn't
+     * guarantee that the declaration has a contract.
      */
     val mayHaveContract: Boolean
 
