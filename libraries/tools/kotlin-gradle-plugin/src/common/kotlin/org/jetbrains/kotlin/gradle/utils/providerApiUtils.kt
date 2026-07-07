@@ -60,7 +60,7 @@ internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithLazyValue(
 ) = setPropertyWithValue(providerWithLazyConvention(lazyValue))
 
 internal inline fun <reified T : Any?> ObjectFactory.propertyWithConvention(
-    conventionValue: Provider<T>
+    conventionValue: Provider<out T>
 ) = property<T>().convention(conventionValue)
 
 internal inline fun <reified T : Any?> ObjectFactory.propertyWithConvention(

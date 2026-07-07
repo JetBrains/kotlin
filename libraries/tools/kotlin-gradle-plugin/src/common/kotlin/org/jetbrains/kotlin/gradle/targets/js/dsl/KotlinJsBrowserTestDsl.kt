@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApiKind
 import java.net.URI
 import java.time.Duration
 
-@ExperimentalJsTestDsl
 /**
- * Represents browser runner configuration.
- * This interface is extended by top-level [KotlinBrowserTestRunnerDsl]
- * as well as in browser-specific configurations (i.e. [KotlinJsBrowserTestDsl.ChromiumTestRunnerDsl])
+ * Represents common configuration that is applicable to all Kotlin Browser Test Runners.
+ * Available at top level [browser.test][KotlinJsBrowserTestDsl] DSL block.
+ * But can be overridden at [runner-level][KotlinBrowserTestRunnerDsl] for specific browser runner.
  */
-interface BrowserTestRunnerConfigDsl {
+@ExperimentalJsTestDsl
+interface BrowserTestRunnerTopLevelConfigDsl {
     /**
      * Input location pointing to a prepared JS bundle with tests and HTML page that can be opened in a browser.
      *
@@ -53,23 +53,9 @@ interface BrowserTestRunnerConfigDsl {
     val headless: Property<Boolean>
 
     /**
-     * Configure additional command line arguments to launch the browser.
-     */
-    val launchArgs: ListProperty<String>
-
-    /**
      * Configure environment variables that will be passed to the browser instance.
      */
     val launchEnvironmentVariables: MapProperty<String, String>
-
-    /**
-     * Set to configure a custom path to the browser executable.
-     *
-     * Should not be used to get the default browser executable path.
-     * Default is empty, meaning that the toolchain's default browser will be used.
-     */
-    @DelicateKotlinGradlePluginApi(kind = DelicateKotlinGradlePluginApiKind.REPLACES_DEFAULTS)
-    val customBrowserExecutable: RegularFileProperty
 }
 
 /**
@@ -105,29 +91,40 @@ interface KotlinJsTestsLocation {
     val url: Provider<URI>
 }
 
+/**
+ * Represents browser runner (e.g. [browser.test.chromium][KotlinJsBrowserTestDsl.ChromiumTestRunnerDsl]) DSL block.
+ * Interface shared between all browser runners, and its members are not available at [top-level][BrowserTestRunnerTopLevelConfigDsl].
+ */
 @ExperimentalJsTestDsl
-interface KotlinBrowserTestRunnerDsl : BrowserTestRunnerConfigDsl, Named
+interface KotlinBrowserTestRunnerDsl : BrowserTestRunnerTopLevelConfigDsl, Named {
+    /**
+     * Configure additional command line arguments to launch the browser.
+     */
+    val launchArgs: ListProperty<String>
+
+    /**
+     * Set to configure a custom path to the browser executable.
+     *
+     * Should not be used to get the default browser executable path.
+     * Default is empty, meaning that the toolchain's default browser will be used.
+     */
+    @DelicateKotlinGradlePluginApi(kind = DelicateKotlinGradlePluginApiKind.REPLACES_DEFAULTS)
+    val customBrowserExecutable: RegularFileProperty
+}
 
 /**
  * DSL Interface to configure multiple browser test runners for Kotlin/JS.
  */
 @ExperimentalJsTestDsl
-interface KotlinJsBrowserTestDsl {
-    /**
-     * Represents a default configuration for all browser test runners.
-     * Defaults can be overridden in the individual browser test runner configuration.
-     */
-    val browserDefaults: BrowserTestRunnerConfigDsl
-    fun browserDefaults(configure: Action<BrowserTestRunnerConfigDsl>): BrowserTestRunnerConfigDsl
-
+interface KotlinJsBrowserTestDsl : BrowserTestRunnerTopLevelConfigDsl {
     /**
      * Default location of bundled and ready to execute JS tests produced from Kotlin JS test compilation.
      * Note that this is read-only [Provider], that Kotlin Gradle Plugin offers as default.
-     * To use different test location for tests use [BrowserTestRunnerConfigDsl.testsLocation].
+     * To use different test location for tests use [KotlinBrowserTestRunnerDsl.testsLocation].
      *
      * The intended use case when this provider should be consumed by user code is to post-process default test bundle
      * or replace some parts of it in a different task and producing new instance of [KotlinJsTestsLocation].
-     * The new location instance should be later set via [BrowserTestRunnerConfigDsl.testsLocation].
+     * The new location instance should be later set via [KotlinBrowserTestRunnerDsl.testsLocation].
      */
     val defaultTestsLocationProvider: Provider<out KotlinJsTestsLocation>
 

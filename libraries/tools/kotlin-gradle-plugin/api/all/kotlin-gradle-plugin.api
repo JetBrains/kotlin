@@ -2587,10 +2587,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension$Com
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl {
-	public abstract fun getCustomBrowserExecutable ()Lorg/gradle/api/file/RegularFileProperty;
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerTopLevelConfigDsl {
 	public abstract fun getHeadless ()Lorg/gradle/api/provider/Property;
-	public abstract fun getLaunchArgs ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getLaunchEnvironmentVariables ()Lorg/gradle/api/provider/MapProperty;
 	public abstract fun getTestsLocation ()Lorg/gradle/api/provider/Property;
 	public abstract fun getTimeout ()Lorg/gradle/api/provider/Property;
@@ -2613,7 +2611,9 @@ public abstract interface annotation class org/jetbrains/kotlin/gradle/targets/j
 public abstract interface annotation class org/jetbrains/kotlin/gradle/targets/js/dsl/ExperimentalMainFunctionArgumentsDsl : java/lang/annotation/Annotation {
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserTestRunnerDsl : org/gradle/api/Named, org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl {
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserTestRunnerDsl : org/gradle/api/Named, org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerTopLevelConfigDsl {
+	public abstract fun getCustomBrowserExecutable ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getLaunchArgs ()Lorg/gradle/api/provider/ListProperty;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode : java/lang/Enum {
@@ -2631,14 +2631,12 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Kotli
 	public abstract fun webpackTask (Lorg/gradle/api/Action;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl {
-	public abstract fun browserDefaults (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl;
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerTopLevelConfigDsl {
 	public abstract fun chromium (Ljava/lang/String;)V
 	public abstract fun chromium (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public abstract fun firefox (Ljava/lang/String;)V
 	public abstract fun firefox (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public abstract fun getAllBrowserRunners ()Lorg/gradle/api/provider/Provider;
-	public abstract fun getBrowserDefaults ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl;
 	public abstract fun getDefaultTestsLocationProvider ()Lorg/gradle/api/provider/Provider;
 	public abstract fun webkit (Ljava/lang/String;)V
 	public abstract fun webkit (Ljava/lang/String;Lorg/gradle/api/Action;)V

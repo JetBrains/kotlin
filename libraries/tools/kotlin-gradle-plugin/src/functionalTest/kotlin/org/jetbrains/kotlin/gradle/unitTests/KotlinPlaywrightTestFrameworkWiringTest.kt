@@ -180,9 +180,9 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val customChromeExecutable = File("custom-chrome-executable.txt").absoluteFile
 
         val setup = buildBrowserTestProject {
-            browserDefaults.testsLocation.set(mockLocation1)
-            browserDefaults.timeout.set(Duration.ofHours(72))
-            browserDefaults.launchEnvironmentVariables.set(mapOf("FOO" to "BAR"))
+            testsLocation.set(mockLocation1)
+            timeout.set(Duration.ofHours(72))
+            launchEnvironmentVariables.set(mapOf("FOO" to "BAR"))
 
             chromium("myChrome") {
                 it.headless.set(false)

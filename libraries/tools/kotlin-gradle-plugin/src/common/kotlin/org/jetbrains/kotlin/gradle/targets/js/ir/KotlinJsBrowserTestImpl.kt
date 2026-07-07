@@ -14,7 +14,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.mapProperty
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BrowserTestRunnerConfigDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinDefaultJsTestLocatio
 import org.jetbrains.kotlin.gradle.targets.js.testing.locateOrRegisterBrowserTestBundleTask
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import java.time.Duration
 import javax.inject.Inject
 
@@ -114,25 +114,17 @@ internal abstract class KotlinJsBrowserTestImpl
         body.execute(runner)
     }
 
-    override val browserDefaults: BrowserTestRunnerConfigDsl = objects
-        .newInstance(BrowserTestRunnerConfigDsl::class.java)
-        .apply {
-            testsLocation.convention(defaultTestsLocationProvider)
-            headless.convention(true)
-            timeout.convention(Duration.ofSeconds(2))
-        }
+    override val testsLocation: Property<KotlinJsTestsLocation> =
+        objects.propertyWithConvention<KotlinJsTestsLocation>(defaultTestsLocationProvider)
 
-    override fun browserDefaults(configure: Action<BrowserTestRunnerConfigDsl>) =
-        browserDefaults.also { configure.execute(it) }
+    override val headless: Property<Boolean> = objects.propertyWithConvention<Boolean>(true)
+
+    override val timeout: Property<Duration> = objects.propertyWithConvention<Duration>(Duration.ofSeconds(2))
 
     private fun connectTopLevelConfigDslWithBrowserTestDsl(browserLevelDsl: KotlinBrowserTestRunnerDsl) {
-        with(browserDefaults) {
-            browserLevelDsl.testsLocation.convention(testsLocation)
-            browserLevelDsl.headless.convention(headless)
-            browserLevelDsl.timeout.convention(timeout)
-            browserLevelDsl.launchArgs.convention(launchArgs)
-            browserLevelDsl.customBrowserExecutable.convention(customBrowserExecutable)
-            browserLevelDsl.launchEnvironmentVariables.convention(launchEnvironmentVariables)
-        }
+        browserLevelDsl.testsLocation.convention(testsLocation)
+        browserLevelDsl.headless.convention(headless)
+        browserLevelDsl.timeout.convention(timeout)
+        browserLevelDsl.launchEnvironmentVariables.convention(launchEnvironmentVariables)
     }
 }

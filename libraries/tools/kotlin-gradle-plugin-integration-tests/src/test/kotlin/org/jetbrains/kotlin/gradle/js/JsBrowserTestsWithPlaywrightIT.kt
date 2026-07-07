@@ -19,6 +19,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
@@ -117,7 +118,8 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                     it.newBundleLocation.set(project.layout.buildDirectory.dir("post-processed-test-bundle"))
                 }
 
-                jsTarget.browser.test.browserDefaults.testsLocation.set(postProcess.map { it.kotlinJsTestsLocation })
+                @OptIn(DelicateKotlinGradlePluginApi::class)
+                jsTarget.browser.test.testsLocation.set(postProcess.map { it.kotlinJsTestsLocation })
             }
 
 
@@ -438,6 +440,7 @@ private class MyLocalFileLocation(
     @get:Input
     override val testHtmlFileName: Provider<String>,
 ) : KotlinJsTestsLocation {
+    @OptIn(DelicateKotlinGradlePluginApi::class)
     @get:Internal
     override val url: Provider<URI> = bundleLocation.map { it.asFile.resolve(testHtmlFileName.get()).toURI() }
 }
