@@ -36,6 +36,7 @@ class KaptOptions(
 
     val mode: AptMode,
     val detectMemoryLeaks: DetectMemoryLeaksMode,
+    val stubGenerationScheme: StubGenerationScheme,
 
     //these two config can be replaced with single function-like interface (ProcessorName -> ClassLoader),
     // but it is hard to pass function between different classloaders
@@ -74,6 +75,7 @@ class KaptOptions(
 
         var mode: AptMode = AptMode.WITH_COMPILATION
         var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.DEFAULT
+        var stubGenerationScheme: StubGenerationScheme = StubGenerationScheme.JTREE
         var processorsStatsReportFile: File? = null
         var fileReadHistoryReportFile: File? = null
 
@@ -87,7 +89,7 @@ class KaptOptions(
                 changedFiles, compiledSources, incrementalCache, classpathChanges,
                 sourcesOutputDir, classesOutputDir, stubsOutputDir, incrementalDataOutputDir,
                 processingClasspath, processors, processingOptions, javacOptions, KaptFlags.fromSet(flags),
-                mode, detectMemoryLeaks,
+                mode, detectMemoryLeaks, stubGenerationScheme,
                 processingClassLoader = null,
                 separateClassloaderForProcessors = emptySet(),
                 processorsStatsReportFile = processorsStatsReportFile,
@@ -132,6 +134,11 @@ interface KaptSelector {
 
 enum class DetectMemoryLeaksMode(override val stringValue: String) : KaptSelector {
     DEFAULT("default"), PARANOID("paranoid"), NONE("none")
+}
+
+enum class StubGenerationScheme(override val stringValue: String) : KaptSelector {
+    DIRECT("direct"),
+    JTREE("jtree"),
 }
 
 enum class AptMode(override val stringValue: String) : KaptSelector {

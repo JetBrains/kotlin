@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.kapt.base.KaptContext
 import org.jetbrains.kotlin.kapt.base.KaptOptions
+import org.jetbrains.kotlin.kapt.base.StubGenerationScheme
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt.stubs.KaptIrOrigin
@@ -53,5 +54,18 @@ class KaptContextForStubGeneration(
     override fun close() {
         (treeMaker as? KaptTreeMaker)?.dispose()
         super.close()
+    }
+
+    internal fun textGenerationError(message: String): String {
+        if (options.stubGenerationScheme == StubGenerationScheme.DIRECT) {
+            error(message)
+        }
+        return "TEXT_GENERATION_ERROR"
+    }
+
+    internal inline fun textGenerationRequire(check: Boolean, lazyMessage: () -> String) {
+        if (options.stubGenerationScheme == StubGenerationScheme.DIRECT) {
+            require(check, lazyMessage)
+        }
     }
 }

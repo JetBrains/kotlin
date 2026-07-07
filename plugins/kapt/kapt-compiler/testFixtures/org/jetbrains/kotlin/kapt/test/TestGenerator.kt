@@ -13,7 +13,14 @@ fun main(args: Array<String>) {
             testClass<AbstractIrKotlinKaptContextTest> {
                 model("kotlinRunner")
             }
-            testClass<AbstractKaptStubConverterTest> {
+            testClass<AbstractKaptStubConverterJTreeTest>(
+                suiteTestClassName = "KaptStubConverterJTreeTestGenerated",
+            ) {
+                model("converter")
+            }
+            testClass<AbstractKaptStubConverterDirectTest>(
+                suiteTestClassName = "KaptStubConverterDirectTestGenerated",
+            ) {
                 model("converter")
             }
         }
