@@ -18,5 +18,8 @@ package org.jetbrains.kotlin.kdoc.psi.api;
 
 import com.intellij.psi.PsiElement;
 
+/**
+ * A marker interface implemented by all elements of a KDoc comment's PSI tree.
+ */
 public interface KDocElement extends PsiElement {
 }

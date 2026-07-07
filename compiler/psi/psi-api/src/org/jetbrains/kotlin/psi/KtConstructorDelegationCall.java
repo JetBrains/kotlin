@@ -83,6 +83,10 @@ public class KtConstructorDelegationCall extends KtElementImpl implements KtCall
         return callee != null && callee.getFirstChild() == null;
     }
 
+    /**
+     * Returns {@code true} if this delegates to another constructor of the same class ({@code this(...)}), or
+     * {@code false} if it delegates to a superclass constructor ({@code super(...)}).
+     */
     public boolean isCallToThis() {
         KtConstructorDelegationReferenceExpression callee = getCalleeExpression();
         return callee != null && callee.isThis();

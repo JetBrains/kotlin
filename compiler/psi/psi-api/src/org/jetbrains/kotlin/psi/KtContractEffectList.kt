@@ -30,5 +30,8 @@ class KtContractEffectList : KtElementImplStub<KotlinPlaceHolderStub<KtContractE
     constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>) : super(stub, KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
 }
 
+/**
+ * Returns the individual contract effects declared in this list, in source order.
+ */
 fun KtContractEffectList.getContractEffects(): List<KtContractEffect> =
     getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTRACT_EFFECT)

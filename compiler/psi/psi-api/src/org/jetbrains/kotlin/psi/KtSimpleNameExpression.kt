@@ -22,19 +22,57 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * Represents a simple name reference: an unqualified reference to a declaration by its name, or an operation sign that
+ * references a declaration (for example, the `+` of a binary expression).
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * val length = text.length
+ * //                ^____^
+ * // A simple name expression referencing the 'length' property
+ * ```
+ *
+ * @see KtNameReferenceExpression a plain identifier reference
+ * @see KtOperationReferenceExpression an operation sign that references a declaration
+ */
 interface KtSimpleNameExpression : KtReferenceExpression {
 
+    /**
+     * Returns the referenced name as it appears in the source, with any surrounding backticks removed.
+     */
     fun getReferencedName(): String
 
+    /**
+     * Returns the referenced name as a [Name].
+     */
     fun getReferencedNameAsName(): Name
 
+    /**
+     * Returns the token or element that carries the referenced name (for example, the identifier or the operation
+     * sign). Never `null`, even for operation references.
+     */
     fun getReferencedNameElement(): PsiElement
 
+    /**
+     * Returns the identifier token of this reference, or `null` if the name is not a plain identifier (for example, an
+     * operation sign).
+     */
     fun getIdentifier(): PsiElement?
 
+    /**
+     * Returns the element type of the [referenced name element][getReferencedNameElement].
+     */
     fun getReferencedNameElementType(): IElementType
 }
 
+/**
+ * Base implementation of [KtSimpleNameExpression] shared by its stub-based and AST-based variants.
+ *
+ * This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing outside
+ * of the PSI implementation. Use [KtSimpleNameExpression] instead.
+ */
 abstract class KtSimpleNameExpressionImpl(node: ASTNode) : KtExpressionImpl(node), KtSimpleNameExpression {
     override fun getIdentifier(): PsiElement? = findChildByType(KtTokens.IDENTIFIER)
 

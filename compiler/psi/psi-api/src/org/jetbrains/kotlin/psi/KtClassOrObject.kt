@@ -20,14 +20,38 @@ import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
 import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 
+/**
+ * Represents a class, interface, object, or enum entry declaration.
+ *
+ * This is the common base for the concrete node types [KtClass] (classes and interfaces), [KtObjectDeclaration]
+ * (named and companion objects), and [KtEnumEntry]. It gives access to the shared structure of such declarations:
+ * the supertype list, the class body, the primary and secondary constructors, and the nested declarations.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ *    class Foo : Bar() {
+ *        fun baz() {}
+ *    }
+ * // ^__________________^
+ * // The entire class-or-object declaration
+ * ```
+ */
 abstract class KtClassOrObject :
     KtTypeParameterListOwnerStub<KotlinClassOrObjectStub<out KtClassOrObject>>, KtDeclarationContainer, KtNamedDeclaration,
     KtPureClassOrObject, KtClassLikeDeclaration {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinClassOrObjectStub<out KtClassOrObject>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
+    /**
+     * Returns the colon token separating the declaration from its supertype list, or `null` if there is no supertype
+     * list.
+     */
     fun getColon(): PsiElement? = findChildByType(KtTokens.COLON)
 
+    /**
+     * Returns the supertype list (the types after the `:`), or `null` if this declaration has no explicit supertypes.
+     */
     fun getSuperTypeList(): KtSuperTypeList? =
         @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.SUPER_TYPE_LIST)
@@ -49,6 +73,9 @@ abstract class KtClassOrObject :
         KtPsiMutationService.getInstance().removeSuperType(this, superTypeListEntry)
     }
 
+    /**
+     * Returns the `init` blocks declared in this class or object body, in source order; empty if there are none.
+     */
     fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
     override fun getBody(): KtClassBody? =
@@ -82,6 +109,10 @@ abstract class KtClassOrObject :
     inline fun <reified T : KtDeclaration> addDeclarationBefore(declaration: T, anchor: PsiElement?): T =
         KtPsiMutationService.getInstance().addMemberDeclarationBefore(this, declaration, anchor)
 
+    /**
+     * Returns `true` if this declaration is a top-level member of a file (not nested in another declaration or a
+     * local scope).
+     */
     fun isTopLevel(): Boolean = greenStub?.isTopLevel ?: isKtFile(parent)
 
     override fun getClassId(): ClassId? {
@@ -105,6 +136,9 @@ abstract class KtClassOrObject :
         }
     }
 
+    /**
+     * Returns `true` if this declaration has the `data` modifier.
+     */
     fun isData(): Boolean = hasModifier(KtTokens.DATA_KEYWORD)
 
     override fun getDeclarations(): List<KtDeclaration> = getBody()?.declarations.orEmpty()
@@ -117,6 +151,10 @@ abstract class KtClassOrObject :
 
     override fun getPrimaryConstructorModifierList(): KtModifierList? = primaryConstructor?.modifierList
 
+    /**
+     * Returns the value parameter list of the primary constructor, or `null` if there is no explicit primary
+     * constructor.
+     */
     fun getPrimaryConstructorParameterList(): KtParameterList? = primaryConstructor?.valueParameterList
 
     override fun getPrimaryConstructorParameters(): List<KtParameter> = getPrimaryConstructorParameterList()?.parameters.orEmpty()
@@ -125,12 +163,22 @@ abstract class KtClassOrObject :
 
     override fun hasPrimaryConstructor(): Boolean = hasExplicitPrimaryConstructor() || !hasSecondaryConstructors()
 
+    /**
+     * Returns `true` if this declaration has at least one secondary constructor.
+     */
     fun hasSecondaryConstructors(): Boolean = !secondaryConstructors.isEmpty()
 
     override fun getSecondaryConstructors(): List<KtSecondaryConstructor> = getBody()?.secondaryConstructors.orEmpty()
 
+    /**
+     * Returns `true` if this declaration has the `annotation` modifier (that is, it declares an annotation class).
+     */
     fun isAnnotation(): Boolean = hasModifier(KtTokens.ANNOTATION_KEYWORD)
 
+    /**
+     * Returns the keyword that introduces this declaration (`class`, `interface`, or `object`), or `null` if it is
+     * absent in incomplete code.
+     */
     fun getDeclarationKeyword(): PsiElement? = findChildByType(classInterfaceObjectTokenSet)
 
     /**
@@ -173,5 +221,9 @@ abstract class KtClassOrObject :
 )
 fun KtClassOrObject.getOrCreateBody(): KtClassBody = KtPsiMutationService.getInstance().getOrCreateClassBody(this)
 
+/**
+ * All constructors of this class or object: the primary constructor (if present) followed by the secondary
+ * constructors, in source order.
+ */
 val KtClassOrObject.allConstructors
     get() = listOfNotNull(primaryConstructor) + secondaryConstructors

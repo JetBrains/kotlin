@@ -51,6 +51,10 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
         return initializerList.getInitializers();
     }
 
+    /**
+     * Returns {@code true} if this enum entry passes constructor arguments or overrides members (that is, it has an
+     * initializer list or a body).
+     */
     public boolean hasInitializer() {
         return !getSuperTypeListEntries().isEmpty();
     }
@@ -61,6 +65,10 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
         return null;
     }
 
+    /**
+     * Returns the initializer list holding the constructor arguments of this enum entry, or {@code null} if it passes
+     * no arguments.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtInitializerList getInitializerList() {

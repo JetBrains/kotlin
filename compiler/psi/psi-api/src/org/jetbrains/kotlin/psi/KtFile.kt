@@ -23,8 +23,22 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
+/**
+ * The root of the PSI tree for a Kotlin file (a `.kt` or `.kts` source file).
+ *
+ * A [KtFile] holds the file's package directive, imports, and top-level declarations (see [KtCommonFile] for that
+ * shared structure). On top of that, it implements the platform's [PsiClassOwner], so it can expose the file's Kotlin
+ * declarations to Java-facing tooling as light [PsiClass]es (for example, the file facade class and top-level
+ * class declarations).
+ *
+ * Obtain the containing file of any [KtElement] via [KtPureElement.getContainingKtFile].
+ */
 open class KtFile(viewProvider: FileViewProvider, isCompiled: Boolean) : @Suppress("DEPRECATION") KtCommonFile(viewProvider, isCompiled),
     PsiClassOwner {
+    /**
+     * Returns the Java light classes that this file contributes, such as the file facade class and any top-level class
+     * declarations, or an empty array if none are available.
+     */
     override fun getClasses(): Array<PsiClass> {
         val fileClassProvider = project.getService(KtFileClassProvider::class.java)
         return fileClassProvider?.getFileClasses(this) ?: PsiClass.EMPTY_ARRAY
@@ -42,6 +56,10 @@ open class KtFile(viewProvider: FileViewProvider, isCompiled: Boolean) : @Suppre
     }
 
     companion object {
+        /**
+         * The stub element types that may appear as top-level members of a Kotlin file: all declaration types plus
+         * scripts.
+         */
         val FILE_DECLARATION_TYPES = TokenSet.orSet(KtTokenSets.DECLARATION_TYPES, TokenSet.create(KtStubBasedElementTypes.SCRIPT))
     }
 }

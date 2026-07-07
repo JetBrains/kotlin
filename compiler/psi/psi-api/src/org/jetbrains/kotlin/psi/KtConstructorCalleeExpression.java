@@ -36,12 +36,20 @@ public class KtConstructorCalleeExpression extends KtExpressionImplStub<KotlinPl
         return visitor.visitConstructorCalleeExpression(this, data);
     }
 
+    /**
+     * Returns the type reference naming the class being constructed, or {@code null} if it is absent in incomplete
+     * code.
+     */
     @Nullable @IfNotParsed
     @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
+    /**
+     * Returns the reference expression naming the invoked constructor's class, or {@code null} if it cannot be
+     * determined (for example, when the callee is not a simple user type).
+     */
     @Nullable @IfNotParsed
     public KtSimpleNameExpression getConstructorReferenceExpression() {
         KtTypeReference typeReference = getTypeReference();

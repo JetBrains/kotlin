@@ -12,6 +12,12 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
+/**
+ * Static helpers for computing fully qualified names of {@link KtNamedDeclaration}s from their PSI structure.
+ *
+ * <p>Prefer {@link KtNamedDeclaration#getFqName()} in client code; these helpers back that computation by walking the
+ * enclosing declarations and package directive.
+ */
 public final class KtNamedDeclarationUtil {
     @Nullable
     //NOTE: use JetNamedDeclaration#getFqName instead
@@ -30,6 +36,11 @@ public final class KtNamedDeclarationUtil {
         return parentFqName.child(name);
     }
 
+    /**
+     * Returns the fully qualified name of the element that lexically encloses the given {@code namedDeclaration} — its
+     * package for a top-level declaration, or the containing class, object, or script otherwise — or {@code null} if it
+     * cannot be determined.
+     */
     @Nullable
     public static FqName getParentFqName(@NotNull KtNamedDeclaration namedDeclaration) {
         PsiElement parent = namedDeclaration.getParent();

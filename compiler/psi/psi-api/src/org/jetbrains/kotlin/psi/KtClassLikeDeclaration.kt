@@ -7,6 +7,13 @@ package org.jetbrains.kotlin.psi
 
 import org.jetbrains.kotlin.name.ClassId
 
+/**
+ * Represents a declaration that introduces a classifier referable by a [ClassId], namely a class, interface, object, or
+ * type alias.
+ *
+ * This is the common base type for [KtClassOrObject] and [KtTypeAlias]. It abstracts over "how a classifier is
+ * addressed" rather than "how it is defined", which is why its central capability is [getClassId].
+ */
 interface KtClassLikeDeclaration : KtNamedDeclaration {
     /**
      * Return [ClassId], if the class is not local (e.g., if a class can be accessed by that [ClassId] from another context)

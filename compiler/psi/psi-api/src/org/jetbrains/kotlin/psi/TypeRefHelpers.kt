@@ -24,6 +24,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
+/**
+ * Returns the type reference written after the `:` of the given callable [declaration] (its explicit return type or
+ * property type), or `null` if the type is not written explicitly.
+ */
 fun getTypeReference(declaration: KtCallableDeclaration): KtTypeReference? {
     return declaration.firstChild!!.siblings(forward = true)
         .dropWhile { it.node!!.elementType != KtTokens.COLON }

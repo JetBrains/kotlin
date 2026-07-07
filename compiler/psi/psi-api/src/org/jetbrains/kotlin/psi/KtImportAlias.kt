@@ -35,6 +35,9 @@ class KtImportAlias : KtElementImplStub<KotlinImportAliasStub>, PsiNameIdentifie
         return visitor.visitImportAlias(this, data)
     }
 
+    /**
+     * The import directive this alias belongs to, or `null` if the alias is detached from an import.
+     */
     val importDirective: KtImportDirective?
         get() = parent as? KtImportDirective
 

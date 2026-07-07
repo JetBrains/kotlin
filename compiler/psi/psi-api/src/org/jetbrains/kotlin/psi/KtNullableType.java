@@ -35,6 +35,9 @@ public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNu
         super(stub, KtStubBasedElementTypes.NULLABLE_TYPE);
     }
 
+    /**
+     * Returns the AST node of the {@code ?} token that marks the type as nullable.
+     */
     @NotNull
     public ASTNode getQuestionMarkNode() {
         return getNode().findChildByType(KtTokens.QUEST);
@@ -52,18 +55,28 @@ public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNu
         return visitor.visitNullableType(this, data);
     }
 
+    /**
+     * Returns the underlying non-nullable type (the part before {@code ?}), or {@code null} if it is absent in
+     * incomplete code.
+     */
     @Nullable
     @IfNotParsed
     public KtTypeElement getInnerType() {
         return KtStubbedPsiUtil.getStubOrPsiChild(this, KtTokenSets.TYPE_ELEMENT_TYPES, KtTypeElement.ARRAY_FACTORY);
     }
 
+    /**
+     * Returns the modifier list attached to this nullable type, or {@code null} if there is none.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtModifierList getModifierList() {
         return getStubOrPsiChild(KtStubBasedElementTypes.MODIFIER_LIST);
     }
 
+    /**
+     * Returns the annotation entries attached to this nullable type, or an empty list if there are none.
+     */
     @NotNull
     public List<KtAnnotationEntry> getAnnotationEntries() {
         KtModifierList modifierList = getModifierList();

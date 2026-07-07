@@ -63,6 +63,9 @@ open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationCon
 
     override fun getName(): String = fqName.shortName().asString()
 
+    /**
+     * The block holding the script's top-level statements and declarations.
+     */
     val blockExpression: KtBlockExpression
         get() = findNotNullChildByClass(KtBlockExpression::class.java)
 

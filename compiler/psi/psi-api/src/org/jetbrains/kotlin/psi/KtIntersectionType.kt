@@ -26,7 +26,16 @@ class KtIntersectionType : KtElementImplStub<KotlinPlaceHolderStub<KtIntersectio
 
     override fun getTypeArgumentsAsTypes(): List<KtTypeReference> = emptyList()
 
+    /**
+     * Returns the left operand type of the intersection (the part before `&`), or `null` if it is absent in incomplete
+     * code.
+     */
     fun getLeftTypeRef(): KtTypeReference? = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE).getOrNull(0)
+
+    /**
+     * Returns the right operand type of the intersection (the part after `&`), or `null` if it is absent in incomplete
+     * code.
+     */
     fun getRightTypeRef(): KtTypeReference? = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE).getOrNull(1)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {

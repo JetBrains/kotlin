@@ -23,6 +23,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getContentRange
 import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
 import kotlin.math.min
 
+/**
+ * A [LiteralTextEscaper] for Kotlin string literals, enabling language injection into them.
+ *
+ * It decodes the raw literal text of a [KtStringTemplateExpression] into the string value it denotes (resolving escape
+ * sequences) and maintains a mapping between offsets in the decoded value and offsets in the host PSI, so that an
+ * injected language can be edited and its ranges translated back to the original source.
+ */
 class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression) : LiteralTextEscaper<KtStringTemplateExpression>(host) {
     private var sourceOffsets: IntArray? = null
 

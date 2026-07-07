@@ -27,6 +27,15 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName;
 
+/**
+ * Base implementation of {@link KtNamedDeclaration} that may be backed either by the AST tree or by a stub.
+ *
+ * <p>The stub carries the declaration's fully qualified name, so the name can be queried without parsing the source.
+ * This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing outside
+ * of the PSI implementation.
+ *
+ * @param <T> the type of stub backing this declaration, carrying its fully qualified name
+ */
 public abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends KtDeclarationStub<T> implements KtNamedDeclaration {
     public KtNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);

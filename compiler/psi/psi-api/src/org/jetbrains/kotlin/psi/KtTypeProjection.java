@@ -33,6 +33,10 @@ public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjecti
         super(stub, KtStubBasedElementTypes.TYPE_PROJECTION);
     }
 
+    /**
+     * Returns the variance projection of this type argument: {@link KtProjectionKind#IN}, {@link KtProjectionKind#OUT},
+     * {@link KtProjectionKind#STAR}, or {@link KtProjectionKind#NONE} for an invariant argument.
+     */
     @NotNull
     public KtProjectionKind getProjectionKind() {
         KotlinTypeProjectionStub stub = getGreenStub();
@@ -55,12 +59,19 @@ public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjecti
         return visitor.visitTypeProjection(this, data);
     }
 
+    /**
+     * Returns the projected type reference, or {@code null} for a star projection ({@code *}) or when it is absent in
+     * incomplete code.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
+    /**
+     * Returns the projection token ({@code *}, {@code in}, or {@code out}), or {@code null} for an invariant argument.
+     */
     @Nullable
     public PsiElement getProjectionToken() {
         PsiElement star = findChildByType(KtTokens.MUL);

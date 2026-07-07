@@ -51,10 +51,17 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
         return visitor.visitAnnotation(this, data);
     }
 
+    /**
+     * Returns the individual annotation entries in this bracketed group, in source order.
+     */
     public List<KtAnnotationEntry> getEntries() {
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ANNOTATION_ENTRY);
     }
 
+    /**
+     * Returns the shared use-site target applied to all entries in this group (as in {@code @set:[...]}), or
+     * {@code null} if no use-site target is specified.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtAnnotationUseSiteTarget getUseSiteTarget() {

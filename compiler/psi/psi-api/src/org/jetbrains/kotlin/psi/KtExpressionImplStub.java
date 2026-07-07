@@ -13,6 +13,14 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
+/**
+ * Base implementation of {@link KtExpression} that may be backed either by the AST tree or by a stub.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing
+ * outside of the PSI implementation. See {@link KtElementImplStub} for details on stub backing.
+ *
+ * @param <T> the type of stub backing this element
+ */
 public abstract class KtExpressionImplStub<T extends StubElement<?>> extends KtElementImplStub<T> implements KtExpression {
     public KtExpressionImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
@@ -33,6 +41,10 @@ public abstract class KtExpressionImplStub<T extends StubElement<?>> extends KtE
         return KtPsiMutationService.getInstance().replaceExpression(this, newElement, true, this::rawReplace);
     }
 
+    /**
+     * Replaces this element using the raw platform implementation, bypassing the Kotlin-specific {@link #replace}
+     * handling. Intended for use by the PSI mutation machinery.
+     */
     @NotNull
     public PsiElement rawReplace(@NotNull PsiElement newElement) {
         return super.replace(newElement);

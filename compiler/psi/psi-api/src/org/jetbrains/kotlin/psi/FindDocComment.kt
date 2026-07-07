@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.psi.KtDeclarationModifierList
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 
+/**
+ * Returns the [KDoc] comment attached to the given [declaration], or `null` if it has none (or the declaration belongs
+ * to a compiled file, where doc comments are not available).
+ */
 fun findDocComment(declaration: KtDeclaration): KDoc? {
     val containingFile = declaration.containingFile
     if (containingFile is KtFile && containingFile.isCompiled) {

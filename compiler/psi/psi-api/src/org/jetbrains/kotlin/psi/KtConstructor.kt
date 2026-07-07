@@ -16,6 +16,27 @@ import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
+/**
+ * Represents a constructor of a class or object.
+ *
+ * This is the common base for the concrete node types [KtPrimaryConstructor] and [KtSecondaryConstructor]. A
+ * constructor is a [KtFunction] with value parameters and (for secondary constructors) a body, but it has no name,
+ * receiver, return type, or type parameters of its own.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * class Foo(val x: Int) {
+ * //       ^__________^
+ * //       The primary constructor
+ *     constructor() : this(0)
+ * //  ^_____________________^
+ * //  A secondary constructor
+ * }
+ * ```
+ *
+ * @param T the concrete constructor node type, used by the stub machinery
+ */
 abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinConstructorStub<T>>, KtFunction {
     protected constructor(node: ASTNode) : super(node)
     protected constructor(
@@ -23,6 +44,9 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
         nodeType: KtStubElementType<out KotlinConstructorStub<T>, T>,
     ) : super(stub, nodeType)
 
+    /**
+     * Returns the class or object that this constructor belongs to.
+     */
     abstract fun getContainingClassOrObject(): KtClassOrObject
 
     override fun isLocal() = false
@@ -49,6 +73,10 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
 
     override fun hasBlockBody() = hasBody()
 
+    /**
+     * Returns `true` if this constructor delegates to another constructor of the same class (`: this(...)`), rather
+     * than to a superclass constructor. For a primary constructor this is always `false`.
+     */
     fun isDelegatedCallToThis(): Boolean {
         greenStub?.let { return it.isDelegatedCallToThis }
         return when (this) {
@@ -58,6 +86,10 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
         }
     }
 
+    /**
+     * Returns `true` if this constructor has an explicit delegation call written in the source (`: this(...)` or
+     * `: super(...)`). For a primary constructor this is always `false`.
+     */
     fun isExplicitDelegationCall(): Boolean {
         greenStub?.let { return it.isExplicitDelegationCall }
         return when (this) {
@@ -99,8 +131,15 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
 
     override fun getPresentation() = ItemPresentationProviders.getItemPresentation(this)
 
+    /**
+     * Returns the `constructor` keyword, or `null` if it is omitted (for a primary constructor without modifiers or
+     * annotations the keyword is optional).
+     */
     open fun getConstructorKeyword(): PsiElement? = findChildByType(KtTokens.CONSTRUCTOR_KEYWORD)
 
+    /**
+     * Returns `true` if this constructor has the `constructor` keyword.
+     */
     fun hasConstructorKeyword(): Boolean = stub != null || getConstructorKeyword() != null
 
     override fun mayHaveContract(): Boolean {

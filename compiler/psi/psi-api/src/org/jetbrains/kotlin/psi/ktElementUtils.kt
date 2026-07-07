@@ -16,6 +16,10 @@
 
 package org.jetbrains.kotlin.psi
 
+/**
+ * If this expression is a lambda expression, or wraps one in a label or an annotation, returns that
+ * [KtLambdaExpression]; otherwise returns `null`. Parentheses are unwrapped only when [allowParentheses] is `true`.
+ */
 fun KtExpression.unpackFunctionLiteral(allowParentheses: Boolean = false): KtLambdaExpression? {
     return when (this) {
         is KtLambdaExpression -> this

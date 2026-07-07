@@ -13,8 +13,23 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.utils.sure
 
+/**
+ * Represents an anonymous initializer: a piece of code that runs during initialization without introducing a named
+ * declaration.
+ *
+ * This is the common base for the concrete node types [KtClassInitializer] (an `init` block in a class or object) and
+ * [KtScriptInitializer] (a top-level statement in a script).
+ */
 interface KtAnonymousInitializer : KtDeclaration, KtStatementExpression {
+    /**
+     * The class, object, or script that this initializer belongs to.
+     */
     val containingDeclaration: KtDeclaration
+
+    /**
+     * The code executed by this initializer (typically a [KtBlockExpression]), or `null` if it is absent in incomplete
+     * code.
+     */
     val body: KtExpression?
 }
 
@@ -43,9 +58,15 @@ class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitia
     override val body: KtExpression?
         get() = findChildByClass(KtExpression::class.java)
 
+    /**
+     * The opening brace of the `init` block's body, or `null` if the body is not a block.
+     */
     val openBraceNode: PsiElement?
         get() = (body as? KtBlockExpression)?.lBrace
 
+    /**
+     * The `init` keyword introducing this block.
+     */
     val initKeyword: PsiElement
         get() = findChildByType(KtTokens.INIT_KEYWORD)!!
 

@@ -32,12 +32,22 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitTypeAlias(this, data)
 
+    /**
+     * Returns `true` if this type alias is declared directly at the top level of a file.
+     */
     fun isTopLevel(): Boolean = greenStub?.isTopLevel ?: isKtFile(parent)
 
+    /**
+     * Returns the `typealias` keyword, or `null` if it is absent in incomplete code.
+     */
     @IfNotParsed
     fun getTypeAliasKeyword(): PsiElement? =
         findChildByType(KtTokens.TYPE_ALIAS_KEYWORD)
 
+    /**
+     * Returns the type reference on the right-hand side of `=` (the aliased type), or `null` if it is absent in
+     * incomplete code.
+     */
     @IfNotParsed
     fun getTypeReference(): KtTypeReference? =
         @Suppress("DEPRECATION") // KT-78356

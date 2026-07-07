@@ -24,7 +24,18 @@ import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Static helpers for navigating the Kotlin PSI in a way that also works over stubs.
+ *
+ * <p>The platform's {@link PsiTreeUtil} operates on the AST tree, which forces a stub-backed element to be parsed.
+ * The methods here (such as {@link #getContainingDeclaration} and {@link #getPsiOrStubParent}) instead walk the stub
+ * hierarchy when one is available, avoiding unnecessary parsing.
+ */
 public final class KtStubbedPsiUtil {
+    /**
+     * Returns the nearest enclosing {@link KtDeclaration} of the given element (excluding the element itself), or
+     * {@code null} if there is none.
+     */
     @Nullable
     public static KtDeclaration getContainingDeclaration(@NotNull PsiElement element) {
         return getPsiOrStubParent(element, KtDeclaration.class, true);
