@@ -25,13 +25,14 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import java.util.List;
 
 /**
- * A group of annotation entries applied to the same use-site target. Can be used to avoid writing use-site target multiple times.
- * <p>
- * Syntax examples:
- * <ul>
- *     <li>{@code @file:[Annotation1, Annotation2]}</li>
- *     <li>{@code @set:[Inject, Autowire]}</li>
- * </ul>
+ * Represents a bracketed group of annotation entries applied to the same use-site target, which avoids repeating the
+ * target for each entry.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ *    @set:[Inject, Autowire]
+ * // ^_____________________^
+ * }</pre>
  * <p>
  * For a single annotation entry, see {@link KtAnnotationEntry}.
  */

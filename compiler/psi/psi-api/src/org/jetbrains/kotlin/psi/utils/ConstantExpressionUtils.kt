@@ -34,7 +34,7 @@ fun hasUnsignedNumericLiteralSuffix(text: String): Boolean {
 }
 
 /**
- * Checks whether the [text] representation of a number literal has both along and unsigned number suffixes.
+ * Checks whether the [text] representation of a number literal has both a long and an unsigned number suffix.
  */
 fun hasUnsignedLongNumericLiteralSuffix(text: String): Boolean {
     return text.endsWith("ul") || text.endsWith("uL") ||

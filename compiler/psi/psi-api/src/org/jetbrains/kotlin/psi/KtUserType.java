@@ -34,8 +34,8 @@ import java.util.List;
  *
  * <pre>{@code
  * val list: List<String> = listOf()
- * //        ^^^^^^^^^^^^  resolves to `kotlin.collections.List`
- * //             ^^^^^^   resolves to `kotlin.String`
+ * //        ^^^^^^^^^^^^  resolves to kotlin.collections.List
+ * //             ^^^^^^   resolves to kotlin.String
  * }</pre>
  *
  * <p><b>Note:</b> a {@link KtUserType} may also resolve to a {@code KaPackageSymbol} when it appears as the
@@ -44,9 +44,9 @@ import java.util.List;
  *
  * <pre>{@code
  * val foo: one.two.TopLevel = ...
- * //       ^^^^^^^           resolves to the package `one.two`
- * //       ^^^                 resolves to the package `one`
- * //               ^^^^^^^^  resolves to the class `one.two.TopLevel`
+ * //       ^^^^^^^           resolves to the package one.two
+ * //       ^^^                 resolves to the package one
+ * //               ^^^^^^^^  resolves to the class one.two.TopLevel
  * }</pre>
  */
 public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements KtTypeElement, KtResolvable {

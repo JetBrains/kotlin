@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.psi;
 
 /**
  * This is an interface to show that {@link KtExpression} is not
- * actually an expression (in meaning that this expression can be placed after "val x = ").
- * This is possibly redundant interface, all inheritors of this interface should be refactored that they are not
+ * actually an expression (in the sense that this expression can be placed after "val x = ").
+ * This is a possibly redundant interface; all inheritors of this interface should be refactored so that they are not
  * {@link KtExpression}, after such refactoring, this interface can be removed.
  */
 public interface KtStatementExpression {

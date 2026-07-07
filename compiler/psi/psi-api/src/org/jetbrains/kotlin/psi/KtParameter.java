@@ -191,7 +191,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     }
 
     private <T extends PsiElement> boolean checkParentOfParentType(Class<T> klass) {
-        // `parent` is supposed to be [KtParameterList]
+        // `parent` is supposed to be KtParameterList
         PsiElement parent = getParent();
         if (parent == null) {
             return false;
@@ -209,7 +209,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
      *   fun foo() {}
      * </pre>
      *
-     * @return true whether this [KtParameter] is a context parameter.
+     * @return {@code true} if this {@link KtParameter} is a context parameter.
      *
      * @see KtContextParameterList
      */
@@ -218,22 +218,24 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     }
 
     /**
-     * For example,
+     * For example:
+     * <pre>{@code
      *   lambdaConsumer { lambdaParameter ->
      *     ...
      *   }
      *
-     * @return [true] if this [KtParameter] is a parameter of a lambda.
+     * @return {@code true} if this {@link KtParameter} is a parameter of a lambda.
      */
     public boolean isLambdaParameter() {
         return checkParentOfParentType(KtFunctionLiteral.class);
     }
 
     /**
-     * For example,
+     * For example:
+     * <pre>{@code
      *   fun foo(lambdaArgument: (functionTypeParameter: T, ...) -> R) { ... }
      *
-     * @return [true] if this [KtParameter] is a parameter of a function type.
+     * @return {@code true} if this {@link KtParameter} is a parameter of a function type.
      */
     public boolean isFunctionTypeParameter() {
         return checkParentOfParentType(KtFunctionType.class);

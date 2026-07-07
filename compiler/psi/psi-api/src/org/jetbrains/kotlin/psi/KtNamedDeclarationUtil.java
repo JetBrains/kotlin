@@ -34,7 +34,7 @@ public final class KtNamedDeclarationUtil {
     public static FqName getParentFqName(@NotNull KtNamedDeclaration namedDeclaration) {
         PsiElement parent = namedDeclaration.getParent();
         if (parent instanceof KtClassBody) {
-            // One nesting to KtClassBody doesn't affect to qualified name
+            // One nesting to KtClassBody doesn't affect the qualified name
             parent = KtPsiUtilKt.getContainingClassOrObject((KtClassBody)parent);
         }
 

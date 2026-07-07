@@ -54,7 +54,7 @@ internal object ClassIdCalculator {
     }
 
     /**
-     * A best-effort way to get the class id of expression's type without resolve.
+     * Infers the [ClassId] of the given constant expression's type from PSI only, without semantic resolution.
      */
     fun inferConstantExpressionClassIdByPsi(expression: KtConstantExpression): ClassId? {
         @Suppress("DEPRECATION") // KT-78356
