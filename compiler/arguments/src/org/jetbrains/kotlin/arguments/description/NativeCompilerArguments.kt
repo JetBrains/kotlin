@@ -892,7 +892,9 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
             deprecatedVersion = KotlinReleaseVersion.v2_4_20,
-            removedVersion = KotlinReleaseVersion.v2_5_0,
+            // The CLI arguments generation is broken if use a future `removedVersion`.
+            // TODO: uncomment after switching to 2.5 or after fixing of KT-87495
+            // removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 
