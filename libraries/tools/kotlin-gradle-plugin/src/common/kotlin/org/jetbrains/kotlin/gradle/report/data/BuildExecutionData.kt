@@ -16,7 +16,7 @@ data class BuildExecutionData(
     val failureMessages: List<String?>,
     val buildOperationRecord: Collection<BuildOperationRecord>,
 ) {
-    val aggregatedMetrics = BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>().also { acc ->
+    val aggregatedMetrics = BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>().also { acc ->
         buildOperationRecord.forEach { acc.addAll(it.buildMetrics) }
     }
 

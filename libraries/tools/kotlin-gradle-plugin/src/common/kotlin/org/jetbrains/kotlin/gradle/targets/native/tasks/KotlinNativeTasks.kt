@@ -844,7 +844,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     internal abstract val macroNamesCollectingMode: Property<MacroNamesCollectingMode>
 
     @get:Internal
-    val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
+    val metrics: Property<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
     private val isInIdeaSync = project.isInIdeaSync

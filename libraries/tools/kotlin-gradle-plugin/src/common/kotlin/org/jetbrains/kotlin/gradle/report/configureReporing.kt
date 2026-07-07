@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
 
-private val availableMetrics = getAllMetrics().map { it.name }.toSet()
+private val availableMetrics by lazy { getAllMetrics().map { it.name }.toSet() }
 
 internal fun reportingSettings(project: Project): ReportingSettings {
     val properties = PropertiesProvider(project)

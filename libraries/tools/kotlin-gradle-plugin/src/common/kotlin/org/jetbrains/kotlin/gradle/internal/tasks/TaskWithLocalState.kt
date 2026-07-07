@@ -19,7 +19,7 @@ internal interface TaskWithLocalState : Task {
     val localStateDirectories: ConfigurableFileCollection
 
     @get:Internal
-    val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>
+    val metrics: Property<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>
 }
 
 internal fun TaskWithLocalState.allOutputFiles(): List<File> =

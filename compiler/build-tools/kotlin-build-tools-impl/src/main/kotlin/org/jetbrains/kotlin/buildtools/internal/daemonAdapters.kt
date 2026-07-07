@@ -81,7 +81,7 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
 internal class DaemonCompilationResults(
     private val kotlinLogger: KotlinLogger,
     private val rootProjectDir: File?,
-    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>
+    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>
 ) : CompilationResults,
     UnicastRemoteObject(
         SOCKET_ANY_FREE_PORT,

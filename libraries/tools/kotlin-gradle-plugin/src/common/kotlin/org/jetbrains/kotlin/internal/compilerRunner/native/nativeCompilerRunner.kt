@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
 internal fun ObjectFactory.KotlinNativeCompilerRunner(
-    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>,
+    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     shouldDisableKonanDaemon: Provider<Boolean>,
     useXcodeMessageStyle: Provider<Boolean>,

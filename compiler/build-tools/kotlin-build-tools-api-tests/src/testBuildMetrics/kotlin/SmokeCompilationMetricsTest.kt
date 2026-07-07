@@ -166,7 +166,12 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             val bazKt = module1.sourcesDirectory.resolve("baz.kt")
             bazKt.writeText(bazKt.readText().replace("baz() = 42", "baz() = 99"))
 
-            module1.compileIncrementallyWithMetrics(SourcesChanges.Known(modifiedFiles = listOf(bazKt.toFile()), removedFiles = emptyList())) { metrics ->
+            module1.compileIncrementallyWithMetrics(
+                SourcesChanges.Known(
+                    modifiedFiles = listOf(bazKt.toFile()),
+                    removedFiles = emptyList()
+                )
+            ) { metrics ->
                 assertCompiledSources("baz.kt")
 
                 val expectedNames = Jvm.incrementalCompilationMetricNames + maybeGetDaemonMetricNames()
@@ -301,14 +306,23 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                 "Number of times classpath snapshot is shrunk and saved after compilation -> Size of shrunk classpath snapshot",
                 "Number of times classpath snapshot is shrunk and saved after compilation",
                 "Calculate output size",
+                "Start time of calculate output size",
                 "Run compilation -> Calculate initial dirty sources set",
+                "Start time of calculate initial dirty sources set",
                 "Run compilation -> Generate compiler reference index",
+                "Start time of generate compiler reference index",
                 "Run compilation -> Shrink and save current classpath snapshot after compilation -> Save shrunk current classpath snapshot",
+                "Start time of save shrunk current classpath snapshot",
                 "Run compilation -> Shrink and save current classpath snapshot after compilation",
+                "Start time of shrink and save current classpath snapshot after compilation",
                 "Run compilation -> Sources compilation round",
+                "Start time of sources compilation round",
                 "Run compilation -> Store build info",
+                "Start time of store build info",
                 "Run compilation -> Update caches",
+                "Start time of update caches",
                 "Run compilation",
+                "Start time of incremental compilation in daemon",
                 "Total size of the cache directory -> ABI snapshot size",
                 "Total size of the cache directory",
             )
@@ -316,28 +330,47 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             val incrementalRecompilationMetricNames = incrementalBaseMetricNames + setOf(
                 "Classpath snapshot not found (Rebuild reason)",
                 "Run compilation -> Clear outputs on rebuild",
+                "Start time of clear outputs on rebuild",
                 "Run compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally -> Load current classpath snapshot -> Remove duplicate classes",
+                "Start time of remove duplicate classes",
                 "Run compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally -> Load current classpath snapshot",
+                "Start time of load current classpath snapshot",
                 "Run compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally",
+                "Start time of shrink current classpath snapshot non-incrementally",
             )
 
             val incrementalCompilationMetricNames = incrementalBaseMetricNames + setOf(
                 "Number of times classpath changes are computed",
                 "Run compilation -> Calculate initial dirty sources set -> Analyze Android layouts",
+                "Start time of analyze Android layouts",
                 "Run compilation -> Calculate initial dirty sources set -> Analyze Java file changes",
+                "Start time of analyze Java file changes",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Compute changed and impacted set -> Compute class changes -> Compute Java class changes",
+                "Start time of compute Java class changes",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Compute changed and impacted set -> Compute class changes -> Compute Kotlin class changes",
+                "Start time of compute Kotlin class changes",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Compute changed and impacted set -> Compute class changes",
+                "Start time of compute class changes",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Compute changed and impacted set",
+                "Start time of compute changed and impacted set",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Load current classpath snapshot -> Remove duplicate classes",
+                "Start time of remove duplicate classes",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Load current classpath snapshot",
+                "Start time of load current classpath snapshot",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Load shrunk previous classpath snapshot",
+                "Start time of load shrunk previous classpath snapshot",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Shrink current classpath snapshot -> Find referenced classes",
+                "Start time of find referenced classes",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Shrink current classpath snapshot -> Find transitively referenced classes",
+                "Start time of find transitively referenced classes",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Shrink current classpath snapshot -> Get lookup symbols",
+                "Start time of get lookup symbols",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes -> Shrink current classpath snapshot",
+                "Start time of shrink current classpath snapshot",
                 "Run compilation -> Calculate initial dirty sources set -> Compute classpath changes",
-                "Run compilation -> Calculate initial dirty sources set -> Detect removed classes"
+                "Start time of compute classpath changes",
+                "Run compilation -> Calculate initial dirty sources set -> Detect removed classes",
+                "Start time of detect removed classes",
             )
         }
 

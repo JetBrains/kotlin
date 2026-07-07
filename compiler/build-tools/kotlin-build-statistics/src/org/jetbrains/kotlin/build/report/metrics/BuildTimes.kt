@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
 
-class BuildTimes<T : BuildTimeMetric> : Serializable {
+class BuildTimes<T : BuildTimeMetric<out BuildPerformanceMetric>> : Serializable {
     private val buildTimesNs = HashMap<T, Long>()
 
     fun addAll(other: BuildTimes<out T>) {

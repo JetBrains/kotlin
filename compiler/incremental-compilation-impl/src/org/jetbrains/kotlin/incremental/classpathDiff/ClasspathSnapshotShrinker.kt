@@ -114,7 +114,7 @@ internal object ClasspathSnapshotShrinker {
      * record different [BuildMetric]s (because the [BuildMetric.parent]s are different).
      */
     class MetricsReporter(
-        private val metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>? = null,
+        private val metrics: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>? = null,
         private val getLookupSymbols: GradleBuildTimeMetric? = null,
         private val findReferencedClasses: GradleBuildTimeMetric? = null,
         private val findTransitivelyReferencedClasses: GradleBuildTimeMetric? = null

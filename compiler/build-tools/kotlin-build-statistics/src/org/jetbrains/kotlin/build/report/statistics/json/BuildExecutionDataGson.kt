@@ -65,12 +65,12 @@ val buildExecutionDataGson = GsonBuilder()
             return CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name = metricName, parentMetric)
         }
 
-    }).registerTypeAdapter(BuildTimeMetric::class.java, object : JsonDeserializer<BuildTimeMetric> {
+    }).registerTypeAdapter(BuildTimeMetric::class.java, object : JsonDeserializer<BuildTimeMetric<out BuildPerformanceMetric>> {
         override fun deserialize(
             json: JsonElement?,
             typeOfT: Type?,
             context: JsonDeserializationContext?,
-        ): BuildTimeMetric? {
+        ): BuildTimeMetric<out BuildPerformanceMetric>? {
             val metricName = json?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) } ?: return null
             val parentMetricName =
                 json.asJsonObject["parent"]?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) }

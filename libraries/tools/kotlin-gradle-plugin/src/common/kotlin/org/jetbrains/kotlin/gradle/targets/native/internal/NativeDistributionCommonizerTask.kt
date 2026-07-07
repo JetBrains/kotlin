@@ -122,7 +122,7 @@ internal abstract class NativeDistributionCommonizerTask
         )
 
     @get:Internal
-    val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
+    val metrics: Property<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
     @get:Nested

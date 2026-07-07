@@ -72,7 +72,7 @@ internal constructor(
     override val rules: KotlinWebpackRulesContainer =
         project.objects.webpackRulesContainer()
 
-    private val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
+    private val metrics: Property<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>> = project.objects
         .property(BuildMetricsReporterImpl())
 
     @Suppress("unused")

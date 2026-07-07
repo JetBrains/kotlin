@@ -63,7 +63,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
-        val metricsReporter: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>
+        val metricsReporter: Property<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>
         val compilerDiagnosticsProblemsReporterFactory: Property<CompilerDiagnosticsProblemsReporter.Factory>
         val warningModeIsAll: Property<Boolean>
     }
@@ -262,7 +262,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
 private fun createRunner(
     toolchain: BtaToolchain,
     workArguments: GradleKotlinCompilerWorkArguments,
-    metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    metrics: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
 ): BtaCompilerRunner<*> {
     val icEnv = workArguments.incrementalCompilationEnvironment
     val outputDirs = workArguments.outputFiles.map(File::toPath)
