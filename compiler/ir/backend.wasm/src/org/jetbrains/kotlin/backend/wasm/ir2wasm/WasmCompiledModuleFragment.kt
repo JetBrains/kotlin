@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.wasm.wasmStartExportName
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
 import org.jetbrains.kotlin.backend.wasm.wasmInitializeExportName
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -154,7 +155,8 @@ class WasmCompiledModuleFragment(
         multimoduleOptions: MultimoduleCompileOptions?,
         exceptionTagType: ExceptionTagType,
         wasmCommandModuleInitialization: Boolean,
-        useStackSwitching: Boolean
+        useStackSwitching: Boolean,
+        importWasmMemoryInsteadOfExport: Boolean,
     ): WasmModule {
         val definedDeclarations = getDefinedDeclarationsFromFragments()
 
@@ -169,7 +171,12 @@ class WasmCompiledModuleFragment(
             exports.addAll(it.exports)
         }
 
-        val memories = createAndExportMemory(exports, multimoduleOptions?.stdlibModuleNameForImport)
+        val memories = createAndExportMemory(
+            importWasmMemoryInsteadOfExport = importWasmMemoryInsteadOfExport,
+            isStdlibOrMonolith = multimoduleOptions?.stdlibModuleNameForImport == null,
+            definedDeclarations = definedDeclarations,
+            exports = exports,
+        )
         val [importedMemories, definedMemories] = memories.partition { it.importPair != null }
 
         val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
@@ -449,15 +456,30 @@ class WasmCompiledModuleFragment(
         addAll(definedDeclarations.globalLiteralGlobals.values)
     }
 
-    private fun createAndExportMemory(exports: MutableList<WasmExport<*>>, stdlibModuleNameForImport: String?): List<WasmMemory> {
-        val memorySizeInPages = 0
-        val importPair = stdlibModuleNameForImport?.let { WasmImportDescriptor(it, WasmSymbol("memory")) }
-        val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), null/* "unlimited" */), importPair)
+    private fun createAndExportMemory(
+        importWasmMemoryInsteadOfExport: Boolean,
+        isStdlibOrMonolith: Boolean,
+        definedDeclarations: DefinedDeclarationsResolver,
+        exports: MutableList<WasmExport<*>>,
+    ): List<WasmMemory> {
+        if (!isStdlibOrMonolith) return emptyList()
 
-        // Need to export the memory in order to pass complex objects to the host language.
-        // Export name "memory" is a WASI ABI convention.
-        val exportMemory = WasmExport.Memory("memory", memory)
-        exports.add(exportMemory)
+        val memoryImport = importWasmMemoryInsteadOfExport.ifTrue {
+            WasmImportDescriptor("intrinsics", WasmSymbol("memory"))
+        }
+
+        val memorySizeInPages = 0
+        val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), null/* "unlimited" */), memoryImport)
+
+        if (importWasmMemoryInsteadOfExport) {
+            val memoryGlobal = WasmGlobal("memory", WasmExternRef, false, emptyList(), memoryImport)
+            definedDeclarations.globalFields[Synthetics.Globals.wasmMemoryGlobal.value] = memoryGlobal
+        } else {
+            // Need to export the memory in order to pass complex objects to the host language.
+            // Export name "memory" is a WASI ABI convention.
+            val exportMemory = WasmExport.Memory("memory", memory)
+            exports.add(exportMemory)
+        }
         return listOf(memory)
     }
 

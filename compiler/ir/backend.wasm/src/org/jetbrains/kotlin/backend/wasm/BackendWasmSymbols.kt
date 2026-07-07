@@ -450,6 +450,13 @@ class BackendWasmSymbols(
     }
 
     val invokeOnExportedFunctionExit get() = invokeOnExportedFunctionExitIfWasi ?: error("Cannot access to wasi related std in js mode")
+
+    val wasmMemoryInternalIfJsOrNull: IrSimpleFunctionSymbol? by run {
+        when (configuration.wasmTarget == WasmTarget.JS) {
+            true -> CallableIds.wasmMemoryInternal.functionSymbol()
+            else -> lazyOf(null)
+        }
+    }
 }
 
 private object ClassIds {
@@ -584,6 +591,7 @@ private object CallableIds {
     val nullableFloatIeee754Equals = "nullableFloatIeee754Equals".wasmCallableId
     val nullableDoubleIeee754Equals = "nullableDoubleIeee754Equals".wasmCallableId
     val returnArgumentIfItIsKotlinAny = "returnArgumentIfItIsKotlinAny".wasmCallableId
+    val wasmMemoryInternal = "wasmMemoryInternal".wasmCallableId
 
     val startCoroutineUninterceptedOrReturnIntrinsic0 = "startCoroutineUninterceptedOrReturnIntrinsic0".wasmCallableId
     val startCoroutineUninterceptedOrReturnIntrinsic1 = "startCoroutineUninterceptedOrReturnIntrinsic1".wasmCallableId
