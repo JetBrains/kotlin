@@ -13,7 +13,9 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
+import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApiKind
 import java.net.URI
 import java.time.Duration
 
@@ -32,6 +34,7 @@ interface BrowserTestRunnerConfigDsl {
      * Change it to a custom location to run tests from there.
      * The bundle location must be compatible with underlying browser test runners.
      */
+    @DelicateKotlinGradlePluginApi(kind = DelicateKotlinGradlePluginApiKind.REPLACES_DEFAULTS)
     val testsLocation: Property<KotlinJsTestsLocation>
 
     /**
@@ -65,6 +68,7 @@ interface BrowserTestRunnerConfigDsl {
      * Should not be used to get the default browser executable path.
      * Default is empty, meaning that the toolchain's default browser will be used.
      */
+    @DelicateKotlinGradlePluginApi(kind = DelicateKotlinGradlePluginApiKind.REPLACES_DEFAULTS)
     val customBrowserExecutable: RegularFileProperty
 }
 
@@ -89,7 +93,15 @@ interface KotlinJsTestsLocation {
     /**
      * Access prepared JS tests via http web server.
      * Already points to [testHtmlFileName].
+     *
+     * *Delicate API*:
+     * By default, URL points to the internal oversimplified web server launched by KGP as Shared Gradle Build Service.
+     * This web server is suitable for serving static files only for tests execution in browsers.
+     * The port is random and the host is localhost.
+     * It is not recommended to use this property outside the Test task.
+     * This URL is also used to attach the IDE debugger.
      */
+    @DelicateKotlinGradlePluginApi(kind = DelicateKotlinGradlePluginApiKind.REQUIRES_KNOWLEDGE)
     val url: Provider<URI>
 }
 
