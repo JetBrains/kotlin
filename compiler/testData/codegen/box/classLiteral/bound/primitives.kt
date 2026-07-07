@@ -41,15 +41,7 @@ fun box(): String {
     checkErased(Double::class, 3.14)
     checkErased(if (isKotlinJs) Double::class else Float::class, 2.72f)
     checkErased(Int::class, 42)
-    if (BACKEND_UNDER_TEST == "JS_IR") {
-        // FIXME(KT-87307): Remove this branch
-        assertEquals(Long::class, (42L as Any)::class)
-        assertNotEquals((42L as Any)::class, Long::class) // This is a bug!
-
-        assertEquals(Long::class.hashCode(), (42L as Any)::class.hashCode())
-    } else {
-        checkErased(Long::class, 42L)
-    }
+    checkErased(Long::class, 42L)
     checkErased(if (isKotlinJs) Int::class else Short::class, 42.toShort())
 
     return "OK"
