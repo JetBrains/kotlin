@@ -33,7 +33,7 @@ class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<Depend
 
     override fun containsAll(elements: Collection<DependencyNode>): Boolean = elements.all { it in this }
 
-    operator fun get(index: DependencyNodeIndex): DependencyNode? = indices[index]
+    operator fun get(index: DependencyNodeIndex): DependencyNode? = index.unwrap().firstNotNullOfOrNull { indices[it] }
 
     operator fun get(enclosingEntity: EnclosingEntity<*>): Sequence<DependencyNodeIndex> = entities[enclosingEntity].asSequence()
 
@@ -79,14 +79,14 @@ class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<Depend
         fun Set<DependencyNode>.condenseCycles(): Unit =
             this@condenseCycles.stronglyConnectedComponents().forEach { component ->
                 if (component.size == 1) return@forEach
+                // Preserve the flat structure of SCCs
+                val indices = sequence {
+                    component.forEach {
+                        yieldAll(it.index.unwrap())
+                    }
+                }.toSet()
                 val condensed = CompositeNode(
-                    // Preserve the flat structure of SCCs
-                    indices = component.flatMapTo(linkedSetOf()) {
-                        when (it) {
-                            is UnitNode -> setOf(it.index)
-                            is CompositeNode -> it.index.indices
-                        }
-                    },
+                    indices = indices,
                     entities = setMultimapOf<EnclosingEntity<*>, DependencyNodeIndex>().apply {
                         component.forEach { node ->
                             when (node) {
@@ -97,16 +97,26 @@ class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<Depend
                             }
                         }
                     },
+                    // Edges between nodes inside SCCs should have only one source and target index
                     subgraphFlow = setMultimapOf<DependencyNodeIndex, HappensBeforeEdge>().apply {
                         component.forEach { node ->
                             when (node) {
-                                is UnitNode -> node.happensAfterFlow.filter { it.holdsInAllExecutions }.forEach {
-                                    put(node.index, it)
+                                is UnitNode -> node.happensAfterFlow.filter { it.holdsInAllExecutions }.forEach { edge ->
+                                    edge.to.unwrap().forEach { target ->
+                                        put(node.index, MustHappenBefore(node.index, target))
+                                    }
                                 }
-                                is CompositeNode -> node.index.indices.forEach { index ->
+                                is CompositeNode -> node.index.unwrap().forEach { index ->
+                                    // Invariant: all subgraph edges have a single source and target index
                                     node.subgraphFlowFrom(index).forEach { put(index, it) }
                                     node.happensAfterFlow.filter { it.holdsInAllExecutions }.forEach { edge ->
-                                        put(index, MustHappenBefore(index, edge.to))
+                                        val sources = edge.from.unwrap()
+                                        val targets = edge.to.unwrap()
+                                        sources.forEach { source ->
+                                            targets.forEach { target ->
+                                                put(source, MustHappenBefore(source, target))
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -122,7 +132,17 @@ class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<Depend
             // Add the node to the graph
             graph.nodes.add(into)
             // Store this to allow lookups of composite nodes along happens-before paths
-            graph.indices[index] = into
+            index.indices.forEach { graph.indices[it] = into }
+            // Edges coming INTO the SCC should be merged if their source is the same, such that the target indices are exactly those
+            // that were directly connected to the source node with the original edge(s)
+            val incomingMergedMustFlow = mutableMapOf<DependencyNodeIndex, MustHappenBefore>()
+            val incomingMergedMayFlow = mutableMapOf<DependencyNodeIndex, MayHappenBefore>()
+            // Edges coming OUT of the SCC should be merged if their target is the same, such that the source indices are exactly those
+            // that were directly connected to the target node with the original edge(s)
+            val outgoingMergedMustFlow = mutableMapOf<DependencyNodeIndex, MustHappenBefore>()
+            val outgoingMergedMayFlow = mutableMapOf<DependencyNodeIndex, MayHappenBefore>()
+            // IMPORTANT: the equivalent back edges for the nodes inside the SCC that point outside the SCC should be kept, so the
+            // must-happens-before subgraphs are properly preserved
             // For each node in the set that was condensed, ...
             scc.forEach { node ->
                 // For each incoming happens-before edge, ...
@@ -134,22 +154,15 @@ class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<Depend
                         is MustHappenBefore -> {
                             // Skip edges which connect nodes in the SCC
                             if (edge.from in into) return@forEach
-                            val newEdge = MustHappenBefore(edge.from, index)
-                            into.insertIncomingEdge(newEdge)
-                            graph[edge.from]?.let { from ->
-                                from.removeOutgoingEdge(edge)
-                                from.insertOutgoingEdge(newEdge)
-                            }
+                            incomingMergedMustFlow[edge.from] = incomingMergedMustFlow[edge.from]?.merge(edge) ?: edge
+                            graph[edge.from]?.removeOutgoingEdge(edge)
                         }
                         is MayHappenBefore -> {
                             // Skip edges which connect nodes in the SCC
                             if (edge.from in into) return@forEach
-                            val newEdge = MayHappenBefore(edge.from, index)
-                            into.insertIncomingEdge(newEdge)
-                            graph[edge.from]?.let { from ->
-                                from.removeOutgoingEdge(edge)
-                                from.insertOutgoingEdge(newEdge)
-                            }
+                            // No need to merge, as we try to minimize the amount of may-happen-before edges
+                            incomingMergedMayFlow[edge.from] = MayHappenBefore(edge.from, index)
+                            graph[edge.from]?.removeOutgoingEdge(edge)
                         }
                     }
                 }
@@ -162,41 +175,40 @@ class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<Depend
                         is MustHappenBefore -> {
                             // Skip edges which connect nodes in the SCC
                             if (edge.to in into) return@forEach
-                            val newEdge = MustHappenBefore(index, edge.to)
-                            into.insertOutgoingEdge(newEdge)
-                            graph[edge.to]?.let { to ->
-                                to.removeIncomingEdge(edge)
-                                to.insertIncomingEdge(newEdge)
-                            }
+                            outgoingMergedMustFlow[edge.to] = outgoingMergedMustFlow[edge.to]?.merge(edge) ?: edge
+                            graph[edge.from]?.removeOutgoingEdge(edge)
                         }
                         is MayHappenBefore -> {
                             // Skip edges which connect nodes in the SCC
                             if (edge.to in into) return@forEach
-                            val newEdge = MayHappenBefore(index, edge.to)
-                            into.insertOutgoingEdge(newEdge)
-                            graph[edge.to]?.let { to ->
-                                to.removeIncomingEdge(edge)
-                                to.insertIncomingEdge(newEdge)
-                            }
+                            val actualTo = graph[edge.to]?.index ?: edge.to
+                            // No need to merge, as we try to minimize the amount of may-happen-before edges
+                            outgoingMergedMayFlow[actualTo] = MayHappenBefore(index, edge.to)
+                            graph[edge.from]?.removeOutgoingEdge(edge)
                         }
                     }
                 }
-                // Update the graph's indices, and for each (incoming) information edge, merge it into the new condensed node
-                when (node) {
-                    is UnitNode -> {
-                        // For unit nodes, we keep the mapping of their node indices to this condensed node,
-                        // as we require their presence in the graph for further analysis of their accesses
-                        graph.indices[node.index] = into
-                        node.informationFlow.forEach { into.insertIncomingEdge(it) }
-                    }
-                    is CompositeNode -> {
-                        // For composite nodes, they are only preserved through time dependencies, so once the node
-                        // is detached, it has no accesses by itself and can be safely removed from the graph
-                        graph.indices.remove(node.index)
-                        node.asSequence().flatMap { node.informationFlowInto(it) }
-                            .forEach { into.insertIncomingEdge(it) }
-                    }
+                // For each information edges, simply insert them to the condensed node
+                node.informationFlow.forEach { into.insertIncomingEdge(it) }
+                // For each merged edge, also insert them to the condensed node and the source/target nodes
+                incomingMergedMustFlow.forEach { [index, edge] ->
+                    into.insertIncomingEdge(edge)
+                    graph[index]?.insertOutgoingEdge(edge)
                 }
+                incomingMergedMayFlow.forEach { [index, edge] ->
+                    into.insertIncomingEdge(edge)
+                    graph[index]?.insertOutgoingEdge(edge)
+                }
+                outgoingMergedMustFlow.forEach { [index, edge] ->
+                    into.insertOutgoingEdge(edge)
+                    graph[index]?.insertIncomingEdge(edge)
+                }
+                outgoingMergedMayFlow.forEach { [index, edge] ->
+                    into.insertOutgoingEdge(edge)
+                    graph[index]?.insertIncomingEdge(edge)
+                }
+                // Composite nodes need to be removed from the dependency graph index
+                if (node.isComposite) graph.indices.remove(node.index)
                 // Dispose of the node
                 node.reset()
                 graph.nodes.remove(node)

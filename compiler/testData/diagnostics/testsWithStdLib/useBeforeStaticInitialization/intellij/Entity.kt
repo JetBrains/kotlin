@@ -14,6 +14,10 @@ sealed class Attributes() {
     protected fun optionalTransient(): Optional = Optional()
 
     protected fun requiredRef(): Required = Required()
+
+    protected fun requiredValue(): Required = Required()
+
+    protected fun manyRef(): Many = Many()
 }
 
 interface Entity {
@@ -62,6 +66,16 @@ interface DocumentComponentEntity : Entity {
 
   companion object : Attributes() {
     val DocumentAttr: Required = requiredRef()
+  }
+}
+
+abstract class EntityType() : Attributes(), Entity {
+  companion object : EntityType() {
+    val Ident = requiredValue()
+
+    val PossibleAttributes = manyRef()
+
+    val Name = requiredValue()
   }
 }
 

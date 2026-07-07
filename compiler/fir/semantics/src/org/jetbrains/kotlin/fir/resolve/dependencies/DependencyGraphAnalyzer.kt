@@ -27,7 +27,7 @@ data class AnalysisResult(val type: InitializationCycleAccessResult, val accesse
 class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSessionComponent {
 
     context(accessingEntity: EnclosingEntity<*>?, cycle: CompositeNode)
-    private fun analyze(
+    private fun analyzeTransitively(
         initial: DependencyNodeIndex,
         node: DependencyNodeIndex,
         visited: MutableSet<DependencyNodeIndex> = mutableSetOf()
@@ -52,17 +52,18 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
                 else -> false
             }
             when (val result = from.accessAnalysisResult) {
-                is InitializationCycleAccessResult.DeadlockInducingConstructorCall -> {
-                    yield(result)
-                    yieldAll(analyze(initial, from, visited.toMutableSet()))
-                }
-                InitializationCycleAccessResult.PropagatesTransitiveDependencies -> yieldAll(analyze(initial, from, visited.toMutableSet()))
-                InitializationCycleAccessResult.Safe -> continue
-                else if inOrderAccess -> when {
-                    analyze(initial, from, visited.toMutableSet()).any { it !is InitializationCycleAccessResult.Safe } -> yield(result)
+                null -> continue
+                is InitializationCycleAccessResult.ReportedAndPoisoning if inOrderAccess -> when {
+                    analyzeTransitively(initial, from, visited.toMutableSet())
+                        .any { it is InitializationCycleAccessResult.ReportedAndPoisoning } -> yield(result)
                     else -> continue
                 }
-                else -> yield(result)
+                is InitializationCycleAccessResult.ReportedAndPoisoning -> yield(result)
+                is InitializationCycleAccessResult.Reported -> {
+                    yield(result)
+                    yieldAll(analyzeTransitively(initial, from, visited.toMutableSet()))
+                }
+                else -> yieldAll(analyzeTransitively(initial, from, visited.toMutableSet()))
             }
         }
     }
@@ -82,6 +83,7 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
      * initializes the singleton object instance but gets invoked BEFORE it is assigned to the field. The same goes for enum entries and
      * companion objects in enum classes.
      */
+    context(accessingEntity: EnclosingEntity<*>?)
     private fun accessingUninitializedEntityAt(accessedNode: AccessibleIndex, cycle: CompositeNode): InitializationCycleAccessResult? {
         // Even though constructors (may) statically initialize their containing classes, there is no actual access to their (initialized)
         // declarations whatsoever
@@ -89,6 +91,7 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
         val accessedEntity = accessedNode.enclosingEntity
             ?: accessedNode.lazilyInitialized
             ?: return null
+        if (accessedEntity == accessingEntity) return null
         // We consider 2 cases when such accesses might arise:
         return when {
             // If the accessed entity is nested under an interface...
@@ -100,43 +103,42 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
         }
     }
 
-    fun performAccessAnalysis(node: DependencyNodeIndex): Sequence<AnalysisResult> =
-        (dependencyGraph[node] as? CompositeNode)?.let { cycle ->
-            val accessingEntity = node.enclosingEntity
-            context(accessingEntity, cycle) {
-                val informationFlow = cycle.informationFlowInto(node)
-                sequence {
-                    for ([from, _, accesses] in informationFlow) {
-                        accessingUninitializedEntityAt(from, cycle)?.let {
-                            yield(it with accesses)
-                            continue
+    fun analyze(node: DependencyNodeIndex): Sequence<AnalysisResult> = (dependencyGraph[node] as? CompositeNode)?.let { cycle ->
+        val accessingEntity = node.enclosingEntity
+        context(accessingEntity, cycle) {
+            val informationFlow = cycle.informationFlowInto(node)
+            sequence {
+                for ([from, _, accesses] in informationFlow) {
+                    accessingUninitializedEntityAt(from, cycle)?.let {
+                        yield(it with accesses)
+                        continue
+                    }
+                    if (from !in cycle) continue
+                    val inOrderAccess = when {
+                        from.enclosingEntity?.let { it == accessingEntity } ?: false ->
+                            // In-order references must be allowed
+                            from != node && from.subgraphFlowDescendants().any { it == node }
+                        else -> false
+                    }
+                    when (val result = from.accessAnalysisResult) {
+                        null -> continue
+                        is InitializationCycleAccessResult.ReportedAndPoisoning if inOrderAccess -> when {
+                            analyzeTransitively(node, from, mutableSetOf(node))
+                                .any { it is InitializationCycleAccessResult.ReportedAndPoisoning } -> yield(result with accesses)
+                            else -> continue
                         }
-                        if (from !in cycle) continue
-                        val inOrderAccess = when {
-                            from.enclosingEntity?.let { it == accessingEntity } ?: false ->
-                                // In-order references must be allowed
-                                from != node && from.subgraphFlowDescendants().any { it == node }
-                            else -> false
+                        is InitializationCycleAccessResult.ReportedAndPoisoning -> yield(result with accesses)
+                        is InitializationCycleAccessResult.Reported -> {
+                            yield(result with accesses)
+                            analyzeTransitively(node, from, mutableSetOf(node))
+                                .forEach { yield(it with accesses) }
                         }
-                        when (val result = from.accessAnalysisResult) {
-                            is InitializationCycleAccessResult.DeadlockInducingConstructorCall -> {
-                                yield(result with accesses)
-                                analyze(node, from, mutableSetOf(node)).forEach { yield(it with accesses) }
-                            }
-                            InitializationCycleAccessResult.PropagatesTransitiveDependencies ->
-                                analyze(node, from, mutableSetOf(node)).forEach { yield(it with accesses) }
-                            InitializationCycleAccessResult.Safe -> continue
-                            else if inOrderAccess -> when {
-                                analyze(node, from, mutableSetOf(node)).any { it !is InitializationCycleAccessResult.Safe } ->
-                                    yield(result with accesses)
-                                else -> continue
-                            }
-                            else -> yield(result with accesses)
-                        }
+                        else -> analyzeTransitively(node, from, mutableSetOf(node)).forEach { yield(it with accesses) }
                     }
                 }
             }
-        } ?: emptySequence()
+        }
+    } ?: emptySequence()
 
     fun mutuallyDependentEntities(enclosingEntity: EnclosingEntity<*>): Sequence<EnclosingEntity<*>> =
         when {

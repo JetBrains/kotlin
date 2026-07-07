@@ -115,9 +115,7 @@ sealed class DependencyNodeBuilder(internal val context: DependencyGraphBuilderC
     infix fun DependencyNodeIndex.mustHappenBefore(to: DependencyNodeIndex): Boolean = let { index ->
         when {
             index != to && index in context.dependencyGraph && to in context.dependencyGraph -> {
-                val actualFrom = context.dependencyGraph[index]?.index ?: return false
-                val actualTo = context.dependencyGraph[to]?.index ?: return false
-                addEdge(MustHappenBefore(actualFrom, actualTo))
+                addEdge(MustHappenBefore(index, to))
             }
             else -> false
         }
@@ -126,9 +124,7 @@ sealed class DependencyNodeBuilder(internal val context: DependencyGraphBuilderC
     infix fun DependencyNodeIndex.mayHappenBefore(to: DependencyNodeIndex): Boolean = let { index ->
         when {
             index != to && index in context.dependencyGraph && to in context.dependencyGraph -> {
-                val actualFrom = context.dependencyGraph[index]?.index ?: return false
-                val actualTo = context.dependencyGraph[to]?.index ?: return false
-                addEdge(MayHappenBefore(actualFrom, actualTo))
+                addEdge(MayHappenBefore(index, to))
             }
             else -> false
         }
@@ -143,16 +139,16 @@ class DependencyGraphBuilder(
 
     inline fun <D : FirDeclaration, E : EnclosingEntity<D>> E.buildClinitSubgraph(crossinline init: StaticInitializationSubgraphBuilder<D, E>.() -> Unit = {}) {
         // Build the subgraph using the initializer
-        beginInitializationIndex.buildNode()
         StaticInitializationSubgraphBuilder(this@DependencyGraphBuilder, this).apply {
+            beginInitializationIndex.buildSubgraphNode()
             init()
             endInitializationIndex.buildSubgraphNode()
         }
     }
 
     inline fun <C : FirClass> FirClassSymbol<C>.buildInitSubgraph(crossinline init: InstanceInitializationSubgraphBuilder<C>.() -> Unit = {}) {
-        BeginInstanceInitializationIndex(this).buildNode()
         InstanceInitializationSubgraphBuilder(this@DependencyGraphBuilder, this).apply {
+            BeginInstanceInitializationIndex(this@buildInitSubgraph).buildSubgraphNode()
             init()
             EndInstanceInitializationIndex(this@buildInitSubgraph).buildSubgraphNode()
         }
