@@ -1,6 +1,7 @@
 package hair.sym
 
 enum class HairType {
+    VOID,
     NOTHING,
     BOOLEAN,
     BYTE,
@@ -16,19 +17,20 @@ enum class HairType {
 
     val isIntegral
         get() = when (this) {
-            HairType.BOOLEAN -> true
+            BOOLEAN -> true
 
-            HairType.BYTE,
-            HairType.SHORT,
-            HairType.INT,
-            HairType.LONG -> true
+            BYTE,
+            SHORT,
+            INT,
+            LONG -> true
 
-            HairType.FLOAT,
-            HairType.DOUBLE -> false
+            FLOAT,
+            DOUBLE -> false
 
-            HairType.REFERENCE,
-            HairType.NATIVE_POINTER -> true
+            REFERENCE,
+            NATIVE_POINTER -> true
 
-            HairType.NOTHING -> error("Should not reach here $this")
+            NOTHING,
+            VOID -> error("Should not reach here $this")
         }
 }
