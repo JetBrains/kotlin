@@ -24,6 +24,7 @@ class KtIntersectionType : KtElementImplStub<KotlinPlaceHolderStub<KtIntersectio
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinPlaceHolderStub<KtIntersectionType>) : super(stub, KtStubBasedElementTypes.INTERSECTION_TYPE)
 
+    /** Always empty: an intersection type has no type arguments (its operands are [getLeftTypeRef] and [getRightTypeRef]). */
     override fun getTypeArgumentsAsTypes(): List<KtTypeReference> = emptyList()
 
     /**

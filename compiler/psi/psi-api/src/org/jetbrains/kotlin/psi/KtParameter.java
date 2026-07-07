@@ -273,42 +273,49 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return checkParentOfParentType(KtFunctionType.class);
     }
 
+    /** Always {@code null}: a parameter does not itself take value parameters. */
     @Nullable
     @Override
     public KtParameterList getValueParameterList() {
         return null;
     }
 
+    /** Always empty: a parameter does not itself take value parameters. */
     @NotNull
     @Override
     public List<KtParameter> getValueParameters() {
         return Collections.emptyList();
     }
 
+    /** Always {@code null}: a parameter cannot have an extension receiver. */
     @Nullable
     @Override
     public KtTypeReference getReceiverTypeReference() {
         return null;
     }
 
+    /** Always {@code null}: a parameter cannot declare type parameters. */
     @Nullable
     @Override
     public KtTypeParameterList getTypeParameterList() {
         return null;
     }
 
+    /** Always {@code null}: a parameter cannot have a {@code where} clause. */
     @Nullable
     @Override
     public KtTypeConstraintList getTypeConstraintList() {
         return null;
     }
 
+    /** Always empty: a parameter has no type constraints. */
     @NotNull
     @Override
     public List<KtTypeConstraint> getTypeConstraints() {
         return Collections.emptyList();
     }
 
+    /** Always empty: a parameter cannot declare type parameters. */
     @NotNull
     @Override
     public List<KtTypeParameter> getTypeParameters() {

@@ -166,6 +166,7 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
         return KtPsiUtilKt.getTrailingCommaByClosingElement(getRPar());
     }
 
+    /** Always {@code null}: a destructuring declaration has no type reference of its own. */
     @Nullable
     @Override
     public KtTypeReference getTypeReference() {

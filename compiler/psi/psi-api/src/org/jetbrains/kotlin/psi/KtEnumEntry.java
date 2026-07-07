@@ -59,6 +59,7 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
         return !getSuperTypeListEntries().isEmpty();
     }
 
+    /** Always {@code null}: an enum entry is not a class semantically, so it has no {@link ClassId}. */
     @Nullable
     @Override
     public ClassId getClassId() {
@@ -143,6 +144,7 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
         return visitor.visitEnumEntry(this, data);
     }
 
+    /** Always {@code null}: an enum entry has no type reference. */
     @Nullable
     @Override
     public KtTypeReference getTypeReference() {

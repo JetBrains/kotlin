@@ -49,6 +49,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
      */
     abstract fun getContainingClassOrObject(): KtClassOrObject
 
+    /** Always `false`: a constructor is never a local declaration. */
     override fun isLocal() = false
 
     override fun getValueParameterList() =
@@ -57,8 +58,10 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
 
     override fun getValueParameters() = valueParameterList?.parameters ?: emptyList()
 
+    /** Always `null`: a constructor cannot be an extension, so it has no receiver type. */
     override fun getReceiverTypeReference() = null
 
+    /** Always `null`: a constructor has no return-type reference. */
     override fun getTypeReference() = null
 
     @Suppress("OVERRIDE_DEPRECATION")
@@ -67,8 +70,13 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
 
     override fun getColon() = findChildByType<PsiElement>(KtTokens.COLON)
 
+    /**
+     * A constructor's body is always a [KtBlockExpression] (a constructor cannot have an expression body); `null` if it
+     * has no body. The base implementation returns `null`; [KtSecondaryConstructor] overrides it.
+     */
     override fun getBodyExpression(): KtBlockExpression? = null
 
+    /** Always `null`: a constructor cannot have an expression body, so there is no `=` token. */
     override fun getEqualsToken() = null
 
     override fun hasBlockBody() = hasBody()
@@ -104,24 +112,32 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
         return bodyExpression != null
     }
 
+    /** Always `false`: a constructor never declares a return type. */
     override fun hasDeclaredReturnType() = false
 
+    /** Always `null`: a constructor cannot declare type parameters. */
     override fun getTypeParameterList() = null
 
+    /** Always `null`: a constructor cannot have a `where` clause. */
     override fun getTypeConstraintList() = null
 
+    /** Always empty: a constructor has no type constraints. */
     override fun getTypeConstraints() = emptyList<KtTypeConstraint>()
 
+    /** Always empty: a constructor cannot declare type parameters. */
     override fun getTypeParameters() = emptyList<KtTypeParameter>()
 
+    /** A constructor has no name of its own; returns the name of its [containing class][getContainingClassOrObject]. */
     override fun getName(): String? = getContainingClassOrObject().name
 
     override fun getNameAsSafeName() = KtPsiUtil.safeName(name)
 
+    /** Always `null`: a constructor has no fully qualified name of its own. */
     override fun getFqName() = null
 
     override fun getNameAsName() = nameAsSafeName
 
+    /** Always `null`: a constructor has no name identifier. */
     override fun getNameIdentifier() = null
 
     override fun getIdentifyingElement(): PsiElement? = getConstructorKeyword()

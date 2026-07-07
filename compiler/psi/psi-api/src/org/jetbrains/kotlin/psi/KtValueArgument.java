@@ -131,6 +131,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         return getSpreadElement() != null;
     }
 
+    /** Always {@code false}: a value argument written in source is never an external (synthetic) argument. */
     @Override
     public boolean isExternal() {
         return false;

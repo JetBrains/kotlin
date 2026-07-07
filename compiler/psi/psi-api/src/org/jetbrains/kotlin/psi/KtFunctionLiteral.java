@@ -29,16 +29,19 @@ public class KtFunctionLiteral extends KtFunctionNotStubbed {
         super(node);
     }
 
+    /** Always {@code false}: the block/expression-body distinction does not apply to a function literal. */
     @Override
     public boolean hasBlockBody() {
         return false;
     }
 
+    /** A function literal is anonymous; returns the special anonymous name rather than a source name. */
     @Override
     public String getName() {
         return SpecialNames.ANONYMOUS_STRING;
     }
 
+    /** Always {@code null}: a function literal is anonymous and has no name identifier. */
     @Override
     public PsiElement getNameIdentifier() {
         return null;
@@ -52,11 +55,13 @@ public class KtFunctionLiteral extends KtFunctionNotStubbed {
         return findChildByType(KtTokens.ARROW) != null;
     }
 
+    /** A function literal's body is always a {@link KtBlockExpression} (a lambda cannot have an expression body). */
     @Override
     public KtBlockExpression getBodyExpression() {
         return (KtBlockExpression) super.getBodyExpression();
     }
 
+    /** Always {@code null}: a function literal cannot have an expression body, so there is no {@code =} token. */
     @Nullable
     @Override
     public PsiElement getEqualsToken() {
@@ -89,6 +94,7 @@ public class KtFunctionLiteral extends KtFunctionNotStubbed {
         return findChildByType(KtTokens.ARROW);
     }
 
+    /** Always {@code null}: a function literal is anonymous and has no fully qualified name. */
     @Nullable
     @Override
     public FqName getFqName() {

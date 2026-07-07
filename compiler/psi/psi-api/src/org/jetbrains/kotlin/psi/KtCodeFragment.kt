@@ -95,6 +95,7 @@ abstract class KtCodeFragment(
 
     override fun isPhysical() = viewProvider.isEventSystemEnabled
 
+    /** Always `true`: a code fragment is synthetic and always considered valid. */
     override fun isValid() = true
 
     override fun getContext(): PsiElement? {

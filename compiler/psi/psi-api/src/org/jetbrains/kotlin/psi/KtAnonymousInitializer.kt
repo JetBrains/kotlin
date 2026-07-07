@@ -70,6 +70,7 @@ class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitia
     val initKeyword: PsiElement
         get() = findChildByType(KtTokens.INIT_KEYWORD)!!
 
+    /** The [KtClassOrObject] that declares this `init` block. */
     override val containingDeclaration: KtClassOrObject
         get() = getParentOfType<KtClassOrObject>(true).sure { "Should only be present in class or object" }
 }
@@ -93,6 +94,7 @@ class KtScriptInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtScriptInit
     override val body: KtExpression?
         get() = findChildByClass(KtExpression::class.java)
 
+    /** The [KtScript] that contains this top-level script initializer. */
     override val containingDeclaration: KtScript
         get() = getParentOfType<KtScript>(true).sure { "Should only be present in script" }
 

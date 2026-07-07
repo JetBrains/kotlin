@@ -81,6 +81,7 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
         return list != null ? list.getArguments() : Collections.<KtValueArgument>emptyList();
     }
 
+    /** Always empty: an annotation entry cannot have trailing lambda arguments. */
     @NotNull
     @Override
     public List<KtLambdaArgument> getLambdaArguments() {

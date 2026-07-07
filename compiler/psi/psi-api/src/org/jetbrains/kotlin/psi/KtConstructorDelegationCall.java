@@ -47,18 +47,21 @@ public class KtConstructorDelegationCall extends KtElementImpl implements KtCall
         return list != null ? list.getArguments() : Collections.<KtValueArgument>emptyList();
     }
 
+    /** Always empty: a constructor delegation call ({@code this(...)} / {@code super(...)}) takes no trailing lambda arguments. */
     @NotNull
     @Override
     public List<KtLambdaArgument> getLambdaArguments() {
         return Collections.emptyList();
     }
 
+    /** Always empty: a constructor delegation call takes no type arguments. */
     @NotNull
     @Override
     public List<KtTypeProjection> getTypeArguments() {
         return Collections.emptyList();
     }
 
+    /** Always {@code null}: a constructor delegation call has no type argument list. */
     @Override
     public KtTypeArgumentList getTypeArgumentList() {
         return null;

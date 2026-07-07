@@ -95,12 +95,14 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         return isKtFile(getParent());
     }
 
+    /** Always {@code null}: a property has no value parameter list. */
     @Nullable
     @Override
     public KtParameterList getValueParameterList() {
         return null;
     }
 
+    /** Always empty: a property has no value parameters. */
     @NotNull
     @Override
     public List<KtParameter> getValueParameters() {
