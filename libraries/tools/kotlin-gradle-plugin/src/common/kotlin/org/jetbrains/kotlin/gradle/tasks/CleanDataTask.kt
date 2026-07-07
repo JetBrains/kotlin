@@ -11,6 +11,8 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.utils.property
+import java.time.Instant
 
 /**
  * Task to clean all old unused loaded files from [storeProvider].
@@ -26,7 +28,8 @@ open class CleanDataTask : DefaultTask() {
     @Suppress("DEPRECATION_ERROR")
     @Deprecated("Scheduled for removal in Kotlin 2.4", level = DeprecationLevel.ERROR)
     @Input
-    lateinit var cleanableStoreProvider: Provider<org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore>
+    var cleanableStoreProvider: Provider<org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore> =
+        project.objects.property(CleanableStoreObject)
 
     /**
      * Time to live in days
@@ -47,6 +50,22 @@ open class CleanDataTask : DefaultTask() {
 
         @InternalKotlinGradlePluginApi
         fun deprecationMessage(taskPath: String) = "The task '$taskPath' is deprecated. Scheduled for removal in Kotlin 2.4."
-    }
 
+        @Suppress("DEPRECATION_ERROR")
+        private object CleanableStoreObject : org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore {
+            private fun readResolve(): Any = CleanableStoreObject
+            override fun cleanDir(expirationDate: Instant) {
+                throw UnsupportedOperationException("CleanableStore is scheduled for removal in Kotlin 2.4")
+            }
+
+            override fun get(fileName: String): org.jetbrains.kotlin.gradle.tasks.internal.DownloadedFile {
+                throw UnsupportedOperationException("CleanableStore is scheduled for removal in Kotlin 2.4")
+            }
+
+            override fun markUsed() {
+                throw UnsupportedOperationException("CleanableStore is scheduled for removal in Kotlin 2.4")
+            }
+        }
+    }
 }
+
