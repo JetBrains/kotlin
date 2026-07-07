@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.maven
 
 import org.jetbrains.kotlin.maven.test.*
 import org.junit.jupiter.api.DisplayName
+import org.w3c.dom.Element
 
 @DisplayName("KAPT annotation processing")
 class KaptIT : KotlinMavenTestBase() {
@@ -33,6 +34,40 @@ class KaptIT : KotlinMavenTestBase() {
     fun testKaptGenerateKotlinCode(mavenVersion: TestVersions.Maven) {
         val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
         testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
+            build(
+                "package", "-X",
+                expectedToFail = false
+            ) {
+                assertBuildLogContains(
+                    "[INFO] [kapt] Kapt is enabled.",
+                    "[INFO] [kapt] Annotation processors: example.ExampleAnnotationProcessor"
+                )
+                assertJarExistsAndNotEmpty("app/target/app-1.0-SNAPSHOT.jar")
+                assertFileExists(
+                    "app/target/generated-sources/kaptKotlin/compile/MyClass.kt"
+                ) { "KAPT-generated Kotlin extension file was not found" }
+            }
+        }
+    }
+
+    @MavenTest
+    @DisplayName("KAPT generates Kotlin code from annotation processor using direct stub generation mode")
+    fun testKaptGenerateKotlinCodeUsingDirectStubMode(mavenVersion: TestVersions.Maven) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
+            modifyPomXml("app/pom.xml") {
+                val kotlinPluginConfig = findKotlinPlugin()
+                val executions = kotlinPluginConfig.getElementsByTagName("executions")
+                val kaptConfiguration = sequence {
+                    for (i in 0 until executions.length) {
+                        yield(executions.item(i) as Element)
+                    }
+                }.first {
+                    it.getElementsByTagName("id").item(0)?.textContent == "kapt"
+                }.getElementsByTagName("configuration").item(0) as Element
+                kaptConfiguration.setAttribute("stubGenerationScheme", "direct")
+            }
+
             build(
                 "package", "-X",
                 expectedToFail = false

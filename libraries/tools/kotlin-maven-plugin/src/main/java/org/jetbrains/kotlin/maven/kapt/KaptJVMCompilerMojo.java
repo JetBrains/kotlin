@@ -65,6 +65,20 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Parameter
     private boolean mapDiagnosticLocations = false;
 
+    private enum StubGenerationScheme {
+        // NOTE: these values are intentionally lowercase
+        jtree,
+        direct,
+    }
+
+    /**
+     * Selects how kapt generates Java stubs.
+     * {@code jtree} is the historical scheme that uses javac AST and will be deprecated eventually.
+     * {@code direct} is a new experimental scheme that generates Java text directly.
+     */
+    @Parameter(property = "kapt.stub.generation.scheme", defaultValue = "jtree")
+    private StubGenerationScheme stubGenerationScheme;
+
     @Parameter
     private List<String> annotationProcessorArgs;
 
@@ -116,6 +130,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         options.add(new KaptOption("useLightAnalysis", useLightAnalysis));
         options.add(new KaptOption("correctErrorTypes", correctErrorTypes));
         options.add(new KaptOption("mapDiagnosticLocations", mapDiagnosticLocations));
+        options.add(new KaptOption("stubGenerationScheme", stubGenerationScheme.name()));
         options.add(new KaptOption("processors", annotationProcessors));
 
         if (includeCompileClasspath != null) {
