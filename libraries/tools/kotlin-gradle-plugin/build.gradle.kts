@@ -38,6 +38,7 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl",
                 "org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation",
                 "org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl",
+                "org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi",
             )
         )
     }
