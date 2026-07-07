@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -71,7 +71,7 @@ class Fir2IrLazyConstructor(
         get() = SpecialNames.INIT
         set(_) = mutationNotSupported()
 
-    override var visibility: DescriptorVisibility = c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+    override var visibility: Visibility = fir.visibility
         set(_) = mutationNotSupported()
 
     override var returnType: IrType by lazyVar(lock) {

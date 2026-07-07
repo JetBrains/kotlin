@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COPY
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage.DataValueClassGeneratedMembersInfo
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
@@ -172,7 +172,7 @@ class Fir2IrDataClassMembersGenerator(
                 endOffset = UNDEFINED_OFFSET,
                 origin = origin,
                 name = name,
-                visibility = DescriptorVisibilities.PUBLIC,
+                visibility = Visibilities.Public,
                 isInline = false,
                 isExpect = false,
                 returnType = returnType,

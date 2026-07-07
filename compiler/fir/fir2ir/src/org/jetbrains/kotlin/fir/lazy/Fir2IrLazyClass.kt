@@ -70,12 +70,12 @@ class Fir2IrLazyClass(
 
     // We need to make it lazy at the moment, because the lazy classes are created for REPL in such a way, that the origin may be
     // updated after the object creation (but before visibility checks)
-    private val _visibility: DescriptorVisibility by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        if (origin == IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET) DescriptorVisibilities.PUBLIC
-        else c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+    private val _visibility: Visibility by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        if (origin == IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET) Visibilities.Public
+        else fir.visibility
     }
 
-    override var visibility: DescriptorVisibility
+    override var visibility: Visibility
         get() = _visibility
         set(_) = mutationNotSupported()
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
@@ -311,7 +311,7 @@ class AdapterGenerator(
                 IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             },
             name = name,
-            visibility = DescriptorVisibilities.LOCAL,
+            visibility = Visibilities.Local,
             isInline = firMemberAdaptee.isInline,
             isExpect = false,
             returnType = if (isSetter) builtins.unitType else adaptedType.arguments.last().typeOrNull ?: builtins.anyNType,
@@ -771,7 +771,7 @@ class AdapterGenerator(
             endOffset = endOffset,
             origin = IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION,
             name = Name.identifier(conversionScope.scope().inventNameForTemporary("suspendConversion")),
-            visibility = DescriptorVisibilities.LOCAL,
+            visibility = Visibilities.Local,
             isInline = false,
             isExpect = false,
             returnType = returnType,
@@ -897,7 +897,7 @@ class AdapterGenerator(
             endOffset = endOffset,
             origin = IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR,
             name = callableSymbol.name,
-            visibility = DescriptorVisibilities.LOCAL,
+            visibility = Visibilities.Local,
             isInline = false,
             isExpect = false,
             returnType = irSamType,

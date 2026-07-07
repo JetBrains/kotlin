@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
@@ -76,8 +76,8 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         set(value) = check(value == null, ::mutationNotSupported)
 
     @Suppress("LeakingThis")
-    override var visibility: DescriptorVisibility by lazyVar(lock) {
-        c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+    override var visibility: Visibility by lazyVar(lock) {
+        fir.visibility
     }
 
     override var modality: Modality

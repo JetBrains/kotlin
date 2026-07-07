@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.toIrType
@@ -51,7 +51,7 @@ class Fir2IrLazyTypeAlias(
         get() = fir.name
         set(_) = mutationNotSupported()
 
-    override var visibility: DescriptorVisibility = c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+    override var visibility: Visibility = fir.visibility
         set(_) = mutationNotSupported()
 
     override var isActual: Boolean

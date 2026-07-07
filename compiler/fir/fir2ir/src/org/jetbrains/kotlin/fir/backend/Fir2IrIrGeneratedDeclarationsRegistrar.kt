@@ -101,9 +101,9 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             moduleData = session.moduleData
             origin = GeneratedForMetadata.origin
             status = FirResolvedDeclarationStatusImpl(
-                irFunction.visibility.delegate,
+                irFunction.visibility,
                 irFunction.modality,
-                irFunction.visibility.delegate.toEffectiveVisibility(owner = null)
+                irFunction.visibility.toEffectiveVisibility(owner = null)
             ).apply {
                 isExpect = irFunction.isExpect
                 isActual = false
@@ -143,9 +143,9 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             moduleData = session.moduleData
             origin = GeneratedForMetadata.origin
             status = FirResolvedDeclarationStatusImpl(
-                irConstructor.visibility.delegate,
+                irConstructor.visibility,
                 Modality.FINAL,
-                irConstructor.visibility.delegate.toEffectiveVisibility(owner = null)
+                irConstructor.visibility.toEffectiveVisibility(owner = null)
             ).apply {
                 isExpect = irConstructor.isExpect
                 isActual = false
@@ -189,9 +189,9 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 isVar = irProperty.isVar
                 isVal = !irProperty.isVar
                 status = FirResolvedDeclarationStatusImpl(
-                    irBf.visibility.delegate,
+                    irBf.visibility,
                     Modality.FINAL,
-                    irBf.visibility.delegate.toEffectiveVisibility(owner = null)
+                    irBf.visibility.toEffectiveVisibility(owner = null)
                 )
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
             }
@@ -201,9 +201,9 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             moduleData = session.moduleData
             origin = GeneratedForMetadata.origin
             status = FirResolvedDeclarationStatusImpl(
-                irProperty.visibility.delegate,
+                irProperty.visibility,
                 irProperty.modality,
-                irProperty.visibility.delegate.toEffectiveVisibility(owner = null)
+                irProperty.visibility.toEffectiveVisibility(owner = null)
             ).apply {
                 isExpect = irProperty.isExpect
                 isActual = false
@@ -273,9 +273,9 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 moduleData = session.moduleData
                 origin = GeneratedForMetadata.origin
                 status = FirResolvedDeclarationStatusImpl(
-                    irGetter.visibility.delegate,
+                    irGetter.visibility,
                     irGetter.modality,
-                    irGetter.visibility.delegate.toEffectiveVisibility(owner = null)
+                    irGetter.visibility.toEffectiveVisibility(owner = null)
                 ).apply {
                     isExpect = irGetter.isExpect
                     isActual = false
@@ -320,9 +320,9 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     moduleData = session.moduleData
                     origin = GeneratedForMetadata.origin
                     status = FirResolvedDeclarationStatusImpl(
-                        irSetter.visibility.delegate,
+                        irSetter.visibility,
                         irSetter.modality,
-                        irSetter.visibility.delegate.toEffectiveVisibility(owner = null)
+                        irSetter.visibility.toEffectiveVisibility(owner = null)
                     ).apply {
                         isExpect = irSetter.isExpect
                         isActual = false
@@ -384,9 +384,9 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             name = irClass.name
             symbol = firClassSymbol
             status = FirResolvedDeclarationStatusImpl(
-                irClass.visibility.delegate,
+                irClass.visibility,
                 irClass.modality,
-                irClass.visibility.delegate.toEffectiveVisibility(owner = null),
+                irClass.visibility.toEffectiveVisibility(owner = null),
             ).apply {
                 isExpect = irClass.isExpect
                 isActual = false

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -276,7 +276,7 @@ class IrBuiltInsOverFir(
             endOffset = UNDEFINED_OFFSET,
             origin = origin,
             name = Name.identifier(name),
-            visibility = DescriptorVisibilities.PUBLIC,
+            visibility = Visibilities.Public,
             isInline = false,
             isExpect = false,
             returnType = returnType,

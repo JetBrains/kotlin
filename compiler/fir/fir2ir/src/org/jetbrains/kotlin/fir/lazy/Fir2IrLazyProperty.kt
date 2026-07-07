@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.isAnnotationClass
@@ -94,7 +94,7 @@ class Fir2IrLazyProperty(
         get() = fir.name
         set(_) = mutationNotSupported()
 
-    override var visibility: DescriptorVisibility = c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+    override var visibility: Visibility = fir.visibility
         set(_) = mutationNotSupported()
 
     override var modality: Modality
@@ -148,7 +148,7 @@ class Fir2IrLazyProperty(
                 fir,
                 IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
                 symbols.backingFieldSymbol,
-                c.visibilityConverter.convertToDescriptorVisibility(visibility),
+                visibility,
                 fir.name,
                 fir.isVal,
                 initializer,
@@ -164,7 +164,7 @@ class Fir2IrLazyProperty(
                 fir,
                 IrDeclarationOrigin.PROPERTY_DELEGATE,
                 symbols.backingFieldSymbol,
-                c.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
+                fir.visibility,
                 NameUtils.propertyDelegateName(fir.name),
                 true,
                 fir.delegate
@@ -177,7 +177,7 @@ class Fir2IrLazyProperty(
                 fir,
                 IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
                 symbols.backingFieldSymbol,
-                c.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
+                fir.visibility,
                 fir.name,
                 fir.isVal,
                 fir.initializer,

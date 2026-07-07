@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.backend.common.actualizer.IrMissingActualDeclarationProvider
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -140,7 +140,7 @@ class LenientModeMissingActualDeclarationProvider(
             origin = IrDeclarationOrigin.STUB_FOR_LENIENT,
             symbol = IrConstructorSymbolImpl(),
             name = SpecialNames.INIT,
-            visibility = DescriptorVisibilities.PRIVATE,
+            visibility = Visibilities.Private,
             isInline = false,
             returnType = clazz.defaultType,
             isPrimary = true,

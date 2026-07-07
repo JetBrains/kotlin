@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
@@ -91,7 +91,7 @@ class Fir2IrLazyPropertyForPureField(
         get() = this.field.name
         set(_) = mutationNotSupported()
 
-    override var visibility: DescriptorVisibility
+    override var visibility: Visibility
         get() = this.field.visibility
         set(_) = mutationNotSupported()
 

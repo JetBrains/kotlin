@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
@@ -297,7 +296,7 @@ class Fir2IrConverter(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
                 conversionData.methodName,
-                DescriptorVisibilities.PUBLIC,
+                Visibilities.Public,
                 isInline = false,
                 isExpect = false,
                 computeCodeFragmentReturnType(codeFragment),
