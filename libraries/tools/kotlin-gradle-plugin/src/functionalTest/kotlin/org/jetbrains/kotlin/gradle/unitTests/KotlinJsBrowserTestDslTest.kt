@@ -42,7 +42,7 @@ class KotlinJsBrowserTestDslTest {
             expected = mapOf(
                 "chromium" to RunnerDump(
                     type = KotlinChromiumTestRunner::class,
-                    timeout = 2L.seconds,
+                    timeout = 30L.seconds,
                     headless = true,
                     launchArgs = emptyList(),
                     launchEnvironmentVariables = mapOf(),
@@ -58,7 +58,7 @@ class KotlinJsBrowserTestDslTest {
                 ),
                 "firefox" to RunnerDump(
                     type = KotlinFirefoxTestRunner::class,
-                    timeout = 2L.seconds,
+                    timeout = 30L.seconds,
                     headless = true,
                     launchArgs = emptyList(),
                     launchEnvironmentVariables = mapOf(),
@@ -66,7 +66,7 @@ class KotlinJsBrowserTestDslTest {
                 ),
                 "webkit" to RunnerDump(
                     type = KotlinWebkitTestRunner::class,
-                    timeout = 2L.seconds,
+                    timeout = 30L.seconds,
                     headless = true,
                     launchArgs = emptyList(),
                     launchEnvironmentVariables = mapOf(),
@@ -74,7 +74,7 @@ class KotlinJsBrowserTestDslTest {
                 ),
                 "extra-webkit" to RunnerDump(
                     type = KotlinWebkitTestRunner::class,
-                    timeout = 2L.seconds,
+                    timeout = 30L.seconds,
                     headless = true,
                     launchArgs = emptyList(),
                     launchEnvironmentVariables = mapOf(),
@@ -167,7 +167,7 @@ class KotlinJsBrowserTestDslTest {
             mapOf(
                 "repeated" to RunnerDump(
                     type = KotlinChromiumTestRunner::class,
-                    timeout = 2L.seconds,
+                    timeout = 30L.seconds,
                     headless = false,
                     launchArgs = listOf("--flag"),
                     launchEnvironmentVariables = mapOf(),

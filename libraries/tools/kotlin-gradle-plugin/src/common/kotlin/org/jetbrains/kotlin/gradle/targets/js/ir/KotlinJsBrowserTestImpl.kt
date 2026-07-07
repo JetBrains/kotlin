@@ -120,7 +120,7 @@ internal abstract class KotlinJsBrowserTestImpl
 
     override val headless: Property<Boolean> = objects.propertyWithConvention<Boolean>(true)
 
-    override val timeout: Property<Duration> = objects.propertyWithConvention<Duration>(2L.seconds)
+    override val timeout: Property<Duration> = objects.propertyWithConvention<Duration>(30L.seconds)
 
     private fun connectTopLevelConfigDslWithBrowserTestDsl(browserLevelDsl: KotlinBrowserTestRunnerDsl) {
         browserLevelDsl.testsLocation.convention(testsLocation)

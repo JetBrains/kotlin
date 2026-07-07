@@ -94,7 +94,6 @@ private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     name.convention(runner.name)
     testsLocation.convention(runner.testsLocation)
     // map to java duration is necessary because Gradle Task fingerprints doesn't work with kotlin.time.Duration
-    // https://github.com/gradle/gradle/issues/38444
     timeout.convention(runner.timeout.map { it.toJavaDuration() })
     headless.convention(runner.headless)
     launchArgs.convention(runner.launchArgs)
