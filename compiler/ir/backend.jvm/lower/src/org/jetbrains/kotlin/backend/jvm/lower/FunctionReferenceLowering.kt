@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.indy.*
 import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -242,7 +242,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         private val functionReferenceClass = context.irFactory.buildClass {
             setSourceRange(irFunctionReference)
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
             // A callable reference results in a synthetic class, while a lambda is not synthetic.
             // We don't produce GENERATED_SAM_IMPLEMENTATION, which is always synthetic.
             origin = if (isLambda) JvmLoweredDeclarationOrigin.LAMBDA_IMPL else JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
@@ -583,7 +583,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             context.irFactory.buildField {
                 name = Name.identifier("receiver")
                 type = context.irBuiltIns.anyNType
-                visibility = DescriptorVisibilities.PROTECTED
+                visibility = Visibilities.Protected
             }.apply {
                 parent = this@getReceiverField
             }

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.INLINE_CLASS
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -534,7 +534,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         // Add the default primary constructor
         val primaryConstructor = valueClass.addConstructor {
             updateFrom(irConstructor)
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
         }.apply {
             copyFunctionSignatureFrom(irConstructor)

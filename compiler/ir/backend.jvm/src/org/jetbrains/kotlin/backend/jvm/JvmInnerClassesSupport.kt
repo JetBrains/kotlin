@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
@@ -29,7 +29,7 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
                 name = Name.identifier("this$0")
                 type = innerClass.parentAsClass.defaultType
                 origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
-                visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                visibility = JavaVisibilities.PackageVisibility
                 isFinal = true
             }.apply {
                 parent = innerClass

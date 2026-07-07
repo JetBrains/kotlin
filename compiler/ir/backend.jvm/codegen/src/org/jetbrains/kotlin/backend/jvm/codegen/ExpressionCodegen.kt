@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -291,7 +291,7 @@ class ExpressionCodegen(
         if (config.isParamAssertionsDisabled)
             return
 
-        if ((DescriptorVisibilities.isPrivate(irFunction.visibility) && !shouldGenerateNonNullAssertionsForPrivateFun(irFunction)) ||
+        if ((Visibilities.isPrivate(irFunction.visibility) && !shouldGenerateNonNullAssertionsForPrivateFun(irFunction)) ||
             irFunction.origin.isSynthetic ||
             irFunction.origin == IrDeclarationOrigin.INLINE_LAMBDA ||
             // TODO: refine this condition to not generate nullability assertions on parameters
@@ -319,7 +319,7 @@ class ExpressionCodegen(
         // Private operator functions have null only on the extension receiver
         // see `DescriptorAsmUtil.genNotNullAssertionsForParameters`.
         val isPrivateOperatorFunction =
-            DescriptorVisibilities.isPrivate(irFunction.visibility) && irFunction is IrSimpleFunction && irFunction.isOperator
+            Visibilities.isPrivate(irFunction.visibility) && irFunction is IrSimpleFunction && irFunction.isOperator
 
         for (parameter in irFunction.parameters) {
             when (parameter.kind) {
@@ -1534,7 +1534,7 @@ class ExpressionCodegen(
         // we do not inline into @JvmStatic wrappers to keep bytecode smaller, but for private ones
         // inlining is preferred (compared to the necessity in extra access-method)
         fun IrFunction.isNonPrivateJvmStaticWrapper() =
-            origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER && visibility != DescriptorVisibilities.PRIVATE
+            origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER && visibility != Visibilities.Private
 
         if (!element.symbol.owner.isInlineFunctionCall(context) ||
             classCodegen.irClass.fileParent.fileEntry is MultifileFacadeFileEntry ||

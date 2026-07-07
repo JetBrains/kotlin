@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -163,7 +163,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         // Only overrides may need bridges and so in particular, private and static functions do not.
         // Note that this includes the static replacements for inline class functions (which are static, but have
         // overriddenSymbols in order to produce correct signatures in the type mapper).
-        if (DescriptorVisibilities.isPrivate(visibility) || isStatic || overriddenSymbols.isEmpty())
+        if (Visibilities.isPrivate(visibility) || isStatic || overriddenSymbols.isEmpty())
             return null
 
         // None of the methods of Any have type parameters and so we will not need bridges for them.

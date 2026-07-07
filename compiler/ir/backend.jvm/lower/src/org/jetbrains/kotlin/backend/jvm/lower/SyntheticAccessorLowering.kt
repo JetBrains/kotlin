@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.IndyLambdaMetafactoryLowering.Companion.getLambdaMetafactoryIndyImplFunctionRefOrNull
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 @PhasePrerequisites(ObjectClassLowering::class, StaticDefaultFunctionLowering::class, InterfaceLowering::class)
@@ -71,7 +71,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
             if (declarationRaw is IrConstructor && declarationRaw.constructedClass.isEnumEntry) return true
 
             // Public declarations are already accessible. However, `super` calls are subclass-only.
-            val jvmVisibility = AsmUtil.getVisibilityAccessFlag(declarationRaw.visibility.delegate)
+            val jvmVisibility = AsmUtil.getVisibilityAccessFlag(declarationRaw.visibility)
             if (jvmVisibility == Opcodes.ACC_PUBLIC && !withSuper) return true
 
             // `toArray` is always accessible cause mapped to public functions
@@ -205,8 +205,8 @@ private class SyntheticAccessorTransformer(
         if (!isAccessible(false, thisSymbol))
             return false
 
-        if (owner.visibility != DescriptorVisibilities.PROTECTED &&
-            owner.visibility != JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
+        if (owner.visibility != Visibilities.Protected &&
+            owner.visibility != JavaVisibilities.ProtectedStaticVisibility
         ) {
             return true
         }
@@ -280,11 +280,11 @@ private class SyntheticAccessorTransformer(
         when {
             accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(declaration) -> {
                 accessorGenerator.getSyntheticConstructorWithMangledParams(declaration).save()
-                declaration.visibility = DescriptorVisibilities.PRIVATE
+                declaration.visibility = Visibilities.Private
             }
             accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(declaration) -> {
                 accessorGenerator.getSyntheticConstructorOfSealedClass(declaration).save()
-                declaration.visibility = DescriptorVisibilities.PRIVATE
+                declaration.visibility = Visibilities.Private
             }
         }
         return super.visitConstructor(declaration)

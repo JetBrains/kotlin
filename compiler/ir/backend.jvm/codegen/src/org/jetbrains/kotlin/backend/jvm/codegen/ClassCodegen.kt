@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_FLAG
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG
@@ -277,13 +277,13 @@ class ClassCodegen private constructor(
 
     private fun generateKotlinMetadataAnnotation() {
         fun addSyntheticClassVisibilityFlags(extraFlags: Int): Int {
-            val normalizedVisibilityForSyntheticClass: DescriptorVisibility =
-                if (irClass.isOriginallyLocal && irClass.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY) {
+            val normalizedVisibilityForSyntheticClass: Visibility =
+                if (irClass.isOriginallyLocal && irClass.visibility == JavaVisibilities.PackageVisibility) {
                     // `package-private` is used for lambdas for historical reasons, but we want them to be
                     // normalized to `local` instead of `protected`
-                    DescriptorVisibilities.LOCAL
+                    Visibilities.Local
                 } else irClass.visibility.normalize()
-            val visibilityFlagsValue = ProtoEnumFlags.visibility(normalizedVisibilityForSyntheticClass.delegate).number
+            val visibilityFlagsValue = ProtoEnumFlags.visibility(normalizedVisibilityForSyntheticClass).number
             val maxVisibilityBits =
                 1 + JvmAnnotationNames.METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_LAST - JvmAnnotationNames.METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_FIRST
             assert(visibilityFlagsValue in 0 until (1 shl maxVisibilityBits)) { "Visibility flag value is out of range: $visibilityFlagsValue" }
@@ -640,7 +640,7 @@ private fun IrField.isPrivateCompanionFieldInInterface(languageVersionSettings: 
     origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
             languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
             parentAsClass.isJvmInterface &&
-            DescriptorVisibilities.isPrivate(parentAsClass.companionObject()!!.visibility)
+            Visibilities.isPrivate(parentAsClass.companionObject()!!.visibility)
 
 private val IrDeclarationOrigin.flags: Int
     get() = (if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
@@ -653,8 +653,8 @@ private val Modality.flags: Int
         Modality.OPEN -> 0
     }
 
-private val DescriptorVisibility.flags: Int
-    get() = AsmUtil.getVisibilityAccessFlag(delegate) ?: throw AssertionError("Unsupported visibility $this")
+private val Visibility.flags: Int
+    get() = AsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
 
 // From `isAnonymousClass` in inlineCodegenUtils.kt
 private val Type.isAnonymousClass: Boolean

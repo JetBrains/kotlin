@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.coroutines.normalize
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -143,7 +143,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
         context.irFactory.buildClass {
             name = SpecialNames.NO_NAME_PROVIDED
             origin = JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
         }.apply {
             this.parent = parent
             createThisReceiverParameter()
@@ -174,7 +174,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                 },
             )
 
-            addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaDescriptorVisibilities.PACKAGE_VISIBILITY)
+            addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaVisibilities.PackageVisibility)
             val varsCountByType = HashMap<Type, Int>()
 
             val parametersFields = function.parameters.map {
@@ -189,8 +189,8 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                     origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                     isFinal = false
                     visibility =
-                        if (it.origin == BOUND_RECEIVER_PARAMETER || it.origin == IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER) DescriptorVisibilities.PRIVATE
-                        else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                        if (it.origin == BOUND_RECEIVER_PARAMETER || it.origin == IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER) Visibilities.Private
+                        else JavaVisibilities.PackageVisibility
                 } else null
                 ParameterInfo(field, unboxedType, it.type, it.name, it.origin)
             }
@@ -382,7 +382,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             origin = JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
             isPrimary = true
             returnType = defaultType
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
         }.also { constructor ->
             val completionParameterSymbol = constructor.addCompletionValueParameter()
             val superClassConstructor = superClass.constructors.single {

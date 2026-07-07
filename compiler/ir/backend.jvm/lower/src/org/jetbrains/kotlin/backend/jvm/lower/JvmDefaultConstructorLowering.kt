@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.hasMangledParameters
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.irBlockBody
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.util.passTypeArgumentsFrom
 @PhasePrerequisites(JvmOverloadsAnnotationLowering::class)
 internal class JvmDefaultConstructorLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        if (irClass.kind != ClassKind.CLASS || irClass.visibility == DescriptorVisibilities.LOCAL ||
+        if (irClass.kind != ClassKind.CLASS || irClass.visibility == Visibilities.Local ||
             (irClass.isInlineClass) || irClass.isInner || irClass.modality == Modality.SEALED
         )
             return
@@ -43,7 +43,7 @@ internal class JvmDefaultConstructorLowering(val context: JvmBackendContext) : C
             return
 
         val primaryConstructor = irClass.constructors.firstOrNull { it.isPrimary } ?: return
-        if (DescriptorVisibilities.isPrivate(primaryConstructor.visibility))
+        if (Visibilities.isPrivate(primaryConstructor.visibility))
             return
 
         if (primaryConstructor.parameters.any { !it.hasDefaultValue() })

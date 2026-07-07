@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -61,7 +61,7 @@ fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode,
     val implementation = resolveFakeOverride(isFakeOverride = ::isFakeOverrideOrDefaultImplsBridge) ?: return null
 
     if (!implementation.hasInterfaceParent()
-        || DescriptorVisibilities.isPrivate(implementation.visibility)
+        || Visibilities.isPrivate(implementation.visibility)
         || implementation.isMethodOfAny()
         || implementation.isBridge()
     ) {

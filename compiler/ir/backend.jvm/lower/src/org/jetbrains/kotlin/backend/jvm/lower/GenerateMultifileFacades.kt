@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -111,7 +111,7 @@ private fun generateMultifileFacades(
                 superTypes = listOf(superClass.typeWith())
 
                 addConstructor {
-                    visibility = DescriptorVisibilities.PRIVATE
+                    visibility = Visibilities.Private
                     isPrimary = true
                 }.also { constructor ->
                     constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
@@ -174,7 +174,7 @@ private fun modifyMultifilePartsForHierarchy(context: JvmBackendContext, parts: 
 
     for ([klass, superClass] in parts.zip(superClasses)) {
         klass.modality = Modality.OPEN
-        klass.visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+        klass.visibility = JavaVisibilities.PackageVisibility
 
         klass.superTypes = listOf(superClass.typeWith())
 
@@ -207,7 +207,7 @@ private fun moveFieldsOfConstProperties(partClass: IrClass, facadeClass: IrClass
 
 private fun IrField.shouldMoveToFacade(): Boolean {
     val property = correspondingPropertySymbol?.owner
-    return property != null && property.isConst && !DescriptorVisibilities.isPrivate(visibility)
+    return property != null && property.isConst && !Visibilities.isPrivate(visibility)
 }
 
 private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
@@ -220,7 +220,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
 
     val originalVisibility = defaultArgumentsOriginalFunction?.visibility ?: visibility
 
-    if (DescriptorVisibilities.isPrivate(originalVisibility) ||
+    if (Visibilities.isPrivate(originalVisibility) ||
         name == StaticInitializersLowering.clinitName ||
         origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR ||
         origin == IrDeclarationOrigin.INLINE_LAMBDA ||

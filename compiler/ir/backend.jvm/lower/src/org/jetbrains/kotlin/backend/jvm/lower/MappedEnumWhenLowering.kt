@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.findEnumValuesFunction
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.isPublicAbi
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -80,7 +80,7 @@ internal class MappedEnumWhenLowering(override val context: JvmBackendContext) :
             context.irFactory.buildClass {
                 name = Name.identifier("WhenMappings")
                 origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_WHEN
-                visibility = DescriptorVisibilities.LOCAL
+                visibility = Visibilities.Local
             }.apply {
                 createThisReceiverParameter()
             }

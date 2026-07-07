@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
@@ -54,7 +54,7 @@ class IrSourceCompilerForInline(
                 // In K1, evaluatorData?.evaluatorGeneratedFunction == null, but it's OK as in K1 non-public-api object inlining error
                 // does not appear in the first place, since all is being compiled in the single module
                 evaluatorData?.evaluatorGeneratedFunction == rootFunction,
-                rootFunction.inlineScopeVisibility,
+                rootFunction.inlineScopeVisibility?.let(org.jetbrains.kotlin.descriptors.DescriptorVisibilities::toDescriptorVisibility),
                 rootFunction.fileParent.getIoFile(),
                 codegen.irFunction.fileParent.fileEntry.getLineNumber(callElement.startOffset),
             )
@@ -95,7 +95,7 @@ class IrSourceCompilerForInline(
                 jvmSignature.asmMethod,
                 callee.isSuspend,
                 callee.hasMangledReturnType,
-                codegen.context.evaluatorData != null && callee.visibility == DescriptorVisibilities.INTERNAL,
+                codegen.context.evaluatorData != null && callee.visibility == Visibilities.Internal,
                 state
             )
         }

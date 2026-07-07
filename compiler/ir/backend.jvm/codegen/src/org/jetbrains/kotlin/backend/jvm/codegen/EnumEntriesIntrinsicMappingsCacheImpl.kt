@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 
 // This class generates synthetic `$EntriesIntrinsicMappings` classes which cache the result of calling the `enumEntries` intrinsic
@@ -74,7 +74,7 @@ class EnumEntriesIntrinsicMappingsCacheImpl(
         for (klass in storage.values) {
             // Use the same origin and visibility for `<clinit>` as in StaticInitializersLowering.
             val clinit = klass.irClass.addFunction(
-                "<clinit>", context.irBuiltIns.unitType, visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
+                "<clinit>", context.irBuiltIns.unitType, visibility = JavaVisibilities.PackageVisibility,
                 isStatic = true, origin = JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
             )
             clinit.body = context.createIrBuilder(clinit.symbol).irBlockBody(clinit) {

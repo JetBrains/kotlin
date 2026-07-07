@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.rawType
 import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.backend.jvm.isPublicAbi
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 @PhasePrerequisites(
@@ -41,7 +41,7 @@ internal class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sin
         get() = allScopes.any { (it.irElement as? IrDeclaration)?.isInPublicInlineScope == true }
 
     override fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>) =
-        if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+        if (inInlineFunctionScope) Visibilities.Public else JavaVisibilities.PackageVisibility
 
     override fun getSuperTypeForWrapper(typeOperand: IrType): IrType =
         typeOperand.erasedUpperBound.rawType(specialAnnotations)
@@ -73,7 +73,7 @@ internal class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sin
             property.setter?.let(klass.declarations::add)
         }
 
-        if (klass.visibility != DescriptorVisibilities.LOCAL) {
+        if (klass.visibility != Visibilities.Local) {
             // Essentially, all SAM wrappers are local classes, but that visibility is lifted historically.
             klass.isOriginallyLocalDeclaration = true
         }

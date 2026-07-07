@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -99,7 +99,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         return jvmContext.irFactory.buildFun {
             name = Name.special("<anonymous>")
             returnType = typeSubstitutor.substitute(superMethod.returnType)
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
             modality = Modality.FINAL
             origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             isSuspend = superMethod.isSuspend

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
@@ -82,7 +82,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                 }
             }
             if (annotated is IrClass &&
-                annotated.visibility == DescriptorVisibilities.LOCAL &&
+                annotated.visibility == Visibilities.Local &&
                 KotlinTarget.CLASS !in applicableTargets &&
                 KotlinTarget.ANNOTATION_CLASS !in applicableTargets
             ) {

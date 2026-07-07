@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -108,7 +108,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
     private fun IrClass.generateMainMethod(makeBody: IrBlockBodyBuilder.(IrSimpleFunction, IrValueParameter) -> Unit) =
         addFunction {
             name = Name.identifier("main")
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             returnType = context.irBuiltIns.unitType
             modality = Modality.OPEN
             origin = JvmLoweredDeclarationOrigin.GENERATED_EXTENDED_MAIN
@@ -129,7 +129,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
         return irBlock {
             val wrapperConstructor = backendContext.irFactory.buildClass {
                 name = Name.special("<main-wrapper>")
-                visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                visibility = JavaVisibilities.PackageVisibility
                 modality = Modality.FINAL
                 origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
             }.let { wrapper ->
@@ -149,7 +149,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
                     wrapper.addField {
                         name = Name.identifier("args")
                         type = stringArrayType
-                        visibility = DescriptorVisibilities.PRIVATE
+                        visibility = Visibilities.Private
                         origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                     }
                 }
@@ -169,7 +169,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
 
                 wrapper.addConstructor {
                     isPrimary = true
-                    visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                    visibility = JavaVisibilities.PackageVisibility
                 }.also { constructor ->
                     val superClassConstructor = lambdaSuperClass.owner.constructors.single()
                     val param = args?.let { constructor.addValueParameter("args", stringArrayType) }

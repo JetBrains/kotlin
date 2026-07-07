@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CREATE_METHOD_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
@@ -358,7 +358,7 @@ class JvmSymbols(
                 continuationClass.typeWith(irBuiltIns.anyNType).makeNullable()
             )
         }
-        klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT, DescriptorVisibilities.PROTECTED).apply {
+        klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT, Visibilities.Protected).apply {
             addValueParameter(SUSPEND_CALL_RESULT_NAME, resultOfAnyType)
         }
         klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType), Modality.OPEN).apply {
@@ -387,7 +387,7 @@ class JvmSymbols(
                 addValueParameter("receiver", irBuiltIns.anyNType)
             }
 
-            klass.addField("receiver", irBuiltIns.anyNType, DescriptorVisibilities.PROTECTED)
+            klass.addField("receiver", irBuiltIns.anyNType, Visibilities.Protected)
 
             generateCallableReferenceMethods(klass)
         }
@@ -531,7 +531,7 @@ class JvmSymbols(
                     backingField = irFactory.buildField {
                         name = receiverFieldName
                         type = irBuiltIns.anyNType
-                        visibility = DescriptorVisibilities.PROTECTED
+                        visibility = Visibilities.Protected
                     }.also { field ->
                         field.parent = klass
                     }

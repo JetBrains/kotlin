@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
@@ -83,9 +83,9 @@ fun IrDeclaration.getJvmNameFromJvmExposeBoxedAnnotation(): String? {
 
 fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =
     when {
-        DescriptorVisibilities.isPrivate(visibility) || isInlineOnly() -> JavaDescriptorVisibilities.PACKAGE_VISIBILITY
-        visibility == DescriptorVisibilities.INTERNAL -> DescriptorVisibilities.INTERNAL
-        else -> DescriptorVisibilities.PUBLIC
+        Visibilities.isPrivate(visibility) || isInlineOnly() -> JavaVisibilities.PackageVisibility
+        visibility == Visibilities.Internal -> Visibilities.Internal
+        else -> Visibilities.Public
     }
 
 fun IrDeclaration.isInCurrentModule(): Boolean =
@@ -223,7 +223,7 @@ fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
     // @JvmField properties have no getters/setters
     resolveFakeOverride()?.backingField?.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) == true -> false
     // We do not produce default accessors for private fields
-    else -> accessor.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR || !DescriptorVisibilities.isPrivate(accessor.visibility)
+    else -> accessor.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR || !Visibilities.isPrivate(accessor.visibility)
 }
 
 val IrDeclaration.isStaticInlineClassReplacement: Boolean
@@ -328,7 +328,7 @@ fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topL
     factory.buildField {
         name = Name.identifier(ASSERTIONS_DISABLED_FIELD_NAME)
         origin = JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
-        visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+        visibility = JavaVisibilities.PackageVisibility
         type = backendContext.irBuiltIns.booleanType
         isFinal = true
         isStatic = true

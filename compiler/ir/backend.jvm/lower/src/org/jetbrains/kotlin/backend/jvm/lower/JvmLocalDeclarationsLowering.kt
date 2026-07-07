@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 /**
@@ -75,22 +75,22 @@ internal val IrClass.isGeneratedLambdaClass: Boolean
 internal object JvmVisibilityPolicy : VisibilityPolicy {
     // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalDeclarationPopupLowering`,
     // else it won't detect the class as local.
-    override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
+    override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): Visibility =
         if (declaration.isGeneratedLambdaClass) {
             scopedVisibility(inInlineFunctionScope)
         } else {
             declaration.visibility
         }
 
-    override fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility =
+    override fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): Visibility =
         if (declaration.parentAsClass.isAnonymousObject)
             scopedVisibility(inInlineFunctionScope)
         else
             declaration.visibility
 
-    override fun forCapturedField(value: IrValueSymbol): DescriptorVisibility =
-        JavaDescriptorVisibilities.PACKAGE_VISIBILITY // avoid requiring a synthetic accessor for it
+    override fun forCapturedField(value: IrValueSymbol): Visibility =
+        JavaVisibilities.PackageVisibility // avoid requiring a synthetic accessor for it
 
-    private fun scopedVisibility(inInlineFunctionScope: Boolean): DescriptorVisibility =
-        if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+    private fun scopedVisibility(inInlineFunctionScope: Boolean): Visibility =
+        if (inInlineFunctionScope) Visibilities.Public else JavaVisibilities.PackageVisibility
 }

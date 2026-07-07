@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.indy.*
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -115,7 +115,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
             generateDeserializeLambdaMethod(declaration, context.serializableMethodRefInfos)
         }
         for (function in context.functionsToAdd) {
-            function.visibility = DescriptorVisibilities.PRIVATE
+            function.visibility = Visibilities.Private
             declaration.addChild(function)
         }
         leaveClass()
@@ -164,7 +164,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
 
         val deserializeLambdaFun = backendContext.irFactory.buildFun {
             name = Name.identifier("\$deserializeLambda\$")
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             origin = JvmLoweredDeclarationOrigin.DESERIALIZE_LAMBDA_FUN
         }
         deserializeLambdaFun.parent = irClass

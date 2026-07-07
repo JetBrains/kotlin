@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -190,7 +190,7 @@ internal class JvmPropertiesLowering(
             origin: IrDeclarationOrigin,
             isStatic: Boolean,
             returnType: IrType,
-            visibility: DescriptorVisibility
+            visibility: Visibility
         ) = irFactory.buildFun {
             name = Name.identifier(computeSyntheticMethodName(declaration, suffix))
             modality = Modality.OPEN
@@ -214,7 +214,7 @@ internal class JvmPropertiesLowering(
                 declaration,
                 JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX,
                 IrDeclarationOrigin.PROPERTY_DELEGATE,
-                isStatic = false, returnType = irBuiltIns.anyNType, visibility = DescriptorVisibilities.PRIVATE
+                isStatic = false, returnType = irBuiltIns.anyNType, visibility = Visibilities.Private
             )
 
         private fun JvmBackendContext.computeSyntheticMethodName(property: IrProperty, suffix: String): String {

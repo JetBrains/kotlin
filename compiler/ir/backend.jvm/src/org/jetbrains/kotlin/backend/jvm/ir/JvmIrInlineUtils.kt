@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
@@ -32,15 +32,15 @@ fun IrValueParameter.isInlineParameter(): Boolean =
 // contained in a nested private inline function. This is an over approximation, since private declarations
 // inside of a public inline function can still escape if they are used without being regenerated.
 // See `plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration` for an example.
-val IrDeclaration.inlineScopeVisibility: DescriptorVisibility?
+val IrDeclaration.inlineScopeVisibility: Visibility?
     get() {
         var owner: IrDeclaration? = original
-        var result: DescriptorVisibility? = null
+        var result: Visibility? = null
         while (owner != null) {
             if (owner is IrFunction && owner.isInline) {
-                result = if (!DescriptorVisibilities.isPrivate(owner.visibility)) {
-                    if (owner.parentClassOrNull?.visibility?.let(DescriptorVisibilities::isPrivate) == true)
-                        DescriptorVisibilities.PRIVATE
+                result = if (!Visibilities.isPrivate(owner.visibility)) {
+                    if (owner.parentClassOrNull?.visibility?.let(Visibilities::isPrivate) == true)
+                        Visibilities.Private
                     else
                         return owner.visibility
                 } else {
@@ -54,7 +54,7 @@ val IrDeclaration.inlineScopeVisibility: DescriptorVisibility?
 
 // True for declarations which are in the scope of an externally visible inline function.
 val IrDeclaration.isInPublicInlineScope: Boolean
-    get() = inlineScopeVisibility?.let(DescriptorVisibilities::isPrivate) == false
+    get() = inlineScopeVisibility?.let(Visibilities::isPrivate) == false
 
 // Map declarations to original declarations before lowering.
 private val IrDeclaration.original: IrDeclaration
@@ -79,4 +79,4 @@ fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
     this is IrFunction && (isReifiable() || isInlineOnly() || isPrivateInlineSuspend())
 
 fun IrFunction.isPrivateInlineSuspend(): Boolean =
-    isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
+    isSuspend && isInline && visibility == Visibilities.Private

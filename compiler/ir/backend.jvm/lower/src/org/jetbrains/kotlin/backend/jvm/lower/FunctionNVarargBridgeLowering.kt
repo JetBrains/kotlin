@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -113,7 +113,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             name = superFunction.name
             returnType = context.irBuiltIns.anyNType
             modality = Modality.FINAL
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             origin = IrDeclarationOrigin.BRIDGE
         }.apply {
             overriddenSymbols += superFunction.symbol

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_SHORT
@@ -81,7 +81,7 @@ internal class FileClassLowering(val context: JvmBackendContext) : FileLoweringP
         val onlyPrivateDeclarationsAndFeatureIsEnabled =
             context.config.languageVersionSettings.supportsFeature(LanguageFeature.PackagePrivateFileClassesWithAllPrivateMembers) && fileClassMembers
                 .all {
-                    val isPrivate = it is IrDeclarationWithVisibility && DescriptorVisibilities.isPrivate(it.visibility)
+                    val isPrivate = it is IrDeclarationWithVisibility && Visibilities.isPrivate(it.visibility)
                     val isInlineOnly = it.hasAnnotation(StandardClassIds.Annotations.InlineOnly)
                     isPrivate || isInlineOnly
                 }
@@ -97,9 +97,9 @@ internal class FileClassLowering(val context: JvmBackendContext) : FileLoweringP
             origin = fileClassOrigin,
             name = fileClassInfo.fileClassFqName.shortName(),
             visibility = if (isMultifilePart || onlyPrivateDeclarationsAndFeatureIsEnabled)
-                JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                JavaVisibilities.PackageVisibility
             else
-                DescriptorVisibilities.PUBLIC,
+                Visibilities.Public,
             symbol = IrClassSymbolImpl(),
             kind = ClassKind.CLASS,
             modality = Modality.FINAL,

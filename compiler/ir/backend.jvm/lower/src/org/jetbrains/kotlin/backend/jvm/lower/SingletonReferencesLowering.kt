@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -69,7 +69,7 @@ internal class SingletonReferencesLowering(val context: JvmBackendContext) : Fil
                     if (irScopeElement.isStatic)
                         return false
                 is IrFunction ->
-                    if (irScopeElement.dispatchReceiverParameter == null && irScopeElement.visibility != DescriptorVisibilities.LOCAL)
+                    if (irScopeElement.dispatchReceiverParameter == null && irScopeElement.visibility != Visibilities.Local)
                         return false
             }
         }

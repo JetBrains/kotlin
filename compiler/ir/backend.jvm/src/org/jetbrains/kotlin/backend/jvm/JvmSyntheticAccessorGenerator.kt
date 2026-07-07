@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.common.lower.inline.SyntheticAccessorGenerat
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -45,7 +45,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         return factory.buildConstructor {
             origin = originForConstructorAccessor
             name = source.name
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }.also { accessor ->
             accessor.parent = source.parent
 
@@ -79,7 +79,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         parent: IrDeclarationParent,
         scopeInfo: List<ScopeWithIr>,
     ): IrDeclarationParent =
-        if (visibility == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY) {
+        if (visibility == JavaVisibilities.ProtectedStaticVisibility) {
             val classes = scopeInfo.map { it.irElement }.filterIsInstance<IrClass>()
             val companions = classes.mapNotNull(IrClass::companionObject)
             val objectsInScope =
@@ -111,7 +111,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
                     currentClass.parentAsClass == function.parentAsClass -> {
                 // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
                 // The two cannot clash.
-                if (!DescriptorVisibilities.isPrivate(function.visibility))
+                if (!Visibilities.isPrivate(function.visibility))
                     contribute(JVM_DEFAULT_MARKER)
             }
 
@@ -170,8 +170,8 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         // TODO: change this to `fqNameUnsafe.asString().replace(".", "_")` as soon as we're ready to break compatibility with pre-KT-21178 code
         name.asString().hashCode().toString()
 
-    private val DescriptorVisibility.isProtected: Boolean
-        get() = AsmUtil.getVisibilityAccessFlag(delegate) == Opcodes.ACC_PROTECTED
+    private val Visibility.isProtected: Boolean
+        get() = AsmUtil.getVisibilityAccessFlag(this) == Opcodes.ACC_PROTECTED
 
     private fun createSyntheticConstructorAccessor(declaration: IrConstructor): IrConstructor =
         declaration.makeConstructorAccessor(JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR).also { accessor ->
@@ -195,7 +195,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         if (constructor.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) return false
         if (constructor.hiddenConstructorMangledParams != null) return true
         return constructor.isOrShouldBeHiddenDueToOrigin &&
-                !DescriptorVisibilities.isPrivate(constructor.visibility) &&
+                !Visibilities.isPrivate(constructor.visibility) &&
                 !constructor.constructedClass.isInlineClass &&
                 constructor.hasMangledParameters() &&
                 !constructor.hasIntroducedAtAnnotatedParameter() &&
@@ -210,7 +210,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
     fun isOrShouldBeHiddenAsSealedClassConstructor(constructor: IrConstructor): Boolean {
         if (constructor.hiddenConstructorOfSealedClass != null) return true
         return constructor.isOrShouldBeHiddenDueToOrigin &&
-                constructor.visibility != DescriptorVisibilities.PUBLIC &&
+                constructor.visibility != Visibilities.Public &&
                 constructor.constructedClass.modality == Modality.SEALED
     }
 

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
@@ -143,7 +143,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
         private fun buildValuesHelperFunction(): IrFunction = irClass.addFunction {
             name = Name.identifier(VALUES_HELPER_FUNCTION_NAME)
             returnType = enumArrayType
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             origin = IrDeclarationOrigin.SYNTHETIC_HELPER_FOR_ENUM_VALUES
         }.apply {
             body = context.createJvmIrBuilder(symbol).run {
@@ -158,7 +158,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
         private fun buildValuesField(valuesHelperFunction: IrFunction): IrField = irClass.addField {
             name = Name.identifier(VALUES_FIELD_NAME)
             type = enumArrayType
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES
             isFinal = true
             isStatic = true
@@ -173,7 +173,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
         private fun buildEntriesField(valuesField: IrField): IrField = irClass.addField {
             name = Name.identifier(ENTRIES_FIELD_NAME)
             type = context.symbols.enumEntries.defaultType
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRIES
             isFinal = true
             isStatic = true

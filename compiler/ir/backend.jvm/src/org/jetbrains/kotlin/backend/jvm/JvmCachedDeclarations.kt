@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.builders.*
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME
@@ -82,8 +82,8 @@ class JvmCachedDeclarations(
                 val shouldMoveFields = oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField)
                 if (shouldMoveFields) {
                     parent = oldParent.parentAsClass
-                    val isPrivate = DescriptorVisibilities.isPrivate(oldField.visibility)
-                    val parentIsPrivate = DescriptorVisibilities.isPrivate(oldParent.visibility)
+                    val isPrivate = Visibilities.isPrivate(oldField.visibility)
+                    val parentIsPrivate = Visibilities.isPrivate(oldParent.visibility)
                     if (parentIsPrivate && !isPrivate) {
                         with(context.createJvmIrBuilder(this.symbol)) {
                             copyAnnotationsAndAddJavaLangDeprecated(oldField)
@@ -140,15 +140,15 @@ class JvmCachedDeclarations(
             // Since we already mangle the name above we need to reset internal visibilities to public in order
             // to avoid mangling the same name twice.
             visibility = when (target.visibility) {
-                DescriptorVisibilities.INTERNAL ->
-                    DescriptorVisibilities.PUBLIC
-                DescriptorVisibilities.PROTECTED -> {
+                Visibilities.Internal ->
+                    Visibilities.Public
+                Visibilities.Protected -> {
                     // Required to properly create accessors to protected static companion object member
                     // when this member is referenced in subclass.
                     if (isStatic)
-                        JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
+                        JavaVisibilities.ProtectedStaticVisibility
                     else
-                        DescriptorVisibilities.PROTECTED
+                        Visibilities.Protected
                 }
                 else ->
                     target.visibility
@@ -205,10 +205,10 @@ class JvmCachedDeclarations(
             // However, Cloneable has no DefaultImpls, so this merely replicates the incorrect behavior of the old backend.
             // We should rather not generate a bridge to clone when interface inherits from Cloneable at all.
             val defaultImplsVisibility =
-                if (DescriptorVisibilities.isPrivate(interfaceFun.visibility))
-                    DescriptorVisibilities.PRIVATE
+                if (Visibilities.isPrivate(interfaceFun.visibility))
+                    Visibilities.Private
                 else
-                    DescriptorVisibilities.PUBLIC
+                    Visibilities.Public
 
             context.irFactory.createStaticFunctionWithReceivers(
                 defaultImpls, interfaceFun.name, interfaceFun,
@@ -243,7 +243,7 @@ class JvmCachedDeclarations(
                 // The DefaultImpls class shall have visibility at least of the original interface, but
                 // it also should not be protected or internal as a nested class of an interface. So,
                 // the safest option is to make it public.
-                visibility = DescriptorVisibilities.PUBLIC
+                visibility = Visibilities.Public
             }.apply {
                 parent = interfaceClass
                 createThisReceiverParameter()
@@ -372,8 +372,8 @@ class CachedFieldsForObjectInstances(private val irFactory: IrFactory) {
                 isFinal = true
                 isStatic = true
                 visibility = when {
-                    !useProperVisibilityForCompanion -> DescriptorVisibilities.PUBLIC
-                    originalVisibility == DescriptorVisibilities.PROTECTED -> JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
+                    !useProperVisibilityForCompanion -> Visibilities.Public
+                    originalVisibility == Visibilities.Protected -> JavaVisibilities.ProtectedStaticVisibility
                     else -> originalVisibility
                 }
 
@@ -394,7 +394,7 @@ class CachedFieldsForObjectInstances(private val irFactory: IrFactory) {
                     origin = JvmLoweredDeclarationOrigin.INTERFACE_COMPANION_PRIVATE_INSTANCE
                     isFinal = true
                     isStatic = true
-                    visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                    visibility = JavaVisibilities.PackageVisibility
                 }.apply {
                     parent = singleton
                 }

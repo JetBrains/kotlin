@@ -23,7 +23,7 @@ fun createJvmFileFacadeClass(
     symbol = IrClassSymbolImpl(),
     name = name,
     kind = ClassKind.CLASS,
-    visibility = DescriptorVisibilities.PUBLIC,
+    visibility = Visibilities.Public,
     modality = Modality.FINAL,
     source = source,
 )

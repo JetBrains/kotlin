@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -116,7 +116,7 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
     }
 
     private inline val IrSimpleFunction.isPrivateInline
-        get() = isInline && DescriptorVisibilities.isPrivate(visibility)
+        get() = isInline && Visibilities.isPrivate(visibility)
 
     private fun IrFunction.isCoroutineIntrinsic(): Boolean =
         isBuiltInSuspendCoroutine() || isBuiltInSuspendCoroutineUninterceptedOrReturn()

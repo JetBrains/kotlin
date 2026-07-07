@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -106,7 +106,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                     val implementation = function.resolveFakeOverrideOrFail()
 
                     when {
-                        DescriptorVisibilities.isPrivate(implementation.visibility) || implementation.isMethodOfAny() ->
+                        Visibilities.isPrivate(implementation.visibility) || implementation.isMethodOfAny() ->
                             continue
                         !function.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode, implementation) -> {
                             val defaultImpl = createDefaultImpl(function)
@@ -125,7 +125,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  * 3) Private methods (not compiled to JVM defaults), default parameter dispatchers (not compiled to JVM defaults)
                  *    and $annotation methods are always moved without bridges
                  */
-                (!function.isCompiledToJvmDefault(jvmDefaultMode) && (DescriptorVisibilities.isPrivate(function.visibility)
+                (!function.isCompiledToJvmDefault(jvmDefaultMode) && (Visibilities.isPrivate(function.visibility)
                         || function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
                         || function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS)) ||
                         (function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
@@ -163,7 +163,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         if (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER)
                             function.defaultArgumentsOriginalFunction!!.visibility
                         else function.visibility
-                    if (!DescriptorVisibilities.isPrivate(visibility)) {
+                    if (!Visibilities.isPrivate(visibility)) {
                         if (isCompatibilityMode) {
                             createJvmDefaultCompatibilityDelegate(function)
                         }
@@ -171,7 +171,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         // In kapt mode with JVM target < 9, private interface methods need to be generated as public (or not generated
                         // at all), because private methods in interfaces are supported in Java sources only starting from Java 9.
                         if (context.config.target == JvmTarget.JVM_1_8 && !context.state.classBuilderMode.generateBodies) {
-                            function.visibility = DescriptorVisibilities.PUBLIC
+                            function.visibility = Visibilities.Public
                         }
                     }
                 }

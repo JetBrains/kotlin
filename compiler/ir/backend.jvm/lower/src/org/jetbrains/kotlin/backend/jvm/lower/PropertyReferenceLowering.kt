@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companio
 import org.jetbrains.kotlin.codegen.inline.loadCompiledInlineFunction
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.usesLocalExceptParameterNullCheck
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.IrStatement
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -140,7 +140,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         val reference = IrRawFunctionReferenceImpl(startOffset, endOffset, expression.type, getter.symbol)
         reference.needsDummySignature = getter.correspondingPropertySymbol?.owner?.needsAccessor(getter) == false ||
                 // Internal underlying vals of inline classes have no getter method
-                getter.isInlineClassFieldGetter && getter.visibility == DescriptorVisibilities.INTERNAL
+                getter.isInlineClassFieldGetter && getter.visibility == Visibilities.Internal
         return irCall(signatureStringIntrinsic).apply { arguments[0] = reference }
     }
 
@@ -194,8 +194,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             isFinal = true
             isStatic = true
             visibility =
-                if (irClass.isInterface && context.config.jvmDefaultMode.isEnabled) DescriptorVisibilities.PUBLIC
-                else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                if (irClass.isInterface && context.config.jvmDefaultMode.isEnabled) Visibilities.Public
+                else JavaVisibilities.PackageVisibility
         }
 
         val localProperties = mutableListOf<IrLocalDelegatedPropertySymbol>()
@@ -260,7 +260,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 signature.asmMethod,
                 isSuspend,
                 hasMangledReturnType,
-                context.evaluatorData != null && visibility == DescriptorVisibilities.INTERNAL,
+                context.evaluatorData != null && visibility == Visibilities.Internal,
                 context.state
             ).node.usesLocalExceptParameterNullCheck(localIndex)
         }
@@ -396,7 +396,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             setSourceRange(expression)
             name = SpecialNames.NO_NAME_PROVIDED
             origin = JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
         }.apply {
             parent = currentDeclarationParent!!
             superTypes = listOf(superClass.defaultType)

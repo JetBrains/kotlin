@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companio
 import org.jetbrains.kotlin.backend.jvm.originalForReflectiveCall
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -289,7 +289,7 @@ internal class SpecialAccessLowering(
         symbol: IrSimpleFunctionSymbol,
     ): IrExpression {
         val classPartStubOrThis = declaringClass.classPartForMultifileFacadeOrThis
-        val signatureToLookup = if (classPartStubOrThis != declaringClass && DescriptorVisibilities.isPrivate(symbol.owner.visibility)) {
+        val signatureToLookup = if (classPartStubOrThis != declaringClass && Visibilities.isPrivate(symbol.owner.visibility)) {
             JvmMethodSignature(
                 Method(
                     "${signature.asmMethod.name}$${classPartStubOrThis.classOrFail.owner.name}",
@@ -410,7 +410,7 @@ internal class SpecialAccessLowering(
                 symbol = IrClassSymbolImpl(),
                 name = facadeSource.className.fqNameForTopLevelClassMaybeWithDollars.shortName(),
                 kind = ClassKind.CLASS,
-                visibility = DescriptorVisibilities.PUBLIC,
+                visibility = Visibilities.Public,
                 modality = Modality.FINAL
             ).also {
                 it.parent = classOrFail.owner.parent

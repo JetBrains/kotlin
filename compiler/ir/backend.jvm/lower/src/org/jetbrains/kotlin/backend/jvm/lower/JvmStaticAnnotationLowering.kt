@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -148,7 +148,7 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
         isEffectivelyInlineOnly() -> false
         // Case 3: protected non-inline needs a static proxy in the parent to be callable from subclasses
         // of said parent in different packages even in pure Kotlin due to JVM visibility rules.
-        visibility == DescriptorVisibilities.PROTECTED && !isInline -> true
+        visibility == Visibilities.Protected && !isInline -> true
         // Case 4: public or protected inline needs a static proxy if not synthetic to be callable
         // on the parent class from Java code (the original point of this annotation).
         else -> !origin.isSynthetic
@@ -180,6 +180,6 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
 
     private fun shouldReplaceWithStaticCall(callee: IrSimpleFunction) =
         callee.isJvmStaticInCompanion() &&
-                callee.visibility == DescriptorVisibilities.PROTECTED &&
+                callee.visibility == Visibilities.Protected &&
                 !callee.isInlineFunctionCall(context)
 }

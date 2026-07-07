@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -91,7 +91,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
         context.irFactory.buildClass {
             name = Name.special("<Continuation>")
             origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
-            visibility = if (capturesCrossinline) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+            visibility = if (capturesCrossinline) Visibilities.Public else JavaVisibilities.PackageVisibility
         }.apply {
             createThisReceiverParameter()
             superTypes += context.symbols.continuationImplClass.owner.defaultType
@@ -102,18 +102,18 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD
                 name = Name.identifier(CONTINUATION_RESULT_FIELD_NAME)
                 type = context.symbols.resultOfAnyType
-                visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                visibility = JavaVisibilities.PackageVisibility
             }
             val capturedThisField = dispatchReceiverParameter?.let {
                 addField {
                     name = Name.identifier("this$0")
                     type = it.type
                     origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
-                    visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                    visibility = JavaVisibilities.PackageVisibility
                     isFinal = true
                 }
             }
-            val labelField = addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaDescriptorVisibilities.PACKAGE_VISIBILITY)
+            val labelField = addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaVisibilities.PackageVisibility)
             addConstructorForNamedFunction(capturedThisField, capturesCrossinline)
             addInvokeSuspendForNamedFunction(
                 irFunction,
@@ -129,7 +129,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
         addConstructor {
             isPrimary = true
             returnType = defaultType
-            visibility = if (capturesCrossinline) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+            visibility = if (capturesCrossinline) Visibilities.Public else JavaVisibilities.PackageVisibility
         }.also { constructor ->
             val capturedThisParameter = capturedThisField?.let { constructor.addValueParameter(it.name.asString(), it.type) }
             val completionParameterSymbol = constructor.addCompletionValueParameter()
@@ -213,9 +213,9 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
             origin = JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
             modality = Modality.OPEN,
             visibility = if (irFunction.parentAsClass.isJvmInterface)
-                DescriptorVisibilities.PUBLIC
+                Visibilities.Public
             else
-                JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
+                JavaVisibilities.PackageVisibility,
             isFakeOverride = false,
             copyMetadata = false,
             typeParametersFromContext = extractTypeParameters(irFunction.parentAsClass),
@@ -330,7 +330,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                         modality = view.modality
                         isSuspend = view.isSuspend
                         isInline = view.isInline
-                        visibility = if (view.isInline) DescriptorVisibilities.PRIVATE else view.visibility
+                        visibility = if (view.isInline) Visibilities.Private else view.visibility
                         origin =
                             if (view.isInline) JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
                             else JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE

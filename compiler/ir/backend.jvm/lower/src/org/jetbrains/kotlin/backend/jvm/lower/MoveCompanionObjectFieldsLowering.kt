@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.addJavaLangDeprecatedAnnotation
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -81,7 +81,7 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
     }
 
     private val IrProperty.hasPublicVisibility: Boolean
-        get() = !DescriptorVisibilities.isPrivate(visibility) && visibility != DescriptorVisibilities.PROTECTED
+        get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.Protected
 
     private fun makeAnonymousInitializerStatic(oldInitializer: IrAnonymousInitializer, newParent: IrClass): IrAnonymousInitializer =
         with(oldInitializer) {
@@ -107,7 +107,7 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
                 context.irFactory.createExpressionBody(startOffset, endOffset, (expression as IrConst).shallowCopy())
             }
             annotations += oldField.annotations
-            if (oldProperty.parentAsClass.visibility == DescriptorVisibilities.PRIVATE) {
+            if (oldProperty.parentAsClass.visibility == Visibilities.Private) {
                 with(context.createJvmIrBuilder(this.symbol)) {
                     addJavaLangDeprecatedAnnotation()
                 }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
 import org.jetbrains.kotlin.backend.jvm.isPublicAbi
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
@@ -258,7 +258,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                     type = storedFieldType
                     origin = originForProp
                     isFinal = true
-                    visibility = DescriptorVisibilities.PRIVATE
+                    visibility = Visibilities.Private
                 }.also { it.parent = implClass }
 
                 val parameter = generatedConstructor.addValueParameter(propName.asString(), propType)
@@ -306,7 +306,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                     name = propName  // Annotation value getter should be named 'x', not 'getX'
                     returnType = propType.kClassToJClassIfNeeded() // On JVM, annotation store j.l.Class even if declared with KClass
                     origin = originForProp
-                    visibility = DescriptorVisibilities.PUBLIC
+                    visibility = Visibilities.Public
                     modality = Modality.FINAL
                 }.apply {
                     correspondingPropertySymbol = prop.symbol

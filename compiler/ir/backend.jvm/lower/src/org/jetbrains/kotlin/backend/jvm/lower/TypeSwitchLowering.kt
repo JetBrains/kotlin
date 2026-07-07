@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.config.JvmWhenGenerationScheme
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -223,7 +223,7 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
                 name = Name.identifier("typeSwitch")
                 returnType = context.irBuiltIns.intType
                 origin = JvmLoweredDeclarationOrigin.INVOKEDYNAMIC_CALL_TARGET
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
             }.apply {
                 parent = backendContext.symbols.kotlinJvmInternalInvokeDynamicPackage
                 addValueParameter("obj", context.irBuiltIns.anyNType, IrDeclarationOrigin.STUB_FOR_TYPE_SWITCH)
