@@ -24,10 +24,12 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.ClassLoadersCache
 import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.rootOrSelf
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
+import org.jetbrains.kotlin.gradle.dsl.KaptStubGenerationScheme
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.getJdkClassesRoots
 import org.jetbrains.kotlin.gradle.utils.listPropertyWithConvention
+import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -51,6 +53,10 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
     @get:Input
     var mapDiagnosticLocations: Boolean = false
+
+    @get:Input
+    val stubGenerationScheme: Property<KaptStubGenerationScheme> =
+        objectFactory.propertyWithConvention(KaptStubGenerationScheme.JTREE)
 
     @get:Input
     abstract val annotationProcessorFqNames: ListProperty<String>
@@ -149,6 +155,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
             javacOptions.get(),
 
             kaptFlagsForWorker,
+            stubGenerationScheme.get().optionValue,
 
             disableClassloaderCacheForProcessors
         )
@@ -353,6 +360,9 @@ private class KaptExecution @Inject constructor(
         val detectMemoryLeaksMode = classLoader.kaptClass("DetectMemoryLeaksMode")
             .enumConstants.single { (it as Enum<*>).name == "NONE" }
 
+        val stubGenerationSchemeEnum = classLoader.kaptClass("StubGenerationScheme")
+            .enumConstants.single { (it as Enum<*>).name == stubGenerationScheme.uppercase() }
+
         //in case cache was enabled and then disabled
         //or disabled for some modules
         val processingClassLoader =
@@ -386,6 +396,7 @@ private class KaptExecution @Inject constructor(
             flags,
             mode,
             detectMemoryLeaksMode,
+            stubGenerationSchemeEnum,
 
             processingClassLoader,
             disableClassloaderCacheForProcessors,
@@ -419,6 +430,7 @@ internal data class KaptOptionsForWorker(
     val javacOptions: Map<String, String>,
 
     val flags: Set<String>,
+    val stubGenerationScheme: String,
 
     val disableClassloaderCacheForProcessors: Set<String>
 ) : Serializable

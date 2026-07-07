@@ -20,6 +20,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.process.CommandLineArgumentProvider
+import org.jetbrains.kotlin.gradle.dsl.KaptStubGenerationScheme
 import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -442,6 +443,7 @@ internal fun buildKaptSubpluginOptions(
         "${kaptExtension.strictMode}"
     )
     pluginOptions += SubpluginOption("stripMetadata", "${kaptExtension.stripMetadata}")
+    pluginOptions += SubpluginOption("stubGenerationScheme", kaptExtension.stubGenerationScheme.get().optionValue)
     pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorStats}")
     pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
     pluginOptions += SubpluginOption("infoAsWarnings", "${KaptProperties.isInfoAsWarnings(project).get()}")
@@ -453,6 +455,12 @@ internal fun buildKaptSubpluginOptions(
 
     return pluginOptions
 }
+
+internal val KaptStubGenerationScheme.optionValue: String
+    get() = when (this) {
+        KaptStubGenerationScheme.DIRECT -> "direct"
+        KaptStubGenerationScheme.JTREE -> "jtree"
+    }
 
 /* Returns AP options from KAPT static DSL. */
 internal fun getNonAndroidDslApOptions(
