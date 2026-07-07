@@ -39,6 +39,7 @@ public class KtObjectLiteralExpression extends KtExpressionImplStub<KotlinPlaceH
         return visitor.visitObjectLiteralExpression(this, data);
     }
 
+    /** Returns the anonymous object declaration wrapped by this expression. */
     @NotNull
     @SuppressWarnings("deprecation") // KT-78356
     public KtObjectDeclaration getObjectDeclaration() {

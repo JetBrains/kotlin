@@ -41,6 +41,9 @@ fun hasUnsignedLongNumericLiteralSuffix(text: String): Boolean {
             text.endsWith("Ul") || text.endsWith("UL")
 }
 
+/**
+ * Checks whether the [text] representation of a number literal has a float number suffix.
+ */
 fun hasFloatNumericLiteralSuffix(text: String): Boolean {
     return text.endsWith('f') || text.endsWith('F')
 }

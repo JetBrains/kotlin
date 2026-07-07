@@ -174,6 +174,10 @@ class KtOperationReferenceExpression :
         return null
     }
 
+    /**
+     * The token type of the operation sign (for example, [KtTokens.PLUS][org.jetbrains.kotlin.lexer.KtTokens.PLUS] for `+`), or `null` if
+     * the operation is spelled as an identifier (as with a named infix function).
+     */
     val operationSignTokenType: KtSingleValueToken?
         get() {
             val stub = greenStub
@@ -184,6 +188,10 @@ class KtOperationReferenceExpression :
             return (firstChild as? TreeElement)?.elementType as? KtSingleValueToken
         }
 
+    /**
+     * Returns `true` if this operation sign corresponds to a convention operator that maps to a named operator function (for example, `+`
+     * maps to `plus`). Returns `false` for non-convention signs such as `&&`.
+     */
     fun isConventionOperator(): Boolean {
         val tokenType = operationSignTokenType ?: return false
         return OperatorTokens.operationName(tokenType) != null

@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 /**
  * A Kotlin PSI file implementation independent of Java PSI (it does not implement [PsiClassOwner]).
  *
- * It can be created by [org.jetbrains.kotlin.parsing.KotlinCommonParserDefinition] when Java PSI is not available, for example, on
- * JB Client.
+ * It can be created by `org.jetbrains.kotlin.parsing.KotlinCommonParserDefinition` when Java PSI is not available, for example, on JB
+ * Client.
  *
  * This class is not intended for direct use. Prefer [PsiFile], or check the file type or language if you need to distinguish it from other
  * PSI files.
@@ -51,12 +51,20 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     @Volatile
     private var pathCached: String? = null
 
+    /**
+     * The primary import list of this file, or `null` if the file has no imports.
+     */
     open val importList: KtImportList?
         get() = findChildByTypeOrClass(KtStubBasedElementTypes.IMPORT_LIST, KtImportList::class.java)
 
     @Volatile
     private var hasImportAlias: Boolean? = null
 
+    /**
+     * Returns `true` if any import in this file introduces an alias (`import foo.Bar as Baz`).
+     *
+     * This is a fast pre-check used to avoid scanning the imports when no aliases are present.
+     */
     fun hasImportAlias(): Boolean {
         val hasImportAlias = hasImportAlias
         if (hasImportAlias != null) return hasImportAlias
@@ -69,15 +77,27 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     protected open val importLists: List<KtImportList>
         get() = findChildrenByTypeOrClass(KtStubBasedElementTypes.IMPORT_LIST, KtImportList::class.java).asList()
 
+    /**
+     * The file-level annotation list holding the `@file:...` annotations, or `null` if the file has none.
+     */
     val fileAnnotationList: KtFileAnnotationList?
         get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubBasedElementTypes.FILE_ANNOTATION_LIST)
 
+    /**
+     * The import directives of this file, in source order; empty if the file has no imports.
+     */
     open val importDirectives: List<KtImportDirective>
         get() = importLists.flatMap { it.imports }
 
+    /**
+     * The package directive of this file, or `null` if the file has no explicit `package` statement (root package).
+     */
     val packageDirective: KtPackageDirective?
         get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubBasedElementTypes.PACKAGE_DIRECTIVE)
 
+    /**
+     * The fully qualified name of the file's package, or [FqName.ROOT] for the default (root) package.
+     */
     var packageFqName: FqName
         get() = greenStub?.getPackageFqName() ?: packageDirective?.fqName ?: FqName.ROOT
         @Deprecated(
@@ -89,6 +109,11 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             KtPsiMutationService.getInstance().setPackageFqName(this, value)
         }
 
+    /**
+     * A compatibility alias for [packageFqName] that may use the stub-based fast path despite its historical name.
+     *
+     * @deprecated use [packageFqName]
+     */
     @Deprecated(
         message = "Use 'packageFqName' property instead",
         replaceWith = ReplaceWith("packageFqName"),
@@ -96,6 +121,9 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     val packageFqNameByTree: FqName
         get() = packageFqName
 
+    /**
+     * The script declaration if this file is a Kotlin script, or `null` for a regular Kotlin file.
+     */
     val script: KtScript?
         get() {
             isScript?.let { if (!it) return null }
@@ -109,6 +137,9 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             return result
         }
 
+    /**
+     * The path of the backing virtual file. The value is cached after the first access.
+     */
     val virtualFilePath
         get(): String {
             pathCached?.let { return it }
@@ -118,6 +149,11 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             }
         }
 
+    /**
+     * A compatibility alias for [isScript] that may use the stub-based fast path despite its historical name.
+     *
+     * @deprecated use [isScript]
+     */
     @Deprecated(
         message = "Use 'isScript()' instead",
         replaceWith = ReplaceWith("isScript()"),
@@ -231,12 +267,19 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     }
 
 
+    /**
+     * Returns the import directive that introduces the given alias [name], or `null` if this file has no such alias.
+     */
     fun findImportByAlias(name: String): KtImportDirective? {
         if (!hasImportAlias()) return null
 
         return importDirectives.firstOrNull { name == it.aliasName }
     }
 
+    /**
+     * Returns the [KtImportAlias] under which the declaration with the given [fqName] is imported, or `null` if that declaration is not
+     * imported with an alias in this file.
+     */
     fun findAliasByFqName(fqName: FqName): KtImportAlias? {
         if (!hasImportAlias()) return null
 
@@ -245,6 +288,9 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         }?.alias
     }
 
+    /**
+     * Returns the original short name that the given alias [name] refers to, or `null` if [name] is not an alias declared in this file.
+     */
     fun getNameForGivenImportAlias(name: Name): Name? {
         if (!hasImportAlias()) return null
 
@@ -267,8 +313,15 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         hasImportAlias = null
     }
 
+    /**
+     * Returns `true` if this file is a Kotlin script.
+     */
     fun isScript(): Boolean = isScript ?: greenStub?.isScript() ?: (script != null)
 
+    /**
+     * Returns `true` if this file declares top-level callables (functions or properties), a type alias, or a script, that is, if it
+     * contributes a file facade class. Expected (`expect`) declarations are not counted.
+     */
     fun hasTopLevelCallables(): Boolean {
         hasTopLevelCallables?.let { return it }
 
@@ -325,6 +378,12 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         super.delete()
     }
 
+    /**
+     * Always returns `false`: for Kotlin files the modification count is tracked entirely by the code-block modification listener, so
+     * changes within this file never bump the out-of-code-block modification count.
+     *
+     * Kept for compatibility with potential plugins.
+     */
     @Suppress("unused") //keep for compatibility with potential plugins
     fun shouldChangeModificationCount(@Suppress("UNUSED_PARAMETER") place: PsiElement): Boolean {
         // Modification count for Kotlin files is tracked entirely by KotlinCodeBlockModificationListener

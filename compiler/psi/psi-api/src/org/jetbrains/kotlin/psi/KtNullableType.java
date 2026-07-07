@@ -40,6 +40,7 @@ public class KtNullableType extends KtModifierListOwnerStub<KotlinPlaceHolderStu
         super(stub, KtStubBasedElementTypes.NULLABLE_TYPE);
     }
 
+    /** Returns the AST node of the {@code ?} token that marks the type as nullable. */
     @NotNull
     public ASTNode getQuestionMarkNode() {
         return getNode().findChildByType(KtTokens.QUEST);
@@ -57,6 +58,7 @@ public class KtNullableType extends KtModifierListOwnerStub<KotlinPlaceHolderStu
         return visitor.visitNullableType(this, data);
     }
 
+    /** Returns the underlying non-nullable type (the part before {@code ?}), or {@code null} if it is absent in incomplete code. */
     @Nullable
     @IfNotParsed
     public KtTypeElement getInnerType() {

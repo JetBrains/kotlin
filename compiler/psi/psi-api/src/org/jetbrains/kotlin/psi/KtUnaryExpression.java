@@ -44,6 +44,7 @@ public abstract class KtUnaryExpression extends KtExpressionImplStub<KotlinPlace
         super(stub, nodeType);
     }
 
+    /** Returns the operand of this unary expression, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public abstract KtExpression getBaseExpression();
 
@@ -54,6 +55,7 @@ public abstract class KtUnaryExpression extends KtExpressionImplStub<KotlinPlace
         return Objects.requireNonNull(getStubOrPsiChild(KtStubBasedElementTypes.OPERATION_REFERENCE));
     }
 
+    /** Returns the element type of the operator token (for example, {@code MINUS} for {@code -} or {@code PLUSPLUS} for {@code ++}). */
     public IElementType getOperationToken() {
         return getOperationReference().getReferencedNameElementType();
     }

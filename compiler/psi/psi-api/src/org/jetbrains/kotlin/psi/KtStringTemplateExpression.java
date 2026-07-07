@@ -61,6 +61,10 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
         return getStubOrPsiChild(KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX);
     }
 
+    /**
+     * Returns the segments that make up this string: literal text, escape sequences, and interpolated expressions, in source order. Empty
+     * for an empty string {@code ""}.
+     */
     @NotNull
     public KtStringTemplateEntry[] getEntries() {
         return getStubOrPsiChildren(STRING_ENTRIES_TYPES, KtStringTemplateEntry.EMPTY_ARRAY);
@@ -82,6 +86,10 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
         return new KotlinStringLiteralTextEscaper(this);
     }
 
+    /**
+     * Returns {@code true} if this string contains at least one interpolated expression ({@code $name} or {@code ${...}}), as opposed to a
+     * plain string literal.
+     */
     public boolean hasInterpolation() {
         for (PsiElement child : getChildren()) {
             if (child instanceof KtSimpleNameStringTemplateEntry || child instanceof KtBlockStringTemplateEntry) {

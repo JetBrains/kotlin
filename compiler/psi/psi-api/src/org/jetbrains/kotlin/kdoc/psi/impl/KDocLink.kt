@@ -21,9 +21,30 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.KtElementImpl
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
+/**
+ * A Markdown link inside a KDoc comment that references a declaration by its (possibly qualified) name.
+ *
+ * It appears either as the [subject][KDocTag.getSubjectLink] of a block tag or as an inline link within the documentation text.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * /**
+ *  * Delegates to [kotlin.collections.List.size].
+ *  * //           ^____________________________^
+ *  */
+ * ```
+ */
 class KDocLink(node: ASTNode) : KtElementImpl(node) {
+    /**
+     * Returns the link text without the enclosing square brackets (for example, `kotlin.collections.List` for the
+     * link `[kotlin.collections.List]`).
+     */
     fun getLinkText(): String = getLinkTextRange().substring(text)
 
+    /**
+     * Returns the range of the [link text][getLinkText] within this element, excluding the enclosing square brackets if they are present.
+     */
     fun getLinkTextRange(): TextRange {
         val text = text
         if (text.startsWith('[') && text.endsWith(']')) {

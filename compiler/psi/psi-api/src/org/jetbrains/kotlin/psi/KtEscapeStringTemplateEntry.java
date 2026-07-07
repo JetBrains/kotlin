@@ -34,6 +34,7 @@ public class KtEscapeStringTemplateEntry extends KtStringTemplateEntry {
         return visitor.visitEscapeStringTemplateEntry(this, data);
     }
 
+    /** Returns the decoded character(s) this escape sequence stands for (for example, {@code "\n"} yields a newline). */
     public String getUnescapedValue() {
         return StringUtil.unescapeStringCharacters(getText());
     }

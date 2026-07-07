@@ -36,6 +36,7 @@ public class KtDynamicType extends KtElementImplStub<KotlinPlaceHolderStub<KtDyn
         return visitor.visitDynamicType(this, data);
     }
 
+    /** Always empty: the {@code dynamic} type has no type arguments. */
     @NotNull
     @Override
     public List<KtTypeReference> getTypeArgumentsAsTypes() {

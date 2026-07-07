@@ -18,9 +18,22 @@ package org.jetbrains.kotlin.psi;
 
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Represents a declaration that can have an expression after {@code =}, such as a property, a destructuring declaration, a named function,
+ * or a property accessor.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ * val greeting = "Hello"
+ * //             ^_____^
+ * // The initializer
+ * }</pre>
+ */
 public interface KtDeclarationWithInitializer extends KtDeclaration {
+    /** Returns the initializer expression, or {@code null} if this declaration has none. */
     @Nullable
     KtExpression getInitializer();
 
+    /** Returns {@code true} if this declaration has an initializer expression. */
     boolean hasInitializer();
 }

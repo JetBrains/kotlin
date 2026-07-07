@@ -21,16 +21,31 @@ import org.jetbrains.kotlin.resolution.KtResolvable
  */
 @OptIn(KtExperimentalApi::class)
 class KDocName(node: ASTNode) : KtElementImpl(node), KtResolvable {
+    /**
+     * Returns the [KDoc] comment this name belongs to.
+     *
+     * @throws IllegalStateException if this name is not contained in a [KDoc].
+     */
     fun getContainingDoc(): KDoc {
         val kdoc = getStrictParentOfType<KDoc>()
         return kdoc ?: throw IllegalStateException("KDocName must be inside a KDoc")
     }
 
+    /**
+     * Returns the [KDocSection] this name belongs to.
+     *
+     * @throws IllegalStateException if this name is not contained in a [KDocSection].
+     */
     fun getContainingSection(): KDocSection {
         val kdoc = getStrictParentOfType<KDocSection>()
         return kdoc ?: throw IllegalStateException("KDocName must be inside a KDocSection")
     }
 
+    /**
+     * Returns the qualifier of this name — the part preceding the last dot — or `null` if the name is not qualified.
+     *
+     * For example, the qualifier of `foo.Bar` is the name `foo`.
+     */
     fun getQualifier(): KDocName? = getChildOfType()
 
     /**
@@ -49,14 +64,25 @@ class KDocName(node: ASTNode) : KtElementImpl(node), KtResolvable {
         return TextRange(nameStart, nameEnd)
     }
 
+    /**
+     * Returns the last segment of the name, without the qualifier and without the enclosing backticks if the identifier is escaped (for
+     * example, `Bar` for the name `foo.Bar`).
+     */
     fun getNameText(): String = getNameTextRange().substring(text)
 
+    /**
+     * Returns the segments of the fully qualified name, from the outermost qualifier to this name (for example, `["foo", "Bar"]`
+     * for `foo.Bar`).
+     */
     fun getQualifiedName(): List<String> {
         val qualifier = getQualifier()
         val nameAsList = listOf(getNameText())
         return if (qualifier != null) qualifier.getQualifiedName() + nameAsList else nameAsList
     }
 
+    /**
+     * Returns the [qualified name][getQualifiedName] segments assembled into an [FqName].
+     */
     fun getQualifiedNameAsFqName(): FqName {
         return FqName.fromSegments(getQualifiedName())
     }

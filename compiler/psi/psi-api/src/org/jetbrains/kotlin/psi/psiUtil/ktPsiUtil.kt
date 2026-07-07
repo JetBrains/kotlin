@@ -30,6 +30,7 @@ import java.util.*
 
 // ----------- Calls and qualified expressions ---------------------------------------------------------------------------------------------
 
+/** Returns the simple-name reference of this call's callee (its function or constructor name), or `null`. */
 fun KtCallElement.getCallNameExpression(): KtSimpleNameExpression? {
     val calleeExpression = calleeExpression ?: return null
 
@@ -54,6 +55,9 @@ fun KtSimpleNameExpression.getQualifiedElement(): KtElement {
     }
 }
 
+/**
+ * Like [getQualifiedElement], but also returns the enclosing [KtCallableReferenceExpression] when this name is its callable reference.
+ */
 fun KtSimpleNameExpression.getQualifiedElementOrCallableRef(): KtElement {
     val parent = parent
     if (parent is KtCallableReferenceExpression && parent.callableReference == this) return parent
@@ -61,6 +65,7 @@ fun KtSimpleNameExpression.getQualifiedElementOrCallableRef(): KtElement {
     return getQualifiedElement()
 }
 
+/** Returns the outermost qualified expression in which this name is (transitively) the selector, or `null`. */
 fun KtSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): KtQualifiedExpression? {
     return generateSequence<KtExpression>(this) {
         val parentQualified = it.parent as? KtQualifiedExpression
@@ -84,6 +89,14 @@ fun KtElement.getQualifiedElementSelector(): KtElement? {
     }
 }
 
+/**
+ * Returns the receiver this name is applied to, considering qualified expressions, binary/unary operators, and qualified user types, or
+ * `null` if this name has no receiver.
+ *
+ * For example, the receiver of `b` in `a.b` is `a`, the receiver of the `+` operator in `a + b` is `a`, the receiver of the `++` operator
+ * in `a++` is `a`, and the receiver of `B` in the user type `A.B` is `A`. A bare, unqualified name has no receiver, so the result
+ * is `null`.
+ */
 fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
     val parent = parent
     when {
@@ -121,40 +134,56 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
     return null
 }
 
+/** Returns the qualified expression in which this element is the selector, or `null` if it is not a selector. */
 fun KtElement.getQualifiedExpressionForSelector(): KtQualifiedExpression? {
     val parent = parent
     return if (parent is KtQualifiedExpression && parent.selectorExpression == this) parent else null
 }
 
+/** Returns the qualified expression in which this expression is the selector, or this expression itself otherwise. */
 fun KtExpression.getQualifiedExpressionForSelectorOrThis(): KtExpression {
     return getQualifiedExpressionForSelector() ?: this
 }
 
+/** Returns the qualified expression in which this expression is the receiver, or `null` if it is not a receiver. */
 fun KtExpression.getQualifiedExpressionForReceiver(): KtQualifiedExpression? {
     val parent = parent
     return if (parent is KtQualifiedExpression && parent.receiverExpression == this) parent else null
 }
 
+/** Returns the qualified expression in which this expression is the receiver, or this expression itself otherwise. */
 fun KtExpression.getQualifiedExpressionForReceiverOrThis(): KtExpression {
     return getQualifiedExpressionForReceiver() ?: this
 }
 
+/** Returns `true` if this expression is the receiver of an enclosing dot-qualified expression. */
 fun KtExpression.isDotReceiver(): Boolean =
     (parent as? KtDotQualifiedExpression)?.receiverExpression == this
 
+/** Returns `true` if this expression is the selector of an enclosing dot-qualified expression. */
 fun KtExpression.isDotSelector(): Boolean =
     (parent as? KtDotQualifiedExpression)?.selectorExpression == this
 
+/**
+ * Returns the call expression this expression represents: the selector's call for a qualified expression, or this expression if it is
+ * itself a call. Returns `null` if there is no call.
+ */
 fun KtExpression.getPossiblyQualifiedCallExpression(): KtCallExpression? =
     ((this as? KtQualifiedExpression)?.selectorExpression ?: this) as? KtCallExpression
 
 // ---------- Block expression -------------------------------------------------------------------------------------------------------------
 
+/** Returns the statements of this element if it is a block, otherwise a single-element sequence of this element. */
 fun KtElement.blockExpressionsOrSingle(): Sequence<KtElement> =
     if (this is KtBlockExpression) statements.asSequence() else sequenceOf(this)
 
+/** Returns the last statement if this expression is a block, otherwise this expression itself. */
 fun KtExpression.lastBlockStatementOrThis(): KtExpression = (this as? KtBlockExpression)?.statements?.lastOrNull() ?: this
 
+/**
+ * Returns the range of direct PSI children between this block's braces after excluding outer whitespace. The range may contain comments
+ * and other non-statement elements. Returns an empty range if either brace is missing or no non-whitespace content remains.
+ */
 fun KtBlockExpression.contentRange(): PsiChildRange {
     val lBrace = this.lBrace ?: return PsiChildRange.EMPTY
     val rBrace = this.rBrace ?: return PsiChildRange.EMPTY
@@ -170,11 +199,24 @@ fun KtBlockExpression.contentRange(): PsiChildRange {
 
 // ----------- Inheritance -----------------------------------------------------------------------------------------------------------------
 
+/** Returns `true` if this class is abstract, that is, it is an interface or has the `abstract` modifier. */
 fun KtClass.isAbstract(): Boolean = isInterface() || hasModifier(KtTokens.ABSTRACT_KEYWORD)
 
 /**
  * Returns the unqualified names indexed as this class's superclass names. For names that might be imported through an alias, this includes
  * both the original and aliased names; reference resolution during inheritor search disambiguates them.
+ *
+ * ### Example:
+ *
+ * Given `derivedClass` representing:
+ *
+ * ```kotlin
+ * import library.Base as Alias
+ *
+ * class Derived : Alias
+ * ```
+ *
+ * `derivedClass.getSuperNames()` returns `listOf("Alias", "Base")`.
  *
  * @return the list of possible superclass names
  */
@@ -229,6 +271,7 @@ fun KtExpression.getAnnotationEntries(): List<KtAnnotationEntry> {
     }
 }
 
+/** Collects the annotation entries of this container, reading from the stub when available and falling back to the PSI. */
 fun KtAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<KtAnnotationEntry> {
     return when (this) {
         is StubBasedPsiElementBase<*> -> stub?.collectAnnotationEntriesFromStubElement() ?: collectAnnotationEntriesFromPsi()
@@ -259,8 +302,8 @@ private fun KtAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<KtAnn
 // -------- Recursive tree visiting --------------------------------------------------------------------------------------------------------
 
 /**
- * Returns a recursive visitor that calls [block] on each descendant of type [T]. Calls happen in DFS-exit order, so deeper nodes are
- * visited before their ancestors.
+ * Returns a recursive visitor that calls [block] on each visited element of type [T], including the element passed to `accept`. Calls
+ * happen in DFS-exit order, so deeper nodes are visited before their ancestors.
  */
 inline fun <reified T : KtElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): KtVisitorVoid {
     return object : KtTreeVisitorVoid() {
@@ -273,6 +316,10 @@ inline fun <reified T : KtElement> forEachDescendantOfTypeVisitor(noinline block
     }
 }
 
+/**
+ * Returns a recursive visitor that maps each visited element of type [T], including the element passed to `accept`, and adds all results
+ * to [accumulator] in DFS-exit order.
+ */
 inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
     accumulator: MutableCollection<R>,
     noinline map: (T) -> Collection<R>,
@@ -281,6 +328,7 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
 }
 
 // ----------- Contracts -------------------------------------------------------------------------------------------------------------------
+
 /**
  * Whether the declaration may have a legacy contract (a contract defined inside the body).
  *
@@ -294,6 +342,28 @@ fun KtDeclarationWithBody.isLegacyContractPresentPsiCheck(): Boolean {
     return unwrappedExpression.isContractDescriptionCallPsiCheck()
 }
 
+/**
+ * Best-effort PSI check for whether this function's body begins with a `contract { ... }` call, taking into account whether contracts are
+ * allowed on member functions via [isAllowedOnMembers]. `false` is definitive; `true` is not a guarantee.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * @OptIn(kotlin.contracts.ExperimentalContracts::class)
+ * fun declaredContract() {
+ *     kotlin.contracts.contract { returns() }
+ * }
+ *
+ * private fun contract() {}
+ *
+ * fun sameNameOnly() {
+ *     contract()
+ * }
+ * ```
+ *
+ * This check returns `true` for both `declaredContract` and `sameNameOnly`: it recognizes the first call by its PSI shape and name without
+ * resolving which `contract` function is called.
+ */
 fun KtNamedFunction.isContractPresentPsiCheck(isAllowedOnMembers: Boolean): Boolean {
     val contractAllowedHere =
         (isAllowedOnMembers || isTopLevel) &&
@@ -306,15 +376,23 @@ fun KtNamedFunction.isContractPresentPsiCheck(isAllowedOnMembers: Boolean): Bool
     return firstExpression.isContractDescriptionCallPsiCheck()
 }
 
+/** Best-effort PSI check for whether this expression is a `contract { ... }` (or `kotlin.contracts.contract { ... }`) call. */
 fun KtExpression.isContractDescriptionCallPsiCheck(): Boolean =
     (this is KtCallExpression && calleeExpression?.text == "contract") || (this is KtQualifiedExpression && isContractDescriptionCallPsiCheck())
 
+/** Best-effort PSI check for whether this qualified expression is a `kotlin.contracts.contract { ... }` call. */
 @OptIn(KtPsiInconsistencyHandling::class)
 fun KtQualifiedExpression.isContractDescriptionCallPsiCheck(): Boolean {
     val expression = selectorExpression ?: return false
     return receiverExpressionOrNull?.text == "kotlin.contracts" && expression.isContractDescriptionCallPsiCheck()
 }
 
+/**
+ * Returns `true` if this element is the first statement of its enclosing block.
+ *
+ * If this element is the receiver of a dot-qualified expression, the check is applied to that whole expression instead. For example, `foo`
+ * returns `true` when `foo.bar()` is the first statement of the block.
+ */
 fun KtElement.isFirstStatement(): Boolean {
     var parent = parent
     var element = this
@@ -328,6 +406,23 @@ fun KtElement.isFirstStatement(): Boolean {
 
 // ----------- Other -----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Returns the body declarations of this class or object in source order, followed by the class's primary-constructor `val`/`var` property
+ * parameters in parameter order.
+ *
+ * ### Example:
+ *
+ * Given `accountClass` representing:
+ *
+ * ```kotlin
+ * class Account(val id: Int, name: String) {
+ *     fun save() {}
+ * }
+ * ```
+ *
+ * `accountClass.effectiveDeclarations().mapNotNull { it.name }` returns `listOf("save", "id")`: `id` is included because it declares a
+ * property, while the ordinary constructor parameter `name` is not.
+ */
 fun KtClassOrObject.effectiveDeclarations(): List<KtDeclaration> {
     return when (this) {
         is KtClass -> getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.hasValOrVar() }
@@ -335,6 +430,7 @@ fun KtClassOrObject.effectiveDeclarations(): List<KtDeclaration> {
     }
 }
 
+/** Returns `true` if this element is an extension function or property (that is, it declares a receiver). */
 fun PsiElement.isExtensionDeclaration(): Boolean {
     val callable: KtCallableDeclaration? = when (this) {
         is KtNamedFunction, is KtProperty -> this as KtCallableDeclaration
@@ -345,6 +441,9 @@ fun PsiElement.isExtensionDeclaration(): Boolean {
     return callable?.receiverTypeReference != null
 }
 
+/**
+ * Returns `true` if this declaration is `expect`, either directly (via the modifier) or by being contained in an `expect` declaration.
+ */
 fun KtDeclaration.isExpectDeclaration(): Boolean = when {
     hasExpectModifier() -> true
     this is KtParameter -> ownerDeclaration?.isExpectDeclaration() == true
@@ -366,6 +465,9 @@ internal fun KtDeclaration.isImplicitlyActualDeclaration(): Boolean = when (this
 
 internal fun KtClass.allowsImplicitlyActualConstructor() = isAnnotation() || isValue() || isInline()
 
+/**
+ * Returns `true` if this callable, class, or object declares at least one legacy context receiver. Named context parameters are ignored.
+ */
 fun KtElement.isContextualDeclaration(): Boolean {
     val contextReceivers = when (this) {
         is KtCallableDeclaration -> contextReceivers
@@ -375,8 +477,27 @@ fun KtElement.isContextualDeclaration(): Boolean {
     return contextReceivers.isNotEmpty()
 }
 
+/** Returns `true` if this is the body of an object literal (`object : Foo { ... }`). */
 fun KtClassOrObject.isObjectLiteral(): Boolean = this is KtObjectDeclaration && isObjectLiteral()
 
+/**
+ * Returns the index of this parameter within its own parameter list (Kotlin or Java), or `-1` if it is not a parameter.
+ *
+ * Ordinary parameters and context parameters live in separate lists, each indexed from zero, so the returned index does not correspond to
+ * the parameter's position in the JVM method signature or any combined ordering.
+ *
+ * ### Example:
+ *
+ * Given the parameters in:
+ *
+ * ```kotlin
+ * context(logger: Logger, transaction: Transaction)
+ * fun process(first: String, second: Int) {}
+ * ```
+ *
+ * `logger.parameterIndex()` and `first.parameterIndex()` both return `0`; `transaction.parameterIndex()` and `second.parameterIndex()` both
+ * return `1`.
+ */
 //TODO: strange method, and not only Kotlin specific (also Java)
 fun PsiElement.parameterIndex(): Int {
     val parent = parent
@@ -388,26 +509,33 @@ fun PsiElement.parameterIndex(): Int {
     }
 }
 
+/** The index of this argument within its enclosing value argument list. */
 val KtValueArgument.argumentIndex: Int get() = (parent as KtValueArgumentList).arguments.indexOf(this)
 
+/** Returns `true` if this declaration has the `private` modifier. */
 fun KtModifierListOwner.isPrivate(): Boolean = hasModifier(KtTokens.PRIVATE_KEYWORD)
 
+/** Returns `true` if this declaration has the `protected` modifier. */
 fun KtModifierListOwner.isProtected(): Boolean = hasModifier(KtTokens.PROTECTED_KEYWORD)
 
+/** Returns `true` if this name is part of an `import` directive. */
 fun KtSimpleNameExpression.isImportDirectiveExpression(): Boolean {
     val parent = parent
     return parent is KtImportDirective || parent.parent is KtImportDirective
 }
 
+/** Returns `true` if this name is part of a `package` directive. */
 fun KtSimpleNameExpression.isPackageDirectiveExpression(): Boolean {
     val parent = parent
     return parent is KtPackageDirective || parent.parent is KtPackageDirective
 }
 
+/** Returns `true` if this expression appears inside an `import` directive. */
 fun KtExpression.isInImportDirective(): Boolean {
     return parents.takeWhile { it !is KtDeclaration && it !is KtBlockExpression }.any { it is KtImportDirective }
 }
 
+/** Returns `true` if this expression is a trailing lambda argument written outside the call parentheses. */
 fun KtExpression.isLambdaOutsideParentheses(): Boolean {
     val parent = parent
     return when (parent) {
@@ -417,11 +545,13 @@ fun KtExpression.isLambdaOutsideParentheses(): Boolean {
     }
 }
 
+/** Returns the assignment in which this expression is the left-hand side, or `null` if it is not assigned to. */
 fun KtExpression.getAssignmentByLHS(): KtBinaryExpression? {
     val parent = parent as? KtBinaryExpression ?: return null
     return if (KtPsiUtil.isAssignment(parent) && parent.left == this) parent else null
 }
 
+/** Walks up from [element] through qualified/simple-name expressions to find a plain `=` assignment whose LHS it is. */
 tailrec fun findAssignment(element: PsiElement?): KtBinaryExpression? =
     when (val parent = element?.parent) {
         is KtBinaryExpression -> if (parent.left == element && parent.operationToken == KtTokens.EQ) parent else null
@@ -430,6 +560,7 @@ tailrec fun findAssignment(element: PsiElement?): KtBinaryExpression? =
         else -> null
     }
 
+/** Returns the text range of the string content, excluding the interpolation prefix and the opening/closing quotes. */
 fun KtStringTemplateExpression.getContentRange(): TextRange {
     val interpolationPrefixOrOpenQuote = node.firstChildNode ?: return TextRange.EMPTY_RANGE
     val openQuoteAfterPrefixOrNull = interpolationPrefixOrOpenQuote.treeNext?.takeIf { secondNode ->
@@ -444,7 +575,10 @@ fun KtStringTemplateExpression.getContentRange(): TextRange {
 /**
  * Returns `true` if this expression can be the callee of a call with the same name.
  *
- * `this` in `this(args)` is not considered a callee, and `name` in `name++` is not considered a callee either.
+ * For example, `foo` is a callee in both `foo()` and `foo(args)`, the `+` operator reference is a callee in `a + b`, and the type name is a
+ * callee in a constructor call such as `Foo()`.
+ *
+ * By contrast, `this` in `this(args)` is not considered a callee, and `name` in `name++` is not considered a callee either.
  */
 fun KtSimpleNameExpression.isCallee(): Boolean {
     val parent = parent
@@ -468,18 +602,23 @@ fun KtSimpleNameExpression.isCallee(): Boolean {
     }
 }
 
+/** The source text between the string delimiters, including any escape or interpolation syntax. */
 val KtStringTemplateExpression.plainContent: String
     get() = getContentRange().substring(text)
 
+/** Returns `true` if this uses the regular one-character quote delimiter (`"`) rather than a triple-quote delimiter (`"""`). */
 fun KtStringTemplateExpression.isSingleQuoted(): Boolean =
     node.findChildByType(KtTokens.OPEN_QUOTE)?.textLength == 1
 
+/** `true` if this is a private nested (non-top-level) class or object. */
 val KtNamedDeclaration.isPrivateNestedClassOrObject: Boolean get() = this is KtClassOrObject && isPrivate() && !isTopLevel()
 
+/** Returns the value parameters of this declaration (constructor value parameters for a class), or an empty list. */
 fun KtNamedDeclaration.getValueParameters(): List<KtParameter> {
     return getValueParameterList()?.parameters ?: Collections.emptyList()
 }
 
+/** Returns the value parameter list of this declaration (the primary constructor's for a class), or `null`. */
 fun KtNamedDeclaration.getValueParameterList(): KtParameterList? {
     return when (this) {
         is KtCallableDeclaration -> valueParameterList
@@ -488,6 +627,7 @@ fun KtNamedDeclaration.getValueParameterList(): KtParameterList? {
     }
 }
 
+/** Returns this expression as a [KtBinaryExpression] if it is an assignment, or `null` otherwise. */
 fun KtExpression.asAssignment(): KtBinaryExpression? =
     if (KtPsiUtil.isAssignment(this)) this as KtBinaryExpression else null
 
@@ -501,12 +641,16 @@ private fun KtModifierList.modifierFromTokenSet(set: TokenSet): PsiElement? {
 
 private fun KtModifierListOwner.modifierFromTokenSet(set: TokenSet) = modifierList?.modifierFromTokenSet(set)
 
+/** Returns the visibility modifier token (`public`/`private`/`protected`/`internal`), or `null` if none is present. */
 fun KtModifierList.visibilityModifier() = modifierFromTokenSet(KtTokens.VISIBILITY_MODIFIERS)
 
+/** Returns the type of the visibility modifier, or `null` if none is present. */
 fun KtModifierList.visibilityModifierType(): KtModifierKeywordToken? = visibilityModifier()?.node?.elementType as KtModifierKeywordToken?
 
+/** Returns the visibility modifier token of this declaration, or `null` if none is present. */
 fun KtModifierListOwner.visibilityModifier() = modifierList?.modifierFromTokenSet(KtTokens.VISIBILITY_MODIFIERS)
 
+/** `true` if this declaration is effectively public (no visibility modifier or an explicit `public`), and not local. */
 val KtModifierListOwner.isPublic: Boolean
     get() {
         if (this is KtDeclaration && KtPsiUtil.isLocal(this)) return false
@@ -514,17 +658,24 @@ val KtModifierListOwner.isPublic: Boolean
         return visibilityModifier == null || visibilityModifier == KtTokens.PUBLIC_KEYWORD
     }
 
+/** Returns the type of this declaration's visibility modifier, or `null` if none is present. */
 fun KtModifierListOwner.visibilityModifierType(): KtModifierKeywordToken? =
     visibilityModifier()?.node?.elementType as KtModifierKeywordToken?
 
+/** Returns the type of this declaration's visibility modifier, or the default visibility (`public`) if none is present. */
 fun KtModifierListOwner.visibilityModifierTypeOrDefault(): KtModifierKeywordToken =
     visibilityModifierType() ?: KtTokens.DEFAULT_VISIBILITY_KEYWORD
 
+/** Returns the modality modifier token (`abstract`/`open`/`final`/`sealed`), or `null` if none is present. */
 fun KtDeclaration.modalityModifier() = modifierFromTokenSet(MODALITY_MODIFIERS)
 
+/** Returns the type of this declaration's modality modifier, or `null` if none is present. */
 fun KtDeclaration.modalityModifierType(): KtModifierKeywordToken? = modalityModifier()?.node?.elementType as KtModifierKeywordToken?
 
+/** Returns `true` if this string consists only of literal text, with no interpolation or escape sequences. */
 fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
+
+/** Returns `true` if this string consists only of literal text and escape sequences, with no interpolation. */
 fun KtStringTemplateExpression.isPlainWithEscapes() =
     entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
 
@@ -546,11 +697,15 @@ val KtDeclaration.containingClassOrObject: KtClassOrObject?
  *
  * ### Example:
  *
- * class Foo { companion {
+ * ```kotlin
+ * class Foo {
+ *   companion {
  *     fun static1() {} // true
- * }
+ *   }
  *
- * fun regular() {} // false
+ *   fun regular() {} // false
+ * }
+ * ```
  */
 @KtExperimentalApi
 val KtDeclaration.isFromCompanionBlock: Boolean
@@ -637,6 +792,9 @@ val KtClassBody.containingClassOrObject: KtClassOrObject?
 val KtCompanionBlock.containingClassOrObject: KtClassOrObject?
     get() = (parent as? KtClassBody)?.containingClassOrObject
 
+/**
+ * Returns the outermost expression that wraps this one only through parentheses, labels, or annotations, or this expression itself.
+ */
 fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
     return (parentsWithSelf.zip(parents)).firstOrNull {
         val [element, parent] = it
@@ -649,37 +807,71 @@ fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
     }?.first as KtExpression? ?: this
 }
 
+/**
+ * Returns `true` if this element is an anonymous function, such as the `fun` expression in
+ * `val predicate = fun(x: Int): Boolean = x > 0`.
+ */
 fun PsiElement.isFunctionalExpression(): Boolean = this is KtNamedFunction && nameIdentifier == null
 
 private val BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN = Regex("([a-zA-Z0-9_]|[^\\p{ASCII}]).*")
 
+/**
+ * Returns `true` if placing text after a `$name` simple-name template entry would not accidentally extend the name, that is, [element] does
+ * not begin with an identifier character.
+ */
 fun canPlaceAfterSimpleNameEntry(element: PsiElement?): Boolean {
     val entryText = element?.text ?: return true
     return !BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN.matches(entryText)
 }
 
+/**
+ * Returns the enclosing classes that this element can access an outer instance of, from innermost to outermost.
+ *
+ * ### Example:
+ *
+ * Given `targetFunction` representing `target` in:
+ *
+ * ```kotlin
+ * class Outer {
+ *     class Boundary {
+ *         inner class Inner {
+ *             fun target() {}
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * `targetFunction.nonStaticOuterClasses().mapNotNull { it.name }.toList()` returns `listOf("Inner", "Boundary")`. The sequence stops at
+ * `Boundary` because it is not an `inner` class, so its instances do not retain an `Outer` instance.
+ */
 fun KtElement.nonStaticOuterClasses(): Sequence<KtClass> {
     return generateSequence(containingClass()) { if (it.isInner()) it.containingClass() else null }
 }
 
+/** Returns the nearest enclosing [KtClass], or `null` if there is none. */
 fun KtElement.containingClass(): KtClass? = getStrictParentOfType()
 
+/** Returns the member property (or primary-constructor property parameter) with the given [name], or `null`. */
 fun KtClassOrObject.findPropertyByName(name: String): KtNamedDeclaration? {
     return declarations.firstOrNull { it is KtProperty && it.name == name } as KtNamedDeclaration?
         ?: primaryConstructorParameters.firstOrNull { it.hasValOrVar() && it.name == name }
 }
 
+/** Returns the member function with the given [name], or `null` if there is none. */
 fun KtClassOrObject.findFunctionByName(name: String): KtNamedDeclaration? {
     return declarations.firstOrNull { it is KtNamedFunction && it.name == name } as KtNamedDeclaration?
 }
 
+/** Returns `true` if [e] is the reference expression naming the classifier in a user type. */
 fun isTypeConstructorReference(e: PsiElement): Boolean {
     val parent = e.parent
     return parent is KtUserType && parent.referenceExpression == e
 }
 
+/** Returns `true` if this parameter is a primary-constructor `val`/`var` property parameter. */
 fun KtParameter.isPropertyParameter() = ownerFunction is KtPrimaryConstructor && hasValOrVar()
 
+/** Returns `true` if [expression] is the receiver of an enclosing `::` (callable reference or class literal) expression. */
 fun isDoubleColonReceiver(expression: KtExpression) =
     expression.getParentOfTypeAndBranch<KtDoubleColonExpression> { this.receiverExpression } != null
 
@@ -694,6 +886,21 @@ fun isDoubleColonReceiver(expression: KtExpression) =
 fun KtFunctionLiteral.getOrCreateParameterList(): KtParameterList =
     KtPsiMutationService.getInstance().getOrCreateFunctionLiteralParameterList(this)
 
+/**
+ * Returns the label (explicit or the enclosing call's name) and the call that this lambda is passed to, as a pair. Either component may be
+ * `null` if it cannot be determined.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * items.forEach { println(it) }
+ * items.forEach itemLoop@ { println(it) }
+ * val standalone = { println("done") }
+ * ```
+ *
+ * For the first function literal, this returns the inferred label `forEach` and its call. For the explicitly labeled literal, it returns
+ * `itemLoop` and the call. For the literal assigned to `standalone`, it returns `(null, null)`.
+ */
 fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
     val literalParent = (this.parent as KtLambdaExpression).parent
 
@@ -743,6 +950,11 @@ fun KtCallExpression.addTypeArgument(typeArgument: KtTypeProjection) {
     KtPsiMutationService.getInstance().appendTypeArgument(this, typeArgument)
 }
 
+/**
+ * Returns `true` if this declaration is a function or property that defines a body.
+ *
+ * Only [KtFunction] and [KtProperty] are considered; every other declaration, including a [KtPropertyAccessor], returns `false`.
+ */
 fun KtDeclaration.hasBody() = when (this) {
     is KtFunction -> hasBody()
     is KtProperty -> hasBody()
@@ -750,9 +962,11 @@ fun KtDeclaration.hasBody() = when (this) {
 }
 
 
+/** Returns the reference expression of this expression (the callee for a call), or `null` if it is not a reference. */
 fun KtExpression.referenceExpression(): KtReferenceExpression? =
     (if (this is KtCallExpression) calleeExpression else this) as? KtReferenceExpression
 
+/** Returns the nearest enclosing labeled expression with the given [labelName], or `null` if there is none. */
 fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
     parents.forEach {
         when (it) {
@@ -832,8 +1046,10 @@ fun String?.isIdentifier(): Boolean {
     return true
 }
 
+/** Returns this string as-is if it is a valid identifier, otherwise wrapped in backticks. */
 fun String.quoteIfNeeded(): String = if (this.isIdentifier()) this else "`$this`"
 
+/** Returns `true` if this element is a top-level member of a Kotlin file or a top-level Java class. */
 fun PsiElement.isTopLevelKtOrJavaMember(): Boolean {
     return when (this) {
         is KtDeclaration -> isKtFile(parent)
@@ -842,18 +1058,22 @@ fun PsiElement.isTopLevelKtOrJavaMember(): Boolean {
     }
 }
 
+/** Returns this declaration's name, substituting the "no name provided" special name for a missing or special name. */
 fun KtNamedDeclaration.safeNameForLazyResolve(): Name {
     return nameAsName.safeNameForLazyResolve()
 }
 
+/** Returns this name, or the "no name provided" special name if it is `null` or special. */
 fun Name?.safeNameForLazyResolve(): Name = this?.takeUnless(Name::isSpecial) ?: SpecialNames.NO_NAME_PROVIDED
 
+/** Returns this declaration's fully qualified name using the safe name for lazy resolution, or `null` if unavailable. */
 fun KtNamedDeclaration.safeFqNameForLazyResolve(): FqName? {
     //NOTE: should only create special names for package level declarations, so we can safely rely on real fq name for parent
     val parentFqName = KtNamedDeclarationUtil.getParentFqName(this)
     return parentFqName?.child(safeNameForLazyResolve())
 }
 
+/** Returns `true` if [element] is a top-level element of a file or a top-level statement of a script. */
 fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
     val parent = element.parent
     return when (parent) {
@@ -863,8 +1083,24 @@ fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
     }
 }
 
+/** Returns the top-level declarations of this file, taking them from the script if the file is a script. */
 fun KtFile.getFileOrScriptDeclarations() = if (isScript()) script!!.declarations else declarations
 
+/**
+ * Returns the `as`/`as?` expression whose left-hand side is a call with this expression as its direct child, normally its callee. The call
+ * may be the selector of a qualified expression, and the call or qualified expression may be parenthesized. Returns `null` otherwise.
+ *
+ * ### Example:
+ *
+ * Given the PSI for:
+ *
+ * ```kotlin
+ * val result = (service.load()) as Result
+ * ```
+ *
+ * Calling this function on the `load` callee reference returns the full `(service.load()) as Result` cast expression. Calling it on the
+ * `service` receiver returns `null` because the receiver is not a direct child of the call expression.
+ */
 fun KtExpression.getBinaryWithTypeParent(): KtBinaryExpressionWithTypeRHS? {
     val callExpression = parent as? KtCallExpression ?: return null
     val possibleQualifiedExpression = callExpression.parent
@@ -879,6 +1115,9 @@ fun KtExpression.getBinaryWithTypeParent(): KtBinaryExpressionWithTypeRHS? {
     return targetExpression.topParenthesizedParentOrMe().parent as? KtBinaryExpressionWithTypeRHS
 }
 
+/**
+ * Returns the outermost enclosing expression that this expression is wrapped in only through parentheses, or this expression itself.
+ */
 fun KtExpression.topParenthesizedParentOrMe(): KtExpression {
     var result: KtExpression = this
     while (KtPsiUtil.deparenthesizeOnce(result.parent as? KtExpression) == result) {
@@ -887,6 +1126,7 @@ fun KtExpression.topParenthesizedParentOrMe(): KtExpression {
     return result
 }
 
+/** Returns the trailing comma immediately before [closingElement] (a closing bracket/parenthesis), or `null`. */
 fun getTrailingCommaByClosingElement(closingElement: PsiElement?): PsiElement? {
     val elementBeforeClosingElement =
         closingElement?.getPrevSiblingIgnoringWhitespaceAndComments() ?: return null
@@ -894,14 +1134,20 @@ fun getTrailingCommaByClosingElement(closingElement: PsiElement?): PsiElement? {
     return elementBeforeClosingElement.run { if (node.elementType == KtTokens.COMMA) this else null }
 }
 
+/** Returns the trailing comma at the end of [elementList] (skipping a trailing comment), or `null` if there is none. */
 fun getTrailingCommaByElementsList(elementList: PsiElement?): PsiElement? {
     val lastChild = elementList?.lastChild?.let { if (it !is PsiComment) it else it.getPrevSiblingIgnoringWhitespaceAndComments() }
     return lastChild?.takeIf { it.node.elementType == KtTokens.COMMA }
 }
 
+/** `true` if this reference is the backtick-escaped underscore identifier `` `_` `` (distinct from the plain `_` placeholder). */
 val KtNameReferenceExpression.isUnderscoreInBackticks
     get() = getReferencedName() == "`_`"
 
+/**
+ * Returns this type after stripping all outer [KtNullableType] layers. Returns `null` only if a nullable-type node is malformed and has no
+ * inner type.
+ */
 tailrec fun KtTypeElement.unwrapNullability(): KtTypeElement? {
     return when (this) {
         is KtNullableType -> this.innerType?.unwrapNullability()
@@ -915,6 +1161,7 @@ internal fun isKtFile(parent: PsiElement?): Boolean {
     return parent is PsiFile && parent.language == KotlinLanguage.INSTANCE
 }
 
+/** Returns the original short name imported under the alias [aliasName] in [file], or `null` if there is no such alias. */
 fun getImportedSimpleNameByImportAlias(file: KtFile, aliasName: String): String? {
     val directive = file.findImportByAlias(aliasName) ?: return null
 

@@ -58,6 +58,7 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
         return list != null ? list.getArguments() : Collections.<KtValueArgument>emptyList();
     }
 
+    /** Always empty: a superclass constructor call cannot have trailing lambda arguments. */
     @NotNull
     @Override
     public List<KtLambdaArgument> getLambdaArguments() {

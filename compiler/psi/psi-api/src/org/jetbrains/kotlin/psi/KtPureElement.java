@@ -36,6 +36,7 @@ public interface KtPureElement {
      */
     PsiElement getParent();
 
+    /** Returns the {@link KtFile} this element belongs to. */
     @NotNull
     KtFile getContainingKtFile();
 }

@@ -24,6 +24,22 @@ import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 
+/**
+ * A block tag inside a KDoc comment (such as `@param`, `@return`, or `@throws`) together with the content that follows it.
+ *
+ * A tag may document a specific entity named by its [subject][getSubjectName], for example the parameter name after `@param`. The primary
+ * description of a doc comment, which precedes any block tag, is represented by a nameless tag; see [KDocSection].
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * /**
+ *  * @param value the value to store
+ *  * ^_____________________________^
+ *  */
+ * fun store(value: Int) {}
+ * ```
+ */
 open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
 
     /**
@@ -46,6 +62,10 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
      */
     open fun getSubjectName(): String? = getSubjectLink()?.getLinkText()
 
+    /**
+     * Returns the [link][KDocLink] naming the entity documented by this tag (for example, the parameter name after `@param`), or `null` if
+     * this tag has no subject.
+     */
     fun getSubjectLink(): KDocLink? {
         val children = childrenAfterTagName()
         if (hasSubject(children)) {
@@ -54,6 +74,9 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
         return null
     }
 
+    /**
+     * The [KDocKnownTag] this tag corresponds to, or `null` if the tag name is not recognized or this is the default section.
+     */
     val knownTag: KDocKnownTag?
         get() {
             return name?.let { KDocKnownTag.findByTagName(it) }
@@ -180,6 +203,9 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
     private fun String.isIndented() = startsWith(indentationWhiteSpaces) || startsWith("\t")
 
     companion object {
+        /**
+         * The indentation (four spaces) prepended to each line of an indented code block when a tag's [content][getContent] is extracted.
+         */
         val indentationWhiteSpaces = " ".repeat(4)
     }
 }

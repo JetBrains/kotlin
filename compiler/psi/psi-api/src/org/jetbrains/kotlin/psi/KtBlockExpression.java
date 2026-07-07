@@ -122,28 +122,33 @@ public class KtBlockExpression extends LazyParseablePsiElement implements KtElem
         return this;
     }
 
+    /** Returns the first statement of this block, or {@code null} if the block is empty. */
     @Nullable
     public KtExpression getFirstStatement() {
         return findChildByClass(KtExpression.class);
     }
 
+    /** Returns the statements of this block in source order, or an empty list if the block is empty. */
     @ReadOnly
     @NotNull
     public List<KtExpression> getStatements() {
         return Arrays.asList(findChildrenByClass(KtExpression.class));
     }
 
+    /** Returns the text range of the closing brace, or {@code null} if it is absent (for example, in incomplete code). */
     @Nullable
     public TextRange getLastBracketRange() {
         PsiElement rBrace = getRBrace();
         return rBrace != null ? rBrace.getTextRange() : null;
     }
 
+    /** Returns the closing brace token of this block, or {@code null} if it is absent. */
     @Nullable
     public PsiElement getRBrace() {
         return findPsiChildByType(KtTokens.RBRACE);
     }
 
+    /** Returns the opening brace token of this block, or {@code null} if it is absent. */
     @Nullable
     public PsiElement getLBrace() {
         return findPsiChildByType(KtTokens.LBRACE);

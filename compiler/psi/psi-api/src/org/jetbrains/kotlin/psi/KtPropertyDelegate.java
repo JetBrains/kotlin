@@ -25,6 +25,7 @@ public class KtPropertyDelegate extends KtElementImpl implements KtResolvableCal
         super(node);
     }
 
+    /** Returns the delegate expression (the part after {@code by}), or {@code null} if it is absent in incomplete code. */
     @Nullable
     public KtExpression getExpression() {
         return findChildByClass(KtExpression.class);
@@ -35,6 +36,7 @@ public class KtPropertyDelegate extends KtElementImpl implements KtResolvableCal
         return visitor.visitPropertyDelegate(this, data);
     }
 
+    /** Returns the AST node of the {@code by} keyword. */
     @NotNull
     public ASTNode getByKeywordNode() {
         //noinspection ConstantConditions

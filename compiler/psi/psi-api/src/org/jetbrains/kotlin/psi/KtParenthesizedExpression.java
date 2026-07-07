@@ -35,6 +35,7 @@ public class KtParenthesizedExpression extends KtExpressionImplStub<KotlinPlaceH
         return visitor.visitParenthesizedExpression(this, data);
     }
 
+    /** Returns the expression inside the parentheses, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtExpression getExpression() {
         KtExpression fromStub = getExpressionFromStub();
