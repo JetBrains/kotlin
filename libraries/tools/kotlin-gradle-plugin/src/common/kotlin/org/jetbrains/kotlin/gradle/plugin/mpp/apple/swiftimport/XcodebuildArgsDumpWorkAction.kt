@@ -167,7 +167,7 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
                 FetchSyntheticImportProjectPackages.XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER,
                 parameters.swiftPMDependenciesCheckout.getFile().path,
                 "CC=${clangArgsDumpScript.path}",
-                "LD=${ldArgsDumpScript.path}",
+                "ALTERNATE_LINKER=${ldArgsDumpScript.path}",
                 "ARCHS=${targetArchitectures.joinToString(" ")}",
                 "CODE_SIGN_IDENTITY=",
                 "COMPILER_INDEX_STORE_ENABLE=NO",

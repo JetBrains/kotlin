@@ -189,6 +189,22 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         }
     }
 
+    class MoreThanOneLinkerCallDiscovered(
+        linkerCalls: List<File>
+    ) : MoreThanOneCallDiscovered(linkerCalls, "linker")
+    class MoreThanOneClangCallDiscovered(
+        clangCalls: List<File>
+    ) : MoreThanOneCallDiscovered(clangCalls, "clang")
+    abstract class MoreThanOneCallDiscovered(
+        calls: List<File>,
+        name: String,
+    ) : Exception("More than one $name call discovered: ${calls.joinToString(", ")}")
+
+
+    class NoLinkerCallsDiscovered : NoCallsDiscovered("linker")
+    class NoClangCallsDiscovered : NoCallsDiscovered("clang")
+    abstract class NoCallsDiscovered(name: String) : Exception("No ${name} call discovered")
+
     private fun writeDefAndLinkerOutputs(
         architectures: Set<AppleArchitecture>,
         cinteropNamespace: String,
@@ -217,6 +233,12 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 }
             }
 
+            if (architectureSpecificProductClangCalls.isEmpty()) {
+                throw NoClangCallsDiscovered()
+            }
+            if (architectureSpecificProductClangCalls.size > 1) {
+                throw MoreThanOneClangCallDiscovered(architectureSpecificProductClangCalls)
+            }
             val parsedClangCall = XcodebuildDefFileUtils.parseClangCall(architectureSpecificProductClangCalls.single())
 
             val clangModules = if (discoverModulesImplicitly) {
@@ -237,7 +259,14 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
             }.filter {
                 val ldArgs = it.readLines().single()
                 ("@rpath/lib${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.dylib" in ldArgs || "@rpath/${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.framework" in ldArgs)
-                        && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in ldArgs
+                        && "-arch${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}${DUMP_FILE_ARGS_SEPARATOR}" in ldArgs
+            }
+
+            if (architectureSpecificProductLdCalls.isEmpty()) {
+                throw NoLinkerCallsDiscovered()
+            }
+            if (architectureSpecificProductLdCalls.size > 1) {
+                throw MoreThanOneLinkerCallDiscovered(architectureSpecificProductLdCalls)
             }
 
             val parsedLdCall = XcodebuildDefFileUtils.parseLdCall(architectureSpecificProductLdCalls.single())
