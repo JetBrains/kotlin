@@ -336,6 +336,8 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
                     val pausedLocation = map.findSegmentForTheGeneratedLocation(frame.pausedLocation.line, frame.pausedLocation.column)
                         ?: return@firstNotNullOfOrNull null
 
+                    if (pausedLocation.isIgnored) return@firstNotNullOfOrNull null
+
                     pausedLocation to functionLocation
                 } ?: return@mapNotNull null
 
