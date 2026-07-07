@@ -76,8 +76,8 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
             val lowerBound = expectedType.lowerBound
             val upperBound = expectedType.upperBound
             val typeContext = context.session.typeContext
-            val lowerConstructor = lowerBound.typeConstructor(typeContext)
-            val upperConstructor = upperBound.typeConstructor(typeContext)
+            val lowerConstructor = lowerBound.typeConstructor(c = typeContext)
+            val upperConstructor = upperBound.typeConstructor(c = typeContext)
 
             // Use site variance projection is always the same for flexible types. So there is no need to check if declaration site is the
             // same.

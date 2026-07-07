@@ -1198,7 +1198,7 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
 
     context(context: ResolutionContext)
     private fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.hasFunctionTypeConstraint(csBuilder: NewConstraintSystemImpl): Boolean {
-        val typeConstructor = expectedType.typeConstructor(context.typeContext)
+        val typeConstructor = expectedType.typeConstructor(c = context.typeContext)
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[typeConstructor] ?: return false
         return variableWithConstraints.constraints.any { it.type.asCone().isSomeFunctionType(context.session) }
     }

@@ -27,7 +27,7 @@ private class ConeTypeSubstitutorByTypeConstructor(
 
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeLookupTagBasedType && type !is ConeStubType && type !is ConeTypeVariableType) return null
-        val new = map[type.typeConstructor(typeContext)] ?: return null
+        val new = map[type.typeConstructor(c = typeContext)] ?: return null
         val approximatedIntegerLiteralType = if (approximateIntegerLiterals) new.approximateIntegerLiteralType() else new
         return approximatedIntegerLiteralType.updateNullabilityIfNeeded(type).withCombinedAttributesFrom(type)
     }

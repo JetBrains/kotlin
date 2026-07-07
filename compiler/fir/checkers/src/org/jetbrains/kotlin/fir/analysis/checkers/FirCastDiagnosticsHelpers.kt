@@ -132,7 +132,7 @@ fun findStaticallyKnownSubtype(
             findCorrespondingSupertypes(
                 typeCheckerState,
                 subtypeWithVariablesType,
-                normalizedType.typeConstructor(context.session.typeContext)
+                normalizedType.typeConstructor(c = context.session.typeContext)
             ).firstOrNull()
 
         val variables: List<FirTypeParameterSymbol> = subTypeClassSymbol.typeParameterSymbols

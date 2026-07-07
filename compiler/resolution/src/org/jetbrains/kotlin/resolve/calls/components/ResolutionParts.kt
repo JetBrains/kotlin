@@ -397,7 +397,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
                 }
 
                 upperBounds.mapNotNull { constraint ->
-                    if (constraint.type.typeConstructor(context) != variable) {
+                    if (constraint.type.typeConstructor(c = context) != variable) {
                         val suitableUpperBound = upperBounds.find { upperBound ->
                             with(context) { upperBound.type.contains { it.typeConstructor() == variable } }
                         }?.type
@@ -434,7 +434,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
     private fun NewConstraintSystem.getDependingOnTypeParameter(variable: TypeConstructor) =
         getBuilder().currentStorage().notFixedTypeVariables[variable]?.constraints?.mapNotNull {
             if (it.position.from is DeclaredUpperBoundConstraintPositionImpl && it.kind == ConstraintKind.UPPER) {
-                it.type.typeConstructor(asConstraintSystemCompleterContext())
+                it.type.typeConstructor(c = asConstraintSystemCompleterContext())
             } else null
         } ?: emptyList()
 
@@ -456,7 +456,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
             isContainedInInvariantOrContravariantPositionsAmongUpperBound(typeVariableConstructor, dependentTypeParameters)
         val isContainedAnyDependentTypeInReturnType = dependentTypeParameters.any { [typeParameter, _] ->
             returnType.contains {
-                it.typeConstructor(asConstraintSystemCompleterContext()) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable
+                it.typeConstructor(c = asConstraintSystemCompleterContext()) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable
             }
         }
 

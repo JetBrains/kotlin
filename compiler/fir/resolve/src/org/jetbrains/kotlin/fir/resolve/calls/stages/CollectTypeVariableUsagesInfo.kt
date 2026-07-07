@@ -122,7 +122,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
 
         return dependentTypeParameters.any { [typeParameter, _] ->
             returnType.contains {
-                it.typeConstructor(this) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable()
+                it.typeConstructor() == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable()
             }
         }
     }

@@ -787,7 +787,7 @@ private class CapturedArguments(val capturedArguments: Array<out ConeTypeProject
 
         if (!areArgumentsMatched) return false
 
-        val areConstructorsMatched = originalType.typeConstructor(context) == type.typeConstructor(context)
+        val areConstructorsMatched = originalType.typeConstructor() == type.typeConstructor()
                 || ConeFlexibleTypeBoundsChecker.areTypesMayBeLowerAndUpperBoundsOfSameFlexibleTypeByMutability(originalType, type)
 
         if (!areConstructorsMatched) return false

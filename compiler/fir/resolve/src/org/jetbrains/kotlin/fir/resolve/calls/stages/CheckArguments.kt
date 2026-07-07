@@ -204,7 +204,7 @@ private fun FirExpression.isCallWithGenericReturnTypeAndMatchingLambda(): Boolea
     val postponedAtoms = namedReferenceWithCandidate()?.candidate?.postponedAtoms ?: return false
     return postponedAtoms.any {
         it is ConeLambdaWithTypeVariableAsExpectedTypeAtom &&
-                it.expectedType.typeConstructor(session.typeContext) == expressionType.typeConstructor(session.typeContext)
+                it.expectedType.typeConstructor(c = session.typeContext) == expressionType.typeConstructor(c = session.typeContext)
     }
 }
 

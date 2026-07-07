@@ -462,7 +462,7 @@ internal object ArgumentCheckingProcessor {
     ): Boolean {
         if (expectedType == null || !csBuilder.isTypeVariable(expectedType)) return false
         val expectedTypeVariableWithConstraints = csBuilder.currentStorage()
-            .notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
+            .notFixedTypeVariables[expectedType.typeConstructor(c = context.typeContext)]
             ?: return false
 
         val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
@@ -660,7 +660,7 @@ internal object ArgumentCheckingProcessor {
 
         val argumentAsFunctionType = AbstractTypeChecker.findCorrespondingSupertypes(
             c.session.typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
-            argumentType.unwrapLowerBound(), expectedClassLikeType.typeConstructor()
+            argumentType.unwrapLowerBound(), expectedClassLikeType.typeConstructor(c = c.session.typeContext)
         ).singleOrNull() as? ConeClassLikeType ?: return null
 
         check(argumentAsFunctionType.functionTypeKind(c.session) == expectedTypeKind)

@@ -98,7 +98,7 @@ internal object InferThrowableTypeParameterToUpperBound : ResolutionStage() {
 
         fun ConeKotlinType.containsGivenTypeVariable(): Boolean =
             candidate.substitutor.substituteOrSelf(this)
-                .contains { it.typeConstructor(session.typeContext) == typeConstructorForVariable }
+                .contains { it.typeConstructor(c = session.typeContext) == typeConstructorForVariable }
 
         if (callableSymbol.fir.returnTypeRef.coneType.containsGivenTypeVariable()) return false
 

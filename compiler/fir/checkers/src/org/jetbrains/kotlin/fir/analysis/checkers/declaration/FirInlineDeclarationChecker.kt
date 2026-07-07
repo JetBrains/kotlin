@@ -169,7 +169,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         private fun EffectiveVisibility.isReachableDueToLocalDispatchReceiver(access: FirStatement): Boolean {
             val receiverType = access.localDispatchReceiver() ?: return false
-            val receiverProtected = EffectiveVisibility.Protected(receiverType.typeConstructor(session.typeContext))
+            val receiverProtected = EffectiveVisibility.Protected(receiverType.typeConstructor(c = session.typeContext))
             val relation = receiverProtected.relation(this, session.typeContext)
             return relation == EffectiveVisibility.Permissiveness.SAME || relation == EffectiveVisibility.Permissiveness.LESS
         }
