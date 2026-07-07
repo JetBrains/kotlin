@@ -2589,7 +2589,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension$Com
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerTopLevelConfigDsl {
 	public abstract fun getHeadless ()Lorg/gradle/api/provider/Property;
-	public abstract fun getLaunchEnvironmentVariables ()Lorg/gradle/api/provider/MapProperty;
 	public abstract fun getTestsLocation ()Lorg/gradle/api/provider/Property;
 	public abstract fun getTimeout ()Lorg/gradle/api/provider/Property;
 }
@@ -2614,6 +2613,7 @@ public abstract interface annotation class org/jetbrains/kotlin/gradle/targets/j
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserTestRunnerDsl : org/gradle/api/Named, org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerTopLevelConfigDsl {
 	public abstract fun getCustomBrowserExecutable ()Lorg/gradle/api/file/RegularFileProperty;
 	public abstract fun getLaunchArgs ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getLaunchEnvironmentVariables ()Lorg/gradle/api/provider/MapProperty;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode : java/lang/Enum {
