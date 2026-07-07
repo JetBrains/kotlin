@@ -46,10 +46,17 @@ class KDocSection(node: ASTNode) : KDocTag(node), ContributedReferenceHost, PsiL
     override fun getContent(): String =
         (firstChild as? KDocTag)?.getContent() ?: super.getContent()
 
+    /**
+     * Returns all tags in this section whose [name][KDocTag.getName] equals the given [name] (without the leading `@`), in source order.
+     */
     fun findTagsByName(name: String): List<KDocTag> {
         return getChildrenOfType<KDocTag>().filter { it.name == name }
     }
 
+    /**
+     * Returns the first tag in this section whose [name][KDocTag.getName] equals the given [name] (without the leading `@`), or `null` if
+     * there is none.
+     */
     fun findTagByName(name: String): KDocTag? = findTagsByName(name).firstOrNull()
 
     override fun getReference(): PsiReference? {

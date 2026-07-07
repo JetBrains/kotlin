@@ -32,6 +32,9 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitBackingField(this, data)
 
+    /**
+     * The `=` token preceding the initializer, or `null` if the backing field has no initializer.
+     */
     open val equalsToken: PsiElement?
         get() = findChildByType(KtTokens.EQ)
 
@@ -39,6 +42,9 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
         @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
+    /**
+     * The `field` keyword that stands in for the declaration's name, or the element itself if the keyword is absent.
+     */
     open val namePlaceholder: PsiElement
         get() = fieldKeyword ?: node.psi
 
@@ -62,6 +68,9 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
     override fun getTextOffset(): Int =
         namePlaceholder.textRange.startOffset
 
+    /**
+     * The `field` keyword introducing this backing field declaration, or `null` if it is absent in incomplete code.
+     */
     open val fieldKeyword: PsiElement?
         get() = findChildByType(KtTokens.FIELD_KEYWORD)
 
