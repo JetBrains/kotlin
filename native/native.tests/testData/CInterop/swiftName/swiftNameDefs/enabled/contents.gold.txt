@@ -1,0 +1,94 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    // class name: pod1/NotesProtocolProtocol
+    // class name: pod1/NotesProtocolProtocolMeta
+    // class name: pod1/NotesRenamed
+    // class name: pod1/NotesRenamed.Companion
+    // class name: pod1/NotesRenamedMeta
+    // class name: pod1/Overridden
+    // class name: pod1/Overridden.Companion
+    // class name: pod1/OverriddenMeta
+    // class name: pod1/SourceRenamed
+    // class name: pod1/SourceRenamed.Companion
+    // class name: pod1/SourceRenamedMeta
+
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_pod1_NotesProtocol_0", binaryName = "NotesProtocol")
+    @kotlin/native/ObjCName(swiftName = "NotesProtocolSwift")
+    public abstract interface pod1/NotesProtocolProtocol : kotlinx/cinterop/ObjCObject {
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_pod1_NotesProtocol_0", binaryName = "NotesProtocol")
+    public abstract interface pod1/NotesProtocolProtocolMeta : kotlinx/cinterop/ObjCClass /* = kotlinx/cinterop/ObjCObjectMeta^ */ {
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    @kotlin/native/ObjCName(swiftName = "NotesRenamedSwift")
+    public open class pod1/NotesRenamed : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/NotesRenamed.Companion : pod1/NotesRenamedMeta, kotlinx/cinterop/ObjCClassOf<pod1/NotesRenamed> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/NotesRenamedMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    @kotlin/native/ObjCName(swiftName = "OverriddenNotesSwift")
+    public open class pod1/Overridden : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/Overridden.Companion : pod1/OverriddenMeta, kotlinx/cinterop/ObjCClassOf<pod1/Overridden> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/OverriddenMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    @kotlin/native/ObjCName(swiftName = "SourceRenamedSwift")
+    public open class pod1/SourceRenamed : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/SourceRenamed.Companion : pod1/SourceRenamedMeta, kotlinx/cinterop/ObjCClassOf<pod1/SourceRenamed> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/SourceRenamedMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+  }
+}
