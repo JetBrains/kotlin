@@ -1512,6 +1512,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     val NamedDomainObjectContainer<KotlinSourceSet>.watchosArm32Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -1535,6 +1536,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     val NamedDomainObjectContainer<KotlinSourceSet>.watchosArm32Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -1868,6 +1870,7 @@ interface KotlinMultiplatformSourceSetConventions {
         configure: LanguageSettingsBuilder.() -> Unit,
     ): Unit = this { languageSettings(configure) }
 }
+
 
 
 

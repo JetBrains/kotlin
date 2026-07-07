@@ -205,20 +205,29 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun iosSimulatorArm64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = iosSimulatorArm64 { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun watchosArm32(
         name: String = "watchosArm32",
         configure: KotlinNativeTarget.() -> Unit = { }
     ): KotlinNativeTarget
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun watchosArm32() = watchosArm32("watchosArm32") { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun watchosArm32(name: String) = watchosArm32(name) { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun watchosArm32(
         name: String,
         configure: Action<KotlinNativeTarget>
     ) = watchosArm32(name) { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun watchosArm32(configure: Action<KotlinNativeTarget>) = watchosArm32 { configure.execute(this) }
 
     fun watchosArm64(
@@ -587,6 +596,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override fun watchosArm32(
         name: String,
         configure: KotlinNativeTarget.() -> Unit
