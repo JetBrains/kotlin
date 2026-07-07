@@ -80,6 +80,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
     val stableOrder: Boolean = false,
+    val stableOrderWithSignatures: Boolean = false,
     val stableOrderOfOverriddenSymbols: Boolean = false,
     val verboseErrorTypes: Boolean = true,
     val printFacadeClassInFqNames: Boolean = true,
@@ -150,7 +151,39 @@ private fun IrFile.shouldSkipDump(): Boolean {
  *  * Enum entries
  *  * Fields
  */
-internal fun List<IrDeclaration>.stableOrdered(): List<IrDeclaration> {
+private fun IrDeclaration.renderForSorting(options: DumpIrTreeOptions): String {
+    val sb = StringBuilder()
+    if (this is IrDeclarationWithName) {
+        sb.append(this.name.asString())
+    } else {
+        sb.append(this.render())
+    }
+    if (this is IrFunction) {
+        sb.append("(")
+        val typeRenderer = RenderIrElementVisitor(options, isUsedForIrDump = true)
+        this.parameters.filter { it.kind != IrParameterKind.DispatchReceiver }.forEach {
+            sb.append(typeRenderer.renderType(it.type))
+            sb.append(",")
+        }
+        sb.append(")")
+        sb.append(":")
+        sb.append(typeRenderer.renderType(this.returnType))
+    }
+    if (this is IrProperty) {
+        val typeRenderer = RenderIrElementVisitor(options, isUsedForIrDump = true)
+        this.backingField?.let {
+            sb.append(":")
+            sb.append(typeRenderer.renderType(it.type))
+        }
+        this.getter?.let {
+            sb.append("get:")
+            sb.append(typeRenderer.renderType(it.returnType))
+        }
+    }
+    return sb.toString()
+}
+
+internal fun List<IrDeclaration>.stableOrdered(options: DumpIrTreeOptions = DumpIrTreeOptions()): List<IrDeclaration> {
     val strictOrder = hashMapOf<IrDeclaration, Int>()
 
     var idx = 0
@@ -171,8 +204,8 @@ internal fun List<IrDeclaration>.stableOrdered(): List<IrDeclaration> {
         val strictB = strictOrder[b] ?: Int.MAX_VALUE
 
         if (strictA == strictB) {
-            val rA = a.render()
-            val rB = b.render()
+            val rA = if (options.stableOrderWithSignatures) a.renderForSorting(options) else a.render()
+            val rB = if (options.stableOrderWithSignatures) b.renderForSorting(options) else b.render()
             rA.compareTo(rB)
         } else strictA - strictB
     }
@@ -187,7 +220,7 @@ class DumpIrTreeVisitor(
     private val elementRenderer = RenderIrElementVisitor(options, isUsedForIrDump = true)
     private fun IrType.render() = elementRenderer.renderType(this)
 
-    private fun List<IrDeclaration>.ordered(): List<IrDeclaration> = if (options.stableOrder) stableOrdered() else this
+    private fun List<IrDeclaration>.ordered(): List<IrDeclaration> = if (options.stableOrder) stableOrdered(options) else this
 
     private fun IrDeclaration.isHidden(): Boolean = options.isHiddenDeclaration(this)
 

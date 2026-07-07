@@ -69,6 +69,9 @@ open class SerializedIrDumpHandler(
             /** Print declarations always in stable order. */
             stableOrder = true,
 
+            /** Use signatures for stable order to prevent flakiness in serialization tests. */
+            stableOrderWithSignatures = true,
+
             /** Print overridden symbols always in stable order. */
             stableOrderOfOverriddenSymbols = true,
 
@@ -267,8 +270,16 @@ open class SerializedIrDumpHandler(
         if (!isAfterDeserialization) {
             assertions.assertFileDoesntExist(dumpFile) { "Dump file already exists: $dumpFile" }
             dumpFile.writeText(dump)
+            val expectedFile = java.io.File("serialized_ir_expected.txt")
+            expectedFile.writeText(dump)
         } else {
-            assertions.assertEqualsToFile(dumpFile, dump)
+            try {
+                assertions.assertEqualsToFile(dumpFile, dump)
+            } catch (e: Throwable) {
+                val actualFile = java.io.File("serialized_ir_actual.txt")
+                actualFile.writeText(dump)
+                throw e
+            }
         }
     }
 
