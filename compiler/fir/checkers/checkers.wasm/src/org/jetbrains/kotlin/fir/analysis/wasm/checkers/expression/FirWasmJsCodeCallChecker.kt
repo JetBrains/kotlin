@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.hasValidJsCodeBody
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
@@ -23,13 +23,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    private val COMPOSABLE_CLASS_ID = ClassId(FqName("androidx.compose.runtime"), Name.identifier("Composable"))
+    private val KOTLIN_PACKAGE = FqName("kotlin")
 
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
@@ -77,12 +75,17 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
                             "function with extension receiver"
                         )
                     }
-                    if (containingDeclaration.hasAnnotation(COMPOSABLE_CLASS_ID, context.session)) {
-                        reporter.reportOn(
-                            source,
-                            FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND,
-                            "@Composable function"
-                        )
+                    for (annotation in containingDeclaration.resolvedAnnotationsWithClassIds) {
+                        // Disallow mixing js(...) with any annotation that isn't a standard Kotlin
+                        // annotation (e.g. @Suppress, @OptIn, etc.)
+                        val classId = annotation.toAnnotationClassId(context.session) ?: continue
+                        if (!classId.packageFqName.startsWith(KOTLIN_PACKAGE)) {
+                            reporter.reportOn(
+                                source,
+                                FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND,
+                                "@${classId.shortClassName} annotated function"
+                            )
+                        }
                     }
                     for (parameter in containingDeclaration.valueParameterSymbols) {
                         if (parameter.name.identifierOrNullIfSpecial?.isValidES5Identifier() != true) {
