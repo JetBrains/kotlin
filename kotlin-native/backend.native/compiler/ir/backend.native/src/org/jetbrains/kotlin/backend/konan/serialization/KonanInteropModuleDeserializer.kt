@@ -319,7 +319,27 @@ internal class KonanInteropModuleDeserializer(
             }
 
             for ([id, declarations] in deserializedDeclarations) {
-                if (allMetadataDeclarations[id]?.get() == null) {
+                val existingRef = allMetadataDeclarations[id]
+                val storeInCache = if (existingRef == null) {
+                    if (id !in allMetadataDeclarations) {
+                        // There is no entry, this is the first deserialization. Cache the results.
+                        true
+                    } else {
+                        // There is a `null` entry. It means that the declaration with a given ID was already converted to IR.
+                        // Don't store the metadata for this declaration again to avoid creating IR for the same declaration twice.
+                        false
+                    }
+                } else {
+                    if (existingRef.get() == null) {
+                        // There is a SoftReference entry, but the referenced value has been GC'ed. Cache it again.
+                        true
+                    } else {
+                        // There is a SoftReference entry and it still holds a value. It will be the same as the freshly deserialized
+                        // declaration, so just keep the old one.
+                        false
+                    }
+                }
+                if (storeInCache) {
                     allMetadataDeclarations[id] = SoftReference(declarations)
                 }
             }
