@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApiKind
 import java.net.URI
-import java.time.Duration
+import kotlin.time.Duration
 
 /**
  * Represents common configuration that is applicable to all Kotlin Browser Test Runners.

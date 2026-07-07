@@ -34,6 +34,9 @@ import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 
 class KotlinPlaywrightTestFrameworkWiringTest {
 
@@ -181,13 +184,13 @@ class KotlinPlaywrightTestFrameworkWiringTest {
 
         val setup = buildBrowserTestProject {
             testsLocation.set(mockLocation1)
-            timeout.set(Duration.ofHours(72))
+            timeout.set(72L.hours)
             launchEnvironmentVariables.set(mapOf("FOO" to "BAR"))
 
             chromium("myChrome") {
                 it.headless.set(false)
                 it.launchArgs.set(listOf("--no-sandbox"))
-                it.timeout.set(Duration.ofDays(42))
+                it.timeout.set(42L.days)
                 it.customBrowserExecutable.set(customChromeExecutable)
             }
             firefox {

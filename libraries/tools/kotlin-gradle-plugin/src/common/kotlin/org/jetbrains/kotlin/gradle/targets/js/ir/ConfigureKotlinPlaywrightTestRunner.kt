@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import kotlin.time.toJavaDuration
 
 internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { target ->
     if (target !is KotlinJsIrTarget) return@KotlinTargetSideEffect
@@ -92,7 +93,9 @@ private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
 ) {
     name.convention(runner.name)
     testsLocation.convention(runner.testsLocation)
-    timeout.convention(runner.timeout)
+    // map to java duration is necessary because Gradle Task fingerprints doesn't work with kotlin.time.Duration
+    // https://github.com/gradle/gradle/issues/38444
+    timeout.convention(runner.timeout.map { it.toJavaDuration() })
     headless.convention(runner.headless)
     launchArgs.convention(runner.launchArgs)
     launchEnvironmentVariables.convention(runner.launchEnvironmentVariables)

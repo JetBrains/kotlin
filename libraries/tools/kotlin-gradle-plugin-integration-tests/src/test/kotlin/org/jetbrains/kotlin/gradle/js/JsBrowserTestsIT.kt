@@ -22,7 +22,6 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.test.Ignore
 import kotlin.test.assertContains
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.toJavaDuration
 
 @JsBrowserGradlePluginTests
 class JsBrowserTestsIT : KGPBaseTest() {
@@ -225,7 +224,6 @@ class JsBrowserTestsIT : KGPBaseTest() {
 
     @DisplayName("KT-86958: Unclear error for js test failure on timeout")
     @GradleTest
-    @Ignore("Currently fails due to missing infra on CI, see KTI-3326")
     fun `prints clear error message when a test times out`(gradleVersion: GradleVersion) {
         project("empty", gradleVersion = gradleVersion) {
             plugins {
@@ -239,7 +237,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
                             @OptIn(ExperimentalJsTestDsl::class)
                             with(test) {
                                 chromium {
-                                    it.timeout.set(1234.milliseconds.toJavaDuration())
+                                    it.timeout.set(1234.milliseconds)
                                 }
                             }
                         }

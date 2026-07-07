@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.locateOrRegisterBrowserTes
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
-import java.time.Duration
 import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 internal abstract class KotlinBrowserTestRunner(
     private val name: String,
@@ -119,7 +120,7 @@ internal abstract class KotlinJsBrowserTestImpl
 
     override val headless: Property<Boolean> = objects.propertyWithConvention<Boolean>(true)
 
-    override val timeout: Property<Duration> = objects.propertyWithConvention<Duration>(Duration.ofSeconds(2))
+    override val timeout: Property<Duration> = objects.propertyWithConvention<Duration>(2L.seconds)
 
     private fun connectTopLevelConfigDslWithBrowserTestDsl(browserLevelDsl: KotlinBrowserTestRunnerDsl) {
         browserLevelDsl.testsLocation.convention(testsLocation)
