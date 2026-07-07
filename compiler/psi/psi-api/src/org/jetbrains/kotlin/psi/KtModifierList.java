@@ -73,7 +73,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
     /**
      * Returns the list of all {@link KtContextParameterList} declared in this modifier list.
      * <p>
-     * This method is indented only for handling error cases since valid code cannot have more than one context parameter list.
+     * This method is intended only for handling error cases since valid code cannot have more than one context parameter list.
      * <p>
      * Prefer {@link #getContextParameterList()} where it is possible.
      */

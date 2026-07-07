@@ -33,8 +33,8 @@ public interface KtDeclarationWithBody extends KtDeclaration {
 
     /**
      * Whether the declaration may have a contract.
-     * </p>
-     * <b>false</b> means that the declaration is definitely having no contract,
+     * <p>
+     * <b>false</b> means that the declaration definitely has no contract,
      * but <b>true</b> doesn't guarantee that the declaration has a contract.
      */
     default boolean mayHaveContract() {

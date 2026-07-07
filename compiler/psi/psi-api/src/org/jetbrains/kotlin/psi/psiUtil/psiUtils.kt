@@ -42,14 +42,14 @@ import kotlin.contracts.contract
 // ----------- Walking children/siblings/parents -------------------------------------------------------------------------------------------
 
 /**
- * Returns all descendants of the given [this] in flatten form if it's a concatenation expression
- * with string literal arguments.
- * Otherwise, returns `null`.
+ * Returns all descendants of this expression in flattened form if it is a string-literal concatenation; otherwise,
+ * returns `null`.
  *
- * For instance, for the expression `"a0" /* comment before plus */ + /* comment after plus */ "a1"`
- * It returns `"a0"`, ws, /* comment before plus */, ws, `+`, ws, `/* comment after plus */`, ws, `"a1"`.
+ * For example, for `"a0" /* comment before plus */ + /* comment after plus */ "a1"`, this returns `"a0"`,
+ * whitespace, `/* comment before plus */`, whitespace, `+`, whitespace, `/* comment after plus */`, whitespace,
+ * and `"a1"`.
  *
- * @see [tryFlattenStringConcatenation] for more detail.
+ * @see tryFlattenStringConcatenation
  */
 @KtImplementationDetail
 fun KtBinaryExpression.tryFlattenStringConcatenationDescendants(): List<PsiElement>? {
@@ -57,13 +57,12 @@ fun KtBinaryExpression.tryFlattenStringConcatenationDescendants(): List<PsiEleme
 }
 
 /**
- * Returns arguments of the given [this] if it's a concatenation expression with string literal arguments.
- * Otherwise, returns `null`.
+ * Returns the string-template arguments of this expression if it is a string-literal concatenation; otherwise, returns
+ * `null`.
  *
- * For instance, for the expression `"a0" /* comment before plus */ + /* comment after plus */ "a1"`
- * It returns `"a0"`, `"a1"`.
+ * For example, for `"a0" /* comment before plus */ + /* comment after plus */ "a1"`, this returns `"a0"` and `"a1"`.
  *
- * @see [tryFlattenStringConcatenation] for more detail.
+ * @see tryFlattenStringConcatenation
  */
 @KtImplementationDetail
 fun KtBinaryExpression.tryFlattenStringConcatenationArguments(): List<KtStringTemplateExpression>? {
@@ -72,26 +71,23 @@ fun KtBinaryExpression.tryFlattenStringConcatenationArguments(): List<KtStringTe
 }
 
 /**
- * Emulates recursion using a stack to prevent StackOverflow exception on big string concatenation expressions like
- * `val x = "a0" + "a1" + ... + "a9999"` (it's relatively common in machine-generated code)
-
- * This method traverses the provided [this], tries to extract all string template nodes and returns
- * the list of nested expressions in direct order if the input `KtBinaryExpression` matches the string literals concatenation pattern.
- * Otherwise, it returns `null`.
- * The method handles nested expressions by pushing nodes onto an input stack and processing them iteratively.
+ * Emulates recursion with an explicit stack to avoid stack overflows on large string-concatenation expressions such as
+ * `val x = "a0" + "a1" + ... + "a9999"` (relatively common in machine-generated code).
  *
- * For instance, the "a" + "b" + "c" is represented as
+ * This method traverses this expression and tries to extract all string-template nodes. It returns the nested
+ * expressions in source order if this [KtBinaryExpression] matches the string-literal concatenation pattern;
+ * otherwise, it returns `null`. Nested expressions are processed iteratively by pushing nodes onto an input stack.
+ *
+ * For example, `"a" + "b" + "c"` is represented as:
  *
  * ```
  *          '+'(0)
  *      '+'(1)     'c'
  *  'a'        'b'
  * ```
- *
- *
- * The method returns `'a', 'b', 'c'` if [fullFidelity] is `false` (default)
- * But returns `'a', 'b', '+'(1), 'c', '+'(0)` and hidden tokens in between (whitespaces or comments) otherwise.
- * This is used when a full-fidelity tree structure is needed (see usages).
+ * The method returns `'a', 'b', 'c'` when [fullFidelity] is `false`. When [fullFidelity] is `true`, it returns
+ * `'a', 'b', '+'(1), 'c', '+'(0)` plus hidden tokens between them (whitespace or comments). Use the full-fidelity mode
+ * when callers need the complete tree structure.
  */
 @KtImplementationDetail
 private fun KtBinaryExpression.tryFlattenStringConcatenation(fullFidelity: Boolean): List<PsiElement>? {
@@ -323,8 +319,10 @@ fun PsiChildRange.trimWhiteSpaces(): PsiChildRange {
 val UNWRAPPABLE_TOKEN_TYPES: Set<IElementType> = setOf(PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION)
 
 /**
- * This function should only be called for a source element corresponding to
- * an assignment/assignment operator call/increment or a decrement operator.
+ * Returns the left-hand-side source element if it is wrapped in parentheses, a label, or annotations.
+ *
+ * This should only be called for a source element corresponding to an assignment, augmented-assignment operator call,
+ * increment operator, or decrement operator.
  */
 fun PsiElement.getAssignmentLhsIfUnwrappable(): PsiElement? =
     when {
@@ -455,7 +453,7 @@ inline fun <reified T : PsiElement, C : MutableCollection<T>> PsiElement.collect
     return to
 }
 
-// ----------- Working with offsets, ranges and texts ----------------------------------------------------------------------------------------------
+// ----------- Working with offsets, ranges, and text --------------------------------------------------------------------------------------
 
 val PsiElement.startOffset: Int
     get() = textRange.startOffset
@@ -471,7 +469,7 @@ val KtPureElement.pureEndOffset: Int
 
 val PsiElement.startOffsetSkippingComments: Int
     get() {
-        if (!startsWithComment()) return startOffset // fastpath
+        if (!startsWithComment()) return startOffset // fast path
         val firstNonCommentChild = generateSequence(firstChild) { it.nextSibling }
             .firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }
         return firstNonCommentChild?.startOffset ?: startOffset
@@ -586,9 +584,7 @@ fun KtModifierList.hasValueModifier() = hasModifier(KtTokens.VALUE_KEYWORD)
 
 fun KtModifierListOwner.hasInnerModifier() = hasModifier(KtTokens.INNER_KEYWORD)
 
-/**
- * Checks whether this [KtModifierListOwner] has the `external` modifier.
- */
+/** Returns `true` if this declaration has the `external` modifier. */
 fun KtModifierListOwner.hasExternalModifier(): Boolean = hasModifier(KtTokens.EXTERNAL_KEYWORD)
 
 fun ASTNode.children() = generateSequence(firstChildNode) { node -> node.treeNext }

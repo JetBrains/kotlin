@@ -41,8 +41,8 @@ fun KtCallElement.getCallNameExpression(): KtSimpleNameExpression? {
 }
 
 /**
- * Returns enclosing qualifying element for given [[KtSimpleNameExpression]]
- * ([[KtQualifiedExpression]] or [[KtUserType]] or original expression)
+ * Returns the enclosing qualified element for this name: a [KtQualifiedExpression], a [KtUserType], or this expression
+ * itself if there is no such qualifier.
  */
 fun KtSimpleNameExpression.getQualifiedElement(): KtElement {
     val baseExpression = (parent as? KtCallExpression) ?: this
@@ -69,7 +69,7 @@ fun KtSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): KtQ
 }
 
 /**
- * Returns rightmost selector of the qualified element (null if there is no such selector)
+ * Returns the rightmost selector of this qualified element, or `null` if there is no such selector.
  */
 fun KtElement.getQualifiedElementSelector(): KtElement? {
     return when (this) {
@@ -173,8 +173,9 @@ fun KtBlockExpression.contentRange(): PsiChildRange {
 fun KtClass.isAbstract(): Boolean = isInterface() || hasModifier(KtTokens.ABSTRACT_KEYWORD)
 
 /**
- * Returns the list of unqualified names that are indexed as the superclass names of this class. For the names that might be imported
- * via an aliased import, includes both the original and the aliased name (reference resolution during inheritor search will sort this out).
+ * Returns the unqualified names indexed as this class's superclass names. For names that might be imported through an
+ * alias, this includes both the original and aliased names; reference resolution during inheritor search disambiguates
+ * them.
  *
  * @return the list of possible superclass names
  */
@@ -214,7 +215,12 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
 
 // ------------ Annotations ----------------------------------------------------------------------------------------------------------------
 
-// Annotations on labeled expression lies on it's base expression
+/**
+ * Returns the annotation entries applied to this expression through an enclosing annotated (or labeled) expression, or
+ * an empty list if there are none.
+ *
+ * Annotations on labeled expressions lie on their base expressions.
+ */
 fun KtExpression.getAnnotationEntries(): List<KtAnnotationEntry> {
     val parent = parent
     return when (parent) {
@@ -255,8 +261,10 @@ private fun KtAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<KtAnn
 
 // -------- Recursive tree visiting --------------------------------------------------------------------------------------------------------
 
-// Calls `block` on each descendant of T type
-// Note, that calls happen in order of DFS-exit, so deeper nodes are applied earlier
+/**
+ * Returns a recursive visitor that calls [block] on each descendant of type [T]. Calls happen in DFS-exit order, so
+ * deeper nodes are visited before their ancestors.
+ */
 inline fun <reified T : KtElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): KtVisitorVoid {
     return object : KtTreeVisitorVoid() {
         override fun visitKtElement(element: KtElement) {
@@ -277,7 +285,7 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
 
 // ----------- Contracts -------------------------------------------------------------------------------------------------------------------
 /**
- * Whether the declaration may have a legacy contract (a contract that defined inside the body).
+ * Whether the declaration may have a legacy contract (a contract defined inside the body).
  *
  * In other words, **false** guarantees that the declaration cannot have a contract,
  * but **true** does not guarantee that the declaration has a contract.
@@ -347,8 +355,8 @@ fun KtDeclaration.isExpectDeclaration(): Boolean = when {
 }
 
 /**
- * Checks if this declaration is an `actual`. This is the case if the declaration either has an explicit `actual` modifier, or if
- * it is a constructor of an annotation, value, or inline class
+ * Returns `true` if this declaration is `actual`: either it has an explicit `actual` modifier, or it is a constructor
+ * of an `actual` annotation, value, or inline class.
  */
 fun KtDeclaration.isActualDeclaration(): Boolean = hasActualModifier() || isImplicitlyActualDeclaration()
 
@@ -437,8 +445,9 @@ fun KtStringTemplateExpression.getContentRange(): TextRange {
 }
 
 /**
- * Check expression might be a callee of call with the same name.
- * Note that 'this' in 'this(args)' isn't considered to be a callee, also 'name' is not a callee in 'name++'.
+ * Returns `true` if this expression can be the callee of a call with the same name.
+ *
+ * `this` in `this(args)` is not considered a callee, and `name` in `name++` is not considered a callee either.
  */
 fun KtSimpleNameExpression.isCallee(): Boolean {
     val parent = parent
@@ -522,8 +531,10 @@ fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTe
 fun KtStringTemplateExpression.isPlainWithEscapes() =
     entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
 
-// Correct for class members only (including constructors and nested classes)
-// Returns null e.g. for member function parameters, member function locals, property accessors
+/**
+ * The class or object that declares this declaration as a member (including constructors and nested classes), or `null`
+ * if it is not a class member — for example, a member function's parameter or local, or a property accessor.
+ */
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
     get() = when (val parent = parent) {
         is KtClassBody -> parent.containingClassOrObject
@@ -536,7 +547,7 @@ val KtDeclaration.containingClassOrObject: KtClassOrObject?
 /**
  * Whether this declaration is declared inside a companion object block.
  *
- * ### Example
+ * ### Example:
  *
  * class Foo {
  *   companion {
@@ -550,10 +561,12 @@ val KtDeclaration.isFromCompanionBlock: Boolean
     get() = (parent as? KtClassBody)?.parent is KtCompanionBlock
 
 /**
- * Whether the callable is a [companion extension](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-extensions) or
- * comes from a [companion block](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-blocks).
+ * Whether the callable is a
+ * [companion extension](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-extensions)
+ * or comes from a
+ * [companion block](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-blocks).
  *
- * **Note**: according to the KEEP, [KtEnumEntry]  are also considered implicitly declared in a companion block.
+ * **Note:** according to the KEEP, [KtEnumEntry]s are also considered implicitly declared in a companion block.
  */
 @KtExperimentalApi
 val KtDeclarationWithReturnType.isCompanion: Boolean
@@ -592,7 +605,7 @@ val KtBlockExpression.containingScript: KtScript?
     get() = parent as? KtScript
 
 /**
- * Containing [ClassId] for a declaration. It supports [KtScript] in REPL mode.
+ * The containing [ClassId] for this declaration. REPL [KtScript]s are supported.
  *
  * @see containingScript
  * @see containingClassOrObject
@@ -780,12 +793,12 @@ private val HARD_KEYWORDS: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION)
  * - Contain only letters, digits, or underscores;
  * - Not be a hard keyword.
  *
- * Escaped identifiers (strings starting with a backtick) are also supported: the function returns `true` for strings like
- * "`class`" or "`with spaces`".
+ * Escaped identifiers (strings starting with a backtick) are also supported: the function returns `true` for strings
+ * such as `` `class` `` or `` `with spaces` ``.
  *
- * The function performs only basic, platform-agnostic validation. Individual build targets may impose additional restrictions.
- * Such as, for the JVM platform, Java bytecode and Dalvik restrictions apply
- * (see 'org.jetbrains.kotlin.resolve.jvm.checkers.DalvikIdentifierUtils.isValidDalvikCharacter').
+ * The function performs only basic, platform-agnostic validation. Individual build targets may impose additional
+ * restrictions; for example, the JVM target also applies Java bytecode and Dalvik restrictions.
+ * See `org.jetbrains.kotlin.resolve.jvm.checkers.DalvikIdentifierUtils.isValidDalvikCharacter`.
  *
  * @see quoteIfNeeded
  */
@@ -900,8 +913,8 @@ tailrec fun KtTypeElement.unwrapNullability(): KtTypeElement? {
 }
 
 internal fun isKtFile(parent: PsiElement?): Boolean {
-    //avoid loading KtFile which depends on java psi, which is not available in some setup
-    //e.g. remote dev https://youtrack.jetbrains.com/issue/GTW-7554
+    // Avoid loading KtFile, which depends on Java PSI and is not available in some setups.
+    // For example, remote dev: https://youtrack.jetbrains.com/issue/GTW-7554.
     return parent is PsiFile && parent.language == KotlinLanguage.INSTANCE
 }
 
@@ -920,7 +933,7 @@ fun getImportedSimpleNameByImportAlias(file: KtFile, aliasName: String): String?
 }
 
 /**
- * A best-effort way to get the class id of expression's type without resolve.
+ * A best-effort way to get the [ClassId] of this expression's type without semantic resolution.
  */
 fun KtConstantExpression.inferClassIdByPsi(): ClassId? =
     ClassIdCalculator.inferConstantExpressionClassIdByPsi(this)

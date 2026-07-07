@@ -26,10 +26,13 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 /**
- * This class represents kotlin psi file, independently of java psi (no [PsiClassOwner] super).
- * It can be created by [org.jetbrains.kotlin.parsing.KotlinCommonParserDefinition], if java psi is not available e.g., on JB Client.
+ * A Kotlin PSI file implementation independent of Java PSI (it does not implement [PsiClassOwner]).
  *
- * It's not supposed to be used directly, use [PsiFile] or if you need to check instanceof, check its' file type or language instead.
+ * It can be created by [org.jetbrains.kotlin.parsing.KotlinCommonParserDefinition] when Java PSI is not available, for
+ * example, on JB Client.
+ *
+ * This class is not intended for direct use. Prefer [PsiFile], or check the file type or language if you need to
+ * distinguish it from other PSI files.
  */
 @Deprecated("Don't use directly, use file.getFileType() instead")
 open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
@@ -147,12 +150,13 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     /**
      * This is an optimized way to find a file child element in the header.
      *
-     * Regular [findChildByTypeOrClass] will iterate through all childen that is especially quite expensive in the
-     * case of [findChildByClass].
-     * It will trigger psi calculation for all children even if the wanted element in the first child.
+     * Regular [findChildByTypeOrClass] will iterate through all children, which is especially expensive in the case of
+     * [findChildByClass].
+     * It will trigger PSI calculation for all children even if the wanted element is the first child.
      *
-     * So this function will iterate as a maximum only through all non-declarations in the beginning plus one declaration.
-     * This one declaration processing is required to support the optimization for [KtScript] as well as it can be only in the beginning.
+     * So this function will iterate at most through all leading non-declarations plus one declaration.
+     * Processing one declaration is required to support the optimization for [KtScript], as it can only appear at the
+     * beginning.
      */
     private fun <T : KtElementImplStub<out StubElement<T>>> findChildBeforeFirstDeclarationInclusiveByType(
         elementType: KtStubElementType<out StubElement<T>, T>,
