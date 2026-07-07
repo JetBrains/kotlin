@@ -239,7 +239,7 @@
 
 /compiler/tests-integration/testData/smoke/ "Kotlin Frontend"
 /compiler/tests-integration/testData/javaModules/ "Kotlin JVM"
-/compiler/tests-integration/testData/multiModule/ "Kotlin Frontend"
+/compiler/tests-integration/testData/multiModule/ "Kotlin Frontend" "Kotlin JVM"
 # UNKNOWN: /compiler/tests-integration/testData/integration/
 # UNKNOWN: /compiler/tests-integration/testData/launcher/
 # UNKNOWN: /compiler/tests-integration/testData/multiplatform/
