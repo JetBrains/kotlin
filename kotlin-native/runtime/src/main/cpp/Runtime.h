@@ -33,8 +33,8 @@ void Kotlin_shutdownRuntime();
 // Appends given node to an initializer list.
 RUNTIME_NOTHROW void AppendToInitializersTail(struct InitNode*);
 
-void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)());
-void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)());
+void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)(), const TypeInfo* typeInfo);
+void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)(), const TypeInfo* typeInfo);
 
 #ifdef __cplusplus
 } // extern "C"

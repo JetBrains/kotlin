@@ -290,7 +290,7 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
 
             waitUntilCanStart(i);
 
-            CallInitGlobalPossiblyLock(&lock, initializationFunction);
+            CallInitGlobalPossiblyLock(&lock, initializationFunction, nullptr);
             // Try to suspend to handle a case when this thread doesn't call the initialization function.
             mm::safePoint();
         });

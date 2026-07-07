@@ -44,7 +44,7 @@ fun box(): String {
         return "FAIL 2.1: should throw"
     } catch (e: NoClassDefFoundError) {
         if (e.cause != null) return "FAIL 2.2: cause must be null, got ${e.cause}"
-        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "Could not initialize file" else "Could not initialize class C"
+        val expectedMessage = "Could not initialize class C"
         if (e.message != expectedMessage) return "FAIL 2.3: message must be '$expectedMessage', was '${e.message}'"
     }
 
@@ -65,7 +65,10 @@ fun box(): String {
         return "FAIL 4.1: should throw"
     } catch (e: NoClassDefFoundError) {
         if (e.cause != null) return "FAIL 4.2: cause must be null, got ${e.cause}"
-        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "Could not initialize file" else "Could not initialize class Child"
+        val expectedMessage = when (BACKEND_UNDER_TEST) {
+            "NATIVE" -> "Could not initialize class Parent" // Slight difference in behavior in Native
+            else -> "Could not initialize class Child"
+        }
         if (e.message != expectedMessage) return "FAIL 4.3: message must be '$expectedMessage', was '${e.message}'"
     }
 
@@ -75,7 +78,7 @@ fun box(): String {
         return "FAIL 5.1: should throw"
     } catch (e: NoClassDefFoundError) {
         if (e.cause != null) return "FAIL 5.2: cause must be null, got ${e.cause}"
-        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "Could not initialize file" else "Could not initialize class Parent"
+        val expectedMessage = "Could not initialize class Parent"
         if (e.message != expectedMessage) return "FAIL 2.3: message must be '$expectedMessage', was '${e.message}'"
     }
 
@@ -93,7 +96,7 @@ fun box(): String {
         return "FAIL 7.1: should throw"
     } catch (e: NoClassDefFoundError) {
         if (e.cause != null) return "FAIL 7.2: cause must be null, got ${e.cause}"
-        val expectedMessage = if (BACKEND_UNDER_TEST == "NATIVE") "Could not initialize file" else "Could not initialize class ThrowsError"
+        val expectedMessage = "Could not initialize class ThrowsError"
         if (e.message != expectedMessage) return "FAIL 7.3: message must be '$expectedMessage', was '${e.message}'"
     }
 

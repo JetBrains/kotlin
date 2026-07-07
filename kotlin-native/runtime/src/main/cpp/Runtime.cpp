@@ -313,7 +313,7 @@ RUNTIME_NOTHROW KBoolean Kotlin_Debugging_isStack(KRef obj) {
     return obj->stack();
 }
 
-static void CallInitGlobalAwaitInitialized(uintptr_t* state) {
+static void CallInitGlobalAwaitInitialized(uintptr_t* state, const TypeInfo* typeInfo) {
     uintptr_t localState;
     // Switch to the native state to avoid dead-locks.
     {
@@ -322,18 +322,18 @@ static void CallInitGlobalAwaitInitialized(uintptr_t* state) {
             localState = std_support::atomic_ref{*state}.load(std::memory_order_acquire);
         } while (localState != FILE_INITIALIZED && localState != FILE_FAILED_TO_INITIALIZE);
     }
-    if (localState == FILE_FAILED_TO_INITIALIZE) ThrowFileFailedToInitializeException(nullptr);
+    if (localState == FILE_FAILED_TO_INITIALIZE) ThrowFileFailedToInitializeException(nullptr, typeInfo);
 }
 
-NO_INLINE void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)()) {
+NO_INLINE void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)(), const TypeInfo* typeInfo) {
     uintptr_t localState = std_support::atomic_ref{*state}.load(std::memory_order_acquire);
     if (localState == FILE_INITIALIZED) return;
     if (localState == FILE_FAILED_TO_INITIALIZE)
-        ThrowFileFailedToInitializeException(nullptr);
+        ThrowFileFailedToInitializeException(nullptr, typeInfo);
     uintptr_t threadId = konan::currentThreadId();
     if ((localState & 3) == FILE_BEING_INITIALIZED) {
         if ((localState & ~3) != (threadId << 2)) {
-            CallInitGlobalAwaitInitialized(state);
+            CallInitGlobalAwaitInitialized(state, typeInfo);
         }
         return;
     }
@@ -346,17 +346,17 @@ NO_INLINE void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)()) {
             ObjHolder holder;
             auto *exception = Kotlin_getExceptionObject(&e, holder.slot());
             std_support::atomic_ref{*state}.store(FILE_FAILED_TO_INITIALIZE, std::memory_order_release);
-            ThrowFileFailedToInitializeException(exception);
+            ThrowFileFailedToInitializeException(exception, typeInfo);
         }
         std_support::atomic_ref{*state}.store(FILE_INITIALIZED, std::memory_order_release);
     } else {
-        CallInitGlobalAwaitInitialized(state);
+        CallInitGlobalAwaitInitialized(state, typeInfo);
     }
 }
 
-void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)()) {
+void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)(), const TypeInfo* typeInfo) {
     if (*localState == FILE_FAILED_TO_INITIALIZE || (globalState != nullptr && *globalState == FILE_FAILED_TO_INITIALIZE))
-        ThrowFileFailedToInitializeException(nullptr);
+        ThrowFileFailedToInitializeException(nullptr, typeInfo);
     *localState = FILE_INITIALIZED;
     try {
         CurrentFrameGuard guard;
@@ -365,7 +365,7 @@ void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState,
         ObjHolder holder;
         auto *exception = Kotlin_getExceptionObject(&e, holder.slot());
         *localState = FILE_FAILED_TO_INITIALIZE;
-        ThrowFileFailedToInitializeException(exception);
+        ThrowFileFailedToInitializeException(exception, typeInfo);
     }
 }
 

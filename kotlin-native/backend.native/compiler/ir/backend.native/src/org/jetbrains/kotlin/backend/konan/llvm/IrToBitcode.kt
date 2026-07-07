@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.cValuesOf
+import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -2345,6 +2345,9 @@ internal class CodeGeneratorVisitor(
         }
     }
 
+    private val IrSimpleFunction.staticInitializerTypeInfo: LLVMValueRef
+        get() = (parent as? IrClass)?.let(codegen::typeInfoValue) ?: llvm.kNull
+
     private fun evaluateFileGlobalInitializerCall(fileInitializer: IrSimpleFunction) = with(functionGenerationContext) {
         val statePtr = getGlobalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
@@ -2356,7 +2359,7 @@ internal class CodeGeneratorVisitor(
         val state = load(llvm.intptrType, statePtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingAcquire)
         condBr(icmpEq(state, llvm.intptr(FILE_INITIALIZED)), bbExit, bbInit)
         positionAtEnd(bbInit)
-        call(llvm.callInitGlobalPossiblyLock, listOf(statePtr, initializerPtr),
+        call(llvm.callInitGlobalPossiblyLock, listOf(statePtr, initializerPtr, fileInitializer.staticInitializerTypeInfo),
                 exceptionHandler = currentCodeContext.exceptionHandler)
         br(bbExit)
         positionAtEnd(bbExit)
@@ -2383,7 +2386,7 @@ internal class CodeGeneratorVisitor(
         positionAtEnd(bbCheckLocalState)
         condBr(icmpNe(load(llvm.intptrType, localStatePtr), llvm.intptr(FILE_INITIALIZED)), bbInit, bbExit)
         positionAtEnd(bbInit)
-        call(llvm.callInitThreadLocal, listOf(globalStatePtr, localStatePtr, initializerPtr),
+        call(llvm.callInitThreadLocal, listOf(globalStatePtr, localStatePtr, initializerPtr, fileInitializer.staticInitializerTypeInfo),
                 exceptionHandler = currentCodeContext.exceptionHandler)
         br(bbExit)
         positionAtEnd(bbExit)
@@ -2401,7 +2404,7 @@ internal class CodeGeneratorVisitor(
         moveBlockAfterEntry(bbInit)
         condBr(icmpEq(load(llvm.intptrType, statePtr), llvm.intptr(FILE_INITIALIZED)), bbExit, bbInit)
         positionAtEnd(bbInit)
-        call(llvm.callInitThreadLocal, listOf(llvm.kNull, statePtr, initializerPtr),
+        call(llvm.callInitThreadLocal, listOf(llvm.kNull, statePtr, initializerPtr, fileInitializer.staticInitializerTypeInfo),
                 exceptionHandler = currentCodeContext.exceptionHandler)
         br(bbExit)
         positionAtEnd(bbExit)
