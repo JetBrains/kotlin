@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.ExceptionHandler
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionGenerationContext
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
-import org.jetbrains.kotlin.backend.konan.llvm.node
 import org.jetbrains.kotlin.backend.konan.llvm.theUnitInstanceRef
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.type
@@ -77,12 +76,6 @@ internal class HairToBitcode(
         /** Runs [block] with [fgc] as the implicit receiver, giving access to all LLVM builder helpers. */
         private fun <R> emit(block: FunctionGenerationContext.() -> R): R = fgc.block()
 
-        /** Widens narrow integral types to i32 (Hair's canonical integer width). */
-        fun adaptToHair(value: LLVMValueRef): LLVMValueRef = value
-
-        /** Truncates from Hair's i32 back to a narrower [targetType] when needed. */
-        fun adaptFromHair(value: LLVMValueRef, targetType: LLVMTypeRef): LLVMValueRef = value
-
         // TODO: copied from IntrinsicGenerator
         fun makeConstOfType(value: Int, targetType: LLVMTypeRef) = when (targetType) {
             llvm.int8Type -> llvm.int8(value.toByte())
@@ -99,7 +92,7 @@ internal class HairToBitcode(
                 nodeValues[this] ?: error("No LLVM value generated for Hair node $this")
 
         override fun visitNode(node: Node): LLVMValueRef? =
-                error("Unhandled Hair node in LLVM codegen: ${node::class.simpleName} — $node")
+                error("Unhandled Hair node in LLVM codegen: $node")
 
         /** NoValue is a structural placeholder; it carries no LLVM value. */
         override fun visitNoValue(node: NoValue): LLVMValueRef? = null
@@ -133,7 +126,7 @@ internal class HairToBitcode(
                 blockExitBlocks[node.trueExit] = trueBB
                 val falseBB = basicBlock("falseExit_${node.id}", null)
                 blockExitBlocks[node.falseExit] = falseBB
-                condBr(adaptFromHair(node.cond.value(), llvm.int1Type), trueBB, falseBB)
+                condBr(node.cond.value(), trueBB, falseBB)
                 appendingTo(trueBB) { br(blocks[node.trueExit.next]!!) }
                 appendingTo(falseBB) { br(blocks[node.falseExit.next]!!) }
             } else {
@@ -143,7 +136,7 @@ internal class HairToBitcode(
                 blockExitBlocks[node.falseExit] = bb
                 appendingTo(bb) {
                     condBr(
-                            adaptFromHair(node.cond.value(), llvm.int1Type),
+                            node.cond.value(),
                             blocks[node.trueExit.next]!!,
                             blocks[node.falseExit.next]!!
                     )
@@ -155,7 +148,7 @@ internal class HairToBitcode(
         override fun visitIfProjection(node: IfProjection): LLVMValueRef? = null
 
         override fun visitReturn(node: Return): LLVMValueRef? {
-            val result = adaptFromHair(node.result.value(), fgc.returnType!!)
+            val result = node.result.value()
             currentCodeContext.genReturn(declaration, result)
             return null
         }
@@ -165,7 +158,7 @@ internal class HairToBitcode(
         // ---------------------------------------------------------------
         // Values
 
-        override fun visitParam(node: Param): LLVMValueRef = adaptToHair(fgc.param(node.index))
+        override fun visitParam(node: Param): LLVMValueRef = fgc.param(node.index)
 
         override fun visitPhi(node: Phi): LLVMValueRef =
                 nodeValues[node]!! // already allocated by visitBlockEntry
@@ -226,13 +219,13 @@ internal class HairToBitcode(
         override fun visitInv(node: Inv): LLVMValueRef = emit { xor(node.value(), makeConstOfType(-1, node.value().type), "") }
 
         override fun visitNot(node: Not): LLVMValueRef =
-                adaptToHair(emit { not(adaptFromHair(node.operand.value(), llvm.int1Type)) })
+                emit { not(node.operand.value()) }
 
         override fun visitCmp(node: Cmp): LLVMValueRef {
             val lhs = node.lhs.value()
             val rhs = node.rhs.value()
             return if (node.type.isIntegral) {
-                adaptToHair(emit {
+                emit {
                     when (node.op) {
                         CmpOp.EQ -> icmpEq(lhs, rhs)
                         CmpOp.NE -> icmpNe(lhs, rhs)
@@ -245,7 +238,7 @@ internal class HairToBitcode(
                         CmpOp.S_LT -> icmpLt(lhs, rhs)
                         CmpOp.S_LE -> icmpLe(lhs, rhs)
                     }
-                })
+                }
             } else {
                 emit {
                     when (node.op) {
@@ -293,7 +286,7 @@ internal class HairToBitcode(
             }
             // TODO there are more things to do around the function call (EH, thread-state, …)
             val args = node.callArgs.zip(llvmParamTypes).map { [arg, paramType] ->
-                adaptFromHair(arg.value(), paramType)
+                arg.value()
             }
             val res = emit {
                 call(
@@ -308,7 +301,7 @@ internal class HairToBitcode(
                 // FIXME try to avoid dead code as the result of HaIR
                 emit { unreachable() }
                 codegen.theUnitInstanceRef.llvm
-            } else adaptToHair(res)
+            } else res
         }
 
         // ---------------------------------------------------------------
@@ -317,26 +310,28 @@ internal class HairToBitcode(
         override fun visitLoadGlobal(node: LoadGlobal): LLVMValueRef {
             val irField = (node.field as HairGlobalImpl).irField
             // TODO require(irField.correspondingPropertySymbol?.owner?.isConst != true)
-            return adaptToHair(fgc.loadIrField(irField, thisPtr = null, resultSlot = null))
+            return fgc.loadIrField(irField, thisPtr = null, resultSlot = null)
         }
 
         override fun visitLoadField(node: LoadField): LLVMValueRef {
             val irField = (node.field as HairFieldImpl).irField
             // TODO require(irField.correspondingPropertySymbol?.owner?.isConst != true)
             // TODO return slot!!
-            return adaptToHair(fgc.loadIrField(irField, node.obj.value(), resultSlot = null))
+            return fgc.loadIrField(irField, node.obj.value(), resultSlot = null)
         }
 
         override fun visitStoreGlobal(node: StoreGlobal): LLVMValueRef? {
             val irField = (node.field as HairGlobalImpl).irField
-            fgc.storeIrField(irField, thisPtr = null, adaptFromHair(node.value.value(), irField.type.toLLVMType(llvm)))
+            irField.type.toLLVMType(llvm)
+            fgc.storeIrField(irField, thisPtr = null, node.value.value())
             return null
         }
 
         override fun visitStoreField(node: StoreField): LLVMValueRef? {
             val irField = (node.field as HairFieldImpl).irField
             // TODO special handling for field initialization
-            fgc.storeIrField(irField, node.obj.value(), adaptFromHair(node.value.value(), irField.type.toLLVMType(llvm)))
+            irField.type.toLLVMType(llvm)
+            fgc.storeIrField(irField, node.obj.value(), node.value.value())
             return null
         }
 
