@@ -43,13 +43,14 @@ fun box(): String {
         if (e.message != null) return "FAIL 1.4: message must be null, got ${e.message}"
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         C()
         return "FAIL 2.1: should throw"
-    } catch (e: Error /* NoClassDefFoundError */) {
+    } catch (e: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "NATIVE" -> "There was an error during file or class initialization"
+                "NATIVE" -> "Could not initialize file"
                 "JS_IR", "JS_IR_ES6" -> "Could not initialize class C"
                 else -> "Could not initialize class foo.C"
             }
@@ -69,13 +70,14 @@ fun box(): String {
         e
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         Child()
         return "FAIL 4.1: should throw"
-    } catch (e: Error /* NoClassDefFoundError */) {
+    } catch (e: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "NATIVE" -> "There was an error during file or class initialization"
+                "NATIVE" -> "Could not initialize file"
                 "JS_IR", "JS_IR_ES6" -> "Could not initialize class Child"
                 else -> "Could not initialize class foo.Child"
             }
@@ -83,13 +85,14 @@ fun box(): String {
         }
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         Parent()
         return "FAIL 5.1: should throw"
-    } catch (e: Throwable /* NoClassDefFoundError */) {
+    } catch (e: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "NATIVE" -> "There was an error during file or class initialization"
+                "NATIVE" -> "Could not initialize file"
                 "JS_IR", "JS_IR_ES6" -> "Could not initialize class Parent"
                 else -> "Could not initialize class foo.Parent"
             }
@@ -105,13 +108,14 @@ fun box(): String {
         if (e.message != "ThrowsMyError.never") return "FAIL 6.3: message must be 'ThrowsMyError.never', was '${e.message}'"
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         ThrowsMyError()
         return "FAIL 7.1: should throw"
-    } catch (e: Error /* NoClassDefFoundError */) {
+    } catch (e: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "NATIVE" -> "There was an error during file or class initialization"
+                "NATIVE" -> "Could not initialize file"
                 "JS_IR", "JS_IR_ES6" -> "Could not initialize class ThrowsMyError"
                 else -> "Could not initialize class foo.ThrowsMyError"
             }

@@ -27,14 +27,15 @@ fun box() : String {
         if (cause.message != "1") return "FAIL 1.3: message must be '1', was '${cause.message}'"
         if (t.message != null) return "FAIL 1.4: message must be null, got ${t.message}"
     }
+
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         y
         return "FAIL 2.1"
-    } catch(t: Error /* NoClassDefFoundError */) {
+    } catch(t: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
                 "JVM_IR" -> "Could not initialize class lib.LibKt"
-                "NATIVE" -> "There was an error during file or class initialization"
                 else -> "Could not initialize file"
             }
             if (t.message != expectedMessage) return "FAIL 2.2: message must be '$expectedMessage', was '${t.message}'"
