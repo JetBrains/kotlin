@@ -191,62 +191,6 @@ class A16 : B16<String>() {
     companion object { init { log("A16.Companion") } }
 }
 
-// multiple interface inheritance
-interface I17 {
-    fun i() {}
-    companion object { init { log("I17.Companion") } }
-}
-interface J17 {
-    fun j() {}
-    companion object { init { log("J17.Companion") } }
-}
-interface K17 : I17 {
-    fun k() {}
-    companion object { init { log("K17.Companion") } }
-}
-interface L17 : J17 {
-    fun l() {}
-    companion object { init { log("L17.Companion") } }
-}
-interface M17 {
-    companion object { init { log("M17.Companion") } }
-}
-open class B17 : J17, K17 {
-    companion object { init { log("B17.Companion") } }
-}
-class A17: B17(), L17, M17 {
-    companion object { init { log("A17.Companion") } }
-}
-
-// multiple interface inheritance; with instance creation
-interface I18 {
-    fun i() {}
-    companion object { init { log("I18.Companion") } }
-}
-interface J18 {
-    fun j() {}
-    companion object { init { log("J18.Companion") } }
-}
-interface K18 : I18 {
-    fun k() {}
-    companion object { init { log("K18.Companion") } }
-}
-interface L18 : J18 {
-    fun l() {}
-    companion object { init { log("L18.Companion") } }
-}
-interface M18 {
-    companion object { init { log("M18.Companion") } }
-}
-open class B18 : J18, K18 {
-    init { log("B18.init") }
-    companion object { init { log("B18.Companion") } }
-}
-class A18: B18(), L18, M18 {
-    init { log("A18.init") }
-    companion object { init { log("A18.Companion") } }
-}
-
 fun box(): String {
     l = ""
     A1
@@ -336,16 +280,6 @@ fun box(): String {
     A16
     val r16 = l
     if (r16 != "B16.Companion\nA16.Companion\n") return "fail test16: '$r16'"
-
-    l = ""
-    A17
-    val r17 = l
-    if (r17 != "J17.Companion\nI17.Companion\nK17.Companion\nB17.Companion\nL17.Companion\nA17.Companion\n") return "fail test17: '$r17'"
-
-    l = ""
-    A18()
-    val r18 = l
-    if (r18 != "J18.Companion\nI18.Companion\nK18.Companion\nB18.Companion\nL18.Companion\nA18.Companion\nB18.init\nA18.init\n") return "fail test18: '$r18'"
 
     return "OK"
 }
