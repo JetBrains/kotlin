@@ -25,12 +25,13 @@ import java.util.Base64
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
     private fun detectArch(): String {
-        val arch = System.getProperty("os.arch")?.toLowerCaseAsciiOnly() ?: return Emulator.X86
-
-        return when {
-            arch.startsWith("arm") || arch == "aarch64" -> Emulator.ARM
-            else -> Emulator.X86
-        }
+        return Emulator.ARM
+//        val arch = System.getProperty("os.arch")?.toLowerCaseAsciiOnly() ?: return Emulator.X86
+//
+//        return when {
+//            arch.startsWith("arm") || arch == "aarch64" -> Emulator.ARM
+//            else -> Emulator.X86
+//        }
     }
 
     private suspend fun runTestsInEmulator(): TestSuite {
