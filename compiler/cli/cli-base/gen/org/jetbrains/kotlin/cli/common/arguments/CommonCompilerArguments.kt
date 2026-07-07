@@ -1096,7 +1096,6 @@ Warning: This feature is not yet production-ready.""",
         description = "Compile using the K2 compiler pipeline.",
         isObsolete = true,
         deprecatedVersion = "1.9.0",
-        removedVersion = "2.2.0",
     )
     var useK2: Boolean = false
         set(value) {
