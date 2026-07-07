@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.parseKotlinVersion
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.JpsPluginSettings
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -120,7 +121,10 @@ private fun generateRec(
 
                 // `Argument` annotation has only `FIELD` target, so check the field instead of its containing property
                 val argumentAnn = property.javaField?.getAnnotation(Argument::class.java)
-                if (argumentAnn != null && argumentAnn.isAlreadyRemoved) {
+                if (argumentAnn != null &&
+                    argumentAnn.removedVersion.isNotEmpty() &&
+                    parseKotlinVersion(argumentAnn.removedVersion) <= KotlinVersion.CURRENT
+                ) {
                     // Skip already removed arguments considering the `removedVersion`
                     continue
                 }
