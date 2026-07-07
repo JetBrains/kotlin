@@ -39,6 +39,7 @@ internal fun compileAndIndex(
             modules = emptyList()
         ),
         objCClassesIncludingCategories = emptySet(),
+        apiNotesSwiftName = false,
         allowIncludingObjCCategoriesFromDefFile = false
     )
 

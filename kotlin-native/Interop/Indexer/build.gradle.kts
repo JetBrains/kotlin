@@ -31,6 +31,8 @@ dependencies {
     api(project(":kotlin-native:Interop:Runtime"))
     api(project(":kotlin-native:libclangInterop"))
     implementation(project(":native:kotlin-native-utils"))
+    implementation(libs.jackson.dataformat.yaml)
+    implementation(libs.jackson.module.kotlin)
 
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":native:unsafe-mem"))
