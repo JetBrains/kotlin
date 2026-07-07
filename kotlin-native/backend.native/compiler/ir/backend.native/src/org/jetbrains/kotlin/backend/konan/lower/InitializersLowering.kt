@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -111,7 +111,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                         endOffset,
                         DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER,
                         "INITIALIZER".synthesizedName,
-                        DescriptorVisibilities.PRIVATE,
+                        Visibilities.Private,
                         isInline = false,
                         isExpect = false,
                         context.irBuiltIns.unitType,

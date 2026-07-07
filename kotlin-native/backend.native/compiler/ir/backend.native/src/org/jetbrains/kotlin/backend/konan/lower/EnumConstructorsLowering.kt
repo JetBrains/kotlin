@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -109,7 +109,7 @@ internal class EnumConstructorsLowering(val context: NativeBackendContext) : Cla
                             endOffset,
                             constructor.origin,
                             constructor.name,
-                            DescriptorVisibilities.PROTECTED,
+                            Visibilities.Protected,
                             isInline = false,
                             isExpect = false,
                             constructor.returnType,

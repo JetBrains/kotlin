@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -64,7 +64,7 @@ internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerati
                 origin = DECLARATION_ORIGIN_COROUTINE_VAR_SPILLING
                 name = variable.name
                 type = variable.type
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 isFinal = false
             }.apply {
                 coroutineClass.addChild(this)

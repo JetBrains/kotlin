@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -786,7 +786,7 @@ private fun CBridgeGenState.createFakeKotlinExternalFunction(
             UNDEFINED_OFFSET,
             IrDeclarationOrigin.DEFINED,
             Name.identifier(cFunctionName),
-            DescriptorVisibilities.PRIVATE,
+            Visibilities.Private,
             isInline = false,
             isExpect = false,
             signature.returnType,
@@ -1362,7 +1362,7 @@ private class ObjCBlockPointerValuePassing(
                 endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
                 Name.identifier(state.stubs.getUniqueKotlinFunctionReferenceClassName("BlockFunctionImpl")),
-                DescriptorVisibilities.PRIVATE,
+                Visibilities.Private,
                 IrClassSymbolImpl(),
                 ClassKind.CLASS,
                 Modality.FINAL,
@@ -1377,7 +1377,7 @@ private class ObjCBlockPointerValuePassing(
                 endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
                 Name.identifier("blockHolder"),
-                DescriptorVisibilities.PRIVATE,
+                Visibilities.Private,
                 IrFieldSymbolImpl(),
                 irBuiltIns.anyType,
                 isFinal = true,
@@ -1390,7 +1390,7 @@ private class ObjCBlockPointerValuePassing(
                 endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
                 Name.special("<init>"),
-                DescriptorVisibilities.PUBLIC,
+                Visibilities.Public,
                 isInline = false,
                 isExpect = false,
                 irClass.defaultType,
@@ -1435,7 +1435,7 @@ private class ObjCBlockPointerValuePassing(
                 endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
                 overriddenInvokeMethod.name,
-                DescriptorVisibilities.PUBLIC,
+                Visibilities.Public,
                 isInline = false,
                 isExpect = false,
                 returnType = functionType.arguments.last().typeOrNull!!,

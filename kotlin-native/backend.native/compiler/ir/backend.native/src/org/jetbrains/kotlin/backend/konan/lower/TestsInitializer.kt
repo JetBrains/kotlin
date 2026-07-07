@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -30,7 +30,7 @@ internal class TestsInitializer(private val context: NativeBackendContext) : Fil
                 startOffset = function.startOffset
                 endOffset = function.endOffset
                 name = "createTestSuites".synthesizedName
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 isFinal = true
                 isStatic = true
                 type = context.irBuiltIns.unitType

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
 import org.jetbrains.kotlin.backend.common.serialization.referenceDeserializedSymbol
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -158,7 +158,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
                 endOffset = UNDEFINED_OFFSET,
                 origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
                 name = (symbol as IrClassSymbol).classIdWhenAvailable!!.shortClassName,
-                visibility = DescriptorVisibilities.PUBLIC,
+                visibility = Visibilities.Public,
                 symbol = symbol,
                 kind = ClassKind.ANNOTATION_CLASS,
                 modality = Modality.FINAL,

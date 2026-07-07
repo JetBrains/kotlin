@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -507,7 +507,7 @@ private class InlineClassTransformer(private val context: NativeBackendContext) 
                 endOffset,
                 IrDeclarationOrigin.DEFINED,
                 Name.identifier("value"),
-                DescriptorVisibilities.PRIVATE,
+                Visibilities.Private,
                 IrFieldSymbolImpl(),
                 declaration.defaultType,
                 isFinal = true,

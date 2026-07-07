@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -41,7 +41,7 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
         this.endOffset = endOffset
         origin = DECLARATION_ORIGIN_ENTRY_POINT
         name = Name.identifier("Konan_start")
-        visibility = DescriptorVisibilities.PRIVATE
+        visibility = Visibilities.Private
         returnType = context.irBuiltIns.intType
     }.apply {
         addValueParameter {

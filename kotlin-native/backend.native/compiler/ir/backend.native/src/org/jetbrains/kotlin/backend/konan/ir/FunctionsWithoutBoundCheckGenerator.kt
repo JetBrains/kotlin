@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -31,7 +31,7 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: NativeBackendCon
                     endOffset = baseFunction.endOffset,
                     origin = IrDeclarationOrigin.GENERATED_SETTER_GETTER,
                     name = functionName,
-                    visibility = DescriptorVisibilities.PUBLIC,
+                    visibility = Visibilities.Public,
                     isInline = false,
                     isExpect = false,
                     returnType = baseFunction.returnType,

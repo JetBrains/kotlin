@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.delegationKind
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -46,7 +46,7 @@ internal class NativeInnerClassesSupport(private val irFactory: IrFactory) : Inn
                 origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
                 name = "this$0".synthesizedName // TODO: other backends have "$this" here.
                 type = outerClass.defaultType
-                visibility = DescriptorVisibilities.PROTECTED
+                visibility = Visibilities.Protected
                 isFinal = true
                 isExternal = false
                 isStatic = false

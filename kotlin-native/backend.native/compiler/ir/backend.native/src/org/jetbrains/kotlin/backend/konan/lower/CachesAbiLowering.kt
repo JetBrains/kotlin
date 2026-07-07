@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -38,10 +38,10 @@ private var IrSimpleFunction.fakeOverrideAccessor: IrSimpleFunction? by irAttrib
 
 private val IrSimpleFunction.isPrivateOrBelongsToPrivateClass: Boolean
     get() {
-        if (DescriptorVisibilities.isPrivate(this.visibility)) return true
+        if (Visibilities.isPrivate(this.visibility)) return true
         val owner = this.correspondingPropertySymbol?.owner?.parent ?: this.parent
         if (owner !is IrClass) return false
-        return DescriptorVisibilities.isPrivate(owner.visibility) || owner.isOriginallyLocal
+        return Visibilities.isPrivate(owner.visibility) || owner.isOriginallyLocal
     }
 
 private val IrSimpleFunction.needsFakeOverrideAccessor: Boolean
@@ -211,7 +211,7 @@ internal class ExportCachesAbiVisitor(val context: NativeBackendContext) : FileL
                 addedFunctions.add(function)
             }
 
-            if (DescriptorVisibilities.isPrivate(declaration.visibility)) return
+            if (Visibilities.isPrivate(declaration.visibility)) return
             for (irFunction in declaration.simpleFunctions()) {
                 if (!irFunction.needsFakeOverrideAccessor) continue
 
@@ -243,7 +243,7 @@ internal class ExportCachesAbiVisitor(val context: NativeBackendContext) : FileL
             declaration.acceptChildrenVoid(this)
 
             if (!declaration.isLateinit || declaration.isFakeOverride
-                    || DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isOriginallyLocal)
+                    || Visibilities.isPrivate(declaration.visibility) || declaration.isOriginallyLocal)
                 return
 
             val backingField = declaration.backingField ?: error("Lateinit property ${declaration.render()} should have a backing field")
@@ -261,7 +261,7 @@ internal class ExportCachesAbiVisitor(val context: NativeBackendContext) : FileL
         override fun visitField(declaration: IrField) {
             declaration.acceptChildrenVoid(this)
 
-            if (!declaration.isTopLevel || DescriptorVisibilities.isPrivate(declaration.visibility)) return
+            if (!declaration.isTopLevel || Visibilities.isPrivate(declaration.visibility)) return
 
             val getter = cachesAbiSupport.getTopLevelFieldAccessor(declaration)
             context.createIrBuilder(getter.symbol).apply {

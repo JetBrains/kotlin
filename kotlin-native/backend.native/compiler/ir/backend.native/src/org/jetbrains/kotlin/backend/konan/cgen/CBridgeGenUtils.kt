@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -123,7 +123,7 @@ private fun createKotlinBridge(
             endOffset,
             origin,
             Name.identifier(cBridgeName),
-            DescriptorVisibilities.PRIVATE,
+            Visibilities.Private,
             isInline = false,
             isExpect = false,
             null,

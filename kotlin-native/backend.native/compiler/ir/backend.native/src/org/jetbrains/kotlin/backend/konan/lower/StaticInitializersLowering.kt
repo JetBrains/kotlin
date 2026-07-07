@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
 import org.jetbrains.kotlin.backend.konan.llvm.storageKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -97,7 +97,7 @@ internal class StaticInitializersLowering(val context: NativeBackendContext) : F
     private fun IrClass.getClinitTriggerFunction() = ::clinitTriggerFunction.getOrSetIfNull {
         context.irFactory.buildFun {
             name = Name.identifier($$"$clinit_trigger")
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             returnType = context.irBuiltIns.unitType
         }.apply {
             parent = this@getClinitTriggerFunction
@@ -295,7 +295,7 @@ internal class StaticInitializersLowering(val context: NativeBackendContext) : F
         // which is a much less common case, because it doesn't work on jvm.
         // For classes, it's not necessary, as the class fqname would be added to the mangled function name anyway
         this.name = if (container is IrFile) Name.identifier(name + '$' + container.name) else Name.identifier(name)
-        visibility = DescriptorVisibilities.PRIVATE
+        visibility = Visibilities.Private
         returnType = context.irBuiltIns.unitType
     }.apply {
         parent = container

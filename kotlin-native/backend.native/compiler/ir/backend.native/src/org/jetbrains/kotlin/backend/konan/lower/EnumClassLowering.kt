@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -200,7 +200,7 @@ internal class EnumClassLowering(val context: NativeBackendContext) : FileLoweri
             origin = DECLARATION_ORIGIN_ENUM
             name = "VALUES".synthesizedName
             type = context.irBuiltIns.arrayClass.typeWith(irClass.defaultType)
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             isFinal = true
             isStatic = true
         }
@@ -210,7 +210,7 @@ internal class EnumClassLowering(val context: NativeBackendContext) : FileLoweri
             origin = DECLARATION_ORIGIN_ENUM
             name = "ENTRIES".synthesizedName
             type = symbols.enumEntriesInterface.typeWith(irClass.defaultType)
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             isFinal = true
             isStatic = true
         }

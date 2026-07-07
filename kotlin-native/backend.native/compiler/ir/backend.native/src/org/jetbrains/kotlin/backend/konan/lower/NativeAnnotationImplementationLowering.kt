@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
@@ -34,7 +34,7 @@ private class NativeAnnotationImplementationTransformer(context: NativeBackendCo
             } ?: error("Can't find an Arrays.contentEquals method for array type ${type.render()}")
 
     override fun IrClass.platformSetup() {
-        visibility = DescriptorVisibilities.PRIVATE
+        visibility = Visibilities.Private
         parent = irFile!!
     }
 
@@ -56,7 +56,7 @@ private class NativeAnnotationImplementationTransformer(context: NativeBackendCo
         } ?: implClass.addConstructor {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }.apply {
             expression.symbol.owner.parameters
                     .filter { it.name in existingArguments }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.lower.EnumClassLowering
 import org.jetbrains.kotlin.backend.konan.lower.EnumConstructorsLowering
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -139,7 +139,7 @@ internal class IrImplementationGeneratorForCStructsAndEnums(
 
         val backingField = IrFactoryImpl.createField(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                irProperty.name, DescriptorVisibilities.PRIVATE, IrFieldSymbolImpl(), getter.returnType,
+                irProperty.name, Visibilities.Private, IrFieldSymbolImpl(), getter.returnType,
                 isFinal = true, isStatic = false, isExternal = false
         )
         backingField.initializer = builtIns.createIrBuilder(backingField.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {

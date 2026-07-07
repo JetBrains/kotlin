@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -115,7 +115,7 @@ private abstract class BaseInteropIrTransformer(
             arguments[0] = irBlock {
                 addedDeclarations.forEach {
                     it.transform(this@BaseInteropIrTransformer, null)
-                    (it as? IrDeclarationWithVisibility)?.visibility = DescriptorVisibilities.LOCAL
+                    (it as? IrDeclarationWithVisibility)?.visibility = Visibilities.Local
                     +it
                 }
                 +result
@@ -189,7 +189,7 @@ private class InteropLoweringPart1(val context: NativeBackendContext, val fileLo
                 expression.endOffset,
                 IrDeclarationOrigin.DEFINED,
                 "topLevelInitializer${topLevelInitializersCounter++}".synthesizedName,
-                DescriptorVisibilities.PRIVATE,
+                Visibilities.Private,
                 IrFieldSymbolImpl(),
                 expression.type,
                 isFinal = true,
@@ -392,7 +392,7 @@ private class InteropTransformerPart1(
             // it must switch thread state and potentially initialize runtime on this thread.
             origin = CBridgeOrigin.C_TO_KOTLIN_BRIDGE
             name = ("imp:$selector").synthesizedName
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             returnType = function.returnType
         }
 

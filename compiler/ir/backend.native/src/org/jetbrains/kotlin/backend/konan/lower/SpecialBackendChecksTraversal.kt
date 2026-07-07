@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -95,7 +95,7 @@ private class BackendChecker(
     private val functionClosures = mutableMapOf<IrFunction, Closure>()
 
     private fun captures(function: IrFunction): List<IrValueDeclaration> {
-        if (function.visibility != DescriptorVisibilities.LOCAL) return emptyList()
+        if (function.visibility != Visibilities.Local) return emptyList()
         val closure = functionClosures.getOrPut(function) {
             functionAnnotators[function]!!.value.getFunctionClosure(function)
         }
@@ -117,7 +117,7 @@ private class BackendChecker(
 
     override fun visitBody(body: IrBody) {
         val declaration = outerDeclarations.peek()!!
-        if ((declaration as? IrFunction)?.visibility == DescriptorVisibilities.LOCAL) {
+        if ((declaration as? IrFunction)?.visibility == Visibilities.Local) {
             functionAnnotators[declaration] = outerAnnotators.peek()!!
             super.visitBody(body)
             return

@@ -94,7 +94,7 @@ class CInteropKlibMetadata2IRTransformer(
                 symbol = symbol,
                 origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
                 name = classId.shortClassName,
-                visibility = kmClass.visibility.toDescriptorVisibility(),
+                visibility = kmClass.visibility.toVisibility(),
                 modality = kmClass.modality.toDescriptorModality(),
                 kind = kmClass.kind.toDescriptorClassKind(),
                 isCompanion = kmClass.kind == KmClassKind.COMPANION_OBJECT,
@@ -157,7 +157,7 @@ class CInteropKlibMetadata2IRTransformer(
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
             name = SpecialNames.INIT,
-            visibility = kmConstructor.visibility.toDescriptorVisibility(),
+            visibility = kmConstructor.visibility.toVisibility(),
             returnType = parent.defaultType,
             isExpect = false,
             isExternal = false,
@@ -180,7 +180,7 @@ class CInteropKlibMetadata2IRTransformer(
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
             name = Name.identifier(kmFunction.name),
-            visibility = kmFunction.visibility.toDescriptorVisibility(),
+            visibility = kmFunction.visibility.toVisibility(),
             modality = kmFunction.modality.toDescriptorModality(),
             returnType = kmFunction.returnType.toIrType(typeParametersById),
             isExpect = kmFunction.isExpect,
@@ -225,7 +225,7 @@ class CInteropKlibMetadata2IRTransformer(
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
             name = Name.identifier(kmProperty.name),
-            visibility = kmProperty.visibility.toDescriptorVisibility(),
+            visibility = kmProperty.visibility.toVisibility(),
             modality = kmProperty.modality.toDescriptorModality(),
             isExpect = kmProperty.isExpect,
             isExternal = kmProperty.isExternal,
@@ -245,7 +245,7 @@ class CInteropKlibMetadata2IRTransformer(
                 endOffset = UNDEFINED_OFFSET,
                 origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
                 name = Name.identifier(kmProperty.name),
-                visibility = kmProperty.visibility.toDescriptorVisibility(),
+                visibility = kmProperty.visibility.toVisibility(),
                 symbol = IrFieldSymbolImpl(),
                 type = kmProperty.returnType.toIrType(),
                 isFinal = !kmProperty.isVar,
@@ -281,7 +281,7 @@ class CInteropKlibMetadata2IRTransformer(
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
             name = if (isSetter) Name.special("<set-${kmProperty.name}>") else Name.special("<get-${kmProperty.name}>"),
-            visibility = kmAccessor.visibility.toDescriptorVisibility(),
+            visibility = kmAccessor.visibility.toVisibility(),
             modality = kmAccessor.modality.toDescriptorModality(),
             returnType = if (isSetter) symbols.unitType else propertyType,
             isExpect = kmProperty.isExpect,
@@ -404,7 +404,7 @@ class CInteropKlibMetadata2IRTransformer(
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
             name = StandardNames.ENUM_VALUES,
-            visibility = DescriptorVisibilities.PUBLIC,
+            visibility = Visibilities.Public,
             modality = Modality.FINAL,
             returnType = symbols.arrayClass.typeWith(enumClass.defaultType),
             isExpect = false,
@@ -423,7 +423,7 @@ class CInteropKlibMetadata2IRTransformer(
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
             name = StandardNames.ENUM_VALUE_OF,
-            visibility = DescriptorVisibilities.PUBLIC,
+            visibility = Visibilities.Public,
             modality = Modality.FINAL,
             returnType = enumClass.defaultType,
             isExpect = false,
@@ -446,7 +446,7 @@ class CInteropKlibMetadata2IRTransformer(
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
             name = StandardNames.ENUM_ENTRIES,
-            visibility = DescriptorVisibilities.PUBLIC,
+            visibility = Visibilities.Public,
             modality = Modality.FINAL,
             isExpect = false,
             isExternal = false,
@@ -460,7 +460,7 @@ class CInteropKlibMetadata2IRTransformer(
                 endOffset = UNDEFINED_OFFSET,
                 origin = IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                 name = Name.special("<get-${StandardNames.ENUM_ENTRIES}>"),
-                visibility = DescriptorVisibilities.PUBLIC,
+                visibility = Visibilities.Public,
                 modality = Modality.FINAL,
                 returnType = symbols.enumEntriesInterfaceClass.typeWith(enumClass.defaultType),
                 isExpect = false,
@@ -710,13 +710,13 @@ class CInteropKlibMetadata2IRTransformer(
     }
 
     companion object {
-        private fun KmVisibility.toDescriptorVisibility(): DescriptorVisibility = when (this) {
-            KmVisibility.PUBLIC -> DescriptorVisibilities.PUBLIC
-            KmVisibility.INTERNAL -> DescriptorVisibilities.INTERNAL
-            KmVisibility.PROTECTED -> DescriptorVisibilities.PROTECTED
-            KmVisibility.PRIVATE -> DescriptorVisibilities.PRIVATE
-            KmVisibility.PRIVATE_TO_THIS -> DescriptorVisibilities.PRIVATE_TO_THIS
-            KmVisibility.LOCAL -> DescriptorVisibilities.LOCAL
+        private fun KmVisibility.toVisibility(): Visibility = when (this) {
+            KmVisibility.PUBLIC -> Visibilities.Public
+            KmVisibility.INTERNAL -> Visibilities.Internal
+            KmVisibility.PROTECTED -> Visibilities.Protected
+            KmVisibility.PRIVATE -> Visibilities.Private
+            KmVisibility.PRIVATE_TO_THIS -> Visibilities.PrivateToThis
+            KmVisibility.LOCAL -> Visibilities.Local
         }
 
         private fun KmModality.toDescriptorModality(): Modality = when (this) {

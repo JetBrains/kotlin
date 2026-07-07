@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -396,7 +396,7 @@ class TestProcessor(
             owner.endOffset,
             TEST_SUITE_GENERATED_MEMBER,
             getterName,
-            DescriptorVisibilities.PROTECTED,
+            Visibilities.Protected,
             isInline = false,
             isExpect = false,
             objectSymbol.starProjectedType,
@@ -435,7 +435,7 @@ class TestProcessor(
             owner.endOffset,
             TEST_SUITE_GENERATED_MEMBER,
             getterName,
-            DescriptorVisibilities.PROTECTED,
+            Visibilities.Protected,
             isInline = false,
             isExpect = false,
             classSymbol.starProjectedType,
@@ -484,7 +484,7 @@ class TestProcessor(
                 testSuite.owner.endOffset,
                 TEST_SUITE_GENERATED_MEMBER,
                 Name.special("<init>"),
-                DescriptorVisibilities.PUBLIC,
+                Visibilities.Public,
                 isInline = false,
                 isExpect = false,
                 testSuite.starProjectedType,
@@ -551,7 +551,7 @@ class TestProcessor(
             testClass.endOffset,
             TEST_SUITE_CLASS,
             testClass.name.synthesizeSuiteClassName(),
-            DescriptorVisibilities.PRIVATE,
+            Visibilities.Private,
             IrClassSymbolImpl(),
             ClassKind.CLASS,
             Modality.FINAL,
@@ -695,7 +695,7 @@ class TestProcessor(
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
                 name = "createTestSuites".synthesizedName
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 returnType = context.irBuiltIns.unitType
             }.apply {
                 parent = irFile
