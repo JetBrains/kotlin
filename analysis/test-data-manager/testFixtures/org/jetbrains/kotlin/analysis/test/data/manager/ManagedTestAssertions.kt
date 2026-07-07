@@ -111,9 +111,8 @@ object ManagedTestAssertions {
         extension: String,
         mode: TestDataManagerMode = TestDataManagerMode.currentMode,
         sanitizer: (String) -> String = { it },
-    ): Unit = context(TestDataContext.build(testDataPath, variantChain, extension, mode, sanitizer)) {
-        assertEqualsToTestDataFile(actual)
-    }
+    ): Unit =
+        assertEqualsToTestDataFile(actual, context = TestDataContext.build(testDataPath, variantChain, extension, mode, sanitizer))
 
     context(context: TestDataContext)
     private fun assertEqualsToTestDataFile(actual: String?) {

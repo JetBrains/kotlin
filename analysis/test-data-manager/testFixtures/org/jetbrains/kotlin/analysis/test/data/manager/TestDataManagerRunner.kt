@@ -116,9 +116,7 @@ internal object TestDataManagerRunner {
             }
 
             LauncherFactory.openSession().use { launcherSession ->
-                context(launcherSession) {
-                    discoverAndRunTests(testClassPattern, testDataPath, goldenOnly, incremental)
-                }
+                discoverAndRunTests(testClassPattern, testDataPath, goldenOnly, incremental, launcherSession = launcherSession)
             }
 
             println("\nTest data management complete.")

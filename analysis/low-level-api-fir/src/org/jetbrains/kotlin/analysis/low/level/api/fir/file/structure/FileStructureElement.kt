@@ -250,12 +250,11 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                     }
 
                     is KtPrefixExpression -> {
-                        context(session) {
-                            fakeCallForIntLiteralWithUnaryExpression(
-                                expression = current,
-                                mapping = mapping,
-                            )?.let { return it }
-                        }
+                        fakeCallForIntLiteralWithUnaryExpression(
+                            expression = current,
+                            mapping = mapping,
+                            session = session,
+                        )?.let { return it }
                     }
                 }
 
@@ -265,12 +264,12 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
             // Here current is the lowest ancestor that has different corresponding text
             return when (current) {
                 // Fake literals where applicable
-                is KtPrefixExpression -> context(session) {
+                is KtPrefixExpression ->
                     fakeCallForIntLiteralWithUnaryExpression(
                         expression = current,
                         mapping = mapping,
+                        session = session,
                     )
-                }
 
                 // There is no separate element for annotation construction call
                 is KtAnnotationEntry,

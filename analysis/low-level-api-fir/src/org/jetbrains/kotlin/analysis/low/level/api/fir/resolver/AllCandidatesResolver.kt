@@ -84,9 +84,9 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(resolutionFacade, element)
 
-        val copiedAccess = context(bodyResolveComponents) {
-            copyQualifiedAccess(qualifiedAccess, element) ?: return emptyList()
-        }
+        val copiedAccess =
+            copyQualifiedAccess(qualifiedAccess, element, components = bodyResolveComponents) ?: return emptyList()
+
         return run {
             bodyResolveComponents.callResolver
                 .collectAllCandidates(

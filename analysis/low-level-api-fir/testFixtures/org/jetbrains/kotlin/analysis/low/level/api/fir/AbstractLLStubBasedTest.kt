@@ -57,9 +57,7 @@ abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBas
         // The main file is already put into a stub-based state by the base test via the `STUB_BASED` default directive (see `configureTest`).
         val output = withAstLoadingAssertion(mainFile) {
             withResolutionFacade(mainFile) { facade ->
-                context(facade) {
-                    doStubBasedTest(mainFile, mainModule, testServices)
-                }
+                doStubBasedTest(mainFile, mainModule, testServices, facade = facade)
             }
         }
 
@@ -69,9 +67,7 @@ abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBas
         testServices.assertions.assertTrue(mainFile.stub == null) { "Stub shouldn't be present for loaded file" }
 
         withResolutionFacade(mainFile) { facade ->
-            context(facade) {
-                doAstBasedValidation(output, mainFile, mainModule, testServices)
-            }
+            doAstBasedValidation(output, mainFile, mainModule, testServices, facade = facade)
         }
     }
 
