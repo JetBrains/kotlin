@@ -43,40 +43,32 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 
 sealed interface InitializationCycleAccessResult {
-    val poisonsInitializers: Boolean
+    val poisonsInitializers: Boolean get() = false
 
-    data class UninitializedPropertyAccess(val node: PropertyIndex) : InitializationCycleAccessResult {
-        override val poisonsInitializers: Boolean = true
+    sealed interface Reported : InitializationCycleAccessResult
+
+    sealed interface ReportedAndPoisoning : Reported {
+        override val poisonsInitializers: Boolean get() = true
     }
 
-    data class UninitializedEnumEntryAccess(val node: EnumEntryIndex) : InitializationCycleAccessResult {
-        override val poisonsInitializers: Boolean = true
-    }
+    data class UninitializedPropertyAccess(val node: PropertyIndex) : ReportedAndPoisoning
 
-    data class CyclicAccess(val node: DeclarationIndex<*>) : InitializationCycleAccessResult {
-        override val poisonsInitializers: Boolean = true
-    }
+    data class UninitializedEnumEntryAccess(val node: EnumEntryIndex) : ReportedAndPoisoning
 
-    data class InaccessibleEntityAccess(val entity: EnclosingEntity<*>, val node: AccessibleIndex) : InitializationCycleAccessResult {
-        override val poisonsInitializers: Boolean = true
-    }
+    data class CyclicAccess(val node: DeclarationIndex<*>) : ReportedAndPoisoning
 
-    data class DeadlockInducingConstructorCall(val node: FunctionIndex.Constructor) : InitializationCycleAccessResult {
-        override val poisonsInitializers: Boolean = false
-    }
+    data class InaccessibleEntityAccess(val entity: EnclosingEntity<*>, val node: AccessibleIndex) : ReportedAndPoisoning
 
-    data object PropagatesTransitiveDependencies : InitializationCycleAccessResult {
-        override val poisonsInitializers: Boolean = false
-    }
+    data class DeadlockInducingConstructorCall(val node: FunctionIndex.Constructor) : Reported
 
-    data object Safe : InitializationCycleAccessResult {
-        override val poisonsInitializers: Boolean = false
-    }
+    data object PropagatesTransitiveDependencies : InitializationCycleAccessResult
 }
 
 sealed interface DependencyNodeIndex {
     context(_: SessionHolder)
     val containingFile: FirFileSymbol? get() = null
+
+    fun unwrap(): Set<DependencyNodeIndex> = setOf(this)
 
     companion object {
         val DependencyNodeIndex.enclosingEntity: EnclosingEntity<*>?
@@ -95,7 +87,7 @@ sealed interface AccessibleIndex : DependencyNodeIndex {
     val lazilyInitialized: EnclosingEntity<*>?
 
     context(accessingEntity: EnclosingEntity<*>?, cycle: CompositeNode)
-    val accessAnalysisResult: InitializationCycleAccessResult get() = InitializationCycleAccessResult.Safe
+    val accessAnalysisResult: InitializationCycleAccessResult? get() = null
 }
 
 sealed interface DeclarationIndex<D : FirDeclaration> : DependencyNodeIndex {
@@ -117,10 +109,10 @@ data class PropertyIndex(
         .takeIf { !isConst && !symbol.isPrivate }
 
     context(_: EnclosingEntity<*>?, _: CompositeNode)
-    override val accessAnalysisResult: InitializationCycleAccessResult
+    override val accessAnalysisResult: InitializationCycleAccessResult?
         get() = when {
             !isConst && hasInitializer && !hasFunctionType -> InitializationCycleAccessResult.UninitializedPropertyAccess(this)
-            else -> InitializationCycleAccessResult.Safe
+            else -> null
         }
 
     val getter: FunctionIndex.PropertyAccessor? = symbol.getterSymbol
@@ -186,7 +178,7 @@ sealed class FunctionIndex<D : FirFunction> : DeclarationIndex<FirFunction>, Acc
         override val accessAnalysisResult: InitializationCycleAccessResult
             get() {
                 return when {
-                    lazilyInitialized?.let { accessingEntity?.parentEnclosingEntityOrSelf != it && it in cycle } == true -> {
+                    lazilyInitialized?.let { accessingEntity?.parentEnclosingEntityOrSelf != it && it in cycle && it.isNotPrivate } == true -> {
                         InitializationCycleAccessResult.DeadlockInducingConstructorCall(this)
                     }
                     else -> InitializationCycleAccessResult.PropagatesTransitiveDependencies
@@ -278,5 +270,6 @@ data class EndInstanceInitializationIndex<C : FirClass>(val classSymbol: FirClas
 }
 
 data class CompositeIndex(val indices: Set<DependencyNodeIndex>) : DependencyNodeIndex {
+    override fun unwrap(): Set<DependencyNodeIndex> = indices
     override fun toString(): String = indices.joinToString(prefix = "{", postfix = "}")
 }

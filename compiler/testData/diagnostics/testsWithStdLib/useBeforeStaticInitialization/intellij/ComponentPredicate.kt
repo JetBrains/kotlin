@@ -5,8 +5,8 @@ abstract class ComponentPredicate : () -> Boolean {
     abstract fun addListener(listener: (Boolean) -> Unit)
 
     companion object {
-        val TRUE: ComponentPredicate = <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>ConstantComponentPredicate(true)<!>
-        val FALSE: ComponentPredicate = <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>ConstantComponentPredicate(false)<!>
+        val TRUE: ComponentPredicate = ConstantComponentPredicate(true)
+        val FALSE: ComponentPredicate = ConstantComponentPredicate(false)
     }
 }
 

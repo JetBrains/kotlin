@@ -4033,17 +4033,17 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             POSSIBLE_INITIALIZATION_DEADLOCK,
-            "Possible initialization deadlock between ''{0}''.",
+            "Possible initialization deadlock with ''{0}''.",
             Renderer { classes -> classes.joinToString(transform = FqName::asString) },
         )
         map.put(
             POSSIBLY_UNINITIALIZED_PROPERTY,
-            "Possibly uninitialized property due to mutually dependent access in ''{0}''.",
+            "Possibly uninitialized property due to mutually dependent (direct or indirect) accesses in ''{0}''.",
             Renderer { classes -> classes.joinToString(transform = FqName::asString) },
         )
         map.put(
             POSSIBLY_UNINITIALIZED_ENUM_ENTRY,
-            "Possibly uninitialized enum entry due to mutually dependent access in ''{0}''.",
+            "Possibly uninitialized enum entry due to mutually dependent (direct or indirect) accesses in ''{0}''.",
             Renderer { classes -> classes.joinToString(transform = FqName::asString) },
         )
         map.put(
@@ -4063,12 +4063,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE,
-            "The expression accesses (either directly or indirectly) the object ''{0}'' which is not fully constructed (due to mutual static dependencies), and possibly throws an initializer error with NPE.",
+            "The expression accesses (either directly or indirectly) the object ''{0}'' when it is not fully (statically) initialized (due to mutual static dependencies), any static access to its declarations may cause an NPE.",
             Renderer(FqName::asString),
         )
         map.put(
             ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS,
-            "The expression accesses (either directly or indirectly) the declaration ''{1}'' of a class ''{0}'' which is not fully constructed (due to mutual static dependencies), and possibly throws an initializer error with NPE.",
+            "The expression accesses (either directly or indirectly) the declaration ''{1}'' of a class ''{0}'' when it is not fully statically initialized (due to mutual static dependencies), any static access to its declarations may cause an NPE.",
             Renderer(FqName::asString),
             DECLARATION_FQ_NAME,
         )

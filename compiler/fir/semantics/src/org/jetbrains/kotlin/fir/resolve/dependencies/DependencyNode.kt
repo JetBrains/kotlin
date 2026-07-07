@@ -9,14 +9,16 @@ import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyNodeIndex.Compani
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import kotlin.collections.forEach
 import kotlin.collections.set
+import kotlin.let
 
 internal typealias InformationFlowMap = MutableMap<AccessibleIndex, InformationEdge>
 
 internal fun InformationFlowMap.insertEdge(edge: InformationEdge): Boolean =
     this[edge.from]?.let { prev ->
-        if (prev == edge) return@let false
-        this[edge.from] = prev.merge(edge.accessSources)
-        return@let true
+        prev.merge(edge)?.let {
+            this[edge.from] = it
+            true
+        } ?: false
     } ?: (putIfAbsent(edge.from, edge) == null)
 
 internal fun InformationFlowMap.removeEdge(edge: InformationEdge): Boolean = remove(edge.from, edge)
@@ -42,6 +44,8 @@ sealed class DependencyNode {
     val happensBeforeFlow: Sequence<HappensBeforeEdge> get() = incomingHappensBeforeFlow.asSequence().map { it.value }
 
     val happensAfterFlow: Sequence<HappensBeforeEdge> get() = outgoingHappensBeforeFlow.asSequence().map { it.value }
+
+    abstract val informationFlow: Sequence<InformationEdge>
 
     context(graph: DependencyGraph)
     val happenBefore: Sequence<DependencyNode> get() = incomingHappensBeforeFlow.asSequence().mapNotNull { graph[it.key] }
@@ -112,7 +116,7 @@ data class UnitNode(override val index: DependencyNodeIndex) : DependencyNode() 
     val enclosingEntity: EnclosingEntity<*>? = index.enclosingEntity
     private val incomingInformationFlow: InformationFlowMap = mutableMapOf()
 
-    val informationFlow: Sequence<InformationEdge> get() = incomingInformationFlow.asSequence().map { it.value }
+    override val informationFlow: Sequence<InformationEdge> get() = incomingInformationFlow.asSequence().map { it.value }
 
     override val isComposite: Boolean = false
 
@@ -151,6 +155,8 @@ data class CompositeNode(
     val enclosingEntities: Set<EnclosingEntity<*>> get() = entities.keys
 
     private val incomingInformationFlow: MutableMap<DependencyNodeIndex, InformationFlowMap> = mutableMapOf()
+
+    override val informationFlow: Sequence<InformationEdge> get() = asSequence().flatMap { informationFlowInto(it) }
 
     fun informationFlowInto(index: DependencyNodeIndex): Sequence<InformationEdge> =
         incomingInformationFlow[index]?.asSequence()?.map { it.value } ?: emptySequence()
@@ -224,15 +230,7 @@ data class CompositeNode(
             TraversalOrder.PreOrder.traverse(
                 start = this@subgraphFlowDescendants,
                 predicate = { it in cycle },
-                neighbours = {
-                    cycle.subgraphFlowFrom(it).flatMap { edge ->
-                        if (edge.to is CompositeIndex) {
-                            (edge.to as CompositeIndex).indices
-                        } else {
-                            setOf(edge.to)
-                        }
-                    }
-                }
+                neighbours = { cycle.subgraphFlowFrom(it).map(DependencyEdge::to) }
             )
     }
 }

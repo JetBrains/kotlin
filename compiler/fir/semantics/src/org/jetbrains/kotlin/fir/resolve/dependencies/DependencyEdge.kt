@@ -15,6 +15,8 @@ sealed interface DependencyEdge {
 
     val to: DependencyNodeIndex
 
+    fun merge(other: DependencyEdge): DependencyEdge?
+
     companion object {
         operator fun DependencyEdge.component1(): DependencyNodeIndex = from
         operator fun DependencyEdge.component2(): DependencyNodeIndex = to
@@ -26,7 +28,7 @@ sealed interface InformationEdge : DependencyEdge {
 
     val accessSources: Set<KtSourceElement>
 
-    fun merge(other: Set<KtSourceElement>): InformationEdge
+    override fun merge(other: DependencyEdge): InformationEdge?
 
     companion object {
         operator fun InformationEdge.component1(): AccessibleIndex = from
@@ -36,6 +38,8 @@ sealed interface InformationEdge : DependencyEdge {
 
 sealed interface HappensBeforeEdge : DependencyEdge {
     val holdsInAllExecutions: Boolean get() = false
+
+    override fun merge(other: DependencyEdge): HappensBeforeEdge?
 }
 
 data class IsReferencedBy(
@@ -49,7 +53,13 @@ data class IsReferencedBy(
         accessSources = SmartSet.create<KtSourceElement>().also { it.addIfNotNull(accessSource) }
     )
 
-    override fun merge(other: Set<KtSourceElement>): IsReferencedBy = copy(accessSources = SmartSet.create(accessSources + other))
+    override fun merge(other: DependencyEdge): IsReferencedBy? {
+        if (other !is IsReferencedBy) return null
+        return when {
+            from == other.from && to == other.to -> copy(accessSources = SmartSet.create(accessSources + other.accessSources))
+            else -> null
+        }
+    }
 }
 
 data class IsCalledBy(
@@ -63,7 +73,13 @@ data class IsCalledBy(
         accessSources = SmartSet.create<KtSourceElement>().also { it.addIfNotNull(accessSource) }
     )
 
-    override fun merge(other: Set<KtSourceElement>): IsCalledBy = copy(accessSources = SmartSet.create(accessSources + other))
+    override fun merge(other: DependencyEdge): IsCalledBy? {
+        if (other !is IsCalledBy) return null
+        return when {
+            from == other.from && to == other.to -> copy(accessSources = SmartSet.create(accessSources + other.accessSources))
+            else -> null
+        }
+    }
 }
 
 data class MustHappenBefore(
@@ -71,9 +87,35 @@ data class MustHappenBefore(
     override val to: DependencyNodeIndex,
 ) : HappensBeforeEdge {
     override val holdsInAllExecutions: Boolean = true
+
+    override fun merge(other: DependencyEdge): MustHappenBefore? {
+        if (other !is MustHappenBefore) return null
+        val mergedFrom = when {
+            from == other.from -> from
+            else -> CompositeIndex(from.unwrap() + other.from.unwrap())
+        }
+        val mergedTo = when {
+            to == other.to -> to
+            else -> CompositeIndex(to.unwrap() + other.to.unwrap())
+        }
+        return MustHappenBefore(mergedFrom, mergedTo)
+    }
 }
 
 data class MayHappenBefore(
     override val from: DependencyNodeIndex,
     override val to: DependencyNodeIndex,
-) : HappensBeforeEdge
+) : HappensBeforeEdge {
+    override fun merge(other: DependencyEdge): MayHappenBefore? {
+        if (other !is MayHappenBefore) return null
+        val mergedFrom = when {
+            from == other.from -> from
+            else -> CompositeIndex(from.unwrap() + other.from.unwrap())
+        }
+        val mergedTo = when {
+            to == other.to -> to
+            else -> CompositeIndex(to.unwrap() + other.to.unwrap())
+        }
+        return MayHappenBefore(mergedFrom, mergedTo)
+    }
+}

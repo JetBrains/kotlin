@@ -105,19 +105,19 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun DependencyGraphAnalyzer.checkObjectConstructor(enclosingEntity: EnclosingEntity.Object) =
-        performAccessAnalysis(enclosingEntity.beginInitializationIndex).forEach { reportResultAndPossibleUninitialization(it) }
+        analyze(enclosingEntity.beginInitializationIndex).forEach { reportResultAndPossibleUninitialization(it) }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun DependencyGraphAnalyzer.checkAccessesInInitializer(initializerNode: AnonymousInitializerIndex) =
-        performAccessAnalysis(initializerNode).forEach { reportResultAndPossibleUninitialization(it) }
+        analyze(initializerNode).forEach { reportResultAndPossibleUninitialization(it) }
 
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun DependencyGraphAnalyzer.checkEnumEntry(enclosingEntity: EnclosingEntity.EnumEntry) {
-        val isUninitialized = performAccessAnalysis(enclosingEntity.beginInitializationIndex).fold(false) { isUninitialized, result ->
+        val isPossiblyUninitialized = analyze(enclosingEntity.beginInitializationIndex).fold(false) { isUninitialized, result ->
             isUninitialized || reportResultAndPossibleUninitialization(result)
         }
-        if (isUninitialized) {
+        if (isPossiblyUninitialized) {
             reporter.reportOn(
                 enclosingEntity.symbol.fir.source,
                 FirErrors.POSSIBLY_UNINITIALIZED_ENUM_ENTRY,
@@ -129,10 +129,10 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     fun DependencyGraphAnalyzer.checkProperty(propertyNode: PropertyIndex) {
-        val isUninitialized = performAccessAnalysis(propertyNode).fold(false) { isUninitialized, result ->
+        val isPossiblyUninitialized = analyze(propertyNode).fold(false) { isUninitialized, result ->
             isUninitialized || reportResultAndPossibleUninitialization(result)
         }
-        if (isUninitialized) {
+        if (isPossiblyUninitialized) {
             reporter.reportOn(
                 propertyNode.symbol.fir.source,
                 FirErrors.POSSIBLY_UNINITIALIZED_PROPERTY,
