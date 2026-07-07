@@ -18,13 +18,23 @@ interface ValueArgument {
 
     fun asElement(): KtElement
 
-    /* The '*' in something like foo(*arr) i.e. pass an array as a number of vararg arguments */
+    /**
+     * Returns the `*` spread token for a spread argument (`foo(*array)`, which passes an array as a series of vararg
+     * arguments), or `null` if this argument is not spread.
+     */
     fun getSpreadElement(): LeafPsiElement?
 
-    /** @see getSpreadElement */
+    /**
+     * `true` if this is a spread argument (`*array`).
+     *
+     * @see getSpreadElement
+     */
     val isSpread: Boolean get() = getSpreadElement() != null
 
-    /* The argument is placed externally to call element, e.g. in 'when' condition with subject: 'when (a) { in c -> }' */
+    /**
+     * Returns `true` if the argument is located outside of the call element, as with the range in a `when` condition
+     * with a subject: `when (a) { in c -> }`.
+     */
     fun isExternal(): Boolean
 }
 

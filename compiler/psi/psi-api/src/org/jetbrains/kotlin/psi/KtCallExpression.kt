@@ -49,8 +49,8 @@ open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallE
 
     /**
      * Normally there should be only one (or zero) function literal arguments.
-     * The returned value is a list for better handling of commonly made mistake of a function taking a lambda and returning another function.
-     * Most of users can simply ignore lists of more than one element.
+     * The returned value is a list for better handling of a commonly made mistake of a function taking a lambda and returning another function.
+     * Most users can simply ignore lists of more than one element.
      */
     override fun getLambdaArguments(): List<KtLambdaArgument> {
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.LAMBDA_ARGUMENT)

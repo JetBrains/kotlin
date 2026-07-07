@@ -129,7 +129,7 @@ interface KotlinAnnotationUseSiteTargetStub : KotlinStubElement<KtAnnotationUseS
 interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : KotlinStubElement<T> {
     /**
      * Whether the declaration may have a contract.
-     * **false** means that the declaration is definitely having no contract,
+     * **false** means that the declaration definitely has no contract,
      * but **true** doesn't guarantee that the declaration has a contract.
      */
     val mayHaveContract: Boolean

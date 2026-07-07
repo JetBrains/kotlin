@@ -670,10 +670,10 @@ public class KtPsiUtil {
     }
 
     /**
-     * CommentUtilCore.isComment fails if element <strong>inside</strong> comment.
+     * CommentUtilCore.isComment fails if the element is <strong>inside</strong> a comment.
      *
-     * Also, we can not add KDocTokens to COMMENTS TokenSet, because it is used in KotlinParserDefinition.getCommentTokens(),
-     * and therefor all COMMENTS tokens will be ignored by PsiBuilder.
+     * Also, we cannot add KDocTokens to COMMENTS TokenSet, because it is used in KotlinParserDefinition.getCommentTokens(),
+     * and therefore all COMMENTS tokens will be ignored by PsiBuilder.
      *
      * @param element
      * @return

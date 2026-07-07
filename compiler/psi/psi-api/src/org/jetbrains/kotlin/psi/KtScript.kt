@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
  *
  * // script.kts
  * ```kotlin
- * val x = 1 println(x)
+ * val x = 1
+ * println(x)
  * ```
  *
  * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
