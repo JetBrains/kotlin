@@ -439,13 +439,18 @@ internal val materializedDumpEntries = listOf("clangDump.sh", "ldDump.sh", "clan
 
 
 internal fun parseSwiftPMFingerprint(fingerprintFile: Path): String =
-    fingerprintFile.toFile().readText().trim()
+    fingerprintFile.toFile().readText().trim().split("\n")[1]
 
 internal fun swiftPMXcodeBuildFingerprint(
     projectDir: Path,
     sdk: String,
 ): Path =
     projectDir.resolve("build").resolve(FingerprintXcodeBuild.xcodebuildFingerprintPathForSdk(sdk))
+
+internal fun swiftPMPackageFingerprint(
+    projectDir: Path,
+): Path =
+    projectDir.resolve("build").resolve(FingerprintSyntheticPackage.SYNTHETIC_PACKAGE_FINGERPRINT_PATH)
 
 internal fun swiftPMFingerprintCheckoutDir(
     projectDir : Path,
@@ -503,6 +508,13 @@ internal fun TestProject.localXcodebuildFingerprint(
     swiftPMXcodeBuildFingerprint(
         projectDir = projectName?.let(projectPath::resolve) ?: projectPath,
         sdk = sdk,
+    )
+
+internal fun TestProject.localPackageFingerprint(
+    projectName: String? = null,
+): Path =
+    swiftPMPackageFingerprint(
+        projectDir = projectName?.let(projectPath::resolve) ?: projectPath,
     )
 
 internal fun TestProject.localDumpDir(

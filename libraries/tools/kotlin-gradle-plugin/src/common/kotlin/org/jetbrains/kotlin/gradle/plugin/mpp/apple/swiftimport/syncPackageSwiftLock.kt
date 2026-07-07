@@ -63,7 +63,7 @@ internal abstract class SyncPackageResolvedTask : DefaultTask() {
             ?.trim()
             ?.let { fingerprint ->
                 syntheticPackagesRoot.get().asFile
-                    .resolve(fingerprint)
+                    .resolve(fingerprint.split("\n")[1])
                     .resolve("Package.resolved")
             }
 

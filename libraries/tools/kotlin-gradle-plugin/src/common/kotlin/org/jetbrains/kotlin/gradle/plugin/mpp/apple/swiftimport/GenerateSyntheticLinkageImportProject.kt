@@ -136,7 +136,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             return
         } else {
             val claim = coordinationService.get().claimOrJoinPackageGeneration(
-                packageHash = syntheticPackageFingerprint.get().asFile.readText().trim()
+                packageHash = syntheticPackageFingerprint.get().asFile.readText().trim().split("\n")[1]
             )
 
             when (claim) {

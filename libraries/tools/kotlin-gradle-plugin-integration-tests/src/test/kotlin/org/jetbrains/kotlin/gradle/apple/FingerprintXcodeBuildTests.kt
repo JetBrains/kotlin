@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import kotlin.io.path.deleteExisting
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -205,19 +206,35 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                     }
                 }
 
-                build(fingerprintXcodebuildIphoneSimulatorTask) {
+                build(":convertSyntheticImportProjectIntoDefFileIphonesimulator") {
                     assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
                 }
-                val originalFingerprint = readIphonesimulatorFingerprint()
+                val originalXcodeBuildFingerprint = readIphonesimulatorFingerprint()
+                val originalPackageFingerprint = localPackageFingerprint().readText()
 
-                build(fingerprintXcodebuildIphoneSimulatorTask, "-P$useAlternateVersion=true") {
+                val lockFile =
+                    projectPath.resolve("build/kotlin/swiftSyntheticPackages/${originalPackageFingerprint.split("\n")[1]}/Package.resolved")
+                val originalLockFile = parsePackageResolved(lockFile.readText())
+                assertEquals(listOf("1.0.0"), originalLockFile.pins.map { it.state.version })
+
+                build(":convertSyntheticImportProjectIntoDefFileIphonesimulator", "-P$useAlternateVersion=true") {
                     assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
+                    assertTasksExecuted(":dumpXcodebuildArgsIphonesimulator")
+                    assertTasksExecuted(":convertSyntheticImportProjectIntoDefFileIphonesimulator")
                 }
+
+                val finalLockFile = parsePackageResolved(lockFile.readText())
+                assertEquals(listOf("1.0.1"), finalLockFile.pins.map { it.state.version })
 
                 assertNotEquals(
-                    originalFingerprint,
+                    originalXcodeBuildFingerprint,
                     readIphonesimulatorFingerprint(),
-                    "Changing a remote SwiftPM dependency version should invalidate the prepare fingerprint task"
+                    "Changing a remote SwiftPM dependency version should invalidate the xcodebuild fingerprint task"
+                )
+                assertNotEquals(
+                    originalPackageFingerprint,
+                    localPackageFingerprint().readText(),
+                    "Changing a remote SwiftPM dependency version should invalidate the synthetic fingerprint task"
                 )
             }
         }
@@ -341,27 +358,94 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
 
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
-    fun `various dependencies and build settings generate different fingerprints`(version: GradleVersion) {
-        val useMapsRepo = "useMaps"
+    fun `various different dependency versions with same lock identifier generate same fingerprints`(version: GradleVersion) {
         val useMapsDifferentVersions = "useMapsDifferentVersions"
 
         project("empty", version) {
             withLockFileFixture {
                 val mapsRepo = repoRef("Maps").also { createRepo(it.name, listOf("1.0.0", "1.0.1")) }
+
+                initSwiftPmProject(cacheDirFile) {
+                    val version = if (project.hasProperty(useMapsDifferentVersions)) {
+                        "1.0.1"
+                    } else {
+                        "1.0.0"
+                    }
+
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url(mapsRepo.url),
+                            version = exact(version),
+                            products = listOf(product(mapsRepo.name))
+                        )
+                    }
+                }
+
+                val kmpMapsProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(mapsRepo.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product(mapsRepo.name))
+                            )
+                        }
+                    }
+                }
+                include(kmpMapsProject, "kmpMapsProject")
+
+                val prepareFingerPrintIphoneos = lowerCamelCaseName(
+                    FingerprintXcodeBuild.TASK_NAME,
+                    "iphonesimulator"
+                )
+
+                val kmpMapsXcodebuildFingerprint = localXcodebuildFingerprint("kmpMapsProject", "iphonesimulator")
+                val rootXcodebuildFingerprint = localXcodebuildFingerprint(sdk = "iphonesimulator")
+
+                build(
+                    ":$prepareFingerPrintIphoneos",
+                    ":kmpMapsProject:$prepareFingerPrintIphoneos",
+                ) {
+
+                    assertEquals(
+                        parseSwiftPMFingerprint(kmpMapsXcodebuildFingerprint),
+                        parseSwiftPMFingerprint(rootXcodebuildFingerprint),
+                        "Projects with different dependencies and build settings should have different fingerprint"
+
+                    )
+                }
+
+                build(
+                    ":$prepareFingerPrintIphoneos", "-P${useMapsDifferentVersions}=true",
+                    ":kmpMapsProject:$prepareFingerPrintIphoneos"
+                ) {
+
+                    assertEquals(
+                        parseSwiftPMFingerprint(kmpMapsXcodebuildFingerprint),
+                        parseSwiftPMFingerprint(rootXcodebuildFingerprint),
+                        "Projects with different dependencies and build settings should have different fingerprint"
+                    )
+                }
+            }
+        }
+    }
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
+    fun `different dependency sets generate different fingerprints`(version: GradleVersion) {
+        val useMapsRepo = "useMaps"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val mapsRepo = repoRef("Maps").also { createRepo(it.name, listOf("1.0.0")) }
                 val crpytoRepo = repoRef("Crypto").also { createRepo(it.name, listOf("1.0.0")) }
 
                 initSwiftPmProject(cacheDirFile) {
                     if (project.hasProperty(useMapsRepo)) {
-                        val version = if (project.hasProperty(useMapsDifferentVersions)) {
-                            "1.0.1"
-                        } else {
-                            "1.0.0"
-                        }
-
                         swiftPMDependencies {
                             swiftPackage(
                                 url = url(mapsRepo.url),
-                                version = exact(version),
+                                version = exact("1.0.0"),
                                 products = listOf(product(mapsRepo.name))
                             )
                         }
@@ -422,18 +506,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
 
                     )
                 }
-
-                build(
-                    ":$prepareFingerPrintIphoneos", "-P${useMapsRepo}=true", "-P${useMapsDifferentVersions}=true",
-                    ":kmpMapsProject:$prepareFingerPrintIphoneos"
-                ) {
-
-                    assertNotEquals(
-                        parseSwiftPMFingerprint(kmpMapsXcodebuildFingerprint),
-                        parseSwiftPMFingerprint(rootXcodebuildFingerprint),
-                        "Projects with different dependencies and build settings should have different fingerprint"
-                    )
-                }
             }
         }
     }
@@ -471,7 +543,6 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
     }
 
     private fun TestProject.readIphonesimulatorFingerprint(): String =
-        parseSwiftPMFingerprint(
-            localIphonesimulatorDumpFingerprintFile()
-        )
+        localIphonesimulatorDumpFingerprintFile().toFile().readText().trim()
+
 }

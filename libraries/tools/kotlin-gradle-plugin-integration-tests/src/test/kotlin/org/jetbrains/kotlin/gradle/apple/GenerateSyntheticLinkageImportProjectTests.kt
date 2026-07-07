@@ -314,10 +314,12 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                     val subProjectGeneratePackageHash = subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
                         .readText()
                         .trim()
+                        .split("\n")[1]
 
                     val rootProjectGeneratePackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
                         .readText()
                         .trim()
+                        .split("\n")[1]
 
                     assertEquals(
                         subProjectGeneratePackageHash,
@@ -395,10 +397,12 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                     val subProjectGeneratePackageHash = subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
                         .readText()
                         .trim()
+                        .split("\n")[1]
 
                     val rootProjectGeneratePackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
                         .readText()
                         .trim()
+                        .split("\n")[1]
 
                     assertNotEquals(
                         subProjectGeneratePackageHash,

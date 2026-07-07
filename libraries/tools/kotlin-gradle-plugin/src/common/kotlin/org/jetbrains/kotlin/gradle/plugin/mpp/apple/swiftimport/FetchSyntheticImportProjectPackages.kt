@@ -131,7 +131,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
             return
         }
 
-        val ownerHash = syntheticPackageFingerprint.asFile.get().readText().trim()
+        val ownerHash = syntheticPackageFingerprint.asFile.get().readText().trim().split("\n")[1]
         val claim = coordinationService.get().claimOrJoinSwiftResolve(
             packageHash = ownerHash,
         )

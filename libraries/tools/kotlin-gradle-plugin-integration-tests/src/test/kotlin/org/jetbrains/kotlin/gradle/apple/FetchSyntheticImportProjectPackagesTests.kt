@@ -190,7 +190,7 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                     assertTasksExecuted(
 
                     )
-                    val rootSyntheticPackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH).readText().trim()
+                    val rootSyntheticPackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH).readText().trim().split("\n")[1]
 
                     val syntheticPackage = projectPath.resolve(SHARED_SYNTHETIC_PACKAGE_DIR).resolve(rootSyntheticPackageHash)
                         .resolve("Package.resolved")
@@ -262,14 +262,18 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                  * The producer maps 1.0.0
                  * The consumer depends on producer so maps 1.0.0
                  */
+
+                val rootSyntheticPackageFingerprintFile = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+                val consumerSyntheticPackageFingerprintFile =
+                    kmpMapsConsumer.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
                 build(
                     ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
                     ":kmpMapsConsumer:${FetchSyntheticImportProjectPackages.TASK_NAME}"
                 ) {
 
-                    val rootSyntheticPackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH).readText().trim()
+                    val rootSyntheticPackageHash = rootSyntheticPackageFingerprintFile.readText().trim().split("\n")[1]
                     val consumerSyntheticPackageHash =
-                        kmpMapsConsumer.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH).readText().trim()
+                        consumerSyntheticPackageFingerprintFile.readText().trim().split("\n")[1]
 
                     assertNotEquals(
                         rootSyntheticPackageHash, consumerSyntheticPackageHash, "Different dependency graph should produce different hash"
@@ -323,9 +327,9 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                     "-P${useMapsRepo}=true",
                     ":kmpMapsConsumer:${FetchSyntheticImportProjectPackages.TASK_NAME}"
                 ) {
-                    val rootSyntheticPackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH).readText().trim()
+                    val rootSyntheticPackageHash = rootSyntheticPackageFingerprintFile.readText().trim().split("\n")[1]
                     val consumerSyntheticPackageHash =
-                        kmpMapsConsumer.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH).readText().trim()
+                        consumerSyntheticPackageFingerprintFile.readText().trim().split("\n")[1]
 
                     assertEquals(
                         rootSyntheticPackageHash, consumerSyntheticPackageHash, "Same dependency graph should produce same hash"
@@ -399,9 +403,8 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                     ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
                 ) {
 
-                    val rootSyntheticPackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH).readText().trim()
-                    val consumerSyntheticPackageHash =
-                        kmpMapsConsumer.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH).readText().trim()
+                    val rootSyntheticPackageHash = rootSyntheticPackageFingerprintFile.readText().trim().split("\n")[1]
+                    val consumerSyntheticPackageHash = consumerSyntheticPackageFingerprintFile.readText().trim().split("\n")[1]
 
                     assertNotEquals(
                         rootSyntheticPackageHash, consumerSyntheticPackageHash, "Different dependency graph should produce different hash"

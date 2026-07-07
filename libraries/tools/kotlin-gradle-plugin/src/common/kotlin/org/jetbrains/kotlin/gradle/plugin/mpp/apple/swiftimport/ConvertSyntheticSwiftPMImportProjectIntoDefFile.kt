@@ -257,7 +257,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     }
 
     private fun resolveDumpedXcodeBuildArgsDir(): File {
-        val hash = xcodebuildFingerprint.get().asFile.readText().trim()
+        val hash = xcodebuildFingerprint.get().asFile.readText().trim().split("\n")[1]
 
         return fingerprintsXcodeDumpsDir.get().asFile.resolve("$hash/swiftImportClangDump/${xcodebuildSdk.get()}")
     }

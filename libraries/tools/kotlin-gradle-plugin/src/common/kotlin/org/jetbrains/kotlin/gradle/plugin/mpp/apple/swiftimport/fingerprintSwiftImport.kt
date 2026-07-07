@@ -78,16 +78,25 @@ internal abstract class FingerprintSyntheticPackage : DefaultTask() {
 
     @TaskAction
     fun fingerprint() {
-        val fingerprintedSwiftPMDependencyGraph = fingerprintSwiftPMDependencyGraph(
-            directSwiftPMMetadata.get(), transitiveSwiftPMMetadata.get()
+        val withVersions = fingerprintSwiftPMDependencyGraph(
+            directSwiftPMMetadata.get(), transitiveSwiftPMMetadata.get(),
+            normalizeVersions = false
+        )
+        val withoutVersions = fingerprintSwiftPMDependencyGraph(
+            directSwiftPMMetadata.get(), transitiveSwiftPMMetadata.get(),
+            normalizeVersions = true
         )
 
-        val calculatedSyntheticPackageFingerprint = fingerprintSyntheticPackage(
+        val calculatedSyntheticPackageFingerprintWithVersions = fingerprintSyntheticPackage(
             packageResolvedSynchronizationFingerprint = packageResolvedSynchronizationFingerprint.get().toKotlinxSerializable(),
-            fingerprintedDependencyGraph = fingerprintedSwiftPMDependencyGraph
+            fingerprintedDependencyGraph = withVersions
+        )
+        val calculatedSyntheticPackageFingerprintWithoutVersions = fingerprintSyntheticPackage(
+            packageResolvedSynchronizationFingerprint = packageResolvedSynchronizationFingerprint.get().toKotlinxSerializable(),
+            fingerprintedDependencyGraph = withoutVersions
         )
 
-        dumpFingerprint(calculatedSyntheticPackageFingerprint, syntheticPackageFingerprint.get().asFile)
+        dumpFingerprint(calculatedSyntheticPackageFingerprintWithVersions + "\n" + calculatedSyntheticPackageFingerprintWithoutVersions, syntheticPackageFingerprint.get().asFile)
     }
 
     companion object {
@@ -136,14 +145,23 @@ internal abstract class FingerprintXcodeBuild : DefaultTask() {
 
     @TaskAction
     fun fingerprint() {
-        val fingerprint = fingerprintXcodebuildFingerprintInput(
+        val packageFingerprint = syntheticPackageFingerprint.get().asFile.readText().trim().split("\n")
+        val withVersion = packageFingerprint[0]
+        val withoutVersion = packageFingerprint[1]
+
+        val fingerprintWithVersion = fingerprintXcodebuildFingerprintInput(
             architectures = architectures.get(),
             additionalXcodeArgs = additionalXcodeArgs.get(),
-            syntheticPackageFingerprint = syntheticPackageFingerprint.get().asFile.readText().trim(),
+            syntheticPackageFingerprint = withVersion,
+        )
+        val fingerprintWithoutVersion = fingerprintXcodebuildFingerprintInput(
+            architectures = architectures.get(),
+            additionalXcodeArgs = additionalXcodeArgs.get(),
+            syntheticPackageFingerprint = withoutVersion,
         )
 
         // The dump task reads this hash during its own execution and performs the build-service claim/join step.
-        dumpFingerprint(fingerprint, xcodebuildFingerprint.get().asFile)
+        dumpFingerprint(fingerprintWithVersion + "\n" + fingerprintWithoutVersion, xcodebuildFingerprint.get().asFile)
     }
 
     companion object {
@@ -212,12 +230,13 @@ internal fun fingerprintSyntheticPackage(
 internal fun fingerprintSwiftPMDependencyGraph(
     directSwiftPMMetadata: SwiftPMImportMetadata,
     transitiveSwiftPMMetadata: TransitiveSwiftPMMetadata,
+    normalizeVersions: Boolean,
 ): TransitiveSwiftPMMetadata {
     val transformed = linkedMapOf<SwiftPMDependencyIdentifier, SwiftPMImportMetadata>()
 
     // isModular is only used for FUS, so for fingerprinting we ignore it
     if (directSwiftPMMetadata.dependencies.isNotEmpty()) {
-        val hash = fingerprintSwiftPMImportMetadata(directSwiftPMMetadata)
+        val hash = fingerprintSwiftPMImportMetadata(directSwiftPMMetadata, normalizeVersions)
         transformed[SwiftPMDependencyIdentifier(hash, isModular = false)] =
             directSwiftPMMetadata.copy()
     }
@@ -227,7 +246,7 @@ internal fun fingerprintSwiftPMDependencyGraph(
         .forEach { (dependencyIdentifier, metadata) ->
             if (metadata.dependencies.isEmpty()) return@forEach
 
-            val hash = fingerprintSwiftPMImportMetadata(metadata)
+            val hash = fingerprintSwiftPMImportMetadata(metadata, normalizeVersions)
 
             transformed.putIfAbsent(
                 SwiftPMDependencyIdentifier(hash, isModular = dependencyIdentifier.isModular),
@@ -240,6 +259,7 @@ internal fun fingerprintSwiftPMDependencyGraph(
 
 internal fun fingerprintSwiftPMImportMetadata(
     metadata: SwiftPMImportMetadata,
+    normalizeVersions: Boolean,
 ): String {
     val payload = dumpTaskFingerprintJson.encodeToString(
         SwiftPMImportMetadataFingerprintInput(
@@ -250,7 +270,7 @@ internal fun fingerprintSwiftPMImportMetadata(
             tvosDeploymentVersion = metadata.tvosDeploymentVersion,
             isModulesDiscoveryEnabled = false,
             dependencies = metadata.dependencies
-                .map { it.normalizedForFingerprint() }
+                .map { it.normalizedForFingerprint(normalizeVersions) }
                 .sortedBy { it.stableSortKey() },
         )
     )
@@ -326,7 +346,7 @@ internal fun fingerprintPackageResolvedSynchronization(
     )
 )
 
-private fun SwiftPMDependency.normalizedForFingerprint(): SwiftPMDependency = when (this) {
+private fun SwiftPMDependency.normalizedForFingerprint(normalizeVersions: Boolean): SwiftPMDependency = when (this) {
     is SwiftPMDependency.Local -> copy(
         products = products.map { it.normalizedForFingerprint() }.sortedBy { it.name },
         cinteropClangModules = cinteropClangModules.map { it.normalizedForFingerprint() }.sortedBy { it.stableSortKey() },
@@ -338,7 +358,7 @@ private fun SwiftPMDependency.normalizedForFingerprint(): SwiftPMDependency = wh
         cinteropClangModules = cinteropClangModules.map { it.normalizedForFingerprint() }.sortedBy { it.stableSortKey() },
         traits = traits.sorted().toSet(),
         // FIXME:
-        version = SwiftPMDependency.Remote.Version.Exact("1.0.0"),
+        version = if (normalizeVersions) SwiftPMDependency.Remote.Version.Exact("1.0.0") else version,
     )
 }
 
