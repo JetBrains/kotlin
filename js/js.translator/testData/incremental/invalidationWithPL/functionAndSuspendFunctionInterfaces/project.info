@@ -1,0 +1,29 @@
+IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^^^ KT-35479 KT-82349: ClassCastException
+
+MODULES: lib1, main
+
+STEP 0:
+    libs: lib1, main
+    dirty js modules: lib1, main
+    dirty js files: lib1/sample/l1, main/helpers, main/test, main/m, main/m.export, main
+STEP 1:
+    libs: lib1, main
+    dirty js modules: lib1, main
+    dirty js files: lib1/sample/l1, main/test
+STEP 2:
+    libs: lib1, main
+    dirty js modules: lib1, main
+    dirty js files: lib1/sample/l1, main/test
+STEP 3:
+    libs: lib1, main
+    dirty js modules: lib1, main
+    dirty js files: lib1/sample/l1, main/test
+STEP 4:
+    libs: lib1, main
+    dirty js modules: lib1, main
+    dirty js files: lib1/sample/l1, main/test
+STEP 5:
+    libs: lib1, main
+    dirty js modules: lib1, main
+    dirty js files: lib1/sample/l1, main/test
