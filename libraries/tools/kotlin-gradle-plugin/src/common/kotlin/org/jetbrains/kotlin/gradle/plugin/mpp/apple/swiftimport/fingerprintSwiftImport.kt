@@ -219,6 +219,7 @@ internal fun fingerprintSyntheticPackage(
         )
     )
 
+    // FIXME: Document SwiftPM not creating lock file in 4ef5a7d75edf289a2f51a82e7ef2170309bd34d00c3523372cf73499c7dbe137
     return sha256(payload)
 }
 
@@ -281,7 +282,7 @@ internal const val SWIFT_IMPORT_HASH_ALGORITHM = "SHA-256"
 
 
 private fun sha256(value: String): String =
-    sha256(value.toByteArray())
+    sha256(value.toByteArray()).substring(0, 10)
 
 private fun sha256(bytes: ByteArray): String {
     return MessageDigest.getInstance(SWIFT_IMPORT_HASH_ALGORITHM)
