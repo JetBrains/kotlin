@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.wasm.BackendWasmSymbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.SymbolFinder
@@ -101,7 +101,7 @@ abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServi
     }
 
     private fun validateVisibility(declaration: IrDeclarationWithVisibility, symbolsClass: KClass<*>) {
-        if (declaration.visibility == DescriptorVisibilities.INTERNAL) {
+        if (declaration.visibility == Visibilities.Internal) {
             require(declaration.isPublishedApi()) {
                 "Internal API loaded from ${symbolsClass.qualifiedName} must have '@PublishedApi' annotation: ${declaration.render()}"
             }
@@ -141,7 +141,7 @@ abstract class IrSecondStageSymbolValidationHandler(testServices: TestServices) 
     }
 
     private fun validateVisibility(declaration: IrDeclarationWithVisibility, symbolsClass: KClass<*>) {
-        if (declaration.visibility == DescriptorVisibilities.INTERNAL) {
+        if (declaration.visibility == Visibilities.Internal) {
             checkForSpecialAnnotation(declaration)
         }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.backend.common.DumpIrReferenceRenderingAsSignatureStrategy
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_EXTERNAL_DECLARATION_STUB
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
@@ -205,7 +205,7 @@ open class SerializedIrDumpHandler(
                      */
                     true
                 } else if ((declaration is IrSimpleFunction || declaration is IrProperty) &&
-                    declaration.parent.let { it is IrClass && it.visibility == DescriptorVisibilities.LOCAL } &&
+                    declaration.parent.let { it is IrClass && it.visibility == Visibilities.Local } &&
                     declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE &&
                     testServices.moduleStructure.modules.first().languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)
                 ) {
