@@ -122,7 +122,7 @@ abstract class KotlinJsIrLink
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?,
     ) {
-        if (!inputChanges.isIncremental && isWasmPlatform) {
+        if (!inputChanges.isIncremental && isWasmPlatformValue) {
             args.regenerateUnchangedModules = true
         }
 
@@ -164,9 +164,6 @@ abstract class KotlinJsIrLink
             }
         }
     }
-
-    private val isWasmPlatform: Boolean =
-        target == KotlinPlatformType.wasm
 
     override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
         if (!isWasmPlatformValue) {
