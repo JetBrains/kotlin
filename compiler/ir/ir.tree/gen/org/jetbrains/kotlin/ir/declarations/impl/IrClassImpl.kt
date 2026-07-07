@@ -28,7 +28,7 @@ class IrClassImpl @IrImplementationDetail constructor(
     override var origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
-    override var visibility: DescriptorVisibility,
+    override var visibility: Visibility,
     override val symbol: IrClassSymbol,
     override var kind: ClassKind,
     override var modality: Modality,

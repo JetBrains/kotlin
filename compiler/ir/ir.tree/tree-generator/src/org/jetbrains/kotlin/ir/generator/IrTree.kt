@@ -160,7 +160,7 @@ object IrTree : AbstractTreeBuilder() {
     val declarationWithVisibility: Element by element(Declaration) {
         parent(declaration)
 
-        +field("visibility", type(Packages.descriptors, "DescriptorVisibility"))
+        +field("visibility", type(Packages.descriptors, "Visibility"))
     }
     val declarationWithName: Element by element(Declaration) {
         parent(declaration)

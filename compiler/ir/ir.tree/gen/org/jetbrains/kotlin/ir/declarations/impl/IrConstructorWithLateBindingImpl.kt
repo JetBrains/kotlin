@@ -11,7 +11,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -31,7 +31,7 @@ class IrConstructorWithLateBindingImpl @IrImplementationDetail constructor(
     override val factory: IrFactory,
     override var name: Name,
     override var isExternal: Boolean,
-    override var visibility: DescriptorVisibility,
+    override var visibility: Visibility,
     override var isInline: Boolean,
     override var isExpect: Boolean,
     override var isPrimary: Boolean,

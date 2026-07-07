@@ -8,11 +8,11 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationWithVisibility]
  */
 interface IrDeclarationWithVisibility : IrDeclaration {
-    var visibility: DescriptorVisibility
+    var visibility: Visibility
 }
