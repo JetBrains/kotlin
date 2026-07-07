@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentVal
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
+import org.jetbrains.kotlin.buildtools.internal.jvm.InternalJvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
@@ -101,20 +102,38 @@ internal class JvmCompilationOperationImpl private constructor(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JvmCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: JvmCompilationOperation.Option<V>): V = options[key].let {
+        @Suppress("UNCHECKED_CAST")
+        when (it) {
+            is InternalJvmSnapshotBasedIncrementalCompilationConfigurationImpl -> JvmSnapshotBasedIncrementalCompilationConfigurationImpl.fromInternalRepresentation(it) as V
+            else -> it
+        }
+    }
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        options[key] = when (value) {
+            is JvmSnapshotBasedIncrementalCompilationConfigurationImpl -> value.toInternalRepresentation()
+            else -> value
+        }
     }
 
     override fun build(): JvmCompilationOperation = deepCopy()
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
+    private operator fun <V> get(key: Option<V>): V = options[key].let {
+        @Suppress("UNCHECKED_CAST")
+        when (it) {
+            is InternalJvmSnapshotBasedIncrementalCompilationConfigurationImpl -> JvmSnapshotBasedIncrementalCompilationConfigurationImpl.fromInternalRepresentation(it) as V
+            else -> it
+        }
+    }
 
     private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        options[key] = when (value) {
+            is JvmSnapshotBasedIncrementalCompilationConfigurationImpl -> value.toInternalRepresentation()
+            else -> value
+        }
     }
 
     class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)

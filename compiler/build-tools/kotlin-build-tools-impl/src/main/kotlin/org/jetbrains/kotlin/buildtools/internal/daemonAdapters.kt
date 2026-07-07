@@ -17,9 +17,18 @@ import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.DAEMON_RUN_DIR_PATH
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.JVM_ARGUMENTS
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_COUNT_LIMIT
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_SIZE_LIMIT
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_PATH
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY_MILLIS
+import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.Serializable
+import java.nio.file.Files
 import java.rmi.server.UnicastRemoteObject
 
 internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: CompilationOptions
@@ -142,3 +151,35 @@ internal fun KotlinLogger.debug(compileIterationResult: CompileIterationResult?,
 }
 
 internal fun createSessionIsAliveFlagFile() = makeAutodeletingFlagFile(keyword = "compilation-session")
+
+internal fun DaemonExecutionPolicyImpl.toDaemonJvmOptions(
+    additionalJvmArguments: List<String>,
+): DaemonJVMOptions = configureDaemonJVMOptions(
+    inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true
+).also { opts ->
+    val effectiveJvmArguments = additionalJvmArguments + (this[JVM_ARGUMENTS] ?: emptyList())
+    if (effectiveJvmArguments.isNotEmpty()) {
+        opts.jvmParams.addAll(
+            effectiveJvmArguments.filterExtractProps(opts.mappers, "", opts.restMapper)
+        )
+    }
+}
+
+internal fun DaemonExecutionPolicyImpl.toDaemonOptions(): Pair<DaemonOptions, List<String>> {
+    val runDirPath = this[DAEMON_RUN_DIR_PATH].absolutePathStringOrThrow()
+    return configureDaemonOptions(
+        DaemonOptions().apply {
+            this@toDaemonOptions[SHUTDOWN_DELAY_MILLIS]?.let { shutdownDelay ->
+                shutdownDelayMilliseconds = shutdownDelay
+            }
+            runFilesPath = runDirPath
+        }) to listOf("D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=$runDirPath")
+}
+
+internal fun DaemonExecutionPolicyImpl.toDaemonLogOptions(): DaemonLogOptions = DaemonLogOptions(
+    logsPath = this[LOGS_PATH].absolutePathStringOrThrow(),
+    logsFileSizeLimit = this[LOGS_FILE_SIZE_LIMIT] ?: 0,
+    logsFileCountLimit = this[LOGS_FILE_COUNT_LIMIT] ?: Int.MAX_VALUE,
+).also {
+    Files.createDirectories(this[LOGS_PATH])
+}

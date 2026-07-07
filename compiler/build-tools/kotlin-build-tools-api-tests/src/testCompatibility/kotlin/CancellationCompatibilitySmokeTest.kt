@@ -125,7 +125,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         assumeTrue(hasCancellationSupport)
         runSingleShotDaemonTest(kotlinToolchains, additionalDaemonConfiguration = {
             this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
-                "-Dkotlin.daemon.wait.before.compilation.for.tests=true"
+                "Dkotlin.daemon.wait.before.compilation.for.tests=true"
             )
         }, additionalCleanupActions = { daemonRunPath ->
             daemonRunPath.resolve("daemon-test-start").deleteIfExists()

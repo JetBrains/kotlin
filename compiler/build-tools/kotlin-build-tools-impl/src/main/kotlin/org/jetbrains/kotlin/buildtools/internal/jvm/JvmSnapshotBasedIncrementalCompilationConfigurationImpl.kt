@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.*
+import java.io.File
+import java.io.Serializable
 import java.nio.file.Path
 
 @Suppress("DEPRECATION_ERROR")
@@ -32,7 +34,8 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
     DummyOptions,
 ), JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
     DeepCopyable<JvmSnapshotBasedIncrementalCompilationConfigurationImpl>,
-    HasSnapshotBasedIcOptionsAccessor {
+    HasSnapshotBasedIcOptionsAccessor,
+    Serializable {
 
     constructor(
         workingDirectory: Path,
@@ -104,9 +107,28 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
         options2[key] = value
     }
 
+    fun toInternalRepresentation() =
+        @Suppress("DEPRECATION")
+        InternalJvmSnapshotBasedIncrementalCompilationConfigurationImpl(
+            workingDirectory.toFile(),
+            sourcesChanges,
+            dependenciesSnapshotFiles.map(Path::toFile),
+            shrunkClasspathSnapshot.toFile(),
+            options2.deepCopy(),
+        )
+
     open class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     companion object {
+
+        fun fromInternalRepresentation(configuration: InternalJvmSnapshotBasedIncrementalCompilationConfigurationImpl) =
+            JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
+                configuration.workingDirectory.toPath(),
+                configuration.sourcesChanges,
+                configuration.dependenciesSnapshotFiles.map(File::toPath),
+                configuration.shrunkClasspathSnapshot.toPath(),
+                configuration.options.deepCopy(),
+            )
 
         val PRECISE_JAVA_TRACKING: Option<Boolean> = Option("PRECISE_JAVA_TRACKING", false)
 
@@ -230,3 +252,12 @@ internal fun JvmSnapshotBasedIncrementalCompilationConfiguration.toOptions(): Ha
         this
     }
 }
+
+
+internal class InternalJvmSnapshotBasedIncrementalCompilationConfigurationImpl(
+    val workingDirectory: File,
+    val sourcesChanges: SourcesChanges,
+    val dependenciesSnapshotFiles: List<File>,
+    val shrunkClasspathSnapshot: File,
+    val options: Options = Options(JvmSnapshotBasedIncrementalCompilationConfiguration::class),
+) : Serializable

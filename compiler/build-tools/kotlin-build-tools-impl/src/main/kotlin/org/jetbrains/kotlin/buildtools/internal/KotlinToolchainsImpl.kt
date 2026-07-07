@@ -13,15 +13,25 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.COMPILER_ARGUMENTS_LOG_LEVEL
+import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.LOOKUP_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
+import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.incremental.clearJarCaches
 import java.io.File
+import java.net.URLClassLoader
+import java.rmi.RemoteException
 import java.util.concurrent.*
 
 internal class KotlinToolchainsImpl() : KotlinToolchains {
@@ -81,10 +91,94 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         ): R {
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
             val operationBody: Callable<R> = { operation.execute(projectId, executionPolicy, logger) }
-            return if (executionPolicy is ExecutionPolicy.InProcess) {
-                unwrapExecutionException(executor.submit(operationBody))
-            } else {
-                operationBody.call()
+            return when (executionPolicy) {
+                is ExecutionPolicy.InProcess -> {
+                    unwrapExecutionException(executor.submit(operationBody))
+                }
+                is DaemonExecutionPolicyImpl -> {
+                    operation.executeInDaemon(executionPolicy, logger)
+                }
+                else -> {
+                    error("Unknown execution policy: $executionPolicy")
+                }
+            }
+        }
+
+        private fun getCurrentClasspath() =
+            (KotlinToolchainsImpl::class.java.classLoader as URLClassLoader).urLs.map { transformUrlToFile(it) }
+
+
+        private fun <R> BuildOperationImpl<R>.executeInDaemon(executionPolicy: DaemonExecutionPolicyImpl, logger: KotlinLogger?): R {
+            val kotlinLogger = logger ?: DefaultKotlinLogger
+            val loggerAdapter = KotlinLoggerMessageCollectorAdapter(
+                kotlinLogger,
+                DefaultCompilerMessageRenderer,
+                false
+            )
+            kotlinLogger.debug("Compiling using the daemon strategy")
+            val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
+            val sessionIsAliveFlagFile = executionPolicy.buildIdToSessionFlagFile.computeIfAbsent(projectId) {
+                createSessionIsAliveFlagFile()
+            }
+            val daemonLogOptions = executionPolicy.toDaemonLogOptions()
+            val (daemonOptions = first, additionalJvmArguments = second) = executionPolicy.toDaemonOptions()
+            val jvmOptions = executionPolicy.toDaemonJvmOptions(additionalJvmArguments)
+            (
+                val daemon = compileService, val sessionId,
+            ) =
+                KotlinCompilerRunnerUtils.newDaemonConnection(
+                    compilerId,
+                    clientIsAliveFile,
+                    sessionIsAliveFlagFile,
+                    loggerAdapter,
+                    loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")
+                        ?.toBooleanStrictOrNull() ?: true,
+                    daemonJVMOptions = jvmOptions,
+                    daemonOptions = daemonOptions,
+                    daemonLogOptions = daemonLogOptions,
+                ) ?: error(ExitCode.INTERNAL_ERROR.asCompilationResult)
+//            onCancel {
+//                daemon.cancelCompilation(sessionId, compilationId)
+//            }
+
+//            val arguments = createAndPrepareCompilerArguments()
+//            arguments.addSources()
+//            logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+//
+//            val rootProjectDir = getRootProjectDir()
+//            val daemonCompileOptions = toDaemonCompilationOptions(loggerAdapter.kotlinLogger.isDebugEnabled, arguments)
+//            loggerAdapter.kotlinLogger.info("Options for KOTLIN DAEMON: $daemonCompileOptions")
+//
+//            val metricsReporter = getMetricsReporter()
+//            val exitCode = daemon.compile(
+//                sessionId,
+//                arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
+//                daemonCompileOptions,
+//                BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
+//                DaemonCompilationResults(
+//                    loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
+//                ),
+//                compilationId
+//            ).get()
+
+            if (loggerAdapter.kotlinLogger.isDebugEnabled) {
+                daemon.getDaemonJVMOptions().takeIf { it.isGood }?.let { jvmOpts ->
+                    loggerAdapter.kotlinLogger.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
+                }
+            }
+
+            val result = daemon.executeOperation(this)
+
+            try {
+                daemon.releaseCompileSession(sessionId)
+            } catch (e: RemoteException) {
+                loggerAdapter.kotlinLogger.warn("Unable to release compile session, maybe daemon is already down: $e")
+            }
+            return when (result) {
+                is CompileService.CallResult.Good -> result.get()
+                is CompileService.CallResult.Error -> throw result.cause ?: error("The operation failed without a cause")
+                is CompileService.CallResult.Dying -> error("The daemon is dying")
+                is CompileService.CallResult.Ok -> result.get()
             }
         }
 

@@ -307,6 +307,7 @@ testing {
                     }
                 }
                 testTask.configure {
+                    jvmArgumentProviders.add(CommandLineArgumentProvider { listOf("-Dsun.io.serialization.extendedDebugInfo=true") })
                     systemProperty(
                         "kotlin.daemon.custom.run.files.path.for.tests",
                         "build/daemon"

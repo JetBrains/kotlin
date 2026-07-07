@@ -180,7 +180,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
 
         (
-            val daemon = compileService, val sessionId
+            val daemon = compileService, val sessionId,
         ) =
             KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId,
