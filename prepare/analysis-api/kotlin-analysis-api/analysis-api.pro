@@ -23,10 +23,14 @@
 -dontwarn kotlinx.coroutines.debug.DebugProbes
 
 # Section after upgrade to SDK 261
--dontwarn kotlinx.coroutines.CoroutineDispatcher
+# Some JDK 1.8 intellij modules illegally use List.removeLast()
+# com.intellij.java.syntax.parser.JavaDocParser was hijacked to fix exceptions in some CliTestGenerated
+# for the remaining two is not known, if the usages are dangerous
+# com.intellij.ide.plugins.PluginDescriptorLoader, com.intellij.platform.eel.path.ArrayListEelAbsolutePath
 -dontwarn java.util.List
+# Used by some intellij classes, e.g. by com.intellij.platform.syntax.extensions.impl.ExtensionRegistryHolderJvmKt
+# In fact we don't need this one in runtime
 -dontwarn fleet.util.multiplatform.Actual
--dontwarn kotlinx.coroutines.internal.intellij.IntellijCoroutines
 
 # Used in script compilation (refineCompilationConfiguration.kt), requires intellij-analysis
 -dontwarn com.intellij.openapi.vfs.LocalFileSystem
