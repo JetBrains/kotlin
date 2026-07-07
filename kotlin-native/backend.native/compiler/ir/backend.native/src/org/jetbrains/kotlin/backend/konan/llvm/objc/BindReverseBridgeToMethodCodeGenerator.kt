@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdap
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdapter.Companion.KotlinToObjCMethodAdapter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.findOverriddenMethodOfAny
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 
 /**
  * Collects `@BindReverseBridgeToMethod` annotations from the given file,
@@ -40,8 +40,7 @@ private fun CodeGenerator.resolveReverseBridgeAdapter(
     layoutBuilder: ClassLayoutBuilder,
     bridge: BindReverseBridgeToMethod,
 ): KotlinToObjCMethodAdapter? {
-    val targetFunction = irClass.declarations
-            .filterIsInstance<IrSimpleFunction>()
+    val targetFunction = irClass.simpleFunctions()
             .firstOrNull { it.name.asString() == bridge.targetMethod }
             ?.let { with(layoutBuilder) { it.getLoweredVersion() } }
             ?: return null

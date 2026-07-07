@@ -934,9 +934,23 @@ package func Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(_
     return _result.__externalRCRef()
 }
 
+@_cdecl("Barable_baz_get__reverse_swift")
+package func Barable_baz_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Barable
+    let _result: any main.Foeble = _self.baz
+    return _result.__externalRCRef()
+}
+
 @_cdecl("Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift")
 package func Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Foeble
     let _result: any main.Foeble = _self.bar(arg: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg) as! any main.Foeble)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("Foeble_baz_get__reverse_swift")
+package func Foeble_baz_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Foeble
+    let _result: any main.Foeble = _self.baz
     return _result.__externalRCRef()
 }

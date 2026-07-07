@@ -545,6 +545,12 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
         val witnessSources: Set<SirFunction> = defaultWitnesses.mapTo(mutableSetOf()) { it.first }
         defaultWitnesses.forEach { it.second.parent = this }
 
+        val defaultVariableWitnesses = members
+            .filterIsInstance<SirAbstractVariableFromKtSymbol>()
+            .mapNotNull { variable -> variable.directDispatchProtocolWitnessOrNull()?.let { variable to it } }
+        val variableWitnessSources: Set<SirVariable> = defaultVariableWitnesses.mapTo(mutableSetOf()) { it.first }
+        defaultVariableWitnesses.forEach { it.second.parent = this }
+
         val protocolSpiGroups = targetProtocol.attributes
             .filterIsInstance<SirAttribute.SPI>()
             .mapTo(mutableSetOf()) { it.name }
@@ -560,38 +566,40 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
                 origin = SirOrigin.Trampoline(function)
                 isOverride = false
                 modality = SirModality.UNSPECIFIED
-                bridges.clear() // pure Swift trap, no Kotlin bridge (avoids duplicating the witness's bridge)
+                bridges.clear() // pure Swift trap, no Kotlin bridge
                 body = createSpiTrap(function.name)
             }.also { it.parent = this }
         }
-        val spiVariableTraps = spiMembers.filterIsInstance<SirVariable>().map { variable ->
-            buildVariableCopy(variable) {
-                origin = SirOrigin.Trampoline(variable)
-                isOverride = false
-                modality = SirModality.UNSPECIFIED
-                bridges.clear()
-                getter = variable.getter?.let { getter ->
-                    buildGetterCopy(getter) {
-                        origin = SirOrigin.Trampoline(getter)
-                        bridges.clear()
-                        body = createSpiTrap(variable.name)
+        val spiVariableTraps = spiMembers.filterIsInstance<SirVariable>()
+            .filter { it !in variableWitnessSources } // a defaulted @_spi property gets a real witness, not a trap
+            .map { variable ->
+                buildVariableCopy(variable) {
+                    origin = SirOrigin.Trampoline(variable)
+                    isOverride = false
+                    modality = SirModality.UNSPECIFIED
+                    bridges.clear()
+                    getter = variable.getter?.let { getter ->
+                        buildGetterCopy(getter) {
+                            origin = SirOrigin.Trampoline(getter)
+                            bridges.clear()
+                            body = createSpiTrap(variable.name)
+                        }
                     }
-                }
-                setter = variable.setter?.let { setter ->
-                    buildSetterCopy(setter) {
-                        origin = SirOrigin.Trampoline(setter)
-                        bridges.clear()
-                        body = createSpiTrap(variable.name)
+                    setter = variable.setter?.let { setter ->
+                        buildSetterCopy(setter) {
+                            origin = SirOrigin.Trampoline(setter)
+                            bridges.clear()
+                            body = createSpiTrap(variable.name)
+                        }
                     }
+                }.apply {
+                    parent = this@SirAuxiliaryProtocolDeclarationsFromKtSymbol
+                    getter?.parent = this
+                    setter?.parent = this
                 }
-            }.apply {
-                parent = this@SirAuxiliaryProtocolDeclarationsFromKtSymbol
-                getter?.parent = this
-                setter?.parent = this
             }
-        }
 
-        (typeAliases + spiFunctionTraps + spiVariableTraps + defaultWitnesses.map { it.second }).toMutableList()
+        (typeAliases + spiFunctionTraps + spiVariableTraps + defaultWitnesses.map { it.second } + defaultVariableWitnesses.map { it.second }).toMutableList()
     }
 }
 

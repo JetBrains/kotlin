@@ -3,14 +3,24 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public protocol Boxed: KotlinRuntime.KotlinBase, main._Boxed {
+    var boxLabel: Swift.String {
+        get
+    }
     func label() -> Swift.String
     func unbox() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
 }
 public protocol Defaulter: KotlinRuntime.KotlinBase, main._Defaulter {
+    var kind: Swift.String {
+        get
+    }
     func describe() -> Swift.String
     func tag() -> Swift.String
 }
 public protocol Greeter: KotlinRuntime.KotlinBase, main._Greeter {
+    var mood: Swift.String {
+        get
+        set
+    }
     func greet(
         name: Swift.String
     ) -> Swift.String
@@ -57,6 +67,36 @@ open class AbstractBase: KotlinRuntime.KotlinBase {
     }
 }
 open class Base: KotlinRuntime.KotlinBase {
+    open var name: Swift.String {
+        get {
+            if Self.self == main.Base.self {
+                return Base_name_get(self.__externalRCRef())
+            } else {
+                return Base_name_get_direct(self.__externalRCRef())
+            }
+        }
+        set {
+            if Self.self == main.Base.self {
+                return { Base_name_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+            } else {
+                return { Base_name_set__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), newValue); return () }()
+            }
+        }
+    }
+    public final var notOpenValue: Swift.String {
+        get {
+            return Base_notOpenValue_get(self.__externalRCRef())
+        }
+    }
+    open var size: Swift.Int32 {
+        get {
+            if Self.self == main.Base.self {
+                return Base_size_get(self.__externalRCRef())
+            } else {
+                return Base_size_get_direct(self.__externalRCRef())
+            }
+        }
+    }
     public init() {
         let __kt = __root___Base_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -89,6 +129,22 @@ open class Base: KotlinRuntime.KotlinBase {
     }
 }
 open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
+    open var mood: Swift.String {
+        get {
+            if Self.self == main.GreeterBase.self {
+                return GreeterBase_mood_get(self.__externalRCRef())
+            } else {
+                return GreeterBase_mood_get_direct(self.__externalRCRef())
+            }
+        }
+        set {
+            if Self.self == main.GreeterBase.self {
+                return { GreeterBase_mood_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+            } else {
+                return { GreeterBase_mood_set__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), newValue); return () }()
+            }
+        }
+    }
     public init() {
         let __kt = __root___GreeterBase_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -118,6 +174,11 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
     }
 }
 extension main.Boxed where Self : main.__Boxed {
+    public var boxLabel: Swift.String {
+        get {
+            return Boxed_boxLabel_get(self.__externalRCRef())
+        }
+    }
     public func label() -> Swift.String {
         return Boxed_label(self.__externalRCRef())
     }
@@ -126,11 +187,21 @@ extension main.Boxed where Self : main.__Boxed {
     }
 }
 extension main.Boxed {
+    public var boxLabel: Swift.String {
+        get {
+            return Boxed_boxLabel_get_direct(self.__externalRCRef())
+        }
+    }
     public func label() -> Swift.String {
         return Boxed_label_direct(self.__externalRCRef())
     }
 }
 extension main.Defaulter where Self : main.__Defaulter {
+    public var kind: Swift.String {
+        get {
+            return Defaulter_kind_get(self.__externalRCRef())
+        }
+    }
     public func describe() -> Swift.String {
         return Defaulter_describe(self.__externalRCRef())
     }
@@ -139,11 +210,24 @@ extension main.Defaulter where Self : main.__Defaulter {
     }
 }
 extension main.Defaulter {
+    public var kind: Swift.String {
+        get {
+            return Defaulter_kind_get_direct(self.__externalRCRef())
+        }
+    }
     public func describe() -> Swift.String {
         return Defaulter_describe_direct(self.__externalRCRef())
     }
 }
 extension main.Greeter where Self : main.__Greeter {
+    public var mood: Swift.String {
+        get {
+            return Greeter_mood_get(self.__externalRCRef())
+        }
+        set {
+            return { Greeter_mood_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+        }
+    }
     public func greet(
         name: Swift.String
     ) -> Swift.String {
@@ -195,6 +279,34 @@ package func Base_greet__TypesOfArguments__Swift_String____reverse_swift(_ `self
     return _result
 }
 
+@_cdecl("Base_name_get__reverse_swift")
+package func Base_name_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.name
+    return _result
+}
+
+@_cdecl("Base_name_set__TypesOfArguments__Swift_String____reverse_swift")
+package func Base_name_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
+    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = { _self.name = newValue }()
+    return { _result; return true }()
+}
+
+@_cdecl("Base_size_get__reverse_swift")
+package func Base_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = main.Base.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.size
+    return _result
+}
+
+@_cdecl("Boxed_boxLabel_get__reverse_swift")
+package func Boxed_boxLabel_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Boxed
+    let _result: Swift.String = _self.boxLabel
+    return _result
+}
+
 @_cdecl("Boxed_label__reverse_swift")
 package func Boxed_label__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Boxed
@@ -216,6 +328,13 @@ package func Defaulter_describe__reverse_swift(_ `self`: Swift.UnsafeMutableRawP
     return _result
 }
 
+@_cdecl("Defaulter_kind_get__reverse_swift")
+package func Defaulter_kind_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Defaulter
+    let _result: Swift.String = _self.kind
+    return _result
+}
+
 @_cdecl("Defaulter_tag__reverse_swift")
 package func Defaulter_tag__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Defaulter
@@ -230,6 +349,20 @@ package func GreeterBase_greet__TypesOfArguments__Swift_String____reverse_swift(
     return _result
 }
 
+@_cdecl("GreeterBase_mood_get__reverse_swift")
+package func GreeterBase_mood_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.mood
+    return _result
+}
+
+@_cdecl("GreeterBase_mood_set__TypesOfArguments__Swift_String____reverse_swift")
+package func GreeterBase_mood_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
+    let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = { _self.mood = newValue }()
+    return { _result; return true }()
+}
+
 @_cdecl("GreeterBase_salutation__reverse_swift")
 package func GreeterBase_salutation__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
     let _self = main.GreeterBase.__createClassWrapper(externalRCRef: `self`)!
@@ -242,6 +375,20 @@ package func Greeter_greet__TypesOfArguments__Swift_String____reverse_swift(_ `s
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Greeter
     let _result: Swift.String = _self.greet(name: name)
     return _result
+}
+
+@_cdecl("Greeter_mood_get__reverse_swift")
+package func Greeter_mood_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Greeter
+    let _result: Swift.String = _self.mood
+    return _result
+}
+
+@_cdecl("Greeter_mood_set__TypesOfArguments__Swift_String____reverse_swift")
+package func Greeter_mood_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Greeter
+    let _result: Swift.Void = { _self.mood = newValue }()
+    return { _result; return true }()
 }
 
 @_cdecl("Greeter_salutation__reverse_swift")

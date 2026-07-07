@@ -125,9 +125,23 @@ package func kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20Exporte
     return _result
 }
 
+@_cdecl("kotlin_ranges_ClosedRange_endInclusive_get__reverse_swift")
+package func kotlin_ranges_ClosedRange_endInclusive_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
+    let _result: any ExportedKotlinPackages.kotlin.Comparable = _self.endInclusive
+    return _result.__externalRCRef()
+}
+
 @_cdecl("kotlin_ranges_ClosedRange_isEmpty__reverse_swift")
 package func kotlin_ranges_ClosedRange_isEmpty__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
     let _result: Swift.Bool = _self.isEmpty()
     return _result
+}
+
+@_cdecl("kotlin_ranges_ClosedRange_start_get__reverse_swift")
+package func kotlin_ranges_ClosedRange_start_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
+    let _result: any ExportedKotlinPackages.kotlin.Comparable = _self.start
+    return _result.__externalRCRef()
 }

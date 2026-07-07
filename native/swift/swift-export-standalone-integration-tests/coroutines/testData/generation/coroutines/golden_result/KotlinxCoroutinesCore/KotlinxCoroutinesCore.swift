@@ -274,6 +274,13 @@ package func kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse
     return { _result; return true }()
 }
 
+@_cdecl("kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift")
+package func kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
+    let _result: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Int32> = _self.subscriptionCount
+    return _result.wrapped.__externalRCRef()
+}
+
 @_cdecl("kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
@@ -286,4 +293,32 @@ package func kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArgu
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
     let _result: Swift.Bool = _self.compareAndSet(expect: { switch expect { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), update: { switch update { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result
+}
+
+@_cdecl("kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse_swift")
+package func kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.value
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+package func kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
+    let _result: Swift.Void = { _self.value = { switch newValue { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }() }()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift")
+package func kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Any {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow
+    let _result: Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = _self.replayCache
+    return _result.map { it in it as! NSObject? ?? NSNull() }
+}
+
+@_cdecl("kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift")
+package func kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.value
+    return _result.map { it in it.__externalRCRef() } ?? nil
 }

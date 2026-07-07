@@ -53,6 +53,47 @@ public fun Base_greet__TypesOfArguments__Swift_String____reverse(self: Base, nam
     return interpretObjCPointer<kotlin.String>(_result)
 }
 
+@ImportedBridge("Base_name_get__reverse_swift")
+internal external fun Base_name_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Base::class, "<get-name>")
+public fun Base_name_get__reverse(self: Base): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Base_name_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Base_name_set__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun Base_name_set__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(Base::class, "<set-name>")
+public fun Base_name_set__TypesOfArguments__Swift_String____reverse(self: Base, newValue: kotlin.String): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __newValue = newValue.objcPtr()
+    val _result = Base_name_set__TypesOfArguments__Swift_String____reverse_swift(__self, __newValue)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("Base_size_get__reverse_swift")
+internal external fun Base_size_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(Base::class, "<get-size>")
+public fun Base_size_get__reverse(self: Base): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Base_size_get__reverse_swift(__self)
+    return _result
+}
+
+@ImportedBridge("Boxed_boxLabel_get__reverse_swift")
+internal external fun Boxed_boxLabel_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Boxed::class, "<get-boxLabel>")
+public fun Boxed_boxLabel_get__reverse(self: Boxed<kotlin.Any?>): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Boxed_boxLabel_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
 @ImportedBridge("Boxed_label__reverse_swift")
 internal external fun Boxed_label__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -83,6 +124,16 @@ public fun Defaulter_describe__reverse(self: Defaulter): kotlin.String {
     return interpretObjCPointer<kotlin.String>(_result)
 }
 
+@ImportedBridge("Defaulter_kind_get__reverse_swift")
+internal external fun Defaulter_kind_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Defaulter::class, "<get-kind>")
+public fun Defaulter_kind_get__reverse(self: Defaulter): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Defaulter_kind_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
 @ImportedBridge("Defaulter_tag__reverse_swift")
 internal external fun Defaulter_tag__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -104,6 +155,27 @@ public fun GreeterBase_greet__TypesOfArguments__Swift_String____reverse(self: Gr
     return interpretObjCPointer<kotlin.String>(_result)
 }
 
+@ImportedBridge("GreeterBase_mood_get__reverse_swift")
+internal external fun GreeterBase_mood_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(GreeterBase::class, "<get-mood>")
+public fun GreeterBase_mood_get__reverse(self: GreeterBase): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = GreeterBase_mood_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("GreeterBase_mood_set__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun GreeterBase_mood_set__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(GreeterBase::class, "<set-mood>")
+public fun GreeterBase_mood_set__TypesOfArguments__Swift_String____reverse(self: GreeterBase, newValue: kotlin.String): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __newValue = newValue.objcPtr()
+    val _result = GreeterBase_mood_set__TypesOfArguments__Swift_String____reverse_swift(__self, __newValue)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("GreeterBase_salutation__reverse_swift")
 internal external fun GreeterBase_salutation__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -123,6 +195,27 @@ public fun Greeter_greet__TypesOfArguments__Swift_String____reverse(self: Greete
     val __name = name.objcPtr()
     val _result = Greeter_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name)
     return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Greeter_mood_get__reverse_swift")
+internal external fun Greeter_mood_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Greeter::class, "<get-mood>")
+public fun Greeter_mood_get__reverse(self: Greeter): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Greeter_mood_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Greeter_mood_set__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun Greeter_mood_set__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(Greeter::class, "<set-mood>")
+public fun Greeter_mood_set__TypesOfArguments__Swift_String____reverse(self: Greeter, newValue: kotlin.String): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __newValue = newValue.objcPtr()
+    val _result = Greeter_mood_set__TypesOfArguments__Swift_String____reverse_swift(__self, __newValue)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("Greeter_salutation__reverse_swift")
@@ -186,10 +279,75 @@ public fun Base_greet__TypesOfArguments__Swift_String___direct(self: kotlin.nati
     return _result.objcPtr()
 }
 
+@ExportedBridge("Base_name_get")
+public fun Base_name_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
+    val _result = run { __self.name }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Base_name_get_direct", nonVirtualTargetMethod = "<get-name>")
+public fun Base_name_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
+    val _result = run { __self.name }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Base_name_set__TypesOfArguments__Swift_String__")
+public fun Base_name_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    val _result = run { __self.name = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("Base_name_set__TypesOfArguments__Swift_String___direct", nonVirtualTargetMethod = "<set-name>")
+public fun Base_name_set__TypesOfArguments__Swift_String___direct(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    val _result = run { __self.name = __newValue }
+    return run { _result; true }
+}
+
 @ExportedBridge("Base_notOpen")
 public fun Base_notOpen(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
     val _result = run { __self.notOpen() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Base_notOpenValue_get")
+public fun Base_notOpenValue_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
+    val _result = run { __self.notOpenValue }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Base_size_get")
+public fun Base_size_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
+    val _result = run { __self.size }
+    return _result
+}
+
+@ExportedBridge("Base_size_get_direct", nonVirtualTargetMethod = "<get-size>")
+public fun Base_size_get_direct(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
+    val _result = run { __self.size }
+    return _result
+}
+
+@ExportedBridge("Boxed_boxLabel_get")
+public fun Boxed_boxLabel_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Boxed<kotlin.Any?>
+    val _result = run { __self.boxLabel }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Boxed_boxLabel_get_direct", nonVirtualTargetMethod = "<get-boxLabel>")
+public fun Boxed_boxLabel_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Boxed<kotlin.Any?>
+    val _result = run { __self.boxLabel }
     return _result.objcPtr()
 }
 
@@ -228,6 +386,20 @@ public fun Defaulter_describe_direct(self: kotlin.native.internal.NativePtr): ko
     return _result.objcPtr()
 }
 
+@ExportedBridge("Defaulter_kind_get")
+public fun Defaulter_kind_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Defaulter
+    val _result = run { __self.kind }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Defaulter_kind_get_direct", nonVirtualTargetMethod = "<get-kind>")
+public fun Defaulter_kind_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Defaulter
+    val _result = run { __self.kind }
+    return _result.objcPtr()
+}
+
 @ExportedBridge("Defaulter_tag")
 public fun Defaulter_tag(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Defaulter
@@ -251,6 +423,36 @@ public fun GreeterBase_greet__TypesOfArguments__Swift_String___direct(self: kotl
     return _result.objcPtr()
 }
 
+@ExportedBridge("GreeterBase_mood_get")
+public fun GreeterBase_mood_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GreeterBase
+    val _result = run { __self.mood }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("GreeterBase_mood_get_direct", nonVirtualTargetMethod = "<get-mood>")
+public fun GreeterBase_mood_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GreeterBase
+    val _result = run { __self.mood }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("GreeterBase_mood_set__TypesOfArguments__Swift_String__")
+public fun GreeterBase_mood_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GreeterBase
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    val _result = run { __self.mood = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("GreeterBase_mood_set__TypesOfArguments__Swift_String___direct", nonVirtualTargetMethod = "<set-mood>")
+public fun GreeterBase_mood_set__TypesOfArguments__Swift_String___direct(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GreeterBase
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    val _result = run { __self.mood = __newValue }
+    return run { _result; true }
+}
+
 @ExportedBridge("GreeterBase_salutation")
 public fun GreeterBase_salutation(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GreeterBase
@@ -271,6 +473,21 @@ public fun Greeter_greet__TypesOfArguments__Swift_String__(self: kotlin.native.i
     val __name = interpretObjCPointer<kotlin.String>(name)
     val _result = run { __self.greet(__name) }
     return _result.objcPtr()
+}
+
+@ExportedBridge("Greeter_mood_get")
+public fun Greeter_mood_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Greeter
+    val _result = run { __self.mood }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Greeter_mood_set__TypesOfArguments__Swift_String__")
+public fun Greeter_mood_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Greeter
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    val _result = run { __self.mood = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("Greeter_salutation")

@@ -8,6 +8,16 @@ import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
+@ImportedBridge("weird_A_bar_get__reverse_swift")
+internal external fun weird_A_bar_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(weird.A::class, "<get-bar>")
+public fun weird_A_bar_get__reverse(self: weird.A): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = weird_A_bar_get__reverse_swift(__self)
+    return _result
+}
+
 @ImportedBridge("weird_A_throws__reverse_swift")
 internal external fun weird_A_throws__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 
@@ -20,6 +30,13 @@ public fun weird_A_throws__reverse(self: weird.A): Unit {
 
 @ExportedBridge("weird_A_bar_get")
 public fun weird_A_bar_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.A
+    val _result = run { __self.bar }
+    return _result
+}
+
+@ExportedBridge("weird_A_bar_get_direct", nonVirtualTargetMethod = "<get-bar>")
+public fun weird_A_bar_get_direct(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.A
     val _result = run { __self.bar }
     return _result

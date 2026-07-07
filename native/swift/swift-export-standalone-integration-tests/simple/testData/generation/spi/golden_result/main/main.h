@@ -5,7 +5,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 _Bool MyInterface_bar__reverse_swift(void * self);
 
+NSString * MyInterface_foo_get__reverse_swift(void * self);
+
+_Bool MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * newValue);
+
 _Bool MyInterface_optInFun__reverse_swift(void * self);
+
+NSString * MyInterface_optInProp_get__reverse_swift(void * self);
+
+_Bool MyInterface_optInProp_set__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * newValue);
 
 _Bool MyImplementation_bar(void * self);
 

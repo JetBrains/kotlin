@@ -3,6 +3,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * _Nullable A_foo_get__reverse_swift(void * self);
+
+void * _Nullable B_foo_get__reverse_swift(void * self);
+
 _Bool Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable item);
 
 void * _Nullable Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable input);

@@ -9,9 +9,19 @@ _Bool kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Op
 
 _Bool kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse_swift(void * self);
 
+void * kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift(void * self);
+
 _Bool kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable value);
 
 _Bool kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable expect, void * _Nullable update);
+
+void * _Nullable kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse_swift(void * self);
+
+_Bool kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable newValue);
+
+NSArray<id> * kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift(void * self);
+
+void * _Nullable kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift(void * self);
 
 _Bool KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(void * pointerToBlock, _Bool _1);
 

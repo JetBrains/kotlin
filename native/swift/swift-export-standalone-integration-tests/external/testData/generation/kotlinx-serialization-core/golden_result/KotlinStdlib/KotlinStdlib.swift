@@ -4571,12 +4571,20 @@ extension ExportedKotlinPackages.kotlin {
     open class Throwable: KotlinRuntime.KotlinBase {
         open var message: Swift.String? {
             get {
-                return kotlin_Throwable_message_get(self.__externalRCRef())
+                if Self.self == ExportedKotlinPackages.kotlin.Throwable.self {
+                    return kotlin_Throwable_message_get(self.__externalRCRef())
+                } else {
+                    return kotlin_Throwable_message_get_direct(self.__externalRCRef())
+                }
             }
         }
         open var cause: ExportedKotlinPackages.kotlin.Throwable? {
             get {
-                return { switch kotlin_Throwable_cause_get(self.__externalRCRef()) { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
+                if Self.self == ExportedKotlinPackages.kotlin.Throwable.self {
+                    return { switch kotlin_Throwable_cause_get(self.__externalRCRef()) { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
+                } else {
+                    return { switch kotlin_Throwable_cause_get_direct(self.__externalRCRef()) { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
+                }
             }
         }
         @_spi(kotlin$experimental$ExperimentalNativeApi)
@@ -7880,6 +7888,13 @@ package func kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_s
     return _result
 }
 
+@_cdecl("kotlin_CharSequence_length_get__reverse_swift")
+package func kotlin_CharSequence_length_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.CharSequence
+    let _result: Swift.Int32 = _self.length
+    return _result
+}
+
 @_cdecl("kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")
 package func kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ startIndex: Swift.Int32, _ endIndex: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.CharSequence
@@ -7939,6 +7954,20 @@ package func kotlin_Number_toShort__reverse_swift(_ `self`: Swift.UnsafeMutableR
     let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.Int16 = _self.toShort()
     return _result
+}
+
+@_cdecl("kotlin_Throwable_cause_get__reverse_swift")
+package func kotlin_Throwable_cause_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = _self.cause
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("kotlin_Throwable_message_get__reverse_swift")
+package func kotlin_Throwable_message_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String? {
+    let _self = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Optional<Swift.String> = _self.message
+    return _result ?? nil
 }
 
 @_cdecl("kotlin_Throwable_toString__reverse_swift")

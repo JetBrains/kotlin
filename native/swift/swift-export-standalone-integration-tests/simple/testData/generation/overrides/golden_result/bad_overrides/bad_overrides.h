@@ -3,9 +3,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+int32_t weird_A_bar_get__reverse_swift(void * self);
+
 _Bool weird_A_throws__reverse_swift(void * self);
 
 int32_t weird_A_bar_get(void * self);
+
+int32_t weird_A_bar_get_direct(void * self);
 
 void * weird_A_init_allocate();
 

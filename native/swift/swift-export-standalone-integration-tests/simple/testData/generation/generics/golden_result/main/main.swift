@@ -459,6 +459,20 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._A {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._B {
 }
+@_cdecl("A_foo_get__reverse_swift")
+package func A_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.A
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.foo
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("B_foo_get__reverse_swift")
+package func B_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.B
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.foo
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
 @_cdecl("Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ item: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Consumer

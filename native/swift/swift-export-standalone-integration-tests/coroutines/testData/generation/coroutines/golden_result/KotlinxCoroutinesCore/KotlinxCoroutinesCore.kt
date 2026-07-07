@@ -61,6 +61,16 @@ public fun kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse(s
     return run<Unit> { _result }
 }
 
+@ImportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift")
+internal external fun kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.MutableSharedFlow::class, "<get-subscriptionCount>")
+public fun kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse(self: kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>): kotlinx.coroutines.flow.StateFlow<Int> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.flow.StateFlow<Int>
+}
+
 @ImportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 internal external fun kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean
 
@@ -82,6 +92,47 @@ public fun kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArgume
     val __update = if (update == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(update)
     val _result = kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __expect, __update)
     return _result
+}
+
+@ImportedBridge("kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse_swift")
+internal external fun kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.MutableStateFlow::class, "<get-value>")
+public fun kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse(self: kotlinx.coroutines.flow.MutableStateFlow<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse_swift(__self)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+}
+
+@ImportedBridge("kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.MutableStateFlow::class, "<set-value>")
+public fun kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.flow.MutableStateFlow<kotlin.Any?>, newValue: kotlin.Any?): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __newValue = if (newValue == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(newValue)
+    val _result = kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __newValue)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift")
+internal external fun kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.SharedFlow::class, "<get-replayCache>")
+public fun kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse(self: kotlinx.coroutines.flow.SharedFlow<kotlin.Any?>): kotlin.collections.List<kotlin.Any?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.collections.List<kotlin.Any?>>(_result)
+}
+
+@ImportedBridge("kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift")
+internal external fun kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.StateFlow::class, "<get-value>")
+public fun kotlinx_coroutines_flow_StateFlow_value_get__reverse(self: kotlinx.coroutines.flow.StateFlow<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift(__self)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
 }
 
 @ExportedBridge("KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")

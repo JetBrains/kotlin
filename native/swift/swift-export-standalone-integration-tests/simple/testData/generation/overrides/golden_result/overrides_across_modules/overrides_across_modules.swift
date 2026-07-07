@@ -6,7 +6,11 @@ import overrides
 open class Cousin: overrides.Parent {
     open override var primitiveTypeVar: Swift.Int32 {
         get {
-            return Cousin_primitiveTypeVar_get(self.__externalRCRef())
+            if Self.self == overrides_across_modules.Cousin.self {
+                return Cousin_primitiveTypeVar_get(self.__externalRCRef())
+            } else {
+                return Cousin_primitiveTypeVar_get_direct(self.__externalRCRef())
+            }
         }
     }
     public override init(
@@ -62,5 +66,12 @@ public final class FinalDerived3: overrides.AbstractDerived2 {
 package func Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.Int32) -> Swift.Int32 {
     let _self = overrides_across_modules.Cousin.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.Int32 = _self.primitiveTypeFunc(arg: arg)
+    return _result
+}
+
+@_cdecl("Cousin_primitiveTypeVar_get__reverse_swift")
+package func Cousin_primitiveTypeVar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = overrides_across_modules.Cousin.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.primitiveTypeVar
     return _result
 }

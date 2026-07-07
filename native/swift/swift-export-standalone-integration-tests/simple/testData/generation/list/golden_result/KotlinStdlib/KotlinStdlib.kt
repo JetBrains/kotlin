@@ -41,6 +41,16 @@ public fun kotlin_collections_Collection_iterator__reverse(self: kotlin.collecti
     return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.collections.Iterator<kotlin.Any?>
 }
 
+@ImportedBridge("kotlin_collections_Collection_size_get__reverse_swift")
+internal external fun kotlin_collections_Collection_size_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(kotlin.collections.Collection::class, "<get-size>")
+public fun kotlin_collections_Collection_size_get__reverse(self: kotlin.collections.Collection<kotlin.Any?>): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlin_collections_Collection_size_get__reverse_swift(__self)
+    return _result
+}
+
 @ImportedBridge("kotlin_collections_Iterable_iterator__reverse_swift")
 internal external fun kotlin_collections_Iterable_iterator__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -212,6 +222,16 @@ public fun kotlin_collections_List_listIterator__reverse(self: kotlin.collection
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_collections_List_listIterator__reverse_swift(__self)
     return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.collections.ListIterator<kotlin.Any?>
+}
+
+@ImportedBridge("kotlin_collections_List_size_get__reverse_swift")
+internal external fun kotlin_collections_List_size_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(kotlin.collections.List::class, "<get-size>")
+public fun kotlin_collections_List_size_get__reverse(self: kotlin.collections.List<kotlin.Any?>): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlin_collections_List_size_get__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")

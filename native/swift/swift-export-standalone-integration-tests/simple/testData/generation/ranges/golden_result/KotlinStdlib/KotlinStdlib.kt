@@ -29,6 +29,16 @@ public fun kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedK
     return _result
 }
 
+@ImportedBridge("kotlin_ranges_ClosedRange_endInclusive_get__reverse_swift")
+internal external fun kotlin_ranges_ClosedRange_endInclusive_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlin.ranges.ClosedRange::class, "<get-endInclusive>")
+public fun kotlin_ranges_ClosedRange_endInclusive_get__reverse(self: kotlin.ranges.ClosedRange<kotlin.Comparable<kotlin.Any?>>): kotlin.Comparable<kotlin.Any?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlin_ranges_ClosedRange_endInclusive_get__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Comparable<kotlin.Any?>
+}
+
 @ImportedBridge("kotlin_ranges_ClosedRange_isEmpty__reverse_swift")
 internal external fun kotlin_ranges_ClosedRange_isEmpty__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 
@@ -37,6 +47,16 @@ public fun kotlin_ranges_ClosedRange_isEmpty__reverse(self: kotlin.ranges.Closed
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_ranges_ClosedRange_isEmpty__reverse_swift(__self)
     return _result
+}
+
+@ImportedBridge("kotlin_ranges_ClosedRange_start_get__reverse_swift")
+internal external fun kotlin_ranges_ClosedRange_start_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlin.ranges.ClosedRange::class, "<get-start>")
+public fun kotlin_ranges_ClosedRange_start_get__reverse(self: kotlin.ranges.ClosedRange<kotlin.Comparable<kotlin.Any?>>): kotlin.Comparable<kotlin.Any?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlin_ranges_ClosedRange_start_get__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Comparable<kotlin.Any?>
 }
 
 @ExportedBridge("kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")

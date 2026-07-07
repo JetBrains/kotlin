@@ -68,7 +68,11 @@ extension ExportedKotlinPackages.namespace {
         @_nonoverride
         open var voo: any KotlinCoroutineSupport.KotlinTypedFlow<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedFlowImpl<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Bar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                if Self.self == ExportedKotlinPackages.namespace.Bar.self {
+                    return KotlinCoroutineSupport._KotlinTypedFlowImpl<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Bar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                } else {
+                    return KotlinCoroutineSupport._KotlinTypedFlowImpl<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Bar_voo_get_direct(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                }
             }
         }
         public override init() {
@@ -93,7 +97,11 @@ extension ExportedKotlinPackages.namespace {
     open class Foo: KotlinRuntime.KotlinBase {
         open var voo: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Foo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                if Self.self == ExportedKotlinPackages.namespace.Foo.self {
+                    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Foo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                } else {
+                    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Foo_voo_get_direct(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                }
             }
         }
         public init() {
@@ -119,7 +127,11 @@ extension ExportedKotlinPackages.namespace {
         @_nonoverride
         open var voo: any KotlinCoroutineSupport.KotlinTypedMutableSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedMutableSharedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_MutableSharedFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow)
+                if Self.self == ExportedKotlinPackages.namespace.MutableSharedFoo.self {
+                    return KotlinCoroutineSupport._KotlinTypedMutableSharedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_MutableSharedFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow)
+                } else {
+                    return KotlinCoroutineSupport._KotlinTypedMutableSharedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_MutableSharedFoo_voo_get_direct(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow)
+                }
             }
         }
         public override init() {
@@ -145,7 +157,11 @@ extension ExportedKotlinPackages.namespace {
         @_nonoverride
         open var voo: any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedMutableStateFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_MutableStateFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow)
+                if Self.self == ExportedKotlinPackages.namespace.MutableStateFoo.self {
+                    return KotlinCoroutineSupport._KotlinTypedMutableStateFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_MutableStateFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow)
+                } else {
+                    return KotlinCoroutineSupport._KotlinTypedMutableStateFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_MutableStateFoo_voo_get_direct(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow)
+                }
             }
         }
         public override init() {
@@ -171,7 +187,11 @@ extension ExportedKotlinPackages.namespace {
         @_nonoverride
         open var voo: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Never> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Never>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Nar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                if Self.self == ExportedKotlinPackages.namespace.Nar.self {
+                    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Never>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Nar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                } else {
+                    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Never>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Nar_voo_get_direct(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                }
             }
         }
         public override init() {
@@ -197,7 +217,11 @@ extension ExportedKotlinPackages.namespace {
         @_nonoverride
         open var voo: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedSharedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_SharedFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow)
+                if Self.self == ExportedKotlinPackages.namespace.SharedFoo.self {
+                    return KotlinCoroutineSupport._KotlinTypedSharedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_SharedFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow)
+                } else {
+                    return KotlinCoroutineSupport._KotlinTypedSharedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_SharedFoo_voo_get_direct(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow)
+                }
             }
         }
         public override init() {
@@ -223,7 +247,11 @@ extension ExportedKotlinPackages.namespace {
         @_nonoverride
         open var voo: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_StateFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow)
+                if Self.self == ExportedKotlinPackages.namespace.StateFoo.self {
+                    return KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_StateFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow)
+                } else {
+                    return KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_StateFoo_voo_get_direct(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow)
+                }
             }
         }
         public override init() {
@@ -249,7 +277,11 @@ extension ExportedKotlinPackages.namespace {
         @_nonoverride
         open var voo: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>> {
             get {
-                return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Zar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                if Self.self == ExportedKotlinPackages.namespace.Zar.self {
+                    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Zar_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                } else {
+                    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Zar_voo_get_direct(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+                }
             }
         }
         public override init() {
@@ -279,10 +311,24 @@ package func namespace_Bar_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPo
     return _result.wrapped.__externalRCRef()
 }
 
+@_cdecl("namespace_Bar_voo_get__reverse_swift")
+package func namespace_Bar_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.namespace.Bar.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any KotlinCoroutineSupport.KotlinTypedFlow<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2> = _self.voo
+    return _result.wrapped.__externalRCRef()
+}
+
 @_cdecl("namespace_Foo_foo__reverse_swift")
 package func namespace_Foo_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = ExportedKotlinPackages.namespace.Foo.__createClassWrapper(externalRCRef: `self`)!
     let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.foo()
+    return _result.wrapped.__externalRCRef()
+}
+
+@_cdecl("namespace_Foo_voo_get__reverse_swift")
+package func namespace_Foo_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.namespace.Foo.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.voo
     return _result.wrapped.__externalRCRef()
 }
 
@@ -293,10 +339,24 @@ package func namespace_MutableSharedFoo_foo__reverse_swift(_ `self`: Swift.Unsaf
     return _result.wrapped.__externalRCRef()
 }
 
+@_cdecl("namespace_MutableSharedFoo_voo_get__reverse_swift")
+package func namespace_MutableSharedFoo_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.namespace.MutableSharedFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any KotlinCoroutineSupport.KotlinTypedMutableSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.voo
+    return _result.wrapped.__externalRCRef()
+}
+
 @_cdecl("namespace_MutableStateFoo_foo__reverse_swift")
 package func namespace_MutableStateFoo_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = ExportedKotlinPackages.namespace.MutableStateFoo.__createClassWrapper(externalRCRef: `self`)!
     let _result: any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.foo()
+    return _result.wrapped.__externalRCRef()
+}
+
+@_cdecl("namespace_MutableStateFoo_voo_get__reverse_swift")
+package func namespace_MutableStateFoo_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.namespace.MutableStateFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.voo
     return _result.wrapped.__externalRCRef()
 }
 
@@ -307,10 +367,24 @@ package func namespace_Nar_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPo
     return _result.wrapped.__externalRCRef()
 }
 
+@_cdecl("namespace_Nar_voo_get__reverse_swift")
+package func namespace_Nar_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.namespace.Nar.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Never> = _self.voo
+    return _result.wrapped.__externalRCRef()
+}
+
 @_cdecl("namespace_SharedFoo_foo__reverse_swift")
 package func namespace_SharedFoo_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = ExportedKotlinPackages.namespace.SharedFoo.__createClassWrapper(externalRCRef: `self`)!
     let _result: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.foo()
+    return _result.wrapped.__externalRCRef()
+}
+
+@_cdecl("namespace_SharedFoo_voo_get__reverse_swift")
+package func namespace_SharedFoo_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.namespace.SharedFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.voo
     return _result.wrapped.__externalRCRef()
 }
 
@@ -321,9 +395,23 @@ package func namespace_StateFoo_foo__reverse_swift(_ `self`: Swift.UnsafeMutable
     return _result.wrapped.__externalRCRef()
 }
 
+@_cdecl("namespace_StateFoo_voo_get__reverse_swift")
+package func namespace_StateFoo_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.namespace.StateFoo.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> = _self.voo
+    return _result.wrapped.__externalRCRef()
+}
+
 @_cdecl("namespace_Zar_foo__reverse_swift")
 package func namespace_Zar_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = ExportedKotlinPackages.namespace.Zar.__createClassWrapper(externalRCRef: `self`)!
     let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>> = _self.foo()
+    return _result.wrapped.__externalRCRef()
+}
+
+@_cdecl("namespace_Zar_voo_get__reverse_swift")
+package func namespace_Zar_voo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.namespace.Zar.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any flow_overrides._ExportedKotlinPackages_namespace_I1_I2>> = _self.voo
     return _result.wrapped.__externalRCRef()
 }

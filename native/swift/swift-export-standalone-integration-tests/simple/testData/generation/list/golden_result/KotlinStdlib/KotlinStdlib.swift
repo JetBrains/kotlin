@@ -250,6 +250,13 @@ package func kotlin_collections_Collection_iterator__reverse_swift(_ `self`: Swi
     return _result.__externalRCRef()
 }
 
+@_cdecl("kotlin_collections_Collection_size_get__reverse_swift")
+package func kotlin_collections_Collection_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _result: Swift.Int32 = _self.size
+    return _result
+}
+
 @_cdecl("kotlin_collections_Iterable_iterator__reverse_swift")
 package func kotlin_collections_Iterable_iterator__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Iterable
@@ -367,6 +374,13 @@ package func kotlin_collections_List_listIterator__reverse_swift(_ `self`: Swift
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: any ExportedKotlinPackages.kotlin.collections.ListIterator = _self.listIterator()
     return _result.__externalRCRef()
+}
+
+@_cdecl("kotlin_collections_List_size_get__reverse_swift")
+package func kotlin_collections_List_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _result: Swift.Int32 = _self.size
+    return _result
 }
 
 @_cdecl("kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")

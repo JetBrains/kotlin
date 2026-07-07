@@ -9,6 +9,8 @@ _Bool kotlin_collections_Collection_isEmpty__reverse_swift(void * self);
 
 void * kotlin_collections_Collection_iterator__reverse_swift(void * self);
 
+int32_t kotlin_collections_Collection_size_get__reverse_swift(void * self);
+
 void * kotlin_collections_Iterable_iterator__reverse_swift(void * self);
 
 _Bool kotlin_collections_Iterator_hasNext__reverse_swift(void * self);
@@ -42,6 +44,8 @@ int32_t kotlin_collections_List_lastIndexOf__TypesOfArguments__Swift_Optional_an
 void * kotlin_collections_List_listIterator__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
 
 void * kotlin_collections_List_listIterator__reverse_swift(void * self);
+
+int32_t kotlin_collections_List_size_get__reverse_swift(void * self);
 
 NSArray<id> * kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(void * self, int32_t fromIndex, int32_t toIndex);
 
