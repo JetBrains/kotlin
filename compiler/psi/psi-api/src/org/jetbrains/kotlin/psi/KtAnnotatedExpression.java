@@ -32,6 +32,9 @@ public class KtAnnotatedExpression extends KtExpressionImpl implements KtAnnotat
         return visitor.visitAnnotatedExpression(this, data);
     }
 
+    /**
+     * Returns the expression the annotations are applied to, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public KtExpression getBaseExpression() {
         return findChildByClass(KtExpression.class);

@@ -42,6 +42,10 @@ fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken)
     KtPsiMutationService.getInstance().removeModifierKeyword(owner, modifier)
 }
 
+/**
+ * Returns the given [modifiers] reordered into the canonical order used by the Kotlin code style. Tokens that are not
+ * recognized as modifier keywords are placed at the end.
+ */
 fun sortModifiers(modifiers: List<KtModifierKeywordToken>): List<KtModifierKeywordToken> {
     return modifiers.sortedBy {
         val index = MODIFIER_KEYWORDS_ARRAY.indexOf(it)

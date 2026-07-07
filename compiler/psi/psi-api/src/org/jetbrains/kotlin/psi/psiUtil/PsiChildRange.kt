@@ -18,6 +18,12 @@ package org.jetbrains.kotlin.psi.psiUtil
 
 import com.intellij.psi.PsiElement
 
+/**
+ * A contiguous range of sibling PSI elements, from [first] to [last] inclusive, iterable as a [Sequence].
+ *
+ * Both endpoints must share the same parent. A range is empty when [first] is `null` (in which case [last] is `null`
+ * too); otherwise it always contains at least [first].
+ */
 data class PsiChildRange(val first: PsiElement?, val last: PsiElement?) : Sequence<PsiElement> {
     init {
         if (first == null) {
@@ -27,6 +33,7 @@ data class PsiChildRange(val first: PsiElement?, val last: PsiElement?) : Sequen
         }
     }
 
+    /** `true` if this range contains no elements. */
     val isEmpty: Boolean
         get() = first == null
 
@@ -41,8 +48,10 @@ data class PsiChildRange(val first: PsiElement?, val last: PsiElement?) : Sequen
     }
 
     companion object {
+        /** The empty range. */
         val EMPTY: PsiChildRange = PsiChildRange(null, null)
 
+        /** Creates a range containing exactly the given [element]. */
         fun singleElement(element: PsiElement): PsiChildRange = PsiChildRange(element, element)
     }
 }

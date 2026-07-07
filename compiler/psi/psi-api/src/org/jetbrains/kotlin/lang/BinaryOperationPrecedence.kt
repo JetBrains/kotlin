@@ -11,21 +11,52 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import java.util.*
 
+/**
+ * The precedence levels of Kotlin's binary operators, ordered from the highest-binding ([AS]) to the lowest-binding
+ * ([ASSIGNMENT]).
+ *
+ * [higherPriority] links each level to the next tighter-binding one, and [tokens] lists the operator tokens that belong
+ * to the level.
+ */
 enum class BinaryOperationPrecedence(val higherPriority: BinaryOperationPrecedence?, vararg val tokens: KtToken) {
+    /** The `as` and `as?` cast operators. */
     AS(null, KtTokens.AS_KEYWORD, KtTokens.AS_SAFE),
+
+    /** The multiplicative operators `*`, `/`, and `%`. */
     MULTIPLICATIVE(AS, KtTokens.MUL, KtTokens.DIV, KtTokens.PERC),
+
+    /** The additive operators `+` and `-`. */
     ADDITIVE(MULTIPLICATIVE, KtTokens.PLUS, KtTokens.MINUS),
+
+    /** The range operators `..` and `..<`. */
     RANGE(ADDITIVE, KtTokens.RANGE, KtTokens.RANGE_UNTIL),
+
+    /** Infix function calls (an identifier used as an operator). */
     INFIX(RANGE, KtTokens.IDENTIFIER),
+
+    /** The elvis operator `?:`. */
     ELVIS(INFIX, KtTokens.ELVIS),
+
+    /** The `in`, `!in`, `is`, and `!is` operators. */
     IN_OR_IS(ELVIS, KtTokens.IN_KEYWORD, KtTokens.NOT_IN, KtTokens.IS_KEYWORD, KtTokens.NOT_IS),
+
+    /** The comparison operators `<`, `>`, `<=`, and `>=`. */
     COMPARISON(IN_OR_IS, KtTokens.LT, KtTokens.GT, KtTokens.LTEQ, KtTokens.GTEQ),
+
+    /** The equality operators `==`, `!=`, `===`, and `!==`. */
     EQUALITY(COMPARISON, KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ),
+
+    /** The conjunction operator `&&`. */
     CONJUNCTION(EQUALITY, KtTokens.ANDAND),
+
+    /** The disjunction operator `||`. */
     DISJUNCTION(CONJUNCTION, KtTokens.OROR),
+
+    /** The assignment operators `=`, `+=`, `-=`, `*=`, `/=`, and `%=`. */
     ASSIGNMENT(DISJUNCTION, KtTokens.EQ, KtTokens.PLUSEQ, KtTokens.MINUSEQ, KtTokens.MULTEQ, KtTokens.DIVEQ, KtTokens.PERCEQ),
     ;
 
+    /** The set of operator tokens that belong to this precedence level. */
     @Suppress("unused") // Used in IntelliJ
     val tokenSet: TokenSet = TokenSet.create(*tokens)
 
@@ -40,6 +71,10 @@ enum class BinaryOperationPrecedence(val higherPriority: BinaryOperationPreceden
         val TOKEN_TO_BINARY_PRECEDENCE_MAP_WITH_SOFT_IDENTIFIERS: Map<KtToken, BinaryOperationPrecedence> =
             getTokensToBinaryPrecedenceMap(includeSoftIdentifiers = true)
 
+        /**
+         * Maps each binary operator token to its [BinaryOperationPrecedence] for O(1) lookup. Soft-keyword identifiers
+         * are not included; use [TOKEN_TO_BINARY_PRECEDENCE_MAP_WITH_SOFT_IDENTIFIERS] when they are needed.
+         */
         @JvmField
         val TOKEN_TO_BINARY_PRECEDENCE_MAP: Map<KtToken, BinaryOperationPrecedence> =
             getTokensToBinaryPrecedenceMap(includeSoftIdentifiers = false)

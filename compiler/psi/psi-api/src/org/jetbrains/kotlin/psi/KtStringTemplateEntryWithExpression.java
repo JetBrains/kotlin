@@ -13,6 +13,20 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents a string template entry that interpolates an expression, using either the {@code $name} or the
+ * {@code ${...}} syntax.
+ *
+ * <p>This is the common base for the concrete node types {@link KtSimpleNameStringTemplateEntry} ({@code $name}) and
+ * {@link KtBlockStringTemplateEntry} ({@code ${expression}}).
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ * "Total: ${price * count}"
+ * //      ^______________^
+ * // A block string template entry
+ * }</pre>
+ */
 public abstract class KtStringTemplateEntryWithExpression extends KtStringTemplateEntry {
     public KtStringTemplateEntryWithExpression(@NotNull ASTNode node) {
         super(node);

@@ -33,6 +33,9 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitPropertyAccessor(this, data)
 
+    /**
+     * `true` if this accessor is a getter (`get`).
+     */
     open val isGetter: Boolean
         get() {
             greenStub?.let {
@@ -41,6 +44,9 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
             return findChildByType<PsiElement>(KtTokens.GET_KEYWORD) != null
         }
 
+    /**
+     * `true` if this accessor is a setter (`set`).
+     */
     open val isSetter: Boolean
         get() {
             greenStub?.let {
@@ -49,11 +55,18 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
             return findChildByType<PsiElement>(KtTokens.SET_KEYWORD) != null
         }
 
+    /**
+     * The parenthesized parameter list of the accessor, or `null` if there is none (a getter, or a setter written
+     * without an explicit parameter).
+     */
     open val parameterList: KtParameterList?
         get() =
             @Suppress("DEPRECATION") // KT-78356
             getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
 
+    /**
+     * The single parameter of a setter (the new value), or `null` for a getter or when it is absent.
+     */
     open val parameter: KtParameter?
         get() = parameterList?.parameters?.firstOrNull()
 
@@ -97,12 +110,16 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
         @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
 
+    /** Always `true`: an accessor's return type is always known (it is the property's type). */
     override fun hasDeclaredReturnType(): Boolean = true
 
     override fun getTypeReference(): KtTypeReference? =
         @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
+    /**
+     * The `get` or `set` keyword, which stands in for the accessor's name (an accessor has no name of its own).
+     */
     open val namePlaceholder: PsiElement
         get() = findChildByType(KtTokens.GET_KEYWORD) ?: findChildByType(KtTokens.SET_KEYWORD)!!
 
@@ -112,6 +129,9 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     override fun hasInitializer(): Boolean =
         initializer != null
 
+    /**
+     * The property this accessor belongs to.
+     */
     open val property: KtProperty
         get() = parent as KtProperty
 

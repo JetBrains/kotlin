@@ -44,6 +44,9 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
     }
 
 
+    /**
+     * Returns the type reference naming the annotation class, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     @IfNotParsed
     public KtTypeReference getTypeReference() {
@@ -78,6 +81,7 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
         return list != null ? list.getArguments() : Collections.<KtValueArgument>emptyList();
     }
 
+    /** Always empty: an annotation entry cannot have trailing lambda arguments. */
     @NotNull
     @Override
     public List<KtLambdaArgument> getLambdaArguments() {
@@ -108,11 +112,19 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
         return null;
     }
 
+    /**
+     * Returns the {@code @} symbol of the annotation, or {@code null} if it is omitted (for example, in an annotation
+     * grouped under a shared use-site target, or in an array of annotation arguments).
+     */
     @Nullable
     public PsiElement getAtSymbol() {
         return findChildByType(KtTokens.AT);
     }
 
+    /**
+     * Returns the use-site target of this annotation ({@code @get:}, {@code @field:}, and so on), taken from the entry
+     * itself or inherited from an enclosing {@link KtAnnotation} group, or {@code null} if there is none.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtAnnotationUseSiteTarget getUseSiteTarget() {
@@ -128,6 +140,9 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
         return target;
     }
 
+    /**
+     * Returns the short (unqualified) name of the annotation class, or {@code null} if it cannot be determined.
+     */
     @Nullable
     public Name getShortName() {
         KotlinAnnotationEntryStub stub = getGreenStub();

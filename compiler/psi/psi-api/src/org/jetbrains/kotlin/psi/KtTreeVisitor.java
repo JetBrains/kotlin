@@ -18,6 +18,15 @@ package org.jetbrains.kotlin.psi;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A {@link KtVisitor} that recursively traverses the whole PSI subtree.
+ *
+ * <p>Unlike the plain {@link KtVisitor}, which visits only the element it is given, this visitor descends into the
+ * children of each visited element automatically. Override the relevant {@code visit*} methods to act on specific
+ * element types; the data value {@code D} is passed unchanged to the children.
+ *
+ * @param <D> the type of the data threaded through the traversal
+ */
 public class KtTreeVisitor<D> extends KtVisitor<Void, D> {
     @Override
     public Void visitKtElement(@NotNull KtElement element, D data) {

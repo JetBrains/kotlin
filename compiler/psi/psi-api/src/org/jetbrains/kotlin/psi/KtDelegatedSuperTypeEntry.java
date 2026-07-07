@@ -35,11 +35,18 @@ public class KtDelegatedSuperTypeEntry extends KtSuperTypeListEntry {
         return visitor.visitDelegatedSuperTypeEntry(this, data);
     }
 
+    /**
+     * Returns the expression that provides the delegate instance (the part after {@code by}), or {@code null} if it is
+     * absent in incomplete code.
+     */
     @Nullable @IfNotParsed
     public KtExpression getDelegateExpression() {
         return findChildByClass(KtExpression.class);
     }
 
+    /**
+     * Returns the AST node of the {@code by} keyword.
+     */
     public ASTNode getByKeywordNode() {
         return getNode().findChildByType(KtTokens.BY_KEYWORD);
     }

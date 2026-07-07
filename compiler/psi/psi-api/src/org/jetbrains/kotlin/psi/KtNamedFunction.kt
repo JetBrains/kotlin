@@ -39,6 +39,10 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitNamedFunction(this, data)
 
+    /**
+     * Returns `true` if the type parameter list appears before the function name (`fun <T> foo()`), as opposed to a
+     * `where` clause or type parameters written after the name.
+     */
     open fun hasTypeParameterListBeforeFunctionName(): Boolean {
         greenStub?.let {
             return it.hasTypeParameterListBeforeFunctionName
@@ -56,7 +60,11 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         return equalsToken == null
     }
 
-    @get:IfNotParsed // "function" with no "fun" keyword is created by parser for "{...}" on top-level or in the class body
+    /**
+     * The `fun` keyword, or `null` if it is absent (the parser produces a keyword-less function for a bare `{...}` at
+     * the top level or in a class body).
+     */
+    @get:IfNotParsed
     open val funKeyword: PsiElement?
         get() = findChildByType(KtTokens.FUN_KEYWORD)
 
@@ -165,9 +173,15 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         }
     }
 
+    /**
+     * `true` if this is an anonymous function (a local function without a name, `fun() { ... }`).
+     */
     open val isAnonymous: Boolean
         get() = name == null && isLocal
 
+    /**
+     * `true` if this function is declared directly at the top level of a file.
+     */
     open val isTopLevel: Boolean
         get() {
             greenStub?.let {
@@ -176,6 +190,11 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
             return isKtFile(parent)
         }
 
+    /**
+     * Always returns `false`: changes inside a function never affect the out-of-code-block modification count.
+     *
+     * Kept for compatibility with potential plugins.
+     */
     @Suppress("unused") // keep for compatibility with potential plugins
     open fun shouldChangeModificationCount(place: PsiElement?): Boolean =
         // Suppress Java check for out-of-block
@@ -193,6 +212,11 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         return isLegacyContractPresentPsiCheck()
     }
 
+    /**
+     * Returns whether this function may declare a contract, taking into account whether contracts are allowed on
+     * member functions via [isAllowedOnMembers]. As with [mayHaveContract], `false` is definitive but `true` is not a
+     * guarantee.
+     */
     open fun mayHaveContract(isAllowedOnMembers: Boolean): Boolean {
         greenStub?.let {
             return it.mayHaveContract

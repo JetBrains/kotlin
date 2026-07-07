@@ -18,7 +18,16 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 // TODO: extract PSI-independent parts, specifically coordinate classes
+
+/**
+ * Utilities for rendering the source location of PSI elements as human-readable strings for use in diagnostic and log
+ * messages.
+ */
 public class PsiDiagnosticUtils {
+    /**
+     * Returns a human-readable description of the source location of the given {@code element} (its file plus
+     * line and column), falling back to an offset-based description if the element is invalid.
+     */
     public static String atLocation(@NotNull PsiElement element) {
         if (element.isValid()) {
             return atLocation(element.getContainingFile(), element.getTextRange());
@@ -37,10 +46,16 @@ public class PsiDiagnosticUtils {
         return "at offset: " + (offset != -1 ? offset : "<unknown>") + " file: " + (file != null ? file : "<unknown>");
     }
 
+    /**
+     * Returns a human-readable description of the source location of the given {@code expression}.
+     */
     public static String atLocation(KtExpression expression) {
         return atLocation(expression.getNode());
     }
 
+    /**
+     * Returns a human-readable description of the source location of the given AST {@code node}.
+     */
     public static String atLocation(@NotNull ASTNode node) {
         int startOffset = node.getStartOffset();
         PsiElement element = PsiUtilsKt.closestPsiElement(node);
@@ -51,12 +66,19 @@ public class PsiDiagnosticUtils {
         return "at offset " + startOffset + " (line and file unknown: no PSI element)";
     }
 
+    /**
+     * Returns a human-readable description of the location of {@code textRange} within {@code file}.
+     */
     @NotNull
     public static String atLocation(@NotNull PsiFile file, @NotNull TextRange textRange) {
         Document document = file.getViewProvider().getDocument();
         return atLocation(file, textRange, document);
     }
 
+    /**
+     * Returns a human-readable description of the location of {@code textRange} within {@code file}, using the given
+     * {@code document} to compute the line and column.
+     */
     @NotNull
     public static String atLocation(PsiFile file, TextRange textRange, Document document) {
         int offset = textRange.getStartOffset();
@@ -65,6 +87,10 @@ public class PsiDiagnosticUtils {
         return offsetToLineAndColumn(document, offset) + pathSuffix;
     }
 
+    /**
+     * Converts a character {@code offset} within {@code document} to a 1-based {@link LineAndColumn}, or a position
+     * with an unknown line (line {@code -1}) if {@code document} is {@code null} or empty.
+     */
     @NotNull
     public static LineAndColumn offsetToLineAndColumn(@Nullable Document document, int offset) {
         if (document == null || document.getTextLength() == 0) {
@@ -81,8 +107,14 @@ public class PsiDiagnosticUtils {
         return new LineAndColumn(lineNumber + 1, column + 1, lineContent.toString());
     }
 
+    /**
+     * A 1-based line and column position in a file, optionally carrying the text of the line.
+     */
     public static final class LineAndColumn {
 
+        /**
+         * A sentinel value denoting an unknown position.
+         */
         public static final LineAndColumn NONE = new LineAndColumn(-1, -1, null);
 
         private final int line;
@@ -95,14 +127,23 @@ public class PsiDiagnosticUtils {
             this.lineContent = lineContent;
         }
 
+        /**
+         * Returns the 1-based line number, or a negative value if it is unknown.
+         */
         public int getLine() {
             return line;
         }
 
+        /**
+         * Returns the 1-based column number.
+         */
         public int getColumn() {
             return column;
         }
 
+        /**
+         * Returns the text of the line, or {@code null} if it is unavailable.
+         */
         @Nullable
         public String getLineContent() {
             return lineContent;
@@ -118,8 +159,14 @@ public class PsiDiagnosticUtils {
         }
     }
 
+    /**
+     * A range spanning from a start to an end {@link LineAndColumn} position.
+     */
     public static final class LineAndColumnRange {
 
+        /**
+         * A sentinel value denoting an unknown range.
+         */
         public static final LineAndColumnRange NONE = new LineAndColumnRange(LineAndColumn.NONE, LineAndColumn.NONE);
 
         private final LineAndColumn start;
@@ -130,10 +177,16 @@ public class PsiDiagnosticUtils {
             this.end = end;
         }
 
+        /**
+         * Returns the start position of the range.
+         */
         public LineAndColumn getStart() {
             return start;
         }
 
+        /**
+         * Returns the end position of the range.
+         */
         public LineAndColumn getEnd() {
             return end;
         }

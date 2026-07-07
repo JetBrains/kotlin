@@ -38,12 +38,20 @@ public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<Kt
         return visitor.visitTypeConstraint(this, data);
     }
 
+    /**
+     * Returns the reference to the constrained type parameter (the part before {@code :}), or {@code null} if it is
+     * absent in incomplete code.
+     */
     @Nullable @IfNotParsed
     @SuppressWarnings("deprecation") // KT-78356
     public KtSimpleNameExpression getSubjectTypeParameterName() {
         return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
     }
 
+    /**
+     * Returns the upper bound type reference (the part after {@code :}), or {@code null} if it is absent in incomplete
+     * code.
+     */
     @Nullable @IfNotParsed
     @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getBoundTypeReference() {

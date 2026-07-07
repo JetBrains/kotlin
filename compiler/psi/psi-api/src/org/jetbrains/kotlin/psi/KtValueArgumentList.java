@@ -39,16 +39,26 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
         return visitor.visitValueArgumentList(this, data);
     }
 
+    /**
+     * Returns the arguments in this list, in source order; empty if there are none. This does not include a trailing
+     * lambda written outside the parentheses.
+     */
     @NotNull
     public List<KtValueArgument> getArguments() {
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.VALUE_ARGUMENT);
     }
 
+    /**
+     * Returns the closing parenthesis, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public PsiElement getRightParenthesis() {
         return findChildByType(KtTokens.RPAR);
     }
 
+    /**
+     * Returns the opening parenthesis, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public PsiElement getLeftParenthesis() {
         return findChildByType(KtTokens.LPAR);
@@ -102,6 +112,9 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
         KtPsiMutationService.getInstance().deleteValueArgument(this, index);
     }
 
+    /**
+     * Returns the trailing comma after the last argument, or {@code null} if there is none.
+     */
     public PsiElement getTrailingComma() {
         return KtPsiUtilKt.getTrailingCommaByClosingElement(getRightParenthesis());
     }

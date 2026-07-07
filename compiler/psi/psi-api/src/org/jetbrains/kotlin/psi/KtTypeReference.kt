@@ -35,9 +35,17 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
         return visitor.visitTypeReference(this, data)
     }
 
+    /**
+     * `true` if this reference is the underscore placeholder type `_` (used, for example, in partially specified
+     * generic type arguments where the rest is inferred).
+     */
     val isPlaceholder: Boolean
         get() = ((typeElement as? KtUserType)?.referenceExpression as? KtNameReferenceExpression)?.isPlaceholder == true
 
+    /**
+     * The actual type syntax this reference wraps (for example, a [KtUserType] or a [KtFunctionType]), stripped of
+     * leading annotations and modifiers, or `null` if it is absent in incomplete code.
+     */
     val typeElement: KtTypeElement?
         get() = KtStubbedPsiUtil.getStubOrPsiChild(this, KtTokenSets.TYPE_ELEMENT_TYPES, KtTypeElement.ARRAY_FACTORY)
 
@@ -49,10 +57,18 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
         return modifierList?.annotationEntries.orEmpty()
     }
 
+    /**
+     * Returns `true` if this type reference is wrapped in parentheses (as in `(Int) -> String` written as
+     * `((Int)) -> String`, or a parenthesized nullable function type).
+     */
     fun hasParentheses(): Boolean {
         return findChildByType<PsiElement>(KtTokens.LPAR) != null && findChildByType<PsiElement>(KtTokens.RPAR) != null
     }
 
+    /**
+     * Returns the short name to use as an implicit label for a receiver of this type (the simple name of the user
+     * type), or `null` if the type is not a user type.
+     */
     fun nameForReceiverLabel() = (typeElement as? KtUserType)?.referencedName
 
     /**

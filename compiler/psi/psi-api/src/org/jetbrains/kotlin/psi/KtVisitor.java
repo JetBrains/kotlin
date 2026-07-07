@@ -14,6 +14,26 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt.tryFlattenStringConcatenationDescendants;
 
+/**
+ * The base visitor over the Kotlin PSI, implementing the visitor pattern for {@link KtElement}s.
+ *
+ * <p>Each concrete element type has a dedicated {@code visit*} method. Dispatch is triggered by
+ * {@link KtElement#accept(KtVisitor, Object)}, which invokes the method matching the element's runtime type. To handle
+ * a specific element type, subclass {@link KtVisitor} and override the corresponding method.
+ *
+ * <p>The {@code visit*} methods form a hierarchy that mirrors the PSI type hierarchy: an unoverridden method delegates
+ * to the method for its supertype (for example, {@code visitClass} falls back to {@code visitClassOrObject}, then to
+ * {@code visitNamedDeclaration}, and ultimately to {@link #visitKtElement}). Overriding a method higher up the
+ * hierarchy therefore provides a default for all of its subtypes.
+ *
+ * <p>This visitor does <b>not</b> recurse into children on its own; a {@code visit*} method visits only the element it
+ * is given. Use {@link KtTreeVisitor} for automatic recursive traversal.
+ *
+ * @param <R> the type of value returned by each {@code visit*} method
+ * @param <D> the type of the extra data threaded through the traversal (use {@link Void} when none is needed)
+ * @see KtVisitorVoid
+ * @see KtTreeVisitor
+ */
 public class KtVisitor<R, D> extends PsiElementVisitor {
     public R visitKtElement(@NotNull KtElement element, D data) {
         visitElement(element);

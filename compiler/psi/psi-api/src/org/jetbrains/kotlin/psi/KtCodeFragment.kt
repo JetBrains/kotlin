@@ -21,6 +21,20 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtCodeFragment.Companion.IMPORT_SEPARATOR
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
+/**
+ * A synthetic, in-memory Kotlin file that holds a standalone snippet of code together with a context.
+ *
+ * Code fragments are not part of any real source file. They are created for scenarios such as evaluating a debugger
+ * watch expression, previewing a refactoring, or running an intention, where a piece of Kotlin code must be parsed and
+ * analyzed as if it appeared at a particular [context] element. The context determines which declarations are visible
+ * to the fragment, and additional [imports] can be supplied on top of it.
+ *
+ * This is the common base for the concrete node types [KtExpressionCodeFragment], [KtBlockCodeFragment], and
+ * [KtTypeCodeFragment]; the meaningful content is exposed by [getContentElement].
+ *
+ * @param imports optional imports, separated by [IMPORT_SEPARATOR]
+ * @param context the element the fragment is conceptually placed at, used to resolve references from the fragment
+ */
 abstract class KtCodeFragment(
     viewProvider: FileViewProvider,
     imports: String?, // Should be separated by KtCodeFragment.IMPORT_SEPARATOR
@@ -67,6 +81,10 @@ abstract class KtCodeFragment(
     private var superType: PsiType? = null
     private var exceptionHandler: JavaCodeFragment.ExceptionHandler? = null
 
+    /**
+     * Returns the meaningful content of this fragment (for example, the parsed expression, block, or type reference),
+     * or `null` if it could not be parsed.
+     */
     abstract fun getContentElement(): KtElement?
 
     override fun forceResolveScope(scope: GlobalSearchScope?) {
@@ -77,6 +95,7 @@ abstract class KtCodeFragment(
 
     override fun isPhysical() = viewProvider.isEventSystemEnabled
 
+    /** Always `true`: a code fragment is synthetic and always considered valid. */
     override fun isValid() = true
 
     override fun getContext(): PsiElement? {
@@ -177,6 +196,10 @@ abstract class KtCodeFragment(
         return hasNewImports
     }
 
+    /**
+     * Builds a [KtImportList] from the imports registered on this fragment, or `null` if the fragment has no imports or
+     * no context.
+     */
     fun importsAsImportList(): KtImportList? {
         if (importDirectiveStrings.isNotEmpty() && context != null) {
             val ktPsiFactory = KtPsiFactory.contextual(context)
@@ -206,10 +229,18 @@ abstract class KtCodeFragment(
 
     override fun getExceptionHandler() = exceptionHandler
 
+    /**
+     * Returns the [KtFile] that ultimately contains this fragment's context (see [getOriginalContext]), or `null` if
+     * the context is invalid or not a Kotlin element.
+     */
     fun getContextContainingFile(): KtFile? {
         return getOriginalContext()?.takeIf { it.isValid }?.containingKtFile
     }
 
+    /**
+     * Returns the original context element, unwrapping nested code fragments so that the result is a real source
+     * element rather than another fragment's context, or `null` if there is no Kotlin context.
+     */
     fun getOriginalContext(): KtElement? {
         val contextElement = getContext() as? KtElement
         val contextFile = contextElement?.containingFile as? KtFile
@@ -220,12 +251,19 @@ abstract class KtCodeFragment(
     }
 
     companion object {
+        /**
+         * The separator between individual imports in the raw import string accepted by a code fragment.
+         */
         const val IMPORT_SEPARATOR: String = ","
 
         @KtImplementationDetail
         val IMPORT_MODIFICATION: Topic<KotlinCodeFragmentImportModificationListener> =
             Topic(KotlinCodeFragmentImportModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 
+        /**
+         * A copyable user-data key holding a provider of a fake Kotlin context element. It is used when a fragment's
+         * real context is a non-Kotlin (for example, Java) file, so that references can still be resolved as Kotlin.
+         */
         val FAKE_CONTEXT_FOR_JAVA_FILE: Key<Function0<KtElement>> = Key.create("FAKE_CONTEXT_FOR_JAVA_FILE")
 
         internal fun createFileViewProviderForLightFile(project: Project, name: String, text: CharSequence): FileViewProvider {
@@ -240,6 +278,12 @@ abstract class KtCodeFragment(
     }
 }
 
+/**
+ * A listener notified when the imports of a [KtCodeFragment] are modified.
+ */
 fun interface KotlinCodeFragmentImportModificationListener {
+    /**
+     * Called after the imports of [codeFragment] have changed.
+     */
     fun onCodeFragmentImportsModification(codeFragment: KtCodeFragment)
 }

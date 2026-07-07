@@ -27,6 +27,13 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.isKtFile;
 
+/**
+ * Base implementation of {@link KtFunction} for functions that are never backed by a stub, such as function literals
+ * and anonymous functions.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing
+ * outside of the PSI implementation.
+ */
 @SuppressWarnings("deprecation")
 public abstract class KtFunctionNotStubbed extends KtTypeParameterListOwnerNotStubbed implements KtFunction {
 

@@ -16,7 +16,23 @@
 
 package org.jetbrains.kotlin.psi
 
+/**
+ * A service that maps a [KtDeclaration] between its "original" and its "navigation" element.
+ *
+ * These may differ when a declaration is viewed through more than one PSI representation — for example, a declaration
+ * decompiled from a library exposes a synthetic element for display while the source (or another canonical element)
+ * is the target of navigation. Implementations back [com.intellij.psi.PsiElement.getNavigationElement] and
+ * [com.intellij.psi.PsiElement.getOriginalElement] for Kotlin declarations.
+ */
 interface KotlinDeclarationNavigationPolicy {
+    /**
+     * Returns the canonical/original element for the given declaration, or the declaration itself if there is no
+     * distinct original.
+     */
     fun getOriginalElement(declaration: KtDeclaration): KtElement
+
+    /**
+     * Returns the element that navigation (Go to Declaration and similar) should land on for the given declaration.
+     */
     fun getNavigationElement(declaration: KtDeclaration): KtElement
 }

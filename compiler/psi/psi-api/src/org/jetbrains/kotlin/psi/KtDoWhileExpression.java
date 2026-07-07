@@ -33,6 +33,9 @@ public class KtDoWhileExpression extends KtWhileExpressionBase {
         return visitor.visitDoWhileExpression(this, data);
     }
 
+    /**
+     * Returns the {@code while} keyword, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     @IfNotParsed
     public PsiElement getWhileKeyword() {

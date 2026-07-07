@@ -65,6 +65,9 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
         KtPsiMutationService.getInstance().deleteSuperTypeList(this);
     }
 
+    /**
+     * Returns the entries of the super type list, in source order; empty if there are none.
+     */
     public List<KtSuperTypeListEntry> getEntries() {
         return Arrays.asList(getStubOrPsiChildren(KtTokenSets.SUPER_TYPE_LIST_ENTRIES, KtSuperTypeListEntry.ARRAY_FACTORY));
     }
@@ -76,6 +79,10 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
         modificationStamp.getAndIncrement();
     }
 
+    /**
+     * Returns a stamp that is incremented whenever this super type list's subtree changes, allowing callers to detect
+     * modifications.
+     */
     public long getModificationStamp() {
         return modificationStamp.get();
     }

@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
+/**
+ * Maps between Kotlin operator tokens and the operator-convention function names they desugar to (for example, `+` maps
+ * to `plus`), and groups the operator tokens by category (unary, binary, assignment, comparison, and so on).
+ */
 object OperatorTokens {
     // If you add new unary, binary or assignment operators, add it to OperatorConventionNames as well
     private val UNARY_OPERATIONS = ImmutableBiMap.builder<KtSingleValueToken, Name>()
@@ -23,9 +27,16 @@ object OperatorTokens {
         .put(KtTokens.EXCL, OperatorNameConventions.NOT)
         .build()
 
+    /**
+     * Maps each unary operator token (such as `++` or `-`) to its operator-convention function name (such as `inc` or
+     * `unaryMinus`).
+     */
     @JvmField
     val UNARY_OPERATION_NAMES: Map<KtSingleValueToken, Name> = UNARY_OPERATIONS
 
+    /**
+     * The inverse of [UNARY_OPERATION_NAMES]: maps each unary operator function name to its token.
+     */
     @JvmField
     val UNARY_OPERATION_TOKENS: Map<Name, KtSingleValueToken> = UNARY_OPERATIONS.inverse()
 
@@ -39,12 +50,22 @@ object OperatorTokens {
         .put(KtTokens.RANGE_UNTIL, OperatorNameConventions.RANGE_UNTIL)
         .build()
 
+    /**
+     * Maps each binary operator token (such as `*`, `+`, or `..`) to its operator-convention function name (such as
+     * `times`, `plus`, or `rangeTo`).
+     */
     @JvmField
     val BINARY_OPERATION_NAMES: Map<KtSingleValueToken, Name> = BINARY_OPERATIONS
 
+    /**
+     * The inverse of [BINARY_OPERATION_NAMES]: maps each binary operator function name to its token.
+     */
     @JvmField
     val BINARY_OPERATION_TOKENS: Map<Name, KtSingleValueToken> = BINARY_OPERATIONS.inverse()
 
+    /**
+     * The increment and decrement operator tokens (`++` and `--`).
+     */
     @JvmField
     val INCREMENT_OPERATIONS: Set<KtSingleValueToken> = Collections.unmodifiableSet(
         setOf(
@@ -53,6 +74,9 @@ object OperatorTokens {
         )
     )
 
+    /**
+     * The comparison operator tokens (`<`, `>`, `<=`, and `>=`), all of which desugar to `compareTo`.
+     */
     @JvmField
     val COMPARISON_OPERATIONS: Set<KtSingleValueToken> = Collections.unmodifiableSet(
         setOf(
@@ -63,6 +87,9 @@ object OperatorTokens {
         )
     )
 
+    /**
+     * The structural equality operator tokens (`==` and `!=`), which desugar to `equals`.
+     */
     @JvmField
     val EQUALS_OPERATIONS: Set<KtSingleValueToken> = Collections.unmodifiableSet(
         setOf(
@@ -71,6 +98,9 @@ object OperatorTokens {
         )
     )
 
+    /**
+     * The referential equality operator tokens (`===` and `!==`).
+     */
     @JvmField
     val IDENTITY_EQUALS_OPERATIONS: Set<KtSingleValueToken> = Collections.unmodifiableSet(
         setOf(
@@ -79,6 +109,9 @@ object OperatorTokens {
         )
     )
 
+    /**
+     * The containment operator tokens (`in` and `!in`), which desugar to `contains`.
+     */
     @JvmField
     val IN_OPERATIONS: Set<KtSingleValueToken> = Collections.unmodifiableSet(
         setOf(
@@ -95,9 +128,16 @@ object OperatorTokens {
         .put(KtTokens.MINUSEQ, OperatorNameConventions.MINUS_ASSIGN)
         .build()
 
+    /**
+     * Maps each augmented assignment operator token (such as `+=` or `*=`) to its operator-convention function name
+     * (such as `plusAssign` or `timesAssign`).
+     */
     @JvmField
     val ASSIGNMENT_OPERATION_NAMES: Map<KtSingleValueToken, Name> = ASSIGNMENT_OPERATIONS
 
+    /**
+     * The inverse of [ASSIGNMENT_OPERATION_NAMES]: maps each augmented assignment function name to its token.
+     */
     @JvmField
     val ASSIGNMENT_OPERATION_TOKENS: Map<Name, KtSingleValueToken> = ASSIGNMENT_OPERATIONS.inverse()
 
@@ -109,12 +149,24 @@ object OperatorTokens {
         .put(KtTokens.MINUSEQ, KtTokens.MINUS)
         .build()
 
+    /**
+     * Maps each augmented assignment token (such as `+=`) to the corresponding binary operator token (such as `+`).
+     */
     @JvmField
     val OPERATIONS_FOR_ASSIGNMENTS: Map<KtSingleValueToken, KtSingleValueToken> = ASSIGNMENT_OPERATION_COUNTERPARTS
 
+    /**
+     * The inverse of [OPERATIONS_FOR_ASSIGNMENTS]: maps each binary operator token (such as `+`) to the corresponding
+     * augmented assignment token (such as `+=`).
+     */
     @JvmField
     val ASSIGNMENTS_FOR_OPERATIONS: Map<KtSingleValueToken, KtSingleValueToken> = ASSIGNMENT_OPERATION_COUNTERPARTS.inverse()
 
+    /**
+     * The set of all function names that carry a special operator meaning in Kotlin (operator conventions). This
+     * includes convention names such as `get`, `set`, `invoke`, `iterator`, `equals`, and `compareTo`, together with
+     * every unary, binary, and assignment operator name.
+     */
     @JvmField
     val CONVENTION_NAMES: Set<Name> = Collections.unmodifiableSet(
         buildSet {
@@ -142,11 +194,21 @@ object OperatorTokens {
     )
 
 
+    /**
+     * Returns the operator-convention function name that the given [token] desugars to, considering unary, binary, and
+     * assignment operators as well as comparison, equality, and containment operators, or `null` if [token] is not an
+     * operator.
+     */
     @JvmStatic
     fun operationName(token: KtToken): Name? {
         return operationName(token, unaryOperations = true, binaryOperations = true)
     }
 
+    /**
+     * Returns the operator-convention function name that the given [token] desugars to, or `null` if [token] is not a
+     * matching operator. [unaryOperations] and [binaryOperations] control whether unary and binary operator tokens are
+     * considered; assignment, comparison, equality, and containment operators are always considered.
+     */
     @JvmStatic
     fun operationName(token: KtToken, unaryOperations: Boolean, binaryOperations: Boolean): Name? {
         if (binaryOperations) {
@@ -174,6 +236,10 @@ object OperatorTokens {
         return null
     }
 
+    /**
+     * Returns the operator token corresponding to the given operator-convention function [name] (for binary, unary, or
+     * assignment operators), or `null` if [name] is not such an operator name.
+     */
     @JvmStatic
     fun operationToken(name: Name): KtToken? {
         if (!isConventionName(name)) {
@@ -185,6 +251,10 @@ object OperatorTokens {
             ?: ASSIGNMENT_OPERATIONS.inverse()[name]
     }
 
+    /**
+     * Returns `true` if the given [name] is an operator-convention function name — either one of [CONVENTION_NAMES] or
+     * a `componentN` destructuring name.
+     */
     @JvmStatic
     fun isConventionName(name: Name): Boolean {
         return CONVENTION_NAMES.contains(name)

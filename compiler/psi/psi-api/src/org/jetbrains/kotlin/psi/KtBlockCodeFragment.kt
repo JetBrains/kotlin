@@ -21,6 +21,12 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 
+/**
+ * A [KtCodeFragment] whose content is a block of statements, as opposed to a single expression.
+ *
+ * Use this when the snippet may contain several statements or local declarations, for example a multi-line debugger
+ * evaluation. Its [content element][getContentElement] is a [KtBlockExpression].
+ */
 class KtBlockCodeFragment(
     viewProvider: FileViewProvider,
     imports: String?, // Should be separated by KtCodeFragment.IMPORT_SEPARATOR

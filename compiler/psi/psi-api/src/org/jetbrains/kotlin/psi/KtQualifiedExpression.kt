@@ -38,6 +38,10 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  */
 @OptIn(KtExperimentalApi::class)
 interface KtQualifiedExpression : KtExpression, KtResolvableCall {
+    /**
+     * The receiver on the left-hand side of the `.` or `?.` operator. Throws if the receiver is missing; use
+     * [receiverExpressionOrNull] when the PSI may be inconsistent.
+     */
     val receiverExpression: KtExpression
         @OptIn(KtPsiInconsistencyHandling::class)
         get() = receiverExpressionOrNull ?: errorWithAttachment("No receiver found in qualified expression") {
@@ -53,9 +57,16 @@ interface KtQualifiedExpression : KtExpression, KtResolvableCall {
     val receiverExpressionOrNull: KtExpression?
         get() = getExpression(false)
 
+    /**
+     * The selector on the right-hand side of the operator (the member or extension being accessed), or `null` if it is
+     * absent in incomplete code.
+     */
     val selectorExpression: KtExpression?
         get() = getExpression(true)
 
+    /**
+     * The AST node of the qualification operator (`.` or `?.`). Throws if it is missing.
+     */
     val operationTokenNode: ASTNode
         get() = operationTokenNodeOrNull ?: error(
             "No operation node for ${node.elementType}. Children: ${children.contentToString()}"
@@ -64,6 +75,9 @@ interface KtQualifiedExpression : KtExpression, KtResolvableCall {
     private val operationTokenNodeOrNull: ASTNode?
         get() = node.findChildByType(KtTokens.OPERATIONS)
 
+    /**
+     * The qualification operator token: [KtTokens.DOT] for `.` or [KtTokens.SAFE_ACCESS] for `?.`.
+     */
     val operationSign: KtSingleValueToken
         get() = operationTokenNode.elementType as KtSingleValueToken
 

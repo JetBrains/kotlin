@@ -17,6 +17,14 @@ import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentKt;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Base implementation of {@link KtDeclaration} that may be backed either by the AST tree or by a stub.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing
+ * outside of the PSI implementation. See {@link KtElementImplStub} for details on stub backing.
+ *
+ * @param <T> the type of stub backing this declaration
+ */
 public abstract class KtDeclarationStub<T extends StubElement<?>> extends KtModifierListOwnerStub<T> implements KtDeclaration {
     private final AtomicLong modificationStamp = new AtomicLong();
 
@@ -34,6 +42,10 @@ public abstract class KtDeclarationStub<T extends StubElement<?>> extends KtModi
         modificationStamp.getAndIncrement();
     }
 
+    /**
+     * Returns a stamp that is incremented whenever this declaration's subtree changes, allowing callers to detect
+     * modifications.
+     */
     public long getModificationStamp() {
         return modificationStamp.get();
     }

@@ -47,6 +47,9 @@ class KtObjectDeclaration : KtClassOrObject {
     @OptIn(KtNonPublicApi::class)
     override fun setName(@NonNls name: String): PsiElement = KtPsiMutationService.getInstance().setObjectDeclarationName(this, name)
 
+    /**
+     * Returns `true` if this is a companion object (declared with the `companion` modifier).
+     */
     fun isCompanion(): Boolean = hasModifier(KtTokens.COMPANION_KEYWORD)
 
     override fun getTextOffset(): Int = nameIdentifier?.textRange?.startOffset
@@ -56,11 +59,19 @@ class KtObjectDeclaration : KtClassOrObject {
         return visitor.visitObjectDeclaration(this, data)
     }
 
+    /**
+     * Returns `true` if this object is the body of an object literal (`object : Foo { ... }`) rather than a named or
+     * companion object declaration.
+     */
     fun isObjectLiteral(): Boolean = _stub?.isObjectLiteral ?: (parent is KtObjectLiteralExpression)
 
+    /**
+     * Returns the `object` keyword, or `null` if it is absent in incomplete code.
+     */
     fun getObjectKeyword(): PsiElement? = findChildByType(KtTokens.OBJECT_KEYWORD)
 
     override fun getIdentifyingElement(): PsiElement? = getObjectKeyword()
 
+    /** Always empty: an object declaration cannot itself declare companion objects. */
     override fun getCompanionObjects(): List<KtObjectDeclaration> = emptyList()
 }

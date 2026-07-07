@@ -47,18 +47,21 @@ public class KtConstructorDelegationCall extends KtElementImpl implements KtCall
         return list != null ? list.getArguments() : Collections.<KtValueArgument>emptyList();
     }
 
+    /** Always empty: a constructor delegation call ({@code this(...)} / {@code super(...)}) takes no trailing lambda arguments. */
     @NotNull
     @Override
     public List<KtLambdaArgument> getLambdaArguments() {
         return Collections.emptyList();
     }
 
+    /** Always empty: a constructor delegation call takes no type arguments. */
     @NotNull
     @Override
     public List<KtTypeProjection> getTypeArguments() {
         return Collections.emptyList();
     }
 
+    /** Always {@code null}: a constructor delegation call has no type argument list. */
     @Override
     public KtTypeArgumentList getTypeArgumentList() {
         return null;
@@ -83,6 +86,10 @@ public class KtConstructorDelegationCall extends KtElementImpl implements KtCall
         return callee != null && callee.getFirstChild() == null;
     }
 
+    /**
+     * Returns {@code true} if this delegates to another constructor of the same class ({@code this(...)}), or
+     * {@code false} if it delegates to a superclass constructor ({@code super(...)}).
+     */
     public boolean isCallToThis() {
         KtConstructorDelegationReferenceExpression callee = getCalleeExpression();
         return callee != null && callee.isThis();

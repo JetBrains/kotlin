@@ -27,10 +27,16 @@ public class KtWhenConditionIsPattern extends KtWhenCondition {
         super(node);
     }
 
+    /**
+     * Returns {@code true} if this is a {@code !is} (negated) type check rather than a plain {@code is} check.
+     */
     public boolean isNegated() {
         return getNode().findChildByType(KtTokens.NOT_IS) != null;
     }
 
+    /**
+     * Returns the type reference being checked against, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable @IfNotParsed
     public KtTypeReference getTypeReference() {
         return (KtTypeReference) findChildByType(KtNodeTypes.TYPE_REFERENCE);
