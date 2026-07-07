@@ -26,7 +26,7 @@ import java.io.File
 
 open class IncrementalJvmCompilerRunner(
     workingDir: File,
-    reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     outputDirs: Collection<File>?,
     private val classpathChanges: ClasspathChanges,
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,

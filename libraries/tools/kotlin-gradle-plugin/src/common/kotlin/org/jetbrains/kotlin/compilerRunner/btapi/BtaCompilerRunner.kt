@@ -14,7 +14,7 @@ import java.io.ByteArrayInputStream
 import java.io.ObjectInputStream
 
 internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
-    private val metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    private val metrics: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     private val buildOperationFactory: BuildOperationFactory<T>,
     private val icConfigurator: IncrementalConfigurationStrategy<T>,
     private val daemonJvmArgs: List<String>,
@@ -67,7 +67,7 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
 }
 
 private fun extractMetrics(
-    metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    metrics: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     compilationOperation: BaseCompilationOperation,
 ) {
     if (metrics is BuildMetricsReporterImpl) {

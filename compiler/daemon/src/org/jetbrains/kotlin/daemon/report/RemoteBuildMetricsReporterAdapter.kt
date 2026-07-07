@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 
 class RemoteBuildMetricsReporterAdapter(
-    private val delegate: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    private val delegate: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     private val shouldReport: Boolean,
     private val compilationResults: CompilationResults
 ) :
-    BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> by delegate,
-    RemoteBuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> {
+    BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric> by delegate,
+    RemoteBuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric> {
 
     override fun flush() {
         if (shouldReport) {

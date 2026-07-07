@@ -54,7 +54,7 @@ import java.io.File
  */
 abstract class IncrementalJvmCompilerRunnerBase(
     workingDir: File,
-    reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     buildHistoryFile: File?, // part of build history implementation is in abstract runner, so this stays
     outputDirs: Collection<File>?,
     kotlinSourceFilesExtensions: Set<String>,

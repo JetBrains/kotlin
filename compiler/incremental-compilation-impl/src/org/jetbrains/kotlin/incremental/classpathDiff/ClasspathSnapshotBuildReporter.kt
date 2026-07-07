@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 
-class ClasspathSnapshotBuildReporter(private val buildReporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>) :
-    ICReporter by buildReporter, BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> by buildReporter {
+class ClasspathSnapshotBuildReporter(private val buildReporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>) :
+    ICReporter by buildReporter, BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric> by buildReporter {
 
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {
         buildReporter.report({ "[ClasspathSnapshot] ${message()}" }, severity)

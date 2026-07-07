@@ -53,7 +53,7 @@ abstract class IncrementalCompilerRunner<
         >(
     protected val workingDir: File,
     cacheDirName: String,
-    protected val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    protected val reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     protected val buildHistoryFile: File?,
 
     /**

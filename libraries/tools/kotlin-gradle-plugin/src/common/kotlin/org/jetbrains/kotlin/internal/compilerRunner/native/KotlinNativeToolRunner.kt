@@ -39,7 +39,7 @@ import java.util.*
 import javax.inject.Inject
 
 internal abstract class KotlinNativeToolRunner @Inject constructor(
-    private val metricsReporterProvider: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>,
+    private val metricsReporterProvider: Provider<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>,
     private val classLoadersCachingBuildServiceProvider: Provider<ClassLoadersCachingBuildService>,
     private val toolSpec: ToolSpec,
     private val fusMetricsConsumer: Provider<out BuildFusService<out BuildFusService.Parameters>>,
@@ -286,7 +286,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     )
 
 
-    internal fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.parseCompilerMetricsFromFile(
+    internal fun BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>.parseCompilerMetricsFromFile(
         jsonFile: File,
     ) {
         if (!jsonFile.isFile()) return

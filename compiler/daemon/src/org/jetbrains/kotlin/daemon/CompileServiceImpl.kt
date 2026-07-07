@@ -359,7 +359,7 @@ abstract class CompileServiceImplBase(
         createMessageCollector: (ServicesFacadeT, CompilationOptions, warningsAsErrors: Boolean) -> MessageCollector,
         createReporter: (ServicesFacadeT, CompilationOptions) -> DaemonMessageReporter,
         createServices: (JpsServicesFacadeT, EventManager, Profiler) -> Services,
-        getICReporter: (ServicesFacadeT, CompilationResultsT & Any, CompilationOptions) -> RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        getICReporter: (ServicesFacadeT, CompilationResultsT & Any, CompilationOptions) -> RemoteBuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
         compilationId: Int? = null,
     ) = kotlin.run {
         maybeWaitForTestStart()
@@ -697,7 +697,7 @@ abstract class CompileServiceImplBase(
         args: CommonJsAndWasmCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
-        reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        reporter: RemoteBuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
         lookupTracker: LookupTracker? = null,
         configurationInputs: ConfigurationInputs? = null,
     ): ExitCode {
@@ -754,7 +754,7 @@ abstract class CompileServiceImplBase(
         k2jvmArgs: K2JVMCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
-        reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        reporter: RemoteBuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
         compilationCanceledStatus: CompilationCanceledStatus? = null,
         lookupTracker: LookupTracker? = null,
         configurationInputs: ConfigurationInputs?,

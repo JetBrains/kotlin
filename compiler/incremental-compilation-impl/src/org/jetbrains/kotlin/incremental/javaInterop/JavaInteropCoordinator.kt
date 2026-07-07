@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.name.Name
 import java.io.File
 
 private class CoarseJavaInteropCoordinator(
-    reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     messageCollector: MessageCollector,
 ) : JavaInteropCoordinator(messageCollector) {
     private val javaFilesProcessor = ChangedJavaFilesProcessor(reporter)
@@ -67,7 +67,7 @@ private class CoarseJavaInteropCoordinator(
 }
 
 private class PreciseJavaInteropCoordinator(
-    private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    private val reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     messageCollector: MessageCollector,
 ) : JavaInteropCoordinator(messageCollector) {
     private val changedUntrackedJavaClasses = mutableSetOf<ClassId>()
@@ -192,7 +192,7 @@ internal sealed class JavaInteropCoordinator(
     companion object {
         fun getImplementation(
             usePreciseJavaTracking: Boolean,
-            reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+            reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
             messageCollector: MessageCollector,
         ): JavaInteropCoordinator {
             return if (usePreciseJavaTracking) {

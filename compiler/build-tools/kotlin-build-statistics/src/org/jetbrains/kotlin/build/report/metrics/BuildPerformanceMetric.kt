@@ -89,6 +89,15 @@ sealed class GradleBuildPerformanceMetric(
 ) :
     BuildPerformanceMetric(name, readableString, type, parent)
 
+class GradleBuildTimeMetricStart(name: String, readableString: String) : GradleBuildPerformanceMetric(
+    name = "${name}_START",
+    readableString = "Start time of ${readableString.replaceFirstChar(Char::lowercaseChar)}",
+    type = ValueType.TIME
+) {
+    override fun equals(other: Any?): Boolean = other is GradleBuildTimeMetricStart && other.name == name
+    override fun hashCode(): Int = name.hashCode()
+}
+
 object COMPILE_ITERATION : GradleBuildPerformanceMetric(
     name = "COMPILE_ITERATION",
     readableString = "Total compiler iteration",

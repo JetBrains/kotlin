@@ -35,7 +35,7 @@ import java.io.File
 
 open class IncrementalFirJvmCompilerRunner(
     workingDir: File,
-    reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     outputDirs: Collection<File>?,
     classpathChanges: ClasspathChanges,
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,

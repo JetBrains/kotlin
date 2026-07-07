@@ -81,7 +81,7 @@ inline fun <R> withJsIC(args: CommonCompilerArguments, enabled: Boolean = true, 
 
 class IncrementalJsCompilerRunner(
     workingDir: File,
-    reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     buildHistoryFile: File?,
     override val modulesApiHistory: ModulesApiHistory,
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,

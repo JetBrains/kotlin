@@ -11,24 +11,25 @@ import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl.Companion.METRICS_COLLECTOR
 
 internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCollector) :
-    BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> {
-    private val myBuildTimeStartNs = HashMap<BuildTimeMetric, Long>()
+    BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric> {
+    private val myBuildTimeStartNs = HashMap<BuildTimeMetric<out BuildPerformanceMetric>, Long>()
     private val myGcPerformance = HashMap<String, GcMetric>()
 
-    override fun startMeasure(time: BuildTimeMetric) {
+    override fun startMeasure(time: BuildTimeMetric<out BuildPerformanceMetric>) {
         if (time in myBuildTimeStartNs) {
             error("$time was restarted before it finished")
         }
+        time.startTimeMetric?.also { addTimeMetric(it) }
         myBuildTimeStartNs[time] = System.nanoTime()
     }
 
-    override fun endMeasure(time: BuildTimeMetric) {
+    override fun endMeasure(time: BuildTimeMetric<out BuildPerformanceMetric>) {
         val startNs = myBuildTimeStartNs.remove(time) ?: error("$time finished before it started")
         val durationNs = System.nanoTime() - startNs
         collector.collectMetric(time.hierarchicalReadableName(), BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
     }
 
-    override fun addTimeMetricNs(time: BuildTimeMetric, durationNs: Long) {
+    override fun addTimeMetricNs(time: BuildTimeMetric<out BuildPerformanceMetric>, durationNs: Long) {
         collector.collectMetric(time.hierarchicalReadableName(), BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
     }
 
@@ -66,11 +67,11 @@ internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCo
         collector.collectMetric(attribute.composedReadableName, BuildMetricsCollector.ValueType.ATTRIBUTE, 1)
     }
 
-    override fun getMetrics(): BuildMetrics<BuildTimeMetric, BuildPerformanceMetric> {
+    override fun getMetrics(): BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric> {
         error("Not supported")
     }
 
-    override fun addMetrics(metrics: BuildMetrics<out BuildTimeMetric, out BuildPerformanceMetric>) {
+    override fun addMetrics(metrics: BuildMetrics<out BuildTimeMetric<out BuildPerformanceMetric>, out BuildPerformanceMetric>) {
         metrics.buildAttributes.asMap().forEach { [attribute, value] ->
             repeat(value) { addAttribute(attribute) }
         }
@@ -96,7 +97,7 @@ private fun ValueType.toMetricsReporterType(): BuildMetricsCollector.ValueType {
     }
 }
 
-internal fun BuildOperationImpl<*>.getMetricsReporter(): BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> =
+internal fun BuildOperationImpl<*>.getMetricsReporter(): BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric> =
     this[METRICS_COLLECTOR]?.let { BuildMetricsReporterAdapter(it) } ?: if (this[BuildOperationImpl.XX_KGP_METRICS_COLLECTOR]) {
         BuildMetricsReporterImpl()
     } else {
