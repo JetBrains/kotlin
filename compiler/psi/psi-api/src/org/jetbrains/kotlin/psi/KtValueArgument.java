@@ -65,6 +65,10 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         return findChildByClass(KtExpression.class);
     }
 
+    /**
+     * Returns the argument expression as a {@link KtStringTemplateExpression} if the argument is a string literal, or
+     * {@code null} otherwise. This is an optimization that reads the string directly from the stub when possible.
+     */
     @Nullable
     public KtStringTemplateExpression getStringTemplateExpression() {
         KotlinPlaceHolderStub<? extends KtValueArgument> stub = getStub();
@@ -86,6 +90,10 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_NAME);
     }
 
+    /**
+     * Returns the {@code =} token of a named argument ({@code name = value}), or {@code null} if this argument is
+     * positional.
+     */
     @Nullable
     public PsiElement getEqualsToken() {
         return findChildByType(KtTokens.EQ);
@@ -123,6 +131,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         return getSpreadElement() != null;
     }
 
+    /** Always {@code false}: a value argument written in source is never an external (synthetic) argument. */
     @Override
     public boolean isExternal() {
         return false;

@@ -38,35 +38,60 @@ public class KtLambdaExpression extends LazyParseablePsiElement implements KtExp
         return visitor.visitLambdaExpression(this, data);
     }
 
+    /**
+     * Returns the underlying function literal, which holds the parameters and body of the lambda. A lambda expression
+     * always wraps exactly one function literal.
+     */
     @NotNull
     public KtFunctionLiteral getFunctionLiteral() {
         return findChildByType(KtNodeTypes.FUNCTION_LITERAL).getPsi(KtFunctionLiteral.class);
     }
 
+    /**
+     * Returns the explicitly declared parameters of the lambda, or an empty list if it uses the implicit {@code it}
+     * parameter.
+     */
     @NotNull
     public List<KtParameter> getValueParameters() {
         return getFunctionLiteral().getValueParameters();
     }
 
+    /**
+     * Returns the body block of the lambda, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public KtBlockExpression getBodyExpression() {
         return getFunctionLiteral().getBodyExpression();
     }
 
+    /**
+     * Returns {@code true} if the lambda declares an explicit return type (only possible for an anonymous function, not
+     * a lambda literal).
+     */
     public boolean hasDeclaredReturnType() {
         return getFunctionLiteral().getTypeReference() != null;
     }
 
+    /**
+     * Returns this expression as a {@link KtElement}. Provided for uniformity with other callee/argument abstractions.
+     */
     @NotNull
     public KtElement asElement() {
         return this;
     }
 
+    /**
+     * Returns the AST node of the lambda's opening brace {@code &#123;}.
+     */
     @NotNull
     public ASTNode getLeftCurlyBrace() {
         return getFunctionLiteral().getNode().findChildByType(KtTokens.LBRACE);
     }
 
+    /**
+     * Returns the AST node of the lambda's closing brace {@code &#125;}, or {@code null} if it is absent in incomplete
+     * code.
+     */
     @Nullable
     public ASTNode getRightCurlyBrace() {
         return getFunctionLiteral().getNode().findChildByType(KtTokens.RBRACE);
@@ -111,11 +136,20 @@ public class KtLambdaExpression extends LazyParseablePsiElement implements KtExp
         super.delete();
     }
 
+    /**
+     * Always returns {@code false}: changes inside a lambda never affect the out-of-code-block modification count.
+     *
+     * <p>Kept for compatibility with potential plugins.
+     */
     @SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins
     public boolean shouldChangeModificationCount(PsiElement place) {
         return false;
     }
 
+    /**
+     * Returns {@code true} if this lambda is a trailing lambda argument placed on a line of its own (separated from the
+     * call by a line break). This is a formatting property used by the IDE.
+     */
     public final boolean isTrailingLambdaOnNewLine() {
         PsiElement parent = getParent();
 

@@ -27,4 +27,7 @@ class KtContractEffect : KtElementImplStub<KotlinContractEffectStub> {
     constructor(stub: KotlinContractEffectStub) : super(stub, KtStubBasedElementTypes.CONTRACT_EFFECT)
 }
 
+/**
+ * Returns the expression that describes this contract effect (for example, `returns() implies (s != null)`).
+ */
 fun KtContractEffect.getExpression(): KtExpression = getChildOfType()!!

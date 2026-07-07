@@ -38,21 +38,33 @@ public class KtTryExpression extends KtExpressionImpl {
         return visitor.visitTryExpression(this, data);
     }
 
+    /**
+     * Returns the protected {@code try} block.
+     */
     @NotNull
     public KtBlockExpression getTryBlock() {
         return (KtBlockExpression) findChildByType(KtNodeTypes.BLOCK);
     }
 
+    /**
+     * Returns the {@code catch} clauses, in source order; empty if there are none.
+     */
     @NotNull
     public List<KtCatchClause> getCatchClauses() {
         return findChildrenByType(KtNodeTypes.CATCH);
     }
 
+    /**
+     * Returns the {@code finally} block, or {@code null} if there is none.
+     */
     @Nullable
     public KtFinallySection getFinallyBlock() {
         return (KtFinallySection) findChildByType(KtNodeTypes.FINALLY);
     }
 
+    /**
+     * Returns the {@code try} keyword, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public PsiElement getTryKeyword() {
         return findChildByType(KtTokens.TRY_KEYWORD);

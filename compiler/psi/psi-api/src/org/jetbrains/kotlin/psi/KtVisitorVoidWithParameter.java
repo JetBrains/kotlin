@@ -7,6 +7,16 @@ package org.jetbrains.kotlin.psi;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A convenience {@link KtVisitor} for visitors that return nothing but still thread a data parameter through the
+ * traversal.
+ *
+ * <p>Its {@code visit*Void} methods take the data parameter but no result. The {@code Void} suffix distinguishes them
+ * from the two-argument {@code visit*} methods inherited from {@link KtVisitor}, which they cannot override because of
+ * the differing return type.
+ *
+ * @param <P> the type of the data threaded through the traversal
+ */
 public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
 
     // methods with parameter

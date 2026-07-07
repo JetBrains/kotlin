@@ -34,17 +34,27 @@ public class KtReturnExpression extends KtExpressionWithLabel implements KtState
         return visitor.visitReturnExpression(this, data);
     }
 
+    /**
+     * Returns the value being returned, or {@code null} for a bare {@code return}.
+     */
     @Nullable
     public KtExpression getReturnedExpression() {
         return findChildByClass(KtExpression.class);
     }
 
+    /**
+     * Returns the {@code return} keyword.
+     */
     @NotNull
     public PsiElement getReturnKeyword() {
         //noinspection ConstantConditions
         return findChildByType(KtTokens.RETURN_KEYWORD);
     }
 
+    /**
+     * Returns the label qualifier of a labeled return ({@code return@label}), or {@code null} if the return is
+     * unlabeled.
+     */
     @Nullable
     public PsiElement getLabeledExpression() {
         return findChildByType(KtNodeTypes.LABEL_QUALIFIER);

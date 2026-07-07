@@ -37,6 +37,9 @@ public class KtImportList extends KtElementImplStub<KotlinPlaceHolderStub<KtImpo
         return visitor.visitImportList(this, data);
     }
 
+    /**
+     * Returns the import directives in this list, in source order; empty if there are none.
+     */
     @NotNull
     public List<KtImportDirective> getImports() {
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.IMPORT_DIRECTIVE);

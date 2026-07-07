@@ -23,6 +23,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
 
+/**
+ * Base implementation of {@link KDocElement}, wrapping the corresponding AST node.
+ *
+ * <p>This is an internal implementation base class of the KDoc PSI, shared by the tag element types
+ * {@code KDocTag} and {@code KDocSection}. It is not intended to be used or subclassed outside of the PSI
+ * implementation.
+ */
 public abstract class KDocElementImpl extends ASTWrapperPsiElement implements KDocElement {
     @NotNull
     @Override

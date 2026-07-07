@@ -26,6 +26,10 @@ public class KtConstructorDelegationReferenceExpression extends KtExpressionImpl
         super(node);
     }
 
+    /**
+     * Returns {@code true} if this reference is {@code this} (delegating to a constructor of the same class), or
+     * {@code false} if it is {@code super} (delegating to a superclass constructor).
+     */
     public boolean isThis() {
         return findChildByType(KtTokens.THIS_KEYWORD) != null;
     }

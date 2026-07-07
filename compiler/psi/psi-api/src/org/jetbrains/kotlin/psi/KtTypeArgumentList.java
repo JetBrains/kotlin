@@ -39,6 +39,9 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
         return visitor.visitTypeArgumentList(this, data);
     }
 
+    /**
+     * Returns the type arguments (as projections), in source order; empty if there are none.
+     */
     @NotNull
     public List<KtTypeProjection> getArguments() {
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_PROJECTION);
@@ -54,6 +57,9 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
         return KtPsiMutationService.getInstance().appendTypeArgument(this, typeArgument);
     }
 
+    /**
+     * Returns the trailing comma after the last type argument, or {@code null} if there is none.
+     */
     @Nullable
     public PsiElement getTrailingComma() {
         return KtPsiUtilKt.getTrailingCommaByClosingElement(findChildByType(KtTokens.GT));

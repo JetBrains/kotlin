@@ -50,6 +50,10 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
         return visitor.visitDestructuringDeclaration(this, data);
     }
 
+    /**
+     * Returns the individual component entries of this destructuring declaration (for example, {@code x} and {@code y}
+     * in {@code val (x, y) = ...}), in source order.
+     */
     @NotNull
     public List<KtDestructuringDeclarationEntry> getEntries() {
         List<KtDestructuringDeclarationEntry> result = new ArrayList<>();
@@ -95,6 +99,10 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
         return getInitializer() != null;
     }
 
+    /**
+     * Returns {@code true} if this destructuring declaration is mutable (introduced by {@code var}), or {@code false}
+     * if it is read-only ({@code val}).
+     */
     public boolean isVar() {
         KotlinDestructuringDeclarationStub stub = getGreenStub();
         if (stub != null) {
@@ -127,11 +135,17 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
     private static final TokenSet OPENING_BRACES = TokenSet.create(LPAR, LBRACKET);
     private static final TokenSet CLOSING_BRACES = TokenSet.create(RPAR, RBRACKET);
 
+    /**
+     * Returns the closing parenthesis or bracket, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public PsiElement getRPar() {
         return findChildByType(CLOSING_BRACES);
     }
 
+    /**
+     * Returns the opening parenthesis or bracket, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public PsiElement getLPar() {
         return findChildByType(OPENING_BRACES);
@@ -144,11 +158,15 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
         return getNode().findChildByType(LBRACKET) != null;
     }
 
+    /**
+     * Returns the trailing comma after the last entry, or {@code null} if there is none.
+     */
     @Nullable
     public PsiElement getTrailingComma() {
         return KtPsiUtilKt.getTrailingCommaByClosingElement(getRPar());
     }
 
+    /** Always {@code null}: a destructuring declaration has no type reference of its own. */
     @Nullable
     @Override
     public KtTypeReference getTypeReference() {

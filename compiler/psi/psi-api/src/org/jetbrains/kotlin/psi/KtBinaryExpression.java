@@ -34,6 +34,9 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
         return visitor.visitBinaryExpression(this, data);
     }
 
+    /**
+     * Returns the left operand, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable @IfNotParsed
     public KtExpression getLeft() {
         ASTNode node = getOperationReference().getNode().getTreePrev();
@@ -48,6 +51,9 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
         return null;
     }
 
+    /**
+     * Returns the right operand, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable @IfNotParsed
     public KtExpression getRight() {
         ASTNode node = getOperationReference().getNode().getTreeNext();
@@ -73,6 +79,9 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
         return (KtOperationReferenceExpression) operationReference;
     }
 
+    /**
+     * Returns the element type of the operator token (for example, {@code PLUS} for {@code +}).
+     */
     @NotNull
     public IElementType getOperationToken() {
         return getOperationReference().getReferencedNameElementType();

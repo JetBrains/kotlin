@@ -20,6 +20,19 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Base implementation of {@link KtElement} that may be backed either by the AST tree or by a stub.
+ *
+ * <p>Stubs are a compact, serializable representation of a declaration's structure that can be built and queried
+ * without parsing the full source. They power fast indexing and are used for library and decompiled sources, so that
+ * such files do not have to be fully parsed until their bodies are actually needed. Subclasses read their data from the
+ * stub when one is present, and fall back to the AST otherwise.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI and is not intended to be used or subclassed
+ * outside of the PSI implementation.
+ *
+ * @param <T> the type of stub backing this element
+ */
 public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiElementBase<T>
         implements KtElement, StubBasedPsiElement<T> {
     public KtElementImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {

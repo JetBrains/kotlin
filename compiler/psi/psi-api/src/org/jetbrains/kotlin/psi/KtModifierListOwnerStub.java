@@ -27,6 +27,14 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Base implementation of {@link KtModifierListOwner} that may be backed either by the AST tree or by a stub.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing
+ * outside of the PSI implementation. See {@link KtElementImplStub} for details on stub backing.
+ *
+ * @param <T> the type of stub backing this element
+ */
 public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElementImplStub<T> implements KtModifierListOwner {
     public KtModifierListOwnerStub(ASTNode node) {
         super(node);

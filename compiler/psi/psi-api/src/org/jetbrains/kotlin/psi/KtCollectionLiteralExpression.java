@@ -49,18 +49,27 @@ public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinColle
         return visitor.visitCollectionLiteralExpression(this, data);
     }
 
+    /**
+     * Returns the opening bracket {@code [}, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public PsiElement getLeftBracket() {
         ASTNode astNode = getNode().findChildByType(KtTokens.LBRACKET);
         return astNode != null ? astNode.getPsi() : null;
     }
 
+    /**
+     * Returns the closing bracket {@code ]}, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public PsiElement getRightBracket() {
         ASTNode astNode = getNode().findChildByType(KtTokens.RBRACKET);
         return astNode != null ? astNode.getPsi() : null;
     }
 
+    /**
+     * Returns the trailing comma after the last element, or {@code null} if there is none.
+     */
     @Nullable
     public PsiElement getTrailingComma() {
         PsiElement rightBracket = getRightBracket();

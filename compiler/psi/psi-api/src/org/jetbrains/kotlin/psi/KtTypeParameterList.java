@@ -34,6 +34,9 @@ public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub
         super(stub, KtStubBasedElementTypes.TYPE_PARAMETER_LIST);
     }
 
+    /**
+     * Returns the type parameters in this list, in source order; empty if there are none.
+     */
     @NotNull
     public List<KtTypeParameter> getParameters() {
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_PARAMETER);
@@ -54,6 +57,9 @@ public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub
         return visitor.visitTypeParameterList(this, data);
     }
 
+    /**
+     * Returns the trailing comma after the last type parameter, or {@code null} if there is none.
+     */
     @Nullable
     public PsiElement getTrailingComma() {
         return KtPsiUtilKt.getTrailingCommaByClosingElement(findChildByType(KtTokens.GT));

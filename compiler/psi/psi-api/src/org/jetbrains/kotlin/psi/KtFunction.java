@@ -16,6 +16,17 @@
 
 package org.jetbrains.kotlin.psi;
 
+/**
+ * Represents a function: a named function, a function literal (lambda or anonymous function), or a constructor.
+ *
+ * <p>This is the common base type for the concrete node types {@link KtNamedFunction}, {@link KtFunctionLiteral}, and
+ * {@link KtConstructor}. As a {@link KtCallableDeclaration} it has value parameters, type parameters, and a return type,
+ * and as a {@link KtDeclarationWithBody} it may have a block or expression body.
+ */
 public interface KtFunction extends KtDeclarationWithBody, KtCallableDeclaration {
+    /**
+     * Returns {@code true} if this function is declared inside a code block (for example, in the body of another
+     * function) rather than as a member or top-level function.
+     */
     boolean isLocal();
 }

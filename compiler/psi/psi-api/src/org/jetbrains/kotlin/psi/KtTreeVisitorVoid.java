@@ -19,6 +19,13 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A {@link KtVisitorVoid} that recursively traverses the whole PSI subtree.
+ *
+ * <p>It combines the recursive descent of {@link KtTreeVisitor} with the single-argument convenience of
+ * {@link KtVisitorVoid}, and is the most common base class for read-only tree walks that neither return a result nor
+ * thread data through the traversal.
+ */
 public class KtTreeVisitorVoid extends KtVisitorVoid {
     @Override
     public void visitElement(@NotNull PsiElement element) {

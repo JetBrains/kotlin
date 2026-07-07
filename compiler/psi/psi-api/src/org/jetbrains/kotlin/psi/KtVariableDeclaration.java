@@ -16,6 +16,17 @@
 
 package org.jetbrains.kotlin.psi;
 
+/**
+ * Represents a variable declaration introduced by {@code val} or {@code var}: a property, a local variable, or an entry
+ * of a destructuring declaration.
+ *
+ * <p>This is the common base type for the concrete node types {@link KtProperty} and
+ * {@link KtDestructuringDeclarationEntry}. A variable may have a declared type and an initializer.
+ */
 public interface KtVariableDeclaration extends KtCallableDeclaration, KtDeclarationWithInitializer, KtValVarKeywordOwner {
+    /**
+     * Returns {@code true} if this variable is mutable (declared with {@code var}), or {@code false} if it is read-only
+     * (declared with {@code val}).
+     */
     boolean isVar();
 }

@@ -64,5 +64,6 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     override fun addAnnotationEntry(annotationEntry: KtAnnotationEntry): KtAnnotationEntry =
         KtPsiMutationService.getInstance().addAnnotation(this, annotationEntry)
 
+    /** Always `false`: a primary constructor has no body and therefore never carries a contract. */
     override fun mayHaveContract(): Boolean = false
 }

@@ -42,12 +42,19 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         super(stub, KtStubBasedElementTypes.PACKAGE_DIRECTIVE);
     }
 
-    // This should be either JetSimpleNameExpression, or JetDotQualifiedExpression
+    /**
+     * Returns the expression denoting the package name, or {@code null} for the root package. This is either a
+     * {@link KtSimpleNameExpression} (a single-segment package) or a {@link KtDotQualifiedExpression} (a dotted name).
+     */
     @Nullable
     public KtExpression getPackageNameExpression() {
         return KtStubbedPsiUtil.getStubOrPsiChild(this, KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS, KtExpression.ARRAY_FACTORY);
     }
 
+    /**
+     * Returns the individual name segments of the package, from the outermost to the innermost (for example,
+     * {@code com}, {@code example}, {@code myapp}). Returns an empty list for the root package.
+     */
     @NotNull
     public List<KtSimpleNameExpression> getPackageNames() {
         KtExpression nameExpression = getPackageNameExpression();
@@ -74,6 +81,9 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         return packageNames;
     }
 
+    /**
+     * Returns the last (innermost) name segment of the package, or {@code null} for the root package.
+     */
     @Nullable
     public KtSimpleNameExpression getLastReferenceExpression() {
         KtExpression nameExpression = getPackageNameExpression();
@@ -82,6 +92,9 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         return (KtSimpleNameExpression) KtPsiUtilKt.getQualifiedElementSelector(nameExpression);
     }
 
+    /**
+     * Returns the identifier token of the last name segment, or {@code null} for the root package.
+     */
     @Nullable
     public PsiElement getNameIdentifier() {
         KtSimpleNameExpression lastPart = getLastReferenceExpression();
@@ -95,22 +108,37 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         return nameIdentifier == null ? "" : nameIdentifier.getText();
     }
 
+    /**
+     * Returns the last name segment as a {@link Name}, or {@link SpecialNames#ROOT_PACKAGE} for the root package.
+     */
     @NotNull
     public Name getNameAsName() {
         PsiElement nameIdentifier = getNameIdentifier();
         return nameIdentifier == null ? SpecialNames.ROOT_PACKAGE : Name.identifier(nameIdentifier.getText());
     }
 
+    /**
+     * Returns {@code true} if this directive declares the root package (an empty or absent package name).
+     */
     public boolean isRoot() {
         return getName().length() == 0;
     }
 
+    /**
+     * Returns the fully qualified package name, or {@link FqName#ROOT} for the root package.
+     */
     @NotNull
     public FqName getFqName() {
         String qualifiedName = getQualifiedName();
         return qualifiedName.isEmpty() ? FqName.ROOT : new FqName(qualifiedName);
     }
 
+    /**
+     * Returns the fully qualified name of the package up to and including the given name segment.
+     *
+     * <p>This is useful for resolving a click on an intermediate segment of a dotted package name to the corresponding
+     * partial package.
+     */
     @NotNull
     public FqName getFqName(KtSimpleNameExpression nameExpression) {
         return new FqName(getQualifiedNameOf(nameExpression));
@@ -125,6 +153,10 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         KtPsiMutationService.getInstance().setPackageFqName(this, fqName);
     }
 
+    /**
+     * Returns the dot-separated package name as a string, or an empty string for the root package. The result is
+     * cached.
+     */
     @NotNull
     public String getQualifiedName() {
         if (qualifiedNameCache == null) {
@@ -148,6 +180,9 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         return builder.toString();
     }
 
+    /**
+     * Returns the {@code package} keyword token, or {@code null} if it is absent (for an implicit root package).
+     */
     @Nullable
     public PsiElement getPackageKeyword() {
         return findChildByType(KtTokens.PACKAGE_KEYWORD);

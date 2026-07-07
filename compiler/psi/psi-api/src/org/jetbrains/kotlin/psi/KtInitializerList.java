@@ -39,6 +39,10 @@ public class KtInitializerList extends KtElementImplStub<KotlinPlaceHolderStub<K
         return visitor.visitInitializerList(this, data);
     }
 
+    /**
+     * Returns the initializer entries (the superclass constructor call carrying the arguments). In valid code this is a
+     * single entry; a longer list only occurs in erroneous code.
+     */
     @NotNull
     public List<KtSuperTypeListEntry> getInitializers() {
         return Arrays.asList(getStubOrPsiChildren(KtTokenSets.SUPER_TYPE_LIST_ENTRIES, KtSuperTypeListEntry.ARRAY_FACTORY));

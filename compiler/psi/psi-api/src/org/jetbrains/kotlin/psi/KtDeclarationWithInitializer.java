@@ -18,9 +18,26 @@ package org.jetbrains.kotlin.psi;
 
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Represents a declaration that can be assigned an initializer with {@code =}, such as a property, a local variable, or
+ * an enum entry.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ * val greeting = "Hello"
+ * //             ^_____^
+ * // The initializer
+ * }</pre>
+ */
 public interface KtDeclarationWithInitializer extends KtDeclaration {
+    /**
+     * Returns the initializer expression, or {@code null} if this declaration has none.
+     */
     @Nullable
     KtExpression getInitializer();
 
+    /**
+     * Returns {@code true} if this declaration has an initializer expression.
+     */
     boolean hasInitializer();
 }

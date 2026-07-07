@@ -20,8 +20,32 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtSingleValueToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
+/**
+ * The kind of variance projection applied to a type argument in a {@link KtTypeProjection}.
+ *
+ * <ul>
+ *     <li>{@link #IN} — a contravariant projection, written {@code in T}.</li>
+ *     <li>{@link #OUT} — a covariant projection, written {@code out T}.</li>
+ *     <li>{@link #STAR} — a star projection, written {@code *}.</li>
+ *     <li>{@link #NONE} — an invariant type argument with no projection keyword.</li>
+ * </ul>
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ * fun copy(from: Array<out Any>, to: Array<in Any>) {}
+ * //                   ^^^                 ^^
+ * //                   OUT                 IN
+ * }</pre>
+ */
 public enum KtProjectionKind {
-    IN(KtTokens.IN_KEYWORD), OUT(KtTokens.OUT_KEYWORD), STAR(KtTokens.MUL), NONE(null);
+    /** A contravariant projection, written {@code in T}. */
+    IN(KtTokens.IN_KEYWORD),
+    /** A covariant projection, written {@code out T}. */
+    OUT(KtTokens.OUT_KEYWORD),
+    /** A star projection, written {@code *}. */
+    STAR(KtTokens.MUL),
+    /** An invariant type argument with no projection keyword. */
+    NONE(null);
 
     private final KtSingleValueToken token;
 
@@ -29,6 +53,10 @@ public enum KtProjectionKind {
         this.token = token;
     }
 
+    /**
+     * Returns the keyword token that denotes this projection ({@code in}, {@code out}, or {@code *}), or {@code null}
+     * for {@link #NONE}.
+     */
     @Nullable
     public KtSingleValueToken getToken() {
         return token;

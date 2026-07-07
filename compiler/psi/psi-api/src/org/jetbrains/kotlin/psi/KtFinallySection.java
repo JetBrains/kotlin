@@ -33,6 +33,9 @@ public class KtFinallySection extends KtElementImpl implements KtStatementExpres
         return visitor.visitFinallySection(this, data);
     }
 
+    /**
+     * Returns the block executed in the {@code finally} section.
+     */
     public KtBlockExpression getFinalExpression() {
         return (KtBlockExpression) findChildByType(KtNodeTypes.BLOCK);
     }

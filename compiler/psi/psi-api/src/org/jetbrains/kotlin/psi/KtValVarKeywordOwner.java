@@ -19,7 +19,15 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Represents an element that may be introduced by a {@code val} or {@code var} keyword, such as a property, a
+ * destructuring entry, or a constructor value parameter.
+ */
 public interface KtValVarKeywordOwner extends PsiElement {
+    /**
+     * Returns the {@code val} or {@code var} keyword token, or {@code null} if neither is present (for example, a
+     * regular function parameter, which uses no keyword).
+     */
     @Nullable
     PsiElement getValOrVarKeyword();
 }

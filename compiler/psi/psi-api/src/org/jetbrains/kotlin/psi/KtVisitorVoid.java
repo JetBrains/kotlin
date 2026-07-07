@@ -7,6 +7,14 @@ package org.jetbrains.kotlin.psi;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A convenience {@link KtVisitor} for the common case of a visitor that returns nothing and needs no extra data.
+ *
+ * <p>It exposes single-argument {@code visit*} methods (without the result and data parameters), so subclasses can
+ * override, for example, {@code visitProperty(KtProperty)} instead of {@code visitProperty(KtProperty, Void)}.
+ *
+ * @see KtTreeVisitorVoid
+ */
 public class KtVisitorVoid extends KtVisitor<Void, Void> {
     // methods with void return
 
