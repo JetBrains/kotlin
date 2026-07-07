@@ -14,7 +14,11 @@ import org.jetbrains.kotlin.gradle.plugin.*
 internal val ConfigureBuildSideEffect = KotlinTargetSideEffect { target ->
     val project = target.project
 
+    // Should be fixed via KT-87508
+    @Suppress("DEPRECATION")
     val buildNeeded = project.tasks.named(JavaBasePlugin.BUILD_NEEDED_TASK_NAME)
+    // Should be fixed via KT-87508
+    @Suppress("DEPRECATION")
     val buildDependent = project.tasks.named(JavaBasePlugin.BUILD_DEPENDENTS_TASK_NAME)
 
     val testCompilation = target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)
@@ -32,6 +36,9 @@ private fun addDependsOnTaskInOtherProjects(
 ) {
     val configuration = project.configurations.getByName(configurationName)
     taskProvider.configure { task ->
+        // Configuration.getTaskDependencyFromProjectDependency() deprecated in Gradle 9.6 without a replacement
+        // Should be fixed via KT-87508
+        @Suppress("DEPRECATION")
         task.dependsOn(configuration.getTaskDependencyFromProjectDependency(useDependedOn, taskProvider.name))
     }
 }
