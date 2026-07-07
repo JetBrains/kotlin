@@ -1,0 +1,141 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.buildtools.tests.compilation
+
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ENABLE_CLASSPATH_METADATA
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.compile
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.execute
+import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.DisplayName
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+
+internal class ClasspathMetadataIncrementalTest : BaseCompilationTest() {
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Without JVM classpath metadata, incremental compilation resolves commonMain against jvmMain (wrong result)")
+    @TestMetadata("jvm-classpath-metadata")
+    fun testClasspathMetadataDisabledProducesWrongResult(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = jvmClasspathMetadataModule(enabled = false)
+            module.execute("MainKt", "KMP output: Any")
+
+            module.changeFile("commonMain/foo.kt") { it.replace("fun foo() = bar(42)", "fun foo() = bar(41)") }
+
+            module.compile(setOf("commonMain/foo.kt"))
+            // Regression control: with the option disabled, the incremental recompilation of `foo.kt` incorrectly
+            // sees `jvmMain`'s `bar(i: Int)` through leftover outputs, so `foo()` now returns "Int".
+            module.execute("MainKt", "KMP output: Int")
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("With JVM classpath metadata, incremental compilation keeps correct commonMain resolution")
+    @TestMetadata("jvm-classpath-metadata")
+    fun testClasspathMetadataEnabledProducesCorrectResult(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = jvmClasspathMetadataModule(enabled = true)
+            module.execute("MainKt", "KMP output: Any")
+
+            module.changeFile("commonMain/foo.kt") { it.replace("fun foo() = bar(42)", "fun foo() = bar(41)") }
+
+            module.compile(setOf("commonMain/foo.kt"))
+            // With the option enabled, commonMain still resolves against commonMain only, so `foo()` returns "Any".
+            module.execute("MainKt", "KMP output: Any")
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Metadata header merge preserves packages of files that were not recompiled")
+    @TestMetadata("metadata-header-merge")
+    fun testMetadataHeaderMergePreservesUntouchedPackages(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = metadataHeaderMergeModule()
+
+            module.changeFile("commonMain/com/example/two/foo.kt") { it.replace("fun foo() = bar(42)", "fun foo() = bar(41)") }
+            module.compile(setOf("commonMain/com/example/two/foo.kt"))
+
+            module.changeFile("commonMain/com/example/two/foo.kt") { it.replace("fun foo() = bar(41)", "fun foo() = bar(40)") }
+            module.compile(setOf("commonMain/com/example/two/foo.kt"))
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Obsolete package data in the metadata header does not break incremental compilation")
+    @TestMetadata("metadata-header-merge")
+    fun testObsoletePackageInMetadataHeaderDoesNotBreakIncrementalCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = metadataHeaderMergeModule()
+
+            module.deleteFile("commonMain/com/example/two/foo.kt")
+            module.compile {
+                assertNoCompiledSources()
+            }
+
+            module.changeFile("commonMain/com/example/one/bar.kt") { it.replace("fun bar(a: Any) = \"Any\"", "fun bar(a: Any) = \"Any!\"") }
+            module.compile(setOf("commonMain/com/example/one/bar.kt"))
+        }
+    }
+}
+
+private typealias JvmScenario = Scenario<JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>
+
+@OptIn(ExperimentalCompilerArgument::class)
+private fun JvmScenario.jvmClasspathMetadataModule(enabled: Boolean) = module(
+    "jvm-classpath-metadata",
+    compilationConfigAction = configureKmpJvmFragments,
+    icOptionsConfigAction = {
+        it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+        it[ENABLE_CLASSPATH_METADATA] = enabled
+    },
+)
+
+@OptIn(ExperimentalCompilerArgument::class)
+private fun JvmScenario.metadataHeaderMergeModule() = module(
+    "metadata-header-merge",
+    compilationConfigAction = configureKmpJvmFragments,
+    icOptionsConfigAction = {
+        it[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = true
+        it[ENABLE_CLASSPATH_METADATA] = true
+    },
+)
+
+private val configureKmpJvmFragments: (JvmCompilationOperation.Builder) -> Unit = { builder ->
+    fun fragmentOf(path: Path): String? = when {
+        path.any { it.toString() == "commonMain" } -> "commonMain"
+        path.any { it.toString() == "jvmMain" } -> "jvmMain"
+        else -> null
+    }
+
+    val sourcesByFragment = builder.sources
+        .mapNotNull { source -> fragmentOf(source)?.let { fragment -> fragment to source } }
+        .groupBy(keySelector = { it.first }, valueTransform = { it.second })
+
+    val fragments = listOf("commonMain", "jvmMain").filter { it in sourcesByFragment }
+    val fragmentSources = fragments.flatMap { fragment ->
+        sourcesByFragment.getValue(fragment).map { "$fragment:${it.absolutePathString()}" }
+    }
+
+    val args = buildList {
+        add("-Xmulti-platform")
+        add("-Xfragments=${fragments.joinToString(",")}")
+        if ("commonMain" in fragments && "jvmMain" in fragments) {
+            add("-Xfragment-refines=jvmMain:commonMain")
+        }
+        add("-Xfragment-sources=${fragmentSources.joinToString(",")}")
+    }
+
+    builder.compilerArguments.applyArgumentStrings(args)
+}

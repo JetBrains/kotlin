@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.compilerRunner.btapi.jvm
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.FORCE_RECOMPILATION
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ENABLE_CLASSPATH_METADATA
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -38,6 +39,7 @@ internal class JvmIncrementalConfigurationStrategy(
                 this[PRECISE_JAVA_TRACKING] = icEnv.icFeatures.usePreciseJavaTracking
                 @Suppress("DEPRECATION_ERROR")
                 this[USE_FIR_RUNNER] = icEnv.useJvmFirRunner
+                this[ENABLE_CLASSPATH_METADATA] = icEnv.enableJvmClasspathMetadata
 
                 when (classpathChanges) {
                     is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges -> {

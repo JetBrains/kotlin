@@ -135,6 +135,8 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
         val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", true)
 
         val TRACK_CONFIGURATION_INPUTS: Option<Boolean> = Option("TRACK_CONFIGURATION_INPUTS", false)
+
+        val ENABLE_CLASSPATH_METADATA: Option<Boolean> = Option("ENABLE_CLASSPATH_METADATA", false)
     }
 }
 

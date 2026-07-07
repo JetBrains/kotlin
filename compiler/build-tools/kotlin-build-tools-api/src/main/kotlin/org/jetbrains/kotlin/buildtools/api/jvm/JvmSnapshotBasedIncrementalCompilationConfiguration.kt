@@ -357,7 +357,17 @@ constructor(
         )
         @JvmField
         @ExperimentalCompilerArgument
-        public val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", KotlinReleaseVersion(2, 3, 0))
+        public val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> =
+            Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", KotlinReleaseVersion(2, 3, 0))
+
+        /**
+         * Controls whether JVM classpath metadata is enabled for KMP incremental compilation for JVM target.
+         *
+         * This option is experimental and disabled by default.
+         */
+        @JvmField
+        @ExperimentalCompilerArgument
+        public val ENABLE_CLASSPATH_METADATA: Option<Boolean> = Option("ENABLE_CLASSPATH_METADATA", KotlinReleaseVersion(2, 4, 20))
     }
 }
 

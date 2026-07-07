@@ -59,6 +59,7 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
                     kotlinScriptExtensions = ktsExtensionsAsArray,
                     icFeatures = options.extractIncrementalCompilationFeatures(),
                     useJvmFirRunner = options.isUsingFirRunner,
+                    enableJvmClasspathMetadata = false
                 )
             }
             // no IC configuration -> non-incremental compilation

@@ -49,6 +49,7 @@ open class IncrementalFirJvmCompilerRunner(
     generateCompilerRefIndex: Boolean = false,
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
     override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
+    enableClasspathMetadata: Boolean = false,
 ) : IncrementalJvmCompilerRunner(
     workingDir,
     reporter,
@@ -57,7 +58,8 @@ open class IncrementalFirJvmCompilerRunner(
     kotlinSourceFilesExtensions,
     icFeatures,
     generateCompilerRefIndex,
-    compilationCanceledStatus = compilationCanceledStatus
+    compilationCanceledStatus = compilationCanceledStatus,
+    enableClasspathMetadata = enableClasspathMetadata
 ) {
     private val configurationPhase = JvmConfigurationPipelinePhase
     private val frontendPhases = JvmFrontendPipelinePhase then
@@ -73,7 +75,7 @@ open class IncrementalFirJvmCompilerRunner(
         services: Services,
         messageCollector: MessageCollector,
         allSources: List<File>,
-        isIncremental: Boolean
+        isIncremental: Boolean,
     ): Pair<ExitCode, Collection<File>> {
         messageCollector.report(
             CompilerMessageSeverity.WARNING,

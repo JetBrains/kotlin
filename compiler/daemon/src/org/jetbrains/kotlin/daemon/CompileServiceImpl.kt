@@ -772,6 +772,7 @@ abstract class CompileServiceImplBase(
                 compilationCanceledStatus = compilationCanceledStatus,
                 generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
                 lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
+                enableClasspathMetadata = incrementalCompilationOptions.enableJvmClasspathMetadata
             )
         } else {
             IncrementalJvmCompilerRunner(
@@ -786,6 +787,7 @@ abstract class CompileServiceImplBase(
                 compilationCanceledStatus = compilationCanceledStatus,
                 generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
                 lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
+                enableClasspathMetadata = incrementalCompilationOptions.enableJvmClasspathMetadata
             )
         }
         return try {

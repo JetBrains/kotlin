@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrTh
 import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.ENABLE_CLASSPATH_METADATA
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
@@ -200,6 +201,7 @@ internal class JvmCompilationOperationImpl private constructor(
             kotlinScriptExtensions = get(KOTLINSCRIPT_EXTENSIONS),
             icFeatures = aggregatedIcConfigurationOptions.extractIncrementalCompilationFeatures(),
             useJvmFirRunner = aggregatedIcConfigurationOptions[USE_FIR_RUNNER],
+            enableJvmClasspathMetadata = aggregatedIcConfigurationOptions[ENABLE_CLASSPATH_METADATA],
             generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
             configurationInputs = makeConfigurationInputs(
                 aggregatedIcConfigurationOptions,
@@ -207,7 +209,7 @@ internal class JvmCompilationOperationImpl private constructor(
                     aggregatedIcConfigurationOptions,
                     arguments,
                 ),
-            )
+            ),
         )
     }
 
@@ -355,6 +357,7 @@ internal class JvmCompilationOperationImpl private constructor(
             compilationCanceledStatus = cancellationHandle,
             generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
             lookupTrackerDelegate = getLookupTrackerAdapter(),
+            enableClasspathMetadata = aggregatedIcConfigurationOptions[ENABLE_CLASSPATH_METADATA]
         )
 
     private fun JvmCompilationOperationImpl.getFirRunner(
@@ -375,6 +378,7 @@ internal class JvmCompilationOperationImpl private constructor(
             compilationCanceledStatus = cancellationHandle,
             generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
             lookupTrackerDelegate = getLookupTrackerAdapter(),
+            enableClasspathMetadata = aggregatedIcConfigurationOptions[ENABLE_CLASSPATH_METADATA],
         )
 
 

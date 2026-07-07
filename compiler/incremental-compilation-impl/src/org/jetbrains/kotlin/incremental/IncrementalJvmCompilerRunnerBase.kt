@@ -59,6 +59,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
     icFeatures: IncrementalCompilationFeatures,
     private val generateCompilerRefIndex: Boolean = false,
     compilationCanceledStatus: CompilationCanceledStatus? = null,
+    private val enableClasspathMetadata: Boolean = false,
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
@@ -78,6 +79,8 @@ abstract class IncrementalJvmCompilerRunnerBase(
         messageCollector,
     )
 
+    private val metadataDirectory = cacheDirectory.resolve("metadata")
+
     private val subtypeTracker = if (generateCompilerRefIndex) SubtypeTrackerImpl() else null
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
@@ -92,7 +95,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         services: Services,
         caches: IncrementalJvmCachesManager,
         generatedFiles: List<GeneratedFile>,
-        changesCollector: ChangesCollector
+        changesCollector: ChangesCollector,
     ) {
         updateIncrementalCache(
             generatedFiles, caches.platformCache, changesCollector,
@@ -110,7 +113,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
     override fun additionalDirtyFiles(
         caches: IncrementalJvmCachesManager,
         generatedFiles: List<GeneratedFile>,
-        services: Services
+        services: Services,
     ): Iterable<File> {
         val cache = caches.platformCache
         val result = HashSet<File>()
@@ -204,6 +207,22 @@ abstract class IncrementalJvmCompilerRunnerBase(
         if (compilationMode is CompilationMode.Incremental) {
             args.classpathAsList = listOf(args.destinationAsFile) + args.classpathAsList
         }
+
+        if (enableClasspathMetadata) {
+            args.applyJvmClasspathMetadata()
+        }
+    }
+
+    private fun K2JVMCompilerArguments.applyJvmClasspathMetadata() {
+        commonFragmentsMetadataDestination = metadataDirectory.absolutePath
+
+        if (metadataDirectory.exists()) {
+            fragmentIncrementalClasspath = metadataDirectory
+                .listFiles()
+                .orEmpty()
+                .map { path -> "${path.name}:${path.absolutePath}" }
+                .toTypedArray()
+        }
     }
 
     override fun runCompiler(
@@ -213,7 +232,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         services: Services,
         messageCollector: MessageCollector,
         allSources: List<File>,
-        isIncremental: Boolean
+        isIncremental: Boolean,
     ): Pair<ExitCode, Collection<File>> {
         val compiler = K2JVMCompiler()
         val freeArgsBackup = args.freeArgs.toList()

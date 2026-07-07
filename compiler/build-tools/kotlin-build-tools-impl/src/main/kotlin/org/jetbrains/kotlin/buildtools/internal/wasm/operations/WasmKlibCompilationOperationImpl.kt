@@ -157,6 +157,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
                     buildDir = aggregatedIcConfiguration[MODULE_BUILD_DIR]?.toFile(),
                     icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
                     useJvmFirRunner = false,
+                    enableJvmClasspathMetadata = false,
                     generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
                     configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration)
                 )

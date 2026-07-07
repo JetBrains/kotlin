@@ -33,6 +33,7 @@ open class IncrementalJvmCompilerRunner(
     generateCompilerRefIndex: Boolean = false,
     compilationCanceledStatus: CompilationCanceledStatus? = null,
     override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
+    enableClasspathMetadata: Boolean = false,
 ) : IncrementalJvmCompilerRunnerBase(
     workingDir = workingDir,
     reporter = reporter,
@@ -42,6 +43,7 @@ open class IncrementalJvmCompilerRunner(
     icFeatures = icFeatures,
     generateCompilerRefIndex = generateCompilerRefIndex,
     compilationCanceledStatus = compilationCanceledStatus,
+    enableClasspathMetadata = enableClasspathMetadata
 ) {
     override val shouldTrackChangesInLookupCache
         get() = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
@@ -53,7 +55,7 @@ open class IncrementalJvmCompilerRunner(
         changedFiles: DeterminableFiles.Known,
         args: K2JVMCompilerArguments,
         messageCollector: MessageCollector,
-        classpathAbiSnapshots: Map<String, AbiSnapshot>
+        classpathAbiSnapshots: Map<String, AbiSnapshot>,
     ): CompilationMode {
         return try {
             val sourcesToCompileCalculator = JvmSourcesToCompileCalculator(

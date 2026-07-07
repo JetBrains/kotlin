@@ -292,6 +292,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             kotlinScriptExtensions = config.kotlinScriptExtensions,
             icFeatures = icEnv.icFeatures,
             useJvmFirRunner = icEnv.useJvmFirRunner,
+            enableJvmClasspathMetadata = icEnv.enableJvmClasspathMetadata,
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")

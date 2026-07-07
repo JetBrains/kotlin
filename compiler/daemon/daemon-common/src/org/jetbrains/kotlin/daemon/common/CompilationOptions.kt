@@ -68,6 +68,7 @@ class IncrementalCompilationOptions(
     requestedCompilationResults: Array<Int>,
     /** Use new JvmBaseFirRunner */
     val useJvmFirRunner: Boolean,
+    val enableJvmClasspathMetadata: Boolean,
     /**
      * Directories that should be cleared when IC decides to rebuild
      */

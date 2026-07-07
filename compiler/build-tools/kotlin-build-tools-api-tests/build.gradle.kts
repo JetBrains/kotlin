@@ -190,6 +190,7 @@ val businessLogicTestSuits = setOf(
     "testEscapableCharacters",
     "testInputChangesTracking",
     "testCrossModuleIncrementalChanges",
+    "testClasspathMetadata",
     "testFirRunner",
     "testCriToolchain",
     "testCompilerPlugins",
