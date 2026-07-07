@@ -69,7 +69,7 @@ internal abstract class KotlinJsBrowserTestImpl
         chromiumRunners + firefoxRunners + webkitRunners
     }
 
-    override val defaultTestsLocation: Provider<KotlinDefaultJsTestLocation> = testCompilation
+    override val defaultTestsLocationProvider: Provider<KotlinDefaultJsTestLocation> = testCompilation
         .locateOrRegisterBrowserTestBundleTask {
             // enabled when at least one browser runner is enabled. So the user has an intention to test via the browser pipeline.
             browserRunnersDeclared.set(allBrowserRunners.map { it.isNotEmpty() })
@@ -117,7 +117,7 @@ internal abstract class KotlinJsBrowserTestImpl
     override val browserDefaults: BrowserTestRunnerConfigDsl = objects
         .newInstance(BrowserTestRunnerConfigDsl::class.java)
         .apply {
-            testsLocation.convention(defaultTestsLocation)
+            testsLocation.convention(defaultTestsLocationProvider)
             headless.convention(true)
             timeout.convention(Duration.ofSeconds(2))
         }

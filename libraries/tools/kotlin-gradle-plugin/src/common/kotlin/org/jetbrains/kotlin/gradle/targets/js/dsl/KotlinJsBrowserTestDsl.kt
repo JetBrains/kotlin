@@ -29,7 +29,7 @@ interface BrowserTestRunnerConfigDsl {
     /**
      * Input location pointing to a prepared JS bundle with tests and HTML page that can be opened in a browser.
      *
-     * Normally configured to use [KotlinJsBrowserTestDsl.defaultTestsLocation]
+     * Normally configured to use [KotlinJsBrowserTestDsl.defaultTestsLocationProvider]
      *
      * Change it to a custom location to run tests from there.
      * The bundle location must be compatible with underlying browser test runners.
@@ -122,9 +122,14 @@ interface KotlinJsBrowserTestDsl {
 
     /**
      * Default location of bundled and ready to execute JS tests produced from Kotlin JS test compilation.
-     * The output of this task is set to [BrowserTestRunnerConfigDsl.testsLocation].
+     * Note that this is read-only [Provider], that Kotlin Gradle Plugin offers as default.
+     * To use different test location for tests use [BrowserTestRunnerConfigDsl.testsLocation].
+     *
+     * The intended use case when this provider should be consumed by user code is to post-process default test bundle
+     * or replace some parts of it in a different task and producing new instance of [KotlinJsTestsLocation].
+     * The new location instance should be later set via [BrowserTestRunnerConfigDsl.testsLocation].
      */
-    val defaultTestsLocation: Provider<out KotlinJsTestsLocation>
+    val defaultTestsLocationProvider: Provider<out KotlinJsTestsLocation>
 
     /** Chromium-specific browser test runner config */
     interface ChromiumTestRunnerDsl : KotlinBrowserTestRunnerDsl

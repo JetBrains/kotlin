@@ -56,7 +56,7 @@ class KotlinHttpServerForBrowserJsTestsTest {
                     browser {
                         test {
                             // accessing to default tests location should trigger registration of http server service
-                            it.defaultTestsLocation.get()
+                            it.defaultTestsLocationProvider.get()
                         }
                     }
                 }
@@ -84,7 +84,7 @@ class KotlinHttpServerForBrowserJsTestsTest {
 
 
         // create directory simulating that bundle task got executed, so http server can safely start
-        val defaultTestLocation = jsIrTarget.browser.test.defaultTestsLocation.get()
+        val defaultTestLocation = jsIrTarget.browser.test.defaultTestsLocationProvider.get()
         defaultTestLocation.bundleLocation.get().asFile.mkdirs()
 
         try {
@@ -104,7 +104,7 @@ class KotlinHttpServerForBrowserJsTestsTest {
                     browser {
                         test {
                             // accessing to default tests location should trigger registration of http server service
-                            it.defaultTestsLocation.get()
+                            it.defaultTestsLocationProvider.get()
                         }
                     }
                 }
@@ -131,7 +131,7 @@ class KotlinHttpServerForBrowserJsTestsTest {
                     browser {
                         test {
                             // accessing to default tests location should trigger registration of http server service
-                            it.defaultTestsLocation.get()
+                            it.defaultTestsLocationProvider.get()
                         }
                     }
                 }
@@ -144,7 +144,7 @@ class KotlinHttpServerForBrowserJsTestsTest {
         assertNotNull(service, "Build service should be registered")
 
         // create directory simulating that bundle task got executed, so http server can safely start
-        val defaultTestLocation = jsIrTarget.browser.test.defaultTestsLocation.get()
+        val defaultTestLocation = jsIrTarget.browser.test.defaultTestsLocationProvider.get()
         val bundleDir = defaultTestLocation.bundleLocation.get()
         bundleDir.asFile.mkdirs()
 

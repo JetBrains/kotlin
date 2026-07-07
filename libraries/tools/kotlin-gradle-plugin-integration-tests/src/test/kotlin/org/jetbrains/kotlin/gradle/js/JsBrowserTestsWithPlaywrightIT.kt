@@ -107,7 +107,7 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
             // replace default tests location with post-processed one
             buildScriptInjection {
                 val jsTarget = kotlinMultiplatform.targets.filterIsInstance<KotlinJsIrTarget>().single()
-                val defaultTestsLocation = jsTarget.browser.test.defaultTestsLocation
+                val defaultTestsLocation = jsTarget.browser.test.defaultTestsLocationProvider
 
                 val postProcess = project.tasks.register(
                     "postProcessTestBundle",

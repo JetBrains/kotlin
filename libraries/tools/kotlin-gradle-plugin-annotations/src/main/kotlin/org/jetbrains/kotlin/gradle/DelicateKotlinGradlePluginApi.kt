@@ -10,6 +10,10 @@ package org.jetbrains.kotlin.gradle
  * API marked with this annotation most likely is not suitable for everyday use.
  * Yet it is useful and covers some corner cases that may be required by a small number of users.
  *
+ * Delicate doesn't mean unstable.
+ * Stable delicate API will have to go through the same deprecation cycle as any other stable API.
+ * Though delicate API can also be experimental, and can be changed without notice.
+ *
  * If you're unsure about using this API, feel free to ask in Kotlin Slack or Kotlin issue tracker.
  */
 @RequiresOptIn(
