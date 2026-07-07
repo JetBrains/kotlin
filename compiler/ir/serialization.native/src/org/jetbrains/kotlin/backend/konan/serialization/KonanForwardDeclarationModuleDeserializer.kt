@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -77,7 +77,7 @@ internal class KonanForwardDeclarationModuleDeserializer(
                 name = Name.identifier(signature.declarationFqName),
                 origin = FORWARD_DECLARATION_ORIGIN,
                 kind = kind.classKind,
-                visibility = DescriptorVisibilities.PUBLIC,
+                visibility = Visibilities.Public,
                 modality = Modality.FINAL,
                 isExternal = false,
                 isCompanion = false,

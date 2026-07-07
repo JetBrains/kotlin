@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.guessName
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -68,7 +68,7 @@ internal class MissingDeclarationStubGenerator(
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
             name = symbol.guessName(),
-            visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+            visibility = Visibilities.DEFAULT_VISIBILITY,
             symbol = symbol,
             kind = ClassKind.CLASS,
             modality = Modality.OPEN,
@@ -84,7 +84,7 @@ internal class MissingDeclarationStubGenerator(
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
             name = symbol.guessName(),
-            visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+            visibility = Visibilities.DEFAULT_VISIBILITY,
             isInline = false,
             isExpect = false,
             returnType = nothingType,
@@ -104,7 +104,7 @@ internal class MissingDeclarationStubGenerator(
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
             name = SpecialNames.INIT,
-            visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+            visibility = Visibilities.DEFAULT_VISIBILITY,
             isInline = false,
             isExpect = false,
             returnType = nothingType,
@@ -120,7 +120,7 @@ internal class MissingDeclarationStubGenerator(
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
             name = symbol.guessName(),
-            visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+            visibility = Visibilities.DEFAULT_VISIBILITY,
             modality = Modality.FINAL,
             symbol = symbol,
             isVar = false,
@@ -148,7 +148,7 @@ internal class MissingDeclarationStubGenerator(
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
             name = symbol.guessName(),
-            visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+            visibility = Visibilities.DEFAULT_VISIBILITY,
             symbol = symbol,
             isActual = true,
             expandedType = nothingType,
@@ -174,7 +174,7 @@ internal class MissingDeclarationStubGenerator(
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
             name = symbol.guessName(),
-            visibility = DescriptorVisibilities.PRIVATE,
+            visibility = Visibilities.Private,
             symbol = symbol,
             type = nothingType,
             isFinal = false,

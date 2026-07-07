@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
@@ -1299,7 +1298,7 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(field, parent, FieldFlags.encode(field)))
             .setNameType(serializeNameAndType(field.name, field.type))
         if (!(settings.bodiesOnlyForInlines &&
-                    (field.parent as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.LOCAL &&
+                    (field.parent as? IrDeclarationWithVisibility)?.visibility != Visibilities.Local &&
                     (field.initializer?.expression !is IrConst))
         ) {
             val initializer = field.initializer?.expression
@@ -1480,7 +1479,7 @@ open class IrFileSerializer(
     private fun skipIfPrivate(declaration: IrDeclaration) =
         settings.publicAbiOnly
                 && !isInsideInline
-                && (declaration as? IrDeclarationWithVisibility)?.let { !it.visibility.isPublicAPI && it.visibility != INTERNAL } == true
+                && (declaration as? IrDeclarationWithVisibility)?.let { !it.visibility.isPublicAPI && it.visibility != Visibilities.Internal } == true
                 // Always keep private interfaces as they can be part of public type hierarchies.
                 && (declaration as? IrClass)?.isInterface != true
 
@@ -1489,7 +1488,7 @@ open class IrFileSerializer(
         require(parent is IrClass)
         if (member is IrTypeAlias) return false
         if (backendSpecificSerializeAllMembers(parent)) return true
-        if (settings.bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != DescriptorVisibilities.LOCAL)
+        if (settings.bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != Visibilities.Local)
             return false
         if (skipIfPrivate(member)) {
             return false

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.signature
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
@@ -77,7 +77,7 @@ class PublicIdSignatureComputer(
             }
 
             private val IrDeclarationWithVisibility.isTopLevelPrivate: Boolean
-                get() = visibility == DescriptorVisibilities.PRIVATE && !checkIfPlatformSpecificExport() &&
+                get() = visibility == Visibilities.Private && !checkIfPlatformSpecificExport() &&
                         (parent is IrPackageFragment || parent.isFacadeClass)
 
             override fun visitClass(declaration: IrClass) {

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.common.serialization.mangle.ir
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.common.serialization.mangle.publishedApiAnnotation
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
@@ -47,7 +47,7 @@ abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : Kot
         override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): Boolean {
             val visibility = (declaration as? IrDeclarationWithVisibility)?.visibility
 
-            if (visibility == DescriptorVisibilities.LOCAL)
+            if (visibility == Visibilities.Local)
                 return false
 
             return declaration.parent.accept(this, data)
@@ -83,7 +83,7 @@ abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : Kot
      * Is used to link libraries with ABI level <= 1.5.0
      */
     private inner class CompatibleChecker : IrVisitor<Boolean, Nothing?>() {
-        private fun IrDeclaration.isExported(annotations: List<IrAnnotation>, visibility: DescriptorVisibility?): Boolean {
+        private fun IrDeclaration.isExported(annotations: List<IrAnnotation>, visibility: Visibility?): Boolean {
             val speciallyExported = annotations.hasAnnotation(publishedApiAnnotation) || isPlatformSpecificExported()
 
             val selfExported = speciallyExported || visibility == null || visibility.isPubliclyVisible()
@@ -91,7 +91,7 @@ abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : Kot
             return selfExported && parent.accept(this@CompatibleChecker, null)
         }
 
-        private fun DescriptorVisibility.isPubliclyVisible(): Boolean = isPublicAPI || this === DescriptorVisibilities.INTERNAL
+        private fun Visibility.isPubliclyVisible(): Boolean = isPublicAPI || this === Visibilities.Internal
 
         override fun visitElement(element: IrElement, data: Nothing?): Boolean = error("Should bot reach here ${element.render()}")
 

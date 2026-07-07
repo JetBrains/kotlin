@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.D
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId.Companion.declarationId
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -468,7 +468,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     val owner = symbol.owner as IrDeclaration
                     owner.origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION
                             // Handle the case when the overridden declaration became private.
-                            && (owner as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.PRIVATE
+                            && (owner as? IrDeclarationWithVisibility)?.visibility != Visibilities.Private
                 }.compact()
             }
         }
