@@ -4,20 +4,19 @@
  */
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 internal fun Project.limitLanguageAndApiVersions(version: KotlinVersion) {
     val projectsDependingOnStableStdlib: Array<String> = CompilerModules.projectsDependingOnStableStdlib
-    val kotlinApiVersionForProjectsDependingOnStableStdlib: String by rootProject.extra
+    val kotlinApiVersionForProjectsDependingOnStableStdlib: Provider<String> = project.providers.gradleProperty("kotlinApiVersionForProjectsDependingOnStableStdlib")
 
     tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
             if (project.path !in projectsDependingOnStableStdlib ||
-                KotlinVersion.fromVersion(kotlinApiVersionForProjectsDependingOnStableStdlib) > version
+                KotlinVersion.fromVersion(kotlinApiVersionForProjectsDependingOnStableStdlib.get()) > version
             ) {
                 // check the `configureKotlinCompilationOptions` in `common-configurations.gradle.kts` out
                 apiVersion.set(version)

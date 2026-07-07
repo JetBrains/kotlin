@@ -105,7 +105,7 @@ fun Project.configureJavaCompile() {
     }
 }
 
-val kotlinApiVersionForProjectsDependingOnStableStdlib: String by rootProject.extra
+val kotlinApiVersionForProjectsDependingOnStableStdlib: Provider<String> = project.providers.gradleProperty("kotlinApiVersionForProjectsDependingOnStableStdlib")
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
@@ -142,7 +142,7 @@ fun Project.configureKotlinCompilationOptions() {
                 freeCompilerArgs.add("-Xskip-prerelease-check")
 
                 if (project.path in CompilerModules.projectsDependingOnStableStdlib) {
-                    apiVersion.set(KotlinVersion.fromVersion(kotlinApiVersionForProjectsDependingOnStableStdlib))
+                    apiVersion.set(kotlinApiVersionForProjectsDependingOnStableStdlib.map { KotlinVersion.fromVersion(it) })
                 }
             }
 
