@@ -160,7 +160,7 @@ private fun generateArgumentsClass(
     dir.mkdirs()
     val file = dir.resolve(info.className + ".kt")
     val newText = buildString { SmartPrinter(this).generateArgumentsClass(level, parent, info) }
-    GeneratorsFileUtil.writeFileIfContentChanged(file, newText, logNotChanged = false)
+    GeneratorsFileUtil.writeFileIfContentChanged(file, newText, logNotChanged = false, forbidGenerationOnTeamcity = false)
 }
 
 private fun SmartPrinter.generateArgumentsClass(
