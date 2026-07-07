@@ -14,7 +14,7 @@ Ask the user whether they want to **disable** the generation check (for branchin
 
 ## Disable (set `forbidGenerationOnTeamcity = false`)
 
-For each `GeneratorsFileUtil.writeFileIfContentChanged(...)` call in the 2 files below, ensure it has `forbidGenerationOnTeamcity = false`. Depending on the current state, either add the parameter or swap `true` to `false`.
+For each `GeneratorsFileUtil.writeFileIfContentChanged(...)` call in the 3 files below, ensure it has `forbidGenerationOnTeamcity = false`. Depending on the current state, either add the parameter or swap `true` to `false`.
 
 Use `replace_text_in_file` with `forbidGenerationOnTeamcity = true` -> `forbidGenerationOnTeamcity = false` as a `replaceAll` replacement in each file. If no match is found (first-time application), add the parameter instead — see the "First-time" examples below.
 
@@ -36,6 +36,14 @@ GeneratorsFileUtil.writeFileIfContentChanged(versionsFilePath.toFile(), sortedVe
 GeneratorsFileUtil.writeFileIfContentChanged(versionsFilePath.toFile(), sortedVersionNames, forbidGenerationOnTeamcity = false)
 ```
 
+**File 3:** `compiler/cli/cli-arguments-generator/src/org/jetbrains/kotlin/cli/arguments/generator/Main.kt` — **1 call** inside `generateArgumentsClass()`:
+```
+// First-time:
+GeneratorsFileUtil.writeFileIfContentChanged(file, newText, logNotChanged = false)
+// Target state:
+GeneratorsFileUtil.writeFileIfContentChanged(file, newText, logNotChanged = false, forbidGenerationOnTeamcity = false)
+```
+
 ### How to apply
 
 Use JetBrains MCP `replace_text_in_file` for each replacement. All replacements are independent — make them in parallel.
@@ -49,9 +57,9 @@ Use JetBrains MCP `replace_text_in_file` for each replacement. All replacements 
 
 ## Revert (set `forbidGenerationOnTeamcity = true`)
 
-After branching is complete, re-enable the check by swapping `false` to `true` in all call sites across the 2 files.
+After branching is complete, re-enable the check by swapping `false` to `true` in all call sites across the 3 files.
 
-Use `replace_text_in_file` with `forbidGenerationOnTeamcity = false` -> `forbidGenerationOnTeamcity = true` as a `replaceAll` replacement in each of the 2 files.
+Use `replace_text_in_file` with `forbidGenerationOnTeamcity = false` -> `forbidGenerationOnTeamcity = true` as a `replaceAll` replacement in each of the 3 files.
 
 ### Commit pattern (revert)
 ```
@@ -79,5 +87,5 @@ Use `replace_text_in_file` with `replaceAll: true` to swap all occurrences at on
 
 ## Verification
 
-After all replacements (disable or revert), run JetBrains MCP `get_file_problems` with `errorsOnly: false` on all 2 files. Any errors related to `forbidGenerationOnTeamcity` or the modified lines indicate a problem. Pre-existing warnings (unused imports, whitespace style) can be ignored.
+After all replacements (disable or revert), run JetBrains MCP `get_file_problems` with `errorsOnly: false` on all 3 files. Any errors related to `forbidGenerationOnTeamcity` or the modified lines indicate a problem. Pre-existing warnings (unused imports, whitespace style) can be ignored.
 
