@@ -17,7 +17,7 @@ internal class WasmAddContinuationToNonLocalSuspendFunctionsLowering(override va
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrSimpleFunction || !declaration.isSuspend) return null
         return if (context.wasmUseStackSwitching) {
-            listOf(transformSuspendFunction(context, declaration) { it.returnType })
+            listOf(transformSuspendFunction(context, declaration) { it })
         } else {
             listOf(transformSuspendFunction(context, declaration))
         }

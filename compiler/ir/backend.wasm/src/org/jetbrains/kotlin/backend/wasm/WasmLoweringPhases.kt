@@ -199,6 +199,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::WasmAddContinuationToNonLocalSuspendFunctionsLowering,
     ::WasmAddContinuationToFunctionCallsLowering,
+    ::WasmAddFunctionSupertypeToSuspendFunctionLowering,
     ::GenerateMainFunctionWrappers,
 
     // We need to generate nothing value exceptions after suspend
