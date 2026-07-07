@@ -37,7 +37,7 @@ fun IrFactory.createIrClassFromDescriptor(
         symbol: IrClassSymbol,
         descriptor: ClassDescriptor,
         name: Name = descriptor.name,
-        visibility: DescriptorVisibility = descriptor.visibility,
+        visibility: Visibility = descriptor.visibility.delegate,
         modality: Modality = descriptor.modality
 ): IrClass = createClass(
     startOffset = startOffset,

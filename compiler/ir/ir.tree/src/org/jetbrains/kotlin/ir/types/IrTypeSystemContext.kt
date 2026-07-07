@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -606,12 +605,12 @@ fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
                 is IrField -> current.parent
                 is IrClass -> when {
                     current.isInner -> current.parent as IrClass
-                    current.visibility == DescriptorVisibilities.LOCAL -> current.parent
+                    current.visibility == Visibilities.Local -> current.parent
                     else -> null
                 }
                 is IrConstructor -> current.parent as IrClass
                 is IrFunction ->
-                    if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null)
+                    if (current.visibility == Visibilities.Local || current.dispatchReceiverParameter != null)
                         current.parent
                     else
                         null

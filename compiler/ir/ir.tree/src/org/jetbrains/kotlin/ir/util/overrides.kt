@@ -29,7 +29,7 @@ fun SymbolTable.declareSimpleFunctionWithOverrides(
                 endOffset = endOffset,
                 origin = origin,
                 name = nameProvider.nameForDeclaration(this),
-                visibility = visibility,
+                visibility = visibility.delegate,
                 isInline = isInline,
                 isExpect = isExpect,
                 returnType = null,

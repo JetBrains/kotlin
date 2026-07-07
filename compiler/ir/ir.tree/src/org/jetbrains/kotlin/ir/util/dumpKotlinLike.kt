@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.ir.util
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -142,7 +142,7 @@ interface CustomKotlinLikeDumpStrategy {
     fun nameOf(container: IrDeclaration?, declaration: IrDeclarationWithName): String = declaration.name.asString()
 
     data class Modifiers(
-        val visibility: DescriptorVisibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+        val visibility: Visibility = Visibilities.DEFAULT_VISIBILITY,
         val isExpect: Boolean = false,
         val modality: Modality? = null,
         val isExternal: Boolean = false,
@@ -431,9 +431,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             p(isOperator, "operator")
         }
 
-    private fun printVisibility(visibility: DescriptorVisibility) {
+    private fun printVisibility(visibility: Visibility) {
         // TODO don't print visibility if it's not changed in override?
-        val shouldBePrinted = visibility != DescriptorVisibilities.DEFAULT_VISIBILITY ||
+        val shouldBePrinted = visibility != Visibilities.DEFAULT_VISIBILITY ||
                 options.visibilityPrintingStrategy == VisibilityPrintingStrategy.ALWAYS
 
         p(condition = shouldBePrinted, visibility.name)

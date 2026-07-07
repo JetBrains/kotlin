@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns.Companion.BUILTIN_OPERATOR
@@ -215,7 +215,7 @@ class IrSyntheticProvider(
             endOffset = UNDEFINED_OFFSET,
             origin = origin,
             name = name,
-            visibility = DescriptorVisibilities.PUBLIC,
+            visibility = Visibilities.Public,
             isInline = false,
             isExpect = false,
             returnType = returnType,

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.*
@@ -260,10 +260,10 @@ private inline fun IrDeclaration.isLocalImpl(isLocal: (IrDeclarationWithVisibili
 }
 
 val IrDeclaration.isLocal: Boolean
-    get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL }
+    get() = isLocalImpl { it.visibility == Visibilities.Local }
 
 val IrDeclaration.isOriginallyLocal: Boolean
-    get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL || it.isOriginallyLocalDeclaration }
+    get() = isLocalImpl { it.visibility == Visibilities.Local || it.isOriginallyLocalDeclaration }
 
 @ObsoleteDescriptorBasedAPI
 val IrDeclaration.module get() = this.descriptor.module

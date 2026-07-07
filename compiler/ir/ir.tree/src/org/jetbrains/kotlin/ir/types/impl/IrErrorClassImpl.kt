@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.types.impl
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -55,7 +55,7 @@ val IrErrorClassImpl: IrClass = IrFactoryImpl.createClass(
     symbol = IrClassSymbolImpl(),
     name = Name.special("<error>"),
     kind = ClassKind.CLASS,
-    visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+    visibility = Visibilities.DEFAULT_VISIBILITY,
     modality = Modality.FINAL,
     source = SourceElement.NO_SOURCE,
 ).apply {
@@ -67,7 +67,7 @@ val IrErrorClassImpl: IrClass = IrFactoryImpl.createClass(
     addConstructor {
         startOffset = SYNTHETIC_OFFSET
         endOffset = SYNTHETIC_OFFSET
-        visibility = DescriptorVisibilities.PUBLIC
+        visibility = Visibilities.Public
         isPrimary = true
     }
 }

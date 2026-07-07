@@ -190,7 +190,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         origin: IrDeclarationOrigin,
         declaration: PropertyDescriptor,
         type: IrType,
-        visibility: DescriptorVisibility?,
+        visibility: Visibility?,
         symbol: IrFieldSymbol,
     ): IrField {
         return irFactory.createField(
@@ -198,7 +198,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
             endOffset = endOffset,
             origin = origin,
             name = nameProvider.nameForDeclaration(declaration),
-            visibility = visibility ?: symbol.descriptor.visibility,
+            visibility = visibility ?: symbol.descriptor.visibility.delegate,
             symbol = symbol,
             type = type,
             isFinal = !symbol.descriptor.isVar,
@@ -247,7 +247,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
             endOffset = endOffset,
             origin = origin,
             name = nameProvider.nameForDeclaration(declaration),
-            visibility = declaration.visibility,
+            visibility = declaration.visibility.delegate,
             modality = declaration.modality,
             symbol = symbol,
             isVar = declaration.isVar,

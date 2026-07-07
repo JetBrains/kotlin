@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -91,9 +91,9 @@ abstract class FakeOverrideBuilderStrategy {
 
     private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
         return when {
-            DescriptorVisibilities.isPrivate(original.visibility) -> false
-            original.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
-            original.visibility == DescriptorVisibilities.INTERNAL -> {
+            Visibilities.isPrivate(original.visibility) -> false
+            original.visibility == Visibilities.InvisibleFake -> false
+            original.visibility == Visibilities.Internal -> {
                 val thisModule = clazz.getPackageFragment().moduleDescriptor
                 val memberModule = original.getPackageFragment().moduleDescriptor
 

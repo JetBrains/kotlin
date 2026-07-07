@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -277,7 +277,7 @@ abstract class SymbolTableExtension<
         origin: IrDeclarationOrigin,
         declaration: Property,
         type: IrType,
-        visibility: DescriptorVisibility? = null,
+        visibility: Visibility? = null,
         fieldFactory: (IrFieldSymbol) -> IrField = {
             defaultFieldFactory(
                 startOffset,
@@ -344,7 +344,7 @@ abstract class SymbolTableExtension<
         origin: IrDeclarationOrigin,
         declaration: Property,
         type: IrType,
-        visibility: DescriptorVisibility?,
+        visibility: Visibility?,
         symbol: IrFieldSymbol,
     ): IrField
 

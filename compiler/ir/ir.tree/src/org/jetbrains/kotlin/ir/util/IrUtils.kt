@@ -755,7 +755,7 @@ val IrFunctionReference.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.i
 val IrFunction.isOverridable get() = this is IrSimpleFunction && this.isOverridable
 
 val IrSimpleFunction.isOverridable: Boolean
-    get() = visibility != DescriptorVisibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
+    get() = visibility != Visibilities.Private && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
 
 val IrFunction.isOverridableOrOverrides: Boolean get() = this is IrSimpleFunction && (isOverridable || overriddenSymbols.isNotEmpty())
 
@@ -1068,7 +1068,7 @@ object SetDeclarationsParentVisitor : IrVisitor<Unit, IrDeclarationParent>() {
 
 
 val IrFunction.isStatic: Boolean
-    get() = parent is IrClass && dispatchReceiverParameter == null && this.visibility != DescriptorVisibilities.LOCAL
+    get() = parent is IrClass && dispatchReceiverParameter == null && this.visibility != Visibilities.Local
 
 val IrDeclaration.isTopLevel: Boolean
     get() {
@@ -1253,7 +1253,7 @@ fun IrFactory.createStaticFunctionWithReceivers(
     dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
     origin: IrDeclarationOrigin = oldFunction.origin,
     modality: Modality = Modality.FINAL,
-    visibility: DescriptorVisibility = oldFunction.visibility,
+    visibility: Visibility = oldFunction.visibility,
     isFakeOverride: Boolean = oldFunction.isFakeOverride,
     copyMetadata: Boolean = true,
     typeParametersFromContext: List<IrTypeParameter> = listOf(),

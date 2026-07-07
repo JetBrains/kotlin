@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -230,7 +230,7 @@ class IrFakeOverrideBuilder(
 
         // because of binary incompatible changes, it's possible to have private member colliding with fake override
         // In that case we shouldn't generate fake override, but also shouldn't mark them as overridden
-        if (!DescriptorVisibilities.isPrivate(fromCurrent.visibility)) {
+        if (!Visibilities.isPrivate(fromCurrent.visibility)) {
             fromCurrent.overriddenSymbols = overridden.memoryOptimizedMap { it.original.symbol }
         }
 
@@ -248,7 +248,7 @@ class IrFakeOverrideBuilder(
                 continue
             }
 
-            val result = DescriptorVisibilities.compare(member.override.visibility, candidate.override.visibility)
+            val result = Visibilities.compare(member.override.visibility, candidate.override.visibility)
             if (result != null && result < 0) {
                 member = candidate
             }
@@ -315,13 +315,13 @@ class IrFakeOverrideBuilder(
 
     private fun IrSimpleFunction.updateAccessorModalityAndVisibility(
         newModality: Modality,
-        newVisibility: DescriptorVisibility
+        newVisibility: Visibility
     ): IrSimpleFunction? {
         require(this is IrFunctionWithLateBinding) {
             "Unexpected fake override accessor kind: $this"
         }
         // For descriptors it gets INVISIBLE_FAKE.
-        if (DescriptorVisibilities.isPrivate(this.visibility)) return null
+        if (Visibilities.isPrivate(this.visibility)) return null
 
         this.visibility = newVisibility
         this.modality = newModality
@@ -395,7 +395,7 @@ class IrFakeOverrideBuilder(
     }
 
     private fun isVisibilityMoreSpecific(a: IrOverridableMember, b: IrOverridableMember): Boolean {
-        val result = DescriptorVisibilities.compare(a.visibility, b.visibility)
+        val result = Visibilities.compare(a.visibility, b.visibility)
         return result == null || result >= 0
     }
 

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -83,7 +83,7 @@ inline fun IrClass.addField(builder: IrFieldBuilder.() -> Unit) =
         declarations.add(field)
     }
 
-fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE): IrField =
+fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: Visibility = Visibilities.Private): IrField =
     addField {
         name = fieldName
         type = fieldType
@@ -93,7 +93,7 @@ fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: Descri
 fun IrClass.addField(
     fieldName: String,
     fieldType: IrType,
-    fieldVisibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE
+    fieldVisibility: Visibility = Visibilities.Private
 ): IrField =
     addField(Name.identifier(fieldName), fieldType, fieldVisibility)
 
@@ -215,7 +215,7 @@ inline fun IrProperty.addBackingField(builder: IrFieldBuilder.() -> Unit = {}): 
     IrFieldBuilder().run {
         name = this@addBackingField.name
         origin = IrDeclarationOrigin.PROPERTY_BACKING_FIELD
-        visibility = DescriptorVisibilities.PRIVATE
+        visibility = Visibilities.Private
         builder()
         factory.buildField(this).also { field ->
             this@addBackingField.backingField = field
@@ -284,7 +284,7 @@ fun IrClass.addFunction(
     name: String,
     returnType: IrType,
     modality: Modality = Modality.FINAL,
-    visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
+    visibility: Visibility = Visibilities.Public,
     isStatic: Boolean = false,
     isSuspend: Boolean = false,
     isFakeOverride: Boolean = false,
