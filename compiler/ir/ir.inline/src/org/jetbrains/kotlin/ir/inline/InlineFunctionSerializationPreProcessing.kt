@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -56,7 +56,7 @@ class InlineFunctionSerializationPreProcessing(
     }
 
     private fun IrSimpleFunction.convertToPrivateTopLevel(): IrSimpleFunction {
-        visibility = DescriptorVisibilities.PRIVATE
+        visibility = Visibilities.Private
         correspondingPropertySymbol = null
         parent = file
 

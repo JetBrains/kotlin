@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.validation.checkers.context
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -65,7 +65,7 @@ class CheckerContext(
     }
 
     private fun IrElement.shouldHaveOuterScopesVisible(): Boolean =
-        this is IrClass && !this.isInner && this.visibility != DescriptorVisibilities.LOCAL
+        this is IrClass && !this.isInner && this.visibility != Visibilities.Local
 
     fun withinAnnotationUsageSubTree(block: () -> Unit) {
         if (withinAnnotationUsageSubTree) {

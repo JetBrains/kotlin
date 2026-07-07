@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -442,7 +442,7 @@ class IrValidatorTest {
         val function1 = IrFactoryImpl.buildFun {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }
         file1.addChild(function1)
         val file2 = createIrFile("b.kt")
@@ -483,14 +483,14 @@ class IrValidatorTest {
         val file1 = createIrFile("a.kt")
         val privateClass = IrFactoryImpl.buildClass {
             name = Name.identifier("PrivateClass")
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }
         val constructor = IrFactoryImpl.createConstructor(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.DEFINED,
             name = SpecialNames.INIT,
-            visibility = DescriptorVisibilities.PRIVATE,
+            visibility = Visibilities.Private,
             isInline = false,
             isExpect = false,
             returnType = null,
@@ -540,7 +540,7 @@ class IrValidatorTest {
         val file1 = createIrFile("a.kt")
         val privateProperty = IrFactoryImpl.buildProperty {
             name = Name.identifier("privateProperty")
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }
         val file2 = createIrFile("b.kt")
         val function = IrFactoryImpl.buildFun {
@@ -588,7 +588,7 @@ class IrValidatorTest {
         val file1 = createIrFile("a.kt")
         val klass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyClass")
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }
         file1.addChild(klass)
         val file2 = createIrFile("b.kt")
@@ -629,7 +629,7 @@ class IrValidatorTest {
         val field = IrFactoryImpl.buildField {
             name = Name.identifier("myField")
             type = TestIrBuiltins.anyType
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }
         field.initializer = IrFactoryImpl.createExpressionBody(12, 43, IrGetValueImpl(13, 42, vp.symbol))
         file.addChild(field)
@@ -845,7 +845,7 @@ class IrValidatorTest {
             name = Name.identifier("MyClass")
         }.let { clazz ->
             file.addChild(clazz)
-            clazz.addField("memberField").also { it.visibility = DescriptorVisibilities.PRIVATE}
+            clazz.addField("memberField").also { it.visibility = Visibilities.Private}
         }
 
         buildFun {
@@ -914,7 +914,7 @@ class IrValidatorTest {
         val field = IrFactoryImpl.buildField {
             name = Name.identifier("myField")
             type = IrSimpleTypeImpl(tp.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }
         file.addChild(field)
         testValidation(
@@ -1706,7 +1706,7 @@ class IrValidatorTest {
         val field = IrFactoryImpl.buildField {
             name = Name.identifier("field")
             type = TestIrBuiltins.intType
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }
         val variable = IrVariableImpl(
             startOffset = UNDEFINED_OFFSET,
@@ -1842,7 +1842,7 @@ class IrValidatorTest {
         val privateFunction = IrFactoryImpl.buildFun {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }.apply {
             parent = klass
         }
@@ -1860,7 +1860,7 @@ class IrValidatorTest {
         val publicFunction = IrFactoryImpl.buildFun {
             name = Name.identifier("bar")
             returnType = TestIrBuiltins.unitType
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }.apply {
             parent = klass
         }
@@ -1877,7 +1877,7 @@ class IrValidatorTest {
 
         val privateProperty = IrFactoryImpl.buildProperty {
             name = Name.identifier("p1")
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }.apply {
             parent = klass
         }
@@ -1893,7 +1893,7 @@ class IrValidatorTest {
 
         val publicProperty = IrFactoryImpl.buildProperty {
             name = Name.identifier("p2")
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }.apply {
             parent = klass
         }

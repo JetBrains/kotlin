@@ -119,7 +119,7 @@ internal fun checkVisibility(
 
     val referencedDeclaration = referencedDeclarationSymbol.owner as? IrDeclarationWithVisibility ?: return
     val classOfReferenced = referencedDeclaration.parentClassOrNull
-    val visibility = referencedDeclaration.visibility.delegate
+    val visibility = referencedDeclaration.visibility
 
     val effectiveVisibility = visibility.toEffectiveVisibilityOrNull(
         container = classOfReferenced?.symbol,

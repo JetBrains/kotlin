@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities.isPrivate
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.IrElement
@@ -268,7 +267,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
         if (explicitApiMode == ExplicitApiMode.DISABLED) return
 
         for (accessor in accessors) {
-            if (accessor.accessorFunction.visibility == DescriptorVisibilities.PUBLIC) {
+            if (accessor.accessorFunction.visibility == Visibilities.Public) {
                 val message = buildString {
                     append("Public synthetic accessor '${accessor.accessorFunction.name}' was generated in explicit API mode. ")
                     append("This accessor is a part of the library ABI now.")
@@ -324,19 +323,19 @@ private class GeneratedAccessor(
 ) {
     val inlineFunctions: MutableSet<IrFunction> = hashSetOf()
 
-    fun computeNarrowedVisibility(): DescriptorVisibility {
+    fun computeNarrowedVisibility(): Visibility {
         for (inlineFunction in inlineFunctions) {
             val inlineFunctionIsEffectivelyPublicAbi = inlineFunction.parentsWithSelf
                 .filterIsInstance<IrDeclarationWithVisibility>()
                 .all { declaration ->
-                    val visibility = declaration.visibility.delegate
+                    val visibility = declaration.visibility
                     visibility.isPublicAPI || (visibility is Visibilities.Internal && declaration.isPublishedApi())
                 }
 
             if (inlineFunctionIsEffectivelyPublicAbi)
-                return DescriptorVisibilities.PUBLIC
+                return Visibilities.Public
         }
 
-        return DescriptorVisibilities.INTERNAL
+        return Visibilities.Internal
     }
 }

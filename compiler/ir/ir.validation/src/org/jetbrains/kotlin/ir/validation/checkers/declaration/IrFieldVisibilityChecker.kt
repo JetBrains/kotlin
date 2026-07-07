@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.validation.checkers.declaration
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
@@ -25,7 +25,7 @@ object IrFieldVisibilityChecker : IrElementChecker<IrField>(IrField::class) {
                 hasAnnotation(JVM_FIELD_CLASS_ID)
 
     override fun check(element: IrField, context: CheckerContext) {
-        if (element.visibility != DescriptorVisibilities.PRIVATE && !element.isExemptFromValidation) {
+        if (element.visibility != Visibilities.Private && !element.isExemptFromValidation) {
             context.error(element, "Kotlin fields are expected to always be private")
         }
     }

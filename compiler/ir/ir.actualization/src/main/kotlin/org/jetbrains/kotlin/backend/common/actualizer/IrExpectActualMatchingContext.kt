@@ -164,7 +164,7 @@ internal abstract class IrExpectActualMatchingContext(
             onTypeAlias = { Modality.FINAL }
         )
     override val ClassLikeSymbolMarker.visibility: Visibility
-        get() = safeAsIr<IrDeclarationWithVisibility>()!!.visibility.delegate
+        get() = safeAsIr<IrDeclarationWithVisibility>()!!.visibility
 
     override val CallableSymbolMarker.modality: Modality?
         get() = when (this) {
@@ -177,7 +177,7 @@ internal abstract class IrExpectActualMatchingContext(
     override val CallableSymbolMarker.visibility: Visibility
         get() = when (this) {
             is IrEnumEntrySymbol -> Visibilities.Public
-            is IrSymbol -> (owner as IrDeclarationWithVisibility).visibility.delegate
+            is IrSymbol -> (owner as IrDeclarationWithVisibility).visibility
             else -> shouldNotBeCalled()
         }
 
