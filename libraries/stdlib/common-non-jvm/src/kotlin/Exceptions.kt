@@ -91,6 +91,5 @@ internal actual open class ExceptionInInitializerError : Error {
 }
 
 internal actual open class NoClassDefFoundError : Error {
-    actual constructor() : super()
     actual constructor(message: String?) : super(message)
 }

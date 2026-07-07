@@ -50,7 +50,6 @@ fun box(): String {
     } catch (e: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "NATIVE" -> "Could not initialize file"
                 "JS_IR", "JS_IR_ES6" -> "Could not initialize class C"
                 else -> "Could not initialize class foo.C"
             }
@@ -77,7 +76,6 @@ fun box(): String {
     } catch (e: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "NATIVE" -> "Could not initialize file"
                 "JS_IR", "JS_IR_ES6" -> "Could not initialize class Child"
                 else -> "Could not initialize class foo.Child"
             }
@@ -92,7 +90,6 @@ fun box(): String {
     } catch (e: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "NATIVE" -> "Could not initialize file"
                 "JS_IR", "JS_IR_ES6" -> "Could not initialize class Parent"
                 else -> "Could not initialize class foo.Parent"
             }
@@ -115,7 +112,6 @@ fun box(): String {
     } catch (e: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "NATIVE" -> "Could not initialize file"
                 "JS_IR", "JS_IR_ES6" -> "Could not initialize class ThrowsMyError"
                 else -> "Could not initialize class foo.ThrowsMyError"
             }

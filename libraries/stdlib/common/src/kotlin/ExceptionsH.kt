@@ -129,7 +129,6 @@ internal expect class ExceptionInInitializerError : Error {
 }
 
 internal expect class NoClassDefFoundError : Error {
-    constructor()
     constructor(message: String?)
 }
 
