@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.utils.exceptions.logErrorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 /**
- * Represents a dot-qualified expression for member/extention access.
+ * Represents a dot-qualified expression for member/extension access.
  *
  * ### Example:
  *

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Represents an element that ows annotations (the element may or may not be the parent for the annotations).
+ * Represents an element that owns annotations (the element may or may not be the parent for the annotations).
  *
  * @see KtAnnotationsContainer
  */

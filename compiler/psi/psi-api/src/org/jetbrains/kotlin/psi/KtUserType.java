@@ -27,26 +27,25 @@ import java.util.List;
  *
  * <h3>Analysis API Resolver Notes:</h3>
  *
- * <p>Resolution of a {@link KtUserType} delegates to its {@link #getReferenceExpression() referenceExpression},
- * so calling {@code resolveSymbol()} returns the same symbol as resolving the inner simple-name expression.
+ * <p>Resolution of a {@link KtUserType} delegates to its {@link #getReferenceExpression() referenceExpression}, so calling
+ * {@code resolveSymbol()} returns the same symbol as resolving the inner simple-name expression.
  *
  * <p>For a well-formed type, the result is a {@code KaClassifierSymbol} (a class, type alias, or type parameter):
  *
  * <pre>{@code
  * val list: List<String> = listOf()
- * //        ^^^^^^^^^^^^  resolves to `kotlin.collections.List`
- * //             ^^^^^^   resolves to `kotlin.String`
+ * //        ^^^^^^^^^^^^  resolves to kotlin.collections.List
+ * //             ^^^^^^   resolves to kotlin.String
  * }</pre>
  *
- * <p><b>Note:</b> a {@link KtUserType} may also resolve to a {@code KaPackageSymbol} when it appears as the
- * package qualifier of a fully qualified nested type. In that case the user type is not a classifier reference
- * itself but a package portion of one:
+ * <p><b>Note:</b> a {@link KtUserType} may also resolve to a {@code KaPackageSymbol} when it appears as the package qualifier of a fully
+ * qualified nested type. In that case the user type is not a classifier reference itself but a package portion of one:
  *
  * <pre>{@code
  * val foo: one.two.TopLevel = ...
- * //       ^^^^^^^           resolves to the package `one.two`
- * //       ^^^                 resolves to the package `one`
- * //               ^^^^^^^^  resolves to the class `one.two.TopLevel`
+ * //       ^^^^^^^           resolves to the package one.two
+ * //       ^^^                 resolves to the package one
+ * //               ^^^^^^^^  resolves to the class one.two.TopLevel
  * }</pre>
  */
 public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements KtTypeElement, KtResolvable {
