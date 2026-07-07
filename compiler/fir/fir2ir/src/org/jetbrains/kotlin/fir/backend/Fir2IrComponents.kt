@@ -39,7 +39,6 @@ interface Fir2IrComponents : SessionAndScopeSessionHolder {
     val declarationStorage: Fir2IrDeclarationStorage
 
     val typeConverter: Fir2IrTypeConverter
-    val visibilityConverter: Fir2IrVisibilityConverter
 
     val callablesGenerator: Fir2IrCallableDeclarationsGenerator
     val classifiersGenerator: Fir2IrClassifiersGenerator

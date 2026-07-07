@@ -28,7 +28,6 @@ class Fir2IrComponentsStorage(
     val fir: List<FirFile>,
     override val extensions: Fir2IrExtensions,
     override val configuration: Fir2IrConfiguration,
-    override val visibilityConverter: Fir2IrVisibilityConverter,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     generatedDataValueClassSyntheticFunctionsStorage: MutableMap<IrClass, DataValueClassGeneratedMembersInfo>,
     override val irMangler: KotlinMangler.IrMangler,

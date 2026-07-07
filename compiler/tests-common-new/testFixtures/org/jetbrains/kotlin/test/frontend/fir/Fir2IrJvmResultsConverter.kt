@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
-import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
@@ -40,10 +39,6 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
 
     override fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): JvmFir2IrExtensions {
         return JvmFir2IrExtensions()
-    }
-
-    override fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter {
-        return FirJvmVisibilityConverter
     }
 
     override fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext {

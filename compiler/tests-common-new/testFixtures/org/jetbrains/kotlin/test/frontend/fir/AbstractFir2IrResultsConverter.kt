@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -52,7 +51,6 @@ abstract class AbstractFir2IrResultsConverter(
 ) {
     protected abstract fun createIrMangler(): KotlinMangler.IrMangler
     protected abstract fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): Fir2IrExtensions
-    protected abstract fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter
     protected abstract fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext
     protected abstract fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider?
     protected abstract fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>
@@ -106,7 +104,6 @@ abstract class AbstractFir2IrResultsConverter(
             fir2IrConfiguration,
             compilerConfiguration.getCompilerExtensions(IrGenerationExtension),
             irMangler,
-            createFir2IrVisibilityConverter(),
             builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
             createTypeSystemContextProvider(),
             specialAnnotationsProvider = createSpecialAnnotationsProvider(),

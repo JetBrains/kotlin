@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
-import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
@@ -61,7 +60,6 @@ object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeF
             fir2IrConfiguration,
             configuration.getCompilerExtensions(IrGenerationExtension),
             irMangler = KonanManglerIr,
-            visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = DefaultBuiltIns.Instance,
             specialAnnotationsProvider = null,
             extraActualDeclarationExtractorsInitializer = { emptyList() },
