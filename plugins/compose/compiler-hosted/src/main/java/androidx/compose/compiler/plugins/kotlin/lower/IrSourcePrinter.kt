@@ -20,7 +20,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ComposeNames
 import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -156,8 +156,8 @@ class IrSourcePrinterVisitor(
                 print("override ")
             } else {
                 if (
-                    declaration.visibility != DescriptorVisibilities.PUBLIC &&
-                    declaration.visibility != DescriptorVisibilities.LOCAL
+                    declaration.visibility != Visibilities.Public &&
+                    declaration.visibility != Visibilities.Local
                 ) {
                     print(declaration.visibility.toString().lowercase(Locale.ROOT))
                     print(" ")
@@ -952,8 +952,8 @@ class IrSourcePrinterVisitor(
 
     override fun visitField(declaration: IrField) {
         if (
-            declaration.visibility != DescriptorVisibilities.PUBLIC &&
-            declaration.visibility != DescriptorVisibilities.LOCAL
+            declaration.visibility != Visibilities.Public &&
+            declaration.visibility != Visibilities.Local
         ) {
             print(declaration.visibility.toString().lowercase(Locale.ROOT))
             print(" ")
@@ -1149,8 +1149,8 @@ class IrSourcePrinterVisitor(
         val primaryConstructor = declaration.primaryConstructor
         declaration.printAnnotations(onePerLine = true)
         if (
-            declaration.visibility != DescriptorVisibilities.PUBLIC &&
-            declaration.visibility != DescriptorVisibilities.LOCAL
+            declaration.visibility != Visibilities.Public &&
+            declaration.visibility != Visibilities.Local
         ) {
             print(declaration.visibility.toString().lowercase(Locale.ROOT))
             print(" ")

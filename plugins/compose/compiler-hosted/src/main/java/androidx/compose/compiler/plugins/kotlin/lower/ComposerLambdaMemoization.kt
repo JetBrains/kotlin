@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.codegen.anyTypeArgument
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -329,7 +329,7 @@ class ComposerLambdaMemoization(
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             kind = ClassKind.OBJECT
-            visibility = DescriptorVisibilities.INTERNAL
+            visibility = Visibilities.Internal
             val shortName = PackagePartClassUtils.getFilePartShortName(fileName)
             // the name of the LiveLiterals class is per-file, so we use the same name that
             // the kotlin file class lowering produces, prefixed with `LiveLiterals$`.
@@ -541,7 +541,7 @@ class ComposerLambdaMemoization(
     ): IrExpression {
         // Get the local captures for local function ref, to make sure we invalidate memoized
         // reference if its capture is different.
-        val localCaptures = if (reference.symbol.owner.visibility == DescriptorVisibilities.LOCAL) {
+        val localCaptures = if (reference.symbol.owner.visibility == Visibilities.Local) {
             declarationContextStack.recordLocalCapture(reference.symbol.owner)
         } else {
             null
@@ -694,7 +694,7 @@ class ComposerLambdaMemoization(
 
     override fun visitCall(expression: IrCall): IrExpression {
         val fn = expression.symbol.owner
-        if (fn.visibility == DescriptorVisibilities.LOCAL) {
+        if (fn.visibility == Visibilities.Local) {
             declarationContextStack.recordLocalCapture(fn)
         }
         return super.visitCall(expression)
@@ -814,14 +814,14 @@ class ComposerLambdaMemoization(
 
         val lambdaProp = clazz.addProperty {
             name = Name.identifier(lambdaName)
-            visibility = DescriptorVisibilities.INTERNAL
+            visibility = Visibilities.Internal
         }.also { p ->
             p.backingField = context.irFactory.buildField {
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
                 name = Name.identifier(lambdaName)
                 type = lambdaType
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 isStatic = context.platform.isJvm()
             }.also { f ->
                 f.correspondingPropertySymbol = p.symbol
@@ -831,7 +831,7 @@ class ComposerLambdaMemoization(
             }
             val getter = p.addGetter {
                 returnType = lambdaType
-                visibility = DescriptorVisibilities.INTERNAL
+                visibility = Visibilities.Internal
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
             }.also { fn ->
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
@@ -850,11 +850,11 @@ class ComposerLambdaMemoization(
             if (currentFunctionContext?.declaration?.isInPublicInlineScope == true) {
                 clazz.addProperty {
                     name = Name.identifier("lambda-${usedSingletonLambdaNames.size}")
-                    visibility = DescriptorVisibilities.INTERNAL
+                    visibility = Visibilities.Internal
                 }.also { p ->
                     p.addGetter {
                         returnType = lambdaType
-                        visibility = DescriptorVisibilities.INTERNAL
+                        visibility = Visibilities.Internal
                     }.also { fn ->
                         val thisParam = clazz.thisReceiver!!.copyTo(fn)
                         fn.parent = clazz

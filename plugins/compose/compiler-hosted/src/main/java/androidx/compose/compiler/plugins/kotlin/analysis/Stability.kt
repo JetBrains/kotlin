@@ -24,7 +24,7 @@ import androidx.compose.compiler.plugins.kotlin.lower.isSyntheticComposableFunct
 import com.google.common.annotations.VisibleForTesting
 import org.jetbrains.kotlin.backend.jvm.ir.isFullValueClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
@@ -351,7 +351,7 @@ class StabilityInferencer(
         }
 
         val forcedToUseRuntimeStability = isTargetJvm &&
-                (declaration.visibility.isPublicAPI || declaration.visibility == DescriptorVisibilities.INTERNAL) &&
+                (declaration.visibility.isPublicAPI || declaration.visibility == Visibilities.Internal) &&
                 (fileContainingDeclaration == null || fileContainingDeclaration != analysisEntryFile)
         if (forcedToUseRuntimeStability) {
             if (typeParameters.isEmpty()) {

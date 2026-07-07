@@ -26,7 +26,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -188,13 +188,13 @@ open class LiveLiteralTransformer(
         val stateGetValue = stateInterface.getPropertyGetter("value")!!
         val defaultProp = clazz.addProperty {
             name = Name.identifier(key)
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }.also { p ->
             p.backingField = context.irFactory.buildField {
                 name = Name.identifier(key)
                 isStatic = true
                 type = literalType
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
             }.also { f ->
                 f.correspondingPropertySymbol = p.symbol
                 f.parent = clazz
@@ -206,7 +206,7 @@ open class LiveLiteralTransformer(
             }
             p.addGetter {
                 returnType = literalType
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
             }.also { fn ->
                 fn.correspondingPropertySymbol = p.symbol
@@ -219,13 +219,13 @@ open class LiveLiteralTransformer(
         }
         val stateProp = clazz.addProperty {
             name = Name.identifier("State\$$key")
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             isVar = true
         }.also { p ->
             p.backingField = context.irFactory.buildField {
                 name = Name.identifier("State\$$key")
                 type = stateType
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 isStatic = true
             }.also { f ->
                 f.correspondingPropertySymbol = p.symbol
@@ -233,7 +233,7 @@ open class LiveLiteralTransformer(
             }
             p.addGetter {
                 returnType = stateType
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
             }.also { fn ->
                 fn.correspondingPropertySymbol = p.symbol
@@ -245,7 +245,7 @@ open class LiveLiteralTransformer(
             }
             p.addSetter {
                 returnType = context.irBuiltIns.unitType
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
             }.also { fn ->
                 fn.correspondingPropertySymbol = p.symbol
@@ -429,7 +429,7 @@ open class LiveLiteralTransformer(
                 val prevClass = liveLiteralsClass
                 val nextClass = context.irFactory.buildClass {
                     kind = ClassKind.OBJECT
-                    visibility = DescriptorVisibilities.INTERNAL
+                    visibility = Visibilities.Internal
                     val shortName = PackagePartClassUtils.getFilePartShortName(fileName)
                     // the name of the LiveLiterals class is per-file, so we use the same name that
                     // the kotlin file class lowering produces, prefixed with `LiveLiterals$`.
@@ -458,13 +458,13 @@ open class LiveLiteralTransformer(
                     if (usePerFileEnabledFlag) {
                         val enabledProp = it.addProperty {
                             name = Name.identifier("enabled")
-                            visibility = DescriptorVisibilities.PRIVATE
+                            visibility = Visibilities.Private
                         }.also { p ->
                             p.backingField = context.irFactory.buildField {
                                 name = Name.identifier("enabled")
                                 isStatic = true
                                 type = builtIns.booleanType
-                                visibility = DescriptorVisibilities.PRIVATE
+                                visibility = Visibilities.Private
                             }.also { f ->
                                 f.correspondingPropertySymbol = p.symbol
                                 f.parent = it
@@ -476,7 +476,7 @@ open class LiveLiteralTransformer(
                             }
                             p.addGetter {
                                 returnType = builtIns.booleanType
-                                visibility = DescriptorVisibilities.PRIVATE
+                                visibility = Visibilities.Private
                                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             }.also { fn ->
                                 val thisParam = it.thisReceiver!!.copyTo(fn)

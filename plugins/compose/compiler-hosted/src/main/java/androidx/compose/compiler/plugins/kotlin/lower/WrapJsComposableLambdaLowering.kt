@@ -25,7 +25,7 @@ import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
@@ -274,7 +274,7 @@ class WrapJsComposableLambdaLowering(
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
                 symbol = functionSymbol,
                 name = SpecialNames.ANONYMOUS,
-                visibility = DescriptorVisibilities.LOCAL,
+                visibility = Visibilities.Local,
                 modality = Modality.FINAL,
                 returnType = returnType,
                 isInline = true,

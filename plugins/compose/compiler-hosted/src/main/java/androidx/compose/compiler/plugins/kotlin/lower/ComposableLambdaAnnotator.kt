@@ -21,7 +21,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
@@ -52,7 +52,7 @@ class ComposableLambdaAnnotator(context: IrPluginContext) : IrVisitorVoid() {
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference) {
-        if (expression.type.isSyntheticComposableFunction() && expression.symbol.owner.visibility == DescriptorVisibilities.LOCAL) {
+        if (expression.type.isSyntheticComposableFunction() && expression.symbol.owner.visibility == Visibilities.Local) {
             expression.symbol.owner.mark()
         }
         super.visitFunctionReference(expression)

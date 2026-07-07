@@ -24,7 +24,7 @@ import androidx.compose.compiler.plugins.kotlin.k2.ComposeErrors
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
@@ -102,8 +102,8 @@ class ClassStabilityTransformer(
             (
                     // Including public AND internal to support incremental compilation, which
                     // is separated by file.
-                    cls.visibility != DescriptorVisibilities.PUBLIC &&
-                            cls.visibility != DescriptorVisibilities.INTERNAL
+                    cls.visibility != Visibilities.Public &&
+                            cls.visibility != Visibilities.Internal
                     ) ||
             cls.isEnumClass ||
             cls.isEnumEntry ||
@@ -199,7 +199,7 @@ class ClassStabilityTransformer(
             cls.annotations += annotation
         }
 
-        if (cls.visibility.isPublicAPI || cls.visibility == DescriptorVisibilities.INTERNAL) {
+        if (cls.visibility.isPublicAPI || cls.visibility == Visibilities.Internal) {
             cls.addStabilityMarkerField(stableExpr)
         }
         return result

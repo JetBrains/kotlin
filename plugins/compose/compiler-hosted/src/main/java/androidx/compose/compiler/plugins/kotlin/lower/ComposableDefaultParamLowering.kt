@@ -24,7 +24,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -233,7 +233,7 @@ class ComposableDefaultParamLowering(
             name = Name.identifier("${source.name.asString()}\$default"),
             visibility = if (source.visibility.isPublicAPI) {
                 // public or protected
-                DescriptorVisibilities.PUBLIC
+                Visibilities.Public
             } else {
                 // private or internal
                 source.visibility

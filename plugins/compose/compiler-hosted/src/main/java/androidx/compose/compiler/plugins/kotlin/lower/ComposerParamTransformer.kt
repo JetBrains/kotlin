@@ -23,7 +23,6 @@ import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -231,7 +230,7 @@ class ComposerParamTransformer(
                 val adapterFn = context.irFactory.buildFun {
                     origin = if (useAdaptedOrigin) IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE else origin
                     name = transformedFn.name
-                    visibility = DescriptorVisibilities.LOCAL
+                    visibility = Visibilities.Local
                     modality = Modality.FINAL
                     returnType = transformedFn.returnType
                 }.also {
@@ -799,14 +798,14 @@ class ComposerParamTransformer(
     }
 
     private fun IrType.isPrimaryConstructorPrivate(): Boolean {
-        return type.classOrNull?.owner?.primaryConstructor?.let { Visibilities.isPrivate(it.visibility.delegate) } == true
+        return type.classOrNull?.owner?.primaryConstructor?.let { Visibilities.isPrivate(it.visibility) } == true
     }
 
     fun IrType.constructorVisibilityIsAtLeastAsAccessibleAsType(): Boolean {
         val clazz = type.classOrNull?.owner
         val primaryConstructor = clazz?.primaryConstructor
-        val classVisibility = clazz?.visibility?.delegate
-        val constructorVisibility = primaryConstructor?.visibility?.delegate
+        val classVisibility = clazz?.visibility
+        val constructorVisibility = primaryConstructor?.visibility
 
         // if public type has private constructor, it is inaccessible for external uses,
         // but private constructor for private type should be ok as far

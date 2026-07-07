@@ -24,7 +24,7 @@ import androidx.compose.compiler.plugins.kotlin.lower.containsComposableAnnotati
 import androidx.compose.compiler.plugins.kotlin.lower.hasFirDeclaration
 import androidx.compose.compiler.plugins.kotlin.lower.needsComposableRemapping
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
@@ -99,8 +99,8 @@ class AddHiddenFromObjCLowering(
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val f = super.visitFunction(declaration) as IrFunction
         if (f.isLocal || f.isSyntheticFun() ||
-            !(f.visibility == DescriptorVisibilities.PUBLIC ||
-                    f.visibility == DescriptorVisibilities.PROTECTED)
+            !(f.visibility == Visibilities.Public ||
+                    f.visibility == Visibilities.Protected)
         )
             return f
 
@@ -114,7 +114,7 @@ class AddHiddenFromObjCLowering(
 
     override fun visitProperty(declaration: IrProperty): IrStatement {
         val p = super.visitProperty(declaration) as IrProperty
-        if (p.isLocal || p.getter?.isSyntheticFun() == true || p.visibility != DescriptorVisibilities.PUBLIC) return p
+        if (p.isLocal || p.getter?.isSyntheticFun() == true || p.visibility != Visibilities.Public) return p
 
         val shouldAdd = p.getter?.hasComposableAnnotation() ?: false ||
                 p.getter?.needsComposableRemapping() ?: false ||

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
@@ -768,7 +768,7 @@ abstract class AbstractComposeLowering(
             this.returnType = returnType
             origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             name = SpecialNames.ANONYMOUS
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
         }.also(body)
 
         return IrFunctionExpressionImpl(
@@ -853,7 +853,7 @@ abstract class AbstractComposeLowering(
             isStatic = true
             isFinal = true
             type = context.irBuiltIns.intType
-            visibility = if (context.platform.isJvm()) DescriptorVisibilities.PUBLIC else DescriptorVisibilities.PRIVATE
+            visibility = if (context.platform.isJvm()) Visibilities.Public else Visibilities.Private
         }.also {
             if (context.platform.isJvm()) {
                 // This tells the Kotlin compiler to avoid generating JVM bytecode for this field's

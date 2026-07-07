@@ -21,7 +21,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -58,7 +58,7 @@ class FunctionReferenceBuilder(
 
     private val functionReferenceClass = generatorContext.irFactory.buildClass {
         setSourceRange(irFunctionExpression)
-        visibility = DescriptorVisibilities.LOCAL
+        visibility = Visibilities.Local
         origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
         name = SpecialNames.NO_NAME_PROVIDED
     }.apply {
