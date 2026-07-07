@@ -892,7 +892,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
             deprecatedVersion = KotlinReleaseVersion.v2_4_20,
-            removedVersion = KotlinReleaseVersion.v2_5_0,
+            // removedVersion = KotlinReleaseVersion.v2_5_0, // TODO: KT-87495
         )
     }
 
