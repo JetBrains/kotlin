@@ -130,8 +130,13 @@ class CachedLibraries(
                         it.absolutePath
                     }
 
-            fun getMetadata(file: String) = File(path).child(file).child(METADATA_FILE_NAME).bufferedReader().use {
-                CacheMetadataSerializer.deserialize(it)
+            // Returns null when the metadata file is absent, which is the case for caches produced by compilers older than 2.2.20 (KT-87202).
+            fun getMetadataOrNull(file: String): CacheMetadata? {
+                val metadataFile = File(path).child(file).child(METADATA_FILE_NAME)
+                if (!metadataFile.exists) return null
+                return metadataFile.bufferedReader().use {
+                    CacheMetadataSerializer.deserialize(it)
+                }
             }
 
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()

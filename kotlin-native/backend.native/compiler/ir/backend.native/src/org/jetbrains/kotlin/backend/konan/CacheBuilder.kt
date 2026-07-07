@@ -157,14 +157,21 @@ class CacheBuilder(
         // This happens when a dependency is changed to an already-cached version, e.g. rolled back to the version it had before
         // an update (KT-87194). Each cache records the fingerprint of such dependencies, so force a full rebuild whenever
         // it doesn't match the current dependencies.
+        // Caches produced by compilers older than 2.2.20 don't have the metadata at all; rebuild them as well (KT-87202).
         val currentCompilerFingerprint = config.distribution.compilerFingerprint
         val staleCacheLibraries = icedLibraries.filter { library ->
             // All files of a per-file cache are produced against the same compiler and dependencies,
             // so any file's metadata identifies the fingerprints of the whole cache.
             val cache = caches[library] as? CachedLibraries.Cache.PerFile ?: return@filter false
             val anyCachedFile = File(cache.path).listFiles.firstOrNull()?.name ?: return@filter false
-            val metadata = cache.getMetadata(anyCachedFile)
+            val metadata = cache.getMetadataOrNull(anyCachedFile)
             when {
+                metadata == null -> {
+                    configuration.reportLog(
+                            "Incremental cache for ${library.path} has no metadata" +
+                                    " (it was produced by a compiler older than 2.2.20); rebuilding it")
+                    true
+                }
                 metadata.compilerFingerprint != currentCompilerFingerprint -> {
                     configuration.reportLog(
                             "Incremental cache for ${library.path} was produced by a different compiler version; rebuilding it")
@@ -214,7 +221,8 @@ class CacheBuilder(
                 } else {
                     actualFiles.remove(cachedFile)
                     val actualContentHash = SerializedIrFileFingerprint(library, fileIndex).fileFingerprint
-                    val previousContentHash = cache.getMetadata(cachedFile).hash
+                    // Missing metadata (a cache produced by a compiler older than 2.2.20) means the file has to be rebuilt.
+                    val previousContentHash = cache.getMetadataOrNull(cachedFile)?.hash
                     if (previousContentHash != actualContentHash)
                         changedFiles.add(libraryFile)
 
