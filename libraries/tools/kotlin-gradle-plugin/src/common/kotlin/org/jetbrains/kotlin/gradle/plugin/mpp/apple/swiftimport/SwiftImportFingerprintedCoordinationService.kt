@@ -92,16 +92,23 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
             key = XcodeDumpBucketMapKey(xcodebuildExecutionHash, xcodebuildSdk),
             buckets = dumpBucketsByXcodebuildFingerprint,
             createOwner = { key ->
-                val bucketRoot = sharedDumpBucketRoot(xcodebuildExecutionHash)
-
                 XcodeDumpBucket(
                     key = key,
-                    ownerDumpDir = sharedDumpDir(bucketRoot, xcodebuildSdk),
-                    ownerDerivedDataDir = sharedDerivedDataDir(bucketRoot, xcodebuildSdk),
+                    ownerDumpDir = sharedXcodeDumpDir(xcodebuildExecutionHash, xcodebuildSdk),
+                    ownerDerivedDataDir = sharedXcodeDerivedDataDir(xcodebuildExecutionHash, xcodebuildSdk),
                 )
-
             }
         )
+
+    fun sharedXcodeDumpDir(
+        xcodebuildExecutionHash: String,
+        xcodebuildSdk: String,
+    ) = sharedDumpDir(sharedDumpBucketRoot(xcodebuildExecutionHash), xcodebuildSdk)
+
+    fun sharedXcodeDerivedDataDir(
+        xcodebuildExecutionHash: String,
+        xcodebuildSdk: String,
+    ) = sharedDerivedDataDir(sharedDumpBucketRoot(xcodebuildExecutionHash), xcodebuildSdk)
 
     private fun sharedDumpBucketRoot(bucketId: String): File =
         parameters.sharedXcodeDumpRoot.get().asFile.resolve(bucketId)

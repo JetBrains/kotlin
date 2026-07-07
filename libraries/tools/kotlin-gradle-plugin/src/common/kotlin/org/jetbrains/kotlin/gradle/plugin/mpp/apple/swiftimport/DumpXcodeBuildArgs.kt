@@ -117,27 +117,20 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         it.file("DumpXcodebuild_error_${xcodebuildSdk.get()}.out")
     }
 
-    private var _xcodebuildClaim: CoordinationClaim<XcodeDumpBucket>? = null
-    private fun xcodebuildClaim(): CoordinationClaim<XcodeDumpBucket> {
-        if (_xcodebuildClaim != null) { return _xcodebuildClaim!! }
-        _xcodebuildClaim = fingerprintCoordinationService.get().claimOrJoinXcodeDump(
-            xcodebuildExecutionHash = readXcodebuildFingerprint(),
-            xcodebuildSdk = xcodebuildSdk.get(),
-        )
-        return _xcodebuildClaim!!
-    }
-
     private val xcodebuildFinishedMarkerFile: File
         get() {
             val markerName = "xcodebuildFinishedMarker"
             if (isCoordinationDisabled()) {
                 return localDerivedDataDir().resolve(markerName)
             } else {
-                return xcodebuildClaim().bucket.ownerDerivedDataDir.resolve(markerName)
+                return fingerprintCoordinationService.get().sharedXcodeDerivedDataDir(
+                    xcodebuildExecutionHash = readXcodebuildFingerprint(),
+                    xcodebuildSdk = xcodebuildSdk.get(),
+                ).resolve(markerName)
             }
         }
 
-    private fun readXcodebuildFingerprint() = xcodebuildFingerprint.asFile.get().readText().trim()
+    private fun readXcodebuildFingerprint() = xcodebuildFingerprint.asFile.get().readText().trim().split("\n")[1]
     private fun localDerivedDataDir() = syntheticImportDd.get().asFile.resolve("dd_${xcodebuildSdk.get()}")
 
     @Suppress("SENSELESS_COMPARISON")
@@ -173,9 +166,12 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
 
         val coordinationService = fingerprintCoordinationService.get()
 
-        val syntheticPackageFingerprint = syntheticPackageFingerprintFile.readText().trim()
+        val syntheticPackageFingerprint = syntheticPackageFingerprintFile.readText().trim().split("\n")[1]
 
-        val claim = xcodebuildClaim()
+        val claim = fingerprintCoordinationService.get().claimOrJoinXcodeDump(
+            xcodebuildExecutionHash = readXcodebuildFingerprint(),
+            xcodebuildSdk = xcodebuildSdk.get(),
+        )
         when (claim) {
             is CoordinationClaim.Owner -> {
                 runOwnerXcodeDump(
