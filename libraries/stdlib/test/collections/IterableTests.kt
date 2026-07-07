@@ -198,8 +198,19 @@ abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out
         assertTrue(empty.windowed(3, 2).isEmpty())
 
         for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
-            assertFailsWith<IllegalArgumentException>("size $illegalValue") { data.windowed(illegalValue, 1) }
-            assertFailsWith<IllegalArgumentException>("step $illegalValue") { data.windowed(1, illegalValue) }
+            assertFailsWith<IllegalArgumentException> { data.windowed(illegalValue, 1) }.let { e ->
+                assertEquals("size $illegalValue must be greater than zero.", e.message)
+            }
+            assertFailsWith<IllegalArgumentException> { data.windowed(1, illegalValue) }.let { e ->
+                assertEquals("step $illegalValue must be greater than zero.", e.message)
+            }
+        }
+        for (illegalSize in listOf(Int.MIN_VALUE, -1, 0)) {
+            for (illegalStep in listOf(Int.MIN_VALUE, -1, 0)) {
+                assertFailsWith<IllegalArgumentException> { data.windowed(illegalSize, illegalStep) }.let { e ->
+                    assertEquals("Both size and step must be greater than zero (size = $illegalSize, step = $illegalStep).", e.message)
+                }
+            }
         }
 
         // index overflow tests
