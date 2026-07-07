@@ -357,6 +357,7 @@ object StandaloneProjectFactory {
         }
     }
 
+    @OptIn(KaImplementationDetail::class)
     fun createLibraryModuleSearchScope(
         binaryRoots: Collection<Path>,
         binaryVirtualFiles: Collection<VirtualFile>,
@@ -366,7 +367,7 @@ object StandaloneProjectFactory {
         createLibraryModuleSearchScope(
             binaryRoots,
             binaryVirtualFiles,
-            StandaloneLibraryScopeConstructionMode.ParentTraversal,
+            LibraryScopeConstructionMode.ParentTraversal,
             environment,
             project,
         )
@@ -375,10 +376,11 @@ object StandaloneProjectFactory {
      * Builds the content search scope for a library module from its [binaryRoots] and [binaryVirtualFiles], using the
      * given [mode] to choose how containment in the scope is determined.
      */
+    @KaImplementationDetail
     fun createLibraryModuleSearchScope(
         binaryRoots: Collection<Path>,
         binaryVirtualFiles: Collection<VirtualFile>,
-        mode: StandaloneLibraryScopeConstructionMode,
+        mode: LibraryScopeConstructionMode,
         environment: CoreApplicationEnvironment,
         project: Project,
     ): GlobalSearchScope =

@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
+import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.toInternalLibraryScopeConstructionMode
 import org.jetbrains.kotlin.analysis.project.structure.impl.KaLibraryModuleImpl
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -26,7 +28,7 @@ public open class KtLibraryModuleBuilder(
     public lateinit var libraryName: String
     public var librarySources: KaLibrarySourceModule? = null
 
-    @OptIn(KaExperimentalApi::class, StandaloneWorkaroundApi::class)
+    @OptIn(KaExperimentalApi::class, KaImplementationDetail::class, StandaloneWorkaroundApi::class)
     override fun build(): KaLibraryModule {
         val binaryRoots = getBinaryRoots()
         val binaryVirtualFiles = getBinaryVirtualFiles()
@@ -35,7 +37,7 @@ public open class KtLibraryModuleBuilder(
             ?: StandaloneProjectFactory.createLibraryModuleSearchScope(
                 binaryRoots,
                 binaryVirtualFiles,
-                libraryScopeConstructionMode,
+                libraryScopeConstructionMode.toInternalLibraryScopeConstructionMode(),
                 coreApplicationEnvironment,
                 project,
             )
