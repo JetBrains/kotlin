@@ -5,4 +5,3 @@ $TEMP_DIR$
 -output=path/to/file
 -Xvalue-classes
 -Xg0=true
--no-endorsed-libs=true
