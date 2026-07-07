@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
@@ -31,7 +31,7 @@ open class PropertyAccessorInlineLowering(
 ) : BodyLoweringPass {
 
     fun IrProperty.isSafeToInlineInClosedWorld() =
-        isTopLevel || (modality === Modality.FINAL || visibility == DescriptorVisibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
+        isTopLevel || (modality === Modality.FINAL || visibility == Visibilities.Private) || (parent as IrClass).modality === Modality.FINAL
 
     open fun IrProperty.isSafeToInline(accessContainer: IrDeclaration): Boolean =
         isSafeToInlineInClosedWorld()

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -138,7 +138,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
             endOffset = functionReference.endOffset
             origin = getClassOrigin(functionReference)
             name = getReferenceClassName(functionReference)
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
         }.apply {
             this.parent = parent
             createThisReceiverParameter()
@@ -173,7 +173,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
                 startOffset = captured.startOffset
                 endOffset = captured.endOffset
                 name = Name.identifier("f\$${index}")
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 isFinal = true
                 type = captured.type
             }.apply {

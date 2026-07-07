@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -98,7 +98,7 @@ abstract class DefaultArgumentFunctionFactory(
         skipInlineMethods: Boolean,
         skipExternalMethods: Boolean,
         forceSetOverrideSymbols: Boolean,
-        visibility: DescriptorVisibility,
+        visibility: Visibility,
         useConstructorMarker: Boolean,
         copiedAnnotations: List<IrAnnotation>,
     ): IrFunction? {
@@ -172,7 +172,7 @@ abstract class DefaultArgumentFunctionFactory(
     private fun generateDefaultsFunctionImpl(
         declaration: IrFunction,
         newOrigin: IrDeclarationOrigin,
-        newVisibility: DescriptorVisibility,
+        newVisibility: Visibility,
         copiedAnnotations: List<IrAnnotation>,
         isFakeOverride: Boolean,
         useConstructorMarker: Boolean,

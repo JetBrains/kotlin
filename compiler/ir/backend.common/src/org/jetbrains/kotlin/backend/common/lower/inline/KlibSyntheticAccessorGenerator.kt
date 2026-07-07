@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -50,7 +50,7 @@ class KlibSyntheticAccessorGenerator(
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.name
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             modality = Modality.FINAL
         }.also { accessor ->
             accessor.parent = parent
@@ -160,7 +160,7 @@ class KlibSyntheticAccessorGenerator(
             endOffset = innerClass.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = accessorName
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }.apply {
             parent = innerClass
             parameters += innerClassThisReceiver.copyTo(

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.capturedConstructor
 import org.jetbrains.kotlin.backend.common.capturedFields
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -104,7 +104,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             context.irFactory.buildClass {
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = nameForCoroutineClass(function)
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
             }.apply {
                 parent = function.parent
                 createThisReceiverParameter()
@@ -252,7 +252,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 endOffset = UNDEFINED_OFFSET
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = CREATE_METHOD_NAME
-                visibility = DescriptorVisibilities.PROTECTED
+                visibility = Visibilities.Protected
                 returnType = coroutineClass.defaultType
             }.apply {
                 parent = coroutineClass
@@ -339,7 +339,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             this.origin = DECLARATION_ORIGIN_COROUTINE_IMPL
             this.name = name
             this.type = type
-            this.visibility = DescriptorVisibilities.PRIVATE
+            this.visibility = Visibilities.Private
             this.isFinal = !isMutable
         }.also {
             it.parent = this

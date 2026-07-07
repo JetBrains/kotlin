@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -143,7 +143,7 @@ fun IrFunction.wrapWithLambdaCall(parent: IrDeclarationParent, context: Lowering
     val wrapper = factory.buildFun {
         setSourceRange(this@wrapWithLambdaCall)
         name = this@wrapWithLambdaCall.name
-        visibility = DescriptorVisibilities.LOCAL
+        visibility = Visibilities.Local
         returnType = this@wrapWithLambdaCall.returnType
     }.apply {
         this.parent = parent

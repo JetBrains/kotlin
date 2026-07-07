@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering.DeclarationKeyForScope
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering.DeclarationKeyForScope.Companion.createDeclarationKeyForScopeBySanitizedName
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -100,7 +100,7 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
         }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data) {
-            if (declaration.visibility == DescriptorVisibilities.LOCAL) {
+            if (declaration.visibility == Visibilities.Local) {
                 val enclosingScope = data.currentScope
                     ?: enclosingField?.getOrCreateScopeWithCounter()
                     ?: enclosingFunction?.getOrCreateScopeWithCounter()

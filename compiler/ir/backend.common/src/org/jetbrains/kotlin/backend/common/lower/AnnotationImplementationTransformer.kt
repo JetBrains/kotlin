@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -168,7 +168,7 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
             endOffset = SYNTHETIC_OFFSET
             name = wrapperName
             origin = ANNOTATION_IMPLEMENTATION
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
         }.apply {
             parent = localDeclarationParent ?: irFile
                     ?: error("irFile in transformer should be specified when creating synthetic implementation")
@@ -181,7 +181,7 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
         val ctor = subclass.addConstructor {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }
         implementAnnotationPropertiesAndConstructor(subclass, annotationClass, ctor)
         implementGeneratedFunctions(annotationClass, subclass)

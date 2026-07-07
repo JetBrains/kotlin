@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -39,10 +39,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 interface VisibilityPolicy {
-    fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility = DescriptorVisibilities.PRIVATE
-    fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility = DescriptorVisibilities.PRIVATE
-    fun forCapturedField(value: IrValueSymbol): DescriptorVisibility = DescriptorVisibilities.PRIVATE
-    fun forSimpleFunction(declaration: IrSimpleFunction): DescriptorVisibility = DescriptorVisibilities.PRIVATE
+    fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): Visibility = Visibilities.Private
+    fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): Visibility = Visibilities.Private
+    fun forCapturedField(value: IrValueSymbol): Visibility = Visibilities.Private
+    fun forSimpleFunction(declaration: IrSimpleFunction): Visibility = Visibilities.Private
 
     companion object {
         val DEFAULT = object : VisibilityPolicy {}
@@ -776,7 +776,7 @@ open class LocalDeclarationsLowering(
             // Drop local functions with `IrDeclarationOrigin.FILLED_FOR_UNBOUND_SYMBOL`.
             fileClass.declarations.removeAll { declaration ->
                 declaration is IrFunction && declaration.origin == IrDeclarationOrigin.FILLED_FOR_UNBOUND_SYMBOL
-                        && declaration.visibility == DescriptorVisibilities.LOCAL
+                        && declaration.visibility == Visibilities.Local
             }
         }
 
@@ -1140,7 +1140,7 @@ open class LocalDeclarationsLowering(
                 }
 
                 override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data) {
-                    if (declaration.visibility == DescriptorVisibilities.LOCAL) {
+                    if (declaration.visibility == Visibilities.Local) {
                         localFunctions[declaration] = LocalFunctionContext(declaration, data.sourceFileWhenInlined)
                     }
 
@@ -1196,4 +1196,4 @@ open class LocalDeclarationsLowering(
 }
 
 // Local inner classes capture anything through outer
-internal fun IrClass.isLocalNotInner(): Boolean = visibility == DescriptorVisibilities.LOCAL && !isInner
+internal fun IrClass.isLocalNotInner(): Boolean = visibility == Visibilities.Local && !isInner

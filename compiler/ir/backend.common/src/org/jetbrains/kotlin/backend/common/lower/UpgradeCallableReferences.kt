@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -171,7 +171,7 @@ open class UpgradeCallableReferences(
             fixCallableReferenceComingFromKlib(reference)
             function.transformChildren(this, function)
             function.setDeclarationsParent(data)
-            function.visibility = DescriptorVisibilities.LOCAL
+            function.visibility = Visibilities.Local
             function.isInline = false
             reference.transformChildren(this, data)
             val isRestrictedSuspension = function.isRestrictedSuspensionFunction()
@@ -402,7 +402,7 @@ open class UpgradeCallableReferences(
                 setSourceRange(this@buildWrapperFunction)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 this.name = name
-                visibility = DescriptorVisibilities.LOCAL
+                visibility = Visibilities.Local
                 this.returnType = returnType
                 this.isSuspend = isSuspend
             }.apply {

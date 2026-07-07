@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -43,7 +43,7 @@ class DelegatedPropertyOptimizationLowering(val context: CommonBackendContext) :
                     delegatedProperties[declaration.symbol] = fun(expression: IrExpression): IrExpression {
                         if (field == null) {
                             field = declaration.factory.buildField {
-                                visibility = DescriptorVisibilities.PRIVATE
+                                visibility = Visibilities.Private
                                 name = "KPROPERTY${refId++}".synthesizedName
                                 isFinal = true
                                 isStatic = true

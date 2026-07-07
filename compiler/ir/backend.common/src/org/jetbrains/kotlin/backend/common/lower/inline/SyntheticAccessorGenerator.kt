@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -162,7 +162,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.accessorName(superQualifierSymbol, scopeInfo)
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             modality = accessorModality(parent)
             isSuspend = source.isSuspend // synthetic accessors of suspend functions are handled in codegen
         }.also { accessor ->
@@ -219,7 +219,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = field.accessorNameForGetter(superQualifierSymbol)
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             modality = Modality.FINAL
             returnType = field.type
         }.also { accessor ->
@@ -279,7 +279,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = field.accessorNameForSetter(superQualifierSymbol)
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             modality = Modality.FINAL
             returnType = context.irBuiltIns.unitType
         }.also { accessor ->
