@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.getExportedIdentifier
@@ -137,7 +137,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 typeParameters = function.typeParameters.memoryOptimizedMap(::exportTypeParameter),
                 isMember = parentClass != null,
                 isStatic = function.isStaticMethodOfClass,
-                isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
+                isProtected = function.visibility == Visibilities.Protected,
                 isAbstract = parentClass != null && !parentClass.isInterface && function.modality == Modality.ABSTRACT,
                 parameters = function.parameters.filter { it.kind != IrParameterKind.DispatchReceiver }
                     .memoryOptimizedMap { exportParameter(it) },
@@ -165,7 +165,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
         val propertyType = specializeType ?: exportType(property.getter!!.returnType)
         val isStatic = (property.getter ?: property.setter)?.isStaticMethodOfClass == true
         val isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT
-        val isProtected = property.visibility == DescriptorVisibilities.PROTECTED
+        val isProtected = property.visibility == Visibilities.Protected
         if (parentClass?.isInterface == true) {
             return listOf(
                 ExportedField(
@@ -323,7 +323,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
     }
 
     private fun exportMemberDeclaration(declaration: IrDeclaration): List<ExportedDeclaration> {
-        if (declaration !is IrDeclarationWithVisibility || declaration.visibility == DescriptorVisibilities.PRIVATE) return emptyList()
+        if (declaration !is IrDeclarationWithVisibility || declaration.visibility == Visibilities.Private) return emptyList()
         return when (declaration) {
             is IrSimpleFunction -> listOfNotNull(exportFunction(declaration))
             is IrConstructor -> listOf(exportConstructor(declaration))

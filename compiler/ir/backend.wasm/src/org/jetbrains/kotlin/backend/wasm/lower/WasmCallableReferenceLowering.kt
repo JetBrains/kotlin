@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.common.lower.declarationsAtFunctionReference
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.FUNCTION_REFERENCE_IMPL
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -370,7 +370,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                         name = fieldName
                         type = expression.type
                         origin = STATIC_FUNCTION_REFERENCE
-                        visibility = DescriptorVisibilities.PRIVATE
+                        visibility = Visibilities.Private
                         isFinal = true
                         isStatic = true
                     }.apply {
@@ -484,7 +484,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
             endOffset = SYNTHETIC_OFFSET
             origin = FUNCTION_REFERENCE_IMPL
             name = Name.identifier(key)
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }.apply {
             this.parent = irFile
             irFile.declarations += this
@@ -529,7 +529,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = Name.identifier("func")
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             isFinal = true
             type = backendContext.wasmSymbols.wasmTypedFuncRefType(erasedFunctionType)
         }.apply {
@@ -542,7 +542,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
                 name = Name.identifier("f\$${index}")
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 isFinal = true
                 this.type = type
             }.apply {

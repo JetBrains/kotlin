@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.lower.WasmCallableReferenceLowering.Companion.STATIC_FUNCTION_REFERENCE
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -53,7 +53,7 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
                     endOffset = UNDEFINED_OFFSET,
                     origin = JsIrBuilder.SYNTHESIZED_DECLARATION,
                     name = Name.identifier(name),
-                    visibility = DescriptorVisibilities.PRIVATE,
+                    visibility = Visibilities.Private,
                     isInline = false,
                     isExpect = false,
                     returnType = context.irBuiltIns.unitType,

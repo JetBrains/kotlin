@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -43,7 +42,7 @@ fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature {
     val valueParameters = parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
     return WasmSignature(
         name,
-        moduleNameForInternals = if (visibility == INTERNAL) findOriginallyContainingModule()?.name else null,
+        moduleNameForInternals = if (visibility == Visibilities.Internal) findOriginallyContainingModule()?.name else null,
         extensionReceiverParameter?.type?.toWasmSignatureType(irBuiltIns),
         valueParameters.map { it.type.toWasmSignatureType(irBuiltIns) },
         returnType.toWasmSignatureType(irBuiltIns),
@@ -153,7 +152,7 @@ class InterfaceMetadata(val iFace: IrClass, irBuiltIns: IrBuiltIns) {
     val methods: List<VirtualMethodMetadata> = iFace.declarations
         .asSequence()
         .filterIsInstance<IrSimpleFunction>()
-        .filter { !it.isFakeOverride && it.visibility != DescriptorVisibilities.PRIVATE && it.modality != Modality.FINAL }
+        .filter { !it.isFakeOverride && it.visibility != Visibilities.Private && it.modality != Modality.FINAL }
         .mapTo(mutableListOf()) { VirtualMethodMetadata(it, it.wasmSignature(irBuiltIns)) }
 }
 

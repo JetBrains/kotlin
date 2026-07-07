@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.topLevelFunctionForNestedExternal
 import org.jetbrains.kotlin.backend.wasm.utils.getJsBuiltinDescriptor
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isExplicitlyExported
@@ -127,7 +127,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val jsFunction = context.irFactory.buildFun {
             origin = JS_CALL_INTEROP_FUNCTION
             name = function.name
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             returnType = resultAdapter?.fromType ?: function.returnType
             modality = Modality.FINAL
             isExternal = true
@@ -601,7 +601,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val closureClassField = closureClass.addField {
             name = Name.identifier("jsClosure")
             type = jsRelatedSymbols.jsAnyType
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             isFinal = true
         }
 
