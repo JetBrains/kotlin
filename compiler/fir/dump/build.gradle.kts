@@ -28,6 +28,16 @@ dependencies {
     compileOnly(libs.apache.commons.text)
 }
 
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.types.model.K2Only",
+        )
+    )
+}
+
 sourceSets {
     "main" { projectDefault() }
 }

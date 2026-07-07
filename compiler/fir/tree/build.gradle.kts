@@ -25,6 +25,16 @@ sourceSets {
     "main" { projectDefault() }
 }
 
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.types.model.K2Only",
+        )
+    )
+}
+
 generatedSourcesTask(
     taskName = "generateTree",
     generatorProject = ":compiler:fir:tree:tree-generator",

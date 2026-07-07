@@ -59,6 +59,15 @@ dependencies {
     testRuntimeOnly(jpsModelImpl())
 }
 
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.types.model.K2Only",
+        )
+    )
+}
 optInToObsoleteDescriptorBasedAPI()
 
 sourceSets {
