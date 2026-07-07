@@ -73,8 +73,6 @@
 # for the remaining two is not known, if the usages are dangerous
 # com.intellij.ide.plugins.PluginDescriptorLoader, com.intellij.platform.eel.path.ArrayListEelAbsolutePath
 -dontwarn java.util.List
-# seems testonly method assertNoReferenceKept is absent, so it's probably safe to ignore this problem
--dontwarn com.intellij.openapi.util.ObjectNode
 # Used by some intellij classes, e.g. by com.intellij.platform.syntax.extensions.impl.ExtensionRegistryHolderJvmKt
 # In fact we don't need this one in runtime
 -dontwarn fleet.util.multiplatform.Actual

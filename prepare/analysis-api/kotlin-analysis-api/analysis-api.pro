@@ -25,7 +25,6 @@
 # Section after upgrade to SDK 261
 -dontwarn kotlinx.coroutines.CoroutineDispatcher
 -dontwarn java.util.List
--dontwarn com.intellij.openapi.util.ObjectNode
 -dontwarn fleet.util.multiplatform.Actual
 -dontwarn kotlinx.coroutines.internal.intellij.IntellijCoroutines
 
