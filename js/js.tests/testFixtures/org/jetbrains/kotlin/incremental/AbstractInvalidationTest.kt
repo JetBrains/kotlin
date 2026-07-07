@@ -45,8 +45,8 @@ import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.testInfraError
-import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
@@ -323,13 +323,13 @@ abstract class AbstractInvalidationTest(
                     }
                 }
 
-                JUnit4Assertions.assertSameElements(got.entries, info.expectedFileStats.entries) {
+                JUnit5Assertions.assertSameElements(got.entries, info.expectedFileStats.entries) {
                     "Mismatched file stats for module [${info.moduleName}] at step $stepId"
                 }
             }
 
             for (libFile in gotStats.keys) {
-                JUnit4Assertions.assertTrue(libFile in checkedLibs) {
+                JUnit5Assertions.assertTrue(libFile in checkedLibs) {
                     "Got unexpected stats for module [${libFile.path}] at step $stepId"
                 }
             }
