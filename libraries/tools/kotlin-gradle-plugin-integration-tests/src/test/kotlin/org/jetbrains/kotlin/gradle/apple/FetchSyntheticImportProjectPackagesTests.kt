@@ -186,10 +186,6 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                 build(
                     ":${FetchSyntheticImportProjectPackages.TASK_NAME}"
                 ) {
-
-                    assertTasksExecuted(
-
-                    )
                     val rootSyntheticPackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH).readText().trim().split("\n")[1]
 
                     val syntheticPackage = projectPath.resolve(SHARED_SYNTHETIC_PACKAGE_DIR).resolve(rootSyntheticPackageHash)
@@ -401,6 +397,7 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
 
                 build(
                     ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                    ":kmpMapsConsumer:${FetchSyntheticImportProjectPackages.TASK_NAME}"
                 ) {
 
                     val rootSyntheticPackageHash = rootSyntheticPackageFingerprintFile.readText().trim().split("\n")[1]

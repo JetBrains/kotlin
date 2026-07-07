@@ -814,6 +814,18 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         )
                     )
 
+                    assertEquals(
+                        listOf("2.0.0"),
+                        describeSwiftPackage(projectPath.resolve(".swiftpm-locks/$identifier/swiftImport/subpackages/_"))
+                            .dependencies.mapNotNull {
+                                it.requirement?.range?.map { it.upperBound }
+                            }.flatten(),
+                        "Make sure we regenerated the package with the from constraint",
+                    )
+
+                    // Make sure we refetched
+                    assertTasksExecuted(":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)}")
+
                     assertExactTasksInGraph(
                         ":${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
                         ":${FingerprintSyntheticPackage.TASK_NAME}",

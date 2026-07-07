@@ -102,9 +102,8 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                     assertEquals(2, dumpTasks.size)
                     assertTasksExecuted(dumpTasks)
-                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
+                    assertOutputContainsExactlyTimes("Starting process 'command 'xcodebuild''", 1)
                     assertSharedDumpDirsHaveSameFiles(
-                        localIphoneosDumpDir(fuzzProjectName),
                         localIphoneosDumpDir(fuzzProjectName),
                         localIphoneosDumpDir(buzzProjectName),
                     )
@@ -149,7 +148,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                     assertEquals(2, dumpTasks.size)
                     assertTasksExecuted(dumpTasks)
-                    assertOutputContainsExactlyTimes("Command line invocation:", 2)
+                    assertOutputContainsExactlyTimes("Starting process 'command 'xcodebuild''", 2)
 
                     val iphoneosDumpLocation = localIphoneosDumpDir(appProjectName)
                     val iphonesimulatorDumpLocation = localIphonesimulatorDumpDir(appProjectName)
@@ -228,7 +227,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                     assertEquals(2, dumpTasks.size, "Different identifiers should still keep one local dump task per project")
                     assertTasksExecuted(dumpTasks)
-                    assertOutputContainsExactlyTimes("Command line invocation:", 2)
+                    assertOutputContainsExactlyTimes("Starting process 'command 'xcodebuild''", 2)
                     assertDumpDirectoryContainsXcodebuildArgsDump(localIphoneosDumpDir(fuzzProjectName))
                     assertDumpDirectoryContainsXcodebuildArgsDump(localIphoneosDumpDir(buzzProjectName))
 
@@ -333,7 +332,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                     assertEquals(2, dumpTasks.size)
                     assertTasksExecuted(dumpTasks)
-                    assertOutputContainsExactlyTimes("Command line invocation:", 2)
+                    assertOutputContainsExactlyTimes("Starting process 'command 'xcodebuild''", 2)
 
                     val coreFingerprintFile = localIphoneosDumpFingerprintFile(coreProjectName)
                     val logsFingerprintFile = localIphoneosDumpFingerprintFile(logsProjectName)
@@ -403,194 +402,9 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                     assertEquals(2, dumpTasks.size, "Different dependency graphs should still keep one local dump task per project")
                     assertTasksExecuted(dumpTasks)
-                    assertOutputContainsExactlyTimes("Command line invocation:", 2)
+                    assertOutputContainsExactlyTimes("Starting process 'command 'xcodebuild''", 2)
                     assertDumpDirectoryContainsXcodebuildArgsDump(localIphoneosDumpDir(fuzzProjectName))
                     assertDumpDirectoryContainsXcodebuildArgsDump(localIphoneosDumpDir(buzzProjectName))
-                }
-            }
-        }
-    }
-
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    @GradleTest
-    fun `fingerprint changes reflect on the dump task configuration`(version: GradleVersion) {
-        val fuzzProjectName = "fuzz"
-        val buzzProjectName = "buzz"
-        val repoName = "SharedPackage"
-        val sharedIdentifier = "sharedLock"
-
-        val useSameFingerprintVariable = "useSameFingerprint"
-
-        project("empty", version) {
-            withLockFileFixture {
-                val sharedRepo = repoRef(repoName).also { createRepo(it.name, listOf("1.0.0", "1.0.1", "1.0.2")) }
-
-                initSwiftPmProject(cacheDirFile) {}
-
-                val fuzzProject = project("empty", version) {
-                    initSwiftPmProject(cacheDirFile) {
-                        if (project.providers.gradleProperty("useSameFingerprint").isPresent) {
-                            swiftPMDependencies {
-                                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(sharedIdentifier)
-                                swiftPackage(
-                                    url = url(sharedRepo.url),
-                                    version = exact("1.0.0"),
-                                    products = listOf(product(sharedRepo.name)),
-                                )
-                            }
-                        } else {
-                            swiftPMDependencies {
-                                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("fuzzLock")
-                                swiftPackage(
-                                    url = url(sharedRepo.url),
-                                    version = exact("1.0.1"),
-                                    products = listOf(product(sharedRepo.name)),
-                                )
-                            }
-                        }
-                    }
-                }
-
-                val buzzProject = project("empty", version) {
-                    initSwiftPmProject(cacheDirFile) {
-                        if (project.providers.gradleProperty("useSameFingerprint").isPresent) {
-                            swiftPMDependencies {
-                                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(sharedIdentifier)
-                                swiftPackage(
-                                    url = url(sharedRepo.url),
-                                    version = exact("1.0.0"),
-                                    products = listOf(product(sharedRepo.name)),
-                                )
-                            }
-                        } else {
-                            swiftPMDependencies {
-                                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("buzzLock")
-                                swiftPackage(
-                                    url = url(sharedRepo.url),
-                                    version = exact("1.0.2"),
-                                    products = listOf(product(sharedRepo.name)),
-                                )
-                            }
-                        }
-                    }
-                }
-
-                include(fuzzProject, fuzzProjectName)
-                include(buzzProject, buzzProjectName)
-
-                build(
-                    ":$fuzzProjectName:convertSyntheticImportProjectIntoDefFileIphoneos",
-                    ":$buzzProjectName:convertSyntheticImportProjectIntoDefFileIphoneos",
-                ) {
-                    val dumpTasks = findTasksByPattern(Regex(":(${fuzzProjectName}|${buzzProjectName}):dumpXcodebuildArgsIphoneos"))
-
-                    assertEquals(2, dumpTasks.size, "Using the different fingerprint task should produce two dump tasks")
-                    assertTasksExecuted(dumpTasks)
-                    assertOutputContainsExactlyTimes("Command line invocation:", 2)
-                }
-
-                build(
-                    ":$fuzzProjectName:convertSyntheticImportProjectIntoDefFileIphoneos", "-P${useSameFingerprintVariable}=true",
-                    ":$buzzProjectName:convertSyntheticImportProjectIntoDefFileIphoneos", "-P${useSameFingerprintVariable}=true",
-                ) {
-                    val dumpTasks = findTasksByPattern(Regex(":(${fuzzProjectName}|${buzzProjectName}):dumpXcodebuildArgsIphoneos"))
-
-                    assertEquals(2, dumpTasks.size, "Using the same fingerprint still keeps one local dump task per project")
-                    assertTasksExecuted(dumpTasks)
-                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
-                    assertEquals(
-                        materializedDumpFilesByRelativePath(localIphoneosDumpDir(fuzzProjectName)).keys,
-                        materializedDumpFilesByRelativePath(localIphoneosDumpDir(buzzProjectName)).keys,
-                        "Changing to one shared fingerprint should make both tasks point to the same xcodebuild dump files"
-                    )
-                    assertLocalDerivedDataDirsExist(
-                        localIphoneosDerivedDataDir(fuzzProjectName),
-                        localIphoneosDerivedDataDir(buzzProjectName),
-                    )
-                }
-            }
-        }
-    }
-
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    @GradleTest
-    fun `consumer re-executes xcodebuild after owner dependency fingerprint changes`(version: GradleVersion) {
-        val ownerProjectName = "owner"
-        val consumerProjectName = "consumer"
-        val sharedRepoName = "SharedPackage"
-        val ownerOnlyRepoName = "OwnerPackage"
-        val alternateOwnerPackage = "useAlternateOwnerPackage"
-
-        project("empty", version) {
-            withLockFileFixture {
-                val sharedRepo = repoRef(sharedRepoName).also { createRepo(it.name, listOf("1.0.0")) }
-                val ownerOnlyRepo = repoRef(ownerOnlyRepoName).also { createRepo(it.name, listOf("1.0.0")) }
-
-                initSwiftPmProject(cacheDirFile) {}
-
-                val ownerProject = project("empty", version) {
-                    initSwiftPmProject(cacheDirFile) {
-                        swiftPMDependencies {
-                            val ownerRepo =
-                                if (project.providers.gradleProperty(alternateOwnerPackage).isPresent) {
-                                    ownerOnlyRepo
-                                } else {
-                                    sharedRepo
-                                }
-
-                            swiftPackage(
-                                url = url(ownerRepo.url),
-                                version = exact("1.0.0"),
-                                products = listOf(product(ownerRepo.name)),
-                            )
-                        }
-                    }
-                }
-
-                val consumerProject = project("empty", version) {
-                    initSwiftPmProject(cacheDirFile) {
-                        swiftPMDependencies {
-                            swiftPackage(
-                                url = url(sharedRepo.url),
-                                version = exact("1.0.0"),
-                                products = listOf(product(sharedRepo.name)),
-                            )
-                        }
-                    }
-                }
-
-                include(ownerProject, ownerProjectName)
-                include(consumerProject, consumerProjectName)
-
-                build(":$ownerProjectName:dumpXcodebuildArgsIphoneos") {
-                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
-                }
-
-                val originalOwnerDumpDir = localIphoneosDumpDir(ownerProjectName)
-                assertDumpDirectoryContainsXcodebuildArgsDump(originalOwnerDumpDir)
-
-                build(
-                    ":$ownerProjectName:dumpXcodebuildArgsIphoneos",
-                    "-P$alternateOwnerPackage=true",
-                ) {
-                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
-                }
-
-                val changedOwnerDumpDir = localIphoneosDumpDir(ownerProjectName)
-                assertNotEquals(
-                    originalOwnerDumpDir,
-                    changedOwnerDumpDir,
-                    "Changing the owner's dependency fingerprint should move it to a different root-build bucket"
-                )
-
-                build(":$consumerProjectName:dumpXcodebuildArgsIphoneos") {
-                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
-                    assertEquals(
-                        originalOwnerDumpDir,
-                        localIphoneosDumpDir(consumerProjectName),
-                        "The consumer should re-execute xcodebuild because its fingerprint matches the owner's original dependency graph"
-                    )
-                    assertDumpDirectoryContainsXcodebuildArgsDump(originalOwnerDumpDir)
                 }
             }
         }

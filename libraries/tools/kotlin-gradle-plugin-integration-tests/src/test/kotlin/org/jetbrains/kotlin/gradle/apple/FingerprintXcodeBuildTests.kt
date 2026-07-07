@@ -227,14 +227,25 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                 assertEquals(listOf("1.0.1"), finalLockFile.pins.map { it.state.version })
 
                 assertNotEquals(
-                    originalXcodeBuildFingerprint,
-                    readIphonesimulatorFingerprint(),
+                    originalXcodeBuildFingerprint.split("\n")[0],
+                    readIphonesimulatorFingerprint().split("\n")[0],
                     "Changing a remote SwiftPM dependency version should invalidate the xcodebuild fingerprint task"
                 )
                 assertNotEquals(
-                    originalPackageFingerprint,
-                    localPackageFingerprint().readText(),
+                    originalPackageFingerprint.split("\n")[0],
+                    localPackageFingerprint().readText().split("\n")[0],
                     "Changing a remote SwiftPM dependency version should invalidate the synthetic fingerprint task"
+                )
+
+                assertEquals(
+                    originalXcodeBuildFingerprint.split("\n")[1],
+                    readIphonesimulatorFingerprint().split("\n")[1],
+                    "Changing a remote SwiftPM dependency version shouldn't invalidate version invariant part of the fingerprint"
+                )
+                assertEquals(
+                    originalPackageFingerprint.split("\n")[1],
+                    localPackageFingerprint().readText().split("\n")[1],
+                    "Changing a remote SwiftPM dependency version shouldn't invalidate version invariant part of the fingerprint"
                 )
             }
         }

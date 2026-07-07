@@ -957,7 +957,7 @@ class SwiftPMImportUnitTests {
     }
 
     @Test
-    fun `project with noSync package resolved synchronization should not register synchronization tasks`() {
+    fun `project with noSync package resolved synchronization should not register coordination tasks`() {
         val project = swiftPMImportProject(
             swiftPMDependencies = { layout ->
                 packageResolvedSynchronization = noSynchronization()

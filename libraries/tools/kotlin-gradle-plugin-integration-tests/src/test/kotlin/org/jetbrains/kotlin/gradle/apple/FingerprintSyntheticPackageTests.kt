@@ -134,7 +134,7 @@ class FingerprintSyntheticPackageTests : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `fingerprint task generates same fingerprint given the two target with same flattened dependency graph`(version: GradleVersion) {
+    fun `fingerprint task - root project fingerprint is identical to left and right because of dependency flattening and product ordering normalization`(version: GradleVersion) {
         val rightProjectName = "rightProject"
         val leftProjectName = "leftProject"
         project("empty", version) {
@@ -215,7 +215,7 @@ class FingerprintSyntheticPackageTests : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `fingerprint task generates different fingerprint given the two target with different flattened dependency graph`(version: GradleVersion) {
+    fun `fingerprint task - root project fingerprint is different - when root has additional dependencies`(version: GradleVersion) {
         val subProjectName = "subProject"
         project("empty", version) {
             withLockFileFixture {

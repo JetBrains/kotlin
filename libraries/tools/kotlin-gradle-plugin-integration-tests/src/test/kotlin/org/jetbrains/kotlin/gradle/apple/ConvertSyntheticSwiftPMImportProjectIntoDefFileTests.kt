@@ -319,15 +319,7 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
             withLockFileFixture {
                 initSwiftPmProject(cacheDirFile){}
 
-                buildScriptInjection {
-                    val task = project.tasks.findByPath(":convertSyntheticImportProjectIntoDefFileIphonesimulator")
-                            as ConvertSyntheticSwiftPMImportProjectIntoDefFile
-
-                    task.ideaSyncEnabled.set(false)
-                }
-
                 build("convertSyntheticImportProjectIntoDefFileIphoneos")
-
 
                 val generatedDefFile = projectPath.resolve("build/kotlin/swiftImportDefs/iphoneos/arm64.def").toFile()
                 assertFileExists(generatedDefFile)
@@ -387,7 +379,3 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
     }
 
 }
-
-
-private fun normalizeMacTempPath(path: String): String =
-    path.replace("/private/var/", "/var/")
