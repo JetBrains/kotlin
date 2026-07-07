@@ -475,6 +475,15 @@ public class DescriptorVisibilities {
     }
 
     @NotNull
+    private static final PlatformDescriptorVisibilityProvider PLATFORM_VISIBILITY_PROVIDER;
+
+    static {
+        Iterator<PlatformDescriptorVisibilityProvider> iterator =
+                ServiceLoader.load(PlatformDescriptorVisibilityProvider.class, PlatformDescriptorVisibilityProvider.class.getClassLoader()).iterator();
+        PLATFORM_VISIBILITY_PROVIDER = iterator.hasNext() ? iterator.next() : PlatformDescriptorVisibilityProvider.Default.INSTANCE;
+    }
+
+    @NotNull
     private static final Map<Visibility, DescriptorVisibility> visibilitiesMapping = new HashMap<Visibility, DescriptorVisibility>();
 
     private static void recordVisibilityMapping(DescriptorVisibility visibility) {
@@ -497,6 +506,10 @@ public class DescriptorVisibilities {
     public static DescriptorVisibility toDescriptorVisibility(@NotNull Visibility visibility) {
         DescriptorVisibility correspondingVisibility = visibilitiesMapping.get(visibility);
         if (correspondingVisibility == null) {
+            DescriptorVisibility platformVisibility = PLATFORM_VISIBILITY_PROVIDER.toDescriptorVisibility(visibility);
+            if (platformVisibility != null) {
+                return platformVisibility;
+            }
             throw new IllegalArgumentException("Inapplicable visibility: " + visibility);
         }
         return correspondingVisibility;
