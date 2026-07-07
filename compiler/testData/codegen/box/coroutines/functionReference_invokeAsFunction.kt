@@ -1,7 +1,11 @@
 // KT-66098: ClassCastException
-// IGNORE_BACKEND: WASM_JS, WASM_WASI, JS_IR_ES6
 // WITH_STDLIB
 // WITH_COROUTINES
+// IGNORE_BACKEND: JS_IR_ES6
+// ^^^^
+// org.jetbrains.kotlin.js.engine.ScriptExecutionException: ERROR:
+// AssertionError: Expected <159>, actual <[object Generator]>.
+// KT-82349: ClassCastException
 
 import kotlin.test.*
 
