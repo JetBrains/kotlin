@@ -103,7 +103,7 @@ internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode
 }
 
 internal fun UsesBuildMetricsService.addBuildMetricsForTaskAction(
-    metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    metricsReporter: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     languageVersion: KotlinVersion?,
     fn: () -> Any
 ) {

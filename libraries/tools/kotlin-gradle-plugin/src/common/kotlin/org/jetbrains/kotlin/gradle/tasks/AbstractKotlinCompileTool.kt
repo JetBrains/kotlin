@@ -119,7 +119,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     }
 
     @get:Internal
-    final override val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
+    final override val metrics: Property<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
     /**

@@ -259,7 +259,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     //TODO: Will be removed with daemon support for JPS
     protected open fun checkSupportedWithDaemon() {}
 
-    protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>) {
+    protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>) {
         if (this[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
             this[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
                 ObjectOutputStream(this).writeObject(metricsReporter)

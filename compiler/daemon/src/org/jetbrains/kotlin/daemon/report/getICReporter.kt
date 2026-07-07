@@ -18,7 +18,7 @@ fun getBuildReporter(
     servicesFacade: CompilerServicesFacadeBase,
     compilationResults: CompilationResults,
     compilationOptions: CompilationOptions,
-): RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric> {
+): RemoteBuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric> {
     val root = (compilationOptions as? IncrementalCompilationOptions)?.rootProjectDir
     val reporters = ArrayList<RemoteICReporter>()
 

@@ -115,13 +115,13 @@ private fun <E : BuildPerformanceMetric> filterMetrics(
     buildTimesMetrics: Map<E, Long>
 ): Map<E, Long> = expectedMetrics?.let { buildTimesMetrics.filterKeys { metric -> it.contains(metric.name) } } ?: buildTimesMetrics
 
-private fun collectBuildAttributes(buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>?): Set<BuildAttribute> {
+private fun collectBuildAttributes(buildMetrics: BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>?): Set<BuildAttribute> {
     return buildMetrics?.buildAttributes?.asMap()?.filter { it.value > 0 }?.keys ?: emptySet()
 }
 
 
 private fun collectBuildPerformanceMetrics(
-    buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>?
+    buildMetrics: BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>?
 ): Map<BuildPerformanceMetric, Long> {
     return buildMetrics?.buildPerformanceMetrics?.asMap()
         ?.filterValues { value -> value != 0L }
@@ -136,11 +136,11 @@ private fun collectBuildPerformanceMetrics(
         ?: emptyMap()
 }
 private fun collectBuildMetrics(
-    buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>?,
+    buildMetrics: BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>?,
     gradleTaskStartTime: Long? = null,
     taskFinishEventTime: Long? = null,
-): Map<BuildTimeMetric, Long> {
-    val taskBuildMetrics = HashMap<BuildTimeMetric, Long>(buildMetrics?.buildTimes?.buildTimesMapMs())
+): Map<BuildTimeMetric<out BuildPerformanceMetric>, Long> {
+    val taskBuildMetrics = HashMap<BuildTimeMetric<out BuildPerformanceMetric>, Long>(buildMetrics?.buildTimes?.buildTimesMapMs())
     val performanceMetrics = buildMetrics?.buildPerformanceMetrics?.asMap() ?: emptyMap()
     gradleTaskStartTime?.let { startTime ->
         performanceMetrics[START_TASK_ACTION_EXECUTION]?.let { actionStartTime ->

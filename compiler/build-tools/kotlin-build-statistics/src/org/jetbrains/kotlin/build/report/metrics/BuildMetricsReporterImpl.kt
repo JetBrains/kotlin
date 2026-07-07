@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
 
-open class BuildMetricsReporterImpl<B : BuildTimeMetric, P : BuildPerformanceMetric> : BuildMetricsReporter<B, P>, Serializable {
+open class BuildMetricsReporterImpl<B : BuildTimeMetric<out P>, P : BuildPerformanceMetric> : BuildMetricsReporter<B, P>, Serializable {
     private val myBuildTimeStartNs = HashMap<B, Long>()
     private val myGcPerformance = HashMap<String, GcMetric>()
     private val myBuildTimes = BuildTimes<B>()
@@ -19,7 +19,9 @@ open class BuildMetricsReporterImpl<B : BuildTimeMetric, P : BuildPerformanceMet
         if (time in myBuildTimeStartNs) {
             error("$time was restarted before it finished")
         }
-        myBuildTimeStartNs[time] = System.nanoTime()
+        val startTime = System.nanoTime()
+        myBuildTimeStartNs[time] = startTime
+        time.startTimeMetric?.also { addTimeMetric(it) }
     }
 
     override fun endMeasure(time: B) {

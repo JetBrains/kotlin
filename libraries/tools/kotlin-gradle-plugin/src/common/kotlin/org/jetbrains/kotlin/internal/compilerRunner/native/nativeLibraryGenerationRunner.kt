@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
 
 internal fun ObjectFactory.KotlinNativeLibraryGenerationRunner(
-    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>,
+    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     useXcodeMessageStyle: Provider<Boolean>,
     classpath: FileCollection,

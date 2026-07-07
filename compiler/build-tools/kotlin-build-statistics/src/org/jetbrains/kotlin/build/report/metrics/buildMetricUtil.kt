@@ -15,10 +15,13 @@ private fun <T : BuildPerformanceMetric> getAllMetricsByType(buildMetricClass: K
         else getAllMetricsByType(it)
     }
 
-fun getAllMetrics() = allBuildPerformanceMetrics + getAllCustomBuildTimeMetrics()
+fun getAllMetrics() = allBuildPerformanceMetrics + allBuildTimeMetricStartMetrics + getAllCustomBuildTimeMetrics()
 
-val allBuildTimeMetrics: List<BuildTimeMetric>
+val allBuildTimeMetrics: List<BuildTimeMetric<out BuildPerformanceMetric>>
     get() = getAllMetricsByType(BuildTimeMetric::class) + getAllCustomBuildTimeMetrics()
+
+private val allBuildTimeMetricStartMetrics: List<BuildPerformanceMetric>
+    get() = allBuildTimeMetrics.mapNotNull { it.startTimeMetric }
 
 internal val allBuildPerformanceMetrics
     get() = getAllMetricsByType(BuildPerformanceMetric::class) + getAllKLibSizeMetrics()

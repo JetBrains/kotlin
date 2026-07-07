@@ -30,7 +30,7 @@ internal class HistoryFilesBasedImpactDeterminer(
     private val buildHistoryFile: File?,
     private val lastBuildInfoFile: File,
     private val icFeatures: IncrementalCompilationFeatures,
-    private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    private val reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     private val messageCollector: MessageCollector,
 ) : ImpactedFilesDeterminer {
 

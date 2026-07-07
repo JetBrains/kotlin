@@ -83,7 +83,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     private val failureMessages = ConcurrentLinkedQueue<String>()
 
     // Info for tasks only
-    private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>()
+    private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>()
     private val taskPathToTaskClass = ConcurrentHashMap<String, String>()
 
     private val processedMessages = ConcurrentHashMap<Long, Boolean>()
@@ -95,7 +95,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     open fun addTask(
         taskPath: String,
         taskClass: Class<*>,
-        metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        metricsReporter: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     ) {
         taskPathToMetricsReporter.put(taskPath, metricsReporter).also {
             if (it != null) log.warn("Duplicate task path: $taskPath") // Should never happen but log it just in case
@@ -110,7 +110,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         clazz: Class<*>,
         startTimeMs: Long,
         totalTimeMs: Long,
-        buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
+        buildMetrics: BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
         failureMessage: String? = null,
         logs: List<String> = emptyList(),
     ) {
@@ -125,7 +125,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         val taskPath = event.descriptor.taskPath
         val totalTimeMs = result.endTime - result.startTime
 
-        val buildMetrics = BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>()
+        val buildMetrics = BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>()
         buildMetrics.buildTimes.addTimeMs(GRADLE_TASK, totalTimeMs)
         taskPathToMetricsReporter[taskPath]?.let {
             buildMetrics.addAll(it.getMetrics())
@@ -189,7 +189,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 return
             }
 
-            val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric> = BuildMetrics()
+            val buildMetrics: BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric> = BuildMetrics()
             buildMetrics.buildTimes.addTimeMs(GRADLE_CONFIGURATION_TIME, ((event?.endTime ?: 0) - (event?.startTime ?: 0)))
             addConfigurationRecord(
                 getPath(details),
@@ -413,7 +413,7 @@ internal class TaskRecord(
     override val classFqName: String,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
-    override val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
+    override val buildMetrics: BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     override val didWork: Boolean,
     override val skipMessage: String?,
     override val icLogLines: List<String>,
@@ -430,7 +430,7 @@ private class ConfigurationRecord(
     override val classFqName: String,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
-    override val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
+    override val buildMetrics: BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     override val icLogLines: List<String>,
 ) : BuildOperationRecord {
     override val isFromKotlinPlugin: Boolean = true

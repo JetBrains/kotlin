@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 
 internal fun ObjectFactory.KotlinNativeCInteropRunner(
-    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>,
+    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     actualNativeHomeDirectory: Provider<File>,
     jvmArgs: Provider<List<String>>,

@@ -117,8 +117,8 @@ internal abstract class CInteropCommonizerTask
         )
 
     @get:Internal
-    internal val metrics: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = objectFactory
-        .property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>(GradleBuildMetricsReporter())
+    internal val metrics: Provider<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>> = objectFactory
+        .property<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>(GradleBuildMetricsReporter())
         .chainedDisallowChanges()
 
     @get:Classpath
