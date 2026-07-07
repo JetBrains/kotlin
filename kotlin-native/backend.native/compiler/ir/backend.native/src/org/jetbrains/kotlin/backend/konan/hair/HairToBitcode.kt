@@ -43,6 +43,7 @@ internal class HairToBitcode(
     private val context = generationState.context
 
     fun HairType.asLLVMType() = when (this) {
+        HairType.VOID -> llvm.voidType
         HairType.NOTHING -> llvm.voidType
         HairType.BOOLEAN -> llvm.int1Type
         HairType.BYTE -> llvm.int8Type
