@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.common
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -128,7 +128,7 @@ abstract class AbstractAtomicfuIrBuilder(
             this.type = valueType
             isFinal = false
             isStatic = parentContainer is IrFile
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
         }.apply {
             this.annotations = annotations + atomicfuSymbols.volatileAnnotation
@@ -214,7 +214,7 @@ abstract class AbstractAtomicfuIrBuilder(
                 this.type = fieldType
                 this.isFinal = true
                 this.isStatic = atomicfuArrayField.isStatic
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
             }.apply {
                 if (atomicFactoryCall != null) {
@@ -363,7 +363,7 @@ abstract class AbstractAtomicfuIrBuilder(
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
                 returnType = irPropertyReference.type
                 isInline = true
-                visibility = DescriptorVisibilities.LOCAL
+                visibility = Visibilities.Local
             }.apply {
                 val lambda = this
                 body = irBlockBody {
@@ -387,7 +387,7 @@ abstract class AbstractAtomicfuIrBuilder(
 
     fun buildPropertyWithAccessors(
         field: IrField,
-        visibility: DescriptorVisibility,
+        visibility: Visibility,
         isVar: Boolean,
         isStatic: Boolean,
         parentContainer: IrDeclarationContainer

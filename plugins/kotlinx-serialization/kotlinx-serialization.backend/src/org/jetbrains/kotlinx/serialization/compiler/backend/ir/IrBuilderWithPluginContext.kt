@@ -8,8 +8,8 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -59,7 +59,7 @@ interface IrBuilderWithPluginContext {
             this.endOffset = this@createLambdaExpression.endOffset
             this.returnType = type
             name = Name.identifier("<anonymous>")
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
             origin = SERIALIZATION_PLUGIN_ORIGIN
         }
         function.body = DeclarationIrBuilder(compilerContext, function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset) {
@@ -85,7 +85,7 @@ interface IrBuilderWithPluginContext {
         containingClass: IrClass,
         targetIrType: IrType,
         propertyName: Name,
-        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
+        visibility: Visibility = Visibilities.Private,
         initializerBuilder: IrBlockBodyBuilder.() -> Unit
     ): IrProperty {
         val lazyIrType = lazyType(targetIrType)
@@ -97,7 +97,7 @@ interface IrBuilderWithPluginContext {
             type = lazyIrType
             origin = SERIALIZATION_PLUGIN_ORIGIN
             isFinal = true
-            this.visibility = DescriptorVisibilities.PRIVATE
+            this.visibility = Visibilities.Private
         }.also { it.parent = containingClass }
 
         containingClass.addAnonymousInit {
@@ -152,7 +152,7 @@ interface IrBuilderWithPluginContext {
     fun IrClass.addValPropertyWithJvmField(
         type: IrType,
         name: Name,
-        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
+        visibility: Visibility = Visibilities.Private,
         initializerBuilder: IrBlockBodyBuilder.() -> Unit
     ): IrProperty {
         return generateSimplePropertyWithBackingField(name, type, this, visibility).apply {
@@ -168,7 +168,7 @@ interface IrBuilderWithPluginContext {
     fun IrClass.addValPropertyWithJvmFieldInitializer(
         type: IrType,
         name: Name,
-        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
+        visibility: Visibility = Visibilities.Private,
         initializer: IrBuilderWithScope.() -> IrExpression
     ): IrProperty {
         return generateSimplePropertyWithBackingField(name, type, this, visibility).apply {
@@ -333,7 +333,7 @@ interface IrBuilderWithPluginContext {
         propertyName: Name,
         propertyType: IrType,
         propertyParent: IrClass,
-        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE
+        visibility: Visibility = Visibilities.Private
     ): IrProperty = generatePropertyMissingParts(null, propertyName, propertyType, propertyParent, visibility)
 
     fun generatePropertyMissingParts(
@@ -341,7 +341,7 @@ interface IrBuilderWithPluginContext {
         propertyName: Name,
         propertyType: IrType,
         propertyParent: IrClass,
-        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE
+        visibility: Visibility = Visibilities.Private
     ): IrProperty {
         val field = property?.backingField ?: propertyParent.factory.buildField {
             startOffset = propertyParent.startOffset
@@ -350,7 +350,7 @@ interface IrBuilderWithPluginContext {
             type = propertyType
             origin = SERIALIZATION_PLUGIN_ORIGIN
             isFinal = true
-            this.visibility = DescriptorVisibilities.PRIVATE
+            this.visibility = Visibilities.Private
         }.also { it.parent = propertyParent }
 
         val prop = property ?: propertyParent.addProperty {

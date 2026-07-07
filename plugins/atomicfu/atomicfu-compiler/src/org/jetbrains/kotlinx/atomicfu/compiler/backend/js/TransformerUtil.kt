@@ -153,7 +153,7 @@ private fun IrPluginContext.buildDefaultPropertyAccessor(name: String): IrSimple
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
         this.origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-        this.visibility = DescriptorVisibilities.LOCAL
+        this.visibility = Visibilities.Local
         this.isInline = true
         this.name = Name.identifier(name)
     }

@@ -128,7 +128,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
                     allowLazyDeclarationsCreation = true
                 ).run {
                     parent = actualParent
-                    visibility = DescriptorVisibilities.PUBLIC
+                    visibility = Visibilities.Public
                     irSnippet.declarationsFromOtherSnippets.add(this)
                 }
             }

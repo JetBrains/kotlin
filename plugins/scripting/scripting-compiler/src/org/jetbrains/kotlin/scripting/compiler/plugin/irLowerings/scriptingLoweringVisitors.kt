@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmInnerClassesSupport
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -445,7 +445,7 @@ internal class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrTrans
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: ScriptFixLambdasTransformerContext): IrSimpleFunction =
         with(declaration) {
             if (data.insideTopLevelDestructuringDeclaration && origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
-                visibility = DescriptorVisibilities.LOCAL
+                visibility = Visibilities.Local
                 val dataForChildren =
                     if (dispatchReceiverParameter?.type == irScriptClass.defaultType) {
                         val oldDispatchReceiver = dispatchReceiverParameter

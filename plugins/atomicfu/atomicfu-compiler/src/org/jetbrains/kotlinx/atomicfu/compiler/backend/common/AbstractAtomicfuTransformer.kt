@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.wrapWithCompilationException
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -560,7 +560,7 @@ abstract class AbstractAtomicfuTransformer(
             return pluginContext.irFactory.buildFun {
                 name = Name.identifier(mangledName)
                 isInline = true
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
             }.apply {
                 val T = if (!valueType.isPrimitiveType()) irBuiltIns.anyNType else valueType
@@ -890,7 +890,7 @@ abstract class AbstractAtomicfuTransformer(
                 "Non-inline extension functions on kotlinx.atomicfu.Atomic* classes are not allowed, " +
                         "please add inline modifier to the function ${this.render()}."
             }
-            require(this.visibility == DescriptorVisibilities.PRIVATE || this.visibility == DescriptorVisibilities.INTERNAL) {
+            require(this.visibility == Visibilities.Private || this.visibility == Visibilities.Internal) {
                 "Only private or internal extension functions on kotlinx.atomicfu.Atomic* classes are allowed, " +
                         "please make the extension function ${this.render()} private or internal."
             }

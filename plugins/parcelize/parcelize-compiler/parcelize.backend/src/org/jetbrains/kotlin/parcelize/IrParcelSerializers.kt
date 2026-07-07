@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -682,7 +682,7 @@ class IrUuidParcelSerializer(
         val lambdaFunction = context.irFactory.buildFun {
             origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             name = SpecialNames.NO_NAME_PROVIDED
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
             returnType = context.irBuiltIns.unitType
             modality = Modality.FINAL
         }.apply {

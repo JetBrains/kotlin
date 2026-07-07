@@ -6,7 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -207,7 +207,7 @@ class SerializableIrGenerator(
     private fun createCachedDescriptorProperty(companionObject: IrClass): IrProperty {
         val serialDescIrType = serialDescriptorClass.defaultType
 
-        return companionObject.addValPropertyWithJvmField(serialDescIrType, CACHED_DESCRIPTOR_FIELD_NAME, DescriptorVisibilities.PUBLIC) {
+        return companionObject.addValPropertyWithJvmField(serialDescIrType, CACHED_DESCRIPTOR_FIELD_NAME, Visibilities.Public) {
             val serialDescVar = irTemporary(
                 getInstantiateDescriptorExpr(),
                 nameHint = "serialDesc"

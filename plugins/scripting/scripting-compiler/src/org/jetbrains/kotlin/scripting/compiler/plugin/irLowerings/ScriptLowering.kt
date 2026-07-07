@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -87,7 +87,7 @@ internal class ScriptsToClassesLowering(
             origin = IrDeclarationOrigin.SCRIPT_CLASS
             name = NameUtils.getScriptTargetClassName(irScript.name)
             kind = ClassKind.CLASS
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             modality = Modality.FINAL
         }.also { irScriptClass ->
             irScriptClass.superTypes += (irScript.baseClass ?: context.irBuiltIns.anyNType)
@@ -182,7 +182,7 @@ internal class ScriptsToClassesLowering(
                 origin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER
                 name = parameter.name
                 type = parameter.type
-                visibility = DescriptorVisibilities.LOCAL
+                visibility = Visibilities.Local
                 isFinal = true
             }
             parameter to field
@@ -347,7 +347,7 @@ internal class ScriptsToClassesLowering(
 
         addFunction {
             name = Name.identifier("main")
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             returnType = context.irBuiltIns.unitType
             modality = Modality.FINAL
         }.also { mainFun ->
@@ -379,7 +379,7 @@ internal class ScriptsToClassesLowering(
             property.backingField = context.irFactory.buildField {
                 name = from.name
                 type = from.type
-                visibility = DescriptorVisibilities.PROTECTED
+                visibility = Visibilities.Protected
             }.also { field ->
                 field.parent = this
                 if (initializer != null) {
@@ -451,7 +451,7 @@ private fun makeImplicitReceiversFieldsWithParameters(irScriptClass: IrClass, ty
                 endOffset = UNDEFINED_OFFSET,
                 origin = IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER,
                 name = name,
-                visibility = DescriptorVisibilities.PRIVATE,
+                visibility = Visibilities.Private,
                 symbol = IrFieldSymbolImpl(),
                 type = typeRemapper.remapType(type),
                 isFinal = true,
@@ -613,7 +613,7 @@ private fun IrClass.addEarlierScriptField(irScript: IrScript) =
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.SCRIPT_EARLIER_SCRIPTS,
             name = Name.identifier("\$\$earlierScripts"),
-            visibility = DescriptorVisibilities.PRIVATE,
+            visibility = Visibilities.Private,
             symbol = IrFieldSymbolImpl(),
             type = earlierScriptsParameter.type,
             isFinal = true,

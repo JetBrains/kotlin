@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.plugin.sandbox.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.addBackingField
@@ -287,7 +287,7 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
             name = Name.identifier("InnerBox")
             kind = ClassKind.CLASS
             modality = Modality.FINAL
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             isInner = true
         }.apply {
             parent = outer
@@ -388,7 +388,7 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
             name = Name.identifier("fromCompanion")
             returnType = context.irBuiltIns.stringType
             modality = Modality.FINAL
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }.apply {
             parent = klass
             parameters += createDispatchReceiverParameterWithClassParent()
@@ -431,7 +431,7 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
             name = Name.identifier(className)
             kind = classKindValue
             this.modality = classModality
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             this.isCompanion = classIsCompanion
             this.isInner = classIsInner
         }.apply {
@@ -507,7 +507,7 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
             name = Name.identifier(functionName)
             returnType = valueType
             modality = Modality.FINAL
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }.apply {
             parent = klass
             parameters += createDispatchReceiverParameterWithClassParent()
@@ -534,7 +534,7 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
             name = Name.identifier("self")
             returnType = selfType
             modality = Modality.FINAL
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }.apply {
             parent = klass
             val dispatch = createDispatchReceiverParameterWithClassParent()
@@ -642,7 +642,7 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
             name = Name.identifier("foo")
             returnType = context.irBuiltIns.stringType
             modality = Modality.OPEN
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }.apply {
             parent = klass
             parameters += createDispatchReceiverParameterWithClassParent()

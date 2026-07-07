@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.classNameOverride
 import org.jetbrains.kotlin.backend.jvm.createJvmFileFacadeClass
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -119,7 +119,7 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
             .singleOrNull { it.origin == IrDeclarationOrigin.SCRIPT_RESULT_PROPERTY }
         resultProp?.let { irResultProperty ->
             val backingField = irResultProperty.backingField ?: return@let
-            backingField.visibility = DescriptorVisibilities.PUBLIC
+            backingField.visibility = Visibilities.Public
 
             val fieldType = backingField.type.toIrBasedKotlinType()
             irSnippetClass.scriptResultFieldDataAttr =
@@ -268,10 +268,10 @@ private class ReplSnippetToClassTransformer(
 private fun IrDeclarationWithVisibility.updateVisibilityToPublicIfNeeded() {
     // The snippet top-level classes visibilities are set to public, so this function is used to update
     // visibilities of such class memebrs recursively, to avoid incorrect codegeneration
-    if (visibility == DescriptorVisibilities.LOCAL &&
-        parent.let { it is IrClass && it.visibility == DescriptorVisibilities.PUBLIC }
+    if (visibility == Visibilities.Local &&
+        parent.let { it is IrClass && it.visibility == Visibilities.Public }
     ) {
-        visibility = DescriptorVisibilities.PUBLIC
+        visibility = Visibilities.Public
     }
 }
 
@@ -287,7 +287,7 @@ private fun makeImplicitReceiversFieldsWithParameters(
             endOffset = UNDEFINED_OFFSET
             origin = IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER
             name = Name.identifier("\$\$implicitReceiver_${typeName ?: param.indexInParameters.toString()}")
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             type = typeRemapper.remapType(param.type)
             isFinal = true
         } to param

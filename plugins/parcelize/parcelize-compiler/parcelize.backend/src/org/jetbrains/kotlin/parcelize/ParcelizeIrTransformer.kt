@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -267,7 +267,7 @@ class ParcelizeIrTransformer(
             val irField = this
             val creatorClass = irFactory.buildClass {
                 name = Name.identifier("Creator")
-                visibility = DescriptorVisibilities.LOCAL
+                visibility = Visibilities.Local
             }.apply {
                 parent = irField
                 superTypes = listOf(creatorType)

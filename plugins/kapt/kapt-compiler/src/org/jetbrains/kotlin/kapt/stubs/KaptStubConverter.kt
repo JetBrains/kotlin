@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAM
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -1091,7 +1091,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             val superClass = declaration.parentAsClass.getNonErrorSuperClassNotAny()
             val superClassConstructor =
                 superClass.constructors.find {
-                    (it.visibility == DescriptorVisibilities.PUBLIC || it.visibility == DescriptorVisibilities.PROTECTED) &&
+                    (it.visibility == Visibilities.Public || it.visibility == Visibilities.Protected) &&
                             it.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR
                 }
 

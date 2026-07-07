@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.jvm.abi
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGenerator
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -83,7 +83,7 @@ class JvmAbiClassBuilderInterceptor(
         private val delegate: ClassGenerator,
         irClass: IrClass?,
     ) : ClassGenerator by delegate {
-        private val isPrivateClass = irClass != null && DescriptorVisibilities.isPrivate(irClass.visibility)
+        private val isPrivateClass = irClass != null && Visibilities.isPrivate(irClass.visibility)
         private val isDataClass = irClass != null && irClass.isData
         private val removeClassFromAbi = shouldRemoveFromAbi(irClass, removePrivateClasses, treatInternalAsPrivate)
 
@@ -92,7 +92,7 @@ class JvmAbiClassBuilderInterceptor(
             ?.primaryConstructor
             ?.visibility
             ?.let {
-                DescriptorVisibilities.isPrivate(it) || (treatInternalAsPrivate && it == DescriptorVisibilities.INTERNAL)
+                Visibilities.isPrivate(it) || (treatInternalAsPrivate && it == Visibilities.Internal)
             } == true
 
         lateinit var internalName: String
@@ -129,14 +129,14 @@ class JvmAbiClassBuilderInterceptor(
                 return field
             }
 
-            val visibility = declaration?.visibility ?: DescriptorVisibilities.DEFAULT_VISIBILITY
+            val visibility = declaration?.visibility ?: Visibilities.DEFAULT_VISIBILITY
 
-            if (DescriptorVisibilities.isPrivate(visibility)) {
+            if (Visibilities.isPrivate(visibility)) {
                 // Remove all private fields.
                 return field
             }
 
-            if (treatInternalAsPrivate && visibility == DescriptorVisibilities.INTERNAL) {
+            if (treatInternalAsPrivate && visibility == Visibilities.Internal) {
                 // Remove all internal fields.
                 return field
             }
@@ -171,14 +171,14 @@ class JvmAbiClassBuilderInterceptor(
 
             // Remove private functions from the ABI jars
             if (
-                access and Opcodes.ACC_PRIVATE != 0 && declaration != null && DescriptorVisibilities.isPrivate(declaration.visibility)
+                access and Opcodes.ACC_PRIVATE != 0 && declaration != null && Visibilities.isPrivate(declaration.visibility)
                 || name == "<clinit>" || name.startsWith("access\$") && access and Opcodes.ACC_SYNTHETIC != 0
             ) {
                 return method
             }
 
             // Remove internal functions from the ABI jars
-            if (treatInternalAsPrivate && declaration?.visibility == DescriptorVisibilities.INTERNAL) {
+            if (treatInternalAsPrivate && declaration?.visibility == Visibilities.Internal) {
                 return method
             }
 
@@ -254,8 +254,8 @@ private fun shouldRemoveFromAbi(irClass: IrClass?, removePrivateClasses: Boolean
 }
 
 private fun IrDeclarationWithVisibility.isVisibilityStrippedFromAbi(stripInternal: Boolean): Boolean {
-    val isInAbi = visibility == DescriptorVisibilities.PUBLIC
-            || visibility == DescriptorVisibilities.PROTECTED
-            || (!stripInternal && visibility == DescriptorVisibilities.INTERNAL)
+    val isInAbi = visibility == Visibilities.Public
+            || visibility == Visibilities.Protected
+            || (!stripInternal && visibility == Visibilities.Internal)
     return !isInAbi || parentClassOrNull?.isVisibilityStrippedFromAbi(stripInternal) == true
 }

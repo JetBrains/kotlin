@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -60,7 +60,7 @@ class IrPreGenerator(
         val method = irClass.addFunction {
             name = SerialEntityNames.WRITE_SELF_NAME
             returnType = compilerContext.irBuiltIns.unitType
-            visibility = if (irClass.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
+            visibility = if (irClass.modality == Modality.FINAL) Visibilities.Internal else Visibilities.Public
             modality = Modality.FINAL
             origin = SERIALIZATION_PLUGIN_ORIGIN
         }
@@ -123,7 +123,7 @@ class IrPreGenerator(
         if (irClass.findSerializableSyntheticConstructor() != null) return
         val ctor = irClass.addConstructor {
             origin = SERIALIZATION_PLUGIN_ORIGIN
-            visibility = if (irClass.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
+            visibility = if (irClass.modality == Modality.FINAL) Visibilities.Internal else Visibilities.Public
         }.apply { excludeFromJsExport() }
         val markerClassSymbol =
             compilerContext.getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_CTOR_MARKER_NAME.asString())

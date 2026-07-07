@@ -7,7 +7,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -423,7 +423,7 @@ internal class Instantiator(
         //   In this case, the private serializer will always be located in the same package, otherwise a syntax error will occur.
         //   If it is not null, rootSerializableClass.getPackageFragment() will return IrFile we are currently compiling
         val sameFileAccess = serializerClass.getPackageFragment() == rootSerializableClass?.getPackageFragment()
-        return if (rootSerializableClass == null || serializerClass.visibility != DescriptorVisibilities.PRIVATE || sameFileAccess) {
+        return if (rootSerializableClass == null || serializerClass.visibility != Visibilities.Private || sameFileAccess) {
             // we can access the serializer object directly only if it is not private, or is located in the same file as the class using it
             irBuilder.irGetObject(serializerClassOriginal)
         } else {

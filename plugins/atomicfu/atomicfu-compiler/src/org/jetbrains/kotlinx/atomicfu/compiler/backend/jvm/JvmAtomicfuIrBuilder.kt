@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
@@ -117,7 +117,7 @@ class JvmAtomicfuIrBuilder(
                 type = atomicBoxType.defaultType
                 this.isFinal = true
                 this.isStatic = atomicfuField.isStatic
-                visibility = DescriptorVisibilities.PRIVATE
+                visibility = Visibilities.Private
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
             }.apply {
                 if (atomicFactoryCall != null) {
@@ -144,7 +144,7 @@ class JvmAtomicfuIrBuilder(
             type = fuClass.defaultType
             isFinal = true
             isStatic = true
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
         }.apply {
             initializer = irExprBody(newJavaAtomicFieldUpdater(fuClass, parentClass, irBuiltIns.anyNType, fieldName))

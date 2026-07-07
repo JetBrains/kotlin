@@ -20,7 +20,7 @@
 package org.jetbrains.kotlin.powerassert
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -59,7 +59,7 @@ fun IrBuilderWithScope.irLambda(
         this.endOffset = endOffset
         name = Name.special("<anonymous>")
         this.returnType = returnType
-        visibility = DescriptorVisibilities.LOCAL
+        visibility = Visibilities.Local
         origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
     }.apply {
         val bodyBuilder = DeclarationIrBuilder(context, symbol, startOffset, endOffset)

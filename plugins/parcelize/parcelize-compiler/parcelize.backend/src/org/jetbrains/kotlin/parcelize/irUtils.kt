@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.parcelize
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -155,7 +155,7 @@ fun AndroidIrBuilder.getParcelableCreator(irClass: IrClass): IrExpression {
         endOffset = UNDEFINED_OFFSET,
         origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
         name = CREATOR_NAME,
-        visibility = DescriptorVisibilities.PUBLIC,
+        visibility = Visibilities.Public,
         symbol = IrFieldSymbolImpl(),
         type = creatorType,
         isFinal = true,

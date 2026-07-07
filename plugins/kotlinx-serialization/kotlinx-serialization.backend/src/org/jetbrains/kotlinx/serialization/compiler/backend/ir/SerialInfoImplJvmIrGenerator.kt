@@ -72,7 +72,7 @@ class SerialInfoImplJvmIrGenerator(
             endOffset = UNDEFINED_OFFSET
             name = SerialEntityNames.IMPL_NAME
             origin = SERIALIZATION_PLUGIN_ORIGIN
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }.apply {
             parent = annotationClass
             createThisReceiverParameter()
@@ -83,7 +83,7 @@ class SerialInfoImplJvmIrGenerator(
         val ctor = subclass.addConstructor {
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
         }
 
         implementor.implementAnnotationPropertiesAndConstructor(annotationClass, properties, subclass, ctor, null)
