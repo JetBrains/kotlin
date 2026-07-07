@@ -293,7 +293,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
                     endOffset = endOffset,
                     origin = origin,
                     name = context.symbolTable.nameProvider.nameForDeclaration(this),
-                    visibility = visibility,
+                    visibility = visibility.delegate,
                     isInline = isInline,
                     isExpect = isExpect,
                     returnType = constructorDescriptor.returnType.toIrType(),

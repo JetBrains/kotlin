@@ -434,7 +434,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
         endOffset = endOffset,
         origin = IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION,
         name = Name.identifier(scope.inventNameForTemporary("suspendConversion")),
-        visibility = DescriptorVisibilities.LOCAL,
+        visibility = Visibilities.Local,
         isInline = false,
         isExpect = false,
         returnType = irSuspendFunReturnType,

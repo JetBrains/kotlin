@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi2ir.lazy
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -34,7 +34,7 @@ class IrLazyField(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: PropertyDescriptor,
     override var name: Name,
-    override var visibility: DescriptorVisibility,
+    override var visibility: Visibility,
     override var isFinal: Boolean,
     override var isExternal: Boolean,
     override var isStatic: Boolean,

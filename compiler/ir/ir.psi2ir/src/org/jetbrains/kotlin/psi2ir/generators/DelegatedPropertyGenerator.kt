@@ -148,7 +148,7 @@ internal class DelegatedPropertyGenerator(
                     endOffset = endOffset,
                     origin = origin,
                     name = delegateDescriptor.name,
-                    visibility = delegateDescriptor.visibility,
+                    visibility = delegateDescriptor.visibility.delegate,
                     symbol = it,
                     type = type,
                     isFinal = !delegateDescriptor.isVar,

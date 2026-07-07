@@ -54,11 +54,11 @@ internal class ClassGenerator(
     declarationGenerator: DeclarationGenerator
 ) : DeclarationGeneratorExtension(declarationGenerator) {
     @OptIn(ValueClassBackendAgnosticApi::class)
-    fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: DescriptorVisibility? = null): IrClass {
+    fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: Visibility? = null): IrClass {
         val classDescriptor = ktClassOrObject.findClassDescriptor(this.context.bindingContext)
         val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationOrNull() ?: ktClassOrObject.pureStartOffset
         val endOffset = ktClassOrObject.pureEndOffset
-        val visibility = visibility_ ?: classDescriptor.visibility
+        val visibility = visibility_ ?: classDescriptor.visibility.delegate
         val modality = getEffectiveModality(ktClassOrObject, classDescriptor)
 
         return context.symbolTable.descriptorExtension.declareClass(classDescriptor) { it: IrClassSymbol ->
@@ -438,7 +438,7 @@ internal class ClassGenerator(
                 endOffset = UNDEFINED_OFFSET,
                 origin = IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
                 name = Name.identifier("contextReceiverField$fieldIndex"),
-                visibility = DescriptorVisibilities.PRIVATE,
+                visibility = Visibilities.Private,
                 symbol = IrFieldSymbolImpl(),
                 type = receiverDescriptor.type.toIrType(),
                 isFinal = true,
@@ -528,7 +528,7 @@ internal class ClassGenerator(
             }
 
             if (ktEnumEntry.hasMemberDeclarations()) {
-                irEnumEntry.correspondingClass = generateClass(ktEnumEntry, DescriptorVisibilities.PRIVATE)
+                irEnumEntry.correspondingClass = generateClass(ktEnumEntry, Visibilities.Private)
             }
         }
 

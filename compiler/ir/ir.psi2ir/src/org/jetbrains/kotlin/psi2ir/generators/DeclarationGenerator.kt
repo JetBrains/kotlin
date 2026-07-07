@@ -99,7 +99,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                     endOffset = ktTypeAlias.endOffset,
                     origin = IrDeclarationOrigin.DEFINED,
                     name = name,
-                    visibility = visibility,
+                    visibility = visibility.delegate,
                     symbol = symbol,
                     isActual = isActual,
                     expandedType = expandedType.toIrType()

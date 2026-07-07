@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi2ir.lazy
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -37,7 +37,7 @@ class IrLazyFunction(
     override val symbol: IrSimpleFunctionSymbol,
     override val descriptor: FunctionDescriptor,
     override var name: Name,
-    override var visibility: DescriptorVisibility,
+    override var visibility: Visibility,
     override var modality: Modality,
     override var isInline: Boolean,
     override var isExternal: Boolean,

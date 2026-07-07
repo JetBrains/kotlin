@@ -140,7 +140,7 @@ class DeclarationStubGeneratorImpl(
             IrLazyProperty(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
-                descriptor.name, descriptor.visibility, descriptor.modality,
+                descriptor.name, descriptor.visibility.delegate, descriptor.modality,
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
                 descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE)
@@ -162,7 +162,7 @@ class DeclarationStubGeneratorImpl(
             IrLazyField(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor),
                 it, descriptor,
-                descriptor.name, descriptor.visibility,
+                descriptor.name, descriptor.visibility.delegate,
                 isFinal = !descriptor.isVar,
                 isExternal = descriptor.isEffectivelyExternal(),
                 isStatic = (descriptor.dispatchReceiverParameter == null),
@@ -194,7 +194,7 @@ class DeclarationStubGeneratorImpl(
             IrLazyFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
-                descriptor.name, descriptor.visibility, descriptor.modality,
+                descriptor.name, descriptor.visibility.delegate, descriptor.modality,
                 descriptor.isInline, descriptor.isExternal, descriptor.isTailrec, descriptor.isSuspend, descriptor.isExpect,
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
                 isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
@@ -218,7 +218,7 @@ class DeclarationStubGeneratorImpl(
             IrLazyConstructor(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
-                descriptor.name, descriptor.visibility,
+                descriptor.name, descriptor.visibility.delegate,
                 descriptor.isInline, descriptor.isEffectivelyExternal(), descriptor.isPrimary, descriptor.isExpect,
                 this, typeTranslator
             ).generateParentDeclaration().also {
@@ -308,7 +308,7 @@ class DeclarationStubGeneratorImpl(
                 IrLazyClass(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                     it, this,
-                    name, kind, visibility, getEffectiveModality(this),
+                    name, kind, visibility.delegate, getEffectiveModality(this),
                     isCompanion = isCompanionObject,
                     isInner = isInner,
                     isData = isData,
@@ -387,7 +387,7 @@ class DeclarationStubGeneratorImpl(
             IrLazyTypeAlias(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
-                descriptor.name, descriptor.visibility, descriptor.isActual,
+                descriptor.name, descriptor.visibility.delegate, descriptor.isActual,
                 this, typeTranslator
             ).generateParentDeclaration()
         }

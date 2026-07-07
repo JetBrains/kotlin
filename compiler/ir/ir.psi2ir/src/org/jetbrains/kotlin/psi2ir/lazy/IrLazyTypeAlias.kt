@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi2ir.lazy
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -31,7 +31,7 @@ class IrLazyTypeAlias(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: TypeAliasDescriptor,
     override var name: Name,
-    override var visibility: DescriptorVisibility,
+    override var visibility: Visibility,
     override var isActual: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,

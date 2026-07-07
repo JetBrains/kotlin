@@ -162,7 +162,7 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
             ktPropertyElement.startOffsetSkippingComments, ktPropertyElement.endOffset,
             IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
             propertyDescriptor, propertyDescriptor.type.toIrType(),
-            propertyDescriptor.fieldVisibility
+            propertyDescriptor.fieldVisibility.delegate
         ).also {
             it.initializer = generateInitializer(it)
         }

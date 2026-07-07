@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -214,7 +214,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                                         generateSyntheticAccessors = true
                                     ) {
                                         // TODO: check if this is a correct place to do it
-                                        it.visibility = DescriptorVisibilities.PUBLIC
+                                        it.visibility = Visibilities.Public
                                         irExpressionBody
                                     }.also {
                                         it.origin = IrDeclarationOrigin.SCRIPT_RESULT_PROPERTY
