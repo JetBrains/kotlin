@@ -21,8 +21,29 @@ import kotlin.time.Duration
 
 /**
  * Represents common configuration that is applicable to all Kotlin Browser Test Runners.
- * Available at top level [browser.test][KotlinJsBrowserTestDsl] DSL block.
- * But can be overridden at [runner-level][KotlinBrowserTestRunnerDsl] for specific browser runner.
+ *
+ * This configuration DSL is available as part of [top-level block][KotlinJsBrowserTestDsl].
+ * And can be overridden by a concrete browser [runner][KotlinBrowserTestRunnerDsl]
+ * Sample:
+ *
+ *     kotlin {
+ *       js {
+ *         browser {
+ *           test {
+ *             // override default timeout on top-level
+ *             timeout = 20.seconds
+ *             chromium {
+ *                 // override default timeout to 25 seconds
+ *                 // specifically for this test runner
+ *                 timeout = 25.seconds
+ *             }
+ *             firefox {
+ *                // inherits timeout of 20 seconds from top-level block
+ *             }
+ *           }
+ *         }
+ *       }
+ *     }
  */
 @ExperimentalJsTestDsl
 interface BrowserTestRunnerTopLevelConfigDsl {
@@ -94,6 +115,24 @@ interface KotlinJsTestsLocation {
 /**
  * Represents browser runner (e.g. [browser.test.chromium][KotlinJsBrowserTestDsl.ChromiumTestRunnerDsl]) DSL block.
  * Interface shared between all browser runners, and its members are not available at [top-level][BrowserTestRunnerTopLevelConfigDsl].
+ *
+ * Sample:
+ *
+ *     kotlin {
+ *       js {
+ *         browser {
+ *           test {
+ *             // no launchArgs at top-level
+ *             chromium {
+ *                launchArgs = listOf("--no-sandbox")
+ *             }
+ *             firefox {
+ *                launchArgs = listOf("-devtools")
+ *             }
+ *           }
+ *         }
+ *       }
+ *     }
  */
 @ExperimentalJsTestDsl
 interface KotlinBrowserTestRunnerDsl : BrowserTestRunnerTopLevelConfigDsl, Named {

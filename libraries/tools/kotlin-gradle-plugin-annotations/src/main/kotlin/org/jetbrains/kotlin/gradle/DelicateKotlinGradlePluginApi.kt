@@ -14,7 +14,7 @@ package org.jetbrains.kotlin.gradle
  * Stable delicate API will have to go through the same deprecation cycle as any other stable API.
  * Though delicate API can also be experimental, and can be changed without notice.
  *
- * If you're unsure about using this API, feel free to ask in Kotlin Slack or Kotlin issue tracker.
+ * If you're unsure about using this API, feel free to ask in [Kotlin Community](https://kotl.in/build-tools-slack) or [Kotlin issue tracker](https://kotl.in/issue).
  */
 @RequiresOptIn(
     level = RequiresOptIn.Level.WARNING,
