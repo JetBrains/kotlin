@@ -187,8 +187,8 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         IntrinsicType.MINUS -> Sub(resType.asArithmeticType())(args[0]!!, args[1]!!)
                         IntrinsicType.TIMES -> Mul(resType.asArithmeticType())(args[0]!!, args[1]!!)
                         // TODO: Throwing on division by zero not yet supported
-//                        IntrinsicType.SIGNED_DIV -> Div(resType)(args[0]!!, args[1]!!)
-//                        IntrinsicType.SIGNED_REM -> Rem(resType)(args[0]!!, args[1]!!)
+//                        IntrinsicType.SIGNED_DIV -> Div(resType.asArithmeticType())(args[0]!!, args[1]!!)
+//                        IntrinsicType.SIGNED_REM -> Rem(resType.asArithmeticType())(args[0]!!, args[1]!!)
 
                         IntrinsicType.INC -> Add(resType.asArithmeticType())(args[0]!!, Const(resType.asArithmeticType(), 1))
                         IntrinsicType.DEC -> Sub(resType.asArithmeticType())(args[0]!!, Const(resType.asArithmeticType(), 1))
