@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.build.report.metrics
 import java.util.concurrent.CopyOnWriteArrayList
 
 
-class CustomBuildTimeMetric private constructor(name: String, parent: BuildTimeMetric?) : BuildTimeMetric(name, name, parent) {
+class CustomBuildTimeMetric private constructor(name: String, parent: BuildTimeMetric<out BuildPerformanceMetric>?) :
+    BuildTimeMetric<BuildPerformanceMetric>(name, name, parent, null) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is CustomBuildTimeMetric) return false
@@ -18,7 +19,10 @@ class CustomBuildTimeMetric private constructor(name: String, parent: BuildTimeM
     override fun hashCode(): Int = name.hashCode()
 
     companion object {
-        fun createIfDoesNotExistAndReturn(name: String, parent: BuildTimeMetric? = null): BuildTimeMetric {
+        fun createIfDoesNotExistAndReturn(
+            name: String,
+            parent: BuildTimeMetric<*>? = null,
+        ): BuildTimeMetric<BuildPerformanceMetric> {
             val newCustomBuildTimeMetric = CustomBuildTimeMetric(name, parent)
             allCustomBuildTimeMetrics.addIfAbsent(newCustomBuildTimeMetric)
             return getAllCustomBuildTimeMetrics().find { it.name == name }

@@ -17,7 +17,7 @@ private fun <T : BuildPerformanceMetric> getAllMetricsByType(buildMetricClass: K
 
 fun getAllMetrics() = allBuildPerformanceMetrics + getAllCustomBuildTimeMetrics()
 
-val allBuildTimeMetrics: List<BuildTimeMetric>
+val allBuildTimeMetrics: List<BuildTimeMetric<out BuildPerformanceMetric>>
     get() = getAllMetricsByType(BuildTimeMetric::class) + getAllCustomBuildTimeMetrics()
 
 internal val allBuildPerformanceMetrics

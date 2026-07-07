@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.statistics.file
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.*
 
-internal fun <B : BuildTimeMetric, P : BuildPerformanceMetric> Printer.printBuildReport(
+internal fun <B : BuildTimeMetric<P>, P : BuildPerformanceMetric> Printer.printBuildReport(
     data: ReadableFileReportData<B, P>,
     printMetrics: Boolean,
     printCustomTaskMetrics: Printer.(CompileStatisticsData<B, P>) -> Unit,
@@ -52,7 +52,7 @@ private fun Printer.printBuildInfo(startParameters: BuildStartParameters, failur
 }
 
 private fun Printer.printMetrics(
-    buildTimesMetrics: Map<out BuildTimeMetric, Long>,
+    buildTimesMetrics: Map<out BuildTimeMetric<out BuildPerformanceMetric>, Long>,
     performanceMetrics: Map<out BuildPerformanceMetric, Long>,
     nonIncrementalAttributes: Collection<BuildAttribute>,
     gcTimeMetrics: Map<String, Long>? = emptyMap(),
@@ -93,14 +93,14 @@ private fun Printer.printGcMetrics(
     }
 }
 
-private fun Printer.printBuildTimes(buildTimes: Map<out BuildTimeMetric, Long>) {
+private fun Printer.printBuildTimes(buildTimes: Map<out BuildTimeMetric<out BuildPerformanceMetric>, Long>) {
     if (buildTimes.isEmpty()) return
 
     println("Time metrics:")
     withIndent {
-        val visitedBuildTimes = HashSet<BuildTimeMetric>()
+        val visitedBuildTimes = HashSet<BuildTimeMetric<out BuildPerformanceMetric>>()
 
-        fun printBuildTime(buildTime: BuildTimeMetric) {
+        fun printBuildTime(buildTime: BuildTimeMetric<out BuildPerformanceMetric>) {
             if (!visitedBuildTimes.add(buildTime)) return
 
             val timeMs = buildTimes[buildTime]
@@ -169,7 +169,7 @@ private fun Printer.printBuildAttributes(buildAttributes: Collection<BuildAttrib
     }
 }
 
-private fun <B : BuildTimeMetric, P : BuildPerformanceMetric> Printer.printTaskOverview(statisticsData: Collection<CompileStatisticsData<B, P>>) {
+private fun <B : BuildTimeMetric<P>, P : BuildPerformanceMetric> Printer.printTaskOverview(statisticsData: Collection<CompileStatisticsData<B, P>>) {
     var allTasksTimeMs = 0L
     var kotlinTotalTimeMs = 0L
     val kotlinTasks = ArrayList<CompileStatisticsData<B, P>>()
@@ -202,7 +202,7 @@ private fun <B : BuildTimeMetric, P : BuildPerformanceMetric> Printer.printTaskO
     println()
 }
 
-private fun <B : BuildTimeMetric, P : BuildPerformanceMetric> Printer.printTasksLog(
+private fun <B : BuildTimeMetric<P>, P : BuildPerformanceMetric> Printer.printTasksLog(
     statisticsData: List<CompileStatisticsData<B, P>>,
     printMetrics: Boolean,
     printCustomTaskMetrics: Printer.(CompileStatisticsData<B, P>) -> Unit,
@@ -224,7 +224,7 @@ private fun <B : BuildTimeMetric, P : BuildPerformanceMetric> Printer.printTasks
 }
 
 
-private fun <B : BuildTimeMetric, P : BuildPerformanceMetric> Printer.printTaskLog(
+private fun <B : BuildTimeMetric<P>, P : BuildPerformanceMetric> Printer.printTaskLog(
     statisticsData: CompileStatisticsData<B, P>,
 ) {
     val skipMessage = statisticsData.getSkipMessage()

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.lang.management.ManagementFactory
 
-interface BuildMetricsReporter<in B : BuildTimeMetric, P : BuildPerformanceMetric> {
+interface BuildMetricsReporter<in B : BuildTimeMetric<P>, P : BuildPerformanceMetric> {
     fun startMeasure(time: B)
     fun endMeasure(time: B)
     fun addTimeMetricNs(time: B, durationNs: Long)
@@ -29,7 +29,9 @@ interface BuildMetricsReporter<in B : BuildTimeMetric, P : BuildPerformanceMetri
     fun addMetrics(metrics: BuildMetrics<out B, out P>)
 }
 
-inline fun <B : BuildTimeMetric, P : BuildPerformanceMetric, T> BuildMetricsReporter<B, P>.measure(time: B, fn: () -> T): T {
+inline fun <B : BuildTimeMetric<P>, P : BuildPerformanceMetric, T> BuildMetricsReporter<B, P>.measure(time: B, fn: () -> T): T {
+    time.startTimeMetric?.also{ addTimeMetric(it)}
+//    startTime?.also{ addTimeMetric(it)}
     startMeasure(time)
     try {
         return fn()
@@ -39,13 +41,13 @@ inline fun <B : BuildTimeMetric, P : BuildPerformanceMetric, T> BuildMetricsRepo
 }
 
 
-fun <B : BuildTimeMetric, P : BuildPerformanceMetric> BuildMetricsReporter<B, P>.startMeasureGc() {
+fun <B : BuildTimeMetric<P>, P : BuildPerformanceMetric> BuildMetricsReporter<B, P>.startMeasureGc() {
     ManagementFactory.getGarbageCollectorMXBeans().forEach {
         startGcMetric(it.name, GcMetric(it.collectionTime, it.collectionCount))
     }
 }
 
-fun <B : BuildTimeMetric, P : BuildPerformanceMetric> BuildMetricsReporter<B, P>.endMeasureGc() {
+fun <B : BuildTimeMetric<P>, P : BuildPerformanceMetric> BuildMetricsReporter<B, P>.endMeasureGc() {
     ManagementFactory.getGarbageCollectorMXBeans().forEach {
         endGcMetric(it.name, GcMetric(it.collectionTime, it.collectionCount))
     }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
 
-open class BuildMetricsReporterImpl<B : BuildTimeMetric, P : BuildPerformanceMetric> : BuildMetricsReporter<B, P>, Serializable {
+open class BuildMetricsReporterImpl<B : BuildTimeMetric<P>, P : BuildPerformanceMetric> : BuildMetricsReporter<B, P>, Serializable {
     private val myBuildTimeStartNs = HashMap<B, Long>()
     private val myGcPerformance = HashMap<String, GcMetric>()
     private val myBuildTimes = BuildTimes<B>()
