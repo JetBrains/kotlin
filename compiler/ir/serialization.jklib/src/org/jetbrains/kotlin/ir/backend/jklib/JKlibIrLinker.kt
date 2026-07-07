@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -37,6 +39,8 @@ class JKlibIrLinker(
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
     val descriptorMangler: JKlibDescriptorMangler,
+    private val typeSystemContextFactory: (IrBuiltIns) -> IrTypeSystemContext,
+    private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) : KotlinIrLinker(module, configuration, symbolTable, emptyList()) {
     lateinit var stubGenerator: DeclarationStubGenerator
     override val returnUnboundSymbolsIfSignatureNotFound
@@ -74,7 +78,11 @@ class JKlibIrLinker(
             override fun needToConstructFakeOverrides(clazz: IrClass): Boolean =
                 clazz.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         },
+        externalOverridabilityConditions = externalOverridabilityConditions
     )
+
+    override fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext =
+        typeSystemContextFactory(irBuiltIns)
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
