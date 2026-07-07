@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -65,7 +65,7 @@ abstract class AbstractBlockDecomposerLowering(private val context: JsCommonBack
                     val initFunction = context.irFactory.buildFun {
                         name = Name.identifier(container.name.asString() + "\$init\$")
                         returnType = container.type
-                        visibility = DescriptorVisibilities.PRIVATE
+                        visibility = Visibilities.Private
                         origin = JsIrBuilder.SYNTHESIZED_DECLARATION
                     }.apply {
                         parent = container.parent

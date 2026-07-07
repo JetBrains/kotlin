@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationJsSymbols
 import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -313,7 +313,7 @@ private class JsCodeOutlineTransformer(
             val containerName = (container as? IrDeclarationWithName)?.name?.asString()
             name = Name.identifier(containerName?.let { "$it\$outlinedJsCode\$" } ?: "outlinedJsCode\$")
             returnType = symbols.dynamicType
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
             isExternal = true
             origin = JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN
         }

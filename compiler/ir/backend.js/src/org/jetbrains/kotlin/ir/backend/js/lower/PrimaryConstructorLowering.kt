@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.syntheticPrimaryConstructor
@@ -54,7 +54,7 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
         val declaration = irClass.addConstructor {
             origin = SYNTHETIC_PRIMARY_CONSTRUCTOR
             isPrimary = true
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
         }
 
         declaration.body = irClass.run {

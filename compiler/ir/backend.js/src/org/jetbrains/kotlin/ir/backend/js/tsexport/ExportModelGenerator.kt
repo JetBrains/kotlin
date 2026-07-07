@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
@@ -137,7 +137,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                     isMember = parent is IrClass && !isExportedDefaultImplementation,
                     isStatic = isStatic && !isFactoryPropertyForInnerClass && !isExportedDefaultImplementation,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
-                    isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
+                    isProtected = function.visibility == Visibilities.Protected,
                     parameters = function.nonDispatchParameters
                         .filter { it.shouldBeExported() }
                         .butIf(isStatic && isInnerClassMember) {
@@ -279,7 +279,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             )
 
         val isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT
-        val isProtected = property.visibility == DescriptorVisibilities.PROTECTED
+        val isProtected = property.visibility == Visibilities.Protected
         if (!isPropertyAMember || parentClass.isInterface) {
             return listOf(
                 ExportedField(
@@ -351,7 +351,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             name = ExportedMemberName.Identifier(irEnumEntry.getExportedIdentifier()),
             type = ExportedType.IntersectionType(exportType(parentClass.defaultType, emptyMap()), type),
             isStatic = true,
-            isProtected = parentClass.visibility == DescriptorVisibilities.PROTECTED,
+            isProtected = parentClass.visibility == Visibilities.Protected,
         ).withAttributesFor(irEnumEntry)
     }
 
@@ -1286,9 +1286,9 @@ private fun IrDeclaration.isExportedImplicitlyOrExplicitly(context: JsIrBackendC
     return shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context, this)
 }
 
-fun DescriptorVisibility.toExportedVisibility() =
+fun Visibility.toExportedVisibility() =
     when (this) {
-        DescriptorVisibilities.PROTECTED -> ExportedVisibility.PROTECTED
+        Visibilities.Protected -> ExportedVisibility.PROTECTED
         else -> ExportedVisibility.DEFAULT
     }
 

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.transformers.transformMemberToStaticFunction
 import org.jetbrains.kotlin.ir.declarations.*
@@ -43,7 +43,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
     }
 
     private fun IrSimpleFunction.transformPrivateFunctionToStaticFunction(): IrSimpleFunction? =
-        runIf(visibility == DescriptorVisibilities.PRIVATE && dispatchReceiverParameter != null) {
+        runIf(visibility == Visibilities.Private && dispatchReceiverParameter != null) {
             with(context) {
                 transformMemberToStaticFunction(this@transformPrivateFunctionToStaticFunction)
             }

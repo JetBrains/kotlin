@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -87,7 +87,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
             this.name = Name.identifier("$name test fun")
             this.returnType = if (this@createInvocation == context.symbols.suiteFun!!) context.irBuiltIns.unitType else context.irBuiltIns.anyNType
             this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-            this.visibility = DescriptorVisibilities.LOCAL
+            this.visibility = Visibilities.Local
         }
 
         function.parent = parentFunction
@@ -136,7 +136,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
     }
 
     private fun IrDeclarationWithVisibility.isVisibleFromTests() =
-        (visibility == DescriptorVisibilities.PUBLIC) || (visibility == DescriptorVisibilities.INTERNAL)
+        (visibility == Visibilities.Public) || (visibility == Visibilities.Internal)
 
     private fun IrDeclarationWithVisibility.isEffectivelyVisibleFromTests(): Boolean {
         return generateSequence(this) { it.parent as? IrDeclarationWithVisibility }.all {
@@ -225,7 +225,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
                 this.name = Name.identifier("${irClass.name.asString()} after test fun")
                 this.returnType = context.irBuiltIns.unitType
                 this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-                this.visibility = DescriptorVisibilities.LOCAL
+                this.visibility = Visibilities.Local
             }.apply {
                 parent = fn
                 this.body = context.irFactory.createBlockBody(

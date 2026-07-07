@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.IrFileDeserializer
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -68,9 +68,9 @@ private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSym
 
             fun <T> addSymbol(decl: T): Boolean where T : IrDeclarationWithVisibility, T : IrSymbolOwner {
                 when (decl.visibility) {
-                    DescriptorVisibilities.LOCAL -> return false
-                    DescriptorVisibilities.PRIVATE -> return false
-                    DescriptorVisibilities.PRIVATE_TO_THIS -> return false
+                    Visibilities.Local -> return false
+                    Visibilities.Private -> return false
+                    Visibilities.PrivateToThis -> return false
                 }
 
                 val sig = decl.symbol.signature

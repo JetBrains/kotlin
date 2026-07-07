@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.BackendJsSymbols.RuntimeMetadataKind
@@ -194,7 +194,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     callActualAccessor: (JsNameRef) -> JsStatement
                 ): JsFunction? =
                     when (visibility) {
-                        DescriptorVisibilities.PRIVATE -> null
+                        Visibilities.Private -> null
                         else -> JsFunction(
                             emptyScope,
                             JsBlock(callActualAccessor(JsNameRef(context.getNameForMemberFunction(this), JsThisRef()))),
@@ -327,7 +327,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun IrSimpleFunction.accessorRef(): JsNameRef? =
         when (visibility) {
-            DescriptorVisibilities.PRIVATE -> null
+            Visibilities.Private -> null
             else -> JsNameRef(
                 context.getNameForMemberFunction(this),
                 classPrototypeRef

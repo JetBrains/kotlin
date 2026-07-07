@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -125,7 +125,7 @@ class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : 
         return context.irFactory.buildFun {
             name = Name.identifier(constructorName)
             returnType = context.irBuiltIns.unitType
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             modality = Modality.FINAL
             isInline = constructor.isInline
             isExternal = constructor.isExternal

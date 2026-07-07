@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
@@ -74,7 +74,7 @@ fun calculateJsFunctionSignature(
 
     nameBuilder.append(declarationName)
 
-    if (declaration.visibility === INTERNAL && declaration.parentClassOrNull != null) {
+    if (declaration.visibility === Visibilities.Internal && declaration.parentClassOrNull != null) {
         val containingModule = declaration.findOriginallyContainingModule()
         if (containingModule != null) {
             nameBuilder.append("_\$m_").append(containingModule.name.toString())

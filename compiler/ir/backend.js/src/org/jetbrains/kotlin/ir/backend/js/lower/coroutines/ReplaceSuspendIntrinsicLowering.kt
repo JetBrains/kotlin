@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -91,7 +91,7 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
     private fun IrExpression.toGeneratorSuspensionExpression(container: IrDeclaration): IrExpression {
         val wrapperFunction = context.irFactory.buildFun {
             name = SpecialNames.NO_NAME_PROVIDED
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
             isSuspend = false
             returnType = this@toGeneratorSuspensionExpression.type
             origin = YIELDED_WRAPPER_FUNCTION

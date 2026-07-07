@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -200,7 +200,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         name = Name.identifier(STATIC_INIT_CALLED_PROPERTY_NAME)
         origin = STATIC_CLASS_INITIALIZER
         type = context.irBuiltIns.intType
-        visibility = DescriptorVisibilities.PRIVATE
+        visibility = Visibilities.Private
         isStatic = true
     }.apply {
         parent = irClass
@@ -229,7 +229,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             endOffset = UNDEFINED_OFFSET
             this.origin = origin
             name = Name.identifier(STATIC_INIT_FUNCTION_NAME)
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = Visibilities.Public
             returnType = context.irBuiltIns.unitType
         }
         return initFunction.apply {

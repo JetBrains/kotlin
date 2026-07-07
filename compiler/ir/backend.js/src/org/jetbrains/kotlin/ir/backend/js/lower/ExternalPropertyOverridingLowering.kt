@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -229,7 +229,7 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
                 endOffset = endOffset,
                 origin = EXTERNAL_SUPER_ACCESSORS_ORIGIN,
                 name = Name.identifier("\$super_${property.getJsNameOrKotlinName().identifier}"),
-                visibility = DescriptorVisibilities.PRIVATE,
+                visibility = Visibilities.Private,
                 symbol = IrFieldSymbolImpl(),
                 type = type,
                 isFinal = true,

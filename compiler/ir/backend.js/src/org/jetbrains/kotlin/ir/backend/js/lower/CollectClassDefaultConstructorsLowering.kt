@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
@@ -33,7 +33,7 @@ class CollectClassDefaultConstructorsLowering(private val context: JsIrBackendCo
     }
 
     private val IrClass.defaultConstructor: IrConstructor?
-        get() = constructors.singleOrNull { it.visibility == DescriptorVisibilities.PUBLIC && it.isDefaultConstructor() }
+        get() = constructors.singleOrNull { it.visibility == Visibilities.Public && it.isDefaultConstructor() }
 
     private fun IrConstructor.isDefaultConstructor(): Boolean = nonDispatchParameters.all { it.defaultValue != null }
 }

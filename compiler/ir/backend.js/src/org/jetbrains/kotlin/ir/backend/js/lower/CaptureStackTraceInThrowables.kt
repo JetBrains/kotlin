@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
@@ -58,7 +58,7 @@ class CaptureStackTraceInThrowables(val context: JsIrBackendContext) : BodyLower
             isStatic = false
             metadata = null
             name = Name.identifier(Namer.THROWABLE_CONSTRUCTOR)
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = Visibilities.Private
             origin = ES6_THROWABLE_CONSTRUCTOR_SLOT
         }.apply {
             parent = this@addThrowableConstructorSlot

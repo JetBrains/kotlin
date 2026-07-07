@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDelegatedPropertiesLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -381,7 +381,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             startOffset = lambdaDeclaration.startOffset
             endOffset = lambdaDeclaration.endOffset
             returnType = lambdaDeclaration.returnType
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
             name = Name.identifier("$")
             isSuspend = true
         }
@@ -701,7 +701,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             endOffset = invokeFun.endOffset
             // Since box/unbox is done on declaration side in case of suspend function use the specified type
             returnType = if (invokeFun.isSuspend) invokeFun.returnType else anyNType
-            visibility = DescriptorVisibilities.LOCAL
+            visibility = Visibilities.Local
             name = lambdaName
             isSuspend = invokeFun.isSuspend
         }

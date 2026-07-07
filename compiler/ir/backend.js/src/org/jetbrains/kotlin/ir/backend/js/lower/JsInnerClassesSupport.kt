@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.SYNTHESIZED_DECLARATION
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -47,7 +47,7 @@ class JsInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupp
                     origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
                     name = Name.identifier(Namer.SYNTHETIC_RECEIVER_NAME)
                     type = outerClass.defaultType
-                    visibility = DescriptorVisibilities.PROTECTED
+                    visibility = Visibilities.Protected
                     isFinal = true
                     isExternal = false
                     isStatic = false

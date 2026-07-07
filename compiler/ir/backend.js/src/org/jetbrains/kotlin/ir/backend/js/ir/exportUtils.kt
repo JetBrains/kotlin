@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.suspendFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
@@ -167,7 +167,7 @@ private fun shouldDeclarationBeExported(
     val parentModality = declaration.parentClassOrNull?.modality
     if (declaration is IrDeclarationWithVisibility
         && !(declaration is IrConstructor && declaration.isPrimary)
-        && declaration.visibility == DescriptorVisibilities.PROTECTED
+        && declaration.visibility == Visibilities.Protected
         && (parentModality == Modality.FINAL || parentModality == Modality.SEALED)
     ) {
         // Protected members inside final classes are effectively private.
@@ -320,7 +320,7 @@ fun IrDeclarationWithName.getExportedIdentifier(): String =
 internal val IrConstructor.exportedVisibility: ExportedVisibility
     get() = when (constructedClass.modality) {
         Modality.SEALED -> ExportedVisibility.PRIVATE
-        Modality.FINAL if visibility == DescriptorVisibilities.PROTECTED -> ExportedVisibility.PRIVATE
+        Modality.FINAL if visibility == Visibilities.Protected -> ExportedVisibility.PRIVATE
         else -> visibility.toExportedVisibility()
     }
 

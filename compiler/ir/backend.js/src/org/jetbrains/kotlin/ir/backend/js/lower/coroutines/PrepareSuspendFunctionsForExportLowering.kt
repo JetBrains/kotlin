@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -486,7 +486,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
                     val promisifiedSuspendLambda = context.irFactory.buildFun {
                         name = SpecialNames.NO_NAME_PROVIDED
-                        visibility = DescriptorVisibilities.LOCAL
+                        visibility = Visibilities.Local
                         isSuspend = true
                         returnType = call.type
                     }.also {

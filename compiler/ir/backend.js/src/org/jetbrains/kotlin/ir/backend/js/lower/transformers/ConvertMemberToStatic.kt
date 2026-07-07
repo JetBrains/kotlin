@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.transformers
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 context(context: CommonBackendContext)
 fun transformMemberToStaticFunction(function: IrSimpleFunction, origin: IrDeclarationOrigin = function.origin): IrSimpleFunction {
     val parentClass = function.parentAsClass
-    val newVisibility = if (function.isOriginallyLocal) DescriptorVisibilities.LOCAL else function.visibility
+    val newVisibility = if (function.isOriginallyLocal) Visibilities.Local else function.visibility
     val typeParametersFromContext = extractTypeParameters(function.parentAsClass)
     return context.irFactory.createStaticFunctionWithReceivers(
         parentClass,
