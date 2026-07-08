@@ -27,9 +27,12 @@ dependencies {
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     runtimeOnly(project(":kotlin-daemon-embeddable"))
     runtimeOnly(libs.kotlinx.coroutines.core) { isTransitive = false }
-    testImplementation(libs.junit4)
-    testImplementation(kotlinTest("junit"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testCompilationClasspath(kotlinStdlib())
+    testImplementation(kotlinStdlib())
 }
 
 sourceSets {
@@ -63,7 +66,7 @@ publish {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         dependsOn(runtimeJar)
         val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
         val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
@@ -77,4 +80,3 @@ projectTests {
         }
     }
 }
-

@@ -4,23 +4,20 @@
  */
 package org.jetbrains.kotlin.native.compiler.embeddable
 
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
 import java.lang.System.err
-import kotlin.test.assertEquals
 
 private val COMPILER_CLASS_FQN = "org.jetbrains.kotlin.cli.bc.K2Native"
 
 class CompilerSmokeTest {
 
-    private val _workingDir: TemporaryFolder = TemporaryFolder()
-
-    @Rule
-    fun getWorkingDir(): TemporaryFolder = _workingDir
+    @field:TempDir
+    lateinit var tmpDir: File
 
     private val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
 
@@ -58,7 +55,7 @@ class CompilerSmokeTest {
                 compilerClasspath.joinToString(File.pathSeparator),
                 COMPILER_CLASS_FQN
         ) + arguments
-        val proc = createProcess(*cmd.toTypedArray(), projectDir = _workingDir.root)
+        val proc = createProcess(*cmd.toTypedArray(), projectDir = tmpDir)
         return readOutput(proc)
     }
 

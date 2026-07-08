@@ -54,8 +54,11 @@ dependencies {
     kotlinNativeJavadoc(project(":kotlin-native:backend.native"))
     kotlinNativeJavadoc(project(":native:cli-native"))
 
-    testImplementation(libs.junit4)
-    testImplementation(kotlinTest("junit"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(kotlinStdlib())
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 val compiler = embeddableCompiler("kotlin-native-compiler-embeddable") {
@@ -117,7 +120,7 @@ open class ProjectTestArgumentProvider @Inject constructor(
 projectTests {
     testData(isolated, "testData")
 
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         /**
          * It's expected that test should be executed on CI, but currently this project under `kotlin.native.enabled`
          */

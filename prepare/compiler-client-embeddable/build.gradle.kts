@@ -25,8 +25,10 @@ dependencies {
     testImplementation(project(":compiler:cli-base"))
     testImplementation(project(":daemon-common"))
     testImplementation(project(":kotlin-daemon-client"))
-    testImplementation(libs.junit4)
-    testImplementation(kotlinTest("junit"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testCompilerClasspath(project(":kotlin-compiler"))
     testCompilerClasspath(project(":kotlin-scripting-compiler"))
     testCompilerClasspath(project(":kotlin-daemon"))
@@ -40,7 +42,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         dependsOn(":kotlin-compiler:jar")
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
         val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
