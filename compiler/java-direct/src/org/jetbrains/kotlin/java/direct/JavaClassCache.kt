@@ -68,11 +68,9 @@ internal class JavaClassCache(
         for (className in allClassNames) {
             val cid = ClassId(fileEntry.packageFqName, FqName(className), isLocal = false)
             if (classCache[cid] != null) continue
-            // Calls sameFileTopLevelClassProvider directly rather than findClassInCurrentScope:
-            // this resolutionContext is always freshly created for a top-level parse, so its
-            // scopeContext.containingClass is always null, under which findClassInCurrentScope's
-            // containing-class-chain lookup is a structurally unreachable no-op and the whole
-            // call reduces to exactly this.
+            // This resolutionContext is always freshly created for a top-level parse, so its
+            // scopeContext.containingClass is always null — no containing-class chain to search,
+            // just the top-level classes declared in this file.
             val javaClass = resolutionContext.scopeContext.sameFileTopLevelClassProvider(Name.identifier(className)) ?: continue
             // putIfAbsent: if a concurrent thread already installed an entry, drop ours and keep
             // theirs so all callers observe the same JavaClassOverAst instance (identity contract).

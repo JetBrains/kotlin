@@ -145,11 +145,9 @@ class JavaClassifierTypeOverAst(
                 findInheritedTypeParameter(parts[0])?.let { return it }
             }
 
-            // Multi-part names: navigate from base class through inner classes. Each hop resolves
-            // declared members plus the class's full inherited member types (same-file, cross-file
-            // Java source, binary Java, and Kotlin — [declaredOrFullyInherited]), so an
-            // intermediate segment inherited from any of those supertype representations still
-            // navigates correctly.
+            // Multi-part names: navigate from base class through inner classes. Each hop uses
+            // [declaredOrFullyInherited] so an intermediate segment inherited from any supertype
+            // representation still navigates correctly.
             var current: JavaClassifier? = findClassInCurrentScope(Name.identifier(parts[0]))
 
             if (current is JavaClass) {

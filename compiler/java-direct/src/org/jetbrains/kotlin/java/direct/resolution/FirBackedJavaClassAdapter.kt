@@ -105,18 +105,15 @@ internal class FirBackedJavaClassAdapter(
 
     /**
      * Own type parameters as [FirBackedJavaTypeParameter] wrappers carrying their
-     * `FirTypeParameterSymbol`s. Outer-class type params (encoded as
-     * [FirOuterClassTypeParameterRef] entries on `FirJavaClass.nonEnhancedTypeParameters`) are
-     * filtered out — the model's `JavaClassifierTypeOverAst.computeTypeArguments` walks
-     * [outerClass] recursively and adds them via the outer chain.
+     * `FirTypeParameterSymbol`s. Outer-class type params ([FirOuterClassTypeParameterRef] entries
+     * on `FirJavaClass.nonEnhancedTypeParameters`) are filtered out — [outerClass] is walked
+     * recursively by `JavaClassifierTypeOverAst.computeTypeArguments` to add them instead.
      *
-     * Reading [FirJavaClass.nonEnhancedTypeParameters] (rather than `typeParameters`) avoids the
-     * `FirSignatureEnhancement` cycle through `JavaTypeConversion.isRaw`.
+     * Reading `nonEnhancedTypeParameters` (rather than `typeParameters`) avoids the
+     * `FirSignatureEnhancement` cycle through `JavaTypeConversion.isRaw`. Cached (`lazy`) because
+     * FIR matches Java type parameters by object identity, and the qualified-form-raw walk in
+     * `JavaTypeOverAst.computeIsRaw` reads outer type parameters across files.
      */
-    // Cached so cross-file outer-type-parameter identity is preserved: the qualified-form-raw walk
-    // in JavaTypeOverAst.computeIsRaw reads outer.typeParameters per outer hop, and FIR matches
-    // Java type parameters by object identity. Re-allocating wrappers on every read would defeat
-    // that contract whenever an outer class lives in another file.
     override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         val fir = firRegularClass ?: return@lazy emptyList()
         val refs: List<FirTypeParameterRef> =
@@ -176,10 +173,8 @@ internal class FirBackedJavaClassAdapter(
      *  - For a [FirJavaClass] target, [FirJavaClass.existingNestedClassifierNames] — populated
      *    structurally at [org.jetbrains.kotlin.fir.java.FirJavaFacade] conversion time from
      *    `JavaClass.innerClassNames`, never touching `declarations`/enhancement.
-     *  - For any other [FirRegularClass] (Kotlin source / deserialized), reading `declarations`
-     *    is safe here — the KT-74097 publication-lazy hazard is specific to [FirJavaClass];
-     *    plain Kotlin/deserialized classes have their `declarations` populated eagerly at parse
-     *    or deserialization time, with no supertype/body resolution triggered by reading them.
+     *  - For any other [FirRegularClass] (Kotlin source / deserialized), [nestedClassifierNames]
+     *    reads `declarations` directly — see its KDoc for why that's safe here.
      *
      * Terminal-lookup only: results returned by [findInnerClass] are themselves fresh
      * [FirBackedJavaClassAdapter] instances (see its KDoc for the identity caveat).

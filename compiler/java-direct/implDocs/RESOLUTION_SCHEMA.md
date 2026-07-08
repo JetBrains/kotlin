@@ -211,7 +211,8 @@ probes.
    Scenario B) to an `outerClassId`.
 2. Form `outerClassId + nestedParts` and probe it; return on hit (direct nested class).
 3. On miss for a single nested segment, search supertypes of `outerClassId` for the inherited
-   nested class (`findInheritedNestedClass`, supertype walk + finder).
+   nested class (`findInheritedNestedClass`, delegating to `JavaInheritedMemberResolver`'s BFS
+   over `directSupertypeClassIds`, Scenario E).
 4. Re-entrance-safe `Outer.Inner` finder fallback: when step 3 was short-circuited by the cycle
    guard, re-probe `collectInheritedInnerClasses(outerClassId)[inner]` without the guard.
 5. Fallback to plain package/class splits longest-package-first (`probeFqnSplits`) — this is the
@@ -227,8 +228,7 @@ inherited segment" sub-problem is still reached, just one recursion level down.
 
 ### Scenario E — Inherited member type via supertypes
 
-Entry: `JavaInheritedMemberResolver`. Two complementary outputs, now both reaching all four class
-representations:
+Entry: `JavaInheritedMemberResolver`. Three outputs, all reaching every class representation:
 
 - `findInnerClassFromSupertypes` → a `JavaClass` with AST outer chain (for the AST pipeline /
   outer-arg substitution). Three arms, tried in order, the first hit wins:
@@ -239,33 +239,47 @@ representations:
      no opinion at all) defers to arm 3, so this arm's ambiguity detection can never be masked by
      a differently-shaped BFS below it.
   3. **Binary Java / Kotlin tail** — reached only when arms 1-2 found nothing: reuses
-     `resolveInheritedInnerClassToClassId`/`walkBinarySupertypes` (below) to get a `ClassId`, then
+     `resolveInheritedInnerClassToClassId`/`walkSupertypeClassIds` (below) to get a `ClassId`, then
      materializes it via `classifierAdapterFor` (Scenario A step 4). This closes the gap where a
      Java source class inheriting a nested class from a Kotlin or binary superclass was invisible
      to the *structural* pipeline (only reachable via the `ClassId` pipeline before).
-- `resolveInheritedInnerClassToClassId` → a bare `ClassId` via a two-pass BFS over
-  [containingClass]'s own supertypes (outer-class coverage is the caller's job — Scenario C's
-  per-level loop — not this function's, since the confirmed-always-`false` `includeOuterClasses`
-  parameter and its outer-walk loop were removed):
-  1. **`walkJavaSourceSupertypes`** — Java-source supertypes through the finder's source index,
-     resolving each level against *that file's* imports; independent of FIR lazy phases. Each
-     supertype reference's dotted segments are extracted via `splitCanonicalFqName()`
-     (bracket-aware) rather than a single `substringBefore('<')`, so a reference with type
-     arguments on a non-final segment (`a.B<String>.C`) is not truncated to `a.B`.
-  2. **`walkBinarySupertypes`** — Kotlin / binary supertypes through the per-origin
-     `directSupertypeClassIds` dispatcher (Scenario F).
+- `resolveInheritedInnerClassToClassId` → a bare `ClassId` via a single, origin-agnostic BFS
+  (`walkSupertypeClassIds`) over [containingClass]'s own supertypes (outer-class coverage is the
+  caller's job — Scenario C's per-level loop — not this function's, since the
+  confirmed-always-`false` `includeOuterClasses` parameter and its outer-walk loop were removed).
+  One exception: [containingClass]'s own direct supertypes are read from raw AST text
+  (`splitCanonicalFqName()`, bracket-aware — so a reference with type arguments on a non-final
+  segment such as `a.B<String>.C` is not truncated to `a.B`) and resolved via the
+  reentrance-safe `resolveWithoutInheritance` rather than through `directSupertypeClassIds`,
+  because [containingClass]'s own `SUPER_TYPES` FIR phase can still be on the call stack when
+  this runs (e.g. resolving a name used inside [containingClass]'s own extends/implements
+  clause); reading `.classifier` there would re-enter that in-progress computation. Every
+  ancestor beyond that first level is walked uniformly via `directSupertypeClassIds`
+  (Scenario F), regardless of origin. Regression-tested by
+  `JavaParsingTypeResolutionTest.testResolveInheritedInnerClassToClassIdNeverQueriesContainingClassOwnSupertypeClassIds`,
+  which fails `directSupertypeClassIds` if it's ever invoked with `containingClass`'s own
+  `ClassId`, while still expecting the walk to find a name inherited two levels up.
+- `resolveInheritedNestedClassId` → a bare `ClassId`, searching a single already-resolved
+  `ClassId`'s own supertypes rather than a containing-class chain (used by `findInheritedNestedClass`
+  for the `Outer.Nested` shape in Scenario D step 3). Reuses `walkSupertypeClassIds` directly,
+  seeded with that `ClassId`'s own direct supertypes — of any origin, so it works uniformly for
+  source, binary Java, and Kotlin without a DFS/BFS split between call sites.
 
-Both passes share a `visited` set, detect cross-pass ambiguity (→ `null`), and are bounded by
-`MAX_SUPERTYPE_DEPTH = 5`.
+`walkSupertypeClassIds` shares one `visited` set across the whole walk and probes every ancestor
+at a given level — source, binary Java, and Kotlin alike — before expanding to the next level, so
+ambiguity between candidates of different origins at the same depth is always detected, not just
+within a single origin's pass. Termination relies on `visited` (bounded by the finite set of
+distinct `ClassId`s reachable from the seed) plus `directSupertypeClassIds`'s own per-session
+cycle guard, not a depth cap — malformed cyclic hierarchies terminate via `visited`, not by
+giving up after N levels.
 
-Accepted, documented limitation: the cross-pass ambiguity check above only fires *within* the
-`ClassId` BFS itself (arm 3's source-vs-binary cross-pass); it does **not** extend to arm 2's
-source-only-finder result versus arm 3's binary/Kotlin tail in `findInnerClassFromSupertypes` —
-an inner class name independently inherited from a *different*, binary/Kotlin branch of the
-hierarchy at the same depth as a unique source-side match would not trigger ambiguity there.
-Closing this fully would mean unconditionally paying for a binary/Kotlin supertype walk even when
-the source answer is already unambiguous, for a very rare shape; accepted as a known trade-off
-rather than fixed.
+Accepted, documented limitation: this ambiguity detection is local to `resolveInheritedInnerClassToClassId`'s
+own BFS; it does **not** extend across `findInnerClassFromSupertypes`'s three arms — an inner
+class name found via the cross-file-source-only arm 2 versus one independently reachable through
+the binary/Kotlin tail (arm 3) at the same depth would not trigger ambiguity there. Closing this
+fully would mean unconditionally paying for a binary/Kotlin supertype walk even when the source
+answer is already unambiguous, for a very rare shape; accepted as a known trade-off rather than
+fixed.
 
 ### Scenario F — Direct-supertype `ClassId` graph
 

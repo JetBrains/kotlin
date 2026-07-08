@@ -233,11 +233,9 @@ internal class JavaSupertypeGraph(
         packageFqName: FqName,
         imports: JavaImports = JavaImports.EMPTY,
     ): List<ClassId> {
-        // Bracket-aware split (splitCanonicalFqName treats a '.' inside a generic argument list
-        // as part of that segment, not a separator) so a reference with type arguments on a
-        // non-final segment (`a.B<String>.C`) is correctly recognised as dotted and delegated
-        // below, instead of a plain `substringBefore('<')` truncating it to `a.B` and mis-treating
-        // it as a single, non-dotted simple name.
+        // splitCanonicalFqName treats a '.' inside a generic argument list as part of that
+        // segment, not a separator, so a reference with type arguments on a non-final segment
+        // (`a.B<String>.C`) is correctly recognised as dotted and delegated below.
         val segments = ref.splitCanonicalFqName()
         val simpleName = segments.singleOrNull()?.substringBefore('<')?.trim()
 

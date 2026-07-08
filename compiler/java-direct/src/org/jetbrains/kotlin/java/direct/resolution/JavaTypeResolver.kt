@@ -84,10 +84,8 @@ internal fun resolve(name: String): ClassId? {
  * (nested-class interpretation first, when the outer is a class in scope) and falls back to
  * plain `package.Class` splits via [probeFqnSplits] when no JLS 6.5.2 outer is in scope.
  *
- * [fullResolution] controls whether inherited-inner-class lookup is enabled (false → the
- * `WithoutInheritance` flavor used as a reentrance-safe fallback from
- * [resolveInheritedInnerClassToClassId]). Keeping a single implementation prevents the two
- * copies from drifting when one is updated.
+ * [fullResolution] controls whether inherited-inner-class lookup is enabled; `false` selects the
+ * reentrance-safe flavor used as a fallback from [resolveInheritedInnerClassToClassId].
  *
  * Operates on a pre-split parts list to avoid O(n²) [String.split] + `joinToString`
  * allocations on recursive calls.
@@ -127,15 +125,11 @@ private fun resolveQualifiedNameToClassIdFromParts(
         }
     }
 
-    // Re-entrance-safe finder fallback for the `Outer.Inner` shape: when the upper loop's
-    // `findInheritedNestedClass(...)` was short-circuited because `outerClassId` is currently
-    // mid-resolution on the supertype-cycle-checker stack, the cycle guard skips its own
-    // `finder.collectInheritedInnerClasses(...)` tail. Re-run that probe here without the
-    // cycle guard. Limited to `parts.size == 2` because that is the exact shape
-    // `collectInheritedInnerClasses` is keyed by (one outer `ClassId`, one inner simple
-    // name) and because `parts[0]` is treated as a simple name here — multi-segment
-    // package qualifiers like `java.util.Map.Entry` are intentionally handed off to
-    // [probeFqnSplits] below.
+    // Fallback for the `Outer.Inner` shape when `findInheritedNestedClass` above was
+    // cycle-guard-skipped (`outerClassId` mid-resolution): re-run the same
+    // `collectInheritedInnerClasses` probe without the guard. Limited to `parts.size == 2`
+    // because that's exactly what `collectInheritedInnerClasses` is keyed by (one outer
+    // `ClassId`, one inner simple name); longer qualifiers fall through to [probeFqnSplits].
     val finder = c.fileContext.classFinder
     if (fullResolution && finder != null && parts.size == 2) {
         val outerClassId = resolveSimpleNameToClassIdImpl(parts[0], tryResolve, fullResolution = true)
@@ -157,14 +151,11 @@ private fun resolveQualifiedNameToClassIdFromParts(
 /**
  * Unified workhorse for simple-name resolution.
  *
- * [fullResolution] selects the resolution flavor. `true` is the full primary path. `false` is the
- * reentrance-safe flavor used as a fallback from [resolveInheritedInnerClassToClassId] while an
- * inherited-inner-class walk is already in progress: it skips Step 1 and downgrades the
- * explicit/star steps to their single-split flavors — exactly the steps that would otherwise
- * recurse back into the same walk.
- * Omitting them is both correct and required for termination: the `false` flavor only turns a
- * supertype reference name into a [ClassId], which the remaining steps resolve directly, and the
- * dropped behaviors matter only for doubly-nested corner cases already handled by the primary path.
+ * [fullResolution] selects the flavor. `true` is the full primary path. `false` is the
+ * reentrance-safe fallback used while an inherited-inner-class walk
+ * ([resolveInheritedInnerClassToClassId]) is already in progress: it skips Step 1 and downgrades
+ * the explicit/star-import steps to their single-split forms, since those are exactly the steps
+ * that would otherwise recurse back into the same walk.
  */
 context(c: JavaResolutionContext)
 private fun resolveSimpleNameToClassIdImpl(
@@ -430,17 +421,12 @@ private fun resolveFromStaticStarImports(
 }
 
 /**
- * Try to resolve a simple name as an inner class inherited from the supertypes of [containingClass].
- * The BFS reads supertypes through the per-origin [directSupertypeClassIds] dispatcher.
+ * Wraps [JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId] with this context's
+ * [directSupertypeClassIds] and reentrance-safe name resolver — see its KDoc for search
+ * semantics.
  *
- * Only [containingClass]'s own supertypes are searched (not those of its outer classes), so every
- * caller ([resolveFromLocalScope], [findClassInCurrentScope] via the binary/Kotlin tail of
- * [JavaInheritedMemberResolver.findInnerClassFromSupertypes]) can interleave declared and inherited
- * lookups level by level while walking the containing-class chain itself (JLS 6.4.1).
- *
- * Not private: also used as the binary/Kotlin tail of
- * [JavaInheritedMemberResolver.findInnerClassFromSupertypes] (the structural, `JavaClass`-returning
- * sibling of this `ClassId`-returning ladder), via [findClassInCurrentScope].
+ * Not private: also plugged in as the binary/Kotlin tail of
+ * [JavaInheritedMemberResolver.findInnerClassFromSupertypes] via [declaredOrFullyInherited].
  */
 context(c: JavaResolutionContext)
 internal fun resolveInheritedInnerClassToClassId(
@@ -460,39 +446,17 @@ internal fun resolveInheritedInnerClassToClassId(
 
 /**
  * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with
- * [nestedName]. Dispatches via [directSupertypeClassIds] and probes via [tryResolve]; cycles are
- * bounded by [cycleGuardedSupertypeWalk].
+ * [nestedName]. Delegates to [JavaInheritedMemberResolver.resolveInheritedNestedClassId], which
+ * BFS-walks [directSupertypeClassIds] and probes via [tryResolve], detecting ambiguity across the
+ * whole hierarchy.
  */
 context(c: JavaResolutionContext)
 private fun findInheritedNestedClass(
     outerClassId: ClassId,
     nestedName: String,
-): ClassId? {
-    // Read supertypes BEFORE the cycle guard: [directSupertypeClassIds] shares the same
-    // per-session supertype-walk guard keyed by `classId` and would bail out if entered re-entrantly.
-    val supers = directSupertypeClassIds(outerClassId)
-    return c.fileContext.session.cycleGuardedSupertypeWalk(outerClassId, default = null) {
-        for (supertypeId in supers) {
-            val candidateId = supertypeId.createNestedClassId(Name.identifier(nestedName))
-            if (tryResolve(candidateId)) return@cycleGuardedSupertypeWalk candidateId
-            // Recurse into supertype's supertypes
-            findInheritedNestedClass(supertypeId, nestedName)?.let { return@cycleGuardedSupertypeWalk it }
-        }
-
-        // Also check via the class finder for same-package Java source supertypes
-        val finder = c.fileContext.classFinder
-        if (finder != null) {
-            val inheritedInners = finder.collectInheritedInnerClasses(outerClassId)
-            val candidates = inheritedInners[nestedName]
-            if (candidates != null && candidates.size == 1) {
-                val candidateClassId = candidates.first()
-                if (tryResolve(candidateClassId)) return@cycleGuardedSupertypeWalk candidateClassId
-            }
-        }
-
-        null
-    }
-}
+): ClassId? = c.fileContext.inheritedMemberResolver.resolveInheritedNestedClassId(
+    nestedName, outerClassId, { tryResolve(it) }, { directSupertypeClassIds(it) },
+)
 
 /**
  * Builtins-filtered class-existence probe: `true` if [classId] is known to the session's symbol
@@ -557,15 +521,11 @@ internal fun resolveConstFieldValue(classId: ClassId, fieldName: Name): Any? =
  *
  *  1. **Source Java arm** — same check [directSupertypeClassIds] arm 1 uses
  *     (`classFinder.isClassInIndex`): if [classId] is source-backed, return the finder's
- *     canonical [org.jetbrains.kotlin.java.direct.model.JavaClassOverAst] instance. This
- *     preserves object identity for consumers reached via the generic `ClassId` ladder — FIR
- *     matches `FirJavaTypeParameter` to `JavaTypeParameter` by reference identity, so a
- *     same-file class reached this way must be the *same* object as the one obtained via direct
- *     same-file navigation, not a second, non-navigable [FirBackedJavaClassAdapter] wrapper.
+ *     canonical [org.jetbrains.kotlin.java.direct.model.JavaClassOverAst] instance rather than a
+ *     second, non-navigable [FirBackedJavaClassAdapter] wrapper — required because FIR matches
+ *     `FirJavaTypeParameter` to `JavaTypeParameter` by reference identity.
  *  2. **Binary Java / Kotlin arm** — otherwise, wrap [classId] in a [FirBackedJavaClassAdapter],
- *     or return `null` when the session has no `FirSymbolProvider` (parsing-level unit fixtures):
- *     the adapter could not materialise its fields, and FIR-side `findClassIdByFqNameString`
- *     handles such references instead.
+ *     or return `null` when the session has no `FirSymbolProvider` (parsing-level unit fixtures).
  */
 context(c: JavaResolutionContext)
 internal fun classifierAdapterFor(classId: ClassId): JavaClass? {

@@ -97,9 +97,10 @@ internal fun FirSession.cycleSafeClassLikeSymbol(classId: ClassId): FirClassLike
  *
  * Re-entry to a [ClassId] already on the set returns the caller-supplied default without
  * recursing, which bounds direct (`A extends A`) and indirect (`A -> B -> A`) Java inheritance
- * cycles. Such cycles can only come from malformed Java source during error recovery; an
- * unbounded supertype walk over them (`directSupertypeClassIds` / `findInheritedNestedClass`)
- * would otherwise recurse until a `StackOverflowError`.
+ * cycles. Such cycles can only come from malformed Java source during error recovery; without this
+ * guard, [directSupertypeClassIds] re-entering itself for the same `ClassId` (e.g. via a
+ * supertype's own `.classifier` resolution looping back) would otherwise recurse until a
+ * `StackOverflowError`.
  *
  * See [JavaCycleBreakerTest] for more details.
  *

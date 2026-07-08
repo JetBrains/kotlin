@@ -30,9 +30,9 @@ import org.junit.jupiter.api.assertThrows
  *
  *  - [org.jetbrains.kotlin.java.direct.resolution.cycleGuardedSupertypeWalk] backed by
  *    [org.jetbrains.kotlin.java.direct.resolution.JavaModelSupertypeWalkGuard] — bounds Java
- *    inheritance-graph cycles (`A extends B`, `B extends A`) while resolution walks the supertype
- *    graph ([org.jetbrains.kotlin.java.direct.resolution.directSupertypeClassIds] /
- *    `findInheritedNestedClass`).
+ *    inheritance-graph cycles (`A extends B`, `B extends A`) when
+ *    [org.jetbrains.kotlin.java.direct.resolution.directSupertypeClassIds] re-enters itself for
+ *    the same `ClassId` (e.g. via a supertype's own `.classifier` resolution looping back).
  *  - [FirSession.cycleSafeClassLikeSymbol] backed by
  *    [org.jetbrains.kotlin.java.direct.resolution.JavaModelInFlightResolutions] — breaks the
  *    `FirJavaClass.declarations` PUBLICATION-lazy re-entrance cycle (KT-74097), where a
@@ -60,14 +60,15 @@ class JavaCycleBreakerTest {
     //   }
     //
     // This is *invalid* Java (a `cyclic inheritance` error), but the model layer still has to walk
-    // the supertype graph during error recovery — e.g. resolving the simple name `Nested` makes
-    // `findInheritedNestedClass(A, "Nested")` ask `directSupertypeClassIds` for A's supertypes,
-    // which yields B, whose supertypes yield A again, ... Without a bound the walk recurses
-    // A -> B -> A -> ... until a StackOverflowError. `cycleGuardedSupertypeWalk` marks each ClassId
-    // in-flight for the duration of its walk, so re-entering an already-active ClassId returns the
-    // caller's default and the walk terminates. (In practice such Java cycles are usually pre-bounded
-    // by FIR's `SupertypeComputationStatus.Computing` sentinel before the model-side walk re-enters,
-    // so this guard is a defense-in-depth net for degenerate error-recovery paths.)
+    // the supertype graph during error recovery — e.g. `directSupertypeClassIds(A)`'s source arm
+    // reads A's supertype `B` via its `.classifier`, whose own resolution can loop back into
+    // `directSupertypeClassIds(A)` again before the first call returns. Without a bound the walk
+    // recurses A -> B -> A -> ... until a StackOverflowError. `cycleGuardedSupertypeWalk` marks each
+    // ClassId in-flight for the duration of its walk, so re-entering an already-active ClassId
+    // returns the caller's default and the walk terminates. (In practice such Java cycles are
+    // usually pre-bounded by FIR's `SupertypeComputationStatus.Computing` sentinel before the
+    // model-side walk re-enters, so this guard is a defense-in-depth net for degenerate
+    // error-recovery paths.)
 
     @OptIn(SessionConfiguration::class)
     @Test
@@ -81,8 +82,8 @@ class JavaCycleBreakerTest {
 
         var visits = 0
 
-        // Mirrors how directSupertypeClassIds / findInheritedNestedClass recurse through the
-        // supertype graph under session.cycleGuardedSupertypeWalk(...).
+        // Mirrors how directSupertypeClassIds can recurse into itself for the same ClassId
+        // under session.cycleGuardedSupertypeWalk(...).
         fun walk(classId: ClassId): Unit = session.cycleGuardedSupertypeWalk(classId, default = Unit) {
             visits++
             for (supertype in directSupertypes.getValue(classId)) {

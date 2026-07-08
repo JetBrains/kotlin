@@ -1,6 +1,6 @@
 # Java-Direct: Iteration Results Log
 
-**Current status**: `:compiler:java-direct:test` full suite green, 2830/2830 (100%). No known won't-fix.
+**Current status**: `:compiler:java-direct:test` full suite green, 2834/2834 (100%). No known won't-fix.
 
 **Last archived**: `implDocs/archive/ITERATION_RESULTS_2026_06_01.md` (entries through 2026-06-01).
 
@@ -35,6 +35,48 @@ This log is read into the agent's context every session, so **entries must stay 
 ---
 
 <!-- Add new entries below, newest first. -->
+
+### 2026-07-08 — Merge the source/binary supertype walks into one BFS; add reentrancy regression test
+- **Change**: Reviewer follow-up on the two-pass split in `resolveInheritedInnerClassToClassId`
+  (source-first, binary/Kotlin-deferred), which masked cross-origin ambiguity at depth. Merged
+  `walkJavaSourceSupertypes` and `walkSupertypeClassIds` into one origin-agnostic BFS, keeping only
+  the one load-bearing exception: `containingClass`'s own direct supertypes are still read from raw
+  AST text via `resolveWithoutInheritance`, because `containingClass`'s own `SUPER_TYPES` FIR phase
+  can still be on the call stack (resolving a name written inside its own extends/implements
+  clause). Every ancestor beyond that first level now goes through `directSupertypeClassIds`
+  uniformly, so same-depth source/Kotlin/binary candidates are compared for ambiguity together
+  instead of the source pass short-circuiting first. Tried a diagnostics-test reproduction first,
+  but real `javac` itself rejects referencing a self-inherited member type from within a class's own
+  extends/implements clause (confirmed empirically) — no valid Java program can exercise a
+  successful match there. Added a direct unit test instead
+  (`testResolveInheritedInnerClassToClassIdNeverQueriesContainingClassOwnSupertypeClassIds`) that
+  fails `directSupertypeClassIds` if ever invoked with `containingClass`'s own `ClassId`, while
+  still expecting the walk to find a name inherited two levels up — referenced from the exception's
+  KDoc/comment.
+- **Files**: `resolution/JavaInheritedMemberResolver.kt`,
+  `test/JavaParsingTypeResolutionTest.kt` (+1 test), `implDocs/RESOLUTION_SCHEMA.md`.
+- **Tests**: `:compiler:java-direct:test` full suite green, 2834/2834 (0 failures; 1 new).
+- **Result**: green. Closes the previously-documented cross-origin ambiguity blind spot in the
+  `ClassId` pipeline.
+
+### 2026-07-08 — Fold findInheritedNestedClass's DFS into the shared BFS; drop MAX_SUPERTYPE_DEPTH
+- **Change**: Reviewer noted `findInheritedNestedClass` (in `JavaTypeResolver.kt`, the `Outer.Nested`
+  qualified-name tail) used its own recursive DFS with no ambiguity detection, while
+  `resolveInheritedInnerClassToClassId`'s supertype walk used BFS. Folded it into the same BFS:
+  added `JavaInheritedMemberResolver.resolveInheritedNestedClassId`, seeding the renamed
+  `walkSupertypeClassIds` (was `walkBinarySupertypes`) with the single starting `ClassId` instead of
+  a containing-class's non-source supertypes. `findInheritedNestedClass` now delegates to it,
+  gaining proper ambiguity detection (previously first-match-wins) and dropping its own
+  `cycleGuardedSupertypeWalk` wrapper and the now-redundant `collectInheritedInnerClasses` fallback.
+  Also dropped `MAX_SUPERTYPE_DEPTH` (both walk loops already terminate solely via their `visited`
+  sets, bounded by the finite reachable `ClassId` set — the cap was pure defensive insurance).
+- **Files**: `resolution/JavaInheritedMemberResolver.kt`, `resolution/JavaTypeResolver.kt` (comment
+  + delegation), `resolution/JavaModelSessionAccess.kt` + `test/JavaCycleBreakerTest.kt` (stale
+  comments), `implDocs/RESOLUTION_SCHEMA.md`.
+- **Tests**: `:compiler:java-direct:test` full suite green, 2833/2833 (0 failures).
+- **Result**: green. No new tests added — this is a mechanical fold of an existing search onto the
+  existing generic BFS engine; ambiguity-detection coverage is exercised by pre-existing
+  `MISSING_DEPENDENCY_CLASS` tests already run by the suite.
 
 ### 2026-07-08 — Regression tests + RESOLUTION_SCHEMA.md update (collapse step 6, final)
 - **Change**: Step 6 (last) of the resolution-pipeline collapse. Added 3 new tests, each verified
