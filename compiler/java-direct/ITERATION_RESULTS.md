@@ -1,6 +1,6 @@
 # Java-Direct: Iteration Results Log
 
-**Current status**: `:compiler:java-direct:test` full suite green, 2835/2835 (100%). No known won't-fix.
+**Current status**: `:compiler:java-direct:test` full suite green, 2836/2836 (100%). No known won't-fix.
 
 **Last archived**: `implDocs/archive/ITERATION_RESULTS_2026_06_01.md` (entries through 2026-06-01).
 
@@ -35,6 +35,29 @@ This log is read into the agent's context every session, so **entries must stay 
 ---
 
 <!-- Add new entries below, newest first. -->
+
+### 2026-07-08 — Fix findInheritedNestedClass's own cycle-guard-skip hazard; drop its now-redundant fallback
+- **Change**: Closed the "third, narrower occurrence" flagged as a follow-up in an earlier entry:
+  `resolveQualifiedNameToClassIdFromParts` had a `collectInheritedInnerClasses`-based fallback for
+  when `findInheritedNestedClass` was cycle-guard-skipped on `outerClassId`'s own
+  `directSupertypeClassIds`, but that fallback was itself source-only (the same cross-origin
+  ambiguity blind spot fixed elsewhere this session) and restricted to `parts.size == 2`. Instead of
+  keeping the compensating fallback, fixed `findInheritedNestedClass` itself: it now materializes
+  `outerClassId` via `classifierAdapterFor` and delegates to
+  `resolveInheritedInnerClassToClassId(nestedName, ..., containingClass)`, which reads
+  `containingClass`'s own direct supertypes from raw AST text instead of the guarded
+  `directSupertypeClassIds`, exactly like the already-fixed simple-name caller. This makes
+  `findInheritedNestedClass` un-guard-skippable, so the fallback became dead code and was removed.
+- **Files**: `resolution/JavaTypeResolver.kt` (`findInheritedNestedClass` rewritten, fallback block
+  removed), `resolution/JavaInheritedMemberResolver.kt` (`resolveInheritedNestedClassId` removed —
+  folded into the existing `resolveInheritedInnerClassToClassId`);
+  `testData/diagnostics/tests/jvm/javaDirect/qualifiedInheritedNestedClassInOwnImplementsClause.kt`
+  (new) exercises a real, `javac`-verified-legal shape: a class implementing a generic interface
+  parameterized by its own inherited nested class.
+- **Tests**: `:compiler:java-direct:test` full suite green, 2836/2836 (0 failures; 1 new).
+- **Result**: green. `findInheritedNestedClass`'s qualified `Outer.Nested` lookup now shares the
+  same raw-AST-text safety and origin-agnostic ambiguity detection as the simple-name path, instead
+  of relying on a narrower, source-only compensating fallback.
 
 ### 2026-07-08 — Merge the classFinder-only fast paths into the origin-agnostic ladder; add j-k-j regression test
 - **Change**: Reviewer asked for a reproduction of the same-level cross-origin ambiguity blind spot

@@ -17,15 +17,12 @@ import org.jetbrains.kotlin.name.Name
  * Resolves inherited inner classes from supertype hierarchies (JLS 6.5.2 — inherited member
  * types are in scope).
  *
- * Three entry points:
+ * Two entry points:
  * - [findInnerClassFromSupertypes] returns a [JavaClass] with its full AST-side outer-class
  *   chain, needed to thread outer-class type arguments for generic outer classes.
  * - [resolveInheritedInnerClassToClassId] returns a bare `ClassId` via a single, origin-agnostic
  *   BFS ([walkSupertypeClassIds]), with one exception for `containingClass`'s own direct
  *   supertypes — see that function's KDoc.
- * - [resolveInheritedNestedClassId] also returns a bare `ClassId`, but starting from a single
- *   already-resolved `ClassId` of any origin rather than a containing-class chain; it reuses
- *   [walkSupertypeClassIds] directly, seeded with that `ClassId`'s own direct supertypes.
  */
 internal class JavaInheritedMemberResolver(
     private val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
@@ -126,6 +123,8 @@ internal class JavaInheritedMemberResolver(
      * safe to walk via [directSupertypeClassIds]: none of them is the class currently being
      * resolved (regression test:
      * `JavaParsingTypeResolutionTest.testResolveInheritedInnerClassToClassIdNeverQueriesContainingClassOwnSupertypeClassIds`).
+     * [JavaTypeResolver.findInheritedNestedClass] reuses this same safety for its qualified
+     * `Outer.Nested` lookup (regression test: `qualifiedInheritedNestedClassInOwnImplementsClause.kt`).
      *
      * Only [containingClass]'s own supertypes are searched, not those of its outer classes —
      * callers needing outer-class coverage walk the containing-class chain themselves and call
@@ -154,22 +153,6 @@ internal class JavaInheritedMemberResolver(
 
         return walkSupertypeClassIds(simpleName, initialAncestorIds, directSupertypeClassIds, tryResolve, mutableSetOf())
     }
-
-    /**
-     * Resolves [simpleName] to an inherited nested-class `ClassId`, searching [classId]'s own
-     * supertypes rather than a containing-class chain — used for qualified `Outer.Nested`
-     * references once `Outer` is already resolved to a `ClassId`, whatever its origin (source,
-     * binary Java, or Kotlin). Reuses [walkSupertypeClassIds] directly, seeded with [classId]'s
-     * own direct supertypes.
-     */
-    fun resolveInheritedNestedClassId(
-        simpleName: String,
-        classId: ClassId,
-        tryResolve: (ClassId) -> Boolean,
-        directSupertypeClassIds: (ClassId) -> List<ClassId>,
-    ): ClassId? = walkSupertypeClassIds(
-        simpleName, directSupertypeClassIds(classId), directSupertypeClassIds, tryResolve, mutableSetOf(),
-    )
 
     /**
      * BFS over ancestor `ClassId`s: at every level, probes `ancestorId.SimpleName` for each id in

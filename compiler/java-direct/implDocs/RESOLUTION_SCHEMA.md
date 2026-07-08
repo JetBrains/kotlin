@@ -213,24 +213,29 @@ probes.
    Scenario B) to an `outerClassId`.
 2. Form `outerClassId + nestedParts` and probe it; return on hit (direct nested class).
 3. On miss for a single nested segment, search supertypes of `outerClassId` for the inherited
-   nested class (`findInheritedNestedClass`, delegating to `JavaInheritedMemberResolver`'s BFS
-   over `directSupertypeClassIds`, Scenario E).
-4. Re-entrance-safe `Outer.Inner` finder fallback: when step 3 was short-circuited by the cycle
-   guard, re-probe `collectInheritedInnerClasses(outerClassId)[inner]` without the guard.
-5. Fallback to plain package/class splits longest-package-first (`probeFqnSplits`) — this is the
+   nested class (`findInheritedNestedClass`, materializing `outerClassId` via `classifierAdapterFor`
+   and delegating to `resolveInheritedInnerClassToClassId`, Scenario E). Reading `outerClassId`'s
+   own supertypes from raw AST text this way (rather than seeding directly from
+   `directSupertypeClassIds(outerClassId)`) means this step can never be cycle-guard-skipped, even
+   when `outerClassId`'s own `SUPER_TYPES` phase is on the call stack — e.g. a qualified reference
+   to a class's own inherited nested class used as a generic argument in its own
+   extends/implements clause (`qualifiedInheritedNestedClassInOwnImplementsClause.kt`). A previous
+   `collectInheritedInnerClasses`-based re-entrance fallback for a guard-skip on this step was
+   removed as dead code once this step became un-guard-skippable — it was also source-only, the
+   same cross-origin ambiguity blind spot fixed elsewhere in this scenario.
+4. Fallback to plain package/class splits longest-package-first (`probeFqnSplits`) — this is the
    path fully-qualified names (`java.util.Map`) take.
 
-Corner cases: `Map.Entry`-style inherited nested classes; cycle-guard short-circuit recovery
-(step 4) limited to two-segment shape; FQN split order mirrors FIR's `findClassId`. The
-`nestedParts.size == 1` restriction on step 3 (and the mirroring `parts.size == 2` restriction on
-step 4) is not a coverage gap: the outer `for` loop tries every split point, and each recursive
-call on a shrinking `outerParts` prefix is itself a fresh invocation whose own `parts`/`nestedParts`
-eventually telescopes down to size 1/2 on its own stack frame — so every "outer class plus one
-inherited segment" sub-problem is still reached, just one recursion level down.
+Corner cases: `Map.Entry`-style inherited nested classes; FQN split order mirrors FIR's
+`findClassId`. The `nestedParts.size == 1` restriction on step 3 is not a coverage gap: the outer
+`for` loop tries every split point, and each recursive call on a shrinking `outerParts` prefix is
+itself a fresh invocation whose own `parts`/`nestedParts` eventually telescopes down to size 1 on
+its own stack frame — so every "outer class plus one inherited segment" sub-problem is still
+reached, just one recursion level down.
 
 ### Scenario E — Inherited member type via supertypes
 
-Entry: `JavaInheritedMemberResolver`. Three outputs, all reaching every class representation:
+Entry: `JavaInheritedMemberResolver`. Two outputs, both reaching every class representation:
 
 - `findInnerClassFromSupertypes` → a `JavaClass` with AST outer chain (for the AST pipeline /
   outer-arg substitution). Two arms, tried in order, the first hit wins:
@@ -264,11 +269,11 @@ Entry: `JavaInheritedMemberResolver`. Three outputs, all reaching every class re
   `JavaParsingTypeResolutionTest.testResolveInheritedInnerClassToClassIdNeverQueriesContainingClassOwnSupertypeClassIds`,
   which fails `directSupertypeClassIds` if it's ever invoked with `containingClass`'s own
   `ClassId`, while still expecting the walk to find a name inherited two levels up.
-- `resolveInheritedNestedClassId` → a bare `ClassId`, searching a single already-resolved
-  `ClassId`'s own supertypes rather than a containing-class chain (used by `findInheritedNestedClass`
-  for the `Outer.Nested` shape in Scenario D step 3). Reuses `walkSupertypeClassIds` directly,
-  seeded with that `ClassId`'s own direct supertypes — of any origin, so it works uniformly for
-  source, binary Java, and Kotlin without a DFS/BFS split between call sites.
+  `JavaTypeResolver.findInheritedNestedClass` (Scenario D step 3, the `Outer.Nested` qualified
+  shape) is this same function's other caller: it materializes `outerClassId` via
+  `classifierAdapterFor` (Scenario A step 4) and passes the result as `containingClass`, so it
+  inherits the same raw-AST-text safety instead of needing its own seed/BFS pair
+  (`qualifiedInheritedNestedClassInOwnImplementsClause.kt`).
 
 `walkSupertypeClassIds` shares one `visited` set across the whole walk and probes every ancestor
 at a given level — source, binary Java, and Kotlin alike — expanding to the next level per

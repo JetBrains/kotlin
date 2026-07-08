@@ -125,24 +125,6 @@ private fun resolveQualifiedNameToClassIdFromParts(
         }
     }
 
-    // Fallback for the `Outer.Inner` shape when `findInheritedNestedClass` above was
-    // cycle-guard-skipped (`outerClassId` mid-resolution): re-run the same
-    // `collectInheritedInnerClasses` probe without the guard. Limited to `parts.size == 2`
-    // because that's exactly what `collectInheritedInnerClasses` is keyed by (one outer
-    // `ClassId`, one inner simple name); longer qualifiers fall through to [probeFqnSplits].
-    val finder = c.fileContext.classFinder
-    if (fullResolution && finder != null && parts.size == 2) {
-        val outerClassId = resolveSimpleNameToClassIdImpl(parts[0], tryResolve, fullResolution = true)
-        if (outerClassId != null) {
-            val inheritedInners = finder.collectInheritedInnerClasses(outerClassId)
-            val candidates = inheritedInners[parts[1]]
-            if (candidates != null && candidates.size == 1) {
-                val candidateClassId = candidates.first()
-                if (tryResolve(candidateClassId)) return candidateClassId
-            }
-        }
-    }
-
     // Fall back: try as fully qualified name with different package/class splits
     // (longest package to shortest).
     return probeFqnSplits(parts, tryResolve)
@@ -418,17 +400,20 @@ internal fun resolveInheritedInnerClassToClassId(
 
 /**
  * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with
- * [nestedName]. Delegates to [JavaInheritedMemberResolver.resolveInheritedNestedClassId], which
- * BFS-walks [directSupertypeClassIds] and probes via [tryResolve], detecting ambiguity across the
- * whole hierarchy.
+ * [nestedName]. Materialises [outerClassId] via [classifierAdapterFor] and delegates to
+ * [resolveInheritedInnerClassToClassId], which reads that class's own direct supertypes from raw
+ * AST text rather than [directSupertypeClassIds] — required here because [outerClassId] can
+ * itself be mid-resolution: a qualified reference such as `Outer.Nested` inside `Outer`'s own
+ * extends/implements clause (e.g. as a generic type argument) resolves `Outer.Nested` while
+ * `directSupertypeClassIds(outerClassId)` is still computing that same class's supertype list,
+ * so seeding the search with that guarded call directly would find nothing (regression test:
+ * `qualifiedInheritedNestedClassInOwnImplementsClause.kt`).
  */
 context(c: JavaResolutionContext)
 private fun findInheritedNestedClass(
     outerClassId: ClassId,
     nestedName: String,
-): ClassId? = c.fileContext.inheritedMemberResolver.resolveInheritedNestedClassId(
-    nestedName, outerClassId, { tryResolve(it) }, { directSupertypeClassIds(it) },
-)
+): ClassId? = resolveInheritedInnerClassToClassId(nestedName, { tryResolveInherited(it) }, classifierAdapterFor(outerClassId))
 
 /**
  * Builtins-filtered class-existence probe: `true` if [classId] is known to the session's symbol
