@@ -9,7 +9,6 @@ import com.intellij.mock.MockApplication
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.indexing.FileContentImpl
-import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
@@ -19,6 +18,8 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
 import org.jetbrains.kotlin.scripting.ide_services.test_util.JvmTestRepl
 import org.jetbrains.kotlin.scripting.ide_services.test_util.checkCompile
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
@@ -27,7 +28,8 @@ import kotlin.script.experimental.util.get
 
 // This test checks the functionality that works only in IDE
 // and doesn't run with embeddableTest configuration
-class JvmReplIdeTest : TestCase() {
+class JvmReplIdeTest {
+    @Test
     fun testReplScriptClassFileDecompilation() {
         JvmTestRepl()
             .use { repl ->
