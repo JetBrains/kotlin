@@ -2,12 +2,15 @@
 package org.jetbrains.kotlin.arguments
 
 import org.jdom.Element
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -103,15 +106,14 @@ class CompilerArgumentsSerializationTest {
             val oldValue = it.get(oldInstance)
             val newValue = it.get(newInstance)
             if (oldValue == null && newValue == null) return@forEach
-            Assert.assertNotNull("Old value of property \"${it.name}\" is null but new is not", oldValue)
-            Assert.assertNotNull("New value of property \"${it.name}\" is null but old is not", newValue)
+            Assertions.assertNotNull(oldValue, "Old value of property \"${it.name}\" is null but new is not")
+            Assertions.assertNotNull(newValue, "New value of property \"${it.name}\" is null but old is not")
 
             if ((it.returnType.classifier as? KClass<*>)?.java?.isArray == true)
-                Assert.assertArrayEquals(
-                    "Property ${it.name} has different values before (${it.get(oldInstance).toString()}) and after (${
-                        it.get(newInstance).toString()
-                    }) serialization",
-                    oldValue as Array<*>, newValue as Array<*>
+                Assertions.assertArrayEquals(
+                    oldValue as Array<*>,
+                    newValue as Array<*>,
+                    "Property ${it.name} has different values before (${it.get(oldInstance).toString()}) and after (${it.get(newInstance).toString()}) serialization",
                 )
             else
                 assert(it.get(oldInstance) == it.get(newInstance)) {

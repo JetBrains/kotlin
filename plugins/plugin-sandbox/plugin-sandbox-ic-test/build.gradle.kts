@@ -36,7 +36,10 @@ dependencies {
 
 sourceSets {
     main { none() }
-    test { generatedTestDir() }
+    test {
+        projectDefault()
+        generatedTestDir()
+    }
     testFixtures { projectDefault() }
 }
 

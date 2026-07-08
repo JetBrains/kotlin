@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -33,8 +30,10 @@ dependencies {
 
     testImplementation(project(":compiler:cli-base"))
     testImplementation(jpsModelSerialization())
-    testImplementation(libs.junit4)
-    testImplementation(kotlin("test-junit"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {

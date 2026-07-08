@@ -6,25 +6,22 @@
 package org.jetbrains.kotlin
 
 import com.intellij.openapi.util.io.FileUtil
-import junit.framework.TestCase
-import org.junit.After
-import org.junit.Before
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import kotlin.properties.Delegates
 
-abstract class TestWithWorkingDir : TestCase() {
+abstract class TestWithWorkingDir {
     protected var workingDir: File by Delegates.notNull()
         private set
 
-    @Before
-    public override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    open fun setUp() {
         workingDir = FileUtil.createTempDirectory(this::class.java.simpleName, null, /* deleteOnExit = */ true)
     }
 
-    @After
-    public override fun tearDown() {
+    @AfterEach
+    open fun tearDown() {
         workingDir.deleteRecursively()
-        super.tearDown()
     }
 }

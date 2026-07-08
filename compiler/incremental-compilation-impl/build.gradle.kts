@@ -36,8 +36,7 @@ dependencies {
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
-    testFixturesApi(libs.junit4)
-    testFixturesApi(kotlinTest("junit"))
+    testImplementation(libs.junit.jupiter.params)
     testFixturesApi(kotlinStdlib())
     testFixturesApi(testFixtures(project(":kotlin-build-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
@@ -50,7 +49,6 @@ dependencies {
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 

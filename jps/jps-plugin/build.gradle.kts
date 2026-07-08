@@ -72,6 +72,12 @@ dependencies {
     testImplementation(jpsBuild())
     testImplementation(jpsBuildJavacRt())
 
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
     CompilerModules.compilerModules.forEach {
         testRuntimeOnly(project(it))
     }
@@ -117,8 +123,7 @@ tasks.compileKotlin {
 
 projectTests {
     testTask(
-        parallel = true,
-        jUnitMode = JUnitMode.JUnit4,
+        jUnitMode = JUnitMode.JUnit5,
         javaLauncher = JdkMajorVersion.JDK_17_0,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {

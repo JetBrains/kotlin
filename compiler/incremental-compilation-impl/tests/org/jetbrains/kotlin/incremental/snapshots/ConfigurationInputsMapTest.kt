@@ -9,9 +9,10 @@ import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.incremental.HashedConfigurationInputs
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.RebuildReason
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.properties.Delegates
 import kotlin.test.assertIs
@@ -20,7 +21,7 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
     private var map: ConfigurationInputsMap by Delegates.notNull()
     private lateinit var storageFile: File
 
-    @Before
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         val caches = File(workingDir, "caches").apply { mkdirs() }
@@ -28,7 +29,7 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
         map = ConfigurationInputsMap(storageFile, IncrementalCompilationContext())
     }
 
-    @After
+    @AfterEach
     override fun tearDown() {
         map.close()
         super.tearDown()
@@ -40,9 +41,9 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
         val state = map.checkConfigurationState(hashedInputs)
         assertIs<ConfigurationInputsMap.ConfigurationState.RequiresRebuild>(state)
         assertEquals(
-            "First build does not have any prior state and should report ${RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS}",
             RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS,
             state.reason,
+            "First build does not have any prior state and should report ${RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS}",
         )
     }
 
@@ -61,7 +62,7 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
         map.updateHash(oldHashedInputs)
         val state = map.checkConfigurationState(newHashedInputs)
         assertIs<ConfigurationInputsMap.ConfigurationState.RequiresRebuild>(state)
-        assertEquals("Different hash should trigger rebuild", RebuildReason.COMPILER_ARGS_CHANGED, state.reason)
+        assertEquals(RebuildReason.COMPILER_ARGS_CHANGED, state.reason, "Different hash should trigger rebuild")
     }
 
     @Test
@@ -72,9 +73,9 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
         val state = map.checkConfigurationState(newHashedInputs)
         assertIs<ConfigurationInputsMap.ConfigurationState.RequiresRebuild>(state)
         assertEquals(
-            "Changes to the map key set should cause rebuild with ${RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS}",
             RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS,
             state.reason,
+            "Changes to the map key set should cause rebuild with ${RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS}",
         )
     }
 
@@ -86,9 +87,9 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
         val state = map.checkConfigurationState(newHashedInputs)
         assertIs<ConfigurationInputsMap.ConfigurationState.RequiresRebuild>(state)
         assertEquals(
-            "Changes to the map key set should cause rebuild with ${RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS}",
             RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS,
             state.reason,
+            "Changes to the map key set should cause rebuild with ${RebuildReason.UNKNOWN_CHANGES_IN_GRADLE_INPUTS}",
         )
     }
 
@@ -107,9 +108,9 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
             val changedState = map2.checkConfigurationState(differentHashedInputs)
             assertIs<ConfigurationInputsMap.ConfigurationState.RequiresRebuild>(changedState)
             assertEquals(
-                "Different hash after persistence should trigger rebuild",
                 RebuildReason.COMPILER_ARGS_CHANGED,
                 changedState.reason,
+                "Different hash after persistence should trigger rebuild",
             )
         }
     }

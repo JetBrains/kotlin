@@ -6,12 +6,9 @@
 package org.jetbrains.kotlinx.atomicfu.incremental;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,21 +17,23 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/projects")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalK2JVMWithAtomicfuRunnerTestGenerated extends AbstractIncrementalK2JVMWithAtomicfuRunnerTest {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  private void run(String fileName) {
+    runTest("plugins/atomicfu/atomicfu-compiler/testData/projects/" + fileName);
   }
 
+  @Test
   public void testAllFilesPresentInProjects() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/projects"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
+  @Test
   @TestMetadata("atomicExtension")
   public void testAtomicExtension() {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/projects/atomicExtension/");
   }
 
+  @Test
   @TestMetadata("atomicHandler")
   public void testAtomicHandler() {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/projects/atomicHandler/");
