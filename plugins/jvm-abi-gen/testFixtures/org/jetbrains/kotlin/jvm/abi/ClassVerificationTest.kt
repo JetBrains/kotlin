@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
+import org.junit.jupiter.api.Test
 import java.net.URLClassLoader
 
 class ClassVerificationTest : BaseJvmAbiTest() {
+    @Test
     fun testSimple() {
         workingDir.resolve("test.kt").writeText(
             """
