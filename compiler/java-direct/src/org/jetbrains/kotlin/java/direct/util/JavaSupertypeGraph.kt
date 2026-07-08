@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.java.direct.resolution.JavaImports
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.getImports
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.splitCanonicalFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -232,9 +233,15 @@ internal class JavaSupertypeGraph(
         packageFqName: FqName,
         imports: JavaImports = JavaImports.EMPTY,
     ): List<ClassId> {
-        val simpleName = ref.substringBefore('<').trim()
+        // Bracket-aware split (splitCanonicalFqName treats a '.' inside a generic argument list
+        // as part of that segment, not a separator) so a reference with type arguments on a
+        // non-final segment (`a.B<String>.C`) is correctly recognised as dotted and delegated
+        // below, instead of a plain `substringBefore('<')` truncating it to `a.B` and mis-treating
+        // it as a single, non-dotted simple name.
+        val segments = ref.splitCanonicalFqName()
+        val simpleName = segments.singleOrNull()?.substringBefore('<')?.trim()
 
-        if (!simpleName.contains('.')) {
+        if (simpleName != null) {
             // Same-package source class — resolves to the in-module ClassId.
             if (sameClassInSameFilePackage(packageFqName, simpleName)) {
                 return listOf(ClassId(packageFqName, Name.identifier(simpleName)))

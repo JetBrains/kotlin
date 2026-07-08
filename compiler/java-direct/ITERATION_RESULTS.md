@@ -36,6 +36,47 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-08 — Regression tests + RESOLUTION_SCHEMA.md update (collapse step 6, final)
+- **Change**: Step 6 (last) of the resolution-pipeline collapse. Added 3 new tests, each verified
+  (by temporarily disabling the relevant fix) to genuinely depend on it, not pass vacuously:
+  `testGetDirectSupertypesDoesNotTruncateQualifiedGenericSupertype` /
+  `testClassifierAdapterForRoutesSourceBackedClassIdToCanonicalInstance` (unit,
+  `JavaParsingClassFinderTest`), and a box test where a Java class's field type navigates
+  `Local.Deeper.EvenDeeper` — `Local` same-file-declared, `Deeper`/`EvenDeeper` inherited from a
+  *Kotlin* supertype two levels deep, exercising the structural pipeline's binary/Kotlin tail
+  *and* the adapter's chained `findInnerClass` in one scenario. Rewrote `RESOLUTION_SCHEMA.md`
+  Scenarios A/C/E (unified per-level lookup, identity routing, 3-arm inherited-inner-class
+  resolver) and added the doc-only clarifications from review (telescoping-recursion argument,
+  empty-name guard comment, javac priority-divergence and source/binary-ambiguity notes as
+  accepted-elsewhere items).
+- **Files**: `test/JavaParsingClassFinderTest.kt` (+2 tests);
+  `testData/codegen/box/javaDirect/inheritedNestedClassFromKotlinSupertype.kt` (new);
+  `implDocs/RESOLUTION_SCHEMA.md`; `resolution/JavaInheritedMemberResolver.kt` (comment),
+  `model/JavaTypeOverAst.kt` (comment).
+- **Tests**: `:compiler:java-direct:test` full suite green, 2833/2833 (0 failures; 3 new).
+- **Result**: green. All 6 steps of `implDocs/COLLAPSE_RESOLUTION_PIPELINES_2026_07_06.md` landed.
+
+### 2026-07-08 — Fix qualified-supertype truncation bugs, drop dead params (collapse step 5)
+- **Change**: Step 5 of the resolution-pipeline collapse. Fixed two confirmed `substringBefore('<')`
+  truncation bugs: `JavaSupertypeGraph.resolveSupertypeReference` now bracket-aware-splits the raw
+  reference (`splitCanonicalFqName()`) before deciding it's a single, non-dotted simple name —
+  previously `ref.substringBefore('<').trim()` truncated `a.B<String>.C`-shaped refs to `a.B`
+  *before* checking dottedness, silently dropping `.C` and mis-treating it as a same-package/import
+  candidate for `a.B`. Same fix applied to `JavaInheritedMemberResolver.walkJavaSourceSupertypes`'s
+  `initialIds` computation. Also dropped two confirmed-dead parameters: `resolveWithoutInheritance`'s
+  second (`resolve`) callback parameter (its sole caller always closed over the same `tryResolve`
+  already in scope) and `includeOuterClasses`/its outer-walk loop on
+  `resolveInheritedInnerClassToClassId` (always called with `false`; outer-class coverage is already
+  provided by collapse-step-4's unified per-level loop in the caller). Simplified
+  `JavaClassCache.parseTopLevelClassFromFile` to call `sameFileTopLevelClassProvider` directly
+  instead of `findClassInCurrentScope` (behaviorally identical for its only call shape — a fresh
+  context with `containingClass == null`).
+- **Files**: `util/JavaSupertypeGraph.kt`, `resolution/JavaInheritedMemberResolver.kt`,
+  `resolution/JavaTypeResolver.kt`, `resolution/JavaScopeResolver.kt`, `JavaClassCache.kt`.
+- **Tests**: `:compiler:java-direct:test` full suite green, 2830/2830 (0 failures).
+- **Result**: green. Step 6 (new regression tests for the newly-reachable paths, `RESOLUTION_SCHEMA.md`
+  update) is tracked in `implDocs/COLLAPSE_RESOLUTION_PIPELINES_2026_07_06.md` for this session.
+
 ### 2026-07-06 — Unify per-level lookup in findClassInCurrentScope / computeClassifier (collapse step 4)
 - **Change**: Step 4 (last of the requested 1-4) of the resolution-pipeline collapse. New
   `declaredOrFullyInherited(cls, name)` = `declaredOrSameFileInherited` (same-file) +

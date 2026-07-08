@@ -6,6 +6,20 @@ the main scenarios. Kept at the level of classes/files; method names appear only
 distinguish a branch. For the end-to-end *type-name → ClassId → FIR symbol* call chain see
 `RESOLUTION_PIPELINE.md`; this document is the structural companion to it.
 
+**Collapsed schema (see `COLLAPSE_RESOLUTION_PIPELINES_2026_07_06.md` for the full design/rationale).**
+The four class representations a reference can resolve to — current-file source, other-file
+source, binary Java (`FirJavaClass`), and Kotlin/deserialized (`FirRegularClass`) — used to be
+handled by genuinely different, hand-rolled code paths in the *structural* (`JavaClass`-returning)
+pipeline (Scenario C/E), even though the *`ClassId`-returning* pipeline (Scenario D/F) had already
+generalized them behind one BFS. That gap is now closed: `FirBackedJavaClassAdapter` gained a real
+`findInnerClass`/`innerClassNames` (using enhancement-free FIR primitives, no new laziness needed),
+`classifierAdapterFor` routes a source-backed `ClassId` to its canonical, identity-preserving
+`JavaClassOverAst` instead of a second wrapper, and `findInnerClassFromSupertypes`/
+`findClassInCurrentScope` reuse that materializer as their binary/Kotlin tail. What remains
+representation-specific is exactly two narrow, independently-justified exceptions — the same-file
+raw-text supertype walk (cycle safety) and the identity-routing check itself (object-identity
+preservation) — called out explicitly in Scenario C and Scenario A below.
+
 ---
 
 ## 1. Entity Map
@@ -81,7 +95,9 @@ flowchart TD
   per-session cycle guards and the TYPE_USE cache.
 - **`LeanJavaClassFinder`** — narrow cross-file source-index interface.
 - **`FirBackedJavaClassAdapter`** — `JavaClass` view of a resolved `ClassId`, exposing outer chain,
-  type parameters, and resolved supertypes for cross-file references.
+  type parameters, resolved supertypes, and (nested-class-)declared members for cross-file,
+  binary Java, and Kotlin references — the single generic materializer every representation is
+  routed through once a `ClassId` is known (see `classifierAdapterFor`, Scenario A/C/E).
 
 ---
 
@@ -118,15 +134,21 @@ classifier a written reference denotes.
    1. own type parameter — `JavaScopeResolver.findTypeParameter` (high priority).
    2. in-scope class — `JavaScopeResolver.findClassInCurrentScope` (Scenario C).
    3. inherited (outer) type parameter — `findInheritedTypeParameter` (low priority, shadowed by 2).
-3. Resolve `parts[0]` via `findClassInCurrentScope`. If it is an AST `JavaClass`, navigate each
-   remaining part with `declaredOrSameFileInherited` and return the final inner class (same-file
-   AST path).
-4. Otherwise (cross-file) resolve the whole name to a `ClassId` via `JavaTypeResolver.resolve`
-   (Scenarios B/D) and wrap it in a `FirBackedJavaClassAdapter` (`classifierAdapterFor`).
+3. Resolve `parts[0]` via `findClassInCurrentScope`. If it is a `JavaClass`, navigate each
+   remaining part with `declaredOrFullyInherited` — declared members plus the class's full
+   inherited member types (same-file, cross-file Java source, binary Java, and Kotlin, Scenario C) —
+   and return the final inner class. This now correctly navigates through an intermediate segment
+   inherited from *any* of those representations, not just a same-file supertype.
+4. Otherwise resolve the whole name to a `ClassId` via `JavaTypeResolver.resolve` (Scenarios B/D)
+   and materialize it via `classifierAdapterFor`: the canonical, identity-preserving
+   `JavaClassOverAst` when the `ClassId` is source-backed, or a `FirBackedJavaClassAdapter`
+   otherwise.
 5. If nothing matched, return `null` (FIR's `findClassId` fallback then runs).
 
-Corner cases: type-parameter-vs-inner-class shadowing (2 before 3); same-file multi-segment
-navigation handled purely on AST without touching the symbol provider.
+Corner cases: type-parameter-vs-inner-class shadowing (2 before 3); step 4's identity routing
+matters because a same-file class reached this way must be the exact same object FIR already
+matches its type parameters against by reference identity — a second, non-navigable
+`FirBackedJavaClassAdapter` wrapper would break that (see Scenario A/C's identity note below).
 
 ### Scenario B — Simple name to `ClassId` (JLS 6.4.1 shadowing ladder)
 
@@ -152,22 +174,32 @@ Corner cases: rank-4 type import probed before rank-4 static import; star-import
 
 ### Scenario C — In-scope (AST) classifier lookup
 
-Entry: `JavaScopeResolver.findClassInCurrentScope`. AST-only; produces a structural `JavaClass`
-with its full outer chain (needed for navigation and outer-arg substitution).
+Entry: `JavaScopeResolver.findClassInCurrentScope`. Produces a structural `JavaClass` with its full
+outer chain (needed for navigation and outer-arg substitution) — sourced from *any* of the four
+class representations, not just same-file AST.
 
-1. Inner class **declared or same-file-inherited** by the containing class
-   (`declaredOrSameFileInherited` → `findInnerClassInSameFileSupertypes`).
-2. Inner class **inherited from supertypes** of the containing class
-   (`JavaInheritedMemberResolver.findInnerClassFromSupertypes`) — runs before step 3 because an
-   inherited member type shadows a merely lexically-enclosing one (JLS 6.4.1).
-3. Sibling inner class of the immediate outer class.
-4. Inner class of each further outer class up the containing chain.
-5. Same-file top-level class (`sameFileTopLevelClassProvider`).
+1. **Declared-plus-fully-inherited lookup** (`declaredOrFullyInherited`) at every level of the
+   containing-class chain, innermost to outermost (self, outer class, outer's outer class, ...).
+   Per JLS 6.4.1, a member type declared or inherited at an inner level shadows one declared or
+   inherited at an enclosing level, so one loop applies the *same* full lookup at every level
+   (previously only the innermost level got full coverage; outer levels were same-file-only — a
+   confirmed gap, now closed). Each level's lookup is itself two steps:
+   1. **Declared or same-file-inherited** (`declaredOrSameFileInherited` → `findInnerClass`, then
+      `findInnerClassInSameFileSupertypes` on raw AST text).
+   2. **Cross-file Java source, binary Java, or Kotlin inherited** member type
+      (`JavaInheritedMemberResolver.findInnerClassFromSupertypes`, Scenario E) — reached only when
+      step 1 found nothing for this level.
+2. Same-file top-level class (`sameFileTopLevelClassProvider`).
 
-Corner case: the same-file supertype walk works on **raw AST text**
-(`directSupertypeRefNames`), deliberately distinct from the resolved-classifier walk in
-`JavaInheritedMemberResolver`, to avoid re-entering type construction; package-qualified
-supertypes are declined here and handed to the `ClassId` path.
+Corner case: the same-file supertype walk (step 1's second half) works on **raw AST text**
+(`directSupertypeRefNames`), deliberately kept distinct from the resolved-classifier walk in
+`JavaInheritedMemberResolver` (step 2) — reading `javaClass.supertypes` here would re-enter type
+construction (`classifier → findClassInCurrentScope`), an actual cycle hazard no amount of
+laziness removes; package-qualified supertypes are declined by the raw-text walk and handed to the
+`ClassId` path. This is the *only* representation-specific split left in this scenario — the
+prior, second exception (same-file source objects needing to stay off the generic `ClassId`
+ladder to preserve identity) is now handled by `classifierAdapterFor`'s routing (Scenario A step 4),
+not by keeping this whole scenario source-only.
 
 ### Scenario D — Qualified / nested name to `ClassId` (JLS 6.5.2)
 
@@ -186,23 +218,54 @@ probes.
    path fully-qualified names (`java.util.Map`) take.
 
 Corner cases: `Map.Entry`-style inherited nested classes; cycle-guard short-circuit recovery
-(step 4) limited to two-segment shape; FQN split order mirrors FIR's `findClassId`.
+(step 4) limited to two-segment shape; FQN split order mirrors FIR's `findClassId`. The
+`nestedParts.size == 1` restriction on step 3 (and the mirroring `parts.size == 2` restriction on
+step 4) is not a coverage gap: the outer `for` loop tries every split point, and each recursive
+call on a shrinking `outerParts` prefix is itself a fresh invocation whose own `parts`/`nestedParts`
+eventually telescopes down to size 1/2 on its own stack frame — so every "outer class plus one
+inherited segment" sub-problem is still reached, just one recursion level down.
 
 ### Scenario E — Inherited member type via supertypes
 
-Entry: `JavaInheritedMemberResolver`. Two complementary outputs:
+Entry: `JavaInheritedMemberResolver`. Two complementary outputs, now both reaching all four class
+representations:
 
 - `findInnerClassFromSupertypes` → a `JavaClass` with AST outer chain (for the AST pipeline /
-  outer-arg substitution); uses same-file supertypes plus the `LeanJavaClassFinder` for cross-file
-  Java source.
-- `resolveInheritedInnerClassToClassId` → a bare `ClassId` via a two-pass BFS:
+  outer-arg substitution). Three arms, tried in order, the first hit wins:
+  1. **Same-file supertypes** — `resolveSameFileSupertype` + recursive same-file walk.
+  2. **Cross-file Java source** — `LeanJavaClassFinder.collectInheritedInnerClasses`. A non-`null`
+     map entry for the name — including an *ambiguous* one (`size > 1`, resolved to `null`) — is
+     authoritative and short-circuits here; only a genuinely *absent* entry (source hierarchy has
+     no opinion at all) defers to arm 3, so this arm's ambiguity detection can never be masked by
+     a differently-shaped BFS below it.
+  3. **Binary Java / Kotlin tail** — reached only when arms 1-2 found nothing: reuses
+     `resolveInheritedInnerClassToClassId`/`walkBinarySupertypes` (below) to get a `ClassId`, then
+     materializes it via `classifierAdapterFor` (Scenario A step 4). This closes the gap where a
+     Java source class inheriting a nested class from a Kotlin or binary superclass was invisible
+     to the *structural* pipeline (only reachable via the `ClassId` pipeline before).
+- `resolveInheritedInnerClassToClassId` → a bare `ClassId` via a two-pass BFS over
+  [containingClass]'s own supertypes (outer-class coverage is the caller's job — Scenario C's
+  per-level loop — not this function's, since the confirmed-always-`false` `includeOuterClasses`
+  parameter and its outer-walk loop were removed):
   1. **`walkJavaSourceSupertypes`** — Java-source supertypes through the finder's source index,
-     resolving each level against *that file's* imports; independent of FIR lazy phases.
+     resolving each level against *that file's* imports; independent of FIR lazy phases. Each
+     supertype reference's dotted segments are extracted via `splitCanonicalFqName()`
+     (bracket-aware) rather than a single `substringBefore('<')`, so a reference with type
+     arguments on a non-final segment (`a.B<String>.C`) is not truncated to `a.B`.
   2. **`walkBinarySupertypes`** — Kotlin / binary supertypes through the per-origin
      `directSupertypeClassIds` dispatcher (Scenario F).
 
 Both passes share a `visited` set, detect cross-pass ambiguity (→ `null`), and are bounded by
 `MAX_SUPERTYPE_DEPTH = 5`.
+
+Accepted, documented limitation: the cross-pass ambiguity check above only fires *within* the
+`ClassId` BFS itself (arm 3's source-vs-binary cross-pass); it does **not** extend to arm 2's
+source-only-finder result versus arm 3's binary/Kotlin tail in `findInnerClassFromSupertypes` —
+an inner class name independently inherited from a *different*, binary/Kotlin branch of the
+hierarchy at the same depth as a unique source-side match would not trigger ambiguity there.
+Closing this fully would mean unconditionally paying for a binary/Kotlin supertype walk even when
+the source answer is already unambiguous, for a very rare shape; accepted as a known trade-off
+rather than fixed.
 
 ### Scenario F — Direct-supertype `ClassId` graph
 

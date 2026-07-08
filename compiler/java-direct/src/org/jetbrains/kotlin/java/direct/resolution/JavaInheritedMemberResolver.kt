@@ -123,6 +123,9 @@ internal class JavaInheritedMemberResolver(
      */
     private fun resolveSameFileSupertype(supertype: JavaClassifierType): JavaClassOverAst? {
         val segments = supertype.presentableText.splitCanonicalFqName().map { it.substringBefore('<').trim() }
+        // An empty segment (or no segments at all) only arises from parser error-recovery AST
+        // shapes for a malformed extends/implements clause — not reachable for well-formed code;
+        // declining here rather than crashing is purely defensive.
         if (segments.isEmpty() || segments.any { it.isEmpty() }) return null
         var resolved = sameFileTopLevelClassProvider(Name.identifier(segments.first())) as? JavaClassOverAst ?: return null
         for (i in 1 until segments.size) {
@@ -138,37 +141,27 @@ internal class JavaInheritedMemberResolver(
      * detect ambiguity.
      *
      * @param resolveWithoutInheritance resolves a name without checking inherited inner
-     *        classes, to avoid infinite recursion back into this method.
-     * @param includeOuterClasses when `true`, the search starts from the supertypes of
-     *        [containingClass] *and* of every enclosing class; when `false`, only the supertypes
-     *        of [containingClass] itself are searched. The per-level (`false`) flavor lets the
-     *        caller interleave declared and inherited member types level by level, preserving the
-     *        JLS 6.4.1 rule that an inner level's inherited member type shadows an outer level's
-     *        declared one.
+     *        classes, to avoid infinite recursion back into this method. Only [containingClass]'s
+     *        own supertypes are searched (not those of its outer classes) — callers that also
+     *        need outer-class coverage walk the containing-class chain themselves and call this
+     *        once per level, interleaving declared and inherited member types level by level to
+     *        preserve the JLS 6.4.1 rule that an inner level's inherited member type shadows an
+     *        outer level's declared one.
      */
     fun resolveInheritedInnerClassToClassId(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
         directSupertypeClassIds: (ClassId) -> List<ClassId>,
         containingClass: JavaClass?,
-        resolveWithoutInheritance: (String, (ClassId) -> Boolean) -> ClassId?,
-        includeOuterClasses: Boolean = true,
+        resolveWithoutInheritance: (String) -> ClassId?,
     ): ClassId? {
         containingClass ?: return null
 
-        // Collect direct supertypes from the containing class (and, when requested, its outer classes).
-        val initialSupertypes = mutableListOf<JavaClassifierType>()
-        var currentClass: JavaClass? = containingClass
-        while (currentClass != null) {
-            initialSupertypes.addAll(currentClass.supertypes)
-            if (!includeOuterClasses) break
-            currentClass = currentClass.outerClass
-        }
         val visited = mutableSetOf<ClassId>()
         val nonSourceSupertypeIds = mutableListOf<ClassId>()
 
         walkJavaSourceSupertypes(
-            simpleName, initialSupertypes, tryResolve, resolveWithoutInheritance, visited, nonSourceSupertypeIds,
+            simpleName, containingClass.supertypes.toList(), tryResolve, resolveWithoutInheritance, visited, nonSourceSupertypeIds,
         )?.let { return it }
 
         if (nonSourceSupertypeIds.isEmpty()) return null
@@ -190,7 +183,7 @@ internal class JavaInheritedMemberResolver(
         simpleName: String,
         initialSupertypes: List<JavaClassifierType>,
         tryResolve: (ClassId) -> Boolean,
-        resolveWithoutInheritance: (String, (ClassId) -> Boolean) -> ClassId?,
+        resolveWithoutInheritance: (String) -> ClassId?,
         visited: MutableSet<ClassId>,
         nonSourceSupertypeIds: MutableList<ClassId>,
     ): ClassId? {
@@ -199,9 +192,15 @@ internal class JavaInheritedMemberResolver(
         // Convert the initial supertypes (the containing-class-chain's direct supertypes,
         // expressed as `JavaClassifierType` AST entries) into `ClassId`s using the caller's
         // resolution context — these names live in the file currently being parsed.
+        //
+        // Each dotted segment is stripped of its own generic type arguments individually via
+        // `splitCanonicalFqName()` (rather than a single `substringBefore('<')` over the whole
+        // text), so a qualified reference with type arguments on a non-final segment
+        // (`a.B<String>.C`) yields the full `a.B.C`, not the truncated `a.B`.
         val initialIds = initialSupertypes.mapNotNull { st ->
-            val name = st.presentableText.substringBefore('<').trim()
-            if (name.isEmpty()) null else resolveWithoutInheritance(name, tryResolve)
+            val segments = st.presentableText.splitCanonicalFqName().map { it.substringBefore('<').trim() }
+            if (segments.isEmpty() || segments.any { it.isEmpty() }) null
+            else resolveWithoutInheritance(segments.joinToString("."))
         }
         var currentLevelIds: List<ClassId> = initialIds
 

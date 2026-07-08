@@ -92,7 +92,7 @@ internal fun declaredOrFullyInherited(cls: JavaClass, name: Name): JavaClass? {
     return c.fileContext.inheritedMemberResolver.findInnerClassFromSupertypes(
         name, astClass, mutableSetOf(),
         resolveBinaryOrKotlinInherited = { containingClass, innerName ->
-            resolveInheritedInnerClassToClassId(innerName.asString(), { tryResolve(it) }, containingClass, includeOuterClasses = false)
+            resolveInheritedInnerClassToClassId(innerName.asString(), { tryResolve(it) }, containingClass)
         },
         classifierAdapterFor = { classifierAdapterFor(it) },
     )

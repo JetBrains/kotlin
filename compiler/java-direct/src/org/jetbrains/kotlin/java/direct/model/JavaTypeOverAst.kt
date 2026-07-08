@@ -128,6 +128,15 @@ class JavaClassifierTypeOverAst(
             if (parts.size == 1) {
                 // Resolution order for simple names (matches Java scoping rules):
                 // 1. OWN type parameters (method/class own — high priority, win over inner class names)
+                //
+                // Known, accepted javac divergence (compiler-wide, not java-direct-specific): javac
+                // resolves a same-named nested class over the class's own type parameter in one
+                // narrow JLS-scoping edge case (`T` used both as an own type parameter and as the
+                // name of a same-named nested class), which this priority order — own type params
+                // before inner classes — does not match. This mirrors PSI's existing behavior
+                // (parity is the target here, not independently re-deriving JLS), so it is
+                // intentionally left as-is; tracked separately as a pre-existing PSI/javac
+                // inconsistency, not fixed in this module alone.
                 findTypeParameter(parts[0])?.let { return it }
                 // 2. Inner/local class names (shadow INHERITED outer type params)
                 val localClass = findClassInCurrentScope(Name.identifier(parts[0]))

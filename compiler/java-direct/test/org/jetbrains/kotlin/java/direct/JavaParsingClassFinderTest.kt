@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
+import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
+import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.name.ClassId
@@ -486,6 +489,72 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         val innerId = innerClassIds.single()
         assert(innerId == ClassId(FqName("pkg"), FqName("A.Inner"), isLocal = false)) {
             "Expected pkg.A.Inner, got $innerId"
+        }
+    }
+
+    @Test
+    fun testGetDirectSupertypesDoesNotTruncateQualifiedGenericSupertype(@TempDir tempDir: Path) {
+        // Regression test for a `substringBefore('<')` truncation bug: `extends B<String>.C` was
+        // mis-parsed as if it extended plain `B` (silently dropping `.C`), because the raw-text
+        // resolver cut the reference at the first '<' *before* checking whether it was dotted, and
+        // "B" alone (post-truncation) has no dot, so it was wrongly treated as a same-package,
+        // non-qualified simple name.
+        val pkgDir = tempDir.resolve("a")
+        pkgDir.toFile().mkdirs()
+        pkgDir.resolve("B.java").writeText(
+            """
+            package a;
+            public class B<T> {
+                public static class C {}
+            }
+        """.trimIndent()
+        )
+        pkgDir.resolve("Derived.java").writeText(
+            """
+            package a;
+            public class Derived extends B<String>.C {}
+        """.trimIndent()
+        )
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val derivedId = ClassId(FqName("a"), Name.identifier("Derived"))
+        finder.findClass(JavaClassFinder.Request(derivedId))
+
+        val supertypes = finder.getDirectSupertypes(derivedId)
+        val wrongTruncatedId = ClassId(FqName("a"), Name.identifier("B"))
+        assert(wrongTruncatedId !in supertypes) {
+            "Expected 'extends B<String>.C' to NOT be truncated to plain 'B', got supertypes $supertypes"
+        }
+    }
+
+    @Test
+    fun testClassifierAdapterForRoutesSourceBackedClassIdToCanonicalInstance(@TempDir tempDir: Path) {
+        // Regression test for the classifierAdapterFor identity-routing fix: a source-backed
+        // ClassId reached through the generic ClassId ladder must materialize to the SAME
+        // JavaClassOverAst instance already used for direct same-file/cross-file navigation, not a
+        // second, non-navigable FirBackedJavaClassAdapter wrapper (FIR matches JavaTypeParameter by
+        // object identity, so a second instance would break outer-type-argument substitution).
+        val pkgDir = tempDir.resolve("pkg")
+        pkgDir.toFile().mkdirs()
+        pkgDir.resolve("Target.java").writeText(
+            """
+            package pkg;
+            public class Target {}
+        """.trimIndent()
+        )
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val targetId = ClassId(FqName("pkg"), Name.identifier("Target"))
+        val direct = finder.findClass(JavaClassFinder.Request(targetId))
+        assert(direct != null) { "Expected to find pkg.Target" }
+
+        val tree = parseJavaToLightTree("package pkg;\nclass Dummy {}", 0)
+        val context = JavaResolutionContext.create(tree, createDummyFirSessionForTests(), classFinder = finder)
+        val viaAdapter = with(context) { classifierAdapterFor(targetId) }
+
+        assert(viaAdapter === direct) {
+            "Expected classifierAdapterFor to route the source-backed ClassId to the canonical " +
+                    "JavaClassOverAst instance, got a different object: $viaAdapter"
         }
     }
 

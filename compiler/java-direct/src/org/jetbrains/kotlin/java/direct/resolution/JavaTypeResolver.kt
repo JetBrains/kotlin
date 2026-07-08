@@ -264,9 +264,7 @@ private fun resolveInheritedInnerForLevel(
             // candidates.isEmpty(): fall back to the BFS for Kotlin / binary supertypes.
         }
     }
-    return resolveInheritedInnerClassToClassId(
-        simpleName, tryResolve, containingClass, includeOuterClasses = false,
-    )
+    return resolveInheritedInnerClassToClassId(simpleName, tryResolve, containingClass)
 }
 
 /**
@@ -435,9 +433,10 @@ private fun resolveFromStaticStarImports(
  * Try to resolve a simple name as an inner class inherited from the supertypes of [containingClass].
  * The BFS reads supertypes through the per-origin [directSupertypeClassIds] dispatcher.
  *
- * When [includeOuterClasses] is `false` only [containingClass]'s own supertypes are searched, so
- * the caller ([resolveFromLocalScope]) can interleave declared and inherited lookups level by level
- * (JLS 6.4.1).
+ * Only [containingClass]'s own supertypes are searched (not those of its outer classes), so every
+ * caller ([resolveFromLocalScope], [findClassInCurrentScope] via the binary/Kotlin tail of
+ * [JavaInheritedMemberResolver.findInnerClassFromSupertypes]) can interleave declared and inherited
+ * lookups level by level while walking the containing-class chain itself (JLS 6.4.1).
  *
  * Not private: also used as the binary/Kotlin tail of
  * [JavaInheritedMemberResolver.findInnerClassFromSupertypes] (the structural, `JavaClass`-returning
@@ -448,17 +447,15 @@ internal fun resolveInheritedInnerClassToClassId(
     simpleName: String,
     tryResolve: (ClassId) -> Boolean,
     containingClass: JavaClass?,
-    includeOuterClasses: Boolean,
 ): ClassId? = c.fileContext.inheritedMemberResolver.resolveInheritedInnerClassToClassId(
     simpleName, tryResolve, { directSupertypeClassIds(it) }, containingClass,
-    resolveWithoutInheritance = { name, resolve ->
+    resolveWithoutInheritance = { name ->
         if (name.contains('.')) {
-            resolveQualifiedNameToClassIdFromParts(name.split('.'), resolve, fullResolution = false)
+            resolveQualifiedNameToClassIdFromParts(name.split('.'), tryResolve, fullResolution = false)
         } else {
-            resolveSimpleNameToClassIdImpl(name, resolve, fullResolution = false)
+            resolveSimpleNameToClassIdImpl(name, tryResolve, fullResolution = false)
         }
     },
-    includeOuterClasses = includeOuterClasses,
 )
 
 /**
