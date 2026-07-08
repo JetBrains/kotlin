@@ -33,7 +33,7 @@ fun foo2(): Boolean {
 fun test0(int: Int?) {
     with(int) {
         foo0()
-        val tmp: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> int
+        val tmp: Int = <!INITIALIZER_TYPE_MISMATCH!>int<!>
         val tmp1: Int = this
     }
     foo0(a = int)

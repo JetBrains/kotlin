@@ -6,13 +6,13 @@ class CallableReference {
         field: String = ""
 
     fun foo() {
-        val x: KProperty<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> ::a
+        val x: KProperty<String> = ::<!INITIALIZER_TYPE_MISMATCH!>a<!>
         val y: KProperty<Any> = ::a
     }
 }
 
 fun outsideOfScope() {
-    val x: KProperty<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> CallableReference::a
+    val x: KProperty<String> = CallableReference::<!INITIALIZER_TYPE_MISMATCH!>a<!>
     val y: KProperty<Any> = CallableReference::a
 }
 

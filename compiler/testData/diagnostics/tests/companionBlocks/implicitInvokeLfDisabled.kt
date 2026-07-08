@@ -38,14 +38,14 @@ class C2 {
 
 fun testC() {
     val c: C = C()
-    val s: String <!INITIALIZER_TYPE_MISMATCH!>=<!> C(<!TOO_MANY_ARGUMENTS!>""<!>)
+    val s: String = <!INITIALIZER_TYPE_MISMATCH!>C<!>(<!TOO_MANY_ARGUMENTS!>""<!>)
 
     C.<!UNSUPPORTED_FEATURE!>invo<!>()
 }
 
 fun testC2() {
     val c: C2 = C2()
-    val s: String <!INITIALIZER_TYPE_MISMATCH!>=<!> C2("")
+    val s: String = <!INITIALIZER_TYPE_MISMATCH!>C2<!>("")
     val i: Int = C2(1)
 
     C2.invo()
@@ -53,7 +53,7 @@ fun testC2() {
 
 fun testJ() {
     val j: J = J()
-    val s: String <!INITIALIZER_TYPE_MISMATCH!>=<!> J(<!TOO_MANY_ARGUMENTS!>""<!>)
+    val s: String = <!INITIALIZER_TYPE_MISMATCH!>J<!>(<!TOO_MANY_ARGUMENTS!>""<!>)
 
     J.invo()
 }

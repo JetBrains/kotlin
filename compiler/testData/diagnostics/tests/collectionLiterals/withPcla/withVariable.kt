@@ -75,14 +75,14 @@ fun testWithSemifixation() {
 
     // TODO: KT-84797
     <!TYPE_MISMATCH("String; Int")!>buildBox {
-        x <!ASSIGNMENT_TYPE_MISMATCH("Set<String>; Set<Int>")!>=<!> setOf(1, 2, 3)
+        x = <!ASSIGNMENT_TYPE_MISMATCH("Set<String>; Set<Int>")!>setOf<!>(1, 2, 3)
         x = ["!"]
         <!TYPE_MISMATCH("String; Int")!>x<!>.size
     }<!>
 
     <!TYPE_MISMATCH("String; Int")!>buildBox {
         x = ["!"]
-        x <!ASSIGNMENT_TYPE_MISMATCH("Collection<String>; Set<Int>")!>=<!> setOf(1, 2, 3)
+        x = <!ASSIGNMENT_TYPE_MISMATCH("Collection<String>; Set<Int>")!>setOf<!>(1, 2, 3)
         <!TYPE_MISMATCH("String; Int")!>x<!>.size
     }<!>
 

@@ -1,4 +1,4 @@
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:12:21: error: Initializer type mismatch: expected 'String', actual '() -> String'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:12:23: error: Initializer type mismatch: expected 'String', actual '() -> String'.
 
 /returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:13:9: error: Return type mismatch: expected 'String', actual '() -> String'.
 
@@ -6,7 +6,7 @@
 
 /returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:14:30: error: Return type mismatch: expected 'String', actual 'String?'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:18:9: error: Assignment type mismatch: actual type is '() -> String', but 'String' was expected.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:18:11: error: Assignment type mismatch: actual type is '() -> String', but 'String' was expected.
 
 /returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:19:9: error: Return type mismatch: expected 'String', actual '() -> String'.
 

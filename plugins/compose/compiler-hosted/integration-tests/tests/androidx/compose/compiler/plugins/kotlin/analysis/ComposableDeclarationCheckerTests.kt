@@ -62,7 +62,7 @@ class ComposableDeclarationCheckerTests(
     
                 @Composable fun A() {}
                 
-                val aCallable: () -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> ::A
+                val aCallable: () -> Unit = ::<!INITIALIZER_TYPE_MISMATCH!>A<!>
                 val bCallable: @Composable () -> Unit = ::A
                 val cCallable = ::A
 
@@ -92,7 +92,7 @@ class ComposableDeclarationCheckerTests(
             fun A() {}
                 
             val aCallable: () -> Unit = ::A
-            val bCallable: @Composable () -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> ::A
+            val bCallable: @Composable () -> Unit = ::<!INITIALIZER_TYPE_MISMATCH!>A<!>
             val cCallable = ::A
 
             fun doSomething(fn: () -> Unit) { print(fn) }

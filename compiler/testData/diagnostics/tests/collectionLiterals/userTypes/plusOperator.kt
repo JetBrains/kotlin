@@ -38,7 +38,7 @@ fun testVar() {
 fun testConcat() {
     val a: MyList<Int> = concat([1, 2, 3], [4, 5, 6])
     val b: MyList<Int> = concat([], [])
-    val c: MyList<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> concat([""], [1, 2, 3])
+    val c: MyList<Int> = <!INITIALIZER_TYPE_MISMATCH!>concat<!>([""], [1, 2, 3])
     val d = concat([1, 2, 3], [4, 5, 6])
     val e = concat([1, 2, 3], ["string"])
     val f = concat([], [null])

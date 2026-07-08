@@ -139,8 +139,8 @@ fun main() {
      * K <: (C) -> Unit -> TypeVariable(_RP1) >: C
      * K == (B) -> Unit -> TypeVariable(_RP1) == B
      */
-    val x17: (C) -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> selectB(id { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, id { it }, id<(B) -> Unit> { x -> x })
-    val x18: (C) -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> select(id { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, id<(B) -> Unit> { x -> x })
+    val x17: (C) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>selectB<!>(id { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, id { it }, id<(B) -> Unit> { x -> x })
+    val x18: (C) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>select<!>(id { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, id<(B) -> Unit> { x -> x })
 
     // Resolution of extension/non-extension functions combination
     val x19: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String.() -> kotlin.Unit")!>id { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this<!> }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String) -> kotlin.Unit")!>id(fun(x: String) {})<!>)

@@ -12,7 +12,7 @@ enum class A {
 }
 
 fun test() {
-    val i: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> A.entries
+    val i: Int = A.<!INITIALIZER_TYPE_MISMATCH!>entries<!>
     A.Companion.entries
 
     <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(A) {

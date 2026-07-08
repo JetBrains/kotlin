@@ -27,5 +27,5 @@ public class B extends A {
 
 // FILE: test.kt
 fun test(b: B) {
-    val list: MutableList<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> b.foo()
+    val list: MutableList<String> = b.<!INITIALIZER_TYPE_MISMATCH!>foo<!>()
 }

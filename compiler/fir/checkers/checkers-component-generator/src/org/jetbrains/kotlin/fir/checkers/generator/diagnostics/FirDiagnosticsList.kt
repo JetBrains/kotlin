@@ -870,7 +870,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("isMismatchDueToNullability")
         }
 
-        val ASSIGNMENT_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.OPERATOR) {
+        val ASSIGNMENT_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.REFERENCE_OR_OPERATOR) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")

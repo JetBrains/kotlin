@@ -14,8 +14,8 @@ fun test() {
     val x: A<String> = []
     val y: A<String> = [P()]
 
-    val z: A<Char> <!INITIALIZER_TYPE_MISMATCH!>=<!> []
-    val t: A<Char> <!INITIALIZER_TYPE_MISMATCH!>=<!> [P()]
+    val z: A<Char> = <!INITIALIZER_TYPE_MISMATCH!>[]<!>
+    val t: A<Char> = <!INITIALIZER_TYPE_MISMATCH!>[P()]<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, objectDeclaration,

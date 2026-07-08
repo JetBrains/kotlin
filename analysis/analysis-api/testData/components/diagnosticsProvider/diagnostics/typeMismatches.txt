@@ -6,7 +6,7 @@ Diagnostics from file:
     INITIALIZER_TYPE_MISMATCH      text ranges: [(11,12)]
       PSI: KtProperty at (1,1-16)
   for PSI element of type KtProperty at (9,1-31)
-    INITIALIZER_TYPE_MISMATCH      text ranges: [(122,123)]
+    INITIALIZER_TYPE_MISMATCH      text ranges: [(124,131)]
       PSI: KtProperty at (9,1-31)
   for PSI element of type KtConstantExpression at (5,12-13)
     RETURN_TYPE_MISMATCH      text ranges: [(68,69)]

@@ -17,7 +17,7 @@ fun test() {
     val a : Outer<Int>.Inner<Int>.(String)->String = Outer<Int>.Inner<Int>::id
     val b : Outer<Int>.Inner<Int>.(String)->String = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer<!>.Inner<Int, Int>::id
     val c : Outer<Int>.Inner<Int>.(String)->String = Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>.Inner::id
-    val d : Outer<Int>.Inner<Int>.(String)->String <!INITIALIZER_TYPE_MISMATCH!>=<!> Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>.Inner<String>::<!CANNOT_INFER_PARAMETER_TYPE!>id<!>
+    val d : Outer<Int>.Inner<Int>.(String)->String = Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>.Inner<String>::<!CANNOT_INFER_PARAMETER_TYPE, INITIALIZER_TYPE_MISMATCH!>id<!>
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, inner, localProperty,
