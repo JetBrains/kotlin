@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_JAVAC
 // WITH_STDLIB
+// LANGUAGE: +CompanionBlocksAndExtensions
 
 @file:OptIn(ExperimentalStdlibApi::class)
 
@@ -73,6 +74,11 @@ class C {
     var icsetter2: IC
         get() = TODO()
         @JvmExposeBoxed set(value) {}
+
+    companion {
+        @JvmExposeBoxed
+        fun baz(ic: IC) {}
+    }
 }
 
 <!USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!>
@@ -115,6 +121,11 @@ class WithIC {
     var icsetter2: IC
         get() = TODO()
         set(value) {}
+
+    companion {
+        @JvmExposeBoxed
+        fun baz(ic: IC) {}
+    }
 }
 
 abstract class Abstract {
@@ -123,6 +134,11 @@ abstract class Abstract {
 
     <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed<!>
     abstract fun abstractIC(ic: IC)
+
+    companion {
+        @JvmExposeBoxed
+        fun baz(ic: IC) {}
+    }
 }
 
 <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed<!>
@@ -132,6 +148,11 @@ interface Interface {
 
     <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT!>@JvmExposeBoxed<!>
     fun bar(ic: IC)
+
+    companion {
+        @JvmExposeBoxed
+        fun baz(ic: IC) {}
+    }
 }
 
 class Class: Interface {
