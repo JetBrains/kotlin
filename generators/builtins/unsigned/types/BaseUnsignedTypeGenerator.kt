@@ -168,6 +168,12 @@ abstract class BaseUnsignedTypeGenerator(
         UnsignedType.ULONG -> "ulongToString(data)"
     }
 
+    open fun toStringWithBase(): String = when (type) {
+        UnsignedType.UBYTE, UnsignedType.USHORT -> "toInt().toString(radix)"
+        UnsignedType.UINT -> "toLong().toString(radix)"
+        UnsignedType.ULONG -> "ulongToString(this.toLong(), checkRadix(radix))"
+    }
+
     open fun toOtherUnsignedTypeBody(otherType: UnsignedType): String = when (type) {
         otherType -> "$className(this)"
         else -> "$className(this.to${type.asSigned.capitalized}())"
@@ -223,6 +229,7 @@ abstract class BaseUnsignedTypeGenerator(
             generateFloatingConversions()
 
             generateToStringHashCode()
+            generateToStringWithBase()
         }
 
         generateExtensionConversions()
@@ -683,6 +690,22 @@ abstract class BaseUnsignedTypeGenerator(
             }
             if (expectActualModifier != ExpectActualModifier.Expect) {
                 toStringHashCodeBody().setAsBody()
+            }
+        }
+    }
+
+    private fun ClassBuilder.generateToStringWithBase() {
+        method {
+            annotations += INLINE_ONLY
+            signature {
+                isInline = true
+                visibility = MethodVisibility.INTERNAL
+                methodName = "toStringWithBase"
+                parameter { name = "radix"; type = "Int" }
+                returnType = "String"
+            }
+            if (expectActualModifier != ExpectActualModifier.Expect) {
+                toStringWithBase().setAsBody()
             }
         }
     }

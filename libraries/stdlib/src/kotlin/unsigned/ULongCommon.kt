@@ -469,6 +469,9 @@ internal constructor(
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String
+
+    @kotlin.internal.InlineOnly
+    internal inline fun toStringWithBase(radix: Int): String
 }
 
 /**

@@ -59,7 +59,7 @@ internal constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     @Suppress("OVERRIDE_BY_INLINE")
     public actual override inline operator fun compareTo(other: UShort): Int =
-        this.toInt().compareTo(other.toInt())
+        jsUintCompare(data.toInt(), other.data.toInt())
 
     /**
      * Compares this value with the specified value for order.
@@ -492,6 +492,10 @@ internal constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun toString(): String =
         toInt().toString()
+
+    @kotlin.internal.InlineOnly
+    internal actual inline fun toStringWithBase(radix: Int): String =
+        toInt().toString(radix)
 }
 
 /**

@@ -69,7 +69,7 @@ internal constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     @Suppress("OVERRIDE_BY_INLINE")
     public actual override inline operator fun compareTo(other: UInt): Int =
-        uintCompare(this.data, other.data)
+        jsUintCompare(data, other.data)
 
     /**
      * Compares this value with the specified value for order.
@@ -169,7 +169,7 @@ internal constructor(
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun div(other: UInt): UInt =
-        uintDivide(this, other)
+        jsUintDivide(this, other)
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.InlineOnly
@@ -205,7 +205,7 @@ internal constructor(
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun rem(other: UInt): UInt =
-        uintRemainder(this, other)
+        jsUintRemainder(this, other)
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -512,11 +512,15 @@ internal constructor(
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
     public actual inline fun toDouble(): Double =
-        uintToDouble(data)
+        jsUintToDouble(data)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun toString(): String =
-        toLong().toString()
+        jsUintToString(data)
+
+    @kotlin.internal.InlineOnly
+    internal actual inline fun toStringWithBase(radix: Int): String =
+        jsUintToString(data, checkRadix(radix))
 }
 
 /**
@@ -596,4 +600,4 @@ public actual inline fun Float.toUInt(): UInt =
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
 public actual inline fun Double.toUInt(): UInt =
-    doubleToUInt(this)
+    jsDoubleToUInt(this)

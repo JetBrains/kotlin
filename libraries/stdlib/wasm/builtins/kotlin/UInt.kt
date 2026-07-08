@@ -518,6 +518,10 @@ internal constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun toString(): String =
         utoa32(this)
+
+    @kotlin.internal.InlineOnly
+    internal actual inline fun toStringWithBase(radix: Int): String =
+        toLong().toString(radix)
 }
 
 /**
