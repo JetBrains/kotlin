@@ -45,10 +45,8 @@ import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
-import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -147,7 +145,7 @@ class WebStaticInitializersDeclarationLowering(private val context: JsCommonBack
             when (it) {
                 is IrEnumEntry -> it.correspondingField?.isStatic == true
                 is IrField -> it.isStatic && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
-                is IrProperty -> it.backingField?.isStatic == true
+                is IrProperty -> it.backingField?.isStatic == true && it.isLateinit
                 else -> false
             }
         }
