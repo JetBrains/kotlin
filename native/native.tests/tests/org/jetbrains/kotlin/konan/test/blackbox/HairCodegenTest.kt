@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test
  * Test sources live in `native/native.tests/testData/hair/`.
  */
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
-@EnforcedProperty(ClassLevelProperty.OPTIMIZATION_MODE, "NO")
+@EnforcedProperty(ClassLevelProperty.OPTIMIZATION_MODE, "OPT")
 @TestMetadata("native/native.tests/testData/hair")
 @TestDataPath("\$PROJECT_ROOT")
 class HairCodegenTest : AbstractNativeSimpleTest() {
