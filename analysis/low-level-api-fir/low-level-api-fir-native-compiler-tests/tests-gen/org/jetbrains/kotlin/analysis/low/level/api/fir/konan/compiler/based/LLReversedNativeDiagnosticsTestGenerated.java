@@ -103,12 +103,6 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   }
 
   @Test
-  @TestMetadata("interfaceCompanionBlockProperty.kt")
-  public void testInterfaceCompanionBlockProperty() {
-    run("interfaceCompanionBlockProperty.kt");
-  }
-
-  @Test
   @TestMetadata("isInitialized.kt")
   public void testIsInitialized() {
     run("isInitialized.kt");

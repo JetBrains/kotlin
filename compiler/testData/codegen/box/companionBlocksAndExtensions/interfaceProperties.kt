@@ -1,6 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// DONT_TARGET_EXACT_BACKEND: JVM_IR
-// ^ interface properties on JVM must have @JvmField
+// TARGET_BACKEND: JS_IR, NATIVE, WASM
 // WITH_STDLIB
 interface I {
     companion {
