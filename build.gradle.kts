@@ -83,7 +83,6 @@ findProperty("deployVersion")?.let {
     assert(findProperty("build.number") != null) { "`build.number` parameter is expected to be explicitly set with the `deployVersion`" }
 }
 
-val kotlinLanguageVersion: String by extra
 val kotlinApiVersionForModulesUsedInIDE: String by extra
 
 extra["kotlin_root"] = rootDir
@@ -147,22 +146,6 @@ val mppProjects by extra {
     listOf(
         ":kotlin-stdlib",
         ":kotlin-test",
-    )
-}
-
-val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
-    listOf(
-        ":analysis:analysis-api-fir",
-        ":analysis:decompiled:light-classes-for-decompiled",
-        ":analysis:symbol-light-classes",
-        ":compiler",
-        ":compiler:backend.js",
-        ":jps:jps-common",
-        ":js:js.tests",
-        ":kotlin-build-common",
-        ":kotlin-gradle-plugin",
-        ":kotlin-scripting-jvm-host-test",
-        ":native:kotlin-klib-commonizer",
     )
 }
 

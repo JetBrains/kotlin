@@ -109,7 +109,7 @@ val kotlinApiVersionForProjectsDependingOnStableStdlib: Provider<String> = proje
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
-        val kotlinLanguageVersion: String by rootProject.extra
+        val kotlinLanguageVersion: Provider<String> = project.providers.gradleProperty("kotlinLanguageVersion")
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
@@ -137,8 +137,8 @@ fun Project.configureKotlinCompilationOptions() {
                 }
 
                 freeCompilerArgs.addAll(commonCompilerArgs)
-                languageVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
-                apiVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
+                languageVersion.set(kotlinLanguageVersion.map{ KotlinVersion.fromVersion(it) })
+                apiVersion.set(kotlinLanguageVersion.map { KotlinVersion.fromVersion(it) })
                 freeCompilerArgs.add("-Xskip-prerelease-check")
 
                 if (project.path in CompilerModules.projectsDependingOnStableStdlib) {
@@ -171,7 +171,20 @@ fun Project.configureKotlinCompilationOptions() {
             }
         }
 
-        val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
+        val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib = listOf(
+            ":analysis:analysis-api-fir",
+            ":analysis:decompiled:light-classes-for-decompiled",
+            ":analysis:symbol-light-classes",
+            ":compiler",
+            ":compiler:backend.js",
+            ":jps:jps-common",
+            ":js:js.tests",
+            ":kotlin-build-common",
+            ":kotlin-gradle-plugin",
+            ":kotlin-scripting-jvm-host-test",
+            ":native:kotlin-klib-commonizer",
+        )
+
 
         tasks.withType<KotlinJvmCompile>().configureEach {
             compilerOptions {
