@@ -890,7 +890,7 @@ class ComposeIT : KGPBaseTest() {
             projectName = "composeMultiModule",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, kotlinVersion = "2.3.10"),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, kotlinVersion = "2.4.0"),
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 additionalRepos = setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
             )
