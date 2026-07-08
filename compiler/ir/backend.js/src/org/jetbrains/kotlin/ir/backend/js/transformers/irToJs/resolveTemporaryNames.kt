@@ -93,18 +93,18 @@ private fun JsNode.computeScopes(): Scope {
             currentScope = Scope().apply {
                 currentScope.children += this
             }
-            currentScope.declaredNames += x.parameters.flatMap { it.assignable.names }
+            currentScope.declaredNames += x.parameters.flatMap { it.declarable.names }
             super.visitFunction(x)
             currentScope = oldScope
         }
 
         override fun visitCatch(x: JsCatch) {
-            currentScope.declaredNames += x.parameter.assignable.names
+            currentScope.declaredNames += x.parameter.declarable.names
             super.visitCatch(x)
         }
 
         override fun visit(x: JsVars.JsVar) {
-            currentScope.declaredNames += x.assignable.names
+            currentScope.declaredNames += x.declarable.names
             super.visit(x)
         }
 

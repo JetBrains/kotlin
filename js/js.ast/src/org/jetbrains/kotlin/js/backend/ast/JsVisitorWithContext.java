@@ -74,6 +74,18 @@ public abstract class JsVisitorWithContext {
         endVisit((JsExpression) x, ctx);
     }
 
+    public void endVisit(@NotNull JsAssignmentOperation x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
+    }
+
+    public void endVisit(@NotNull JsAssignmentOperation.Simple x, @NotNull JsContext ctx) {
+        endVisit((JsAssignmentOperation) x, ctx);
+    }
+
+    public void endVisit(@NotNull JsAssignmentOperation.Destructuring x, @NotNull JsContext ctx) {
+        endVisit((JsAssignmentOperation) x, ctx);
+    }
+
     public void endVisit(@NotNull JsBlock x, @NotNull JsContext ctx) {
     }
 
@@ -251,19 +263,19 @@ public abstract class JsVisitorWithContext {
         endVisit((JsLoop) x, ctx);
     }
 
-    public void endVisit(@NotNull JsAssignable x, @NotNull JsContext ctx) {
+    public void endVisit(@NotNull JsDeclarable x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(@NotNull JsAssignable.Named x, @NotNull JsContext ctx) {
-        endVisit((JsAssignable) x, ctx);
+    public void endVisit(@NotNull JsDeclarable.Named x, @NotNull JsContext ctx) {
+        endVisit((JsDeclarable) x, ctx);
     }
 
-    public void endVisit(@NotNull JsAssignable.ArrayPattern x, @NotNull JsContext ctx) {
-        endVisit((JsAssignable) x, ctx);
+    public void endVisit(@NotNull JsDeclarable.ArrayPattern x, @NotNull JsContext ctx) {
+        endVisit((JsDeclarable) x, ctx);
     }
 
-    public void endVisit(@NotNull JsAssignable.ObjectPattern x, @NotNull JsContext ctx) {
-        endVisit((JsAssignable) x, ctx);
+    public void endVisit(@NotNull JsDeclarable.ObjectPattern x, @NotNull JsContext ctx) {
+        endVisit((JsDeclarable) x, ctx);
     }
 
     public void endVisit(@NotNull JsBindingProperty x, @NotNull JsContext ctx) {
@@ -293,6 +305,18 @@ public abstract class JsVisitorWithContext {
 
     public boolean visit(@NotNull JsBinaryOperation x, @NotNull JsContext ctx) {
         return true;
+    }
+
+    public boolean visit(@NotNull JsAssignmentOperation x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsAssignmentOperation.Simple x, @NotNull JsContext ctx) {
+        return visit((JsAssignmentOperation) x, ctx);
+    }
+
+    public boolean visit(@NotNull JsAssignmentOperation.Destructuring x, @NotNull JsContext ctx) {
+        return visit((JsAssignmentOperation) x, ctx);
     }
 
     public boolean visit(@NotNull JsBlock x, @NotNull JsContext ctx) {
@@ -518,20 +542,20 @@ public abstract class JsVisitorWithContext {
         return true;
     }
 
-    public boolean visit(@NotNull JsAssignable x, @NotNull JsContext ctx) {
+    public boolean visit(@NotNull JsDeclarable x, @NotNull JsContext ctx) {
         return true;
     }
 
-    public boolean visit(@NotNull JsAssignable.Named x, @NotNull JsContext ctx) {
-        return visit((JsAssignable) x, ctx);
+    public boolean visit(@NotNull JsDeclarable.Named x, @NotNull JsContext ctx) {
+        return visit((JsDeclarable) x, ctx);
     }
 
-    public boolean visit(@NotNull JsAssignable.ArrayPattern x, @NotNull JsContext ctx) {
-        return visit((JsAssignable) x, ctx);
+    public boolean visit(@NotNull JsDeclarable.ArrayPattern x, @NotNull JsContext ctx) {
+        return visit((JsDeclarable) x, ctx);
     }
 
-    public boolean visit(@NotNull JsAssignable.ObjectPattern x, @NotNull JsContext ctx) {
-        return visit((JsAssignable) x, ctx);
+    public boolean visit(@NotNull JsDeclarable.ObjectPattern x, @NotNull JsContext ctx) {
+        return visit((JsDeclarable) x, ctx);
     }
 
     public boolean visit(@NotNull JsBindingProperty x, @NotNull JsContext ctx) {

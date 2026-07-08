@@ -80,7 +80,7 @@ object ModuleWrapperTranslation {
 
         val rootName = JsName("globalThis", false)
 
-        val lhs: JsExpression = if (Namer.requiresEscaping(moduleId)) {
+        val lhs: JsAssignableExpression = if (Namer.requiresEscaping(moduleId)) {
             JsArrayAccess(rootName.makeRef(), JsStringLiteral(moduleId))
         }
         else {
@@ -197,7 +197,7 @@ object ModuleWrapperTranslation {
         return module.plainReference ?: makePlainModuleRef(module.externalName, program)
     }
 
-    private fun makePlainModuleRef(moduleId: String, program: JsProgram): JsExpression {
+    private fun makePlainModuleRef(moduleId: String, program: JsProgram): JsAssignableExpression {
         // TODO: we could use `this.moduleName` syntax. However, this does not work for `kotlin` module in Rhino, since
         // we run kotlin.js in a parent scope. Consider better solution
         return if (Namer.requiresEscaping(moduleId)) {

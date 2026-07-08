@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.js.backend.ast
 
 class JsForIn(
     bindingVarVariant: JsVars.Variant?,
-    private val bindingVarName: JsAssignable.Named?,
+    private val bindingVarName: JsDeclarable.Named?,
     bindingExpression: JsExpression?,
     iterableExpression: JsExpression,
     body: JsStatement,

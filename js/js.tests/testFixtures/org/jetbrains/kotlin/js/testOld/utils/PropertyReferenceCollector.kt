@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.js.testOld.utils
 
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
+import org.jetbrains.kotlin.js.backend.ast.JsAssignmentOperation
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class PropertyReferenceCollector : RecursiveJsVisitor() {
 
@@ -39,18 +38,16 @@ class PropertyReferenceCollector : RecursiveJsVisitor() {
         identReadMap[nameRef.ident] = 1 + unqualifiedReadCount(nameRef.ident)
     }
 
-    override fun visitBinaryExpression(x: JsBinaryOperation) {
-        var assignmentToProperty = false
-        JsAstUtils.decomposeAssignment(x)?.let { [left, right] ->
-            (left as? JsNameRef)?.let { nameRef ->
-                assignmentToProperty = true
-                identWriteMap[nameRef.ident] = 1 + unqualifiedWriteCount(nameRef.ident)
-                nameRef.qualifier?.accept(this)
-                right.accept(this)
-            }
-        }
-        if (!assignmentToProperty) {
-            super.visitBinaryExpression(x)
+    override fun visitSimpleAssignment(x: JsAssignmentOperation.Simple) {
+        val left = x.target
+        val right = x.value
+        val nameRef = left as? JsNameRef
+        if (nameRef != null) {
+            identWriteMap[nameRef.ident] = 1 + unqualifiedWriteCount(nameRef.ident)
+            nameRef.qualifier?.accept(this)
+            right.accept(this)
+        } else {
+            super.visitSimpleAssignment(x)
         }
     }
 

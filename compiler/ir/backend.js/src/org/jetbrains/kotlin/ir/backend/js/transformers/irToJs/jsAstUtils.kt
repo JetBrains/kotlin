@@ -87,25 +87,25 @@ fun <T : JsNode> IrWhen.toJsNode(
         }
     }
 
-fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
+fun jsElementAccess(name: String, receiver: JsExpression?): JsAssignableExpression =
     jsElementAccess(JsName(name, false), receiver)
 
 fun JsExpression.putIntoVariableWitName(name: JsName): JsVars {
     return JsVars(JsVars.Variant.Var, JsVars.JsVar(name, this))
 }
 
-fun jsElementAccess(name: JsName, computedName: JsExpression?, receiver: JsExpression?): JsExpression =
+fun jsElementAccess(name: JsName, computedName: JsExpression?, receiver: JsExpression?): JsAssignableExpression =
     computedName?.let { JsArrayAccess(receiver, it) }
         ?: jsElementAccess(name, receiver)
 
-fun jsElementAccess(name: JsName, receiver: JsExpression?): JsExpression =
+fun jsElementAccess(name: JsName, receiver: JsExpression?): JsAssignableExpression =
     if (receiver == null || name.ident.isValidES5Identifier()) {
         JsNameRef(name, receiver)
     } else {
         JsArrayAccess(receiver, JsStringLiteral(name.ident))
     }
 
-fun jsAssignment(left: JsExpression, right: JsExpression) = JsBinaryOperation(JsBinaryOperator.ASG, left, right)
+fun jsAssignment(left: JsAssignableExpression, right: JsExpression) = JsAssignmentOperation.Simple(left, right)
 
 fun prototypeOf(classNameRef: JsExpression, context: JsStaticContext) =
     JsInvocation(
@@ -588,8 +588,8 @@ object JsAstUtils {
         return JsBinaryOperation(JsBinaryOperator.REF_EQ, arg1, arg2)
     }
 
-    fun assignment(left: JsExpression, right: JsExpression): JsBinaryOperation {
-        return JsBinaryOperation(JsBinaryOperator.ASG, left, right)
+    fun assignment(left: JsAssignableExpression, right: JsExpression): JsAssignmentOperation.Simple {
+        return JsAssignmentOperation.Simple(left, right)
     }
 
     fun sum(left: JsExpression, right: JsExpression): JsBinaryOperation {

@@ -219,7 +219,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         FOR_IN -> {
                             JsForIn(
                                 ifTrue { jsVarVariants[readInt()] },
-                                ifTrue { readAssignable() as JsAssignable.Named },
+                                ifTrue { readDeclarable() as JsDeclarable.Named },
                                 ifTrue { readExpression() },
                                 readExpression(),
                                 readStatement()
@@ -228,7 +228,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         FOR_OF -> {
                             JsForOf(
                                 ifTrue { jsVarVariants[readInt()] },
-                                ifTrue { readAssignable() },
+                                ifTrue { readDeclarable() },
                                 ifTrue { readExpression() },
                                 readExpression(),
                                 readStatement()
@@ -238,7 +238,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                             JsTry(
                                 readBlock(),
                                 readList {
-                                    JsCatch(readAssignable()).apply {
+                                    JsCatch(readDeclarable()).apply {
                                         body = readBlock()
                                     }
                                 },
@@ -446,6 +446,12 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         SPREAD -> {
                             JsSpread(readExpression())
                         }
+                        SIMPLE_ASSIGNMENT -> {
+                            JsAssignmentOperation.Simple(readExpression() as JsAssignableExpression, readExpression())
+                        }
+                        DESTRUCTURING_ASSIGNMENT -> {
+                            JsAssignmentOperation.Destructuring(readDeclarable(), readExpression())
+                        }
                         else -> error("Unknown expression id: $id")
                     }
                 }
@@ -477,7 +483,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
     }
 
     private fun readParameter(): JsParameter {
-        return JsParameter(readAssignable(), ifTrue { readExpression() }, readBoolean()).apply {
+        return JsParameter(readDeclarable(), ifTrue { readExpression() }, readBoolean()).apply {
             hasDefaultValue = readBoolean()
         }
     }
@@ -499,20 +505,20 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         return JsVars(variant, readBoolean()).apply {
             readRepeated {
                 vars += withLocation {
-                    JsVars.JsVar(readAssignable(), ifTrue { readExpression() })
+                    JsVars.JsVar(readDeclarable(), ifTrue { readExpression() })
                 }
             }
             ifTrue { exportedPackage = stringTable[readInt()] }
         }
     }
 
-    private fun readAssignable(): JsAssignable {
+    private fun readDeclarable(): JsDeclarable {
         return when (val id = readByte().toInt()) {
-            AssignableIds.NAMED -> {
-                JsAssignable.Named(nameTable[readInt()])
+            DeclarableIds.NAMED -> {
+                JsDeclarable.Named(nameTable[readInt()])
             }
-            AssignableIds.ARRAY_PATTERN -> {
-                JsAssignable.ArrayPattern(readList {
+            DeclarableIds.ARRAY_PATTERN -> {
+                JsDeclarable.ArrayPattern(readList {
                     when (val id = readByte().toInt()) {
                         ArrayPatternItemKinds.ELEMENT -> JsBindingArrayItem.Element(readBindingElement())
                         ArrayPatternItemKinds.HOLE -> JsBindingArrayItem.Hole()
@@ -520,8 +526,8 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                     }
                 })
             }
-            AssignableIds.OBJECT_PATTERN -> {
-                JsAssignable.ObjectPattern(readList {
+            DeclarableIds.OBJECT_PATTERN -> {
+                JsDeclarable.ObjectPattern(readList {
                     JsBindingProperty(ifTrue { readExpression() }, readBindingElement())
                 })
             }
@@ -531,7 +537,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
 
     private fun readBindingElement(): JsBindingElement {
         return JsBindingElement(
-            readAssignable(),
+            readDeclarable(),
             ifTrue { readExpression() },
             readBoolean()
         )

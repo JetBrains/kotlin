@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.js.backend.ast
 
-sealed class JsAssignable : SourceInfoAwareJsNode() {
-    abstract override fun deepCopy(): JsAssignable
+sealed class JsDeclarable : SourceInfoAwareJsNode() {
+    abstract override fun deepCopy(): JsDeclarable
 
     val names: List<JsName>
         get() = mutableListOf<JsName>().apply {
             accept(NamesCollector(this))
         }
 
-    class Named(private var name: JsName) : JsAssignable(), HasName {
+    class Named(private var name: JsName) : JsDeclarable(), HasName {
         override fun getName(): JsName = name
 
         override fun setName(name: JsName) {
@@ -21,7 +21,7 @@ sealed class JsAssignable : SourceInfoAwareJsNode() {
         }
 
         override fun accept(visitor: JsVisitor) {
-            visitor.visitNamedAssignable(this)
+            visitor.visitNamedDeclarable(this)
         }
 
         override fun deepCopy(): Named {
@@ -37,9 +37,9 @@ sealed class JsAssignable : SourceInfoAwareJsNode() {
         }
     }
 
-    class ArrayPattern(val elements: List<JsBindingArrayItem>) : JsAssignable() {
+    class ArrayPattern(val elements: List<JsBindingArrayItem>) : JsDeclarable() {
         override fun accept(visitor: JsVisitor) {
-            visitor.visitArrayPatternAssignable(this)
+            visitor.visitArrayPatternDeclarable(this)
         }
 
         override fun acceptChildren(visitor: JsVisitor) {
@@ -56,14 +56,14 @@ sealed class JsAssignable : SourceInfoAwareJsNode() {
             visitor.endVisit(this, ctx)
         }
 
-        override fun deepCopy(): JsAssignable {
+        override fun deepCopy(): JsDeclarable {
             return ArrayPattern(elements.map { it.deepCopy() }).withMetadataFrom(this)
         }
     }
 
-    class ObjectPattern(val properties: List<JsBindingProperty>) : JsAssignable() {
+    class ObjectPattern(val properties: List<JsBindingProperty>) : JsDeclarable() {
         override fun accept(visitor: JsVisitor) {
-            visitor.visitObjectPatternAssignable(this)
+            visitor.visitObjectPatternDeclarable(this)
         }
 
         override fun acceptChildren(visitor: JsVisitor) {
@@ -80,15 +80,15 @@ sealed class JsAssignable : SourceInfoAwareJsNode() {
             visitor.endVisit(this, ctx)
         }
 
-        override fun deepCopy(): JsAssignable {
+        override fun deepCopy(): JsDeclarable {
             return ObjectPattern(properties.map { it.deepCopy() }).withMetadataFrom(this)
         }
     }
 
     private class NamesCollector(private val names: MutableList<JsName>) : RecursiveJsVisitor() {
-        override fun visitNamedAssignable(assignable: Named) {
-            names.add(assignable.name)
-            super.visitNamedAssignable(assignable)
+        override fun visitNamedDeclarable(declarable: Named) {
+            names.add(declarable.name)
+            super.visitNamedDeclarable(declarable)
         }
     }
 }

@@ -172,7 +172,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val array = args[0]
                 val index = args[1]
                 val value = args[2]
-                JsBinaryOperation(JsBinaryOperator.ASG, JsArrayAccess(array, index), value)
+                JsAssignmentOperation.Simple(JsArrayAccess(array, index), value)
             }
 
             add(symbols.arrayLiteral) { call, context ->

@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.js.backend.ast
 
 class JsForOf(
     bindingVarVariant: JsVars.Variant?,
-    bindingAssignable: JsAssignable?,
+    bindingDeclarable: JsDeclarable?,
     bindingExpression: JsExpression?,
     iterableExpression: JsExpression,
     body: JsStatement,
-) : JsIterableLoop(bindingVarVariant, bindingAssignable, bindingExpression, iterableExpression, body) {
+) : JsIterableLoop(bindingVarVariant, bindingDeclarable, bindingExpression, iterableExpression, body) {
     override fun accept(visitor: JsVisitor) {
         visitor.visitForOf(this)
     }
@@ -19,7 +19,7 @@ class JsForOf(
     override fun deepCopy(): JsStatement {
         return JsForOf(
             bindingVarVariant,
-            bindingAssignable?.deepCopy(),
+            bindingDeclarable?.deepCopy(),
             bindingExpression?.deepCopy(),
             iterableExpression.deepCopy(),
             body.deepCopy()

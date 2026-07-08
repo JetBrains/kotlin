@@ -351,7 +351,7 @@ class JsScopesCollector : RecursiveJsVisitor() {
     override fun visitVars(x: JsVars) {
         super.visitVars(x)
         val currentScope = functionsStack.last()
-        x.vars.flatMap { it.assignable.names }.forEach { name ->
+        x.vars.flatMap { it.declarable.names }.forEach { name ->
             currentScope.add(name.ident)
         }
     }
@@ -361,7 +361,7 @@ class JsScopesCollector : RecursiveJsVisitor() {
         val newScope = Scope(parentScope).apply {
             val funcName = x.name?.ident
             if (funcName != null) add(funcName)
-            x.parameters.flatMap { it.assignable.names }.forEach { name ->
+            x.parameters.flatMap { it.declarable.names }.forEach { name ->
                 add(name.ident)
             }
         }
