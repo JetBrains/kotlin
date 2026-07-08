@@ -57,7 +57,7 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
     @Test
     fun `Metadata compilation - default strategy`() = runTest(
         strategy = null,
-        expectedDuplicatedNameMessagePrefix = "warning",
+        expectedDuplicatedNameMessagePrefix = null,
         isSuccessfulCompilationExpected = true,
         freeCompilerArgs = listOf("-Xmetadata-klib")
     )

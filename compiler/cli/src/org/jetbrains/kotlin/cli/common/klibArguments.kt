@@ -42,7 +42,7 @@ fun CompilerConfiguration.setupCommonKlibArguments(
 
     duplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.parseOrDefault(
         arguments.duplicatedUniqueNameStrategy,
-        default = if (isKlibMetadataCompilation) DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING else DuplicatedUniqueNameStrategy.DENY
+        default = if (isKlibMetadataCompilation) DuplicatedUniqueNameStrategy.ALLOW_ALL else DuplicatedUniqueNameStrategy.DENY
     )
 
     // Set up the custom ABI version (the one that has no effect on the KLIB serialization, though will be written to manifest).
