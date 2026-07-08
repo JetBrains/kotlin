@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.RunAll
-import com.intellij.util.ThrowableRunnable
 import com.intellij.util.io.URLUtil
 import org.jetbrains.jps.model.JpsDummyElement
 import org.jetbrains.jps.model.java.JpsJavaSdkType
@@ -27,20 +26,18 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
-import org.jetbrains.kotlin.test.runTest
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 
 @Suppress("UnstableApiUsage")
 @WithMutedInDatabaseRunTest
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    open fun setUp() {
         System.setProperty("kotlin.jps.tests", "true")
     }
 
-    override fun shouldRunTest(): Boolean {
-        return super.shouldRunTest()
-    }
-
+    @AfterEach
     override fun tearDown() {
         RunAll(
             {
@@ -64,11 +61,5 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
 
     protected fun requireLibrary(library: KotlinJpsLibrary) = libraries.getOrPut(library.id) {
         library.create(myProject)
-    }
-
-    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-        runTest {
-            super.runTestRunnable(testRunnable)
-        }
     }
 }

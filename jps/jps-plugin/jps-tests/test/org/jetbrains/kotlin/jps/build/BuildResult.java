@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public final class BuildResult implements MessageHandler {
   private final List<BuildMessage> myErrorMessages;
@@ -135,11 +135,11 @@ public final class BuildResult implements MessageHandler {
   }
 
   public void assertUpToDate() {
-    assertTrue("Project sources weren't up to date", myUpToDate);
+    assertTrue(myUpToDate, "Project sources weren't up to date");
   }
 
   public void assertFailed() {
-    assertFalse("Build not failed as expected", isSuccessful());
+    assertFalse(isSuccessful(), "Build not failed as expected");
   }
 
   public boolean isSuccessful() {

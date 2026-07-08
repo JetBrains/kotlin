@@ -4,10 +4,11 @@
  */
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.TimeoutUtil
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
@@ -40,12 +41,18 @@ import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.model.serialization.JpsProjectLoader
 import org.jetbrains.jps.model.serialization.PathMacroUtil
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
 
 @Suppress("UnstableApiUsage")
-abstract class JpsBuildTestCase : UsefulTestCase() {
+abstract class JpsBuildTestCase {
     private var myProjectDir: File? = null
     protected lateinit var myProject: JpsProject
     protected lateinit var myModel: JpsModel
@@ -53,16 +60,24 @@ abstract class JpsBuildTestCase : UsefulTestCase() {
     protected lateinit var myDataStorageRoot: File
     private lateinit var myLogger: TestProjectBuilderLogger
 
+    protected lateinit var testInfo: TestInfo
+    protected val testRootDisposable: Disposable = Disposer.newDisposable()
+
     protected lateinit var myBuildParams: MutableMap<String, String>
 
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    open fun setUp(testInfo: TestInfo) {
+        this.testInfo = testInfo
         myModel = JpsElementFactory.getInstance().createModel()
         myProject = myModel.project
         myDataStorageRoot = FileUtil.createTempDirectory("compile-server-" + this.projectName, null)
         myLogger = TestProjectBuilderLogger()
         myBuildParams = HashMap()
+    }
+
+    @AfterEach
+    open fun tearDown() {
+        disposeRootDisposable(testRootDisposable)
     }
 
     protected fun addJdk(name: String): JpsSdk<JpsDummyElement> {
@@ -88,7 +103,7 @@ abstract class JpsBuildTestCase : UsefulTestCase() {
     private val projectName: String
         get() = StringUtil.decapitalize(
             StringUtil.trimStart(
-                name,
+                testInfo.testMethod.get().name,
                 "test"
             )
         )
@@ -282,7 +297,7 @@ abstract class JpsBuildTestCase : UsefulTestCase() {
         fun rename(path: String, newName: String) {
             try {
                 val file = File(FileUtil.toSystemDependentName(path))
-                assertTrue("File ${file.absolutePath} doesn't exist", file.exists())
+                assertTrue(file.exists(), "File ${file.absolutePath} doesn't exist")
                 val tempFile = File(file.getParentFile(), "__$newName")
                 FileUtil.rename(file, tempFile)
                 val newFile = File(file.getParentFile(), newName)
@@ -297,7 +312,7 @@ abstract class JpsBuildTestCase : UsefulTestCase() {
         fun change(filePath: String, newContent: String? = null) {
             try {
                 val file = File(FileUtil.toSystemDependentName(filePath))
-                assertTrue("File ${file.absolutePath} doesn't exist", file.exists())
+                assertTrue(file.exists(), "File ${file.absolutePath} doesn't exist")
                 if (newContent != null) {
                     FileUtil.writeToFile(file, newContent)
                 }
@@ -311,7 +326,7 @@ abstract class JpsBuildTestCase : UsefulTestCase() {
                         // macOS and some versions of Linux truncates timestamp to nearest second
                         setLastModified(file, time + 1000)
                         newTimeStamp = FSOperations.lastModified(file)
-                        assertTrue("Failed to change timestamp for ${file.absolutePath}", newTimeStamp > oldTimestamp)
+                        assertTrue(newTimeStamp > oldTimestamp, "Failed to change timestamp for ${file.absolutePath}")
                     }
                     sleepUntil(newTimeStamp)
                 }
@@ -330,14 +345,14 @@ abstract class JpsBuildTestCase : UsefulTestCase() {
 
         private fun setLastModified(file: File, time: Long) {
             val updated = file.setLastModified(time)
-            assertTrue("Cannot modify timestamp for ${file.absolutePath}", updated)
+            assertTrue(updated, "Cannot modify timestamp for ${file.absolutePath}")
         }
 
         protected fun delete(filePath: String) {
             val file = File(FileUtil.toSystemDependentName(filePath))
-            assertTrue("File ${file.absolutePath} doesn't exist", file.exists())
+            assertTrue(file.exists(), "File ${file.absolutePath} doesn't exist")
             val deleted = FileUtil.delete(file)
-            assertTrue("Cannot delete file ${file.absolutePath}", deleted)
+            assertTrue(deleted, "Cannot delete file ${file.absolutePath}")
         }
 
         private fun <T : JpsElement?> setupModuleSdk(module: JpsModule, sdk: JpsSdk<T>) {

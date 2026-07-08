@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.kotlin.jps.incremental.CacheStatus
-import org.jetbrains.kotlin.jps.incremental.loadDiff
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.io.path.Path
 import kotlin.test.assertEquals
 

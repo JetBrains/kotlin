@@ -7,35 +7,38 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.RunAll
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 import java.io.File
-import java.nio.file.Paths
+import kotlin.jvm.optionals.getOrNull
 
 abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
     protected lateinit var originalProjectDir: File
     protected val expectedOutputFile: File
         get() = File(originalProjectDir, "expected-output.txt")
 
-    override fun setUp() {
-        super.setUp()
-        val currentTestMethod = this::class.members.firstOrNull { it.name == "test" + getTestName(false) }
+    @BeforeEach
+    override fun setUp(testInfo: TestInfo) {
+        super.setUp(testInfo)
+        val currentTestMethod = testInfo.testMethod.getOrNull()
         val workingDirFromAnnotation = currentTestMethod?.annotations?.filterIsInstance<WorkingDir>()?.firstOrNull()?.name
-        val projDirPath = Paths.get(
-            TEST_DATA_PATH,
-            "general",
-            workingDirFromAnnotation ?: getTestName(false)
-        )
-        originalProjectDir = projDirPath.toFile()
+        val testDirectoryName = workingDirFromAnnotation ?: getTestName(testInfo.testMethod.get().name, false)
+        val projDirPath = "$TEST_DATA_PATH/general/$testDirectoryName"
+        originalProjectDir = ForTestCompileRuntime.transformTestDataPath(projDirPath)
         workDir = copyTestDataToTmpDir(originalProjectDir)
         orCreateProjectDir
     }
@@ -47,10 +50,11 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         return tmpDir
     }
 
+    @AfterEach
     override fun tearDown() {
         RunAll(
-            ThrowableRunnable { workDir.deleteRecursively() },
-            ThrowableRunnable { super.tearDown() }
+            { workDir.deleteRecursively() },
+            { super.tearDown() }
         ).run()
     }
 
@@ -143,9 +147,10 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         protected fun assertFilesExistInOutput(module: JpsModule, vararg relativePaths: String) {
             for (path in relativePaths) {
                 val outputFile = findFileInOutputDir(module, path)
-                assertTrue("Output not written: " + outputFile.absolutePath + "\n Directory contents: \n" + dirContents(
-                    outputFile.parentFile
-                ), outputFile.exists())
+                assertTrue(
+                    outputFile.exists(),
+                    "Output not written: ${outputFile.absolutePath}\n Directory contents: \n" + dirContents(outputFile.parentFile)
+                )
             }
         }
 
@@ -164,7 +169,7 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
             val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
             for (path in relativePaths) {
                 val outputFile = File(outputDir, path)
-                assertFalse("Output directory \"" + outputFile.absolutePath + "\" contains \"" + path + "\"", outputFile.exists())
+                assertFalse(outputFile.exists(), """Output directory "${outputFile.absolutePath}" contains "$path"""")
             }
         }
 
