@@ -17,7 +17,7 @@ import kotlin.io.path.readBytes
 
 /** See KT-68322 for details. */
 abstract class LibrarySpecialCompatibilityChecker {
-    protected class Version(
+    data class Version(
         private val comparableVersion: MavenComparableVersion,
         private val languageVersion: LanguageVersion,
         private val rawVersion: String
@@ -84,7 +84,13 @@ abstract class LibrarySpecialCompatibilityChecker {
             val errorMessage = when {
                 !isLibraryAbiCompatible ->
                     message(
-                        rootCause = "The ${checkedLibrary.platformDisplayName} ${checkedLibrary.libraryDisplayName} library has the ABI version (${library.versions.abiVersion}) that is not compatible with the compiler's current ABI compatibility level ($klibAbiCompatibilityLevel).",
+                        rootCause = "The ${checkedLibrary.platformDisplayName} ${checkedLibrary.libraryDisplayName} library has the ABI version (${library.versions.abiVersion}) that is not compatible with the compiler's current ABI compatibility level ($klibAbiCompatibilityLevel)." +
+                                "\nLibrary versions in KLIB manifest = ${library.versions}" +
+                                "\nLibrary version in JAR manifest = $libraryVersion" +
+                                "\nCurrent ABI compatibility level = $klibAbiCompatibilityLevel" +
+                                "\nCompiler version = $compilerVersion" +
+                                "\nCompiler version is DEV version = ${compilerVersion.isDevVersion}" +
+                                "\nRelaxed mode = $useRelaxedCompatibilityCheckForDevCompilerVersion",
                         libraryName = checkedLibrary.libraryDisplayName,
                         versionKind = "ABI version",
                         minAcceptedVersion = "$klibAbiCompatibilityLevel.0",
