@@ -40,6 +40,9 @@ object FirThreadUnsafeCachesFactory : FirCachesFactory() {
 
     override fun <V> createPossiblySoftLazyValue(createValue: () -> V): FirLazyValue<V> =
         createLazyValue(createValue)
+
+    override fun <V, CONTEXT> createLazyValueWithContext(createValue: (CONTEXT) -> V): FirLazyValueWithContext<V, CONTEXT> =
+        FirThreadUnsafeValueWithContext(createValue)
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -89,4 +92,23 @@ private class FirThreadUnsafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
 private class FirThreadUnsafeValue<V>(createValue: () -> V) : FirLazyValue<V>() {
     private val lazyValue by lazy(LazyThreadSafetyMode.NONE, createValue)
     override fun getValue(): V = lazyValue
+}
+
+private class FirThreadUnsafeValueWithContext<V, CONTEXT>(
+    createValue: (CONTEXT) -> V,
+) : FirLazyValueWithContext<V, CONTEXT>() {
+    private object NotComputed
+
+    private var createValue: ((CONTEXT) -> V)? = createValue
+
+    private var value: Any? = NotComputed
+
+    @Suppress("UNCHECKED_CAST")
+    override fun getValue(context: CONTEXT): V {
+        if (value === NotComputed) {
+            value = createValue!!(context)
+            createValue = null
+        }
+        return value as V
+    }
 }

@@ -123,6 +123,14 @@ abstract class FirCachesFactory : FirSessionComponent {
     abstract fun <V> createLazyValue(createValue: () -> V): FirLazyValue<V>
 
     /**
+     * Creates a [FirLazyValueWithContext] which computes its value on demand, using a [CONTEXT] passed to
+     * [FirLazyValueWithContext.getValue]. The [CONTEXT] is only used for the first computation.
+     *
+     * [createValue] might be called multiple times for the same value, but all threads will always get the same value.
+     */
+    abstract fun <V, CONTEXT> createLazyValueWithContext(createValue: (CONTEXT) -> V): FirLazyValueWithContext<V, CONTEXT>
+
+    /**
      * Creates a [FirLazyValue] which possibly references its value softly. If the referenced value is garbage-collected, it will be
      * recomputed with the [createValue] function.
      *
