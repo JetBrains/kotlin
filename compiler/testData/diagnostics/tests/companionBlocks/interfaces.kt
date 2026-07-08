@@ -13,6 +13,11 @@ interface I {
         <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun foo()<!>
 
         <!MUST_BE_INITIALIZED!>val bar: String<!>
+
+        <!PRIVATE_PROPERTY_IN_INTERFACE!>private<!> val private1 = 1
+        <!PRIVATE_PROPERTY_IN_INTERFACE!>private<!> var private2 = 2
+        var private3 = 2
+            private set
     }
 }
 
