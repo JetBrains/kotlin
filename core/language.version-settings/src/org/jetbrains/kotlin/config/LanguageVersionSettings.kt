@@ -63,7 +63,6 @@ enum class LanguageFeature(
     val forcesPreReleaseBinaries: Boolean = false,
     val forcesPreReleaseBinariesBefore: LanguageVersion? = null,
     val testOnly: Boolean = false,
-    val hintUrl: String? = null,
     val behaviorAfterSinceVersion: LanguageFeatureBehaviorAfterSinceVersion = CannotBeDisabled,
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
@@ -707,8 +706,6 @@ enum class LanguageFeature(
     val presentableName: String
         // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
         get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::lowercase)
-
-    val presentableText get() = if (hintUrl == null) presentableName else "$presentableName (See: $hintUrl)"
 
     enum class State(override val description: String) : DescriptionAware {
         ENABLED("Enabled"),

@@ -53,15 +53,6 @@ class LanguageFeatureMessageRenderer @JvmOverloads constructor(
             Type.WARNING -> sb.append("experimental")
         }
 
-        val hintUrl = feature.hintUrl
-        if (hintUrl != null) {
-            if (useHtml) {
-                sb.append(" (").append("see more <a href=\"").append(hintUrl).append("\">here</a>)")
-            } else {
-                sb.append(" (see: ").append(hintUrl).append(")")
-            }
-        }
-
         if (feature in additionalFeatureMessages) {
             sb.append(". ${additionalFeatureMessages[feature]}")
         }
