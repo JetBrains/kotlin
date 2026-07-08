@@ -1031,6 +1031,16 @@ internal abstract class FunctionGenerationContext(
             shift(if (signed) LLVMOpcode.LLVMAShr else LLVMOpcode.LLVMLShr,
                     arg, amount)
 
+    fun shift(op: LLVMOpcode, value: LLVMValueRef, shift: LLVMValueRef): LLVMValueRef {
+        val shiftAdjusted = if (value.type == llvm.int64Type) {
+            val tmp = and(shift, llvm.int32(63))
+            zext(tmp, llvm.int64Type)
+        } else {
+            and(shift, llvm.int32(31))
+        }
+        return LLVMBuildBinOp(builder, op, value, shiftAdjusted, "")!!
+    }
+
     /* integers comparisons */
     fun icmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntEQ, arg0, arg1, name)!!
 
