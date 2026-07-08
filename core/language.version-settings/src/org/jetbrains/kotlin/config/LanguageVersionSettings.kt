@@ -700,20 +700,6 @@ enum class LanguageFeature(
         issue: String,
     ) : this(sinceVersion, issue, enabledInProgressiveMode = enabledInProgressiveMode, enabledInLatestLVTests = false)
 
-    init {
-        if (testOnly && sinceVersion != null) {
-            error("$this: should be enabled by default since version $sinceVersion but is test only")
-        }
-
-        if (!forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore != null) {
-            error("$this: forcesPreReleaseBinariesBefore is not null but forcesPreReleaseBinaries is false")
-        }
-
-        if (sinceVersion != null && enabledInLatestLVTests) {
-            error("$this: already enabled in latest language version tests, no need in '${::enabledInLatestLVTests.name} = true'")
-        }
-    }
-
     val presentableName: String
         // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
         get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::lowercase)
