@@ -11,7 +11,6 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.Level
@@ -61,6 +60,7 @@ import java.io.PrintStream
 import java.util.*
 import kotlin.reflect.jvm.javaField
 
+@Suppress("UnstableApiUsage")
 abstract class AbstractIncrementalJpsTest(
     private val allowNoFilesWithSuffixInTestData: Boolean = false,
     private val checkDumpsCaseInsensitively: Boolean = false
@@ -150,9 +150,9 @@ abstract class AbstractIncrementalJpsTest(
             (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
         } finally {
             RunAll(
-                ThrowableRunnable { lookupsDuringTest.clear() },
-                ThrowableRunnable { enableICFixture.tearDown() },
-                ThrowableRunnable { super.tearDown() }
+                { lookupsDuringTest.clear() },
+                { enableICFixture.tearDown() },
+                { super.tearDown() }
             ).run()
         }
     }
@@ -431,7 +431,7 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun configureSingleModuleProject(jdk: JpsSdk<JpsDummyElement>?) {
-        addModule("module", arrayOf(getAbsolutePath("src")), null, null, jdk)
+        addModule("module", srcPaths = arrayOf(getAbsolutePath("src")), outputPath = null, sdk = jdk)
 
         val sourceDestinationDir = File(workDir, "src")
         val sourcesMapping = copyTestSources(testDataDir, File(workDir, "src"), "")
@@ -450,11 +450,10 @@ abstract class AbstractIncrementalJpsTest(
         modulesTxt.modules.forEach { module ->
             module.jpsModule = addModule(
                 module.name,
-                arrayOf(getAbsolutePath("${module.name}/src")),
-                null,
-                null,
+                srcPaths = arrayOf(getAbsolutePath("${module.name}/src")),
+                outputPath = null,
                 jdk
-            )!!
+            )
 
             val kotlinFacetSettings = module.kotlinFacetSettings
             if (kotlinFacetSettings != null) {

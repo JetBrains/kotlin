@@ -25,12 +25,11 @@ import org.jetbrains.jps.model.java.JpsJavaSdkType
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.library.sdk.JpsSdk
-import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
 
+@Suppress("UnstableApiUsage")
 @WithMutedInDatabaseRunTest
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     override fun setUp() {
@@ -44,17 +43,16 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
 
     override fun tearDown() {
         RunAll(
-            ThrowableRunnable {
+            {
                 System.clearProperty("kotlin.jps.tests")
-                myModel = null
                 myBuildParams.clear()
             },
-            ThrowableRunnable { JpsKotlinCompilerRunner.releaseCompileServiceSession() },
-            ThrowableRunnable { super.tearDown() }
+            { JpsKotlinCompilerRunner.releaseCompileServiceSession() },
+            { super.tearDown() }
         ).run()
     }
 
-    override fun addJdk(name: String, path: String?): JpsSdk<JpsDummyElement> {
+    override fun addJdk(name: String, jdkClassesRoot: String?): JpsSdk<JpsDummyElement> {
         val homePath = System.getProperty("java.home")
         val versionString = System.getProperty("java.version")
         val jdk = myModel.global.addSdk(name, homePath, versionString, JpsJavaSdkType.INSTANCE)

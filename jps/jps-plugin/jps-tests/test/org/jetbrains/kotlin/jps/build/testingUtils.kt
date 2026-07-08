@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase.assertTrue
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.jps.build.JpsBuildTestCase.change
+import org.jetbrains.kotlin.jps.build.JpsBuildTestCase.Companion.change
 import java.io.File
 
 inline fun withSystemProperty(property: String, newValue: String?, fn: ()->Unit) {

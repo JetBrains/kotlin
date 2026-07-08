@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.RunAll
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.cmdline.ProjectDescriptor
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 import kotlin.reflect.KFunction1
 
@@ -30,7 +28,6 @@ class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
     private val enableICFixture = EnableICFixture()
     private lateinit var workingDir: File
 
-    @OptIn(ExperimentalPathApi::class)
     override fun setUp() {
         super.setUp()
         enableICFixture.setUp()
@@ -39,9 +36,9 @@ class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
 
     override fun tearDown() {
         RunAll(
-            ThrowableRunnable { workingDir.deleteRecursively() },
-            ThrowableRunnable { enableICFixture.tearDown() },
-            ThrowableRunnable { super.tearDown() }
+            { workingDir.deleteRecursively() },
+            { enableICFixture.tearDown() },
+            { super.tearDown() }
         ).run()
     }
 
@@ -141,7 +138,7 @@ abstract class RelocatableCacheTestCase(
         return projectWorkingDir
     }
 
-    override fun doBuild(descriptor: ProjectDescriptor, scopeBuilder: CompileScopeTestBuilder?): BuildResult =
+    override fun doBuild(descriptor: ProjectDescriptor, scopeBuilder: CompileScopeTestBuilder): BuildResult =
         super.doBuild(descriptor, scopeBuilder).also {
             copyKotlinCaches(descriptor)
         }
