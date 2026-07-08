@@ -583,14 +583,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             LLVMBuildFPTrunc(builder, args[0], callSite.llvmReturnType, "")!!
 
     private fun FunctionGenerationContext.emitShift(op: LLVMOpcode, args: List<LLVMValueRef>): LLVMValueRef {
-        val [first, second] = args
-        val shift = if (first.type == llvm.int64Type) {
-            val tmp = and(second, llvm.int32(63))
-            zext(tmp, llvm.int64Type)
-        } else {
-            and(second, llvm.int32(31))
-        }
-        return LLVMBuildBinOp(builder, op, first, shift, "")!!
+        return shift(op, args[0], args[1])
     }
 
     private fun FunctionGenerationContext.emitShl(args: List<LLVMValueRef>) =

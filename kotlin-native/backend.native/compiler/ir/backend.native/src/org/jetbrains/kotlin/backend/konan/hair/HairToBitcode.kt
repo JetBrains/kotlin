@@ -213,9 +213,9 @@ internal class HairToBitcode(
         override fun visitOr(node: Or): LLVMValueRef = emit { or(node.lhs.value(), node.rhs.value()) }
         override fun visitXor(node: Xor): LLVMValueRef = emit { xor(node.lhs.value(), node.rhs.value()) }
 
-        override fun visitShl(node: Shl): LLVMValueRef = emit { LLVMBuildShl(builder, node.lhs.value(), node.rhs.value(), "")!! }
-        override fun visitShr(node: Shr): LLVMValueRef = emit { LLVMBuildAShr(builder, node.lhs.value(), node.rhs.value(), "")!! }
-        override fun visitUshr(node: Ushr): LLVMValueRef = emit { LLVMBuildLShr(builder, node.lhs.value(), node.rhs.value(), "")!! }
+        override fun visitShl(node: Shl): LLVMValueRef = emit { shift(LLVMOpcode.LLVMShl, node.lhs.value(), node.rhs.value()) }
+        override fun visitShr(node: Shr): LLVMValueRef = emit { shift(LLVMOpcode.LLVMAShr, node.lhs.value(), node.rhs.value()) }
+        override fun visitUshr(node: Ushr): LLVMValueRef = emit { shift(LLVMOpcode.LLVMLShr, node.lhs.value(), node.rhs.value()) }
 
         override fun visitInv(node: Inv): LLVMValueRef = emit { xor(node.value(), makeConstOfType(-1, node.value().type), "") }
 
