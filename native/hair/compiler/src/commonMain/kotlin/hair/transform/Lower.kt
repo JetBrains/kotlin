@@ -6,11 +6,14 @@
 package hair.transform
 
 import hair.ir.*
+import hair.ir.nodes.ArrayIndexCheck
 import hair.ir.nodes.CheckCast
 import hair.ir.nodes.ControlFlowBuilder
 import hair.ir.nodes.IsInstanceOf
 import hair.ir.nodes.Node
 import hair.ir.nodes.NodeBuilder
+import hair.sym.CmpOp
+import hair.sym.HairType
 import hair.sym.RuntimeInterface
 import hair.utils.withWorklist
 
@@ -63,6 +66,23 @@ fun Session.lower() {
                         override fun visitCheckCast(node: CheckCast) {
                             // TODO strike out?
                             node.replaceValueUsesAndKill(node.obj)
+                        }
+
+                        override fun visitArrayIndexCheck(node: ArrayIndexCheck) {
+                            node.replaceWithSubGraph {
+                                val size = ArraySize(node.array)
+                                // Unsigned compare so a negative index (a huge unsigned value) also
+                                // fails the upper-bound check with a single comparison.
+                                branch(
+                                    cond = Cmp(HairType.INT, CmpOp.U_GE)(node.index, size),
+                                    trueInit = {
+                                        InvokeStatic(RuntimeInterface.throwArrayIndexOutOfBounds)()
+                                        breakControlFlowWithUnreachable()
+                                    },
+                                    falseInit = { },
+                                )
+                                null
+                            }
                         }
                     }
 

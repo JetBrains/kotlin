@@ -25,6 +25,7 @@ import hair.sym.asArithmeticType
 import hair.utils.*
 import hair.transform.*
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
+import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
 import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
 import org.jetbrains.kotlin.backend.konan.ir.isComparisonFunction
 import org.jetbrains.kotlin.backend.konan.ir.isTypedIntrinsic
@@ -35,13 +36,16 @@ import org.jetbrains.kotlin.backend.konan.lower.StaticInitializersOrigins
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isChar
-import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isOverridable
+import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.isUnsignedArray
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 
 internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
@@ -67,6 +71,34 @@ internal fun generateHair(generationState: NativeGenerationState, irModule: IrMo
 // FIXME move to utils?
 context(controlBuilder: ControlFlowBuilder)
 val controlBuilder get() = controlBuilder
+
+// FIXME copy-pasted from BCEFroLoopBodyTransformer
+private fun IrType.isBasicArray() = isPrimitiveArray() || isArray() || isUnsignedArray()
+
+enum class ArrayOp {
+    GET, SET, GET_UNCHECKED, SET_UNCHECKED, SIZE;
+
+    val needsIndexCheck: Boolean
+        get() = when (this) {
+            GET, SET -> true
+            GET_UNCHECKED, SET_UNCHECKED -> false
+            SIZE -> false
+        }
+}
+
+fun IrCall.getArrayOp(): ArrayOp? {
+    val receiverType = dispatchReceiver?.type
+    if (receiverType?.isBasicArray() != true) return null
+    val function = symbol.owner
+    return when {
+        function.name == OperatorNameConventions.GET -> ArrayOp.GET
+        function.name == OperatorNameConventions.SET -> ArrayOp.SET
+        function.name == KonanNameConventions.getWithoutBoundCheck -> ArrayOp.GET_UNCHECKED
+        function.name == KonanNameConventions.setWithoutBoundCheck -> ArrayOp.SET_UNCHECKED
+        function == receiverType.getClass()!!.getPropertyGetter("size")!!.owner -> ArrayOp.SIZE
+        else -> null
+    }
+}
 
 internal class HairGenerator(val context: Context, val module: IrModuleFragment) : BodyLoweringPass {
     val moduleCompilation = createHairCompilation(context, module)
@@ -172,12 +204,34 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             function.origin == StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER -> ThreadLocalInit()
                             function.origin == StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> StandaloneThreadLocalInit()
                             !function.isReal -> notImplemented(HairTODO.FAKE_OVERRIDE_CALL)
-                            else -> if (expression.isVirtual()) {
-                                notImplemented(HairTODO.VIRTUAL_CALLS)
-                            } else {
-                                val call = InvokeStatic(HairFunctionImpl(function))(callArgs = args.toTypedArray())
-                                // TODO insert Halt if function returns Notihing ?
-                                if (function.returnType.isUnit()) UnitValue() else call
+                            expression.isVirtual() -> notImplemented(HairTODO.VIRTUAL_CALLS)
+                            else -> {
+                                val arrayOp = expression.getArrayOp()
+                                if (arrayOp != null) {
+                                    if (arrayOp.needsIndexCheck) {
+                                        ArrayIndexCheck(args[0], args[1])
+                                    }
+                                    when (arrayOp) {
+                                        ArrayOp.GET,
+                                        ArrayOp.GET_UNCHECKED -> LoadArrayElement(resultType)(args[0], args[1])
+                                        ArrayOp.SET,
+                                        ArrayOp.SET_UNCHECKED -> {
+                                            val elementType = function.parameters.last().type.asHairType()
+                                            StoreArrayElement(elementType)(args[0], args[1], args[2])
+                                        }
+                                        ArrayOp.SIZE -> ArraySize(args[0])
+                                    }
+                                } else {
+                                    val call = InvokeStatic(HairFunctionImpl(function))(callArgs = args.toTypedArray())
+                                    when {
+                                        function.returnType.isNothing() -> {
+                                            breakControlFlowWithUnreachable()
+                                            NoValue()
+                                        }
+                                        function.returnType.isUnit() -> UnitValue()
+                                        else -> call
+                                    }
+                                }
                             }
                         }
                     }
@@ -285,7 +339,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         val result = if (exits.isNotEmpty()) {
                             require(exits.size == values.size)
                             val merge = BlockEntry(*exits.toTypedArray())
-                            Phi( merge, *((exits.map { it!! }).zip(values)).toTypedArray())
+                            Phi(merge, *((exits.map { it!! }).zip(values)).toTypedArray())
                         } else NoValue()
 
                         return result

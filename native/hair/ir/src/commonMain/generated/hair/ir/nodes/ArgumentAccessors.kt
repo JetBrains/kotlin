@@ -153,6 +153,21 @@ val TypeInfo.obj: Node
 val TypeInfo.objOrNull: Node?
     get() = args.getOrNull(objIndex)
 
+val ArraySize.array: Node
+    get() = args[arrayIndex]
+val ArraySize.arrayOrNull: Node?
+    get() = args.getOrNull(arrayIndex)
+
+val ArrayIndexCheck.array: Node
+    get() = args[arrayIndex]
+val ArrayIndexCheck.arrayOrNull: Node?
+    get() = args.getOrNull(arrayIndex)
+
+val ArrayIndexCheck.index: Node
+    get() = args[indexIndex]
+val ArrayIndexCheck.indexOrNull: Node?
+    get() = args.getOrNull(indexIndex)
+
 val DirectMemoryOp.location: Node
     get() = args[locationIndex]
 val DirectMemoryOp.locationOrNull: Node?
@@ -181,6 +196,21 @@ val StoreField.valueOrNull: Node?
 val StoreGlobal.value: Node
     get() = args[valueIndex]
 val StoreGlobal.valueOrNull: Node?
+    get() = args.getOrNull(valueIndex)
+
+val ArrayMemoryOp.array: Node
+    get() = args[arrayIndex]
+val ArrayMemoryOp.arrayOrNull: Node?
+    get() = args.getOrNull(arrayIndex)
+
+val ArrayMemoryOp.index: Node
+    get() = args[indexIndex]
+val ArrayMemoryOp.indexOrNull: Node?
+    get() = args.getOrNull(indexIndex)
+
+val StoreArrayElement.value: Node
+    get() = args[valueIndex]
+val StoreArrayElement.valueOrNull: Node?
     get() = args.getOrNull(valueIndex)
 
 val AnyInvoke.callArgs: VarArgsList<Node>
@@ -427,6 +457,30 @@ interface ArgumentAccessor {
 
     
 
+    val ArraySize.array: Node
+        get() = args[arrayIndex]
+
+    val ArraySize.arrayOrNull: Node?
+        get() = args.getOrNull(arrayIndex)
+
+    
+
+    val ArrayIndexCheck.array: Node
+        get() = args[arrayIndex]
+
+    val ArrayIndexCheck.arrayOrNull: Node?
+        get() = args.getOrNull(arrayIndex)
+
+    
+
+    val ArrayIndexCheck.index: Node
+        get() = args[indexIndex]
+
+    val ArrayIndexCheck.indexOrNull: Node?
+        get() = args.getOrNull(indexIndex)
+
+    
+
     val DirectMemoryOp.location: Node
         get() = args[locationIndex]
 
@@ -471,6 +525,30 @@ interface ArgumentAccessor {
         get() = args[valueIndex]
 
     val StoreGlobal.valueOrNull: Node?
+        get() = args.getOrNull(valueIndex)
+
+    
+
+    val ArrayMemoryOp.array: Node
+        get() = args[arrayIndex]
+
+    val ArrayMemoryOp.arrayOrNull: Node?
+        get() = args.getOrNull(arrayIndex)
+
+    
+
+    val ArrayMemoryOp.index: Node
+        get() = args[indexIndex]
+
+    val ArrayMemoryOp.indexOrNull: Node?
+        get() = args.getOrNull(indexIndex)
+
+    
+
+    val StoreArrayElement.value: Node
+        get() = args[valueIndex]
+
+    val StoreArrayElement.valueOrNull: Node?
         get() = args.getOrNull(valueIndex)
 
     
@@ -715,6 +793,36 @@ interface ArgumentUpdater : ArgumentAccessor, ArgumentUpdaterBase {
 
     
 
+    override var ArraySize.array: Node
+        get() = args[arrayIndex]
+        set(value) { args[arrayIndex] = value }
+
+    override var ArraySize.arrayOrNull: Node?
+        get() = args.getOrNull(arrayIndex)
+        set(value) { args[arrayIndex] = value }
+
+    
+
+    override var ArrayIndexCheck.array: Node
+        get() = args[arrayIndex]
+        set(value) { args[arrayIndex] = value }
+
+    override var ArrayIndexCheck.arrayOrNull: Node?
+        get() = args.getOrNull(arrayIndex)
+        set(value) { args[arrayIndex] = value }
+
+    
+
+    override var ArrayIndexCheck.index: Node
+        get() = args[indexIndex]
+        set(value) { args[indexIndex] = value }
+
+    override var ArrayIndexCheck.indexOrNull: Node?
+        get() = args.getOrNull(indexIndex)
+        set(value) { args[indexIndex] = value }
+
+    
+
     override var DirectMemoryOp.location: Node
         get() = args[locationIndex]
         set(value) { args[locationIndex] = value }
@@ -732,6 +840,26 @@ interface ArgumentUpdater : ArgumentAccessor, ArgumentUpdaterBase {
     override var Store.valueOrNull: Node?
         get() = args.getOrNull(valueIndex)
         set(value) { args[valueIndex] = value }
+
+    
+
+    override var ArrayMemoryOp.array: Node
+        get() = args[arrayIndex]
+        set(value) { args[arrayIndex] = value }
+
+    override var ArrayMemoryOp.arrayOrNull: Node?
+        get() = args.getOrNull(arrayIndex)
+        set(value) { args[arrayIndex] = value }
+
+    
+
+    override var ArrayMemoryOp.index: Node
+        get() = args[indexIndex]
+        set(value) { args[indexIndex] = value }
+
+    override var ArrayMemoryOp.indexOrNull: Node?
+        get() = args.getOrNull(indexIndex)
+        set(value) { args[indexIndex] = value }
 
     
 

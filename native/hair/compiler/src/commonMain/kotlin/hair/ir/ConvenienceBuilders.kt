@@ -52,6 +52,13 @@ fun Phi(block: Controlling, vararg inputs: Pair<BlockExit, Node>): Node = when (
     else -> inputs.single().second
 }
 
+context(_: NodeBuilder, _: ControlFlowBuilder)
+fun breakControlFlowWithUnreachable() {
+    // terminate existing control flow with a block end
+    Halt()
+    // everythig that comes after is unreachable
+    Unreachable()
+}
 
 // CFG structures
 private typealias BodyBuilder = context(NodeBuilder, ControlFlowBuilder) () -> Unit
@@ -74,9 +81,6 @@ fun branch(
 
     BlockEntry(*listOfNotNull(trueGoto, falseGoto).toTypedArray())
 }
-
-context(_: NodeBuilder, _: ControlFlowBuilder)
-fun <T> irBuilder(builder: context(NodeBuilder, ControlFlowBuilder) () -> T) = builder
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 fun branch(

@@ -75,5 +75,8 @@ private fun ValueNode.typeRule(): HairType? = when (this) {
     is Param -> compilation.function.parameterTypes[index]
 
     is Phi -> joinedValues.firstNotNullOfOrNull { (it as NodeBase).valueTypeOrNull }
+
+    is LoadArrayElement -> elementType
+    is ArraySize -> HairType.INT
 }
 

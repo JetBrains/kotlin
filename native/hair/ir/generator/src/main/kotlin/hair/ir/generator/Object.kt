@@ -51,4 +51,16 @@ object Object : ModelDSL() {
         formParam("type", HairClass::class)
     }
 
+
+    val arraySize by node {
+        interfaces(DataFlow.valueNode)
+        param("array")
+    }
+
+    // TODO sounds like a throwingCheck
+    val arrayIndexCheck by node(ControlFlow.blockBodyWithException) {
+        param("array")
+        param("index")
+    }
+
 }

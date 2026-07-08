@@ -39,6 +39,8 @@ object ControlFlow : ModelDSL() {
     // TODO last location access?
     val blockEnd by abstractClass(controlled)
 
+    val halt by node(blockEnd)
+
     val `return` by node(blockEnd) {
         param("result")
     }
