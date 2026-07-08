@@ -59,7 +59,7 @@ object FirMemberFunctionsChecker : FirNamedFunctionChecker(MppCheckerKind.Common
         val isInsideExternal = isInsideExternalClass(containingDeclaration)
         val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
         if (!function.hasBody) {
-            if (containingDeclaration.isInterface) {
+            if (containingDeclaration.isInterface && !function.isCompanionBlockMember) {
                 if (Visibilities.isPrivate(function.visibility)) {
                     reporter.reportOn(source, FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY, functionSymbol)
                 }
