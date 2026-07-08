@@ -45,7 +45,6 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(protobufFull())
     testFixturesApi(testFixtures(project(":compiler:tests-common")))

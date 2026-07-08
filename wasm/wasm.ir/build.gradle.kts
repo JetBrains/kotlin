@@ -40,9 +40,10 @@ dependencies {
 
     implementation(kotlinStdlib())
     implementation(kotlinxCollectionsImmutable())
-    testCompileOnly(kotlinTest("junit"))
-    testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(libs.kotlinx.serialization.json)
 
