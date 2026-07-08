@@ -17,7 +17,7 @@ import kotlin.io.path.readBytes
 
 /** See KT-68322 for details. */
 abstract class LibrarySpecialCompatibilityChecker {
-    protected class Version(
+    class Version(
         private val comparableVersion: MavenComparableVersion,
         private val languageVersion: LanguageVersion,
         private val rawVersion: String
