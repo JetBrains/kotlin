@@ -145,7 +145,7 @@ enabledTargets(platformManager).forEach { target ->
         installTasks.add(klibInstallTask)
 
         if (target.name in cacheableTargetNames) {
-            for (withOptimizations in listOf(false, true)) {
+            for (withOptimizations in listOf(false)) {
                 val cacheTask = tasks.register(cacheTaskName(targetName, df.name, withOptimizations), KonanCacheTask::class.java) {
                     val dist = nativeDistribution
 

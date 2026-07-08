@@ -217,7 +217,6 @@ tasks.register("distRuntime") {
 tasks.register("distStdlibCache") {
     if (hostName in cacheableTargetNames) {
         dependsOn("${hostName}StdlibCache")
-        dependsOn("${hostName}StdlibCacheOpt")
     }
     // Make sure any tasks depending on this one see cleaned-up distribution.
     mustRunAfter("distInvalidateStaleCaches")
@@ -313,7 +312,6 @@ tasks.register("crossDistPlatformLibs") {
 
 tasks.register("crossDistStdlibCache") {
     dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCache" })
-    dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCacheOpt" })
     // Make sure any tasks depending on this one see cleaned-up distribution.
     mustRunAfter("distInvalidateStaleCaches")
 }
@@ -356,7 +354,7 @@ targetList.each { target ->
     }
 
     if (target in cacheableTargetNames) {
-        [false, true].each { optimizationsEnabled ->
+        [false].each { optimizationsEnabled ->
             def optSuffix = optimizationsEnabled ? "Opt" : ""
             tasks.register("${target}StdlibCache${optSuffix}", Sync) {
                 dependsOn "distStdlib"
@@ -379,7 +377,6 @@ targetList.each { target ->
         dependsOn "${target}CrossDistRuntime", "distCompiler"
         if (target in cacheableTargetNames) {
             dependsOn "${target}StdlibCache"
-            dependsOn "${target}StdlibCacheOpt"
         }
         // Make sure any tasks depending on this one see cleaned-up distribution.
         mustRunAfter("distInvalidateStaleCaches")
