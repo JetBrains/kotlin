@@ -14,7 +14,7 @@ abstract class C {
         <!WRONG_MODIFIER_TARGET!>override<!> fun override() {}
 
         suspend fun suspend() {}
-        <!EXTERNAL_DECLARATION_CANNOT_HAVE_BODY!>external<!> fun external() {}
+        external fun external()
         <!WRONG_MODIFIER_TARGET!>lateinit<!> fun lateinit() {}
         <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun tailrec() { <!NON_TAIL_RECURSIVE_CALL!>tailrec<!>() }
         <!WRONG_MODIFIER_TARGET!>const<!> fun const() {}
