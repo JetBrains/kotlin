@@ -9,11 +9,14 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.file.Directory
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinChromiumTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinFirefoxTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWebkitTestRunner
+import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import kotlin.reflect.KClass
 import kotlin.test.Test
@@ -176,6 +179,26 @@ class KotlinJsBrowserTestDslTest {
             ),
             test.dumpRunners(),
         )
+    }
+
+    @Test
+    fun `using new test DSL in wasmJs target throws an error`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                @OptIn(ExperimentalWasmDsl::class)
+                wasmJs {
+                    browser {
+                        test {
+                            it.chromium()
+                        }
+                    }
+                }
+            }
+        }
+
+        project.evaluate()
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.NewJsTestDslNotSupportedForWasmError)
     }
 }
 
