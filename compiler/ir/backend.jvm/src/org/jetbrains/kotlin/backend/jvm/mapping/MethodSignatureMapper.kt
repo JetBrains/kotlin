@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
@@ -156,7 +154,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     private fun getModuleNameForClassMember(function: IrSimpleFunction): String {
         val parent = function.parent
         return if (parent is IrLazyClassBase) {
-            (if (parent.isK2) parent.moduleName else parent.irLazyClassModuleName) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+            parent.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
         } else context.state.moduleName
     }
 

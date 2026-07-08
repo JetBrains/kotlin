@@ -8,15 +8,12 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
-import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 
 /**
  * Records metadata of `@OptionalExpectation`-annotated classes to backend-specific storage, later written to `.kotlin_module`.
@@ -31,39 +28,17 @@ class ProcessOptionalAnnotations(private val context: JvmBackendContext) : FileL
     }
 
     private fun IrClass.registerOptionalAnnotations() {
-        if (context.config.useFir) {
-            processClassFir()
-        } else {
-            processClassDescriptors()
+        val classMetadata = metadata
+        require(classMetadata is MetadataSource.Class?) { "IrClass has unexpected metadata: ${classMetadata!!::class.simpleName}" }
+
+        if (classMetadata != null && isAnnotationClass && isExpect && hasAnnotation(StandardClassIds.Annotations.OptionalExpectation)) {
+            context.optionalAnnotations += classMetadata
         }
 
         for (declaration in declarations) {
             if (declaration is IrClass && declaration.isOptionalAnnotationClass) {
                 declaration.registerOptionalAnnotations()
             }
-        }
-    }
-
-    @OptIn(K1Deprecation::class)
-    private fun IrClass.processClassDescriptors() {
-        val classMetadata = metadata
-
-        require(classMetadata is DescriptorMetadataSource.Class?) { "IrClass has unexpected metadata: ${classMetadata!!::class.simpleName}" }
-
-        if (classMetadata != null) {
-            val descriptor = classMetadata.descriptor
-            if (OptionalAnnotationUtil.shouldGenerateExpectClass(descriptor)) {
-                context.optionalAnnotations += classMetadata
-            }
-        }
-    }
-
-    private fun IrClass.processClassFir() {
-        val classMetadata = metadata
-        require(classMetadata is MetadataSource.Class?) { "IrClass has unexpected metadata: ${classMetadata!!::class.simpleName}" }
-
-        if (classMetadata != null && isAnnotationClass && isExpect && hasAnnotation(StandardClassIds.Annotations.OptionalExpectation)) {
-            context.optionalAnnotations += classMetadata
         }
     }
 }

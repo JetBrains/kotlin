@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector

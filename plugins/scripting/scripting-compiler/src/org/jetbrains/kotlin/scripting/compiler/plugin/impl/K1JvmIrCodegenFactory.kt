@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K1JvmSerializationBindings.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.SerializerExtension
