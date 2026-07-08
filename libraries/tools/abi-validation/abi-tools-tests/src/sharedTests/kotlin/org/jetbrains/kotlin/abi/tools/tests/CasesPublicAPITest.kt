@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.AbiFilters
-import org.junit.*
-import org.junit.rules.TestName
 import java.io.File
 import kotlin.io.walk
-import kotlin.test.fail
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 
 class CasesPublicAPITest {
 
@@ -23,59 +23,62 @@ class CasesPublicAPITest {
         val baseOutputPath = File("src/compiling/kotlin/cases")
     }
 
-    @Rule
-    @JvmField
-    val testName = TestName()
+    private lateinit var testMethodName: String
+
+    @BeforeEach
+    fun captureTestName(testInfo: TestInfo) {
+        testMethodName = testInfo.testMethod.get().name
+    }
 
     @Test
     fun annotations() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun syntheticConstructors() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun companions() {
-        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.companions.PrivateApi"))
+        snapshotAPIAndCompare(testMethodName, excludedAnnotatedWith = setOf("cases.companions.PrivateApi"))
     }
 
     @Test
     fun default() {
-        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.default.PrivateApi"))
+        snapshotAPIAndCompare(testMethodName, excludedAnnotatedWith = setOf("cases.default.PrivateApi"))
     }
 
     @Test
     fun inline() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun interfaces() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun internal() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun java() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun localClasses() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun marker() {
         snapshotAPIAndCompare(
-            testName.methodName,
+            testMethodName,
             excludedAnnotatedWith = setOf(
                 "cases.marker.HiddenField",
                 "cases.marker.HiddenProperty",
@@ -86,77 +89,77 @@ class CasesPublicAPITest {
 
     @Test
     fun nestedClasses() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun packageAnnotations() {
-        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.packageAnnotations.PrivateApi"))
+        snapshotAPIAndCompare(testMethodName, excludedAnnotatedWith = setOf("cases.packageAnnotations.PrivateApi"))
     }
 
     @Test
     fun private() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun protected() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun public() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun special() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun suspend() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun whenMappings() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun enums() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun repeatable() {
-        snapshotAPIAndCompare(testName.methodName, excludedClasses = setOf("cases.repeatable.RepeatableAnnotation.Container"))
+        snapshotAPIAndCompare(testMethodName, excludedClasses = setOf("cases.repeatable.RepeatableAnnotation.Container"))
     }
 
     @Test
     fun included() {
-        snapshotAPIAndCompare(testName.methodName, includedClasses = setOf("cases.included.subpackage.*"))
+        snapshotAPIAndCompare(testMethodName, includedClasses = setOf("cases.included.subpackage.*"))
     }
 
     @Test
     fun root() {
-        snapshotAPIAndCompareRoot(testName.methodName, excludedClasses = setOf("RootClass1", "*Tests"), includedClasses = setOf("*"))
+        snapshotAPIAndCompareRoot(testMethodName, excludedClasses = setOf("RootClass1", "*Tests"), includedClasses = setOf("*"))
     }
 
     @Test
     fun file() {
-        snapshotAPIAndCompare(testName.methodName, excludedClasses = setOf("cases.file.FileFacade1Kt"))
+        snapshotAPIAndCompare(testMethodName, excludedClasses = setOf("cases.file.FileFacade1Kt"))
     }
 
     @Test
     fun jvmOverloads() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     @Test
     fun consts() {
-        snapshotAPIAndCompare(testName.methodName)
+        snapshotAPIAndCompare(testMethodName)
     }
 
     private fun snapshotAPIAndCompareRoot(
@@ -169,7 +172,7 @@ class CasesPublicAPITest {
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
 
         val testClassPaths = baseClassPaths.map { it.resolve("..") }
-        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
+        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testMethodName + ".txt")
 
         doCheck(testClassPaths, target, filters)
     }
@@ -184,7 +187,7 @@ class CasesPublicAPITest {
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
 
         val testClassPaths = baseClassPaths.map { it.resolve(testClassRelativePath) }
-        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
+        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testMethodName + ".txt")
 
         doCheck(testClassPaths, target, filters)
     }
@@ -198,7 +201,7 @@ internal fun doCheck(testClassPaths: List<File>, target: File, filters: AbiFilte
         target.bufferedWriter().use { writer ->
             AbiToolsImpl.printJvmDump(writer, inputFiles, filters)
         }
-        fail("Expected data file did not exist. Generating: $target")
+        error("Expected data file did not exist. Generating: $target")
     } else {
         val stringBuffer = StringBuffer()
         AbiToolsImpl.printJvmDump(stringBuffer, inputFiles, filters)

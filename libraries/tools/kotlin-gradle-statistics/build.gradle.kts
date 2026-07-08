@@ -21,14 +21,15 @@ dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     compileOnly(kotlin("stdlib", coreDepsVersion))
 
-    testImplementation(libs.junit4)
     testImplementation(kotlin("stdlib", coreDepsVersion))
-    testImplementation(kotlin("test", coreDepsVersion))
-    testRuntimeOnly(kotlin("test-junit", coreDepsVersion))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         workingDir = rootDir
     }
 }

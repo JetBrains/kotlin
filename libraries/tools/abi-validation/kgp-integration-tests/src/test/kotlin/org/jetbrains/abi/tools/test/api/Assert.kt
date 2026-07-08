@@ -7,8 +7,8 @@ package org.jetbrains.abi.tools.test.api
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 
 /**
  * Helper `fun` for asserting a [TaskOutcome] to be equal to [TaskOutcome.SUCCESS]

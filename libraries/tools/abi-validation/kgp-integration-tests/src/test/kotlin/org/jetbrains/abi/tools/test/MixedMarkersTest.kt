@@ -6,7 +6,7 @@
 package org.jetbrains.abi.tools.test
 
 import org.jetbrains.abi.tools.test.api.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class MixedMarkersTest : BaseKotlinGradleTest() {
 

@@ -20,5 +20,12 @@ dependencies {
     implementation(kotlin("stdlib", coreDepsVersion))
     implementation(libs.kotlinx.serialization.json)
     testImplementation(kotlin("stdlib", coreDepsVersion))
-    testImplementation(kotlin("test-junit", coreDepsVersion))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

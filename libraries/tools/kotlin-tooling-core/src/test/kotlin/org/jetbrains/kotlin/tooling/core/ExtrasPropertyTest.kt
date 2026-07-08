@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.tooling.core
 
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
+import org.junit.jupiter.api.fail
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.test.*
 
 class ExtrasPropertyTest {
 

@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinc
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
-import org.junit.Assert
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -51,7 +51,7 @@ class MainKtsIT {
     }
 
     @Test
-    @Ignore // Fails on TC most likely due to repo proxying
+    @Disabled // Fails on TC most likely due to repo proxying
     fun testKotlinxHtml() {
         runWithK2JVMCompilerAndMainKts(
             "$TEST_DATA_ROOT/kotlinx-html.main.kts",
@@ -124,10 +124,10 @@ class MainKtsIT {
             val cache = createTempDirectory("main.kts.test")
 
             try {
-                Assert.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
+                Assertions.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
                 runWithKotlincAndMainKts(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
                 val cacheFile = cache.listDirectoryEntries("*.jar").firstOrNull()
-                Assert.assertTrue(cacheFile != null && cacheFile.exists())
+                Assertions.assertTrue(cacheFile != null && cacheFile.exists())
 
                 // run generated jar with java
                 val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
@@ -152,10 +152,10 @@ class MainKtsIT {
         val cache = createTempDirectory("main.kts.test")
 
         try {
-            Assert.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
+            Assertions.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
             runWithK2JVMCompilerAndMainKts(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
             val cacheFile = cache.listDirectoryEntries("*.jar").firstOrNull()
-            Assert.assertTrue(cacheFile != null && cacheFile.exists())
+            Assertions.assertTrue(cacheFile != null && cacheFile.exists())
 
             // run generated jar with java
             val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
@@ -180,10 +180,10 @@ class MainKtsIT {
         val expectedTestOutput = listOf(Regex.escape(scriptPath))
 
         try {
-            Assert.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
+            Assertions.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
             runWithKotlinRunner(scriptPath, expectedTestOutput, cacheDir = cache)
             val cacheFile = cache.listDirectoryEntries("*.jar").firstOrNull()
-            Assert.assertTrue(cacheFile != null && cacheFile.exists())
+            Assertions.assertTrue(cacheFile != null && cacheFile.exists())
 
             // this run should use the cached script
             runWithKotlinRunner(scriptPath, expectedTestOutput, cacheDir = cache)
@@ -209,7 +209,7 @@ class MainKtsIT {
     @Test
     fun testUtf8Bom() {
         val scriptPath = "$TEST_DATA_ROOT/utf8bom.main.kts"
-        Assert.assertTrue("Expect file '$scriptPath' to start with UTF-8 BOM", File(scriptPath).readText().startsWith(UTF8_BOM))
+        Assertions.assertTrue(File(scriptPath).readText().startsWith(UTF8_BOM), "Expect file '$scriptPath' to start with UTF-8 BOM")
         runWithKotlincAndMainKts(scriptPath, listOf("Hello world"))
     }
 
@@ -353,4 +353,3 @@ fun runWithK2JVMCompilerAndMainKts(
 }
 
 internal const val UTF8_BOM = 0xfeff.toChar().toString()
-

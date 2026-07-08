@@ -20,7 +20,11 @@ dependencies {
         runtimeOnly(kotlin("compiler-embeddable", bootstrapKotlinVersion))
     }
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(kotlinStdlib())
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     testArtifacts(project(":kotlin-stdlib"))
     testArtifacts(project(":kotlin-stdlib-jdk7"))
@@ -37,6 +41,7 @@ sourceSets {
 }
 
 val test by tasks.existing(Test::class) {
+    useJUnitPlatform()
     dependsOn(testArtifacts)
     dependsOn(":kotlin-stdlib:assemble")
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {

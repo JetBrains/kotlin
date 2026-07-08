@@ -7,7 +7,7 @@ plugins {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         // Disable KONAN_DATA_DIR env variable for all integration tests
         // because we are using `konan.data.dir` gradle property instead
         environment.remove("KONAN_DATA_DIR")
@@ -28,6 +28,9 @@ dependencies {
     testImplementation(gradleTestKit())
     testImplementation(project(":kotlin-compiler-embeddable"))
 
-    testImplementation(kotlinTest("junit"))
-    testImplementation(libs.junit4)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(kotlinStdlib())
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }

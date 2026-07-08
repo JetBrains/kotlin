@@ -8,13 +8,19 @@
 package org.jetbrains.kotlin.tools.tests
 
 import kotlinx.validation.ExperimentalBCVApi
-import kotlinx.validation.api.klib.*
-import org.junit.Assume
+import kotlinx.validation.api.klib.KlibDump
+import kotlinx.validation.api.klib.KlibDumpFilters
+import kotlinx.validation.api.klib.mergeFromKlib
+import kotlinx.validation.api.klib.saveTo
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import java.io.File
-import kotlin.io.path.*
-import kotlin.test.Test
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import kotlin.io.path.Path
+import kotlin.io.path.absolute
+import kotlin.io.path.createParentDirectories
+import kotlin.io.path.writeText
 
 class KlibPublicAPITest {
 
@@ -38,7 +44,7 @@ class KlibPublicAPITest {
 
     @Test
     fun nativeStdlib() {
-        Assume.assumeTrue("Skipped, to enable it, either pass `kotlin.native.enabled` gradle property (if running with Gradle; the preferred way, see `ReadMe.md`), or `-Dnative.enabled=true` (if using the generated JUnit config; discouraged as it won't rebuild stdlib artifacts).", NATIVE_ENABLED)
+        Assumptions.assumeTrue(NATIVE_ENABLED, "Skipped, to enable it, either pass `kotlin.native.enabled` gradle property (if running with Gradle; the preferred way, see `ReadMe.md`), or `-Dnative.enabled=true` (if using the generated JUnit config; discouraged as it won't rebuild stdlib artifacts).")
         val dump = nativeDump("kotlin-stdlib-native", "../../../kotlin-native/runtime/build/nativeStdlib")
         mergeAndCompare("kotlin-stdlib", dump)
     }

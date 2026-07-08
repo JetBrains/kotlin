@@ -16,11 +16,17 @@ dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     testImplementation(kotlin("stdlib", coreDepsVersion))
-    testImplementation(kotlin("test-junit", coreDepsVersion))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks {
     apiBuild {
         inputJar.value(jar.flatMap { it.archiveFile })
+    }
+    test {
+        useJUnitPlatform()
     }
 }

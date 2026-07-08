@@ -7,19 +7,18 @@ package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.KlibDump
 import org.jetbrains.kotlin.abi.tools.KlibTarget
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import kotlin.test.assertEquals
+import java.nio.file.Files
 
 class KlibDumpSamples {
-    @JvmField
-    @Rule
-    var tempFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var tempFolder: File
 
     fun createDumpFileWithContent(content: String): File {
-        val file = tempFolder.newFile()
+        val file = Files.createTempFile(tempFolder.toPath(), null, null).toFile()
         file.writer().use {
             it.write(content)
         }
