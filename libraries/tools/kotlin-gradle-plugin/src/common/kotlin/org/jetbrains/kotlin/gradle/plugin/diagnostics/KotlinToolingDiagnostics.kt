@@ -2377,6 +2377,20 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object NewJsTestDslNotSupportedForWasmError : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke() = build {
+            title { "The new test {} DSL is currently not supported for wasmJs targets" }
+                .description {
+                    "At the moment the new test {} DSL is not supported for wasmJs targets, support will be added in a future release."
+                }
+                .solution { "For now, please use the old DSL with wasmJs targets" }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
     internal object SwiftPMLinkagePackageNotIntegratedInXcodeProject : ToolingDiagnosticFactory(
         FATAL,
         DiagnosticGroup.Kgp.Misconfiguration,
