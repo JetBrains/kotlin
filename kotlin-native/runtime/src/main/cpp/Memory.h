@@ -216,11 +216,18 @@ void ZeroStackRef(ObjHeader** location) RUNTIME_NOTHROW;
 void UpdateStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates heap/static data location.
 void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+// Updates heap location; `owner` is the heap container of `location` (see mm/cpp/Memory.cpp).
+void UpdateHeapRefWithOwner(ObjHeader* owner, ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates volatile heap/static data location.
 void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
 bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
 OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) RUNTIME_NOTHROW;
+// Owner-carrying volatile/atomic variants; `owner` is the heap container of `location` (see mm/cpp/Memory.cpp).
+void UpdateVolatileHeapRefWithOwner(ObjHeader* owner, ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+OBJ_GETTER(CompareAndSwapVolatileHeapRefWithOwner, ObjHeader* owner, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
+bool CompareAndSetVolatileHeapRefWithOwner(ObjHeader* owner, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
+OBJ_GETTER(GetAndSetVolatileHeapRefWithOwner, ObjHeader* owner, ObjHeader** location, ObjHeader* newValue) RUNTIME_NOTHROW;
 
 // Updates location if it is null, atomically.
 // Updates reference in return slot.

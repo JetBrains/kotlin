@@ -5,6 +5,8 @@
 
 #include "AllocatorImpl.hpp"
 
+#include <algorithm>
+
 #include "Allocator.hpp"
 #include "GCApi.hpp"
 #include "Heap.hpp"
@@ -112,6 +114,53 @@ gc::GC::ObjectData& alloc::objectDataForObject(ObjHeader* object) noexcept {
 
 ObjHeader* alloc::objectForObjectData(gc::GC::ObjectData& objectData) noexcept {
     return CustomHeapObject::from(objectData).object();
+}
+
+class alloc::HeapLayoutSnapshot::Impl {
+public:
+    Impl() noexcept {
+        mm::GlobalData::Instance().allocator().impl().heap().SnapshotPageRanges(ranges_);
+        // Page ranges are disjoint, so sorting them by start address lets containerOf() binary-search
+        // instead of scanning every page. This turns each remembered-set slot resolution from O(pages)
+        // into O(log pages); it matters because the whole drain runs inside the Eden STW pause, and a
+        // full remembered set (thousands of slots) over a large heap (thousands of pages) would
+        // otherwise make the pause quadratic in heap size -- defeating the point of a minor collection.
+        std::sort(ranges_.begin(), ranges_.end(), [](const Heap::PageRange& a, const Heap::PageRange& b) noexcept {
+            return a.begin < b.begin;
+        });
+    }
+
+    ObjHeader* containerOf(void* interiorPointer) const noexcept {
+        auto* addr = reinterpret_cast<uint8_t*>(interiorPointer);
+        // First range whose begin is strictly greater than addr; the candidate range (if any) is the
+        // one immediately before it -- the last range with begin <= addr. Ranges are disjoint, so addr
+        // can lie in at most that one range.
+        auto it = std::upper_bound(ranges_.begin(), ranges_.end(), addr, [](uint8_t* value, const Heap::PageRange& range) noexcept {
+            return value < range.begin;
+        });
+        if (it == ranges_.begin()) return nullptr;
+        --it;
+        if (addr < it->end) {
+            return it->resolve(it->page, interiorPointer);
+        }
+        return nullptr;
+    }
+
+private:
+    std::vector<Heap::PageRange> ranges_;
+};
+
+alloc::HeapLayoutSnapshot::HeapLayoutSnapshot() noexcept : impl_(std::make_unique<Impl>()) {}
+alloc::HeapLayoutSnapshot::~HeapLayoutSnapshot() = default;
+ObjHeader* alloc::HeapLayoutSnapshot::containerOf(void* interiorPointer) const noexcept {
+    return impl_->containerOf(interiorPointer);
+}
+bool alloc::HeapLayoutSnapshot::resolvesInteriorPointers() const noexcept {
+    return true;
+}
+
+bool alloc::heapLayoutResolvesInteriorPointers() noexcept {
+    return true;
 }
 
 size_t alloc::allocatedHeapSize(ObjHeader* object) noexcept {

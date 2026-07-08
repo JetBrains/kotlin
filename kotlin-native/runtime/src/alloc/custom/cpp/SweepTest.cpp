@@ -24,6 +24,9 @@ using SingleObjectPage = typename kotlin::alloc::SingleObjectPage;
 using AllocationSize = typename kotlin::alloc::AllocationSize;
 using ExtraObjectCell = typename kotlin::alloc::ExtraObjectCell;
 
+static_assert(kotlin::alloc::ObjectSweepTraits::kCanSkipCleanOldPages, "object pages can use the Eden clean-old-page skip");
+static_assert(!kotlin::alloc::ExtraDataSweepTraits::kCanSkipCleanOldPages, "extra-object pages must always be swept");
+
 } // namespace
 
 TEST_F(CustomAllocatorTest, ExtraDataSweepFullFinalizedPage) {

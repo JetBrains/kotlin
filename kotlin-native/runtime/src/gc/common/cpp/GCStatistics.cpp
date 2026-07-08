@@ -211,15 +211,26 @@ void GCHandle::ClearForTests() {
 bool GCHandle::isValid() const {
     return epoch_ != kInvalidEpoch;
 }
-void GCHandle::finished() {
+void GCHandle::finished(CollectionScope scope) {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         stat->endTime = static_cast<KLong>(konan::getTimeNanos());
         stat->memoryUsageAfter.heap = currentHeapUsage();
         if (stat->markStats && stat->sweepStats.heap) {
-            RuntimeAssert(stat->markStats->markedCount == stat->sweepStats.heap->keptCount,
-                          "Mismatch in statistics: marked %" PRId64 " objects, while %" PRId64 " are alive after sweep",
-                          stat->markStats->markedCount, stat->sweepStats.heap->keptCount);
+            const auto markedCount = stat->markStats->markedCount;
+            const auto keptCount = stat->sweepStats.heap->keptCount;
+            // Every marked object is kept, so marked never exceeds kept. This always holds.
+            RuntimeAssert(markedCount <= keptCount,
+                          "Mismatch in statistics: marked %" PRId64 " objects, while only %" PRId64 " are alive after sweep",
+                          markedCount, keptCount);
+            // A Full (or non-generational) collection marks the entire live set, so kept == marked
+            // exactly. An Eden collection also keeps old survivors it never traced/marked this cycle,
+            // so kept legitimately exceeds marked there and only the inequality above applies.
+            if (scope == CollectionScope::Full) {
+                RuntimeAssert(markedCount == keptCount,
+                              "Mismatch in statistics: marked %" PRId64 " objects, while %" PRId64 " are alive after sweep",
+                              markedCount, keptCount);
+            }
         }
         if (stat->rootSet) {
             GCLogInfo(

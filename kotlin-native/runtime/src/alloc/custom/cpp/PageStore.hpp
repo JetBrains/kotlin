@@ -21,11 +21,13 @@ class PageStore {
 public:
     using GCSweepScope = typename SweepTraits::GCSweepScope;
 
-    void PrepareForGC() noexcept {
+    void PrepareForGC(bool destroyEmptyPages = true) noexcept {
         unswept_.TransferAllFrom(std::move(ready_));
         unswept_.TransferAllFrom(std::move(used_));
-        T* page;
-        while ((page = empty_.Pop())) page->Destroy();
+        if (destroyEmptyPages) {
+            T* page;
+            while ((page = empty_.Pop())) page->Destroy();
+        }
     }
 
     void Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {

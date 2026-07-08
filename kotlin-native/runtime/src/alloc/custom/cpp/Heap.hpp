@@ -41,6 +41,21 @@ public:
     void AddToFinalizerQueue(FinalizerQueue queue) noexcept;
     FinalizerQueue ExtractFinalizerQueue() noexcept;
 
+    // One object-holding page's address range plus a function that resolves an interior pointer within
+    // that page to the heap object containing it. `resolve` is a captureless function (not a virtual
+    // call) selected by page kind.
+    struct PageRange {
+        uint8_t* begin;
+        uint8_t* end;
+        ObjHeader* (*resolve)(void* page, void* interiorPointer) noexcept;
+        void* page;
+    };
+
+    // Appends the address ranges of every object-holding page (fixed-block, next-fit, single-object;
+    // NOT extra-object pages) to `out`. Call only while the world is stopped. Backs HeapLayoutSnapshot,
+    // which the generational GC uses to map a remembered-set slot back to its containing object.
+    void SnapshotPageRanges(std::vector<PageRange>& out) noexcept;
+
     // Test method
     std::vector<ObjHeader*> GetAllocatedObjects() noexcept;
     void ClearForTests() noexcept;
@@ -50,35 +65,25 @@ public:
     template <typename T>
     void TraverseAllocatedObjects(T process) noexcept(noexcept(process(std::declval<ObjHeader*>()))) {
         for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
-            fixedBlockPages_[blockSize].TraversePages([process](auto *page) {
-                page->TraverseAllocatedBlocks([process](auto *block) {
-                    process(reinterpret_cast<CustomHeapObject*>(block)->object());
-                });
+            fixedBlockPages_[blockSize].TraversePages([process](auto* page) {
+                page->TraverseAllocatedBlocks([process](auto* block) { process(reinterpret_cast<CustomHeapObject*>(block)->object()); });
             });
         }
-        nextFitPages_.TraversePages([process](auto *page) {
-            page->TraverseAllocatedBlocks([process](auto *block) {
-                process(reinterpret_cast<CustomHeapObject*>(block)->object());
-            });
+        nextFitPages_.TraversePages([process](auto* page) {
+            page->TraverseAllocatedBlocks([process](auto* block) { process(reinterpret_cast<CustomHeapObject*>(block)->object()); });
         });
-        singleObjectPages_.TraversePages([process](auto *page) {
-            page->TraverseAllocatedBlocks([process](auto *block) {
-                process(reinterpret_cast<CustomHeapObject*>(block)->object());
-            });
+        singleObjectPages_.TraversePages([process](auto* page) {
+            page->TraverseAllocatedBlocks([process](auto* block) { process(reinterpret_cast<CustomHeapObject*>(block)->object()); });
         });
     }
 
     template <typename T>
     void TraverseAllocatedExtraObjects(T process) noexcept(noexcept(process(std::declval<kotlin::mm::ExtraObjectData*>()))) {
-        fixedBlockExtraObjectPages_.TraversePages([process](auto *page) {
-            page->TraverseAllocatedBlocks([process](uint8_t* block) {
-                process(reinterpret_cast<ExtraObjectCell*>(block)->Data());
-            });
+        fixedBlockExtraObjectPages_.TraversePages([process](auto* page) {
+            page->TraverseAllocatedBlocks([process](uint8_t* block) { process(reinterpret_cast<ExtraObjectCell*>(block)->Data()); });
         });
-        singleExtraObjectPages_.TraversePages([process](auto *page) {
-            page->TraverseAllocatedBlocks([process](uint8_t* block) {
-                process(reinterpret_cast<ExtraObjectCell*>(block)->Data());
-            });
+        singleExtraObjectPages_.TraversePages([process](auto* page) {
+            page->TraverseAllocatedBlocks([process](uint8_t* block) { process(reinterpret_cast<ExtraObjectCell*>(block)->Data()); });
         });
     }
 

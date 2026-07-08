@@ -23,13 +23,37 @@ namespace kotlin::alloc {
 
 void Heap::PrepareForGC() noexcept {
     CustomAllocDebug("Heap::PrepareForGC()");
-    nextFitPages_.PrepareForGC();
+    // Eden collections are latency-sensitive and frequent. Keep empty pages for reuse instead of
+    // destroying them in the STW prepare phase; Full collections still return them to the OS.
+    const bool destroyEmptyPages = !gc::sweepSkipsCleanOldPages();
+    nextFitPages_.PrepareForGC(destroyEmptyPages);
     singleObjectPages_.PrepareForGC();
     for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
-        fixedBlockPages_[blockSize].PrepareForGC();
+        fixedBlockPages_[blockSize].PrepareForGC(destroyEmptyPages);
     }
-    fixedBlockExtraObjectPages_.PrepareForGC();
+    fixedBlockExtraObjectPages_.PrepareForGC(destroyEmptyPages);
     singleExtraObjectPages_.PrepareForGC();
+}
+
+void Heap::SnapshotPageRanges(std::vector<PageRange>& out) noexcept {
+    auto addFixed = [&out](FixedBlockPage* page) {
+        out.push_back(PageRange{
+                reinterpret_cast<uint8_t*>(page), page->pageEnd(),
+                [](void* pg, void* p) noexcept { return static_cast<FixedBlockPage*>(pg)->objectContainingInteriorPointer(p); }, page});
+    };
+    for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
+        fixedBlockPages_[blockSize].TraversePages(addFixed);
+    }
+    nextFitPages_.TraversePages([&out](NextFitPage* page) {
+        out.push_back(PageRange{
+                reinterpret_cast<uint8_t*>(page), page->pageEnd(),
+                [](void* pg, void* p) noexcept { return static_cast<NextFitPage*>(pg)->objectContainingInteriorPointer(p); }, page});
+    });
+    singleObjectPages_.TraversePages([&out](SingleObjectPage* page) {
+        out.push_back(PageRange{
+                reinterpret_cast<uint8_t*>(page), page->pageEnd(),
+                [](void* pg, void* p) noexcept { return static_cast<SingleObjectPage*>(pg)->objectContainingInteriorPointer(p); }, page});
+    });
 }
 
 FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
@@ -114,7 +138,7 @@ std::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
         }
     }
     std::vector<ObjHeader*> unfinalized;
-    for (auto* block: allocated) {
+    for (auto* block : allocated) {
         if (!block->has_meta_object() || !mm::ExtraObjectData::Get(block)->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
             unfinalized.push_back(block);
         }

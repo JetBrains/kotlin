@@ -34,16 +34,35 @@ uint8_t* NextFitPage::TryAllocate(uint32_t blockSize) noexcept {
     // +1 accounts for header, since cell->size also includes header cell
     uint32_t cellsNeeded = blockSize + 1;
     uint8_t* allocated = curBlock_->TryAllocate(cellsNeeded);
-    if (allocated) return allocated;
+    if (allocated) {
+        allocatedSinceSweep_ = true; // page now holds a young object; must be swept next Eden
+        return allocated;
+    }
 
     UpdateCurBlock(cellsNeeded);
     allocated = curBlock_->TryAllocate(cellsNeeded);
-    if (allocated) return allocated;
+    if (allocated) {
+        allocatedSinceSweep_ = true; // page now holds a young object; must be swept next Eden
+        return allocated;
+    }
 
     allocatedSizeTracker_.onPageOverflow(GetAllocatedSizeBytes());
     return nullptr;
 }
 
+ObjHeader* NextFitPage::objectContainingInteriorPointer(void* interiorPointer) noexcept {
+    auto* p = reinterpret_cast<uint8_t*>(interiorPointer);
+    Cell* end = cells_ + cellCount();
+    for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
+        if (!block->isAllocated_) continue;
+        auto* blockBegin = reinterpret_cast<uint8_t*>(block);
+        auto* blockEnd = reinterpret_cast<uint8_t*>(block->Next());
+        if (p >= blockBegin && p < blockEnd) {
+            return reinterpret_cast<CustomHeapObject*>(block->data_)->object();
+        }
+    }
+    return nullptr;
+}
 
 void NextFitPage::UpdateCurBlock(uint32_t cellsNeeded) noexcept {
     CustomAllocDebug("NextFitPage@%p::UpdateCurBlock(%u)", this, cellsNeeded);
@@ -83,9 +102,7 @@ bool NextFitPage::CheckInvariants() noexcept {
 
 std::vector<uint8_t*> NextFitPage::GetAllocatedBlocks() noexcept {
     std::vector<uint8_t*> allocated;
-    TraverseAllocatedBlocks([&allocated](uint8_t* block) {
-        allocated.push_back(block);
-    });
+    TraverseAllocatedBlocks([&allocated](uint8_t* block) { allocated.push_back(block); });
     return allocated;
 }
 

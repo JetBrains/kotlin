@@ -37,6 +37,8 @@ void gc::GC::ThreadData::onThreadRegistration() noexcept {
     impl_->barriers_.onThreadRegistration();
 }
 
+void gc::GC::ThreadData::onThreadUnregistration() noexcept {}
+
 PERFORMANCE_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noexcept {
     impl().barriers_.onAllocation(object);
 }
@@ -64,6 +66,19 @@ PERFORMANCE_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* arr
     gc::internal::processArrayInMark<gc::mark::ParallelMark::MarkTraits>(state, array);
 }
 
+void gc::GC::requestFullCollection() noexcept {}
+
+gc::GC::GenerationalStats gc::GC::generationalStats() noexcept {
+    return {};
+}
+
+void gc::GC::setFullGrowthTriggerPercent(uint64_t) noexcept {}
+
+// Non-generational: the sweep must visit every page.
+bool gc::sweepSkipsCleanOldPages() noexcept {
+    return false;
+}
+
 int64_t gc::GC::Schedule() noexcept {
     return impl_->state_.schedule();
 }
@@ -76,7 +91,7 @@ void gc::GC::WaitFinalizers(int64_t epoch) noexcept {
     impl_->state_.waitEpochFinalized(epoch);
 }
 
-ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {}
+ALWAYS_INLINE void gc::beforeHeapRefUpdate(ObjHeader* owner, mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {}
 
 PERFORMANCE_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
     RETURN_RESULT_OF(gc::WeakRefRead, weakReferee);

@@ -232,6 +232,60 @@ public object GC {
         get() = GCInfo.lastGCInfo
 
     /**
+     * The number of Eden (minor) collections performed so far.
+     *
+     * Only the generational collector (`-Xbinary=gc=gms`) performs Eden collections; for every other
+     * collector this is always `0` (all of their collections are full).
+     *
+     * This information is supposed to be used for testing and debugging purposes only.
+     */
+    public val edenCollectionsCount: Long
+        get() = getEdenCollectionsCount()
+
+    /**
+     * The number of Full (major) collections performed so far.
+     *
+     * For non-generational collectors this equals the total number of collections. For the
+     * generational collector (`-Xbinary=gc=gms`) it counts only the full (major) collections.
+     *
+     * This information is supposed to be used for testing and debugging purposes only.
+     */
+    public val fullCollectionsCount: Long
+        get() = getFullCollectionsCount()
+
+    /**
+     * The live-heap size in bytes measured after the most recent Full collection, i.e. the current
+     * old-generation baseline the generational collector grows from.
+     *
+     * Only meaningful for the generational collector (`-Xbinary=gc=gms`); `0` for other collectors
+     * and until the first Full collection has run.
+     *
+     * This information is supposed to be used for testing and debugging purposes only.
+     */
+    public val oldGenerationSizeBytes: Long
+        get() = getOldGenerationSizeBytes()
+
+    /**
+     * The live-heap growth, as a percentage over the post-Full baseline, that triggers the next Full
+     * (major) collection in the generational collector. Between Full collections the collector runs
+     * cheap Eden (minor) collections; once the live heap has grown past the baseline by this
+     * percentage, the next collection is promoted to Full. Loosely mirrors JSC's ~1/3 ratio.
+     *
+     * Only affects the generational collector (`-Xbinary=gc=gms`); ignored by other collectors. A
+     * value of `0` is clamped to `1` (a Full every cycle would disable Eden entirely).
+     *
+     * Default: 33
+     *
+     * @throws [IllegalArgumentException] when value is negative.
+     */
+    public var fullGrowthTriggerPercent: Long
+        get() = getFullGrowthTriggerPercent()
+        set(value) {
+            require(value >= 0) { "fullGrowthTriggerPercent must not be negative: $value" }
+            setFullGrowthTriggerPercent(value)
+        }
+
+    /**
      * Deprecated and unused. Always returns null.
      */
     @Deprecated("No-op in modern GC implementation")
@@ -413,4 +467,24 @@ public object GC {
     @GCUnsafeCall("Kotlin_native_internal_GC_setPauseOnTargetHeapOverflow")
     @Escapes.Nothing
     private external fun setPauseOnTargetHeapOverflow(value: Boolean)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getEdenCollectionsCount")
+    @Escapes.Nothing
+    private external fun getEdenCollectionsCount(): Long
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getFullCollectionsCount")
+    @Escapes.Nothing
+    private external fun getFullCollectionsCount(): Long
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getOldGenerationSizeBytes")
+    @Escapes.Nothing
+    private external fun getOldGenerationSizeBytes(): Long
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getFullGrowthTriggerPercent")
+    @Escapes.Nothing
+    private external fun getFullGrowthTriggerPercent(): Long
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setFullGrowthTriggerPercent")
+    @Escapes.Nothing
+    private external fun setFullGrowthTriggerPercent(value: Long)
 }

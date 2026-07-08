@@ -30,6 +30,7 @@ mm::ThreadRegistry::Node* mm::ThreadRegistry::RegisterCurrentThread() noexcept {
 
 void mm::ThreadRegistry::Unregister(Node* threadDataNode) noexcept {
     AssertThreadState(threadDataNode->Get(), ThreadState::kNative);
+    threadDataNode->Get()->gc().onThreadUnregistration();
     list_.Erase(threadDataNode);
     // Do not touch `currentThreadData_` as TLS may already have been deallocated.
 }

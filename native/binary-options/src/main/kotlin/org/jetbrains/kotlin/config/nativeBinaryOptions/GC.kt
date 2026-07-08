@@ -10,4 +10,5 @@ enum class GC(val shortcut: String) {
     STOP_THE_WORLD_MARK_AND_SWEEP("stwms"),
     PARALLEL_MARK_CONCURRENT_SWEEP("pmcs"),
     CONCURRENT_MARK_AND_SWEEP("cms"),
+    GENERATIONAL_MARK_AND_SWEEP("gms"),
 }

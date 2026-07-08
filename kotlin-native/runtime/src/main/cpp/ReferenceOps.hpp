@@ -108,9 +108,15 @@ public:
 
     explicit RefAccessor(ObjHeader*& fieldRef) noexcept : direct_(fieldRef) {}
     explicit RefAccessor(ObjHeader** fieldPtr) noexcept : RefAccessor(*fieldPtr) {}
-    RefAccessor(const RefAccessor& other) noexcept : direct_(other.direct_) {}
+    // Owner-carrying constructors: `owner` is the heap container of `fieldRef`, threaded to the
+    // generational write barrier so it can filter old->young edges (see gc::beforeHeapRefUpdate).
+    // A nullptr owner means "unknown" (static/global slot); the other constructors default to that.
+    explicit RefAccessor(ObjHeader* owner, ObjHeader*& fieldRef) noexcept : direct_(fieldRef), owner_(owner) {}
+    explicit RefAccessor(ObjHeader* owner, ObjHeader** fieldPtr) noexcept : RefAccessor(owner, *fieldPtr) {}
+    RefAccessor(const RefAccessor& other) noexcept : direct_(other.direct_), owner_(other.owner_) {}
 
     DirectRefAccessor direct() const noexcept { return direct_; }
+    ObjHeader* owner() const noexcept { return owner_; }
 
     void beforeLoad() noexcept;
     void afterLoad() noexcept;
@@ -173,6 +179,7 @@ public:
 
 private:
     DirectRefAccessor direct_;
+    ObjHeader* owner_ = nullptr;
 };
 
 using RefFieldAccessor = RefAccessor<false>;

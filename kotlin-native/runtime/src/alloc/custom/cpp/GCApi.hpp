@@ -28,6 +28,8 @@ using CustomHeapArray = HeapArray<gc::GC::ObjectData>;
 struct ObjectSweepTraits {
     using GCSweepScope = gc::GCHandle::GCSweepScope;
 
+    static constexpr bool kCanSkipCleanOldPages = true;
+
     static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweep(); }
 
     static bool trySweepElement(uint8_t* data, FinalizerQueue& finalizerQueue, GCSweepScope& sweepScope) noexcept;
@@ -37,6 +39,8 @@ struct ObjectSweepTraits {
 
 struct ExtraDataSweepTraits {
     using GCSweepScope = gc::GCHandle::GCSweepExtraObjectsScope;
+
+    static constexpr bool kCanSkipCleanOldPages = false;
 
     static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweepExtraObjects(); }
 
