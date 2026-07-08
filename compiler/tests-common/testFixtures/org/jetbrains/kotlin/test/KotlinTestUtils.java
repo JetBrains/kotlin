@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInfo;
 
 import java.io.File;
@@ -344,18 +343,6 @@ public class KotlinTestUtils {
 
     public static void runTest(@NotNull TestCase testCase, @NotNull Function0<Unit> test) {
         MuteWithDatabaseJunit4Kt.runTest(testCase, test);
-    }
-
-    public static void runTestWithThrowable(@NotNull TestCase testCase, @NotNull RunnableWithThrowable test) {
-        MuteWithDatabaseJunit4Kt.runTest(testCase, () -> {
-            try {
-                test.run();
-            }
-            catch (Throwable throwable) {
-                throw new IllegalStateException(throwable);
-            }
-            return null;
-        });
     }
 
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.

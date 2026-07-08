@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import junit.framework.TestCase
-import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertNotNull
+import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.JvmClassFileArtifact
@@ -18,6 +16,7 @@ import org.jetbrains.kotlin.utils.rethrow
 import org.jetbrains.org.objectweb.asm.*
 import java.lang.reflect.Modifier
 import java.util.*
+
 /*
  * Test correctness of written flags in class file
  *
@@ -45,7 +44,7 @@ class JvmWriteFlagsHandler(testServices: TestServices) : JvmBinaryArtifactHandle
         val classFileFactory = info.classFileFactory
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val fileText = testDataFile.readText()
-        val testedObjects: MutableList<TestedObject> = parseExpectedTestedObject(fileText)
+        val testedObjects: MutableList<TestedObject> = parseExpectedTestedObject(fileText, assertions)
         for (testedObject in testedObjects) {
             var className: String? = null
             for (outputFile in classFileFactory.asList()) {
@@ -57,10 +56,10 @@ class JvmWriteFlagsHandler(testServices: TestServices) : JvmBinaryArtifactHandle
                 }
             }
 
-            assertNotNull("Couldn't find a class file with name " + testedObject.containingClass, className)
+            assertions.assertNotNull(className) { "Couldn't find a class file with name ${testedObject.containingClass}" }
 
             val outputFile = classFileFactory.get(className!!)
-            assertNotNull(outputFile)
+            assertions.assertNotNull(outputFile)
 
             val cr = ClassReader(outputFile!!.asByteArray())
             var classVisitor: TestClassVisitor = getClassVisitor(testedObject, false)
@@ -72,16 +71,15 @@ class JvmWriteFlagsHandler(testServices: TestServices) : JvmBinaryArtifactHandle
             }
 
             val isObjectExists = !InTextDirectivesUtils.findStringWithPrefixes(testedObject.textData!!, "// ABSENT: ").toBoolean()
-            TestCase.assertEquals("Wrong object existence state: $testedObject", isObjectExists, classVisitor.isExists)
+            assertions.assertEquals(isObjectExists, classVisitor.isExists) { "Wrong object existence state: $testedObject" }
 
             if (isObjectExists) {
                 val expected: Int = getExpectedFlags(testedObject.textData!!)
                 val actual = classVisitor.access
                 if (expected != actual) {
-                    TestCase.assertEquals(
-                        "Wrong access flag for " + testedObject + " \n" + outputFile.asText(),
-                        flagsToText(expected), flagsToText(actual)
-                    )
+                    assertions.assertEquals(flagsToText(expected), flagsToText(actual)) {
+                        "Wrong access flag for $testedObject \n${outputFile.asText()}"
+                    }
                 }
             }
         }
@@ -160,7 +158,7 @@ class JvmWriteFlagsHandler(testServices: TestServices) : JvmBinaryArtifactHandle
     }
 
     companion object {
-        private fun parseExpectedTestedObject(testDescription: String): MutableList<TestedObject> {
+        private fun parseExpectedTestedObject(testDescription: String, assertions: Assertions): MutableList<TestedObject> {
             val testObjectData = testDescription.substring(testDescription.indexOf("// TESTED_OBJECT_KIND")).split("\n\n".toRegex())
                 .dropLastWhile { it.isEmpty() }.toTypedArray()
             val objects: MutableList<TestedObject> = ArrayList<TestedObject>()
@@ -171,7 +169,7 @@ class JvmWriteFlagsHandler(testServices: TestServices) : JvmBinaryArtifactHandle
                 val testObject = TestedObject()
                 testObject.textData = testData
                 val testedObjects = InTextDirectivesUtils.findListWithPrefixes(testData, "// TESTED_OBJECTS: ")
-                assertFalse("Cannot find TESTED_OBJECTS instruction", testedObjects.isEmpty())
+                assertions.assertFalse(testedObjects.isEmpty()) { "Cannot find TESTED_OBJECTS instruction" }
                 testObject.containingClass = testedObjects[0]
                 when (testedObjects.size) {
                     1 -> testObject.name = testedObjects[0]
@@ -194,7 +192,7 @@ class JvmWriteFlagsHandler(testServices: TestServices) : JvmBinaryArtifactHandle
                 }
                 objects.add(testObject)
             }
-            assertFalse("Test description not present!", objects.isEmpty())
+            assertions.assertFalse(objects.isEmpty()) { "Test description not present!" }
             return objects
         }
 

@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.codegen.extractUrls
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
-import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.checkTestInfrastructure
@@ -41,6 +39,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.junit.jupiter.api.Assertions.assertNotSame
 import java.io.File
 import java.lang.reflect.Method
 import java.net.URL
@@ -154,7 +153,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             }
         }
         if (unexpectedBehaviour) {
-            TestCase.assertNotSame(DEFAULT_EXPECTED_RESULT, result)
+            assertNotSame(DEFAULT_EXPECTED_RESULT, result)
         } else {
             val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
             val outputFile = originalFile.withExtension(OUTPUT_EXTENSION)
@@ -321,7 +320,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     private fun ClassLoader.getGeneratedClass(className: String): Class<*> {
         try {
             return loadClass(className)
-        } catch (e: ClassNotFoundException) {
+        } catch (_: ClassNotFoundException) {
             assertions.fail { "No class file was generated for: $className" }
         }
     }
@@ -329,7 +328,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     private fun Class<*>.getBoxMethodOrNull(): Method? {
         return try {
             getMethod("box")
-        } catch (e: NoSuchMethodException) {
+        } catch (_: NoSuchMethodException) {
             return null
         }
     }

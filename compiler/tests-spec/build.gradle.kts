@@ -25,9 +25,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.params)
-    runtimeOnly(libs.junit.vintage.engine)
-    testFixturesImplementation(libs.junit4)
-    testImplementation(libs.junit4)
 }
 
 sourceSets {
