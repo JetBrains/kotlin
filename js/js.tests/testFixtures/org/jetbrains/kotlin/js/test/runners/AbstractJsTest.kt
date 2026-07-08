@@ -342,7 +342,7 @@ abstract class AbstractJsSteppingSplitWithInlinedFunInKlibTest : AbstractJsStepp
 
 abstract class AbstractJsCodegenWasmJsInteropTest(
     testGroupOutputDirPrefix: String = "codegen/boxWasmJsInteropJs/"
-) : AbstractJsCodegenBoxTestBase(
+) : AbstractJsTest(
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )

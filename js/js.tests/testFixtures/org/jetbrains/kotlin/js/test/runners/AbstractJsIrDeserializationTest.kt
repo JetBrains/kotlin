@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.runners
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
-import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -51,10 +49,6 @@ abstract class AbstractJsIrDeserializationTest(
             }
             useFailureSuppressors(
                 ::FirMetaInfoDiffSuppressor
-            )
-            useAdditionalSourceProviders(
-                ::JsAdditionalSourceProvider,
-                ::CoroutineHelpersSourceFilesProvider,
             )
         }
     }
