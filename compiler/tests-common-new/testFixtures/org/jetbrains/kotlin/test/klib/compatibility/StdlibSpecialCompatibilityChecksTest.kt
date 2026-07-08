@@ -47,7 +47,7 @@ interface StdlibSpecialCompatibilityChecksTest : DummyLibraryCompiler {
         listOf(
             "2.5.0" to false,
             "2.5.0-Beta1" to false,
-            "2.5.0-dev" to false, // TODO(KT-83853): this should be a DEV version
+            "2.5.0-dev" to true,
             "2.5.0-dev1" to false,
             "2.5.0-dev-123" to true,
             "2.5.0-SNAPSHOT" to true,

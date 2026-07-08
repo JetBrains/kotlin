@@ -27,7 +27,7 @@ abstract class LibrarySpecialCompatibilityChecker {
         override fun hashCode() = comparableVersion.hashCode()
 
         // TODO (KT-83853): Find a reliable way to detect dev compiler versions.
-        val isDevVersion: Boolean = "-dev-" in rawVersion || rawVersion.endsWith("-SNAPSHOT")
+        val isDevVersion: Boolean = "-dev-" in rawVersion || rawVersion.endsWith("-dev") || rawVersion.endsWith("-SNAPSHOT")
 
         override fun toString() = rawVersion
         fun toComparableVersionString() = comparableVersion.toString()
