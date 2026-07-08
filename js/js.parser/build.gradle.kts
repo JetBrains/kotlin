@@ -33,6 +33,10 @@ val generateJsParser by tasks.registering(JavaExec::class) {
     mainClass.set("org.antlr.v4.Tool")
     classpath = antlrTool
 
+    // ANTLR 4.13 is compiled for Java 11, so the tool must run on a JDK 11+ launcher
+    // regardless of the JVM Gradle itself is running on.
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+
     val grammarFiles = grammarDir
         .walkTopDown()
         .filter { file -> file.extension == "g4" }
