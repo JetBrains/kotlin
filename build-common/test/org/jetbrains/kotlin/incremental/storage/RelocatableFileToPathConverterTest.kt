@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Files
 
 class RelocatableFileToPathConverterTest {
 
-    @get:Rule
-    val tmpDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tmpDir: File
 
     private lateinit var baseDir: File
     private lateinit var pathConverter: RelocatableFileToPathConverter
 
-    @Before
+    @BeforeEach
     fun setUp() {
-        baseDir = tmpDir.newFolder("baseDir")
+        baseDir = Files.createTempDirectory(tmpDir.toPath(), "baseDir").toFile()
         pathConverter = RelocatableFileToPathConverter(baseDir)
     }
 

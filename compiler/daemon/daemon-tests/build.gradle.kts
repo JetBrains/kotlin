@@ -11,15 +11,12 @@ plugins {
 
 dependencies {
     testImplementation(kotlinStdlib())
-    testImplementation(kotlinTest("junit"))
     testImplementation(project(":kotlin-daemon"))
     testImplementation(project(":kotlin-daemon-client"))
-    testImplementation(libs.junit4)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(testFixtures(project(":compiler:tests-integration")))
     testImplementation(intellijCore())
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 sourceSets {
