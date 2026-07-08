@@ -243,6 +243,62 @@ test regresses:
   *typeAnnotations*). Place them on the component for varargs, leave the outer
   array wrapper's member annotations empty for non-varargs.
 
+## Simplification Discipline (justifying complexity, not defending it)
+
+This module's resolution code went through many rounds where a split pipeline, an
+overload, or a lambda parameter was defended as "necessary" — and turned out, after
+the user pushed back two or three times, to exist only for a unit test's convenience
+or to rest on a comment's reasoning that a later refactor had already invalidated.
+The goal below is to reach the same simplified end state in one pass instead of
+several.
+
+- **Default to one generic path.** When the same operation (e.g. resolving a name,
+  walking a hierarchy) is implemented separately per representation/origin (source
+  vs. binary vs. Kotlin, same-file vs. cross-file), treat that split as a hypothesis
+  to disprove, not a given. Actively look for the one existing generic mechanism
+  (a callback-parameterized walk, a shared adapter) that the specialized arms could
+  route through instead of writing a new one.
+- **"A unit test injects a fake here" is not a production justification.** If a
+  function's extra parameter, overload, or lambda exists only so a test can pass in
+  a fake/stub, the fix is to change the test, not to keep the parameter: write an
+  end-to-end/integration test that exercises the real production wiring (a real
+  finder, a real session, a real AST), or add a narrow test double at the correct
+  architectural boundary. Before answering "we need this for testing," check whether
+  a same-shape end-to-end test already exists elsewhere in the module and can be
+  copied.
+- **Re-derive, don't recite.** A comment or a verbal justification for why some
+  complexity is "necessary" or "load-bearing" must be re-verified against the
+  *current* code on every review pass — trace the actual current call sites and data
+  flow again — rather than restated from an earlier round's reasoning, which may
+  already be stale after intervening refactors (this happened more than once this
+  session: a documented split's real reason had silently changed after a merge).
+- **Answer capability questions with evidence, not assumption.** "Is this tested?",
+  "is this reachable?", "does this detect ambiguity?", "is this parameter used?" must
+  be answered by actually grepping call sites / running the suspect scenario, not by
+  inference from the code's shape. If no test demonstrates a claimed hazard, either
+  add one immediately in the same pass, or treat the claim as unproven and prefer the
+  simpler design.
+- **Treat a repeated "are we sure?" from the user as a cue to re-investigate, not to
+  restate the previous answer.** If the same question comes back a second time, that
+  is a signal the first investigation was insufficient — redo it from scratch with a
+  concrete test or a concrete reachable call path as the outcome, don't re-justify
+  the status quo with the same argument.
+- **Healthy resistance is still expected — but only backed by evidence.** Push back
+  on a proposed simplification when you can produce, within the same investigation
+  pass, either a concrete regression test that fails without the extra complexity, or
+  a specific reachable call path/cycle that it guards against. If neither can be
+  produced, implement the simplification rather than defending the status quo on
+  hypothetical grounds.
+- **Prefer collapsing multi-parameter overloads with exactly one production caller.**
+  When a function has a generic, lambda-parameterized form used by only one call
+  site (the rest being test-only), fold it into a single context-bound function and
+  replace the lost test flexibility with an integration test against the real path —
+  mirrors this session's collapse of `resolveInheritedInnerClassToClassId` and
+  `walkSupertypeClassIds` down to their `JavaResolutionContext`-bound, parameter-free
+  production shape.
+
+---
+
 ## Performance Measurement
 
 When profiling java-direct code paths:
@@ -327,7 +383,14 @@ Keep the working doc set small — these files are read into context every sessi
 
 ---
 
-*Last updated: 2026-06-15 (added the Source Comment Conventions section so review-ready
+*Last updated: 2026-07-08 (added the Simplification Discipline section: default to one
+generic path over per-representation splits, treat "a unit test needs a fake" as a code
+smell rather than a justification, re-verify complexity claims against current code every
+pass instead of reciting earlier reasoning, and back pushback on simplification with a
+concrete test or call path or else implement it — distilled from repeated
+push-collapse-push cycles on the resolver-unification work.)*
+
+*Previously: 2026-06-15 (added the Source Comment Conventions section so review-ready
 comment style — no `implDocs`/stage references, current-state only, no `javac-wrapper`
 mentions, no decl/use-site duplication, bullets over prose — is the default and needs no
 cleanup pass before review.)*
