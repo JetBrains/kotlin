@@ -20,13 +20,13 @@ private val jvmModulePhases1 = createModulePhases(
     ::FragmentSharedVariablesLowering,
     ::ProcessOptionalAnnotations,
     ::ExpectDeclarationsRemoveLowering,
-    ::ConstEvaluationLowering,
     ::FileClassLowering,
     ::JvmStaticInObjectLowering,
     ::RepeatedAnnotationLowering,
 )
 
 private val jvmFilePhases = createFilePhases(
+    ::ConstEvaluationLowering,
     ::TypeAliasAnnotationMethodsLowering,
 
     ::PatchLambdaOffsetsLowering,

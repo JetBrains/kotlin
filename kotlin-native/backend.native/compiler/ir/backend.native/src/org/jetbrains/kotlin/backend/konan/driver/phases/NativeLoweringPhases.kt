@@ -624,6 +624,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
 )
 
 internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+        constEvaluationPhase,
         reifiedFunctionLowering,
         typeOfProcessingLowering,
         specializeSharedVariableBoxes,
