@@ -1,0 +1,3 @@
+expression: A(1)
+expression PSI: KtCallExpression
+type: A<kotlin.Int>

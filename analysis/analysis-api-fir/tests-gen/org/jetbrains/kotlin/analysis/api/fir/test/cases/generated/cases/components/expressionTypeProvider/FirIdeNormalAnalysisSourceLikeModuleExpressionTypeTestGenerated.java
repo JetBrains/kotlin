@@ -926,6 +926,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpressionTypeTestGenerated ext
     }
 
     @Test
+    @TestMetadata("missingOperatorFunction.kt")
+    public void testMissingOperatorFunction() {
+      run("missingOperatorFunction.kt");
+    }
+
+    @Test
     @TestMetadata("qualifedAssignment.kt")
     public void testQualifedAssignment() {
       run("qualifedAssignment.kt");
