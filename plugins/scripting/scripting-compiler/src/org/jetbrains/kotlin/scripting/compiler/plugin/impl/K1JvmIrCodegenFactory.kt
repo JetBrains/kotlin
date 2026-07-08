@@ -183,8 +183,6 @@ class K1JvmIrCodegenFactory(
             symbolTable,
             psi2irContext.irBuiltIns,
             irProvider,
-            @OptIn(MessageCollectorAccess::class) // deprecated in IrPluginContext
-            configuration.messageCollector,
             diagnosticReporter
         )
         for (extension in configuration.filteredExtensions) {

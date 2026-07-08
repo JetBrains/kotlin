@@ -25,8 +25,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectFileSearchScope
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ProjectContext
@@ -166,10 +169,6 @@ object JKlibIrCompilationPhase :
             symbolTable,
             irBuiltIns,
             linker = linker,
-            messageCollector = 
-            @OptIn(MessageCollectorAccess::class) /* deprecated in IrPluginContext */ 
-            configuration.messageCollector,
-            
         )
 
         linker.init(null)

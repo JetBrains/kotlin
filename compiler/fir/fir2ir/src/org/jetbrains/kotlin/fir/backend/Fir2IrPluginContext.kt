@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.DeclarationFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -45,11 +42,6 @@ class Fir2IrPluginContext(
     private val c: Fir2IrComponents,
     override val irBuiltIns: IrBuiltIns,
     @property:ObsoleteDescriptorBasedAPI override val symbolTable: ReferenceSymbolTable,
-    @property:Deprecated(
-        "Consider using diagnosticReporter instead. See https://youtrack.jetbrains.com/issue/KT-78277 for more details",
-        level = DeprecationLevel.WARNING
-    )
-    override val messageCollector: MessageCollector,
     override val diagnosticReporter: IrDiagnosticReporter,
 ) : IrPluginContext {
     override val afterK2: Boolean = true

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -119,15 +118,6 @@ interface IrPluginContext : IrGeneratorContext {
     fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile)
 
     // ------------------------------------ Deprecated API ------------------------------------
-
-    /**
-     * Returns a message collector instance to report generic diagnostic messages from plugin
-     */
-    @Deprecated(
-        "Consider using diagnosticReporter instead. See https://youtrack.jetbrains.com/issue/KT-78277 for more details",
-        level = DeprecationLevel.WARNING
-    )
-    val messageCollector: MessageCollector
 
     @ObsoleteDescriptorBasedAPI
     val symbolTable: ReferenceSymbolTable

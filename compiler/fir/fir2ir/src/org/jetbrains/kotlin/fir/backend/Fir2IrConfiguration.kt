@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -31,12 +30,9 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
  *  Code generation in the IDE is trickier, though, as declarations from any module can be potentially referenced.
  *  For such a scenario, there is a flag that relaxes consistency checks.
  */
-@OptIn(MessageCollectorAccess::class) // required for IrPluginContext where it's deprecated
 class Fir2IrConfiguration private constructor(
     val languageVersionSettings: LanguageVersionSettings,
     diagnosticReporter: BaseDiagnosticsCollector,
-    @property:MessageCollectorAccess
-    val messageCollector: MessageCollector,
     val inlineConstTracker: InlineConstTracker?,
     val expectActualTracker: ExpectActualTracker?,
     val allowNonCachedDeclarations: Boolean,
@@ -63,7 +59,6 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
-                messageCollector = compilerConfiguration.messageCollector,
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
@@ -85,7 +80,6 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
-                messageCollector = compilerConfiguration.messageCollector,
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
@@ -107,7 +101,6 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
-                messageCollector = compilerConfiguration.messageCollector,
                 inlineConstTracker = null,
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
@@ -130,7 +123,6 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
-                messageCollector = compilerConfiguration.messageCollector,
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = true,
