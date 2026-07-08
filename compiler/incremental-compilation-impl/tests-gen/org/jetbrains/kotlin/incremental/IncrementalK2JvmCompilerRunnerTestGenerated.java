@@ -2143,11 +2143,6 @@ public class IncrementalK2JvmCompilerRunnerTestGenerated extends AbstractIncreme
         runTest("jps/jps-plugin/testData/incremental/withJava/other/classToPackageFacade/");
       }
 
-      @TestMetadata("conflictingPlatformDeclarations")
-      public void testConflictingPlatformDeclarations() {
-        runTest("jps/jps-plugin/testData/incremental/withJava/other/conflictingPlatformDeclarations/");
-      }
-
       @TestMetadata("defaultValueInConstructorAdded")
       public void testDefaultValueInConstructorAdded() {
         runTest("jps/jps-plugin/testData/incremental/withJava/other/defaultValueInConstructorAdded/");
@@ -2196,11 +2191,6 @@ public class IncrementalK2JvmCompilerRunnerTestGenerated extends AbstractIncreme
       @TestMetadata("multifileClassFileChanged")
       public void testMultifileClassFileChanged() {
         runTest("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileChanged/");
-      }
-
-      @TestMetadata("multifileClassFileMovedToAnotherMultifileClass")
-      public void testMultifileClassFileMovedToAnotherMultifileClass() {
-        runTest("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileMovedToAnotherMultifileClass/");
       }
 
       @TestMetadata("multifileClassInlineFunction")
@@ -2327,19 +2317,6 @@ public class IncrementalK2JvmCompilerRunnerTestGenerated extends AbstractIncreme
 
         public void testAllFilesPresentInClassToPackageFacade() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/classToPackageFacade"), Pattern.compile("^([^.]+)$"), null, true);
-        }
-      }
-
-      @TestMetadata("jps/jps-plugin/testData/incremental/withJava/other/conflictingPlatformDeclarations")
-      @TestDataPath("$PROJECT_ROOT")
-      @RunWith(JUnit3RunnerWithInners.class)
-      public static class ConflictingPlatformDeclarations extends AbstractIncrementalK2JvmCompilerRunnerTest {
-        private void runTest(String testDataFilePath) {
-          KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInConflictingPlatformDeclarations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/conflictingPlatformDeclarations"), Pattern.compile("^([^.]+)$"), null, true);
         }
       }
 
@@ -2470,19 +2447,6 @@ public class IncrementalK2JvmCompilerRunnerTestGenerated extends AbstractIncreme
 
         public void testAllFilesPresentInMultifileClassFileChanged() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileChanged"), Pattern.compile("^([^.]+)$"), null, true);
-        }
-      }
-
-      @TestMetadata("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileMovedToAnotherMultifileClass")
-      @TestDataPath("$PROJECT_ROOT")
-      @RunWith(JUnit3RunnerWithInners.class)
-      public static class MultifileClassFileMovedToAnotherMultifileClass extends AbstractIncrementalK2JvmCompilerRunnerTest {
-        private void runTest(String testDataFilePath) {
-          KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInMultifileClassFileMovedToAnotherMultifileClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileMovedToAnotherMultifileClass"), Pattern.compile("^([^.]+)$"), null, true);
         }
       }
 
