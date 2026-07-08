@@ -14,50 +14,37 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.android.tests;
+package org.jetbrains.kotlin.android.tests
 
-import com.google.common.base.StandardSystemProperty;
-import com.intellij.openapi.util.io.FileUtil;
-import junit.framework.TestSuite;
-import org.jetbrains.annotations.NotNull;
-import org.junit.runner.RunWith;
-import org.junit.runners.AllTests;
+import com.google.common.base.StandardSystemProperty
+import com.intellij.openapi.util.io.FileUtil
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.DynamicNode
+import org.junit.jupiter.api.TestFactory
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Objects;
+class AndroidRunner {
+    companion object {
+        private lateinit var pathManager: PathManager
 
-@RunWith(AllTests.class)
-public class AndroidRunner {
-
-    private static PathManager pathManager;
-
-    @NotNull
-    public static PathManager getPathManager() throws IOException {
-        if (pathManager == null) {
-            File tmpFolder =
-                    Files.createTempDirectory(Paths.get(Objects.requireNonNull(StandardSystemProperty.JAVA_IO_TMPDIR.value())), null)
-                            .toFile();
-            System.out.println("Created temporary folder for running android tests: " + tmpFolder.getAbsolutePath());
-            File rootFolder = new File("");
-            pathManager = new PathManager(tmpFolder.getAbsolutePath());
+        @JvmStatic
+        @AfterAll
+        fun tearDown() {
+            FileUtil.delete(File(pathManager.tmpFolder))
         }
-        return pathManager;
     }
 
-    public static TestSuite suite() throws Throwable {
-        PathManager pathManager = getPathManager();
-
-        CodegenTestsOnAndroidGenerator.generate(pathManager);
-
-        System.out.println("Run tests on Android...");
-        return CodegenTestsOnAndroidRunner.runTestsInEmulator(pathManager);
-    }
-
-    public void tearDown() throws Exception {
-        // Clear tmp folder where we run android tests
-        FileUtil.delete(new File(pathManager.getTmpFolder()));
+    @TestFactory
+    fun runTests(): List<DynamicNode> {
+        val tmpFolder = Files.createTempDirectory(
+            Paths.get(StandardSystemProperty.JAVA_IO_TMPDIR.value()!!), null
+        ).toFile()
+        println("Created temporary folder for running android tests: ${tmpFolder.absolutePath}")
+        pathManager = PathManager(tmpFolder.absolutePath)
+        CodegenTestsOnAndroidGenerator.generate(pathManager)
+        println("Run tests on Android...")
+        return CodegenTestsOnAndroidRunner.runTestsInEmulator(pathManager)
     }
 }
