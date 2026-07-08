@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.generators.protobuf
 
 import com.google.common.collect.LinkedHashMultimap
-import junit.framework.TestCase
 import org.jetbrains.kotlin.protobuf.Descriptors
 import org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension
+import org.junit.jupiter.api.Test
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
+import kotlin.test.fail
 
-class ProtoBufConsistencyTest : TestCase() {
+class ProtoBufConsistencyTest {
+    @Test
     fun testExtensionNumbersDoNotIntersect() {
         data class Key(val messageType: Class<*>, val index: Int)
 
