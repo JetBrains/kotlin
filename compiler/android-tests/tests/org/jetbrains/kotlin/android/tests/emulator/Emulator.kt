@@ -47,7 +47,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
             } else if (platform == X86) {
                 commandLine.addParameter("system-images;android-$SYSTEM_IMAGE_API;default;x86_64")
             } else {
-                commandLine.addParameter("system-images;android-$SYSTEM_IMAGE_API;default;arm64-v8a")
+                commandLine.addParameter("system-images;android-$SYSTEM_IMAGE_API;default;armeabi-v7a")
             }
 
             commandLine.withEnvironment("ANDROID_SDK_ROOT", pathManager.androidSdkRoot)
