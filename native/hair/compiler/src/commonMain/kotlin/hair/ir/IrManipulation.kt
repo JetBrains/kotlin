@@ -144,6 +144,38 @@ fun <N: BlockBody> Session.insertBefore(point: Controlled, createNode: context(N
     return insertAfter(point.control, createNode)
 }
 
+/**
+ * Replaces this control-spine node with an arbitrary control-flow sub-graph.
+ *
+ * If the replaced node produced a value, [build] must return its replacement, to which all value uses
+ * are redirected; return `null` for non-value nodes.
+ */
+fun BlockBody.replaceWithSubGraph(
+    build: context(NodeBuilder, ControlFlowBuilder) ArgumentUpdater.() -> Node?,
+) {
+    val original = this
+    if (original is Throwing) require(original.unwind == null) {
+        "replaceWithSubGraph cannot yet re-link the exception edge of $original"
+    }
+    // Captured before any rewiring: the spine neighbours the sub-graph is spliced between.
+    val predecessor = original.control
+    val successor = original.next
+
+    session.modifyControlFlow(predecessor) {
+        // Detach the node up front so the predecessor's only live control successor is the sub-graph.
+        original.controlOrNull = null
+
+        val replacementValue = build()
+
+        val continuation = contextOf<ControlFlowBuilder>().lastControl
+            ?: error("The sub-graph replacing $original must fall through to its successor $successor")
+        successor.control = continuation
+
+        replacementValue?.let { original.replaceValueUses(it) }
+        original.kill()
+    }
+}
+
 context(_: ArgumentUpdater)
 fun Node.kill() {
     require(uses.isEmpty())

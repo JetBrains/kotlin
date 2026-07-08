@@ -140,3 +140,36 @@ class ConstTypeInfo internal constructor(form: Form) : NodeBase(form, listOf()),
 }
 
 
+class ArraySize internal constructor(form: Form, array: Node?) : NodeBase(form, listOf(array)), ValueNode {
+    val arrayIndex: Int = 0
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "array"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitArraySize(this)
+    companion object {
+        internal fun form(session: Session) = SimpleValueForm(session, "ArraySize")
+    }
+}
+
+
+class ArrayIndexCheck internal constructor(form: Form, control: Controlling?, array: Node?, index: Node?) : BlockBodyWithException(form, listOf(control, array, index)) {
+    val arrayIndex: Int = 1
+    val indexIndex: Int = 2
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "control"
+        1 -> "array"
+        2 -> "index"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitArrayIndexCheck(this)
+    companion object {
+        internal fun form(session: Session) = SimpleControlFlowForm(session, "ArrayIndexCheck")
+    }
+}
+
+

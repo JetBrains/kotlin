@@ -54,6 +54,12 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 fun BlockEntry(vararg preds: BlockExit?): Controlling = controlBuilder.appendControl { BlockEntryNoCtrl(*preds) }
 
 context(nodeBuilder: NodeBuilder)
+fun Halt(control: Controlling?): Node = nodeBuilder.onNodeBuilt(Halt(nodeBuilder.session.haltForm, control))
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+fun Halt(): Node = controlBuilder.appendControlled { ctrl -> Halt(ctrl) }
+
+context(nodeBuilder: NodeBuilder)
 fun Return(control: Controlling?, result: Node?): Node = nodeBuilder.onNodeBuilt(Return(nodeBuilder.session.returnForm, control, result))
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
@@ -306,6 +312,15 @@ context(nodeBuilder: NodeBuilder)
 fun ConstTypeInfo(type: HairClass): ConstTypeInfo = ConstTypeInfoForm(type)()
 
 context(nodeBuilder: NodeBuilder)
+fun ArraySize(array: Node?): Node = nodeBuilder.onNodeBuilt(ArraySize(nodeBuilder.session.arraySizeForm, array))
+
+context(nodeBuilder: NodeBuilder)
+fun ArrayIndexCheck(control: Controlling?, array: Node?, index: Node?): Controlling = nodeBuilder.onNodeBuilt(ArrayIndexCheck(nodeBuilder.session.arrayIndexCheckForm, control, array, index)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+fun ArrayIndexCheck(array: Node?, index: Node?): Controlling = controlBuilder.appendControlled { ctrl -> ArrayIndexCheck(ctrl, array, index) }
+
+context(nodeBuilder: NodeBuilder)
 fun Load(type: HairType): Load.Form = Load.Form(nodeBuilder.session.loadMetaForm, type).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
@@ -364,6 +379,24 @@ operator fun StoreGlobal.Form.invoke(control: Controlling?, value: Node?): Contr
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun StoreGlobal.Form.invoke(value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, value) }
+
+context(nodeBuilder: NodeBuilder)
+fun LoadArrayElement(elementType: HairType): LoadArrayElement.Form = LoadArrayElement.Form(nodeBuilder.session.loadArrayElementMetaForm, elementType).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun LoadArrayElement.Form.invoke(control: Controlling?, array: Node?, index: Node?): Controlling = nodeBuilder.onNodeBuilt(LoadArrayElement(this@invoke, control, array, index)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun LoadArrayElement.Form.invoke(array: Node?, index: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, array, index) }
+
+context(nodeBuilder: NodeBuilder)
+fun StoreArrayElement(elementType: HairType): StoreArrayElement.Form = StoreArrayElement.Form(nodeBuilder.session.storeArrayElementMetaForm, elementType).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun StoreArrayElement.Form.invoke(control: Controlling?, array: Node?, index: Node?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(StoreArrayElement(this@invoke, control, array, index, value)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun StoreArrayElement.Form.invoke(array: Node?, index: Node?, value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, array, index, value) }
 
 context(nodeBuilder: NodeBuilder)
 fun InvokeStatic(function: HairFunction): InvokeStatic.Form = InvokeStatic.Form(nodeBuilder.session.invokeStaticMetaForm, function).ensureFormUniq()

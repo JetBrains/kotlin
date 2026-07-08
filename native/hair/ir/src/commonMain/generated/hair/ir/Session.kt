@@ -22,6 +22,8 @@ class Session: SessionBase() {
 
     internal val blockEntryForm = BlockEntry.form(this).also { register(it) }
 
+    internal val haltForm = Halt.form(this).also { register(it) }
+
     internal val returnForm = Return.form(this).also { register(it) }
 
     internal val gotoForm = Goto.form(this).also { register(it) }
@@ -53,6 +55,10 @@ class Session: SessionBase() {
     internal val notForm = Not.form(this).also { register(it) }
 
     internal val typeInfoForm = TypeInfo.form(this).also { register(it) }
+
+    internal val arraySizeForm = ArraySize.form(this).also { register(it) }
+
+    internal val arrayIndexCheckForm = ArrayIndexCheck.form(this).also { register(it) }
 
     
 
@@ -121,6 +127,10 @@ class Session: SessionBase() {
     internal val loadGlobalMetaForm = LoadGlobal.metaForm(this)
 
     internal val storeGlobalMetaForm = StoreGlobal.metaForm(this)
+
+    internal val loadArrayElementMetaForm = LoadArrayElement.metaForm(this)
+
+    internal val storeArrayElementMetaForm = StoreArrayElement.metaForm(this)
 
     internal val invokeStaticMetaForm = InvokeStatic.metaForm(this)
 
