@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationT
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
 import org.junit.jupiter.api.Tag
@@ -40,6 +41,7 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
     fun `Metadata compilation - ALLOW_ALL_WITH_WARNING strategy`() = runTest(
         strategy = DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING,
         expectedDuplicatedNameMessagePrefix = null,
+        isSuccessfulCompilationExpected = true,
         freeCompilerArgs = listOf("-Xmetadata-klib")
     )
 
@@ -47,6 +49,7 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
     fun `Metadata compilation - default strategy`() = runTest(
         strategy = null,
         expectedDuplicatedNameMessagePrefix = null,
+        isSuccessfulCompilationExpected = true,
         freeCompilerArgs = listOf("-Xmetadata-klib")
     )
 
@@ -66,6 +69,7 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
     @Test
     fun `Regular compilation - ALLOW_ALL_WITH_WARNING strategy`() = runTest(
         strategy = DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING,
+        isSuccessfulCompilationExpected = true,
         expectedDuplicatedNameMessagePrefix = null,
     )
 
@@ -79,6 +83,7 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
         strategy: DuplicatedUniqueNameStrategy?,
         expectedDuplicatedNameMessagePrefix: String?,
         isUnresolvedReferenceErrorExpected: Boolean = false,
+        isSuccessfulCompilationExpected: Boolean = false,
         freeCompilerArgs: List<String>? = null,
     ) {
         val extraCliArgs = buildList {
@@ -107,7 +112,9 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
                     else -> fail { "Unexpected module: ${module.name}" }
                 }
             }
+            assertTrue(isSuccessfulCompilationExpected) { "Compilation was expected to fail" }
         } catch (cte: CompilationToolException) {
+            assertFalse(isSuccessfulCompilationExpected) { "Compilation was expected to succeed" }
             val compilerOutputFromModuleC: List<String> = cte.reason.lines()
 
             val duplicatedNameMessagePresent = compilerOutputFromModuleC.any {
