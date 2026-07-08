@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import java.io.Serializable
+
 /**
  * A renderer for formatting compiler diagnostic messages.
  */
@@ -47,14 +49,18 @@ public interface CompilerMessageRenderer {
         public val lineEnd: Int,
         public val columnEnd: Int,
         public val lineContent: String?,
-    )
+    ) : Serializable
 }
 
 /**
  * Extension of [CompilerMessageRenderer] that also receives the compiler diagnostic identifier.
  */
 public interface CompilerMessageRendererWithDiagnosticId : CompilerMessageRenderer {
-    override fun render(severity: CompilerMessageRenderer.Severity, message: String, location: CompilerMessageRenderer.SourceLocation?): String =
+    override fun render(
+        severity: CompilerMessageRenderer.Severity,
+        message: String,
+        location: CompilerMessageRenderer.SourceLocation?,
+    ): String =
         render(severity, message, location, diagnosticId = null)
 
     /**

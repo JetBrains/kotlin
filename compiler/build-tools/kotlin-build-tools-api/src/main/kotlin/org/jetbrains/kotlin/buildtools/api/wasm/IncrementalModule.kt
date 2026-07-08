@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.api.wasm
 
+import java.io.File
+import java.io.Serializable
 import java.nio.file.Path
 
 /**
@@ -19,7 +21,24 @@ import java.nio.file.Path
  */
 public class IncrementalModule(
     public val name: String,
-    public val output: Path,
-    public val buildDir: Path,
-    public val buildHistoryDir: Path? = null,
-)
+    output: Path,
+    buildDir: Path,
+    buildHistoryDir: Path? = null,
+) : Serializable {
+
+    public val output: Path
+        get() = _output.toPath()
+
+    public val buildDir: Path
+        get() = _buildDir.toPath()
+
+    public val buildHistoryDir: Path?
+        get() = _buildHistoryDir?.toPath()
+
+
+    public val _output: File = output.toFile()
+    public val _buildDir: File = buildDir.toFile()
+    public val _buildHistoryDir: File? = buildHistoryDir?.toFile()
+
+}
+

@@ -6,13 +6,24 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotExternalizer
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import java.io.DataOutputStream
 import java.io.File
 import java.io.Serializable
 import java.nio.file.Path
+import java.rmi.Remote
+import java.rmi.server.UnicastRemoteObject
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
@@ -22,6 +33,27 @@ internal class Options(
     constructor(typeForName: KClass<*>) : this(typeForName.qualifiedName ?: typeForName.jvmName)
 
     private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+    private fun writeReplace(): Any {
+        return deepCopy().apply {
+            optionsMap.replaceAll { key, value ->
+                when (value) {
+                    is Remote -> value
+                    is CompilerMessageRenderer -> object : UnicastRemoteObject(
+                        SOCKET_ANY_FREE_PORT,
+                        LoopbackNetworkInterface.clientLoopbackSocketFactory,
+                        LoopbackNetworkInterface.serverLoopbackSocketFactory
+                    ), RemoteCompilerMessageRenderer, CompilerMessageRenderer by value {}
+                    is CompilerLookupTracker -> object : UnicastRemoteObject(
+                        SOCKET_ANY_FREE_PORT,
+                        LoopbackNetworkInterface.clientLoopbackSocketFactory,
+                        LoopbackNetworkInterface.serverLoopbackSocketFactory
+                    ), RemoteCompilerLookupTracker, CompilerLookupTracker by value {}
+                    else -> value
+                }
+            }
+        }
+    }
 
     @UseFromImplModuleRestricted
     operator fun <V> set(key: BaseOption<V>, value: Any?) {

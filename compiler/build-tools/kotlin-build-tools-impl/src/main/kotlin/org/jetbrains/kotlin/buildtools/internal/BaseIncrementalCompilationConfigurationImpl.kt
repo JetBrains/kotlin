@@ -9,10 +9,11 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import java.io.Serializable
 import java.nio.file.Path
 
 internal abstract class BaseIncrementalCompilationConfigurationImpl : BaseIncrementalCompilationConfiguration,
-    BaseIncrementalCompilationConfiguration.Builder {
+    BaseIncrementalCompilationConfiguration.Builder, Serializable {
 
     protected abstract val options: Options
 

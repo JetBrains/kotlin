@@ -18,12 +18,13 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
+import java.io.File
 import java.nio.file.Path
 
 internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
     override val options: Options = Options(KotlinMetadataKlibCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destination: Path,
+    sources: List<Path>,
+    destination: Path,
     compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
     private val compilerVersion: String,
 ) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(compilerArguments),
@@ -43,6 +44,15 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
     ) {
         initializeOptions(this::class, options)
     }
+
+    override val sources: List<Path>
+        get() = _sources.map(File::toPath)
+
+    override val destination: Path
+        get() = _destination.toPath()
+
+    val _sources: List<File> = sources.map { it.toFile() }
+    val _destination: File = destination.toFile()
 
     override fun toBuilder(): KotlinMetadataKlibCompilationOperation.Builder = deepCopy()
 

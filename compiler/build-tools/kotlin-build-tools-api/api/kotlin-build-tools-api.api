@@ -1624,7 +1624,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/Accessib
 	public abstract fun getClassAbiHash ()J
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshot {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshot : java/io/Serializable {
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranularity : java/lang/Enum {
@@ -1634,7 +1634,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranular
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranularity;
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/ClasspathEntrySnapshot {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/ClasspathEntrySnapshot : java/io/Serializable {
 	public abstract fun getClassSnapshots ()Ljava/util/Map;
 	public abstract fun saveSnapshot (Ljava/io/File;)V
 	public fun saveSnapshot (Ljava/nio/file/Path;)V

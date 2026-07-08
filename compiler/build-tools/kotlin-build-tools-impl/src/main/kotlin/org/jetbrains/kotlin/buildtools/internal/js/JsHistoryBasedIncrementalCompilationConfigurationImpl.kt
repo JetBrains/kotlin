@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
+import java.io.File
 import java.nio.file.Path
 
 internal class JsHistoryBasedIncrementalCompilationConfigurationImpl private constructor(
-    override val workingDirectory: Path,
+    workingDirectory: Path,
     override val sourcesChanges: SourcesChanges,
     override val modulesInformation: List<IncrementalModule>,
     override val options: Options = Options(
@@ -39,6 +40,10 @@ internal class JsHistoryBasedIncrementalCompilationConfigurationImpl private con
         initializeOptions(this::class, options)
         options[ROOT_PROJECT_DIR] = rootProjectDir
     }
+
+    override val workingDirectory: Path get() = _workingDirectory.toPath()
+    val _workingDirectory: File = workingDirectory.toFile()
+
 
     internal val historyFile: Path
         get() {

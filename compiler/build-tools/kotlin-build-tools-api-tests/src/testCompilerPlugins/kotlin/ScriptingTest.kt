@@ -187,22 +187,6 @@ class ScriptingTest : BaseCompilationTest() {
         assertTrue(result.isEmpty(), "Expected empty list when class is missing")
     }
 
-    // TODO: Remove this test and add daemon execution support when KT-84096 is implemented
-    @BtaVersionsOnlyCompilationTest
-    @DisplayName("Script extension discovery fails with daemon execution policy")
-    fun discoverScriptExtensionsFailsWithDaemon(toolchain: KotlinToolchains) {
-        val classpath = listOf(workingDirectory.resolve("greet-script-template"))
-        val operation = toolchain.jvm.discoverScriptExtensionsOperationBuilder(classpath).build()
-        val daemonPolicy = toolchain.daemonExecutionPolicyBuilder().build()
-
-        val exception = assertThrows<IllegalStateException> {
-            toolchain.createBuildSession().use { session ->
-                session.executeOperation(operation, daemonPolicy, TestKotlinLogger())
-            }
-        }
-        assertEquals("Only in-process execution policy is supported for this operation.", exception.message)
-    }
-
     private fun assumeInProcess(strategyConfig: CompilerExecutionStrategyConfiguration) {
         assumeTrue(
             strategyConfig.second is ExecutionPolicy.InProcess,

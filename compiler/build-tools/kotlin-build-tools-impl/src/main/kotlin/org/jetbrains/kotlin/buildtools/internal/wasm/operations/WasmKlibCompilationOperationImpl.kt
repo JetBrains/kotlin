@@ -44,12 +44,13 @@ import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
+import java.io.File
 import java.nio.file.Path
 
 internal class WasmKlibCompilationOperationImpl private constructor(
     override val options: Options = Options(WasmKlibCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destination: Path,
+    sources: List<Path>,
+    destination: Path,
     compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
     private val compilerVersion: String,
 ) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
@@ -69,6 +70,15 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     ) {
         initializeOptions(this::class, options)
     }
+
+    override val sources: List<Path>
+        get() = _sources.map(File::toPath)
+
+    override val destination: Path
+        get() = _destination.toPath()
+
+    val _sources: List<File> = sources.map { it.toFile() }
+    val _destination: File = destination.toFile()
 
     override fun historyBasedIcConfigurationBuilder(
         rootProjectDir: Path,

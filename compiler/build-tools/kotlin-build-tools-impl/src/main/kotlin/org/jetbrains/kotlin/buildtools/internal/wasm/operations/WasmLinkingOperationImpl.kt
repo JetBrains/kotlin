@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
+import java.io.File
 import java.nio.file.Path
 
 @OptIn(ExperimentalCompilerArgument::class)
 internal class WasmLinkingOperationImpl private constructor(
     override val options: Options = Options(WasmLinkingOperation::class),
-    override val klib: Path,
-    override val destination: Path,
+    klib: Path,
+    destination: Path,
     compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
 ) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
     WasmLinkingOperation, WasmLinkingOperation.Builder,
@@ -39,6 +40,13 @@ internal class WasmLinkingOperationImpl private constructor(
     ) {
         initializeOptions(this::class, options)
     }
+
+    override val klib: Path get() = _klib.toPath()
+    override val destination: Path get() = _destination.toPath()
+
+    val _klib: File = klib.toFile()
+    val _destination: File = destination.toFile()
+
 
     override fun toBuilder(): WasmLinkingOperation.Builder = deepCopy()
 

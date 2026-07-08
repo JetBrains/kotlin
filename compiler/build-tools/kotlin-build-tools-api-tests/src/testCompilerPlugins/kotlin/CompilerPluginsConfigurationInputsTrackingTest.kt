@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.TRACK_CONFIGURATION_INPUTS
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
@@ -38,7 +37,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    LogLevel.INFO,
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -66,7 +65,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    LogLevel.INFO,
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -91,13 +90,11 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    LogLevel.INFO,
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
         }
     }
 
-    private fun expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-        if (strategyConfig.second is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
 }

@@ -17,14 +17,15 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
+import java.io.File
 import java.nio.file.Path
 
 
 @OptIn(ExperimentalCompilerArgument::class)
 internal class JsLinkingOperationImpl private constructor(
     override val options: Options = Options(JsLinkingOperation::class),
-    override val klib: Path,
-    override val destination: Path,
+    klib: Path,
+    destination: Path,
     compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
 ) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments),
     JsLinkingOperation, JsLinkingOperation.Builder,
@@ -41,6 +42,12 @@ internal class JsLinkingOperationImpl private constructor(
     ) {
         initializeOptions(this::class, options)
     }
+
+    override val klib: Path get() = _klib.toPath()
+    override val destination: Path get() = _destination.toPath()
+
+    val _klib: File = klib.toFile()
+    val _destination: File = destination.toFile()
 
     override fun toBuilder(): JsLinkingOperation.Builder = deepCopy()
 

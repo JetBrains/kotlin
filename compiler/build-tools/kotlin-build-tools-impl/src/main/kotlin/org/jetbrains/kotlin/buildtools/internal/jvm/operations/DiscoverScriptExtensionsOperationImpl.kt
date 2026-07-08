@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensio
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
+import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 internal class DiscoverScriptExtensionsOperationImpl private constructor(
     override val options: Options = Options(DiscoverScriptExtensionsOperation::class),
-    override val classpath: List<Path>,
+    classpath: List<Path>,
 ) : BuildOperationImpl<Collection<String>>(), DiscoverScriptExtensionsOperation, DiscoverScriptExtensionsOperation.Builder,
     DeepCopyable<DiscoverScriptExtensionsOperation> {
 
@@ -26,13 +27,15 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
         initializeOptions(this::class, options)
     }
 
+    override val classpath: List<Path> get() = _classpath.map(File::toPath)
+    val _classpath: List<File> = classpath.map(Path::toFile)
+
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
     ): Collection<String> {
         // KT-84096 BTA: support daemon execution for script discovery operation
-        check(executionPolicy is ExecutionPolicy.InProcess) { "Only in-process execution policy is supported for this operation." }
         val definitions = ScriptDefinitionsFromClasspathDiscoverySource(
             classpath.map(Path::toFile), defaultJvmScriptingHostConfiguration, KotlinLoggerMessageCollectorAdapter(
                 logger ?: DefaultKotlinLogger, this[COMPILER_MESSAGE_RENDERER], warningsAsErrors = false
