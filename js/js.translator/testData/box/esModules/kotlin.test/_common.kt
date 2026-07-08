@@ -15,7 +15,7 @@ fun raise(name: String): Nothing {
 }
 
 // Adapter should be initialized eagerly
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER")
 @OptIn(kotlin.ExperimentalStdlibApi::class)
 @EagerInitialization
 private val underscore = kotlin.test.setAdapter(object : FrameworkAdapter {
