@@ -5,34 +5,19 @@
 
 package org.jetbrains.kotlin.gradle
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import org.gradle.kotlin.dsl.support.serviceOf
-import org.gradle.process.ExecOperations
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.KOTLIN_JS_STORE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.YARN_LOCK
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNpmTooling
-import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
-import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
-import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.util.setupCustomKgpNpmToolingDependenciesDir
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
-import java.io.ByteArrayOutputStream
-import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 
 class WasmNpmGradlePluginIT : WasmPackageManagerGradlePluginIT() {
@@ -40,7 +25,7 @@ class WasmNpmGradlePluginIT : WasmPackageManagerGradlePluginIT() {
 
     override val lockFileName: String = PACKAGE_LOCK
 
-    override val toolingCustomDir: String
+    override val toolingCustomDirName: String
         get() = "npm"
 }
 
@@ -49,7 +34,7 @@ class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
 
     override val lockFileName: String = YARN_LOCK
 
-    override val toolingCustomDir: String
+    override val toolingCustomDirName: String
         get() = "yarn"
 
     @GradleTest
@@ -199,7 +184,11 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
 
     abstract val lockFileName: String
 
-    abstract val toolingCustomDir: String
+    /**
+     * The name of the custom directory used to install KGP's npm tooling dependencies,
+     * within the root project directory.
+     */
+    abstract val toolingCustomDirName: String
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
@@ -274,82 +263,13 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
 
             // extracted as val to be serializable
             val isYarn = yarn
-            val toolingCustomDir = toolingCustomDir
-            val kgpNpmToolingPackageJson = kgpNpmToolingPackageJson
 
-            buildScriptInjection {
-                project.rootProject.extensions.getByType(WasmNpmTooling::class.java).apply {
-                    this.installationDir.fileValue(project.projectDir.resolve(toolingCustomDir))
-                }
+            val toolingCustomDir = projectPath.resolve(toolingCustomDirName)
 
-                val nodeJsEnvSpec = project.extensions.getByType(WasmNodeJsEnvSpec::class.java)
-
-                val nodejsExecutable = nodeJsEnvSpec.executable
-
-                val toolExecutable = if (isYarn) {
-                    nodejsExecutable
-                } else {
-                    project.provider {
-                        project.rootProject.extensions.getByType(WasmNpmExtension::class.java).requireConfigured().executable
-                    }
-                }
-
-                val installArgs = if (isYarn) {
-                    project.rootProject.extensions.getByType(WasmYarnRootEnvSpec::class.java).executable.map { listOf(it) }
-                } else {
-                    project.provider {
-                        listOf("install", "--ignore-scripts")
-                    }
-                }
-
-                val toolingCustomDir = project.projectDir.resolve(toolingCustomDir)
-                toolingCustomDir.mkdirs()
-
-                // A `package.json` file is required for `npm install` and `yarn install` commands to work.
-                toolingCustomDir.resolve("package.json").writeText(kgpNpmToolingPackageJson)
-
-                if (isYarn) {
-                    toolingCustomDir.resolve("yarn.lock").writeText(kgpYarnLockFileContent)
-                } else {
-                    toolingCustomDir.resolve("package-lock.json").writeText(kgpPackageLockJsonFileContent)
-                }
-
-                project.tasks.register("toolingInstall").configure { task ->
-
-                    with(nodeJsEnvSpec) {
-                        task.dependsOn(project.nodeJsSetupTaskProvider)
-                    }
-                    if (isYarn) {
-                        task.dependsOn(WasmYarnRootExtension[project.rootProject].yarnSetupTaskProvider)
-                    }
-
-                    val exec = project.serviceOf<ExecOperations>()
-
-                    task.doLast { _ ->
-                        val execOutput = ByteArrayOutputStream()
-                        val result = exec.exec { exec ->
-                            exec.executable(toolExecutable.get())
-                            exec.args(installArgs.get())
-                            exec.workingDir = toolingCustomDir
-                            exec.standardOutput = execOutput
-                            exec.errorOutput = execOutput
-                            exec.isIgnoreExitValue = true
-
-                            if (!isYarn) {
-                                val nodePath = File(nodejsExecutable.get()).parent
-                                exec.environment["PATH"] =
-                                    "$nodePath${File.pathSeparator}${System.getenv("PATH")}"
-                            }
-                        }
-                        require(result.exitValue == 0) {
-                            buildString {
-                                appendLine("${task.path}} failed")
-                                appendLine(execOutput)
-                            }
-                        }
-                    }
-                }
-            }
+            setupCustomKgpNpmToolingDependenciesDir(
+                toolingCustomDir = toolingCustomDir,
+                useYarn = isYarn,
+            )
 
             build(":toolingInstall") {
                 assertTasksExecuted(":toolingInstall")
@@ -373,48 +293,6 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
             build(":wasmJsBrowserTest") {
                 assertTasksExecuted(":kotlinWasmToolingSetup")
             }
-        }
-    }
-
-    companion object {
-        private val kgpPackageLockJsonFileContent: String by lazy {
-            NodeJsPlugin::class.loadResource("/org/jetbrains/kotlin/gradle/targets/js/npm/package-lock.json")
-        }
-
-        private val kgpYarnLockFileContent: String by lazy {
-            NodeJsPlugin::class.loadResource("/org/jetbrains/kotlin/gradle/targets/js/yarn/yarn.lock")
-        }
-
-        private fun KClass<*>.loadResource(path: String): String {
-            java.getResourceAsStream(path).use { source ->
-                requireNotNull(source) { "Resource not found: $path" }
-                return source.bufferedReader().readText()
-            }
-        }
-
-        /**
-         * Create a `package.json` file containing KGP's tooling dependencies.
-         *
-         * @see [org.jetbrains.kotlin.gradle.targets.js.NpmVersions]
-         */
-        private val kgpNpmToolingPackageJson: String by lazy {
-            val json = Json {
-                prettyPrint = true
-            }
-
-            val packageJson: JsonObject =
-                buildJsonObject {
-                    put("name", "kotlin-tooling-dependencies")
-                    put("version", "1.0.0")
-                    put("private", true)
-                    put("dependencies", buildJsonObject {
-                        NpmVersions().allDependencies.forEach { [name, version] ->
-                            put(name, version)
-                        }
-                    })
-                }
-
-            json.encodeToString(JsonObject.serializer(), packageJson)
         }
     }
 }
