@@ -87,8 +87,8 @@ internal fun declaredOrFullyInherited(cls: JavaClass, name: Name): JavaClass? {
     val astClass = cls as? JavaClassOverAst ?: return null
     return c.fileContext.inheritedMemberResolver.findInnerClassFromSupertypes(
         name, astClass, mutableSetOf(),
-        resolveBinaryOrKotlinInherited = { containingClass, innerName ->
-            resolveInheritedInnerClassToClassId(innerName.asString(), { tryResolve(it) }, containingClass)
+        resolveInherited = { containingClass, innerName ->
+            resolveInheritedInnerClassToClassId(innerName.asString(), { tryResolveInherited(it) }, containingClass)
         },
         classifierAdapterFor = { classifierAdapterFor(it) },
     )

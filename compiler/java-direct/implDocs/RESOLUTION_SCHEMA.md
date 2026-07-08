@@ -79,7 +79,7 @@ flowchart TD
 - **`JavaResolutionContext`** — positional data carrier. Wraps an immutable per-file
   `JavaFileContext` (package, `JavaImports`, `LeanJavaClassFinder`, `JavaInheritedMemberResolver`,
   `FirSession`) and a per-position `JavaScopeContext` (containing class, in-scope type parameters,
-  same-file top-level class provider, inherited-inner cache). Scope transitions
+  same-file top-level class provider). Scope transitions
   (`withTypeParameters` / `withInheritedTypeParameters` / `withContainingClass`) fork a new record.
 - **`JavaTypeResolver`** — the stateless engine: JLS 6.4.1 simple-name dispatcher, JLS 6.5.2
   qualified-name dispatcher, supertype-`ClassId` walking, session probes (`tryResolve`),
@@ -157,7 +157,9 @@ step probes candidate `ClassId`s through `tryResolve` and returns the first hit.
 
 1. **Local scope** (`resolveFromLocalScope`) — member types declared *and* inherited by the
    containing-class chain, walked innermost→outermost, interleaving declared and inherited per
-   level (Scenario D for the inherited part). *(skipped in the reentrance-safe flavor)*
+   level. The inherited half delegates directly to `resolveInheritedInnerClassToClassId`'s
+   origin-agnostic ladder (Scenario E), probed via `tryResolveInherited` (source-index-first,
+   FIR-fallback) — no separate cached fast path. *(skipped in the reentrance-safe flavor)*
 2. **Same-file top-level** (`resolveFromSameFile`) — via `sameFileTopLevelClassProvider`.
 3. **Single-type import** (`resolveFromExplicitImport`) — `import a.b.C;`, rank 4.
 4. **Single-static import, type arm** (`resolveFromStaticSingleImport`) — `import static a.b.C.X;`,
@@ -231,18 +233,21 @@ inherited segment" sub-problem is still reached, just one recursion level down.
 Entry: `JavaInheritedMemberResolver`. Three outputs, all reaching every class representation:
 
 - `findInnerClassFromSupertypes` → a `JavaClass` with AST outer chain (for the AST pipeline /
-  outer-arg substitution). Three arms, tried in order, the first hit wins:
-  1. **Same-file supertypes** — `resolveSameFileSupertype` + recursive same-file walk.
-  2. **Cross-file Java source** — `LeanJavaClassFinder.collectInheritedInnerClasses`. A non-`null`
-     map entry for the name — including an *ambiguous* one (`size > 1`, resolved to `null`) — is
-     authoritative and short-circuits here; only a genuinely *absent* entry (source hierarchy has
-     no opinion at all) defers to arm 3, so this arm's ambiguity detection can never be masked by
-     a differently-shaped BFS below it.
-  3. **Binary Java / Kotlin tail** — reached only when arms 1-2 found nothing: reuses
-     `resolveInheritedInnerClassToClassId`/`walkSupertypeClassIds` (below) to get a `ClassId`, then
-     materializes it via `classifierAdapterFor` (Scenario A step 4). This closes the gap where a
-     Java source class inheriting a nested class from a Kotlin or binary superclass was invisible
-     to the *structural* pipeline (only reachable via the `ClassId` pipeline before).
+  outer-arg substitution). Two arms, tried in order, the first hit wins:
+  1. **Same-file supertypes** — `resolveSameFileSupertype` + recursive same-file walk. Kept
+     separate rather than folded into arm 2's ladder: a same-file result must stay the exact
+     `JavaClassOverAst` instance FIR matches type parameters against by identity, and this arm
+     must keep working with no `LeanJavaClassFinder` or FIR session at all
+     (`JavaParsingTypeResolutionTest.testInheritedInnerClassFromNestedGenericSupertype`).
+  2. **Cross-file Java source, binary Java, or Kotlin** — reached only when arm 1 found nothing:
+     reuses `resolveInheritedInnerClassToClassId`/`walkSupertypeClassIds` (below) to get a
+     `ClassId`, then materializes it via `classifierAdapterFor` (Scenario A step 4). One
+     origin-agnostic ladder rather than a separate `classFinder`-backed cross-file-source arm
+     ahead of a binary/Kotlin tail — the earlier two-arm split let a cross-file-source match
+     short-circuit before a competing binary/Kotlin one at the same depth was ever checked
+     (`testData/diagnostics/tests/jvm/javaDirect/ambiguousInheritedInnerClassAcrossSourceAndKotlinSupertypes.kt`).
+  Ambiguity is compared within arm 1 and within arm 2, but not across them — same accepted
+  trade-off as review comment #7, now narrower since it used to also apply *within* arm 2.
 - `resolveInheritedInnerClassToClassId` → a bare `ClassId` via a single, origin-agnostic BFS
   (`walkSupertypeClassIds`) over [containingClass]'s own supertypes (outer-class coverage is the
   caller's job — Scenario C's per-level loop — not this function's, since the
@@ -266,20 +271,21 @@ Entry: `JavaInheritedMemberResolver`. Three outputs, all reaching every class re
   source, binary Java, and Kotlin without a DFS/BFS split between call sites.
 
 `walkSupertypeClassIds` shares one `visited` set across the whole walk and probes every ancestor
-at a given level — source, binary Java, and Kotlin alike — before expanding to the next level, so
-ambiguity between candidates of different origins at the same depth is always detected, not just
-within a single origin's pass. Termination relies on `visited` (bounded by the finite set of
-distinct `ClassId`s reachable from the seed) plus `directSupertypeClassIds`'s own per-session
-cycle guard, not a depth cap — malformed cyclic hierarchies terminate via `visited`, not by
-giving up after N levels.
+at a given level — source, binary Java, and Kotlin alike — expanding to the next level per
+ancestor, not per level, so a match found through one ancestor cannot stop an unrelated sibling
+ancestor from being expanded further. This closes a previously-latent bug where a match at one
+ancestor suppressed expansion of every other ancestor at the same level, hiding a deeper
+conflicting match reached only through one of them
+(`ambiguousInheritedInnerClassAcrossSourceAndKotlinSupertypes.kt`). Termination relies on `visited`
+(bounded by the finite set of distinct `ClassId`s reachable from the seed) plus
+`directSupertypeClassIds`'s own per-session cycle guard, not a depth cap — malformed cyclic
+hierarchies terminate via `visited`, not by giving up after N levels.
 
-Accepted, documented limitation: this ambiguity detection is local to `resolveInheritedInnerClassToClassId`'s
-own BFS; it does **not** extend across `findInnerClassFromSupertypes`'s three arms — an inner
-class name found via the cross-file-source-only arm 2 versus one independently reachable through
-the binary/Kotlin tail (arm 3) at the same depth would not trigger ambiguity there. Closing this
-fully would mean unconditionally paying for a binary/Kotlin supertype walk even when the source
-answer is already unambiguous, for a very rare shape; accepted as a known trade-off rather than
-fixed.
+Same fix applies one layer up: `resolveInheritedInnerForLevel`'s `Step 1` in Scenario B used to
+special-case cross-file Java source via a cached `collectInheritedInnerClasses` map, returning a
+single non-ambiguous candidate without ever probing a same-level Kotlin/binary competitor. It now
+always delegates to `resolveInheritedInnerClassToClassId` via `tryResolveInherited`, and that dead
+cache (`getInheritedInnerClassesForClass` / `JavaScopeContext.InheritedInnerCache`) was removed.
 
 ### Scenario F — Direct-supertype `ClassId` graph
 

@@ -1,6 +1,6 @@
 # Java-Direct: Iteration Results Log
 
-**Current status**: `:compiler:java-direct:test` full suite green, 2834/2834 (100%). No known won't-fix.
+**Current status**: `:compiler:java-direct:test` full suite green, 2835/2835 (100%). No known won't-fix.
 
 **Last archived**: `implDocs/archive/ITERATION_RESULTS_2026_06_01.md` (entries through 2026-06-01).
 
@@ -35,6 +35,35 @@ This log is read into the agent's context every session, so **entries must stay 
 ---
 
 <!-- Add new entries below, newest first. -->
+
+### 2026-07-08 — Merge the classFinder-only fast paths into the origin-agnostic ladder; add j-k-j regression test
+- **Change**: Reviewer asked for a reproduction of the same-level cross-origin ambiguity blind spot
+  in a Java-Kotlin-Java (j-k-j) shape and a real fix rather than an accepted-limitation note. Found
+  two independent classFinder-only fast paths that returned a single, non-ambiguous *source-only*
+  candidate without ever checking a same-level Kotlin/binary competitor: (1)
+  `resolveInheritedInnerForLevel` (`JavaTypeResolver.kt`, the `ClassId`-returning Step-1 dispatcher)
+  used a cached `collectInheritedInnerClasses` map and returned on `candidates.size == 1`; (2)
+  `findInnerClassFromSupertypes`'s separate `classFinder`-backed cross-file-source arm (already
+  merged into the origin-agnostic ladder together with the binary/Kotlin tail earlier this
+  session). Simplified (1) to always delegate to `resolveInheritedInnerClassToClassId` via the new
+  `tryResolveInherited` (classFinder-first, FIR-fallback existence probe, reused from (2)'s earlier
+  fix), removing the now-dead `getInheritedInnerClassesForClass` cache and
+  `JavaScopeContext.InheritedInnerCache`. Also fixed a real ambiguity-walk bug in
+  `walkSupertypeClassIds`: expansion to the next level was gated on a *global* `foundClassId`, so an
+  unrelated sibling ancestor stopped being expanded as soon as any other ancestor matched at the
+  same level, hiding a deeper conflicting match — now gated per-ancestor.
+- **Files**: `resolution/JavaTypeResolver.kt` (`resolveInheritedInnerForLevel` simplified,
+  `tryResolveInherited` added, dead cache removed), `resolution/JavaScopeContext.kt`
+  (`InheritedInnerCache` removed), `resolution/JavaInheritedMemberResolver.kt`
+  (`walkSupertypeClassIds` per-ancestor fix, `findInnerClassFromSupertypes` KDoc),
+  `resolution/JavaScopeResolver.kt` (`declaredOrFullyInherited` uses `tryResolveInherited`);
+  `testData/diagnostics/tests/jvm/javaDirect/ambiguousInheritedInnerClassAcrossSourceAndKotlinSupertypes.kt`
+  (new).
+- **Tests**: `:compiler:java-direct:test` full suite green, 2835/2835 (0 failures; 1 new).
+- **Result**: green. A Java class inheriting the same nested-class name from an unrelated cross-file
+  Java source ancestor and a Kotlin/binary ancestor now correctly fails to resolve
+  (`MISSING_DEPENDENCY_CLASS`) in both resolution pipelines, instead of silently picking the
+  source-only candidate.
 
 ### 2026-07-08 — Merge the source/binary supertype walks into one BFS; add reentrancy regression test
 - **Change**: Reviewer follow-up on the two-pass split in `resolveInheritedInnerClassToClassId`

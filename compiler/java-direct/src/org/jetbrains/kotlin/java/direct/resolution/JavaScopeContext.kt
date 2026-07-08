@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Per-position immutable scope **data** for Java source resolution.
@@ -30,22 +28,7 @@ internal class JavaScopeContext(
     val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
     /** Type parameters with LOW priority (outer class inherited params, shadowed by inner class names). */
     val inheritedTypeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
-    /**
-     * Lazily computed inherited inner classes, cached per enclosing class. For a given class
-     * [ClassId] maps simpleName -> Set<ClassId> of the inner classes it transitively inherits
-     * from its supertypes. Resolution walks the containing chain level by level and queries this
-     * cache once per level, so the per-class keying preserves the JLS 6.4.1 priority (an inner
-     * level shadows an outer one) while still avoiding repeated supertype walks.
-     *
-     * Shared by reference across [withTypeParameters] / [withInheritedTypeParameters] forks
-     * (containing class unchanged) and reset on [withContainingClass].
-     */
-    val inheritedInnerCache: InheritedInnerCache = InheritedInnerCache(),
 ) {
-    class InheritedInnerCache {
-        val byClass: ConcurrentHashMap<ClassId, Map<String, Set<ClassId>>> = ConcurrentHashMap()
-    }
-
     /**
      * Creates a new scope with additional OWN type parameters (high priority).
      * Used when entering a class or method that declares type parameters.
@@ -57,7 +40,6 @@ internal class JavaScopeContext(
         return JavaScopeContext(
             sameFileTopLevelClassProvider, containingClass, newScope,
             inheritedTypeParametersInScope,
-            inheritedInnerCache, // share — containingClass unchanged
         )
     }
 
@@ -72,7 +54,6 @@ internal class JavaScopeContext(
         return JavaScopeContext(
             sameFileTopLevelClassProvider, containingClass, typeParametersInScope,
             newInherited,
-            inheritedInnerCache, // share — containingClass unchanged
         )
     }
 
@@ -86,7 +67,6 @@ internal class JavaScopeContext(
             containingClass = newContainingClass,
             typeParametersInScope = typeParametersInScope,
             inheritedTypeParametersInScope = inheritedTypeParametersInScope,
-            // fresh InheritedInnerCache — containingClass changed
         )
     }
 }

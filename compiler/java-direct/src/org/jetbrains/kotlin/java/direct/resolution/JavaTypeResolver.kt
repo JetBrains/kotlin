@@ -195,9 +195,9 @@ private fun resolveSimpleNameToClassIdImpl(
  * member type **declared** by that class, then the member types it **inherits** from its
  * supertypes, before moving outward. Per JLS 6.4.1 a member type declared or inherited at an
  * inner level shadows one declared or inherited at an enclosing level, so the declared and
- * inherited lookups must interleave level by level. The inherited lookup mirrors the AST
- * classifier path in [findClassInCurrentScope] but additionally reaches Kotlin / binary
- * supertypes through the `ClassId` BFS.
+ * inherited lookups must interleave level by level. The inherited lookup reuses
+ * [resolveInheritedInnerClassToClassId]'s origin-agnostic ladder, so a cross-file Java source,
+ * Kotlin, and binary supertype at the same level are all compared for ambiguity together.
  *
  * Same-file top-level classes are NOT resolved here: they share their `ClassId` with same-package
  * cross-file classes, so [resolveFromSamePackage] picks them up at the next step. The AST fast
@@ -223,39 +223,11 @@ private fun resolveFromLocalScope(
             if (tryResolve(declared)) return declared
             // Member types this class inherits from its supertypes (cross-file Java source,
             // Kotlin, and binary), restricted to this single level so the interleaving holds.
-            resolveInheritedInnerForLevel(simpleName, current, containingId, tryResolve)?.let { return it }
+            resolveInheritedInnerClassToClassId(simpleName, { tryResolveInherited(it) }, current)?.let { return it }
         }
         current = current.outerClass
     }
     return null
-}
-
-/**
- * Resolves a member type [simpleName] inherited by a single class [containingClass] (identified by
- * [containingId]) from its supertypes. Uses the per-class cached map of inherited inner names for
- * Java-source supertypes (fast path + same-level ambiguity detection) and falls back to the
- * supertype BFS for the Kotlin / binary supertypes the map does not cover.
- */
-context(c: JavaResolutionContext)
-private fun resolveInheritedInnerForLevel(
-    simpleName: String,
-    containingClass: JavaClass,
-    containingId: ClassId,
-    tryResolve: (ClassId) -> Boolean,
-): ClassId? {
-    val inherited = getInheritedInnerClassesForClass(containingId)
-    if (inherited != null) {
-        val candidates = inherited[simpleName] ?: emptySet()
-        when {
-            candidates.size > 1 -> return null // Ambiguously inherited at this level – don't resolve.
-            candidates.size == 1 -> {
-                val candidateClassId = candidates.first()
-                if (tryResolve(candidateClassId)) return candidateClassId
-            }
-            // candidates.isEmpty(): fall back to the BFS for Kotlin / binary supertypes.
-        }
-    }
-    return resolveInheritedInnerClassToClassId(simpleName, tryResolve, containingClass)
 }
 
 /**
@@ -481,6 +453,23 @@ internal fun tryResolve(classId: ClassId): Boolean {
 }
 
 /**
+ * [tryResolve] extended to probe [classId] against the source index first, via the same
+ * `isClassInIndex` + `findClass` check [classifierAdapterFor] and [directSupertypeClassIds]'s
+ * source-Java arm already use, before falling back to [tryResolve]. Lets a cross-file Java
+ * source ancestor be checked for existence from its AST alone, like a same-file one already is,
+ * so [JavaInheritedMemberResolver.findInnerClassFromSupertypes] can compare it for ambiguity in
+ * the same walk as a binary Java or Kotlin ancestor instead of needing a separate arm for each.
+ */
+context(c: JavaResolutionContext)
+internal fun tryResolveInherited(classId: ClassId): Boolean {
+    val finder = c.fileContext.classFinder
+    if (finder != null && finder.isClassInIndex(classId)) {
+        return finder.findClass(JavaClassFinder.Request(classId)) != null
+    }
+    return tryResolve(classId)
+}
+
+/**
  * Whether [classId] denotes an annotation class whose declared `@Target` lists `TYPE_USE`
  * (Java) or `TYPE` (Kotlin). Used by [org.jetbrains.kotlin.java.direct.model.JavaTypeOverAst]
  * to pre-filter `memberAnnotations`.
@@ -695,22 +684,6 @@ private fun resolveSupertypeNames(enclosing: JavaClass): List<ClassId> =
     enclosing.supertypes.mapNotNull { supertype ->
         (supertype.classifier as? JavaClass)?.classId
     }
-
-/**
- * Transitively inherited inner class names for a single enclosing class [classId], as reported by
- * the Java-source class finder (maps simpleName -> Set<ClassId>). Cached per class on
- * [JavaScopeContext.inheritedInnerCache] so the level-by-level walk in [resolveFromLocalScope] does
- * not re-collect the same class on every simple-name resolution. Returns `null` when no class
- * finder is available (the caller then falls back to the supertype BFS).
- */
-context(c: JavaResolutionContext)
-private fun getInheritedInnerClassesForClass(classId: ClassId): Map<String, Set<ClassId>>? {
-    val finder = c.fileContext.classFinder ?: return null
-    val cache = c.scopeContext.inheritedInnerCache
-    return cache.byClass.getOrPut(classId) {
-        finder.collectInheritedInnerClasses(classId)
-    }
-}
 
 /**
  * Unified single-import lookup ([JavaImports.getSingleImport]): tries the single-type-import

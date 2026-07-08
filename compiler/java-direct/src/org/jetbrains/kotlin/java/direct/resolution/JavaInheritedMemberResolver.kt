@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
-import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.java.structure.impl.splitCanonicalFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -30,7 +28,6 @@ import org.jetbrains.kotlin.name.Name
  *   [walkSupertypeClassIds] directly, seeded with that `ClassId`'s own direct supertypes.
  */
 internal class JavaInheritedMemberResolver(
-    private val classFinder: LeanJavaClassFinder?,
     private val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
 ) {
 
@@ -38,34 +35,34 @@ internal class JavaInheritedMemberResolver(
      * Searches for an inner class with the given name in the supertype hierarchy.
      *
      * Returns null if multiple inner classes with the same name are found (ambiguity),
-     * matching `javac`'s `MISSING_DEPENDENCY_CLASS` error. Uses the [classFinder] (if
-     * available) to detect cross-file ambiguities and to materialize the inherited
-     * `JavaClass` for cross-file Java-source supertypes; falls back to
-     * [sameFileTopLevelClassProvider] for same-file supertypes.
+     * matching `javac`'s `MISSING_DEPENDENCY_CLASS` error.
      *
-     * Ambiguity is compared within each arm, not across them: a match from the same-file loop
-     * below (including one surfaced by its own recursive calls into a deeper supertype's
-     * cross-file/binary/Kotlin arms) is returned without checking whether [classFinder] or
-     * [resolveBinaryOrKotlinInherited] would also match a different candidate among [javaClass]'s
-     * own supertypes, and a non-null [classFinder] result — ambiguous or not — skips
-     * [resolveBinaryOrKotlinInherited] entirely. Same accepted source/binary mixed-hierarchy
-     * trade-off as review.md comment #7.
+     * Ambiguity is compared within each of the two arms below, but not across them: a match
+     * from the same-file loop (including one surfaced by its own recursive calls) is returned
+     * without checking whether [resolveInherited] would also match a different candidate among
+     * [javaClass]'s own supertypes. Same-file supertypes are kept as their own prioritized,
+     * short-circuited arm rather than folded into [resolveInherited]'s ladder for two reasons:
+     * a same-file [JavaClassOverAst] must stay the exact instance FIR already matches type
+     * parameters against by identity, and this arm must keep working with no [LeanJavaClassFinder]
+     * or FIR session at all (`JavaParsingTypeResolutionTest.testInheritedInnerClassFromNestedGenericSupertype`).
+     * Cross-file source, binary Java, and Kotlin supertypes no longer have this restriction, so
+     * they are merged into [resolveInherited]'s single origin-agnostic ladder, closing a gap
+     * where a cross-file-source match used to be returned without ever checking for a
+     * conflicting binary/Kotlin one (regression test:
+     * `testData/diagnostics/tests/jvm/javaDirect/ambiguousInheritedInnerClassAcrossSourceAndKotlinSupertypes.kt`).
      *
-     * @param resolveBinaryOrKotlinInherited the binary/Kotlin tail, tried only after the
-     *        same-file and cross-file-source arms above have found nothing for [javaClass]
-     *        itself: resolves an inherited inner class of [javaClass] to a `ClassId` by reusing
-     *        [resolveInheritedInnerClassToClassId]'s generic ladder (already binary/Kotlin-aware
-     *        via [directSupertypeClassIds]).
-     * @param classifierAdapterFor materializes the `ClassId` found by
-     *        [resolveBinaryOrKotlinInherited] back into a navigable [JavaClass] — routes
-     *        source-backed results to their canonical [JavaClassOverAst], wraps binary/Kotlin
-     *        results in a [FirBackedJavaClassAdapter].
+     * @param resolveInherited resolves an inherited inner class of [javaClass] to a `ClassId`,
+     *        tried only after the same-file arm above found nothing for [javaClass] itself, by
+     *        reusing [resolveInheritedInnerClassToClassId]'s generic ladder.
+     * @param classifierAdapterFor materializes the `ClassId` found by [resolveInherited] back
+     *        into a navigable [JavaClass] — routes source-backed results to their canonical
+     *        [JavaClassOverAst], wraps binary/Kotlin results in a [FirBackedJavaClassAdapter].
      */
     fun findInnerClassFromSupertypes(
         name: Name,
         javaClass: JavaClassOverAst,
         visited: MutableSet<JavaClass>,
-        resolveBinaryOrKotlinInherited: (JavaClass, Name) -> ClassId?,
+        resolveInherited: (JavaClass, Name) -> ClassId?,
         classifierAdapterFor: (ClassId) -> JavaClass?,
     ): JavaClass? {
         if (!visited.add(javaClass)) return null
@@ -73,38 +70,24 @@ internal class JavaInheritedMemberResolver(
         var foundInnerClass: JavaClass? = null
 
         // Same-file supertypes — local resolution by simple name via resolveSameFileSupertype,
-        // not classFinder.collectInheritedInnerClasses below: the latter's candidate generator
-        // (JavaSupertypeGraph.resolveSupertypeReference) deliberately avoids triggering
-        // resolution and so declines dotted supertype references, which would miss a same-file
-        // qualified supertype like `class Foo extends x.S`; same-file JavaClassOverAst data is
-        // also already free to navigate in memory, so caching it there would buy nothing. Cross-
-        // file source supertypes are handled by the classFinder fallback below; binary/Kotlin
-        // supertypes by the tail.
+        // not classFinder.collectInheritedInnerClasses (used by resolveInherited below): the
+        // latter's candidate generator (JavaSupertypeGraph.resolveSupertypeReference)
+        // deliberately avoids triggering resolution and so declines dotted supertype
+        // references, which would miss a same-file qualified supertype like
+        // `class Foo extends x.S`; same-file JavaClassOverAst data is also already free to
+        // navigate in memory, so caching it there would buy nothing.
         for (supertype in javaClass.supertypes) {
             val supertypeClass = resolveSameFileSupertype(supertype) ?: continue
-            (supertypeClass.findInnerClass(name) ?: findInnerClassFromSupertypes(name, supertypeClass, visited, resolveBinaryOrKotlinInherited, classifierAdapterFor))?.let {
+            (supertypeClass.findInnerClass(name) ?: findInnerClassFromSupertypes(name, supertypeClass, visited, resolveInherited, classifierAdapterFor))?.let {
                 if (foundInnerClass == null) foundInnerClass = it else return null
             }
         }
 
         if (foundInnerClass != null) return foundInnerClass
 
-        val containingClassId = javaClass.classId ?: return null
-        if (classFinder != null) {
-            val candidates = classFinder.collectInheritedInnerClasses(containingClassId)[name.asString()]
-            // A non-null `candidates` map entry means the source hierarchy has an opinion on
-            // [name] (including ambiguity, via `singleOrNull()` returning null for size > 1) and
-            // must not fall through to the tail below, which could otherwise silently pick one
-            // of the ambiguous candidates and mask the ambiguity.
-            if (candidates != null) {
-                return candidates.singleOrNull()?.let { classFinder.findClass(JavaClassFinder.Request(it)) }
-            }
-        }
-
-        // Binary/Kotlin tail — the same-file and cross-file-source arms above found nothing for
-        // `javaClass`'s own supertypes; fall through to the generic ClassId ladder, which is
-        // already binary/Kotlin-aware.
-        val inheritedId = resolveBinaryOrKotlinInherited(javaClass, name) ?: return null
+        // Cross-file source, binary Java, and Kotlin supertypes — one origin-agnostic ClassId
+        // ladder, so a match from one origin is compared for ambiguity against every other.
+        val inheritedId = resolveInherited(javaClass, name) ?: return null
         return classifierAdapterFor(inheritedId)
     }
 
@@ -221,16 +204,19 @@ internal class JavaInheritedMemberResolver(
                 if (tryResolve(innerClassId)) {
                     if (foundClassId != null && foundClassId != innerClassId) return null
                     foundClassId = innerClassId
-                }
-                if (foundClassId == null) {
+                } else {
+                    // Expansion is decided per ancestor, not by whether some other ancestor at
+                    // this level already matched — otherwise a match found via one ancestor
+                    // would stop an unrelated sibling ancestor from being expanded, hiding a
+                    // deeper conflicting match one or more levels further down (regression test:
+                    // testAmbiguousInheritedInnerClassAcrossSourceAndKotlinSupertypes.kt).
                     nextLevelIds.addAll(directSupertypeClassIds(ancestorId))
                 }
             }
 
-            if (foundClassId != null) return foundClassId
             currentLevelIds = nextLevelIds
         }
-        return null
+        return foundClassId
     }
 }
 

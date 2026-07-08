@@ -57,13 +57,12 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val derived = topLevelClasses.getValue("Derived")
 
         val resolver = JavaInheritedMemberResolver(
-            classFinder = null,
             sameFileTopLevelClassProvider = { name -> topLevelClasses[name.asString()] },
         )
 
         val found = resolver.findInnerClassFromSupertypes(
             Name.identifier("Target"), derived, mutableSetOf(),
-            resolveBinaryOrKotlinInherited = { _, _ -> null },
+            resolveInherited = { _, _ -> null },
             classifierAdapterFor = { null },
         )
         assert(found != null) {
@@ -116,7 +115,6 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val expectedNestedId = grandparentClassId.createNestedClassId(Name.identifier("Nested"))
 
         val resolver = JavaInheritedMemberResolver(
-            classFinder = null,
             sameFileTopLevelClassProvider = { name -> topLevelClasses[name.asString()] },
         )
 
