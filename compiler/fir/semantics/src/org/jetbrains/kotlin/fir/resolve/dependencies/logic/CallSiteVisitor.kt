@@ -173,7 +173,7 @@ internal class CallSiteVisitor(
         if (!node.symbol.inVisitedFiles) node.symbol.postponeFileEntity()
         context.accessingNode calls node
         if (node !is FunctionIndex.Constructor) {
-            val enclosingEntity = node.lazilyInitialized ?: return@apply
+            val enclosingEntity = node.lazilyInitialized?.parentEnclosingEntityOrSelf ?: return@apply
             val possiblyInitializedEndNode = enclosingEntity.endInitializationIndex
             possiblyInitializedEndNode mayHappenBefore node
         }

@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 
 sealed interface InitializationCycleAccessResult {
@@ -133,7 +132,7 @@ data class PropertyIndex(
     context(sessionHolder: SessionHolder)
     override val containingFile: FirFileSymbol? get() = sessionHolder.session.firProvider.getContainingFile(symbol)?.symbol
 
-    val name: FqName get() = symbol.callableId?.classId?.relativeClassName?.child(symbol.name) ?: CallableId(symbol.name).asSingleFqName()
+    val name: FqName get() = symbol.callableId?.classId?.relativeClassName?.child(symbol.name) ?: FqName.topLevel(symbol.name)
 
     override fun toString(): String = "${symbol.callableId?.classId?.relativeClassName ?: ""}.${symbol.name.asString()}"
 }
@@ -178,9 +177,8 @@ sealed class FunctionIndex<D : FirFunction> : DeclarationIndex<FirFunction>, Acc
         override val accessAnalysisResult: InitializationCycleAccessResult
             get() {
                 return when {
-                    lazilyInitialized?.let { accessingEntity?.parentEnclosingEntityOrSelf != it && it in cycle && it.isNotPrivate } == true -> {
+                    lazilyInitialized?.let { accessingEntity?.parentEnclosingEntityOrSelf != it && it in cycle && it.isNotPrivate } == true ->
                         InitializationCycleAccessResult.DeadlockInducingConstructorCall(this)
-                    }
                     else -> InitializationCycleAccessResult.PropagatesTransitiveDependencies
                 }
             }
