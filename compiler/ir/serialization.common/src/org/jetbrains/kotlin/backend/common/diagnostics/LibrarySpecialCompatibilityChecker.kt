@@ -69,7 +69,7 @@ abstract class LibrarySpecialCompatibilityChecker {
         // It might happen that the compiler has already got a new major version (N.M+1.0), but there is still the old bootstrap compiler
         // version (N.M,*) used to compile stdlib & kotlin-test libraries. As a result, these libraries still have `abi_version=N.M.0`
         // in their manifest files. And the compatibility check, if it were applied, would fail.
-        val useRelaxedCompatibilityCheckForDevCompilerVersion = isLatestKlibAbiCompatibilityLevel && compilerVersion.isDevVersion
+        val useRelaxedCompatibilityCheckForDevCompilerVersion = true // TODO(KT-87548) revert to after bootstrap isLatestKlibAbiCompatibilityLevel && compilerVersion.isDevVersion
 
         for (library in libraries) {
             val checkedLibrary = library.toCheckedLibrary() ?: continue
