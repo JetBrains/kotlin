@@ -58,11 +58,7 @@ object ToStringBodyBuilder : IrBodyBuilder<ToStringGeneratorKey>() {
 
             for ([index, propInfo] in key.propertyInfos.withIndex()) {
                 @OptIn(UnsafeDuringIrConstructionAPI::class)
-                val propertyDeclaration = irClass.findDeclaration<IrProperty> { it.name == propInfo.propertyName }
-
-                if (propertyDeclaration == null || (propertyDeclaration.backingField == null && propInfo.ignoreWithoutBackingField)) {
-                    continue
-                }
+                val propertyDeclaration = irClass.findDeclaration<IrProperty> { it.name == propInfo.propertyName } ?: continue
 
                 addArgument(
                     irString(

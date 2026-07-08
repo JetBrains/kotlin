@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
@@ -42,12 +43,10 @@ import org.jetbrains.kotlin.name.Name
  *
  * @param propertyName the simple name of the backing property
  * @param displayName  the prefix to emit before `=value`; `null` means no prefix (includeFieldNames = false)
- * @param ignoreWithoutBackingField whether to ignore the property if it has no backing field
  */
 data class ToStringPropertyInfo(
     val propertyName: Name,
     val displayName: String?,
-    val ignoreWithoutBackingField: Boolean,
 )
 
 /**
@@ -148,14 +147,12 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
                 val toStringIncludeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_INCLUDE_ID, session)
                 val config = session.lombokService.config
 
-                // Can't check for `property.hasBackingField` right here
-                // because it requires the `BODY_RESOLVE ` phase, but the current phase might be less.
-                // Delegate the computation to the IR generator.
-                val ignoreWithoutBackingField = if (toStringIncludeAnnotation != null) {
-                    false
-                } else {
-                    if (toStringConfig.onlyExplicitlyIncluded ?: config.toStringOnlyExplicitlyIncluded) return@processAllProperties
-                    true // Treat properties without backing fields as parameterless methods, so include them if only they are explicitly included.
+                if (toStringIncludeAnnotation == null) {
+                    if (!property.hasBackingField || // Treat properties without backing fields as parameterless methods, so include them if only they are explicitly included.
+                        (toStringConfig.onlyExplicitlyIncluded ?: config.toStringOnlyExplicitlyIncluded)
+                    ) {
+                        return@processAllProperties
+                    }
                 }
 
                 val displayName = if (toStringConfig.includeFieldNames ?: config.toStringIncludeFieldNames) {
@@ -177,7 +174,7 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
                     }
                     ?: 0
 
-                add(ToStringPropertyInfo(propertyName, displayName, ignoreWithoutBackingField) to rank)
+                add(ToStringPropertyInfo(propertyName, displayName) to rank)
             }
             sortByDescending { it.second }
         }.map { it.first }
