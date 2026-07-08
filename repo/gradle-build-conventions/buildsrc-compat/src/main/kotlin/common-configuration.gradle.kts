@@ -1,5 +1,4 @@
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -225,12 +224,8 @@ private fun Project.shouldUseOldJvmDefaultArgument(): Boolean {
     return isOldCompilerVersion
 }
 
-private val kotlinCompilerVersionForGradle = rootProject.extensions
-    .getByType(VersionCatalogsExtension::class.java)
-    .named("libs")
-    .findVersion("kotlin-for-gradle-plugins-compilation")
-    .get()
-    .displayName
+private val libs = project.the<LibrariesForLibs>()
+private val kotlinCompilerVersionForGradle = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
 
 private fun Project.skipArgumentForOlderKotlinCompilerVersion(): Boolean {
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
