@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import java.io.Serializable
 
 /** Snapshot of a classpath. It consists of a list of [ClasspathEntrySnapshot]s. */
 class ClasspathSnapshot(val classpathEntrySnapshots: List<ClasspathEntrySnapshot>)
@@ -20,14 +21,14 @@ class ClasspathSnapshot(val classpathEntrySnapshots: List<ClasspathEntrySnapshot
  * NOTE: It's important that the path to the classpath entry is not part of this snapshot. The reason is that classpath entries produced by
  * different builds or on different machines but having the same contents should be considered the same for better build performance.
  */
-class ClasspathEntrySnapshot(
+class ClasspathEntrySnapshot (
 
     /**
      * Maps (Unix-style) relative paths of classes to their snapshots. The paths are relative to the containing classpath entry (directory
      * or jar).
      */
     val classSnapshots: LinkedHashMap<String, ClassSnapshot>
-)
+) : Serializable
 
 /**
  * Snapshot of a class. It contains minimal information about a class to compute the source files that need to be recompiled during an

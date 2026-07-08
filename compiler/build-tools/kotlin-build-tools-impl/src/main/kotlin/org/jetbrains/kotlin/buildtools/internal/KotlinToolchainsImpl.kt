@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.GcMetric
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
 import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
@@ -12,9 +19,11 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.COMPILER_ARGUMENTS_LOG_LEVEL
 import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.LOOKUP_TRACKER
+import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl.Companion.METRICS_COLLECTOR
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
@@ -28,10 +37,14 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerId
+import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.incremental.clearJarCaches
 import java.io.File
 import java.net.URLClassLoader
+import java.rmi.Remote
 import java.rmi.RemoteException
+import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.*
 
 internal class KotlinToolchainsImpl() : KotlinToolchains {
@@ -39,8 +52,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
 
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        return toolchains.computeIfAbsent(type) { type ->
+        @Suppress("UNCHECKED_CAST") return toolchains.computeIfAbsent(type) { type ->
             when (type) {
                 JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(getCompilerVersion())
                 JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(getCompilerVersion())
@@ -111,9 +123,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         private fun <R> BuildOperationImpl<R>.executeInDaemon(executionPolicy: DaemonExecutionPolicyImpl, logger: KotlinLogger?): R {
             val kotlinLogger = logger ?: DefaultKotlinLogger
             val loggerAdapter = KotlinLoggerMessageCollectorAdapter(
-                kotlinLogger,
-                DefaultCompilerMessageRenderer,
-                false
+                kotlinLogger, DefaultCompilerMessageRenderer, false
             )
             kotlinLogger.debug("Compiling using the daemon strategy")
             val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
@@ -149,7 +159,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
 //            val daemonCompileOptions = toDaemonCompilationOptions(loggerAdapter.kotlinLogger.isDebugEnabled, arguments)
 //            loggerAdapter.kotlinLogger.info("Options for KOTLIN DAEMON: $daemonCompileOptions")
 //
-//            val metricsReporter = getMetricsReporter()
+            val metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> = getMetricsReporter()
 //            val exitCode = daemon.compile(
 //                sessionId,
 //                arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
@@ -161,13 +171,53 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
 //                compilationId
 //            ).get()
 
+            val remoteMetricsReporter = this[METRICS_COLLECTOR]?.let {
+                object : UnicastRemoteObject(
+                    SOCKET_ANY_FREE_PORT,
+                    LoopbackNetworkInterface.clientLoopbackSocketFactory,
+                    LoopbackNetworkInterface.serverLoopbackSocketFactory
+                ), RemoteBuildMetricsCollector, BuildMetricsCollector by it {
+//                    override fun collectMetric(
+//                        name: String,
+//                        type: BuildMetricsCollector.ValueType,
+//                        value: Long,
+//                    ) {
+//                        it.collectMetric(name, type, value)
+//                    }
+                }
+            }
+
+            @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") val localKGPMetrics =
+                if (this[BuildOperationImpl.XX_KGP_METRICS_COLLECTOR]) {
+                    val localKGPMetrics = BuildMetricsReporterImpl<BuildTimeMetric, BuildPerformanceMetric>()
+                    this[BuildOperationImpl.XX_KGP_REMOTE_METRICS_REPORTER] = object : UnicastRemoteObject(
+                        SOCKET_ANY_FREE_PORT,
+                        LoopbackNetworkInterface.clientLoopbackSocketFactory,
+                        LoopbackNetworkInterface.serverLoopbackSocketFactory
+                    ), RemoteBuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+                        BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> by localKGPMetrics {}
+                    localKGPMetrics
+                } else null
+
+            set(METRICS_COLLECTOR, remoteMetricsReporter)
+
             if (loggerAdapter.kotlinLogger.isDebugEnabled) {
                 daemon.getDaemonJVMOptions().takeIf { it.isGood }?.let { jvmOpts ->
                     loggerAdapter.kotlinLogger.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
                 }
             }
 
-            val result = daemon.executeOperation(this)
+            @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
+            val result = daemon.executeOperation(this, object : UnicastRemoteObject(
+                SOCKET_ANY_FREE_PORT,
+                LoopbackNetworkInterface.clientLoopbackSocketFactory,
+                LoopbackNetworkInterface.serverLoopbackSocketFactory
+            ), RemoteKotlinLogger, KotlinLogger by kotlinLogger {})
+
+
+            if (localKGPMetrics != null) {
+                populateMetricsCollector(localKGPMetrics)
+            }
 
             try {
                 daemon.releaseCompileSession(sessionId)
@@ -203,4 +253,75 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             file.delete()
         }
     }
+}
+
+@ExperimentalBuildToolsApi
+internal interface RemoteBuildMetricsCollector : BuildMetricsCollector, Remote {
+    @Throws(RemoteException::class)
+    override fun collectMetric(name: String, type: BuildMetricsCollector.ValueType, value: Long)
+}
+
+internal interface RemoteBuildMetricsReporter<B : BuildTimeMetric, P : BuildPerformanceMetric> : BuildMetricsReporter<B, P>, Remote {
+    @Throws(RemoteException::class)
+    override fun startMeasure(time: B)
+
+    @Throws(RemoteException::class)
+    override fun endMeasure(time: B)
+
+    @Throws(RemoteException::class)
+    override fun addTimeMetricNs(time: B, durationNs: Long)
+
+    @Deprecated("Use addTimeMetricNs instead", ReplaceWith("addTimeMetricNs(time, durationNs)"))
+    @Throws(RemoteException::class)
+    override fun addTimeMetricMs(time: B, durationMs: Long) = addTimeMetricNs(time, durationMs * 1_000_000)
+
+    @Throws(RemoteException::class)
+    override fun addMetric(metric: P, value: Long)
+
+    @Throws(RemoteException::class)
+    override fun addTimeMetric(metric: P)
+
+    //Change metric to enum if possible
+    @Throws(RemoteException::class)
+    override fun addGcMetric(metric: String, value: GcMetric)
+
+    @Throws(RemoteException::class)
+    override fun startGcMetric(name: String, value: GcMetric)
+
+    @Throws(RemoteException::class)
+    override fun endGcMetric(name: String, value: GcMetric)
+
+    @Throws(RemoteException::class)
+    override fun addAttribute(attribute: BuildAttribute)
+
+    @Throws(RemoteException::class)
+    override fun getMetrics(): BuildMetrics<in B, P>
+
+    @Throws(RemoteException::class)
+    override fun addMetrics(metrics: BuildMetrics<out B, out P>)
+}
+
+internal interface RemoteKotlinLogger : KotlinLogger, Remote {
+    @get:Throws(RemoteException::class)
+    override val isDebugEnabled: Boolean
+
+    @Throws(RemoteException::class)
+    override fun error(msg: String, throwable: Throwable?)
+
+    @Throws(RemoteException::class)
+    override fun warn(msg: String) {
+        warn(msg, null)
+    }
+
+    @Throws(RemoteException::class)
+    override fun warn(msg: String, throwable: Throwable?)
+
+    @Throws(RemoteException::class)
+    override fun info(msg: String)
+
+    @Throws(RemoteException::class)
+    override fun debug(msg: String)
+
+    @Throws(RemoteException::class)
+    override fun lifecycle(msg: String)
 }

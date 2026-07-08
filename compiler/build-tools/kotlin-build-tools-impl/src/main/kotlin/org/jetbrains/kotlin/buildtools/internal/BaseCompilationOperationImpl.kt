@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl.Companion.XX_KGP_METRICS_COLLECTOR_OUT
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.DAEMON_RUN_DIR_PATH
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.JVM_ARGUMENTS
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_COUNT_LIMIT
@@ -236,14 +237,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
     }
 
-    protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>) {
-        if (this[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
-            this[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
-                ObjectOutputStream(this).writeObject(metricsReporter)
-            }.toByteArray()
-        }
-    }
-
     abstract fun getRootProjectDir(): Path?
 
     abstract fun createAndPrepareCompilerArguments(): CompilerArgs
@@ -339,6 +332,14 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", false)
 
+    }
+}
+
+internal fun BuildOperationImpl<*>.populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>) {
+    if (this[BuildOperationImpl.XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
+        this[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
+            ObjectOutputStream(this).writeObject(metricsReporter)
+        }.toByteArray()
     }
 }
 

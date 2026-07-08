@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -51,7 +52,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @DisplayName("Basic incremental compilation metrics test")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+        jvmProject(strategyConfig.first, strategyConfig.second/*.maybeConnectDaemonToLocalhostDebugger()*/) {
             val module1 = module("basic-multimodule-project/module-1")
             val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
@@ -122,7 +123,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             val bazKt = module1.sourcesDirectory.resolve("baz.kt")
             bazKt.writeText(bazKt.readText().replace("baz() = 42", "baz() = 99"))
 
-            module1.compileIncrementallyWithMetrics(SourcesChanges.Known(modifiedFiles = listOf(bazKt.toFile()), removedFiles = emptyList())) { metrics ->
+            module1.compileIncrementallyWithMetrics(forceOutput = LogLevel.DEBUG, sourcesChanges = SourcesChanges.Known(modifiedFiles = listOf(bazKt.toFile()), removedFiles = emptyList())) { metrics ->
                 assertCompiledSources("baz.kt")
 
                 val expectedNames = incrementalCompilationMetricNames

@@ -11,12 +11,37 @@ import org.jetbrains.kotlin.incremental.classpathDiff.AccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotExternalizer
 import org.jetbrains.kotlin.incremental.classpathDiff.InaccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.storage.saveToFile
+import java.io.DataInputStream
+import java.io.DataOutputStream
 import java.io.File
+import java.io.IOException
+import java.io.ObjectInputStream
 
-internal class ClasspathEntrySnapshotImpl(
-    private val origin: org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshot,
-) :
+
+internal class ClasspathEntrySnapshotImpl private constructor() :
     ClasspathEntrySnapshot {
+    val origin: org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshot get() = _origin
+
+    private lateinit var _origin: org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshot
+
+    constructor(origin: org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshot) : this() {
+        this._origin = origin
+    }
+
+    private fun writeObject(out: java.io.ObjectOutputStream) {
+        val dataOutputStream = DataOutputStream(out)
+        ClasspathEntrySnapshotExternalizer.save(dataOutputStream, origin)
+        dataOutputStream.flush()
+
+    }
+
+    @Throws(IOException::class, ClassNotFoundException::class)
+    private fun readObject(`in`: ObjectInputStream) {
+        val dataInputStream = DataInputStream(`in`)
+        _origin = ClasspathEntrySnapshotExternalizer.read(dataInputStream)
+    }
+
+
     override val classSnapshots: Map<String, ClassSnapshot>
         get() = origin.classSnapshots.mapValues {
             when (val snapshot = it.value) {

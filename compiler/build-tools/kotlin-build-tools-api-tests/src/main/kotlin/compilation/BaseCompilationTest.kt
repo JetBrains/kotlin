@@ -69,4 +69,25 @@ abstract class BaseCompilationTest {
             Thread.sleep(150)
         } while (tries-- > 0)
     }
+
+    /**
+     * Configures the Kotlin daemon to connect to a debugger running on localhost, if the execution policy
+     * supports daemon execution. If the current execution policy does not use a daemon, the execution policy
+     * is returned unchanged.
+     *
+     * The debugger connection is set up with the following parameters:
+     * - transport: `dt_socket`
+     * - server: `n`
+     * - address: `wojtek-pc:5005`
+     * - suspend: `y`
+     *
+     * @return A modified [ExecutionPolicy] with debugger connection arguments added for daemon execution,
+     *         or the original [ExecutionPolicy] if it does not support daemon execution.
+     */
+    fun ExecutionPolicy.maybeConnectDaemonToLocalhostDebugger(): ExecutionPolicy =
+        (this as? ExecutionPolicy.WithDaemon)?.toBuilder()?.apply {
+            val previousJvmArgs = this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] ?: emptyList()
+            this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] =
+                previousJvmArgs + "agentlib:jdwp=transport=dt_socket,server=n,address=localhost:5005,suspend=y"
+        }?.build() ?: this
 }

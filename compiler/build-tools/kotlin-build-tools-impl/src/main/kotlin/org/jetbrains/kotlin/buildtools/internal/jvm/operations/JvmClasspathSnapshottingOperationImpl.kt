@@ -14,11 +14,12 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
+import java.io.File
 import java.nio.file.Path
 
 internal class JvmClasspathSnapshottingOperationImpl private constructor(
     override val options: Options = Options(JvmClasspathSnapshottingOperation::class),
-    override val classpathEntry: Path,
+    classpathEntry: Path,
 ) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
     DeepCopyable<JvmClasspathSnapshottingOperation> {
 
@@ -28,6 +29,11 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
     ) {
         initializeOptions(this::class, options)
     }
+
+    override val classpathEntry: Path
+        get() = _classpathEntry.toPath()
+
+    val _classpathEntry: File = classpathEntry.toFile()
 
     override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder = deepCopy()
 

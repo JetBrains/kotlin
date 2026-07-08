@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -40,7 +43,6 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
-    @OptIn(UseFromImplModuleRestricted::class)
     operator fun <V> set(key: Option<V>, value: V) {
         options[key] = value
     }
@@ -50,6 +52,8 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
     companion object {
         val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)
         val XX_KGP_METRICS_COLLECTOR: Option<Boolean> = Option("XX_KGP_METRICS_COLLECTOR", default = false)
+        val XX_KGP_REMOTE_METRICS_REPORTER: Option<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>?> =
+            Option("XX_KGP_REMOTE_METRICS_REPORTER", default = null)
         val XX_KGP_METRICS_COLLECTOR_OUT: Option<ByteArray?> = Option("XX_KGP_METRICS_COLLECTOR_OUT", default = null)
     }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.api.jvm
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import java.io.File
+import java.io.Serializable
 import java.nio.file.Path
 
 /**
@@ -15,7 +16,7 @@ import java.nio.file.Path
  * This interface is not intended to be implemented by the API consumers.
  */
 @ExperimentalBuildToolsApi
-public interface ClasspathEntrySnapshot {
+public interface ClasspathEntrySnapshot : Serializable {
     public val classSnapshots: Map<String, ClassSnapshot>
 
     public fun saveSnapshot(path: File)
@@ -34,7 +35,7 @@ public interface ClasspathEntrySnapshot {
  * This interface is not intended to be implemented by the API consumers.
  */
 @ExperimentalBuildToolsApi
-public sealed interface ClassSnapshot
+public sealed interface ClassSnapshot : Serializable
 
 /**
  * [ClassSnapshot] of an inaccessible class.
