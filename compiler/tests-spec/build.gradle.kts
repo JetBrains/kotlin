@@ -39,13 +39,6 @@ val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.sp
 
 val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt", testSourceSet)
 
-val specConsistencyTests by task<Test> {
-    filter {
-        includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
-    }
-    useJUnitPlatform()
-}
-
 projectTests {
     testData(isolated, "testData")
     testData(project(":compiler").isolated, "testData")
@@ -60,6 +53,12 @@ projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
         filter {
             excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
+        }
+    }
+
+    testTask(taskName = "specConsistencyTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+        filter {
+            includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
         }
     }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.spec.consistency
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.SpecTestLinkedType
 import org.jetbrains.kotlin.spec.utils.TestArea
@@ -31,9 +32,9 @@ class SpecTestsConsistencyTest {
                 val testDataPath =
                     "${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testArea.testDataPath}/${SpecTestLinkedType.LINKED.testDataPath}"
 
-                testFiles += File(testDataPath).let { testsDir ->
+                testFiles += ForTestCompileRuntime.transformTestDataPath(testDataPath).let { testsDir ->
                     testsDir.walkTopDown().filter { it.extension == "kt" }.map {
-                        it.relativeTo(File(GeneralConfiguration.SPEC_TESTDATA_PATH)).path.replace("/", "$")
+                        it.relativeTo(ForTestCompileRuntime.transformTestDataPath(GeneralConfiguration.SPEC_TESTDATA_PATH)).path.replace("/", "$")
                     }.toList()
                 }
             }
