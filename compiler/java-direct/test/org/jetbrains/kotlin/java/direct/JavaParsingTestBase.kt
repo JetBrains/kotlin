@@ -16,8 +16,12 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
 import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
+import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.name.ClassId
 import java.nio.file.Path
 
 /**
@@ -47,7 +51,9 @@ open class JavaParsingTestBase {
 
     protected fun parseSource(source: String): ParsedSource {
         val tree = parseJavaToLightTree(source, 0)
-        val context = JavaResolutionContext.create(tree, session = createDummyFirSessionForTests())
+        lateinit var context: JavaResolutionContext
+        val classFinder = SameFileOnlyClassFinder { context }
+        context = JavaResolutionContext.create(tree, session = createDummyFirSessionForTests(), classFinder = classFinder)
         return ParsedSource(tree.getRoot(), context, tree)
     }
 
@@ -58,6 +64,34 @@ open class JavaParsingTestBase {
         }
         return JavaClassOverAst(classNode, parsed.tree, parsed.context)
     }
+}
+
+/**
+ * [LeanJavaClassFinder] restricted to top-level classes declared in the same file as [context].
+ * Lets unit tests exercise the module's real inherited-inner-class resolution path
+ * ([org.jetbrains.kotlin.java.direct.resolution.JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId])
+ * for same-file supertypes without a full [JavaClassFinderOverAstImpl] backed by real files.
+ *
+ * [context] is passed as a supplier because it isn't constructed yet when this finder is built
+ * (`JavaResolutionContext.create` needs the finder as a constructor argument).
+ */
+private class SameFileOnlyClassFinder(private val context: () -> JavaResolutionContext) : LeanJavaClassFinder {
+    override fun isClassInIndex(classId: ClassId): Boolean = findClass(JavaClassFinder.Request(classId)) != null
+
+    override fun findClass(request: JavaClassFinder.Request): JavaClass? {
+        val resolutionContext = context()
+        if (request.classId.packageFqName != resolutionContext.packageFqName) return null
+        val segments = request.classId.relativeClassName.pathSegments()
+        var current: JavaClass = resolutionContext.scopeContext.sameFileTopLevelClassProvider(segments.first()) ?: return null
+        for (i in 1 until segments.size) {
+            current = current.findInnerClass(segments[i]) ?: return null
+        }
+        return current
+    }
+
+    override fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> = emptyMap()
+
+    override fun getDirectSupertypes(classId: ClassId): List<ClassId> = emptyList()
 }
 
 /**

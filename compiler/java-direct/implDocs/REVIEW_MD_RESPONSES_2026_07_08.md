@@ -19,22 +19,22 @@ flagged and consciously left as accepted trade-offs. Each entry below quotes (pa
 
 | # | `review.md` comment (file) | Status | Where it's addressed |
 |---|-----------------------------|--------|-----------------------|
-| 1 | `name.isEmpty()` / `a.B<String>.C` truncation — `JavaInheritedMemberResolver.kt` | **Fixed** | `walkJavaSourceSupertypes`'s `initialIds` now uses `splitCanonicalFqName()` |
+| 1 | `name.isEmpty()` / `a.B<String>.C` truncation — `JavaInheritedMemberResolver.kt` | **Fixed** | `resolveInheritedInnerClassToClassId`'s `initialAncestorIds` now uses `splitCanonicalFqName()` |
 | 2 | `resolveWithoutInheritance`'s `fullResolution` silently weakens imported-name resolution — `JavaTypeResolver.kt` | **Confirmed, narrow, left as-is** | `resolveFromExplicitImport` line 304-310 |
 | 3 | "Isn't `resolve` always `tryResolve`?" — `JavaTypeResolver.kt` | **Fixed** | dead parameter removed |
 | 4 | Re-entrance-safe finder fallback confusing (`CopyBuilder` example) — `JavaTypeResolver.kt` | **Answered** (design explanation, unify request N/A) | `resolveQualifiedNameToClassIdFromParts` lines 130-138, `RESOLUTION_SCHEMA.md` Scenario D |
 | 5 | Why only `nestedParts.size == 1`? — `JavaTypeResolver.kt` | **Answered** (telescoping-recursion argument) | `RESOLUTION_SCHEMA.md` Scenario D corner cases |
 | 6 | javac priority divergence (`T` type param vs `T` inner class) — `JavaTypeOverAst.kt` | **Accepted, tracked, out of scope** | plan Scope §Out of scope; pre-existing, compiler-wide |
-| 7 | Source/binary mixed-hierarchy ambiguity not detected — `JavaInheritedMemberResolver.kt` | **Accepted, documented limitation** | `RESOLUTION_SCHEMA.md` Scenario E, "Accepted, documented limitation" |
+| 7 | Source/binary mixed-hierarchy ambiguity not detected — `JavaInheritedMemberResolver.kt` | **Fixed** | single BFS + collapsed structural pipeline compare every origin together, see §7 below |
 | 8 | `includeOuterClasses` "looks always false" — `JavaTypeResolver.kt` / `JavaInheritedMemberResolver.kt` | **Fixed** | parameter and outer-walk loop removed |
 | 9 | Does `resolve(rawTypeName)` already cover same-scope? — `JavaTypeOverAst.kt` | **Answered** (design explanation) | see §9 below |
 | 10 | `sameFileTopLevelClassProvider` would be enough? — `JavaClassCache.kt` | **Fixed** | `parseTopLevelClassFromFile` now calls it directly |
 | 11 | Inheriting a nested class from a compiled/Kotlin supertype "didn't get how it works" — `JavaScopeResolver.kt` | **Fixed** | binary/Kotlin tail wired in (Steps 1-3) |
 | 12 | Sibling/outer-class lookup could be "part of the loop below" — `JavaScopeResolver.kt` | **Fixed** | unified per-level loop (Step 4) |
-| 13 | Why not use `collectInheritedInnerClasses` for same-file supertypes too? — `JavaInheritedMemberResolver.kt` | **Answered** (design explanation) | see §13 below |
+| 13 | Why not use `collectInheritedInnerClasses` for same-file supertypes too? — `JavaInheritedMemberResolver.kt` | **Fixed** | same-file arm folded into the single ladder, see §13 below |
 
-10 of 13 comments are now fixed by code changes; 1 is an out-of-scope pre-existing item explicitly
-tracked as accepted; the remaining 3 (#2, #4/#5 as one topic, #9, #13) are direct design
+11 of 13 comments are now fixed by code changes; 1 is an out-of-scope pre-existing item explicitly
+tracked as accepted; the remaining 2 (#2, #4/#5 as one topic, #9) are direct design
 explanations, since they ask "why does it work this way" rather than flag a bug. None is left as
 an open question.
 
@@ -47,9 +47,10 @@ an open question.
 > Denis Zharkov: "And what do we do with the remaining parts of fq-name after type arguments?
 > Like `a.B<String>.C`?"
 
-**Fixed** in Step 5. `JavaInheritedMemberResolver.walkJavaSourceSupertypes`'s `initialIds`
-computation no longer does a single `substringBefore('<')` over the whole reference text. It now
-splits bracket-aware via `splitCanonicalFqName()` and strips generics **per segment**:
+**Fixed** in Step 5. `JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId`'s
+`initialAncestorIds` computation no longer does a single `substringBefore('<')` over the whole
+reference text. It now splits bracket-aware via `splitCanonicalFqName()` and strips generics
+**per segment**:
 
 ```kotlin
 val segments = st.presentableText.splitCanonicalFqName().map { it.substringBefore('<').trim() }
@@ -64,10 +65,8 @@ confirmed truncation site.
 
 On the original question ("in which case would the name be empty"): an empty/all-empty segment
 list only arises from parser error-recovery AST shapes for a malformed `extends`/`implements`
-clause (not reachable for well-formed code) — this is now called out explicitly next to the
-sibling same-file check in `resolveSameFileSupertype`'s KDoc: *"An empty segment (or no segments at
-all) only arises from parser error-recovery AST shapes for a malformed extends/implements clause —
-not reachable for well-formed code; declining here rather than crashing is purely defensive."*
+clause (not reachable for well-formed code) — this is now called out explicitly next to this
+segment-splitting code in `resolveInheritedInnerClassToClassId`.
 
 ---
 
@@ -189,32 +188,20 @@ or fixable in `java-direct` alone. Reproducing `javac`'s narrower shadowing rule
 > look correct because we wouldn't fail with ambiguity caused by the mix of source/binary
 > classes, while we probably should."
 
-**Accepted, documented limitation** — exactly as recorded in the collapse plan's Scope §Out of
-scope: *"Fully closing the source/binary mixed-hierarchy ambiguity detection gap (review comment
-#7) — accepted perf/safety trade-off, documented rather than fixed."* `RESOLUTION_SCHEMA.md`
-Scenario E now spells out precisely which cross-pass check *does* fire and which does not:
+**Fixed — both the original gap and its layer-out counterpart are closed.** The original
+two-pass structure (a separate source-only walk, then a separate binary/Kotlin walk) was merged
+into `walkSupertypeClassIds`, a single BFS that expands and probes source, binary Java, and
+Kotlin ancestors together at every level (`resolveInheritedInnerClassToClassId`'s KDoc,
+`ambiguousInheritedInnerClassAcrossSourceAndKotlinSupertypes.kt`) — so a source candidate and a
+binary/Kotlin candidate at the same depth are always compared for ambiguity, not just within a
+single pass.
 
-- The `ClassId` BFS (`resolveInheritedInnerClassToClassId`) *does* share one `visited` set across
-  `walkJavaSourceSupertypes` and `walkBinarySupertypes`, so ambiguity *within* that BFS (a source
-  candidate and a binary/Kotlin candidate both resolving to the same simple name at the same BFS
-  level) is caught.
-- What is **not** caught: `findInnerClassFromSupertypes`'s arm 2 (cross-file Java source, via
-  `classFinder.collectInheritedInnerClasses`) finding a unique, unambiguous source-side candidate,
-  while a *different* binary/Kotlin branch of the hierarchy independently also declares the same
-  name at the same depth — arm 2's own result short-circuits before arm 3 (the binary/Kotlin tail)
-  ever runs, so the two never get cross-checked against each other.
-
-Closing this fully would mean unconditionally paying for a binary/Kotlin supertype walk even when
-the source-side answer from `collectInheritedInnerClasses` is already unambiguous — a real
-perf cost for what is a very rare shape (an inner class name independently declared on two
-unrelated branches of a hierarchy, one source, one binary/Kotlin). Accepted as a documented
-trade-off rather than fixed, matching the plan's original scoping decision.
-
-The same blind spot exists one layer out, in the structural pipeline
-(`findInnerClassFromSupertypes`): its same-file arm, cross-file-source arm (`classFinder`), and
-binary/Kotlin tail each detect ambiguity within themselves, but a result from one arm is returned
-without cross-checking whether a different arm would also match at the same level — now documented
-directly on `findInnerClassFromSupertypes`'s KDoc as the same accepted trade-off.
+The same blind spot one layer out, in the structural pipeline (`findInnerClassFromSupertypes`),
+is also closed: it used to have its own same-file arm that could return before ever consulting
+`resolveInheritedInnerClassToClassId`'s BFS, hiding a same-file-vs-cross-file/binary/Kotlin
+conflict. That arm has since been removed — `findInnerClassFromSupertypes` now always
+materializes whatever `resolveInheritedInnerClassToClassId`'s BFS finds, so every candidate,
+same-file included, is compared for ambiguity in that one walk.
 
 ---
 
@@ -315,13 +302,17 @@ return classifierAdapterFor(inheritedId)
 ```
 
 reusing the already-binary/Kotlin-aware `resolveInheritedInnerClassToClassId`/
-`walkBinarySupertypes` ladder to get a `ClassId`, then materializing it via `classifierAdapterFor`
+`walkSupertypeClassIds` ladder to get a `ClassId`, then materializing it via `classifierAdapterFor`
 — which itself now (Step 2) routes source-backed results to their canonical `JavaClassOverAst` and
 wraps binary/Kotlin results in a `FirBackedJavaClassAdapter` whose `findInnerClass`/
 `innerClassNames` are, since Step 1, real implementations (over `existingNestedClassifierNames` /
 `createNestedClassId` / `cycleSafeClassLikeSymbol`, no FIR enhancement triggered) instead of the
-previous hardcoded `null`/`emptyList()`. See `RESOLUTION_SCHEMA.md` Scenario E arm 3, and the box
-test `inheritedNestedClassFromKotlinSupertype.kt` (Step 6) added specifically to cover this path.
+previous hardcoded `null`/`emptyList()`. See the box test `inheritedNestedClassFromKotlinSupertype.kt`
+(Step 6) added specifically to cover this path.
+
+**Update**: the same-file and cross-file-source arms mentioned above have since been folded into
+this same ladder too (item #13) — `findInnerClassFromSupertypes` no longer has separate arms at
+all, it just materializes whatever this one BFS finds, regardless of origin.
 
 ---
 
@@ -359,48 +350,26 @@ every level of the containing-class chain — not just the innermost — now get
 > `findInnerClassFromSupertypes`'s same-file loop (`resolveSameFileSupertype` + recursive call) —
 > "Why we cannot handle the same-file classes via `collectInheritedInnerClasses`, too?"
 
-**Answered as a design explanation** — this one is deliberate, not an oversight, for two
-independent reasons visible in the current code:
+**Fixed — the split is gone.** The previous answer's remaining justification (the same-file arm
+is the only part of `findInnerClassFromSupertypes` that works with no `LeanJavaClassFinder`/FIR
+session at all) was a purely technical/testability property, not a production constraint:
+`JavaFileContext.classFinder` is always non-null in production
+(`JavaClassFinderOverAstImpl` always wires a real one), and every production `JavaResolutionContext`
+carries a real FIR session. There was no live scenario this arm protected. The same-file arm
+(`resolveSameFileSupertype`) and its recursive walk have been removed;
+`findInnerClassFromSupertypes` now just materializes whatever `resolveInherited`'s single BFS
+ladder finds — same-file, cross-file-source, binary Java, and Kotlin supertypes are all walked
+uniformly, closing the last representation-specific pipeline in this module.
 
-1. **`collectInheritedInnerClasses` is backed by a structurally weaker candidate generator for
-   same-file qualified supertypes.** It is powered by `JavaSupertypeGraph.getDirectSupertypes` /
-   `resolveSupertypeReference`, which works from **raw AST text plus package/import
-   information alone** — deliberately, since its own KDoc explains it must avoid triggering
-   classifier resolution (`JavaSupertypeGraph.kt:71-74`: *"we read raw JAVA_CODE_REFERENCE text
-   from the node, NOT classifierQualifiedName, because the latter triggers resolution which can
-   circle back into `getDirectSupertypes` via `findInnerClassFromSupertypes` →
-   `collectInheritedInnerClasses`"*). Its own `resolveSupertypeReference` explicitly **declines
-   dotted supertype references** (`JavaSupertypeGraph.kt:293-295`: *"Dotted form is delegated to
-   `JavaResolutionContext.resolve`"*) — so a same-file qualified supertype like
-   `class Foo extends x.S` (both top-level in the same file) would simply not be found through
-   this path. `resolveSameFileSupertype` (`JavaInheritedMemberResolver.kt`), by contrast, is built
-   specifically to resolve exactly this shape: it navigates each dotted segment via
-   `sameFileTopLevelClassProvider` + `JavaClass.findInnerClass`, which does not have this
-   limitation, because it is not trying to avoid triggering resolution — it only reads names/AST
-   nodes that are already cheaply available (`JavaClassOverAst` is a free AST wrap; no phase
-   resolution is involved for reading a same-file class's own top-level/nested identity).
-2. **Cost shape.** `collectInheritedInnerClasses` eagerly computes and caches the transitive
-   closure of *every* inherited inner-class name for a `ClassId` — the right trade-off for
-   cross-file source and binary/Kotlin supertypes, where the alternative is re-parsing another
-   file or a symbol-provider round-trip per query. For same-file supertypes, the resolved
-   `JavaClassOverAst.supertypes` and the recursive `findInnerClassFromSupertypes` walk are already
-   immediately available in memory with no I/O, so eagerly building and caching a name→`ClassId`
-   map keyed by `ClassId` buys nothing extra and would only add one more cache to reason about.
-
-Routing same-file supertypes through `collectInheritedInnerClasses` would therefore *reduce*
-correctness for qualified same-file supertypes without buying back any performance — the two paths
-are kept distinct for the same reason `findInnerClassInSameFileSupertypes`'s raw-text walk in
-`JavaScopeResolver` is kept distinct from the resolved-classifier walk (cycle-safety /
-resolution-triggering concerns), just realized as a *candidate-generation capability* gap here
-rather than a recursion-safety one.
-
-Re-checked after the subsequent merge of the source/binary supertype walks into one BFS
-(`resolveInheritedInnerClassToClassId`): both reasons above are untouched by that change — it
-only altered how ancestor `ClassId`s are walked for the `ClassId`-returning pipeline, not
-`JavaSupertypeGraph.resolveSupertypeReference`'s dotted-reference limitation or
-`collectInheritedInnerClasses`'s eager-caching cost shape — so the explanation still holds. A
-condensed version of both points is now also inlined as a code comment directly above the
-same-file loop in `findInnerClassFromSupertypes`.
+`testInheritedInnerClassFromNestedGenericSupertype`, the test that used to rely on a
+finder-less/session-less same-file-only setup by stubbing `resolveInherited`/`classifierAdapterFor`
+to always return null, now runs against a same-file-only `LeanJavaClassFinder` test double
+(`JavaParsingTestBase.SameFileOnlyClassFinder`) wired through the production
+`resolveInheritedInnerClassToClassId`/`classifierAdapterFor` functions, exercising the merged
+ladder end-to-end instead of a stub. `resolveSameFileSupertype`'s dotted/qualified-reference case
+(`class Sub extends x.S`) remains covered by
+`testInheritedInnerClassFromQualifiedNestedSameFileSupertype`, now going through the same merged
+ladder as every other supertype origin.
 
 ---
 
@@ -409,5 +378,5 @@ same-file loop in `findInnerClassFromSupertypes`.
 - `COLLAPSE_RESOLUTION_PIPELINES_2026_07_06.md` — the full plan, decisions, and per-step delivery
   record for items #1, #3, #8, #10, #11, #12 above.
 - `RESOLUTION_SCHEMA.md` — the up-to-date structural schema, including the telescoping-recursion
-  argument (#4/#5) and the accepted source/binary ambiguity limitation (#7).
+  argument (#4/#5) and the merged origin-agnostic supertype walk (#7).
 - `ITERATION_RESULTS.md` — the terse per-step log with test-count evidence for each landed step.

@@ -235,24 +235,21 @@ reached, just one recursion level down.
 
 ### Scenario E — Inherited member type via supertypes
 
-Entry: `JavaInheritedMemberResolver`. Two outputs, both reaching every class representation:
+Entry: `JavaInheritedMemberResolver`. Two outputs, both reaching every class representation
+through the same single, origin-agnostic BFS — same-file, cross-file Java source, binary Java,
+and Kotlin supertypes are all walked uniformly, with no representation-specific arm:
 
 - `findInnerClassFromSupertypes` → a `JavaClass` with AST outer chain (for the AST pipeline /
-  outer-arg substitution). Two arms, tried in order, the first hit wins:
-  1. **Same-file supertypes** — `resolveSameFileSupertype` + recursive same-file walk. Kept
-     separate rather than folded into arm 2's ladder: a same-file result must stay the exact
-     `JavaClassOverAst` instance FIR matches type parameters against by identity, and this arm
-     must keep working with no `LeanJavaClassFinder` or FIR session at all
-     (`JavaParsingTypeResolutionTest.testInheritedInnerClassFromNestedGenericSupertype`).
-  2. **Cross-file Java source, binary Java, or Kotlin** — reached only when arm 1 found nothing:
-     reuses `resolveInheritedInnerClassToClassId`/`walkSupertypeClassIds` (below) to get a
-     `ClassId`, then materializes it via `classifierAdapterFor` (Scenario A step 4). One
-     origin-agnostic ladder rather than a separate `classFinder`-backed cross-file-source arm
-     ahead of a binary/Kotlin tail — the earlier two-arm split let a cross-file-source match
-     short-circuit before a competing binary/Kotlin one at the same depth was ever checked
-     (`testData/diagnostics/tests/jvm/javaDirect/ambiguousInheritedInnerClassAcrossSourceAndKotlinSupertypes.kt`).
-  Ambiguity is compared within arm 1 and within arm 2, but not across them — same accepted
-  trade-off as review comment #7, now narrower since it used to also apply *within* arm 2.
+  outer-arg substitution). Just materializes the `ClassId` found by `resolveInheritedInnerClassToClassId`
+  (below) via `classifierAdapterFor` (Scenario A step 4); ambiguity detection is entirely
+  `resolveInheritedInnerClassToClassId`'s job, since every candidate — regardless of origin — is
+  compared together in one walk
+  (`testData/diagnostics/tests/jvm/javaDirect/ambiguousInheritedInnerClassAcrossSourceAndKotlinSupertypes.kt`).
+  An earlier same-file-only arm (`resolveSameFileSupertype` + recursive same-file walk) was
+  removed: its only reason to exist was working with no `LeanJavaClassFinder`/FIR session at all,
+  which is a testability property, not a production constraint — every production
+  `JavaResolutionContext` has both. `JavaParsingTypeResolutionTest`'s tests for this case now use a
+  same-file-only `LeanJavaClassFinder` test double instead.
 - `resolveInheritedInnerClassToClassId` → a bare `ClassId` via a single, origin-agnostic BFS
   (`walkSupertypeClassIds`) over [containingClass]'s own supertypes (outer-class coverage is the
   caller's job — Scenario C's per-level loop — not this function's, since the

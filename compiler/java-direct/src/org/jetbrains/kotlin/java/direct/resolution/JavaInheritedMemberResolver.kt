@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.impl.splitCanonicalFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -17,96 +16,40 @@ import org.jetbrains.kotlin.name.Name
  * Resolves inherited inner classes from supertype hierarchies (JLS 6.5.2 — inherited member
  * types are in scope).
  *
- * Two entry points:
- * - [findInnerClassFromSupertypes] returns a [JavaClass] with its full AST-side outer-class
- *   chain, needed to thread outer-class type arguments for generic outer classes.
- * - [resolveInheritedInnerClassToClassId] returns a bare `ClassId` via a single, origin-agnostic
- *   BFS ([walkSupertypeClassIds]), with one exception for `containingClass`'s own direct
+ * One generic, origin-agnostic path handles same-file, cross-file source, binary Java, and
+ * Kotlin supertypes alike:
+ * - [resolveInheritedInnerClassToClassId] returns a bare `ClassId` via a single BFS
+ *   ([walkSupertypeClassIds]), with one exception for `containingClass`'s own direct
  *   supertypes — see that function's KDoc.
+ * - [findInnerClassFromSupertypes] materializes that `ClassId` back into a navigable [JavaClass]
+ *   with its full AST-side outer-class chain, needed to thread outer-class type arguments for
+ *   generic outer classes.
  */
-internal class JavaInheritedMemberResolver(
-    private val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
-) {
+internal class JavaInheritedMemberResolver {
 
     /**
-     * Searches for an inner class with the given name in the supertype hierarchy.
+     * Searches for an inner class with the given name in [javaClass]'s supertype hierarchy.
      *
      * Returns null if multiple inner classes with the same name are found (ambiguity),
-     * matching `javac`'s `MISSING_DEPENDENCY_CLASS` error.
-     *
-     * Ambiguity is compared within each of the two arms below, but not across them: a match
-     * from the same-file loop (including one surfaced by its own recursive calls) is returned
-     * without checking whether [resolveInherited] would also match a different candidate among
-     * [javaClass]'s own supertypes. Same-file supertypes are kept as their own prioritized,
-     * short-circuited arm rather than folded into [resolveInherited]'s ladder for two reasons:
-     * a same-file [JavaClassOverAst] must stay the exact instance FIR already matches type
-     * parameters against by identity, and this arm must keep working with no [LeanJavaClassFinder]
-     * or FIR session at all (`JavaParsingTypeResolutionTest.testInheritedInnerClassFromNestedGenericSupertype`).
-     * Cross-file source, binary Java, and Kotlin supertypes no longer have this restriction, so
-     * they are merged into [resolveInherited]'s single origin-agnostic ladder, closing a gap
-     * where a cross-file-source match used to be returned without ever checking for a
-     * conflicting binary/Kotlin one (regression test:
+     * matching `javac`'s `MISSING_DEPENDENCY_CLASS` error — enforced by [resolveInherited]'s BFS,
+     * which compares every same-file, cross-file-source, binary-Java, and Kotlin candidate
+     * together (regression test:
      * `testData/diagnostics/tests/jvm/javaDirect/ambiguousInheritedInnerClassAcrossSourceAndKotlinSupertypes.kt`).
      *
      * @param resolveInherited resolves an inherited inner class of [javaClass] to a `ClassId`,
-     *        tried only after the same-file arm above found nothing for [javaClass] itself, by
-     *        reusing [resolveInheritedInnerClassToClassId]'s generic ladder.
+     *        via [resolveInheritedInnerClassToClassId]'s generic ladder.
      * @param classifierAdapterFor materializes the `ClassId` found by [resolveInherited] back
      *        into a navigable [JavaClass] — routes source-backed results to their canonical
      *        [JavaClassOverAst], wraps binary/Kotlin results in a [FirBackedJavaClassAdapter].
      */
     fun findInnerClassFromSupertypes(
         name: Name,
-        javaClass: JavaClassOverAst,
-        visited: MutableSet<JavaClass>,
+        javaClass: JavaClass,
         resolveInherited: (JavaClass, Name) -> ClassId?,
         classifierAdapterFor: (ClassId) -> JavaClass?,
     ): JavaClass? {
-        if (!visited.add(javaClass)) return null
-
-        var foundInnerClass: JavaClass? = null
-
-        // Same-file supertypes — local resolution by simple name via resolveSameFileSupertype,
-        // not classFinder.collectInheritedInnerClasses (used by resolveInherited below): the
-        // latter's candidate generator (JavaSupertypeGraph.resolveSupertypeReference)
-        // deliberately avoids triggering resolution and so declines dotted supertype
-        // references, which would miss a same-file qualified supertype like
-        // `class Foo extends x.S`; same-file JavaClassOverAst data is also already free to
-        // navigate in memory, so caching it there would buy nothing.
-        for (supertype in javaClass.supertypes) {
-            val supertypeClass = resolveSameFileSupertype(supertype) ?: continue
-            (supertypeClass.findInnerClass(name) ?: findInnerClassFromSupertypes(name, supertypeClass, visited, resolveInherited, classifierAdapterFor))?.let {
-                if (foundInnerClass == null) foundInnerClass = it else return null
-            }
-        }
-
-        if (foundInnerClass != null) return foundInnerClass
-
-        // Cross-file source, binary Java, and Kotlin supertypes — one origin-agnostic ClassId
-        // ladder, so a match from one origin is compared for ambiguity against every other.
         val inheritedId = resolveInherited(javaClass, name) ?: return null
         return classifierAdapterFor(inheritedId)
-    }
-
-    /**
-     * Resolves a same-file supertype reference to the [JavaClassOverAst] it denotes.
-     *
-     * Only AST-backed same-file classes are produced here: the outermost segment comes from
-     * [sameFileTopLevelClassProvider] and each nested segment from [JavaClass.findInnerClass], both
-     * of which yield [JavaClassOverAst] for same-file classes. The result is narrowed accordingly so
-     * [findInnerClassFromSupertypes] keeps recursing only over AST classes.
-     */
-    private fun resolveSameFileSupertype(supertype: JavaClassifierType): JavaClassOverAst? {
-        val segments = supertype.presentableText.splitCanonicalFqName().map { it.substringBefore('<').trim() }
-        // An empty segment (or no segments at all) only arises from parser error-recovery AST
-        // shapes for a malformed extends/implements clause — not reachable for well-formed code.
-        // The error is supposed to be reported by javac.
-        if (segments.isEmpty() || segments.any { it.isEmpty() }) return null
-        var resolved = sameFileTopLevelClassProvider(Name.identifier(segments.first())) as? JavaClassOverAst ?: return null
-        for (i in 1 until segments.size) {
-            resolved = resolved.findInnerClass(Name.identifier(segments[i])) as? JavaClassOverAst ?: return null
-        }
-        return resolved
     }
 
     /**
@@ -144,7 +87,10 @@ internal class JavaInheritedMemberResolver(
 
         // `splitCanonicalFqName()` splits per dotted segment before stripping generics, so a
         // qualified reference with type arguments on a non-final segment (`a.B<String>.C`)
-        // still yields the full `a.B.C`.
+        // still yields the full `a.B.C`. An empty segment (or no segments at all) only arises
+        // from parser error-recovery AST shapes for a malformed extends/implements clause —
+        // javac is expected to report the error, so declining here rather than crashing is
+        // purely defensive.
         val initialAncestorIds = containingClass.supertypes.mapNotNull { st ->
             val segments = st.presentableText.splitCanonicalFqName().map { it.substringBefore('<').trim() }
             if (segments.isEmpty() || segments.any { it.isEmpty() }) null

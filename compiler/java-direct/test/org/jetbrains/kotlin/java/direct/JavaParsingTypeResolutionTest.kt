@@ -10,6 +10,9 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.resolution.JavaInheritedMemberResolver
+import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
+import org.jetbrains.kotlin.java.direct.resolution.resolveInheritedInnerClassToClassId
+import org.jetbrains.kotlin.java.direct.resolution.tryResolveInherited
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.classId
@@ -56,15 +59,17 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
 
         val derived = topLevelClasses.getValue("Derived")
 
-        val resolver = JavaInheritedMemberResolver(
-            sameFileTopLevelClassProvider = { name -> topLevelClasses[name.asString()] },
-        )
+        val resolver = JavaInheritedMemberResolver()
 
-        val found = resolver.findInnerClassFromSupertypes(
-            Name.identifier("Target"), derived, mutableSetOf(),
-            resolveInherited = { _, _ -> null },
-            classifierAdapterFor = { null },
-        )
+        val found = with(context) {
+            resolver.findInnerClassFromSupertypes(
+                Name.identifier("Target"), derived,
+                resolveInherited = { containingClass, innerName ->
+                    resolveInheritedInnerClassToClassId(innerName.asString(), { tryResolveInherited(it) }, containingClass)
+                },
+                classifierAdapterFor = { classifierAdapterFor(it) },
+            )
+        }
         assert(found != null) {
             "Expected to resolve inherited inner class 'Target' through nested generic supertype " +
                     "Outer<String>.Inner, but resolution returned null"
@@ -114,9 +119,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val grandparentClassId = topLevelClasses.getValue("Grandparent").classId!!
         val expectedNestedId = grandparentClassId.createNestedClassId(Name.identifier("Nested"))
 
-        val resolver = JavaInheritedMemberResolver(
-            sameFileTopLevelClassProvider = { name -> topLevelClasses[name.asString()] },
-        )
+        val resolver = JavaInheritedMemberResolver()
 
         val result = resolver.resolveInheritedInnerClassToClassId(
             simpleName = "Nested",

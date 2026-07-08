@@ -86,7 +86,7 @@ internal fun declaredOrFullyInherited(cls: JavaClass, name: Name): JavaClass? {
     cls.declaredOrSameFileInherited(name)?.let { return it }
     val astClass = cls as? JavaClassOverAst ?: return null
     return c.fileContext.inheritedMemberResolver.findInnerClassFromSupertypes(
-        name, astClass, mutableSetOf(),
+        name, astClass,
         resolveInherited = { containingClass, innerName ->
             resolveInheritedInnerClassToClassId(innerName.asString(), { tryResolveInherited(it) }, containingClass)
         },

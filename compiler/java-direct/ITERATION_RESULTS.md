@@ -36,6 +36,47 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-08 — Collapse the same-file arm; findInnerClassFromSupertypes is now one ladder
+- **Change**: The same-file arm's remaining justification (works with no `LeanJavaClassFinder`/FIR
+  session at all) was purely technical/testability — every production `JavaResolutionContext`
+  has both. Removed `resolveSameFileSupertype` and the recursive same-file walk;
+  `findInnerClassFromSupertypes` now just materializes `resolveInheritedInnerClassToClassId`'s
+  result via `classifierAdapterFor`, so same-file, cross-file-source, binary Java, and Kotlin
+  supertypes all go through one BFS with no representation-specific arm left.
+- **Files**: `resolution/JavaInheritedMemberResolver.kt` (`resolveSameFileSupertype` and
+  `sameFileTopLevelClassProvider` ctor param removed), `resolution/JavaResolutionContext.kt` /
+  `resolution/JavaScopeResolver.kt` (call sites updated); `test/.../JavaParsingTestBase.kt` (new
+  `SameFileOnlyClassFinder` test double replaces the removed provider for unit tests that need a
+  finder-less same-file setup); `JavaParsingTypeResolutionTest.kt`
+  (`testInheritedInnerClassFromNestedGenericSupertype` rewired onto the production BFS instead of
+  stubbed callbacks; the other affected test only needed its constructor call updated);
+  `RESOLUTION_SCHEMA.md`/`REVIEW_MD_RESPONSES_2026_07_08.md` updated.
+- **Tests**: `:compiler:java-direct:test` full suite green, 2836/2836 (0 failures), confirmed via
+  a forced `--rerun`.
+- **Result**: green. The class-resolution code now has exactly one narrow exception left (the
+  level-1 raw-AST-text read for cycle-safety in `resolveInheritedInnerClassToClassId`); the
+  same-file/cross-file/binary/Kotlin split is fully collapsed.
+
+### 2026-07-08 — Correct stale `collectInheritedInnerClasses` claim behind the same-file-arm split
+- **Change**: Reviewer re-flagged the same-file arm in `findInnerClassFromSupertypes` as
+  unconvincing and asked for a test / cross-check against the other arm. Verified the comment's
+  premise — that the other arm ("`resolveInherited`") is backed by `collectInheritedInnerClasses`,
+  which declines dotted references — is stale: since the earlier BFS merge, `resolveInherited` goes
+  through `tryResolveInherited`/`directSupertypeClassIds`, which never calls
+  `collectInheritedInnerClasses` and handles dotted references fine via the already-resolved
+  `.classifier`. `collectInheritedInnerClasses` has no remaining production caller in this scenario
+  (only its own public `LeanJavaClassFinder` method + tests). The split's real, still-load-bearing
+  reason is that the same-file arm is the only part working with no class finder/FIR session at all
+  (`testInheritedInnerClassFromNestedGenericSupertype`); a pre-existing test
+  (`testInheritedInnerClassFromQualifiedNestedSameFileSupertype`) already covers the dotted
+  same-file-supertype case and is now referenced from the code.
+- **Files**: `resolution/JavaInheritedMemberResolver.kt` (KDoc rewrite, no logic change),
+  `util/JavaSupertypeGraph.kt` (two stale KDoc/comment corrections),
+  `REVIEW_MD_RESPONSES_2026_07_08.md` §13 corrected.
+- **Tests**: comment-only change; `:compiler:java-direct:test` `JavaParsingTypeResolutionTest` green.
+- **Result**: green. No behavior change; `collectInheritedInnerClasses`/`getDirectSupertypes` being
+  dead in this scenario is flagged as a follow-up, not removed in this pass.
+
 ### 2026-07-08 — Fix findInheritedNestedClass's own cycle-guard-skip hazard; drop its now-redundant fallback
 - **Change**: Closed the "third, narrower occurrence" flagged as a follow-up in an earlier entry:
   `resolveQualifiedNameToClassIdFromParts` had a `collectInheritedInnerClasses`-based fallback for
