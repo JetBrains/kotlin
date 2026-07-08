@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.constructFunctionType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -67,7 +66,11 @@ internal class KaFirExpressionTypeProvider(
         if (assignmentExpression != null) {
             val fir = assignmentExpression.getOrBuildFir(resolutionFacade)
             if (fir != null) {
-                return getAssignmentLhsType(lhsExpression = expression, fir)
+                return getAssignmentLhsType(
+                    lhsExpression = expression,
+                    fir = fir,
+                    isAugmented = assignmentExpression.operationToken != KtTokens.EQ
+                )
             }
         }
 
@@ -198,13 +201,13 @@ internal class KaFirExpressionTypeProvider(
     /**
      * Compute the expression type of [lhsExpression], an assignment target, e.g.: `lhsExpression = ...`.
      */
-    private fun getAssignmentLhsType(lhsExpression: KtExpression, fir: FirElement): KaType? {
+    private fun getAssignmentLhsType(lhsExpression: KtExpression, fir: FirElement, isAugmented: Boolean): KaType? {
         return when (fir) {
             is FirFunctionCall -> {
                 getReturnTypeForPluginModifiedAssignment(fir)
                     ?: getReturnTypeForArrayElementAssignmentTarget(lhsExpression, fir)
-                    ?: runIf(!fir.calleeReference.isError()) {
-                        // Take the receiver type on which the 'set' is called, but only for successful calls
+                    ?: runIf(isAugmented) {
+                        // For non-augmented assignments, there is no 'get' call so the LHS expression type is undefined
                         fir.explicitReceiver?.resolvedType?.asKaType()
                     }
             }
