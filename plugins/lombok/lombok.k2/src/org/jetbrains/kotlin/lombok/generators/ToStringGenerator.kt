@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
-import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
@@ -76,26 +74,9 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
         register(PREDICATE)
     }
 
-    private val cache: FirCache<FirClassSymbol<*>, FirNamedFunctionSymbol?, MemberGenerationContext> =
-        session.firCachesFactory.createCache(::initializeToStringIfNeeded)
-
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        return if (cache.getValue(classSymbol, context) != null) {
-            setOf(TO_STRING_NAME)
-        } else {
-            emptySet()
-        }
-    }
+        if (classSymbol !is FirRegularClassSymbol || classSymbol.isInterface) return emptySet()
 
-    override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        val classSymbol = context?.owner ?: return emptyList()
-        return listOfNotNull(cache.getValue(classSymbol, context))
-    }
-
-    private fun initializeToStringIfNeeded(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): FirNamedFunctionSymbol? {
-        if (classSymbol !is FirRegularClassSymbol || classSymbol.isInterface) return null
-
-        val toStringConfig = session.lombokService.getToString(classSymbol) ?: return null
         val declaredScope = context.declaredScope
 
         // Don't generate if toString() already exists in sources
@@ -105,35 +86,46 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
                 functionWithoutParametersAlreadyExists = true
             }
         }
-        if (functionWithoutParametersAlreadyExists) return null
+        if (functionWithoutParametersAlreadyExists) return emptySet()
 
-        return if (classSymbol.hasJavaOrigin) {
-            classSymbol.createJavaMethod(
-                name = TO_STRING_NAME,
-                valueParameters = emptyList(),
-                returnTypeRef = StandardTypes.String.toFirResolvedTypeRef(),
-                visibility = Visibilities.Public,
-                modality = Modality.OPEN,
-                isOverride = true,
-            ).symbol
-        } else {
-            createMemberFunction(
-                owner = classSymbol,
-                key = ToStringGeneratorKey(
-                    className = classSymbol.classId.shortClassName.asString(),
-                    propertyInfos = computePropertiesToInclude(toStringConfig, declaredScope),
-                    callSuper = toStringConfig.callSuper == CallSuperMode.Call,
-                ),
-                name = TO_STRING_NAME,
-                returnType = StandardTypes.String,
-            ) {
-                modality = Modality.OPEN
-                status {
-                    isOverride = true
-                }
-                withGeneratedDefaultBody()
-            }.symbol
-        }
+        return setOf(TO_STRING_NAME)
+    }
+
+    override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
+        require(callableId.callableName == TO_STRING_NAME)
+        val classSymbol = context?.owner ?: return emptyList()
+
+        val toStringConfig = session.lombokService.getToString(classSymbol) ?: return emptyList()
+
+        return listOf(
+            if (classSymbol.hasJavaOrigin) {
+                classSymbol.createJavaMethod(
+                    name = TO_STRING_NAME,
+                    valueParameters = emptyList(),
+                    returnTypeRef = StandardTypes.String.toFirResolvedTypeRef(),
+                    visibility = Visibilities.Public,
+                    modality = Modality.OPEN,
+                    isOverride = true,
+                ).symbol
+            } else {
+                createMemberFunction(
+                    owner = classSymbol,
+                    key = ToStringGeneratorKey(
+                        className = classSymbol.classId.shortClassName.asString(),
+                        propertyInfos = computePropertiesToInclude(toStringConfig, context.declaredScope),
+                        callSuper = toStringConfig.callSuper == CallSuperMode.Call,
+                    ),
+                    name = TO_STRING_NAME,
+                    returnType = StandardTypes.String,
+                ) {
+                    modality = Modality.OPEN
+                    status {
+                        isOverride = true
+                    }
+                    withGeneratedDefaultBody()
+                }.symbol
+            }
+        )
     }
 
     private fun computePropertiesToInclude(
