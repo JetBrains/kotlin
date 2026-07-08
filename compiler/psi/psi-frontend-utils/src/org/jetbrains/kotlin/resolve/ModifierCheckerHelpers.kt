@@ -383,6 +383,7 @@ val possibleParentTargetPredicateMap = mapOf(
         KotlinTarget.OBJECT_LITERAL,
         KotlinTarget.ENUM_CLASS,
         KotlinTarget.ENUM_ENTRY,
+        KotlinTarget.INTERFACE,
         KotlinTarget.FILE
     ),
     PRIVATE_KEYWORD to always(
