@@ -33,6 +33,7 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "testFixtures" { projectDefault() }
+    "test" { projectDefault() }
 }
 
 optInToK1Deprecation()

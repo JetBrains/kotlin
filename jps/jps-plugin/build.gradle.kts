@@ -94,6 +94,7 @@ sourceSets {
         Ide.IJ {
             java.srcDirs("jps-tests/test")
             java.srcDirs("jps-tests/tests-gen")
+            resources.srcDir("jps-tests/testResources")
         }
     }
 }
