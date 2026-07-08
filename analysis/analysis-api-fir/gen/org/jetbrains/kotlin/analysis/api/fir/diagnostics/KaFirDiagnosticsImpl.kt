@@ -5986,6 +5986,16 @@ internal class JavaClassOnCompanionImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaClassOnCompanion
 
+internal class JavaClassPropertyReferenceErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaClassPropertyReferenceError
+
+internal class JavaClassPropertyReferenceWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaClassPropertyReferenceWarning
+
 internal class UnexhaustiveWhenBasedOnJavaAnnotationsImpl(
     override val subjectType: KaType,
     firDiagnostic: KtPsiDiagnostic,

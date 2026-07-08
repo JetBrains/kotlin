@@ -117,6 +117,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
         }
+        val JAVA_CLASS_PROPERTY_REFERENCE by deprecationError<PsiElement>(
+            featureForError = ForbidJavaClassPropertyReferences,
+            positioningStrategy = PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED,
+        )
 
         val UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<ConeKotlinType>("subjectType")

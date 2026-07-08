@@ -4985,6 +4985,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val expectedType: KaType
     }
 
+    interface JavaClassPropertyReferenceError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JavaClassPropertyReferenceError::class
+    }
+
+    interface JavaClassPropertyReferenceWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JavaClassPropertyReferenceWarning::class
+    }
+
     interface UnexhaustiveWhenBasedOnJavaAnnotations : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UnexhaustiveWhenBasedOnJavaAnnotations::class
         val subjectType: KaType

@@ -1126,6 +1126,12 @@ private fun KaDiagnosticConverterBuilder.addConversions20() {
             token,
         )
     }
+    add(FirJvmErrors.JAVA_CLASS_PROPERTY_REFERENCE.warningFactory) { firDiagnostic ->
+        JavaClassPropertyReferenceWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirWebCommonErrors.NESTED_JS_EXPORT) { firDiagnostic ->
         NestedJsExportImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -6576,6 +6582,12 @@ private fun KaDiagnosticConverterBuilder.addConversions144() {
             firDiagnostic.b,
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
             firDiagnostic.d,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JAVA_CLASS_PROPERTY_REFERENCE.errorFactory) { firDiagnostic ->
+        JavaClassPropertyReferenceErrorImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
