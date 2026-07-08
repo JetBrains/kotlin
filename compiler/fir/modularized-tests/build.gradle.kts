@@ -36,9 +36,9 @@ dependencies {
 
     composeCompilerPlugin(project(":plugins:compose-compiler-plugin:compiler-hosted")) { isTransitive = false }
 
-    val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
-    if (asyncProfilerClasspath != null) {
-        testRuntimeOnly(files(*asyncProfilerClasspath.split(File.pathSeparatorChar).toTypedArray()))
+    val asyncProfilerClasspath = project.providers.gradleProperty("fir.bench.async.profiler.classpath")
+    if (asyncProfilerClasspath.isPresent) {
+        testRuntimeOnly(files(*asyncProfilerClasspath.get().split(File.pathSeparatorChar).toTypedArray()))
     }
 }
 
