@@ -45,8 +45,7 @@ class FirTypeIntersectionScopeContext(
     private val dispatchClassSymbol: FirRegularClassSymbol? = dispatchReceiverType.toRegularClassSymbol(session)
     private val isReceiverClassExpect = dispatchClassSymbol?.isExpect == true
 
-    val intersectionOverrides: FirCache<FirCallableSymbol<*>, MemberWithBaseScope<FirCallableSymbol<*>>, ResultOfIntersection.NonTrivial<*>> =
-        session.intersectionOverrideStorage.cacheByScope.getValue(dispatchReceiverType)
+    private val intersectionOverrideStorage = session.intersectionOverrideStorage
 
     sealed class ResultOfIntersection<D : FirCallableSymbol<*>>(
         val overriddenMembers: List<MemberWithBaseScope<D>>,
@@ -72,7 +71,11 @@ class FirTypeIntersectionScopeContext(
         ) : ResultOfIntersection<D>(overriddenMembers) {
             override val chosenSymbol: D by lazy {
                 @Suppress("UNCHECKED_CAST")
-                context.intersectionOverrides.getValue(keySymbol, this).member as D
+                context.intersectionOverrideStorage.getOrCompute(
+                    context.dispatchReceiverType,
+                    keySymbol,
+                    this,
+                ).member as D
             }
 
             val keySymbol: D
@@ -196,6 +199,12 @@ class FirTypeIntersectionScopeContext(
 
         return result
     }
+
+    /**
+     * @see FirIntersectionOverrideStorage.getIfComputed
+     */
+    fun getIntersectionOverrideIfComputed(symbol: FirCallableSymbol<*>): MemberWithBaseScope<FirCallableSymbol<*>>? =
+        intersectionOverrideStorage.getIfComputed(dispatchReceiverType, symbol)
 
     private fun MemberWithBaseScope<*>.isVisible(): Boolean {
         // Checking for private is not enough because package-private declarations can be hidden, too, if they're in a different package.
@@ -524,15 +533,52 @@ private fun <D : FirCallableSymbol<*>> D.withScope(baseScope: FirTypeScope) = Me
 typealias FirIntersectionOverrideCache =
         FirCache<FirCallableSymbol<*>, MemberWithBaseScope<FirCallableSymbol<*>>, ResultOfIntersection.NonTrivial<*>>
 
+/**
+ * A storage for computed intersection overrides based on [non-trivial intersection results][ResultOfIntersection.NonTrivial].
+ *
+ * The storage has two cache layers:
+ *
+ * 1. An outer cache that maps dispatch receiver types in the form of [ConeKotlinType] to individual [FirIntersectionOverrideCache]s.
+ * 2. An inner [FirIntersectionOverrideCache] that maps original callable symbols to generated intersection overrides.
+ *
+ * In most cases, the inner cache would be *empty*. The storage avoids the creation of the inner cache until there is a legitimate write to
+ * the cache from a non-trivial intersection with [getOrCompute].
+ */
 class FirIntersectionOverrideStorage(val session: FirSession) : FirSessionComponent {
     private val cachesFactory = session.firCachesFactory
 
-    val cacheByScope: FirCache<ConeKotlinType, FirIntersectionOverrideCache, Nothing?> =
+    private val cacheByScope: FirCache<ConeKotlinType, FirIntersectionOverrideCache, Nothing?> =
         cachesFactory.createCache { _ ->
             cachesFactory.createCache { _, result ->
                 result.context.createIntersectionOverride(result.mostSpecific, result.overriddenMembers, result.containsMultipleNonSubsumed)
             }
         }
+
+    /**
+     * Returns the intersection override for [symbol] in the scope of [dispatchReceiverType], computing and caching it on first request.
+     *
+     * The inner cache is created lazily here, on the first actually materialized override for that scope.
+     */
+    fun getOrCompute(
+        dispatchReceiverType: ConeKotlinType,
+        symbol: FirCallableSymbol<*>,
+        result: ResultOfIntersection.NonTrivial<*>,
+    ): MemberWithBaseScope<FirCallableSymbol<*>> =
+        cacheByScope.getValue(dispatchReceiverType).getValue(symbol, result)
+
+    /**
+     * Returns the already-computed intersection override for [symbol] in the scope of [dispatchReceiverType], or `null` if none has been
+     * computed yet.
+     *
+     * The function consciously avoids creating the inner cache. Dispatch receiver types that never materialize an intersection override
+     * with [getOrCompute] therefore don't retain an empty inner cache. That is crucial for keeping the storage small, since the vast
+     * majority of scopes are only ever probed and never materialize an override.
+     */
+    fun getIfComputed(
+        dispatchReceiverType: ConeKotlinType,
+        symbol: FirCallableSymbol<*>,
+    ): MemberWithBaseScope<FirCallableSymbol<*>>? =
+        cacheByScope.getValueIfComputed(dispatchReceiverType)?.getValueIfComputed(symbol)
 }
 
 private val FirSession.intersectionOverrideStorage: FirIntersectionOverrideStorage by FirSession.sessionComponentAccessor()
