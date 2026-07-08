@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.pipeline
+package org.jetbrains.kotlin.ir.evaluation
 
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrElement
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.evaluation.reportOnIr
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.shallowCopy
@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 var IrConst.wasInlined: Boolean? by irAttribute(copyByDefault = true)
 
-@OptIn(UnsafeDuringIrConstructionAPI::class)
-internal class ConstInliner(
+class IrConstFieldInliner(
     private val irFile: IrFile,
     private val inlineConstTracker: InlineConstTracker?,
 ) : IrTransformer<Nothing?>() {
@@ -58,7 +57,7 @@ internal class ConstInliner(
     private fun IrExpression.tryToInline(field: IrField): IrExpression? {
         if (!field.canBeInlined()) return null
 
-        transformChildren(this@ConstInliner, null)
+        transformChildren(this@IrConstFieldInliner, null)
 
         val receiver = when (this) {
             is IrCall -> dispatchReceiver
@@ -112,4 +111,17 @@ internal class ConstInliner(
 
     private val IrProperty?.isConst: Boolean
         get() = this?.isConst == true
+
+    companion object {
+        fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst) {
+            if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
+
+            val path = irFile.path
+            val owner = field.parentAsClass.classId?.asString()?.replace(".", "$")?.replace("/", ".") ?: return
+            val name = field.name.asString()
+            val constType = value.kind.asString
+
+            report(path, owner, name, constType)
+        }
+    }
 }
