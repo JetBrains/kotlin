@@ -4777,6 +4777,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CompanionBlockMemberExtension::class
     }
 
+    interface InterfaceCompanionBlockVar : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InterfaceCompanionBlockVar::class
+    }
+
     interface IllegalCompanionBlock : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = IllegalCompanionBlock::class
         val parent: KaSymbol
@@ -4938,6 +4942,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ConflictVersionAndJvmOverloadsAnnotation : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ConflictVersionAndJvmOverloadsAnnotation::class
+    }
+
+    interface InterfaceCompanionBlockPropertyPrivateField : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InterfaceCompanionBlockPropertyPrivateField::class
     }
 
     interface JavaTypeMismatch : KaFirDiagnostic<KtExpression> {
