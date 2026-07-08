@@ -48,7 +48,7 @@ private fun ValueNode.typeRule(): HairType? = when (this) {
     is ConstTypeInfo -> HairType.NATIVE_POINTER
 
     is ArithBinaryOp -> opType.toHairType()
-    is Cmp -> HairType.INT
+    is Cmp -> HairType.BOOLEAN
 
     is Cast -> targetType
 
