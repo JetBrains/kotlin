@@ -8,43 +8,48 @@ package hair.opt
 import hair.graph.dfs
 import hair.ir.*
 import hair.ir.nodes.*
-import hair.ir.spine
 import hair.utils.forEachInWorklist
-import hair.utils.isEmpty
 
 fun Session.eliminateDead(): Boolean {
-    return eliminateDeadBlocks() || eliminateDeadFoam()
+    // Two phases run back to back:
+    //   1. remove blocks that are unreachable in the CFG, and
+    //   2. sweep away the dead "foam" — value nodes not reachable from any control-flow root
+    //      (including whatever the block removal just orphaned).
+    val aliveBlocks = dfs(cfg()).toList()
+    val deadBlocks = allNodes<BlockEntry>().filter { it !in aliveBlocks }.toList()
+    if (deadBlocks.isNotEmpty()) {
+        modifyIR(runDCE = false) {
+            for (block in deadBlocks) {
+                if (!block.registered) continue
+                block.nextOrNull?.let {
+                    it.control = unreachable
+                }
+                block.replaceValueUsesAndKill(NoValue())
+            }
+        }
+    }
+    return eliminateDeadFoam() || deadBlocks.isNotEmpty()
 }
 
-fun Session.eliminateDeadBlocks(): Boolean {
-    val alive = dfs(cfg()).toList()
-    val dead = allNodes<BlockEntry>().filter { it !in alive }.toList()
+private fun Session.eliminateDeadFoam(): Boolean {
+    // Mark-and-sweep to handle dead cycles (e.g. mutually referencing Phis)
+    // FIXME maybe find common grounds for control flow handling
+    val alive = mutableSetOf<Node>()
+    forEachInWorklist(allNodes().filter { it is ControlFlow }) { node ->
+        if (alive.add(node)) addAll(node.args.filterNotNull())
+    }
+
+    val dead = allNodes().filter { it.registered && it !is ControlFlow && it !in alive }.toList()
     if (dead.isEmpty()) return false
-    modifyIR {
-        for (block in dead) {
-            if (!block.registered) continue
-            block.nextOrNull?.let {
-                it.control = unreachable
-            }
-            block.replaceValueUsesAndKill(NoValue())
-        }
+
+    // The dead set is closed under uses: every user of a dead node is itself dead.
+    // So we first sever all argument edges leaving the set,
+    // which empties every dead node's use list even across cycles, and only then deregister.
+    for (node in dead) {
+        for (arg in node.args) arg?.removeUse(node)
+    }
+    for (node in dead) {
+        node.deregister()
     }
     return true
-}
-
-fun Session.eliminateDeadFoam(): Boolean {
-    var changed = false
-    forEachInWorklist(allNodes()) { node ->
-        // FIXME what about cyclic dependencies?
-        // FIXME maybe find common grounds for control flow handling
-        if (node !is ControlFlow && node.uses.isEmpty()) {
-            // FIXME fix this registered/deregistered mess
-            if (node.registered) {
-                changed = true
-                addAll(node.args.filterNotNull())
-                node.deregister()
-            }
-        }
-    }
-    return changed
 }
