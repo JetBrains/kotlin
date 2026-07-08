@@ -5,6 +5,9 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Wasm-JS:2.3,2.4
+// ^^^ KT-78040 is available in 2.4.20-Beta2
+
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
