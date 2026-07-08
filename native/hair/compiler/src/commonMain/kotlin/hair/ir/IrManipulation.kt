@@ -3,8 +3,7 @@ package hair.ir
 import hair.ir.nodes.*
 import hair.ir.nodes.Node
 import hair.opt.Normalization
-import hair.opt.eliminateDeadBlocks
-import hair.opt.eliminateDeadFoam
+import hair.opt.eliminateDead
 import hair.utils.isEmpty
 
 class RawNodeBuilder(override val session: Session) : NodeBuilder {
@@ -81,19 +80,19 @@ fun <T> Session.buildInitialIR(
 ): T {
     return context(nodeBuilder, ControlFlowBuilder(entry)) {
         argUpdater.builderAction().also {
-            eliminateDeadBlocks()
-            eliminateDeadFoam()
+            eliminateDead()
             verify()
         }
     }
 }
 
 fun <T> Session.modifyIR(
+    runDCE: Boolean = true,
     builderAction: context(NodeBuilder, NoControlFlowBuilder) ArgumentUpdater.() -> T
 ): T {
     return context(nodeBuilder, NoControlFlowBuilder) {
         argUpdater.builderAction().also {
-            eliminateDeadFoam()
+            if (runDCE) eliminateDead()
             verify()
         }
     }
@@ -105,8 +104,7 @@ fun <T> Session.modifyControlFlow(
 ): T {
     return context(nodeBuilder, ControlFlowBuilder(at)) {
         argUpdater.builderAction().also {
-            eliminateDeadBlocks()
-            eliminateDeadFoam()
+            eliminateDead()
             verify()
         }
     }
