@@ -795,7 +795,7 @@ open class FirDeclarationsResolveTransformer(
         owner: FirProperty,
         shouldResolveEverything: Boolean,
     ): Unit = whileAnalysing(session, accessor) {
-        context.withPropertyAccessor(owner, accessor, components) {
+        context.withPropertyAccessor(owner, accessor) {
             val propertyTypeRef = owner.returnTypeRef
 
             // Currently, this condition might only be true for delegates, because if type is set explicitly for the property,
@@ -858,7 +858,7 @@ open class FirDeclarationsResolveTransformer(
     }
 
     open fun withScript(script: FirScript, action: () -> FirScript): FirScript {
-        val result = context.withScript(script, components) {
+        val result = context.withScript(script) {
             // see todo in withFile
             dataFlowAnalyzer.enterScript(script, buildGraph = transformer.buildCfgForScripts)
             action()
@@ -879,7 +879,7 @@ open class FirDeclarationsResolveTransformer(
     open fun withReplSnippet(
         snippet: FirReplSnippet,
         action: () -> FirReplSnippet,
-    ): FirReplSnippet = context.withReplSnippet(snippet, components) {
+    ): FirReplSnippet = context.withReplSnippet(snippet) {
         action()
     }
 
@@ -899,7 +899,7 @@ open class FirDeclarationsResolveTransformer(
 
     override fun transformCodeFragment(codeFragment: FirCodeFragment, data: ResolutionMode): FirCodeFragment {
         dataFlowAnalyzer.enterCodeFragment(codeFragment)
-        context.withCodeFragment(codeFragment, components) {
+        context.withCodeFragment(codeFragment) {
             transformBlock(codeFragment.block, data)
         }
         dataFlowAnalyzer.exitCodeFragment(codeFragment)
@@ -933,7 +933,7 @@ open class FirDeclarationsResolveTransformer(
         file: FirFile,
         action: () -> FirFile,
     ): FirFile {
-        val result = context.withFile(file, components) {
+        val result = context.withFile(file) {
             // TODO Must be done within 'withFile' as the context - any the analyzer - is cleared as the first step.
             //  yuk. maybe the clear shouldn't happen for `enterFile`? or at maybe separately?
             // also check whether it is applicable in withScript`
@@ -962,7 +962,7 @@ open class FirDeclarationsResolveTransformer(
         action: () -> FirRegularClass
     ): FirRegularClass {
         dataFlowAnalyzer.enterClass(regularClass, buildGraph = transformer.preserveCFGForClasses)
-        val result = context.forRegularClassBody(regularClass, components) {
+        val result = context.forRegularClassBody(regularClass) {
             action()
         }
 
@@ -986,7 +986,7 @@ open class FirDeclarationsResolveTransformer(
             require(anonymousObject.controlFlowGraphReference == null)
             val buildGraph = !implicitTypeOnly
             dataFlowAnalyzer.enterClass(anonymousObject, buildGraph)
-            val result = context.withAnonymousObject(anonymousObject, components) {
+            val result = context.withAnonymousObject(anonymousObject) {
                 transformDeclarationContent(anonymousObject, data) as FirAnonymousObject
             }
             val graph = dataFlowAnalyzer.exitClass()
@@ -1025,7 +1025,7 @@ open class FirDeclarationsResolveTransformer(
                 }
             }
 
-            context.forFunctionBody(namedFunction, components) {
+            context.forFunctionBody(namedFunction) {
                 withFullBodyResolve {
                     transformFunctionWithGivenSignature(namedFunction, shouldResolveEverything = shouldResolveEverything)
                 }
@@ -1169,7 +1169,7 @@ open class FirDeclarationsResolveTransformer(
                 .transformReceiverParameter(transformer, data)
                 .transformReturnTypeRef(transformer, data)
 
-            context.forConstructorParameters(constructor, owningClass, components) {
+            context.forConstructorParameters(constructor, owningClass) {
                 constructor.transformValueParameters(transformer, data)
             }
             constructor.transformDelegatedConstructor(transformer, data)
@@ -1545,7 +1545,7 @@ open class FirDeclarationsResolveTransformer(
     ): FirAnonymousFunction {
         // `transformFunction` will replace both `typeRef` and `returnTypeRef`, so make sure to keep the former.
         val lambdaType = anonymousFunction.typeRef
-        return context.withAnonymousFunction(anonymousFunction, components) {
+        return context.withAnonymousFunction(anonymousFunction) {
             doTransformTypeParameters(anonymousFunction)
             withFullBodyResolve {
                 if (anonymousFunction.bodyResolved) return@withFullBodyResolve anonymousFunction

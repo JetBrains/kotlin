@@ -180,7 +180,7 @@ private class KaFirCompletionExtensionCandidateChecker(
                 val resolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
                 val components = resolver.bodyResolveComponents
                 val context = components.context
-                context.withFile(firOriginalFile, components) {
+                context.withFile(firOriginalFile, holder = components) {
                     components.callableReferenceLhsResolver.resolveLhsAsType(callableReferenceFir)
                 }
             } else {

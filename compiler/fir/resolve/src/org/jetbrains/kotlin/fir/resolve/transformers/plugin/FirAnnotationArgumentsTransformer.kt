@@ -170,7 +170,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
     transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirDeclarationsResolveTransformer(transformer) {
     override fun withFile(file: FirFile, action: () -> FirFile): FirFile {
-        return context.withFile(file, components) {
+        return context.withFile(file) {
             action()
         }
     }
@@ -191,14 +191,14 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
 
     override fun forRegularClassBody(regularClass: FirRegularClass, action: () -> FirRegularClass): FirRegularClass {
         return context.withContainingClass(regularClass) {
-            context.forRegularClassBody(regularClass, components) {
+            context.forRegularClassBody(regularClass) {
                 action()
             }
         }
     }
 
     override fun withScript(script: FirScript, action: () -> FirScript): FirScript {
-        return context.withScript(script, components) {
+        return context.withScript(script) {
             action()
         }
     }
@@ -246,7 +246,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
                     it.transformSingle(transformer, data)
                 }
 
-            context.forConstructorParameters(constructor, containingClass, components) {
+            context.forConstructorParameters(constructor, containingClass) {
                 constructor.transformValueParameters(transformer, data)
             }
         }

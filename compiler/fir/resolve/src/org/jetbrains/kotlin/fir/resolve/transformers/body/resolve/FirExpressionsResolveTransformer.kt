@@ -1940,7 +1940,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         dataFlowAnalyzer.enterCallArguments(delegatedConstructorCall, delegatedConstructorCall.arguments)
-        context.forDelegatedConstructorCallChildren(containingConstructor, containingClass as? FirRegularClass, components) {
+        context.forDelegatedConstructorCallChildren(containingConstructor, containingClass as? FirRegularClass) {
             delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
         }
         dataFlowAnalyzer.exitCallArguments()

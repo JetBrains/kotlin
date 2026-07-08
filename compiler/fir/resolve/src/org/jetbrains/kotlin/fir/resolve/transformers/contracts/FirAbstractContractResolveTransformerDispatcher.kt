@@ -87,7 +87,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             if (!namedFunction.hasContractToResolve) return namedFunction
 
             return context.withNamedFunction(namedFunction, session) {
-                context.forFunctionBody(namedFunction, components) {
+                context.forFunctionBody(namedFunction) {
                     transformContractDescriptionOwner(namedFunction)
                 }
             }
@@ -96,7 +96,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         override fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: ResolutionMode): FirAnonymousFunction {
             if (!anonymousFunction.hasContractToResolve) return anonymousFunction
 
-            return context.forFunctionBody(anonymousFunction, components) {
+            return context.forFunctionBody(anonymousFunction) {
                 transformContractDescriptionOwner(anonymousFunction)
             }
         }
@@ -135,7 +135,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             if (!propertyAccessor.hasContractToResolve) {
                 return propertyAccessor
             }
-            return context.withPropertyAccessor(owner, propertyAccessor, components, forContracts = true) {
+            return context.withPropertyAccessor(owner, propertyAccessor, forContracts = true) {
                 transformContractDescriptionOwner(propertyAccessor)
             }
         }
@@ -293,7 +293,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         }
 
         override fun withFile(file: FirFile, action: () -> FirFile): FirFile {
-            return context.withFile(file, components) {
+            return context.withFile(file) {
                 action()
             }
         }
@@ -306,13 +306,13 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         }
 
         override fun forRegularClassBody(regularClass: FirRegularClass, action: () -> FirRegularClass): FirRegularClass {
-            return context.forRegularClassBody(regularClass, components) {
+            return context.forRegularClassBody(regularClass) {
                 action()
             }
         }
 
         override fun withScript(script: FirScript, action: () -> FirScript): FirScript {
-            return context.withScript(script, components) {
+            return context.withScript(script) {
                 action()
             }
         }
@@ -331,7 +331,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             anonymousObject: FirAnonymousObject,
             data: ResolutionMode
         ): FirAnonymousObject {
-            context.withAnonymousObject(anonymousObject, components) {
+            context.withAnonymousObject(anonymousObject) {
                 transformDeclarationContent(anonymousObject, data)
             }
             return anonymousObject

@@ -550,7 +550,7 @@ private class ContextCollectorVisitor(
         onActive {
             val holder = getSessionHolder(script)
 
-            context.withScript(script, holder) {
+            context.withScript(script, holder = holder) {
                 dumpContext(script, ContextKind.BODY)
 
                 onActive {
@@ -570,7 +570,7 @@ private class ContextCollectorVisitor(
         onActive {
             val holder = getSessionHolder(replSnippet)
 
-            context.withReplSnippet(replSnippet, holder) {
+            context.withReplSnippet(replSnippet, holder = holder) {
                 dumpContext(replSnippet, ContextKind.BODY)
 
                 onActive {
@@ -585,7 +585,7 @@ private class ContextCollectorVisitor(
     override fun visitFile(file: FirFile) = withProcessor(file) {
         val holder = getSessionHolder(file)
 
-        context.withFile(file, holder) {
+        context.withFile(file, holder = holder) {
             dumpContext(file, ContextKind.SELF, hasBodyContext = false)
 
             processFileHeader(file)
@@ -603,7 +603,7 @@ private class ContextCollectorVisitor(
 
         val holder = getSessionHolder(codeFragment)
 
-        context.withCodeFragment(codeFragment, holder) {
+        context.withCodeFragment(codeFragment, holder = holder) {
             withLocalVariableHolder(
                 onEnter = { enterCodeFragment(codeFragment) },
                 onExit = { exitCodeFragment(codeFragment) }
@@ -701,7 +701,7 @@ private class ContextCollectorVisitor(
 
                 val holder = getSessionHolder(regularClass)
 
-                context.forRegularClassBody(regularClass, holder) {
+                context.forRegularClassBody(regularClass, holder = holder) {
                     dumpContext(regularClass, ContextKind.BODY)
 
                     onActive {
@@ -826,7 +826,7 @@ private class ContextCollectorVisitor(
                 val holder = getSessionHolder(constructor)
                 val containingClass = context.containerIfAny as? FirRegularClass
 
-                context.forConstructorParameters(constructor, containingClass, holder) {
+                context.forConstructorParameters(constructor, containingClass, holder = holder) {
                     processList(constructor.valueParameters)
                 }
 
@@ -840,7 +840,7 @@ private class ContextCollectorVisitor(
                 }
 
                 onActive {
-                    context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder) {
+                    context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = holder) {
                         process(constructor.delegatedConstructor)
                     }
 
@@ -899,7 +899,7 @@ private class ContextCollectorVisitor(
                 process(namedFunction.receiverParameter)
 
                 onActive {
-                    context.forFunctionBody(namedFunction, holder) {
+                    context.forFunctionBody(namedFunction, holder = holder) {
                         dumpContext(namedFunction, ContextKind.BODY)
 
                         withLocalVariableHolder(onEnter = { enterFunction(namedFunction) }, onExit = { exitFunction() }) {
@@ -935,7 +935,7 @@ private class ContextCollectorVisitor(
                 onActive {
                     dumpContext(property, ContextKind.BODY)
 
-                    context.withParameters(property, getSessionHolder(property)) {
+                    context.withParameters(property, holder = getSessionHolder(property)) {
                         processList(property.contextParameters)
                     }
 
@@ -1020,7 +1020,7 @@ private class ContextCollectorVisitor(
         onActive {
             val holder = getSessionHolder(propertyAccessor)
 
-            context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder) {
+            context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder = holder) {
                 dumpContext(propertyAccessor, ContextKind.BODY)
                 processChildren(propertyAccessor)
             }
@@ -1075,7 +1075,7 @@ private class ContextCollectorVisitor(
 
                 onActive {
                     withLocalVariableHolder(onEnter = { enterFunction(anonymousFunction) }, onExit = { exitFunction() }) {
-                        context.withAnonymousFunction(anonymousFunction, bodyHolder) {
+                        context.withAnonymousFunction(anonymousFunction, holder = bodyHolder) {
                             for (contextParameter in anonymousFunction.contextParameters) {
                                 context.storeValueParameterIfNeeded(contextParameter, bodyHolder.session)
                             }
@@ -1106,7 +1106,7 @@ private class ContextCollectorVisitor(
         onActive {
             processAnonymousObjectHeader(anonymousObject)
 
-            context.withAnonymousObject(anonymousObject, bodyHolder) {
+            context.withAnonymousObject(anonymousObject, holder = bodyHolder) {
                 dumpContext(anonymousObject, ContextKind.BODY)
                 withLocalVariableHolder(onEnter = { enterClass(anonymousObject) }, onExit = { exitClass() }) {
                     processChildren(anonymousObject)

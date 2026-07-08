@@ -45,12 +45,12 @@ import org.jetbrains.kotlin.util.PrivateForInline
 
 @OptIn(PrivateForInline::class)
 abstract class AbstractFirSpecificAnnotationResolveTransformer(
-    @property:PrivateForInline val session: FirSession,
-    @property:PrivateForInline val scopeSession: ScopeSession,
+    @property:PrivateForInline override val session: FirSession,
+    @property:PrivateForInline override val scopeSession: ScopeSession,
     @property:PrivateForInline val computationSession: CompilerRequiredAnnotationsComputationSession,
     containingDeclarations: List<FirDeclaration> = emptyList(),
     private val outerBodyResolveContext: BodyResolveContext? = null,
-) : FirDefaultTransformer<Nothing?>() {
+) : FirDefaultTransformer<Nothing?>(), SessionAndScopeSessionHolder {
     inner class FirEnumAnnotationArgumentsTransformerDispatcher : FirAbstractBodyResolveTransformerDispatcher(
         session,
         FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS,
@@ -554,7 +554,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         val oldValue = currentFile
         currentFile = file
         return try {
-            argumentsTransformer.context.withFile(file, argumentsTransformer.components) {
+            argumentsTransformer.context.withFile(file) {
                 withFileAnalysisExceptionWrapping(file, f)
             }
         } finally {
