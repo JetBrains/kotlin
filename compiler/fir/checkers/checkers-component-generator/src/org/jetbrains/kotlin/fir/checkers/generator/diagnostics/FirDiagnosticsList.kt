@@ -2423,7 +2423,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val COMPANION_BLOCKS_AND_EXTENSIONS by object : DiagnosticGroup("Companion Blocks & Extensions") {
-        val COMPANION_BLOCK_MEMBER_EXTENSION by error<PsiElement>()
+        val COMPANION_BLOCK_MEMBER_EXTENSION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val ILLEGAL_COMPANION_BLOCK by error<PsiElement> {
             parameter<FirBasedSymbol<*>>("parent")
         }
