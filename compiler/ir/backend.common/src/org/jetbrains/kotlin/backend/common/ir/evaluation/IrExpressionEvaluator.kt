@@ -13,19 +13,11 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.evaluation.reportOnIr
+import org.jetbrains.kotlin.ir.evaluation.IrConstFieldInliner
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.getPrimitiveType
-import org.jetbrains.kotlin.ir.types.getUnsignedType
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.types.isString
-import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.types.removeAnnotations
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
@@ -48,13 +40,13 @@ fun evaluate(
     inlineConstTracker: InlineConstTracker?,
     isFloatingPointOptimizationEnabled: Boolean,
 ): IrExpression? {
-    return expression.accept(IrExpressionEvaluator(irFile, irBuiltIns, inlineConstTracker, isFloatingPointOptimizationEnabled), null)
+    val inlineResult = expression.accept(IrConstFieldInliner(irFile, inlineConstTracker), null)
+    val evaluationResult = (inlineResult ?: expression).accept(IrExpressionEvaluator(irBuiltIns, isFloatingPointOptimizationEnabled), null)
+    return evaluationResult ?: inlineResult
 }
 
 private class IrExpressionEvaluator(
-    private val irFile: IrFile,
     private val irBuiltIns: IrBuiltIns,
-    private val inlineConstTracker: InlineConstTracker?,
     private val isFloatingPointOptimizationEnabled: Boolean,
 ) : IrVisitor<IrExpression?, Nothing?>() {
     private fun IrExpression.evaluateAsConst(): IrConst? = this.accept(this@IrExpressionEvaluator, null) as? IrConst
@@ -64,32 +56,12 @@ private class IrExpressionEvaluator(
     override fun visitConst(expression: IrConst, data: Nothing?): IrConst = expression
 
     override fun visitCall(expression: IrCall, data: Nothing?): IrExpression? {
-        val property = expression.correspondingProperty
-        val field = property?.backingField
         return when {
-            field != null && field.canBeInlined() -> {
-                val const = field.getInitializerAndReportInlining(expression)
-                val receiver = expression.dispatchReceiver
-                if (receiver == null || receiver.shouldDropConstReceiver()) return const
-
-                IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type, null, listOf(receiver, const))
-            }
             expression.isInterpretableKCallableNameCall(irBuiltIns) -> inlineCallableName(expression)
             expression.isEnumName() -> inlineEnumName(expression)
             expression.isCompileTimeBuiltinCall() -> evaluateBuiltinCall(expression)
             else -> null
         }
-    }
-
-    override fun visitGetField(expression: IrGetField, data: Nothing?): IrExpression? {
-        val field = expression.symbol.owner
-        if (!field.canBeInlined()) return null
-
-        val const = field.getInitializerAndReportInlining(expression)
-        val receiver = expression.receiver
-        if (receiver == null || receiver.shouldDropConstReceiver()) return const
-
-        return IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type, null, listOf(receiver, const))
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): IrConst? {
@@ -140,15 +112,6 @@ private class IrExpressionEvaluator(
         }
     }
 
-    private fun IrField.getInitializerAndReportInlining(original: IrExpression): IrExpression {
-        val const = this.initializer?.expression as IrConst
-        inlineConstTracker?.reportOnIr(irFile, this, const)
-        return const.shallowCopy().apply {
-            startOffset = original.startOffset
-            endOffset = original.endOffset
-        }
-    }
-
     private fun inlineCallableName(expression: IrCall): IrExpression? {
         val callableReference = expression.dispatchReceiver
         if (callableReference !is IrRichCallableReference<*>) return null
@@ -175,15 +138,6 @@ private class IrExpressionEvaluator(
     }
 
     companion object {
-        private val IrField.property: IrProperty?
-            get() = this.correspondingPropertySymbol?.owner
-
-        private val IrCall.correspondingProperty: IrProperty?
-            get() = this.symbol.owner.correspondingPropertySymbol?.owner
-
-        private val IrProperty?.isConst: Boolean
-            get() = this?.isConst == true
-
         private val IrDeclarationWithName.callableId: CallableId?
             get() {
                 return when (val parent = this.parent) {
@@ -196,21 +150,6 @@ private class IrExpressionEvaluator(
                     else -> null
                 }
             }
-
-        private fun IrExpression.shouldDropConstReceiver(): Boolean {
-            return this is IrGetValue || this is IrGetObjectValue
-        }
-
-        fun IrField.isMarkedAsConst(): Boolean {
-            val implicitConst = isFinal && isStatic && origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && initializer != null
-            return implicitConst || this.property.isConst
-        }
-
-        private fun IrField.canBeInlined(): Boolean {
-            val property = this.property ?: return false
-            val initializer = property.backingField?.initializer?.expression
-            return this.isMarkedAsConst() && initializer is IrConst
-        }
 
         private fun IrType.isFloatOrDouble(): Boolean =
             getPrimitiveType().let { it == PrimitiveType.FLOAT || it == PrimitiveType.DOUBLE }
