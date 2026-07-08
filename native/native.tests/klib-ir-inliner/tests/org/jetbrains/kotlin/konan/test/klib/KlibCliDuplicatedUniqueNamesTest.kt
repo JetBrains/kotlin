@@ -47,6 +47,14 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
     )
 
     @Test
+    fun `Metadata compilation - ALLOW_ALL strategy`() = runTest(
+        strategy = DuplicatedUniqueNameStrategy.ALLOW_ALL,
+        expectedDuplicatedNameMessagePrefix = null,
+        isSuccessfulCompilationExpected = true,
+        freeCompilerArgs = listOf("-Xmetadata-klib")
+    )
+
+    @Test
     fun `Metadata compilation - default strategy`() = runTest(
         strategy = null,
         expectedDuplicatedNameMessagePrefix = "warning",
@@ -72,6 +80,13 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
         strategy = DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING,
         isSuccessfulCompilationExpected = true,
         expectedDuplicatedNameMessagePrefix = "warning",
+    )
+
+    @Test
+    fun `Regular compilation - ALLOW_ALL strategy`() = runTest(
+        strategy = DuplicatedUniqueNameStrategy.ALLOW_ALL,
+        isSuccessfulCompilationExpected = true,
+        expectedDuplicatedNameMessagePrefix = null,
     )
 
     @Test

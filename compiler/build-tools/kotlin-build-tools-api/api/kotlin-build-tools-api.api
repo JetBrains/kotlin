@@ -1178,6 +1178,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/Compatqua
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy : java/lang/Enum {
+	public static final field ALLOW_ALL Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
 	public static final field ALLOW_ALL_WITH_WARNING Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
 	public static final field ALLOW_FIRST_WITH_WARNING Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
 	public static final field DENY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;

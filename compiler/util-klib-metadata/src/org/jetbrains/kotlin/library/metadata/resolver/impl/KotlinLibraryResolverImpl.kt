@@ -123,12 +123,11 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
             librariesWithDuplicatedUniqueNames.entries.sortedBy { it.key }.forEach { [uniqueName, libraries] ->
                 val libraryPaths = libraries.map { it.path.absolutePathString() }.sorted().joinToString()
                 val message = "KLIB resolver: The same 'unique_name=$uniqueName' found in more than one library: $libraryPaths"
-                if (duplicatedUniqueNameStrategy == DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING ||
-                    duplicatedUniqueNameStrategy == DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING
-                ) {
-                    logger.strongWarning(message)
-                } else {
-                    logger.error(
+                when (duplicatedUniqueNameStrategy) {
+                    DuplicatedUniqueNameStrategy.ALLOW_ALL -> {}
+                    DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING,
+                    DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING -> logger.strongWarning(message)
+                    DuplicatedUniqueNameStrategy.DENY -> logger.error(
                         message + "\n" +
                                 "Please file an issue to https://kotl.in/issue and meanwhile use CLI flag `-Xklib-duplicated-unique-name-strategy` with one of the following values:\n" +
                                 "${DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING}: Use all KLIB dependencies, even when they have same `unique_name` property.\n" +

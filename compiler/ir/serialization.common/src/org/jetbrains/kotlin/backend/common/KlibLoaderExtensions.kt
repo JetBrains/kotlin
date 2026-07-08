@@ -46,17 +46,20 @@ fun KlibLoaderResult.eliminateLibrariesWithDuplicatedUniqueNames(configuration: 
         val message =
             "KLIB loader: The same 'unique_name=$uniqueName' found in more than one library: ${libraries.joinToString { it.path.pathString }}"
 
-        if (duplicatedUniqueNameStrategy == DuplicatedUniqueNameStrategy.DENY) {
-            configuration.report(
-                SerializationErrors.KLIB_LOADING_ERROR,
-                message +
-                        "\nPlease file an issue to https://kotl.in/issue and meanwhile use CLI parameter -Xklib-duplicated-unique-name-strategy with one of the following values:\n" +
-                        "${DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING}: Use all KLIB dependencies, even when they have same 'unique_name' property.\n" +
-                        "${DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING}: Use the first KLIB dependency with clashing 'unique_name' property. No order guarantees are given though.\n" +
-                        "${DuplicatedUniqueNameStrategy.DENY}: Fail a compilation with the error."
-            )
-        } else {
-            configuration.report(SerializationErrors.KLIB_LOADING_WARNING, message)
+        when (duplicatedUniqueNameStrategy) {
+            DuplicatedUniqueNameStrategy.ALLOW_ALL -> {}
+            DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING, DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING ->
+                configuration.report(SerializationErrors.KLIB_LOADING_WARNING, message)
+            DuplicatedUniqueNameStrategy.DENY ->
+                configuration.report(
+                    SerializationErrors.KLIB_LOADING_ERROR,
+                    message +
+                            "\nPlease file an issue to https://kotl.in/issue and meanwhile use CLI parameter -Xklib-duplicated-unique-name-strategy with one of the following values:\n" +
+                            "${DuplicatedUniqueNameStrategy.ALLOW_ALL}: Use all KLIB dependencies, even when they have same 'unique_name' property.\n" +
+                            "${DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING}: Use all KLIB dependencies, even when they have same 'unique_name' property, but emit a warning.\n" +
+                            "${DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING}: Use the first KLIB dependency with clashing 'unique_name' property. No order guarantees are given though.\n" +
+                            "${DuplicatedUniqueNameStrategy.DENY}: Fail a compilation with the error."
+                )
         }
     }
 
@@ -75,7 +78,7 @@ fun KlibLoaderResult.eliminateLibrariesWithDuplicatedUniqueNames(configuration: 
  */
 fun KlibLoaderResult.reportLoadingProblemsIfAny(
     configuration: CompilerConfiguration,
-    allAsErrors: Boolean = false
+    allAsErrors: Boolean = false,
 ) {
     reportLoadingProblemsIfAny { defaultSeverity, message ->
         val factory = if (allAsErrors) SerializationErrors.KLIB_LOADING_ERROR else when (defaultSeverity) {

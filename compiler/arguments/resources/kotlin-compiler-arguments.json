@@ -1515,6 +1515,15 @@
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
+                },
+                {
+                    "name": "allow-all",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.4.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
             ]
         },
