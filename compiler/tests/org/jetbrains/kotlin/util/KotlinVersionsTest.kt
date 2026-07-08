@@ -20,7 +20,6 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
@@ -30,7 +29,6 @@ import org.xml.sax.helpers.DefaultHandler
 import java.io.File
 import javax.xml.parsers.SAXParserFactory
 
-@WithMutedInDatabaseRunTest
 @Disabled("Reads files from :libraries, should live there")
 class KotlinVersionsTest {
     @Test

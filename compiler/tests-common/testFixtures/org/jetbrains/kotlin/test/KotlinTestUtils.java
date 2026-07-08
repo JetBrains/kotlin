@@ -9,20 +9,11 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.lang.JavaVersion;
-import junit.framework.TestCase;
 import kotlin.Unit;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.CompilerConfigurationCreationKt;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
@@ -35,58 +26,25 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactory;
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.jupiter.api.TestInfo;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES;
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class KotlinTestUtils {
-    public static final String ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT = "Actual data differs from file content";
-    public static String TEST_MODULE_NAME = "test-module";
-
-    private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
-            Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
-
-    private static final boolean PRINT_STACKTRACE_FOR_IGNORED_TESTS =
-            Boolean.getBoolean("org.jetbrains.kotlin.print.stacktrace.for.ignored.tests");
-
-    private static final boolean DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND =
-            Boolean.getBoolean("org.jetbrains.kotlin.dont.ignore.tests.working.on.compatible.backend");
-
-    private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
-    private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*([A-Z_0-9]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
 
     private KotlinTestUtils() {
-    }
-
-    @NotNull
-    @SuppressWarnings("deprecation")
-    public static AnalysisResult analyzeFile(@NotNull KtFile file, @NotNull KotlinCoreEnvironment environment) {
-        return JvmResolveUtil.analyze(file, environment);
     }
 
     @NotNull
@@ -111,23 +69,20 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static KotlinCoreEnvironment createEnvironmentWithFullJdkAndIdeaAnnotations(Disposable disposable) {
+    private static KotlinCoreEnvironment createEnvironmentWithFullJdkAndIdeaAnnotations(Disposable disposable) {
         return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
     }
 
     @NotNull
-    public static File tmpDirForTest(TestCase test) throws IOException {
-        return KtTestUtil.tmpDirForTest(test.getClass().getSimpleName(), test.getName());
-    }
-
-    @NotNull
     public static File tmpDirForTest(TestInfo testInfo) throws IOException {
+        //noinspection OptionalGetWithoutIsPresent
         return KtTestUtil.tmpDirForTest(testInfo.getTestClass().get().getSimpleName(), testInfo.getDisplayName());
     }
 
     @NotNull
     public static CompilerConfiguration newConfiguration() {
-        CompilerConfiguration configuration = CompilerConfigurationCreationKt.create(CompilerConfiguration.Companion);;
+        CompilerConfiguration configuration = CompilerConfigurationCreationKt.create(CompilerConfiguration.Companion);
+        String TEST_MODULE_NAME = "test-module";
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME);
         configuration.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, new MessageCollector() {
             @Override
@@ -257,248 +212,6 @@ public class KotlinTestUtils {
         return directives;
     }
 
-    public static List<String> loadBeforeAfterText(String filePath) {
-        String content;
-
-        try {
-            content = FileUtil.loadFile(new File(filePath), true);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        List<String> files = TestFiles.createTestFiles("", content, new TestFiles.TestFileFactoryNoModules<String>() {
-            @NotNull
-            @Override
-            public String create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
-                int firstLineEnd = text.indexOf('\n');
-                return StringUtil.trimTrailing(text.substring(firstLineEnd + 1));
-            }
-        });
-
-        assertEquals(2, files.size(), "Exactly two files expected: ");
-
-        return files;
-    }
-
-    public enum CommentType {
-        ALL,
-        LINE_COMMENT,
-        BLOCK_COMMENT
-    }
-
-    @NotNull
-    public static String getLastCommentInFile(@NotNull KtFile file) {
-        return CollectionsKt.first(getLastCommentsInFile(file, CommentType.ALL, true));
-    }
-
-    @NotNull
-    public static List<String> getLastCommentsInFile(@NotNull KtFile file, CommentType commentType, boolean assertMustExist) {
-        PsiElement lastChild = file.getLastChild();
-        if (lastChild != null && lastChild.getNode().getElementType().equals(KtTokens.WHITE_SPACE)) {
-            lastChild = lastChild.getPrevSibling();
-        }
-        assert lastChild != null;
-
-        List<String> comments = new ArrayList<>();
-
-        while (true) {
-            if (lastChild.getNode().getElementType().equals(KtTokens.BLOCK_COMMENT)) {
-                if (commentType == CommentType.ALL || commentType == CommentType.BLOCK_COMMENT) {
-                    String lastChildText = lastChild.getText();
-                    comments.add(lastChildText.substring(2, lastChildText.length() - 2).trim());
-                }
-            }
-            else if (lastChild.getNode().getElementType().equals(KtTokens.EOL_COMMENT)) {
-                if (commentType == CommentType.ALL || commentType == CommentType.LINE_COMMENT) {
-                    comments.add(lastChild.getText().substring(2).trim());
-                }
-            }
-            else {
-                break;
-            }
-
-            lastChild = lastChild.getPrevSibling();
-        }
-
-        if (comments.isEmpty() && assertMustExist) {
-            throw new AssertionError(String.format(
-                    "Test file '%s' should end in a comment of type %s; last node was: %s", file.getName(), commentType, lastChild));
-        }
-
-        return comments;
-    }
-
-    public static String navigationMetadata(@TestDataFile String testFile) {
-        return testFile;
-    }
-
-    public interface DoTest {
-        void invoke(@NotNull String filePath);
-    }
-
-    public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) {
-        runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIXES), testCase, ForTestCompileRuntime.transformTestDataPath(testDataFile).getPath());
-    }
-
-    public static void runTest(@NotNull TestCase testCase, @NotNull Function0<Unit> test) {
-        MuteWithDatabaseJunit4Kt.runTest(testCase, test);
-    }
-
-    // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
-    // So only file paths passed to this parameter will be used in navigation actions, like "Navigate to testdata" and "Related Symbol..."
-    public static void runTest(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile) {
-        runTest0(test, targetBackend, ForTestCompileRuntime.transformTestDataPath(testDataFile).getPath());
-    }
-
-    public static void runTestWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile, String ignoreDirective) {
-        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), null, ForTestCompileRuntime.transformTestDataPath(testDataFile).getPath());
-    }
-
-    // In this test runner version, NONE of the parameters are annotated by `TestDataFile`.
-    // So DevKit will use test name to determine related files in navigation actions, like "Navigate to testdata" and "Related Symbol..."
-    //
-    // Pro:
-    // * in most cases, it shows all related files including generated js files, for example.
-    // Cons:
-    // * sometimes, for too common/general names, it shows many variants to navigate
-    // * it adds an additional step for navigation -- you must choose an exact file to navigate
-    public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) {
-        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIXES), null, testDataFilePath);
-    }
-
-    private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) {
-        if (testCase != null && !isRunTestOverridden(testCase)) {
-            Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseJunit4Kt.wrapWithMuteInDatabase(testCase, () -> {
-                try {
-                    test.invoke(testDataFilePath);
-                }
-                catch (Exception e) {
-                    throw new IllegalStateException(e);
-                }
-                return null;
-            });
-            if (wrapWithMuteInDatabase != null) {
-                wrapWithMuteInDatabase.invoke();
-                return;
-            }
-        }
-        test.invoke(testDataFilePath);
-    }
-
-    private static boolean isRunTestOverridden(TestCase testCase) {
-        Class<?> type = testCase.getClass();
-        while (type != null) {
-            for (Annotation annotation : type.getDeclaredAnnotations()) {
-                if (annotation.annotationType().equals(WithMutedInDatabaseRunTest.class)) {
-                    return true;
-                }
-            }
-            type = type.getSuperclass();
-        }
-        return false;
-    }
-
-    private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String... ignoreDirectives) {
-        return filePath -> {
-            File testDataFile = new File(filePath);
-
-            boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile, ignoreDirectives);
-
-            if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
-                // Only ignore if it is ignored for both backends
-                // Motivation: this backend works => all good, even if compatible backend fails
-                // This backend fails, compatible works => need to know
-                isIgnored &= isIgnoredTarget(targetBackend.getCompatibleWith(), testDataFile);
-            }
-
-            try {
-                test.invoke(filePath);
-            }
-            catch (Throwable e) {
-                if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
-                    String text = KtTestUtil.doLoadFile(testDataFile);
-                    String directive = ignoreDirectives[0] + targetBackend.name() + "\n";
-
-                    String newText;
-                    if (text.startsWith("//")) {
-                        StringBuilder prefixBuilder = new StringBuilder();
-                        int l = 0;
-                        while (text.startsWith("//", l)) {
-                            int r = text.indexOf("\n", l) + 1;
-                            if (r <= 0) r = text.length();
-                            prefixBuilder.append(text.substring(l, r));
-                            l = r;
-                        }
-                        prefixBuilder.append(directive);
-                        prefixBuilder.append(text.substring(l));
-
-                        newText = prefixBuilder.toString();
-                    } else {
-                        newText = directive + text;
-                    }
-
-                    if (!newText.equals(text)) {
-                        System.err.println("\"" + directive + "\" was added to \"" + testDataFile + "\"");
-                        try {
-                            FileUtil.writeToFile(testDataFile, newText);
-                        } catch (IOException ioException) {
-                            throw ExceptionUtilsKt.rethrow(e);
-                        }
-                    }
-                }
-
-                if (RUN_IGNORED_TESTS_AS_REGULAR || !isIgnored) {
-                    throw e;
-                }
-
-                if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
-                    e.printStackTrace();
-                } else {
-                    System.err.println("MUTED TEST with `" + ignoreDirectives[0] + "`");
-                }
-                return;
-            }
-
-            if (isIgnored) {
-                StringBuilder directivesToRemove = new StringBuilder();
-                if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
-                    for (String ignoreDirective: ignoreDirectives){
-                        String text = KtTestUtil.doLoadFile(testDataFile);
-                        String directive = ignoreDirective + targetBackend.name();
-                        directivesToRemove.append(directive);
-                        directivesToRemove.append(", ");
-                        String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
-                        if (!newText.equals(text)) {
-                            System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
-                            try {
-                                FileUtil.writeToFile(testDataFile, newText);
-                            } catch (IOException e) {
-                                throw ExceptionUtilsKt.rethrow(e);
-                            }
-                        }
-                    }
-                }
-
-                throw new AssertionError(String.format("Looks like this test can be unmuted. Remove \"%s\" directive.", directivesToRemove.toString()));
-            }
-        };
-    }
-
-    /**
-     * @return test data file name specified in the metadata of test method
-     */
-    @Nullable
-    public static String getTestDataFileName(@NotNull Class<?> testCaseClass, @NotNull String testName) {
-        try {
-            Method method = testCaseClass.getDeclaredMethod(testName);
-            return KtTestUtil.getMethodMetadata(method);
-        }
-        catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @NotNull
     public static KtFile loadKtFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
         String text = FileUtil.loadFile(ioFile, true);
@@ -515,36 +228,7 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static ModuleDescriptorImpl createEmptyModule() {
-        return createEmptyModule("<empty-for-test>");
-    }
-
-    @NotNull
-    public static ModuleDescriptorImpl createEmptyModule(@NotNull String name) {
-        return createEmptyModule(name, DefaultBuiltIns.getInstance());
-    }
-
-    @NotNull
-    public static ModuleDescriptorImpl createEmptyModule(@NotNull String name, @NotNull KotlinBuiltIns builtIns) {
-        return new ModuleDescriptorImpl(Name.special(name), LockBasedStorageManager.NO_LOCKS, builtIns);
-    }
-
-    @NotNull
     public static File replaceExtension(@NotNull File file, @Nullable String newExtension) {
         return new File(file.getParentFile(), FileUtil.getNameWithoutExtension(file) + (newExtension == null ? "" : "." + newExtension));
-    }
-
-    public static boolean isAllFilesPresentTest(String testName) {
-        //noinspection SpellCheckingInspection
-        return testName.toLowerCase().startsWith("allfilespresentin");
-    }
-
-    public static boolean isMultiExtensionName(@NotNull String name) {
-        int firstDotIndex = name.indexOf('.');
-        if (firstDotIndex == -1) {
-            return false;
-        }
-        // Several extension if name contains another dot
-        return name.indexOf('.', firstDotIndex + 1) != -1;
     }
 }

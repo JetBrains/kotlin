@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.TestDataAssertions;
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.KotlinPaths;
@@ -47,7 +46,6 @@ import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@WithMutedInDatabaseRunTest
 public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
     static {
         System.setProperty("java.awt.headless", "true");
