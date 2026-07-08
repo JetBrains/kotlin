@@ -36,6 +36,40 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-08 — Drop walkSupertypeClassIds' now-redundant lambda parameters
+- **Change**: `walkSupertypeClassIds` had exactly one call site
+  (`resolveInheritedInnerClassToClassId`), which always passed the same
+  `directSupertypeClassIds`/`tryResolveInherited` closures and a fresh `visited` set — so its
+  5-parameter signature carried no real flexibility. Gave it a `JavaResolutionContext` context
+  receiver and dropped the `directSupertypeClassIds`/`tryResolve`/`visited` parameters: it now
+  reads `tryResolveInherited`/`directSupertypeClassIds` off the context directly and initializes
+  `visited` internally.
+- **Files**: `resolution/JavaInheritedClassResolver.kt` (`walkSupertypeClassIds` signature +
+  KDoc); `RESOLUTION_SCHEMA.md` updated.
+- **Tests**: `:compiler:java-direct:compileKotlin` succeeds (signature-only change, no test
+  call sites — `walkSupertypeClassIds` is private).
+- **Result**: green. No production function in this file still takes injectable lambdas.
+
+### 2026-07-08 — Drop the 3-lambda-parameter test-only overload of resolveInheritedInnerClassToClassId
+- **Change**: The 5-parameter generic `resolveInheritedInnerClassToClassId(simpleName, tryResolve,
+  directSupertypeClassIds, containingClass, resolveWithoutInheritance)` had exactly one production
+  caller (the 2-parameter context-bound wrapper) — its 3 lambda parameters existed only so a unit
+  test could inject fakes to verify the level-1 raw-AST-text safety invariant. Merged the two
+  overloads into one context-bound function taking only `simpleName`/`containingClass`, binding
+  `tryResolveInherited`/`directSupertypeClassIds`/the reentrance-safe name resolver directly via the
+  context receiver. Replaced the removed unit test with an end-to-end diagnostics test exercising
+  the real hazard: an unqualified reference inside a class's own `implements` clause to its own
+  nested class, inherited two supertypes up — the companion of the existing qualified-reference
+  regression test.
+- **Files**: `resolution/JavaInheritedClassResolver.kt` (overloads merged; `walkSupertypeClassIds`
+  unchanged); `test/.../JavaParsingTypeResolutionTest.kt` (old unit test + unused imports removed);
+  new `testData/diagnostics/tests/jvm/javaDirect/simpleInheritedNestedClassInOwnImplementsClause.kt`;
+  `RESOLUTION_SCHEMA.md` updated.
+- **Tests**: `:compiler:java-direct:compileKotlin`/`compileTestKotlin` succeed; full
+  `:compiler:java-direct:test` suite green, 2836/2836 (0 failures) — same count as before (one
+  removed unit test, one added diagnostics test).
+- **Result**: green. Production signature now has no injectable lambdas left.
+
 ### 2026-07-08 — Convert JavaInheritedMemberResolver to top-level functions; rename file
 - **Change**: The class had no instance state left after the earlier collapses, so its members
   became top-level functions in a renamed `JavaInheritedClassResolver.kt` (it resolves classes,

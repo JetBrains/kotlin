@@ -41,32 +41,13 @@ internal fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass): Jav
 }
 
 /**
- * [resolveInheritedInnerClassToClassId] bound to this context's [directSupertypeClassIds],
- * [tryResolveInherited] existence probe, and reentrance-safe name resolver.
- *
- * Every production call site probes existence the same way, via [tryResolveInherited] — plugged
- * in here as the binary/Kotlin tail of [findInnerClassFromSupertypes], and called directly from
- * [resolveFromLocalScope] and [findInheritedNestedClass].
- */
-context(c: JavaResolutionContext)
-internal fun resolveInheritedInnerClassToClassId(simpleName: String, containingClass: JavaClass?): ClassId? =
-    resolveInheritedInnerClassToClassId(
-        simpleName,
-        tryResolve = { tryResolveInherited(it) },
-        directSupertypeClassIds = { directSupertypeClassIds(it) },
-        containingClass = containingClass,
-        resolveWithoutInheritance = { name ->
-            if (name.contains('.')) {
-                resolveQualifiedNameToClassIdFromParts(name.split('.'), { tryResolveInherited(it) }, fullResolution = false)
-            } else {
-                resolveSimpleNameToClassIdImpl(name, { tryResolveInherited(it) }, fullResolution = false)
-            }
-        },
-    )
-
-/**
- * Tries to resolve a simple name as an inner class inherited from supertypes, via a single
- * origin-agnostic BFS ([walkSupertypeClassIds]) over [containingClass]'s ancestors.
+ * Tries to resolve [simpleName] as an inner class inherited from [containingClass]'s
+ * supertypes, via a single origin-agnostic BFS ([walkSupertypeClassIds]) that probes existence
+ * via [tryResolveInherited] and expands further ancestors via [directSupertypeClassIds] — so
+ * same-file, cross-file source, binary Java, and Kotlin ancestors are all walked and compared
+ * for ambiguity alike. Called directly from [resolveFromLocalScope] and
+ * [findInheritedNestedClass], and plugged in as the binary/Kotlin tail of
+ * [findInnerClassFromSupertypes].
  *
  * [containingClass]'s own direct supertypes are the one exception: they are read from raw
  * AST text via [resolveWithoutInheritance] rather than through [directSupertypeClassIds].
@@ -76,25 +57,16 @@ internal fun resolveInheritedInnerClassToClassId(simpleName: String, containingC
  * Reading `.classifier` at this level, as [directSupertypeClassIds]'s source-Java arm does,
  * would re-enter that in-progress computation. Every ancestor beyond this first level is
  * safe to walk via [directSupertypeClassIds]: none of them is the class currently being
- * resolved (regression test:
- * `JavaParsingTypeResolutionTest.testResolveInheritedInnerClassToClassIdNeverQueriesContainingClassOwnSupertypeClassIds`).
+ * resolved (regression test: `simpleInheritedNestedClassInOwnImplementsClause.kt`).
  * [JavaTypeResolver.findInheritedNestedClass] reuses this same safety for its qualified
  * `Outer.Nested` lookup (regression test: `qualifiedInheritedNestedClassInOwnImplementsClause.kt`).
  *
  * Only [containingClass]'s own supertypes are searched, not those of its outer classes —
  * callers needing outer-class coverage walk the containing-class chain themselves and call
  * this once per level, preserving the JLS 6.4.1 shadowing rule between levels.
- *
- * @param resolveWithoutInheritance resolves a name without checking inherited inner
- *        classes, avoiding infinite recursion back into this method.
  */
-internal fun resolveInheritedInnerClassToClassId(
-    simpleName: String,
-    tryResolve: (ClassId) -> Boolean,
-    directSupertypeClassIds: (ClassId) -> List<ClassId>,
-    containingClass: JavaClass?,
-    resolveWithoutInheritance: (String) -> ClassId?,
-): ClassId? {
+context(c: JavaResolutionContext)
+internal fun resolveInheritedInnerClassToClassId(simpleName: String, containingClass: JavaClass?): ClassId? {
     containingClass ?: return null
 
     // `splitCanonicalFqName()` splits per dotted segment before stripping generics, so a
@@ -109,29 +81,37 @@ internal fun resolveInheritedInnerClassToClassId(
         else resolveWithoutInheritance(segments.joinToString("."))
     }
 
-    return walkSupertypeClassIds(simpleName, initialAncestorIds, directSupertypeClassIds, tryResolve, mutableSetOf())
+    return walkSupertypeClassIds(simpleName, initialAncestorIds)
 }
 
 /**
+ * Resolves [name] without checking inherited inner classes, avoiding infinite recursion back
+ * into [resolveInheritedInnerClassToClassId].
+ */
+context(c: JavaResolutionContext)
+private fun resolveWithoutInheritance(name: String): ClassId? =
+    if (name.contains('.')) {
+        resolveQualifiedNameToClassIdFromParts(name.split('.'), { tryResolveInherited(it) }, fullResolution = false)
+    } else {
+        resolveSimpleNameToClassIdImpl(name, { tryResolveInherited(it) }, fullResolution = false)
+    }
+
+/**
  * BFS over ancestor `ClassId`s: at every level, probes `ancestorId.SimpleName` for each id in
- * [initialAncestorIds] / the current level via [tryResolve], then expands each unmatched id
- * to its own direct supertypes via [directSupertypeClassIds] for the next level —
+ * [initialAncestorIds] / the current level via [tryResolveInherited], then expands each
+ * unmatched id to its own direct supertypes via [directSupertypeClassIds] for the next level —
  * origin-agnostic per hop, so source, Kotlin, and binary Java ancestors can all appear in the
- * same walk and are compared for ambiguity together. Shares [visited] across calls so
- * cross-call ambiguity is still detected. Termination relies solely on [visited] (bounded by
- * the finite set of distinct `ClassId`s reachable from [initialAncestorIds]) plus
- * [directSupertypeClassIds]'s own per-session cycle guard.
+ * same walk and are compared for ambiguity together. `visited` is shared across the whole walk
+ * so ambiguity between different levels/branches is still detected. Termination relies solely
+ * on `visited` (bounded by the finite set of distinct `ClassId`s reachable from
+ * [initialAncestorIds]) plus [directSupertypeClassIds]'s own per-session cycle guard.
  *
  * Returns the found inner-class `ClassId`, or `null` if nothing was found or if ambiguity is
  * detected (two different matches).
  */
-private fun walkSupertypeClassIds(
-    simpleName: String,
-    initialAncestorIds: List<ClassId>,
-    directSupertypeClassIds: (ClassId) -> List<ClassId>,
-    tryResolve: (ClassId) -> Boolean,
-    visited: MutableSet<ClassId>,
-): ClassId? {
+context(c: JavaResolutionContext)
+private fun walkSupertypeClassIds(simpleName: String, initialAncestorIds: List<ClassId>): ClassId? {
+    val visited = mutableSetOf<ClassId>()
     var foundClassId: ClassId? = null
     var currentLevelIds = initialAncestorIds
 
@@ -142,7 +122,7 @@ private fun walkSupertypeClassIds(
             if (!visited.add(ancestorId)) continue
 
             val innerClassId = ancestorId.createNestedClassId(Name.identifier(simpleName))
-            if (tryResolve(innerClassId)) {
+            if (tryResolveInherited(innerClassId)) {
                 if (foundClassId != null && foundClassId != innerClassId) return null
                 foundClassId = innerClassId
             } else {

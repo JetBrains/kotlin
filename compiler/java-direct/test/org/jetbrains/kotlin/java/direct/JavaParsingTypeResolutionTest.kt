@@ -10,10 +10,8 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.resolution.findInnerClassFromSupertypes
-import org.jetbrains.kotlin.java.direct.resolution.resolveInheritedInnerClassToClassId
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Test
 
@@ -66,65 +64,6 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         }
         assert(found?.name?.asString() == "Target") {
             "Expected resolved inner class 'Target', got '${found?.name?.asString()}'"
-        }
-    }
-
-    /**
-     * Regression test for the level-1 exception documented on
-     * [resolveInheritedInnerClassToClassId]: `containingClass`'s own
-     * direct supertypes must be read from raw AST text via `resolveWithoutInheritance`, never
-     * via `directSupertypeClassIds`, because `containingClass`'s own `SUPER_TYPES` FIR phase can
-     * still be on the call stack when this runs (e.g. resolving a name used inside
-     * `containingClass`'s own extends/implements clause). Reads through `.classifier`/FIR at
-     * that point would re-enter `containingClass`'s own in-progress supertype computation.
-     *
-     * Simulates that hazard directly: `directSupertypeClassIds` fails the test if ever invoked
-     * with `A`'s own `ClassId`, while the walk is still expected to find `Nested`, inherited two
-     * levels up through `Base` (source, resolved from raw text) into `Grandparent` (only reached
-     * via `directSupertypeClassIds`, safe once past the first level).
-     */
-    @Test
-    fun testResolveInheritedInnerClassToClassIdNeverQueriesContainingClassOwnSupertypeClassIds() {
-        val source = """
-            class Grandparent {
-                class Nested {}
-            }
-            class Base extends Grandparent {}
-            class A extends Base {}
-        """.trimIndent()
-
-        val parsed = parseSource(source)
-        val tree = parsed.tree
-        val context = parsed.context
-        val topLevelClasses: Map<String, JavaClassOverAst> = tree.getChildren(parsed.root)
-            .filter { tree.getType(it).toString() == "CLASS" }
-            .associate { node ->
-                val cls = JavaClassOverAst(node, tree, context)
-                cls.name.asString() to cls
-            }
-
-        val a = topLevelClasses.getValue("A")
-        val aClassId = a.classId!!
-        val baseClassId = topLevelClasses.getValue("Base").classId!!
-        val grandparentClassId = topLevelClasses.getValue("Grandparent").classId!!
-        val expectedNestedId = grandparentClassId.createNestedClassId(Name.identifier("Nested"))
-
-        val result = resolveInheritedInnerClassToClassId(
-            simpleName = "Nested",
-            tryResolve = { it == expectedNestedId },
-            directSupertypeClassIds = { classId ->
-                assert(classId != aClassId) {
-                    "resolveInheritedInnerClassToClassId must resolve containingClass's own " +
-                            "direct supertypes from raw AST text, never via directSupertypeClassIds"
-                }
-                if (classId == baseClassId) listOf(grandparentClassId) else emptyList()
-            },
-            containingClass = a,
-            resolveWithoutInheritance = { name -> if (name == "Base") baseClassId else null },
-        )
-
-        assert(result == expectedNestedId) {
-            "Expected to resolve 'Nested' inherited via A -> Base -> Grandparent, got $result"
         }
     }
 

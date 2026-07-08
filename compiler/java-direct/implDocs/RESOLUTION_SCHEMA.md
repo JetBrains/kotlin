@@ -253,10 +253,13 @@ supertypes are all walked uniformly, with no representation-specific arm:
   which is a testability property, not a production constraint — every production
   `JavaResolutionContext` has both. `JavaParsingTypeResolutionTest`'s tests for this case now use a
   same-file-only `LeanJavaClassFinder` test double instead.
-- `resolveInheritedInnerClassToClassId` → a bare `ClassId` via a single, origin-agnostic BFS
-  (`walkSupertypeClassIds`) over [containingClass]'s own supertypes (outer-class coverage is the
-  caller's job — Scenario C's per-level loop — not this function's, since the
-  confirmed-always-`false` `includeOuterClasses` parameter and its outer-walk loop were removed).
+- `resolveInheritedInnerClassToClassId(simpleName, containingClass)` → a bare `ClassId` via a
+  single, origin-agnostic BFS (`walkSupertypeClassIds`) over [containingClass]'s own supertypes
+  (outer-class coverage is the caller's job — Scenario C's per-level loop — not this function's,
+  since the confirmed-always-`false` `includeOuterClasses` parameter and its outer-walk loop were
+  removed). Takes only these two parameters — no injectable lambdas — since it has exactly one
+  production shape: probing existence via `tryResolveInherited` and expanding ancestors via
+  `directSupertypeClassIds`, both bound directly to the ambient `JavaResolutionContext`.
   One exception: [containingClass]'s own direct supertypes are read from raw AST text
   (`splitCanonicalFqName()`, bracket-aware — so a reference with type arguments on a non-final
   segment such as `a.B<String>.C` is not truncated to `a.B`) and resolved via the
@@ -265,22 +268,26 @@ supertypes are all walked uniformly, with no representation-specific arm:
   this runs (e.g. resolving a name used inside [containingClass]'s own extends/implements
   clause); reading `.classifier` there would re-enter that in-progress computation. Every
   ancestor beyond that first level is walked uniformly via `directSupertypeClassIds`
-  (Scenario F), regardless of origin. Regression-tested by
-  `JavaParsingTypeResolutionTest.testResolveInheritedInnerClassToClassIdNeverQueriesContainingClassOwnSupertypeClassIds`,
-  which fails `directSupertypeClassIds` if it's ever invoked with `containingClass`'s own
-  `ClassId`, while still expecting the walk to find a name inherited two levels up.
+  (Scenario F), regardless of origin. Regression-tested end-to-end by
+  `simpleInheritedNestedClassInOwnImplementsClause.kt` — an unqualified reference inside a
+  class's own `implements` clause to its own inherited (through two supertypes) nested class,
+  which only resolves if the raw-AST-text seed is used instead of the guarded
+  `directSupertypeClassIds(containingClass)`.
   `JavaTypeResolver.findInheritedNestedClass` (Scenario D step 3, the `Outer.Nested` qualified
   shape) is this same function's other caller: it materializes `outerClassId` via
   `classifierAdapterFor` (Scenario A step 4) and passes the result as `containingClass`, so it
   inherits the same raw-AST-text safety instead of needing its own seed/BFS pair
   (`qualifiedInheritedNestedClassInOwnImplementsClause.kt`).
 
-`walkSupertypeClassIds` shares one `visited` set across the whole walk and probes every ancestor
-at a given level — source, binary Java, and Kotlin alike — expanding to the next level per
-ancestor, not per level, so a match found through one ancestor cannot stop an unrelated sibling
-ancestor from being expanded further. This closes a previously-latent bug where a match at one
-ancestor suppressed expansion of every other ancestor at the same level, hiding a deeper
-conflicting match reached only through one of them
+`walkSupertypeClassIds` — private, single call site (`resolveInheritedInnerClassToClassId`), so it
+takes just `simpleName`/`initialAncestorIds` and reads `tryResolveInherited`/
+`directSupertypeClassIds` off the ambient `JavaResolutionContext` directly rather than through
+injected lambdas. It initializes one `visited` set internally and shares it across the whole walk,
+probing every ancestor at a given level — source, binary Java, and Kotlin alike — expanding to the
+next level per ancestor, not per level, so a match found through one ancestor cannot stop an
+unrelated sibling ancestor from being expanded further. This closes a previously-latent bug where
+a match at one ancestor suppressed expansion of every other ancestor at the same level, hiding a
+deeper conflicting match reached only through one of them
 (`ambiguousInheritedInnerClassAcrossSourceAndKotlinSupertypes.kt`). Termination relies on `visited`
 (bounded by the finite set of distinct `ClassId`s reachable from the seed) plus
 `directSupertypeClassIds`'s own per-session cycle guard, not a depth cap — malformed cyclic
