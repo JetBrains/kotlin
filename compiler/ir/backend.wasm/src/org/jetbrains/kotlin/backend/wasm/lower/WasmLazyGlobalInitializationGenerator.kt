@@ -1,0 +1,25 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.backend.wasm.lower
+
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.LazyGlobalInitializationGenerator
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irNull
+import org.jetbrains.kotlin.ir.builders.kClassReference
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.types.starProjectedType
+
+class WasmLazyGlobalInitializationGenerator(override val backendContext: WasmBackendContext) : LazyGlobalInitializationGenerator() {
+    override fun IrBuilderWithScope.generateStaticInitializationStateCheck(getStateField: IrGetField, klass: IrClass?): IrCall =
+        irCall(backendContext.symbols.checkStaticInitializationState).apply {
+            arguments[0] = getStateField
+            arguments[1] = klass?.let { kClassReference(it.symbol.starProjectedType) } ?: irNull()
+        }
+}

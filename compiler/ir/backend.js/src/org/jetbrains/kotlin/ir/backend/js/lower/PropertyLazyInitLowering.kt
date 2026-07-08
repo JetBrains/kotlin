@@ -9,37 +9,32 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.prependFunctionCall
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrSetField
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.name.Name
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 
 private var IrFile.initializationFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 private var IrFile.isPureForInitialization: Boolean? by irAttribute(copyByDefault = false)
 
-class PropertyLazyInitLowering(
+abstract class PropertyLazyInitLowering(
     private val context: JsCommonBackendContext
 ) : BodyLoweringPass {
 
     private val irBuiltIns
         get() = context.irBuiltIns
 
-    private val irFactory
-        get() = context.irFactory
+    protected abstract val initializationGenerator: LazyGlobalInitializationGenerator
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (!context.propertyLazyInitialization.enabled) {
@@ -92,72 +87,31 @@ class PropertyLazyInitLowering(
             return null
         }
 
-        val initializedField = irFactory.createInitializationField(fileName)
-            .apply {
-                file.declarations.add(this)
-                parent = file
-            }
-
-        return irFactory.addFunction(file) {
-            name = Name.special("<init properties $fileName>")
-            startOffset = SYNTHETIC_OFFSET
-            endOffset = SYNTHETIC_OFFSET
-            returnType = irBuiltIns.unitType
-            visibility = INTERNAL
-            origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-        }.apply {
-            buildPropertiesInitializationBody(
-                fieldToInitializer,
-                initializedField
-            )
-        }
-    }
-
-    private fun IrFactory.createInitializationField(fileName: String): IrField =
-        buildField {
-            name = Name.identifier("properties initialized $fileName")
-            type = irBuiltIns.booleanType
-            isStatic = true
-            isFinal = true
-            origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+        val initializedField = initializationGenerator.createStateField(
+            name = Name.identifier("properties initialized $fileName"),
+            origin = JsIrBuilder.SYNTHESIZED_DECLARATION,
+        ).apply {
+            file.declarations.add(this)
+            parent = file
         }
 
-    private fun IrSimpleFunction.buildPropertiesInitializationBody(
-        initializers: Map<IrField, IrExpression>,
-        initializedField: IrField
-    ) {
-        body = irFactory.createBlockBody(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            listOf(buildBodyWithIfGuard(initializers, initializedField))
-        )
-    }
-
-    private fun buildBodyWithIfGuard(
-        initializers: Map<IrField, IrExpression>,
-        initializedField: IrField
-    ): IrStatement {
         val statements = buildList<IrStatement> {
-            val upGuard = createIrSetField(
-                initializedField,
-                JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
-            )
-            add(upGuard)
-            initializers.forEach { [field, expression] ->
+            fieldToInitializer.forEach { [field, expression] ->
                 add(createIrSetField(field, expression))
             }
             add(JsIrBuilder.buildBlock(irBuiltIns.unitType))
         }
 
-        return JsIrBuilder.buildIfElse(
-            type = irBuiltIns.unitType,
-            cond = createIrGetField(initializedField),
-            thenBranch = JsIrBuilder.buildBlock(irBuiltIns.unitType),
-            elseBranch = JsIrBuilder.buildComposite(
-                type = irBuiltIns.unitType,
-                statements = statements
-            )
-        )
+        return initializationGenerator.createStaticInitFunction(
+            name = Name.special("<init properties $fileName>"),
+            klass = null,
+            origin = JsIrBuilder.SYNTHESIZED_DECLARATION,
+            stateField = initializedField,
+            initializers = statements,
+        ).apply {
+            file.declarations.add(this)
+            parent = file
+        }
     }
 
     companion object {
@@ -165,11 +119,8 @@ class PropertyLazyInitLowering(
     }
 }
 
-private fun createIrGetField(field: IrField): IrGetField {
-    return JsIrBuilder.buildGetField(
-        symbol = field.symbol,
-        receiver = null
-    )
+class JsPropertyLazyInitLowering(context: JsIrBackendContext) : PropertyLazyInitLowering(context) {
+    override val initializationGenerator = JsLazyGlobalInitializationGenerator(context)
 }
 
 private fun createIrSetField(field: IrField, expression: IrExpression): IrSetField {
