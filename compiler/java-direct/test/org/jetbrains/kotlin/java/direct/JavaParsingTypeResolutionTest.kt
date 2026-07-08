@@ -9,10 +9,8 @@ package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
-import org.jetbrains.kotlin.java.direct.resolution.JavaInheritedMemberResolver
-import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
+import org.jetbrains.kotlin.java.direct.resolution.findInnerClassFromSupertypes
 import org.jetbrains.kotlin.java.direct.resolution.resolveInheritedInnerClassToClassId
-import org.jetbrains.kotlin.java.direct.resolution.tryResolveInherited
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.classId
@@ -59,16 +57,8 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
 
         val derived = topLevelClasses.getValue("Derived")
 
-        val resolver = JavaInheritedMemberResolver()
-
         val found = with(context) {
-            resolver.findInnerClassFromSupertypes(
-                Name.identifier("Target"), derived,
-                resolveInherited = { containingClass, innerName ->
-                    resolveInheritedInnerClassToClassId(innerName.asString(), { tryResolveInherited(it) }, containingClass)
-                },
-                classifierAdapterFor = { classifierAdapterFor(it) },
-            )
+            findInnerClassFromSupertypes(Name.identifier("Target"), derived)
         }
         assert(found != null) {
             "Expected to resolve inherited inner class 'Target' through nested generic supertype " +
@@ -81,7 +71,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
 
     /**
      * Regression test for the level-1 exception documented on
-     * [JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId]: `containingClass`'s own
+     * [resolveInheritedInnerClassToClassId]: `containingClass`'s own
      * direct supertypes must be read from raw AST text via `resolveWithoutInheritance`, never
      * via `directSupertypeClassIds`, because `containingClass`'s own `SUPER_TYPES` FIR phase can
      * still be on the call stack when this runs (e.g. resolving a name used inside
@@ -119,9 +109,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val grandparentClassId = topLevelClasses.getValue("Grandparent").classId!!
         val expectedNestedId = grandparentClassId.createNestedClassId(Name.identifier("Nested"))
 
-        val resolver = JavaInheritedMemberResolver()
-
-        val result = resolver.resolveInheritedInnerClassToClassId(
+        val result = resolveInheritedInnerClassToClassId(
             simpleName = "Nested",
             tryResolve = { it == expectedNestedId },
             directSupertypeClassIds = { classId ->

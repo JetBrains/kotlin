@@ -36,6 +36,26 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-08 — Convert JavaInheritedMemberResolver to top-level functions; rename file
+- **Change**: The class had no instance state left after the earlier collapses, so its members
+  became top-level functions in a renamed `JavaInheritedClassResolver.kt` (it resolves classes,
+  not "members"). Dropped the now-unneeded `JavaFileContext.inheritedMemberResolver` field.
+  Eliminated the `tryResolve` parameter from the context-bound `resolveInheritedInnerClassToClassId`
+  overload and the `resolveInherited`/`classifierAdapterFor` parameters from
+  `findInnerClassFromSupertypes` — every production and test call site built the same closures, so
+  they're now hardcoded via the context receiver instead of injected.
+- **Files**: `resolution/JavaInheritedMemberResolver.kt` → `resolution/JavaInheritedClassResolver.kt`;
+  `resolution/JavaFileContext.kt`, `resolution/JavaResolutionContext.kt`,
+  `resolution/JavaScopeResolver.kt`, `resolution/JavaTypeResolver.kt` (call sites + KDoc refs
+  updated; `resolveQualifiedNameToClassIdFromParts`/`resolveSimpleNameToClassIdImpl` widened to
+  `internal`); `resolution/LeanJavaClassFinder.kt`, `model/JavaClassOverAst.kt` (KDoc refs);
+  `test/.../JavaParsingTestBase.kt`, `JavaParsingTypeResolutionTest.kt` (tests call the top-level
+  functions directly); `RESOLUTION_SCHEMA.md`, `ARCHITECTURE.md` updated.
+- **Tests**: `:compiler:java-direct:compileKotlin`/`compileTestKotlin` succeed; full
+  `:compiler:java-direct:test` suite green, 2836/2836 (0 failures).
+- **Result**: green. Pure structural cleanup — the 5-arg generic BFS entry point keeps all its
+  parameters (still test-injected by `testResolveInheritedInnerClassToClassIdNeverQueriesContainingClassOwnSupertypeClassIds`).
+
 ### 2026-07-08 — Collapse the same-file arm; findInnerClassFromSupertypes is now one ladder
 - **Change**: The same-file arm's remaining justification (works with no `LeanJavaClassFinder`/FIR
   session at all) was purely technical/testability — every production `JavaResolutionContext`

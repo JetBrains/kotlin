@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 
 /**
- * Cross-file class lookup capabilities needed by the resolution context and inherited member resolver.
+ * Cross-file class lookup capabilities needed by the resolution context and inherited-class
+ * resolution.
  *
- * Decouples [JavaResolutionContext] and [JavaInheritedMemberResolver] from the concrete
+ * Decouples [JavaResolutionContext] and [resolveInheritedInnerClassToClassId] from the concrete
  * [JavaClassFinderOverAstImpl][org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl],
  * exposing only the operations they actually use.
  */

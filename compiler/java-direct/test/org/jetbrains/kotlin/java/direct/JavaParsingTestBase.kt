@@ -69,7 +69,7 @@ open class JavaParsingTestBase {
 /**
  * [LeanJavaClassFinder] restricted to top-level classes declared in the same file as [context].
  * Lets unit tests exercise the module's real inherited-inner-class resolution path
- * ([org.jetbrains.kotlin.java.direct.resolution.JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId])
+ * ([org.jetbrains.kotlin.java.direct.resolution.resolveInheritedInnerClassToClassId])
  * for same-file supertypes without a full [JavaClassFinderOverAstImpl] backed by real files.
  *
  * [context] is passed as a supplier because it isn't constructed yet when this finder is built

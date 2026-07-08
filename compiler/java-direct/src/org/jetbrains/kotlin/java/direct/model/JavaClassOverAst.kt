@@ -166,7 +166,7 @@ class JavaClassOverAst(
         // and binary (`BinaryJavaClass.ownInnerClassNameToAccess`) implementations, `findInnerClass` returns
         // only directly declared member types. Inherited member types (JLS 8.5) are resolved by the resolution
         // layer (see [org.jetbrains.kotlin.java.direct.resolution.findInnerClassInSameFileSupertypes] and
-        // [org.jetbrains.kotlin.java.direct.resolution.JavaInheritedMemberResolver]).
+        // [org.jetbrains.kotlin.java.direct.resolution.findInnerClassFromSupertypes]).
         return null
     }
 

@@ -95,7 +95,7 @@ Java classes have implicit inheritance:
 | `JavaResolutionContext.kt` | Import/type-parameter scope management, `resolve()` entry point |
 | `JavaScopeResolver.kt` | Local-class / type-parameter scope lookup (`findLocalClassCache`) |
 | `JavaImportResolver.kt` | Single-type + on-demand import handling, JLS priority |
-| `JavaInheritedMemberResolver.kt` | Inherited-inner-class resolution, aggregated-inner handling |
+| `JavaInheritedClassResolver.kt` | Inherited-inner-class resolution, aggregated-inner handling |
 | `JavaSupertypeGraph.kt` | Cross-file supertype graph, `supertypeCache`, `inheritedInnerClassesCache` |
 
 ### Utilities

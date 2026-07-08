@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.name.FqName
 internal class JavaFileContext(
     val packageFqName: FqName,
     val imports: JavaImports,
-    val inheritedMemberResolver: JavaInheritedMemberResolver,
     val classFinder: LeanJavaClassFinder?,
     val session: FirSession,
 )

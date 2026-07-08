@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * Its data is two immutable records:
  *  - [fileContext] — per-file data (package, imports, class finder, session, cycle
- *    checker, inherited-member resolver), shared across every scope variant.
+ *    checker), shared across every scope variant.
  *  - [scopeContext] — per-position data (containing class, type parameters in scope, same-file
  *    top-level class provider, inherited-inner cache).
  *
@@ -32,7 +32,8 @@ import java.util.concurrent.ConcurrentHashMap
  * - [JavaImportResolver] — import extraction and package name parsing (stateless).
  * - [JavaTypeResolver] — the JLS 6.4.1 / 6.5.2 type-name dispatcher and session probes.
  * - [JavaScopeResolver] — type-parameter scoping and AST current-scope class lookup.
- * - [JavaInheritedMemberResolver] — supertype hierarchy traversal for inner classes.
+ * - [findInnerClassFromSupertypes] / [resolveInheritedInnerClassToClassId] — supertype hierarchy
+ *   traversal for inner classes.
  */
 class JavaResolutionContext private constructor(
     internal val fileContext: JavaFileContext,
@@ -94,7 +95,6 @@ class JavaResolutionContext private constructor(
                 }
             }
 
-            val inheritedMemberResolver = JavaInheritedMemberResolver()
             val scopeContext = JavaScopeContext(
                 sameFileTopLevelClassProvider,
                 containingClass = null,
@@ -102,7 +102,7 @@ class JavaResolutionContext private constructor(
 
             val fileContext = JavaFileContext(
                 packageFqName, imports,
-                inheritedMemberResolver, classFinder,
+                classFinder,
                 session = session,
             )
             return JavaResolutionContext(fileContext, scopeContext).also {

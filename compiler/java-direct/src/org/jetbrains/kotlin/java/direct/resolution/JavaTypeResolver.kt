@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.name.Name
  * qualified-name dispatcher, supertype-`ClassId` walking, and the session-backed probes. The
  * data it reads ([JavaFileContext], [JavaScopeContext]) lives on the [JavaResolutionContext]; the
  * scope/type-parameter lookups live in [JavaScopeResolver]; the supertype hierarchy traversal
- * lives in [JavaInheritedMemberResolver].
+ * lives in [findInnerClassFromSupertypes] / [resolveInheritedInnerClassToClassId].
  */
 
 /**
@@ -91,7 +91,7 @@ internal fun resolve(name: String): ClassId? {
  * allocations on recursive calls.
  */
 context(c: JavaResolutionContext)
-private fun resolveQualifiedNameToClassIdFromParts(
+internal fun resolveQualifiedNameToClassIdFromParts(
     parts: List<String>,
     tryResolve: (ClassId) -> Boolean,
     fullResolution: Boolean,
@@ -140,7 +140,7 @@ private fun resolveQualifiedNameToClassIdFromParts(
  * that would otherwise recurse back into the same walk.
  */
 context(c: JavaResolutionContext)
-private fun resolveSimpleNameToClassIdImpl(
+internal fun resolveSimpleNameToClassIdImpl(
     simpleName: String,
     tryResolve: (ClassId) -> Boolean,
     fullResolution: Boolean,
@@ -205,7 +205,7 @@ private fun resolveFromLocalScope(
             if (tryResolve(declared)) return declared
             // Member types this class inherits from its supertypes (cross-file Java source,
             // Kotlin, and binary), restricted to this single level so the interleaving holds.
-            resolveInheritedInnerClassToClassId(simpleName, { tryResolveInherited(it) }, current)?.let { return it }
+            resolveInheritedInnerClassToClassId(simpleName, current)?.let { return it }
         }
         current = current.outerClass
     }
@@ -375,30 +375,6 @@ private fun resolveFromStaticStarImports(
 }
 
 /**
- * Wraps [JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId] with this context's
- * [directSupertypeClassIds] and reentrance-safe name resolver — see its KDoc for search
- * semantics.
- *
- * Not private: also plugged in as the binary/Kotlin tail of
- * [JavaInheritedMemberResolver.findInnerClassFromSupertypes] via [declaredOrFullyInherited].
- */
-context(c: JavaResolutionContext)
-internal fun resolveInheritedInnerClassToClassId(
-    simpleName: String,
-    tryResolve: (ClassId) -> Boolean,
-    containingClass: JavaClass?,
-): ClassId? = c.fileContext.inheritedMemberResolver.resolveInheritedInnerClassToClassId(
-    simpleName, tryResolve, { directSupertypeClassIds(it) }, containingClass,
-    resolveWithoutInheritance = { name ->
-        if (name.contains('.')) {
-            resolveQualifiedNameToClassIdFromParts(name.split('.'), tryResolve, fullResolution = false)
-        } else {
-            resolveSimpleNameToClassIdImpl(name, tryResolve, fullResolution = false)
-        }
-    },
-)
-
-/**
  * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with
  * [nestedName]. Materialises [outerClassId] via [classifierAdapterFor] and delegates to
  * [resolveInheritedInnerClassToClassId], which reads that class's own direct supertypes from raw
@@ -413,7 +389,7 @@ context(c: JavaResolutionContext)
 private fun findInheritedNestedClass(
     outerClassId: ClassId,
     nestedName: String,
-): ClassId? = resolveInheritedInnerClassToClassId(nestedName, { tryResolveInherited(it) }, classifierAdapterFor(outerClassId))
+): ClassId? = resolveInheritedInnerClassToClassId(nestedName, classifierAdapterFor(outerClassId))
 
 /**
  * Builtins-filtered class-existence probe: `true` if [classId] is known to the session's symbol
@@ -442,8 +418,8 @@ internal fun tryResolve(classId: ClassId): Boolean {
  * `isClassInIndex` + `findClass` check [classifierAdapterFor] and [directSupertypeClassIds]'s
  * source-Java arm already use, before falling back to [tryResolve]. Lets a cross-file Java
  * source ancestor be checked for existence from its AST alone, like a same-file one already is,
- * so [JavaInheritedMemberResolver.findInnerClassFromSupertypes] can compare it for ambiguity in
- * the same walk as a binary Java or Kotlin ancestor instead of needing a separate arm for each.
+ * so [findInnerClassFromSupertypes] can compare it for ambiguity in the same walk as a binary
+ * Java or Kotlin ancestor instead of needing a separate arm for each.
  */
 context(c: JavaResolutionContext)
 internal fun tryResolveInherited(classId: ClassId): Boolean {

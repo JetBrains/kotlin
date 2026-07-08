@@ -34,14 +34,14 @@ flowchart TD
     end
 
     Ctx[JavaResolutionContext]
-    FileCtx[JavaFileContext: package, imports, finder, session, resolver]
+    FileCtx[JavaFileContext: package, imports, finder, session]
     ScopeCtx[JavaScopeContext: containingClass, type params, caches]
     Imports[JavaImports: 4 buckets]
 
     TypeResolver[JavaTypeResolver: name to ClassId engine]
     ScopeResolver[JavaScopeResolver: AST scope and type params]
     ImportResolver[JavaImportResolver: import and package extraction]
-    Inherited[JavaInheritedMemberResolver: supertype BFS]
+    Inherited[JavaInheritedClassResolver.kt: supertype BFS]
     ConstResolver[JavaExternalConstResolver: const value eval]
 
     Session[JavaModelSessionAccess: cycle guards, caches, symbol probe]
@@ -77,9 +77,9 @@ flowchart TD
 ### Roles
 
 - **`JavaResolutionContext`** — positional data carrier. Wraps an immutable per-file
-  `JavaFileContext` (package, `JavaImports`, `LeanJavaClassFinder`, `JavaInheritedMemberResolver`,
-  `FirSession`) and a per-position `JavaScopeContext` (containing class, in-scope type parameters,
-  same-file top-level class provider). Scope transitions
+  `JavaFileContext` (package, `JavaImports`, `LeanJavaClassFinder`, `FirSession`) and a
+  per-position `JavaScopeContext` (containing class, in-scope type parameters, same-file
+  top-level class provider). Scope transitions
   (`withTypeParameters` / `withInheritedTypeParameters` / `withContainingClass`) fork a new record.
 - **`JavaTypeResolver`** — the stateless engine: JLS 6.4.1 simple-name dispatcher, JLS 6.5.2
   qualified-name dispatcher, supertype-`ClassId` walking, session probes (`tryResolve`),
@@ -89,7 +89,9 @@ flowchart TD
 - **`JavaImportResolver`** / **`JavaImports`** — four-bucket import model
   (`simpleTypeImports`, `staticSingleImports`, `typeStarImports`, `staticStarImports`) and package
   extraction, including parser error-recovery shapes.
-- **`JavaInheritedMemberResolver`** — supertype-hierarchy traversal for inherited member types.
+- **`JavaInheritedClassResolver.kt`** (`findInnerClassFromSupertypes`,
+  `resolveInheritedInnerClassToClassId`) — supertype-hierarchy traversal for inherited member
+  types.
 - **`JavaExternalConstResolver`** — cross-language `const val` / constant-field evaluation.
 - **`JavaModelSessionAccess`** — the single chokepoint to `FirSession.symbolProvider`, with the
   per-session cycle guards and the TYPE_USE cache.
@@ -189,13 +191,13 @@ class representations, not just same-file AST.
    1. **Declared or same-file-inherited** (`declaredOrSameFileInherited` → `findInnerClass`, then
       `findInnerClassInSameFileSupertypes` on raw AST text).
    2. **Cross-file Java source, binary Java, or Kotlin inherited** member type
-      (`JavaInheritedMemberResolver.findInnerClassFromSupertypes`, Scenario E) — reached only when
-      step 1 found nothing for this level.
+      (`findInnerClassFromSupertypes`, Scenario E) — reached only when step 1 found nothing for
+      this level.
 2. Same-file top-level class (`sameFileTopLevelClassProvider`).
 
 Corner case: the same-file supertype walk (step 1's second half) works on **raw AST text**
 (`directSupertypeRefNames`), deliberately kept distinct from the resolved-classifier walk in
-`JavaInheritedMemberResolver` (step 2) — reading `javaClass.supertypes` here would re-enter type
+`findInnerClassFromSupertypes` (step 2) — reading `javaClass.supertypes` here would re-enter type
 construction (`classifier → findClassInCurrentScope`), an actual cycle hazard no amount of
 laziness removes; package-qualified supertypes are declined by the raw-text walk and handed to the
 `ClassId` path. This is the *only* representation-specific split left in this scenario — the
@@ -235,9 +237,10 @@ reached, just one recursion level down.
 
 ### Scenario E — Inherited member type via supertypes
 
-Entry: `JavaInheritedMemberResolver`. Two outputs, both reaching every class representation
-through the same single, origin-agnostic BFS — same-file, cross-file Java source, binary Java,
-and Kotlin supertypes are all walked uniformly, with no representation-specific arm:
+Entry: `findInnerClassFromSupertypes` / `resolveInheritedInnerClassToClassId`
+(`JavaInheritedClassResolver.kt`). Two outputs, both reaching every class representation through
+the same single, origin-agnostic BFS — same-file, cross-file Java source, binary Java, and Kotlin
+supertypes are all walked uniformly, with no representation-specific arm:
 
 - `findInnerClassFromSupertypes` → a `JavaClass` with AST outer chain (for the AST pipeline /
   outer-arg substitution). Just materializes the `ClassId` found by `resolveInheritedInnerClassToClassId`
@@ -350,9 +353,9 @@ cross-language references are unsupported (return `null`).
 |----------|----------------|-------------------|
 | A. Classifier dispatch | `JavaTypeOverAst` | `JavaScopeResolver`, `JavaTypeResolver`, `FirBackedJavaClassAdapter` |
 | B. Simple name → ClassId | `JavaTypeResolver` | `JavaImports`, `JavaModelSessionAccess`, Scenario D/E |
-| C. In-scope classifier | `JavaScopeResolver` | `JavaInheritedMemberResolver`, `JavaClassOverAst` |
+| C. In-scope classifier | `JavaScopeResolver` | `JavaInheritedClassResolver.kt`, `JavaClassOverAst` |
 | D. Qualified name → ClassId | `JavaTypeResolver` | `LeanJavaClassFinder`, cycle guards |
-| E. Inherited member type | `JavaInheritedMemberResolver` | `LeanJavaClassFinder`, Scenario F |
+| E. Inherited member type | `JavaInheritedClassResolver.kt` | `LeanJavaClassFinder`, Scenario F |
 | F. Supertype ClassId graph | `JavaTypeResolver` | `LeanJavaClassFinder`, `FirJavaClass`, cycle guard |
 | G. Outer-arg recovery | `JavaTypeResolver` | `FirBackedJavaClassAdapter`, `FirBackedJavaClassifierType` |
 | H. Annotation reference | `JavaAnnotationOverAst` | `JavaTypeResolver`, TYPE_USE cache |
