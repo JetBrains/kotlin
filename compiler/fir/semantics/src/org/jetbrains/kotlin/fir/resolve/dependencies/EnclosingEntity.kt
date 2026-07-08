@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.withSession
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 sealed class EnclosingEntity<D : FirDeclaration> {
 
@@ -81,7 +82,7 @@ sealed class EnclosingEntity<D : FirDeclaration> {
 
     data class File(override val symbol: FirFileSymbol) : EnclosingEntity<FirFile>() {
 
-        override val name: FqName = symbol.packageFqName
+        override val name: FqName = symbol.packageFqName.child(Name.identifier(symbol.fir.name))
 
         override val parentEnclosingEntity: EnclosingEntity<*>? get() = null
 
@@ -104,8 +105,7 @@ sealed class EnclosingEntity<D : FirDeclaration> {
             }
         ): Object? = when {
             classKind.isObject -> {
-                outerClass?.let { require(it.symbol == getContainingClassSymbol()) { "outerClass.symbol != getContainingClassSymbol()" } }
-                    ?: require(!isCompanion) { "$this `isCompanion" }
+                outerClass?.let { require(it.symbol == getContainingClassSymbol()) } ?: require(!isCompanion)
                 Object(this, outerClass)
             }
             else -> null

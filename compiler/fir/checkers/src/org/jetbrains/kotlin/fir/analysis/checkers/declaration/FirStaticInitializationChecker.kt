@@ -121,6 +121,7 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 enclosingEntity.symbol.fir.source,
                 FirErrors.POSSIBLY_UNINITIALIZED_ENUM_ENTRY,
+                enclosingEntity.symbol,
                 mutuallyDependentEntities(enclosingEntity).mapTo(mutableListOf(), EnclosingEntity<*>::name)
             )
         }
@@ -136,7 +137,10 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 propertyNode.symbol.fir.source,
                 FirErrors.POSSIBLY_UNINITIALIZED_PROPERTY,
-                mutuallyDependentEntities(propertyNode.enclosingEntity!!).mapTo(mutableListOf(), EnclosingEntity<*>::name)
+                propertyNode.name,
+                propertyNode.enclosingEntity?.let {
+                    mutuallyDependentEntities(it).mapTo(mutableListOf(), EnclosingEntity<*>::name)
+                } ?: emptyList()
             )
         }
     }

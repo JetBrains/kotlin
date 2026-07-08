@@ -145,10 +145,11 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
             enclosingEntity.isPrivate -> emptySequence()
             else -> dependencyGraph[enclosingEntity].mapNotNull(dependencyGraph::get)
                 .filterIsInstance<CompositeNode>()
-                .flatMap { it.enclosingEntities }
-                .map { it.parentEnclosingEntityOrSelf }
-                .filter { it.isNotPrivate && it != enclosingEntity }
-                .distinct()
+                .flatMap { node ->
+                    node.enclosingEntities.asSequence()
+                        .map { it.parentEnclosingEntityOrSelf }
+                        .filter { it.isNotPrivate && it != enclosingEntity && it.endInitializationIndex in node }
+                }.distinct()
         }
 }
 

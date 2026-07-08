@@ -4038,13 +4038,21 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             POSSIBLY_UNINITIALIZED_PROPERTY,
-            "Possibly uninitialized property due to mutually dependent (direct or indirect) accesses in ''{0}''.",
-            Renderer { classes -> classes.joinToString(transform = FqName::asString) },
+            "Possibly uninitialized property ''{0}'' due to mutually dependent (direct or indirect) accesses ''{1}''.",
+            Renderer(FqName::asString),
+            Renderer { classes ->
+                if (classes.isEmpty()) "between the declarations of its containing class"
+                else classes.joinToString(prefix = "in ", transform = FqName::asString)
+            },
         )
         map.put(
             POSSIBLY_UNINITIALIZED_ENUM_ENTRY,
-            "Possibly uninitialized enum entry due to mutually dependent (direct or indirect) accesses in ''{0}''.",
-            Renderer { classes -> classes.joinToString(transform = FqName::asString) },
+            "Possibly uninitialized enum entry ''{0}'' due to mutually dependent (direct or indirect) accesses ''{1}''.",
+            DECLARATION_FQ_NAME,
+            Renderer { classes ->
+                if (classes.isEmpty()) "between the declarations of its containing class"
+                else classes.joinToString(prefix = "in ", transform = FqName::asString)
+            },
         )
         map.put(
             ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY,

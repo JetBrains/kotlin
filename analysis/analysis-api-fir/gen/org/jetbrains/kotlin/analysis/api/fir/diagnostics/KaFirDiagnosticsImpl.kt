@@ -5799,12 +5799,14 @@ internal class PossibleInitializationDeadlockImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossibleInitializationDeadlock
 
 internal class PossiblyUninitializedPropertyImpl(
+    override val property: FqName,
     override val cyclicDependencies: List<FqName>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossiblyUninitializedProperty
 
 internal class PossiblyUninitializedEnumEntryImpl(
+    override val enumEntry: KaSymbol,
     override val cyclicDependencies: List<FqName>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

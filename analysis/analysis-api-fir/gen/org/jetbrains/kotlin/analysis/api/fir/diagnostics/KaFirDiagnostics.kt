@@ -4832,11 +4832,13 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface PossiblyUninitializedProperty : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = PossiblyUninitializedProperty::class
+        val property: FqName
         val cyclicDependencies: List<FqName>
     }
 
     interface PossiblyUninitializedEnumEntry : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = PossiblyUninitializedEnumEntry::class
+        val enumEntry: KaSymbol
         val cyclicDependencies: List<FqName>
     }
 

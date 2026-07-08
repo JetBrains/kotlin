@@ -2460,10 +2460,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val POSSIBLY_UNINITIALIZED_PROPERTY by warning<PsiElement> {
+            parameter<FqName>("property")
             parameter<List<FqName>>("cyclicDependencies")
         }
 
         val POSSIBLY_UNINITIALIZED_ENUM_ENTRY by warning<PsiElement> {
+            parameter<FirEnumEntrySymbol>("enumEntry")
             parameter<List<FqName>>("cyclicDependencies")
         }
 
