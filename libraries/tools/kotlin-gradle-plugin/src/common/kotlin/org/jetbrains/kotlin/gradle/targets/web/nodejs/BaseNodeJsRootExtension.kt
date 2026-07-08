@@ -113,6 +113,11 @@ abstract class BaseNodeJsRootExtension internal constructor(
 
     lateinit var resolver: KotlinRootNpmResolver
 
+    /**
+     * Root directory for the root npm project.
+     * Nested inside the Gradle project's root `build/` directory.
+     * Contains subdirectories of npm workspaces for each Kotlin compilation.
+     */
     val rootPackageDirectory: Provider<Directory> = project.layout.buildDirectory.dir(rootDir)
 
     val projectPackagesDirectory: Provider<Directory>

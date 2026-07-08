@@ -3432,6 +3432,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsSetupTask
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/nodejs/NpmApiExtension {
 	public abstract fun getAdditionalInstallOutput ()Lorg/gradle/api/file/FileCollection;
 	public abstract fun getEnvironment ()Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;
+	public abstract fun getLockFileNameProvider ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getPackageManager ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmApiExecution;
 	public abstract fun getPostInstallTasks ()Lorg/gradle/api/provider/ListProperty;
@@ -4036,6 +4037,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDepende
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask : org/gradle/api/Task, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+	public abstract fun getFileBasedNpmDependencyLocations ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getNpmDependenciesLockFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getPath ()Ljava/lang/String;
 }
 

@@ -8,11 +8,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.kotlin.dsl.getByName
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
 import java.io.File
 import kotlin.test.assertEquals
 
@@ -22,10 +24,10 @@ class KotlinJsIrCompilationTest {
     fun `fetch npmToolingDir - js - yarn`() {
         val project = buildProjectWithMPP()
 
-        val compilation = project.multiplatformExtension.js().compilations.getByName(MAIN_COMPILATION_NAME)
-
         // must enable browser to ensure NodeJsRootPlugin is applied
         project.kotlin { js { browser() } }
+
+        val compilation = project.multiplatformExtension.js().compilations.getByName(MAIN_COMPILATION_NAME)
 
         assertEquals(
             project.projectDir.resolve("build/js/packages/${project.name}"),
@@ -42,10 +44,10 @@ class KotlinJsIrCompilationTest {
             }
         )
 
-        val compilation = project.multiplatformExtension.js().compilations.getByName(MAIN_COMPILATION_NAME)
-
         // must enable browser to ensure NodeJsRootPlugin is applied
         project.kotlin { js { browser() } }
+
+        val compilation = project.multiplatformExtension.js().compilations.getByName(MAIN_COMPILATION_NAME)
 
         assertEquals(
             project.projectDir.resolve("build/js/packages/${project.name}"),
@@ -56,6 +58,8 @@ class KotlinJsIrCompilationTest {
     @Test
     fun `fetch npmToolingDir - wasmJs - yarn`() {
         val project = buildProjectWithMPP()
+
+        project.kotlin { wasmJs { browser() } }
 
         val compilation = project.multiplatformExtension.wasmJs().compilations.getByName(MAIN_COMPILATION_NAME)
 
@@ -76,6 +80,8 @@ class KotlinJsIrCompilationTest {
             }
         )
 
+        project.kotlin { wasmJs { browser() } }
+
         val compilation = project.multiplatformExtension.wasmJs().compilations.getByName(MAIN_COMPILATION_NAME)
 
         val userHomeDir = File(System.getProperty("user.home"))
@@ -84,5 +90,35 @@ class KotlinJsIrCompilationTest {
             userHomeDir.resolve(".kotlin/kotlin-npm-tooling/npm"),
             compilation.npmToolingDir().orNull?.asFile?.parentFile,
         )
+    }
+
+    @Test
+    fun `test hasSharedNpmToolingDir`() {
+        val project = buildProjectWithMPP()
+        project.kotlin {
+            js { browser() }
+            wasmJs { browser() }
+            wasmWasi { nodejs() }
+        }
+
+        fun assertHasSharedNpmToolingDir(targetName: String, expected: Boolean) {
+            val target = project.multiplatformExtension.targets.getByName<KotlinJsIrTarget>(targetName)
+            val compilations = target.compilations
+            assertAll(
+                compilations.map { compilation ->
+                    {
+                        assertEquals(
+                            expected = expected,
+                            actual = compilation.hasSharedNpmToolingDir(),
+                            message = "Expected target $targetName compilation ${compilation.name} ${if (expected) "has" else "does not have"} shared npm tooling dir",
+                        )
+                    }
+                }
+            )
+        }
+
+        assertHasSharedNpmToolingDir("wasmJs", true)
+        assertHasSharedNpmToolingDir("js", false)
+        assertHasSharedNpmToolingDir("wasmWasi", false)
     }
 }
