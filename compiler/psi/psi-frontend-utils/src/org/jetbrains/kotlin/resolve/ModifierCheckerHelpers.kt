@@ -35,8 +35,6 @@ enum class Compatibility {
     COMPATIBLE_FOR_CLASSES_ONLY
 }
 
-val compatibilityTypeMap = hashMapOf<Pair<KtKeywordToken, KtKeywordToken>, Compatibility>()
-
 fun compatibility(first: KtKeywordToken, second: KtKeywordToken): Compatibility {
     return if (first == second) {
         Compatibility.REPEATED
