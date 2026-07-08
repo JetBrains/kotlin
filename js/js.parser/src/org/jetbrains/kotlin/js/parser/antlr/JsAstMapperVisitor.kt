@@ -651,13 +651,14 @@ internal class JsAstMapperVisitor(
                     else -> add(JsBindingArrayItem.Element(visitNode<JsBindingElement>(firstElement)).applyLocation(firstElement))
                 }
                 addAll(visitAll<JsBindingArrayItem>(items.arrayItemBinding()))
-                if (lastOrNull() is JsBindingArrayItem.Hole) {
-                    removeLast()
-                }
             }
 
             ctx.restBindingElement()?.let {
                 add(JsBindingArrayItem.Element(visitNode<JsBindingElement>(it)).applyLocation(it))
+            }
+
+            if (lastOrNull() is JsBindingArrayItem.Hole) {
+                removeLast()
             }
         }
 
