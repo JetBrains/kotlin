@@ -1,8 +1,9 @@
 import com.github.gradle.node.npm.task.NpmTask
+import org.gradle.kotlin.dsl.register
 
 plugins {
-  alias(libs.plugins.gradle.node)
-  base
+    alias(libs.plugins.gradle.node)
+    base
 }
 
 description = "Node utils"
@@ -12,7 +13,7 @@ node {
     distBaseUrl.set(null as String?)
 }
 
-val deployDir = "$buildDir/deploy_to_npm"
+val deployDir = "${layout.buildDirectory.get().asFile}/deploy_to_npm"
 val templateDir = "$projectDir/templates"
 val kotlincDir = "$projectDir/../../dist/kotlinc"
 
@@ -23,50 +24,55 @@ val deployTag = getProperty("kotlin.deploy.tag", "dev")
 val authToken = getProperty("kotlin.npmjs.auth.token")
 val dryRun = getProperty("dryRun", "false") // Pack instead of publish
 
-fun Project.createCopyTemplateTask(templateName: String): Copy {
-  return task<Copy>("copy-$templateName-template") {
-      from("$templateDir/$templateName")
-      into("$deployDir/$templateName")
+fun Project.createCopyTemplateTask(templateName: String): TaskProvider<Copy> {
+    return tasks.register<Copy>("copy-$templateName-template") {
+        from("$templateDir/$templateName")
+        into("$deployDir/$templateName")
 
-      expand(hashMapOf("version" to deployVersion))
-  }
-}
-
-fun Project.createPublishToNpmTask(templateName: String): NpmTask {
-  return task<NpmTask>("publish-$templateName-to-npm") {
-    val deployDir = File("$deployDir/$templateName")
-    workingDir.set(deployDir)
-
-    val deployArgs = listOf("publish", "--//registry.npmjs.org/:_authToken=$authToken", "--tag=$deployTag")
-    if (dryRun == "true") {
-      println("$deployDir \$ npm arguments: $deployArgs");
-      args.set(listOf("pack"))
+        expand(hashMapOf("version" to deployVersion))
     }
-    else {
-      args.set(deployArgs)
-    }
-  }
 }
 
-fun sequential(first: Task, vararg tasks: Task): Task {
-  tasks.fold(first) { previousTask, currentTask ->
-    currentTask.dependsOn(previousTask)
-  }
-  return tasks.last()
-}
+val createCopyTemplate = createCopyTemplateTask("kotlin-compiler")
 
-val publishKotlinCompiler = sequential(
-  createCopyTemplateTask("kotlin-compiler"),
-  task<Copy>("copy-kotlin-compiler") {
+val copyKotlinCompiler = tasks.register<Copy>("copy-kotlin-compiler") {
+    dependsOn(createCopyTemplate)
     from(kotlincDir)
     into("$deployDir/kotlin-compiler")
-  },
-  task<Exec>("chmod-kotlinc-bin") {
-    commandLine = listOf("chmod", "-R", "ugo+rx", "$deployDir/kotlin-compiler/bin")
-  },
-  createPublishToNpmTask("kotlin-compiler")
-)
+}
 
-task("publishAll") {
+val makeBinExecutable = tasks.register<Exec>("chmod-kotlinc-bin") {
+    dependsOn(copyKotlinCompiler)
+    commandLine = listOf("chmod", "-R", "ugo+rx", "$deployDir/kotlin-compiler/bin")
+}
+
+val npmWhoami = createWhoamiNpmTask()
+
+fun Project.createPublishToNpmTask(templateName: String): TaskProvider<NpmTask> {
+    return tasks.register<NpmTask>("publish-$templateName-to-npm") {
+        dependsOn(makeBinExecutable)
+        val deployDir = File("$deployDir/$templateName")
+        workingDir.set(deployDir)
+
+        val deployArgs = listOf("publish", "--//registry.npmjs.org/:_authToken=$authToken", "--tag=$deployTag")
+        if (dryRun == "true") {
+            println("$deployDir \$ npm arguments: $deployArgs");
+            args.set(listOf("pack"))
+            dependsOn(npmWhoami)
+        } else {
+            args.set(deployArgs)
+        }
+    }
+}
+
+fun Project.createWhoamiNpmTask(): TaskProvider<NpmTask> {
+    return tasks.register<NpmTask>("npm-whoami") {
+        args.set(listOf("whoami", "--//registry.npmjs.org/:_authToken=$authToken"))
+    }
+}
+
+val publishKotlinCompiler = createPublishToNpmTask("kotlin-compiler")
+
+tasks.register("publishAll") {
     dependsOn(publishKotlinCompiler)
 }
