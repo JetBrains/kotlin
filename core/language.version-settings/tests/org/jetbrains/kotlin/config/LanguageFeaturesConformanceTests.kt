@@ -11,15 +11,14 @@ import kotlin.test.fail
 class LanguageFeaturesConformanceTests {
     @Test
     fun testLanguageFeatureOrder() {
-        val values = enumValues<LanguageFeature>()
-        val enabledFeatures = values.filter { it.sinceVersion != null }
+        val comparator = compareBy(nullsLast(), LanguageFeature::sinceVersion)
 
-        if (enabledFeatures.sortedBy { it.sinceVersion!! } != enabledFeatures) {
-            val [a, b] = enabledFeatures.zipWithNext().first { [a, b] -> a.sinceVersion!! > b.sinceVersion!! }
+        if (LanguageFeature.entries.sortedWith(comparator) != LanguageFeature.entries) {
+            val [a, b] = LanguageFeature.entries.zipWithNext().first { [a, b] -> comparator.compare(a, b) > 0 }
             fail(
                 "Please make sure LanguageFeature entries are sorted by sinceVersion to improve readability & reduce confusion.\n" +
-                        "The feature $b is out of order; its sinceVersion is ${b.sinceVersion}, yet it comes after $a, whose " +
-                        "sinceVersion is ${a.sinceVersion}.\n"
+                        "The feature $a is out of order; its sinceVersion is ${a.sinceVersion}, yet it comes before $b, whose " +
+                        "sinceVersion is ${b.sinceVersion}.\n"
             )
         }
     }
