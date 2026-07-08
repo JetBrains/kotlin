@@ -1,0 +1,3 @@
+expression: i
+expression PSI: KtNameReferenceExpression
+type: kotlin.Int

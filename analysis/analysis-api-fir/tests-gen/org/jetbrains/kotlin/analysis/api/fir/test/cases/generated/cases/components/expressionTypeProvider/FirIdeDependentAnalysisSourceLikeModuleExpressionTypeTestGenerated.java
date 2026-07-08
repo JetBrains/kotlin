@@ -1159,4 +1159,84 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpressionTypeTestGenerated 
       run("unaryPlus.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/unaryOperationOperand")
+  @TestDataPath("$PROJECT_ROOT")
+  public class UnaryOperationOperand {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/unaryOperationOperand/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInUnaryOperationOperand() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/unaryOperationOperand"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("arrayElementIncrement.kt")
+    public void testArrayElementIncrement() {
+      run("arrayElementIncrement.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayElementUnaryMinus.kt")
+    public void testArrayElementUnaryMinus() {
+      run("arrayElementUnaryMinus.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayElementUnaryNot.kt")
+    public void testArrayElementUnaryNot() {
+      run("arrayElementUnaryNot.kt");
+    }
+
+    @Test
+    @TestMetadata("customNotOperator.kt")
+    public void testCustomNotOperator() {
+      run("customNotOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixDec.kt")
+    public void testPostfixDec() {
+      run("postfixDec.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixInc.kt")
+    public void testPrefixInc() {
+      run("prefixInc.kt");
+    }
+
+    @Test
+    @TestMetadata("primitiveBooleanArrayElementUnaryNot.kt")
+    public void testPrimitiveBooleanArrayElementUnaryNot() {
+      run("primitiveBooleanArrayElementUnaryNot.kt");
+    }
+
+    @Test
+    @TestMetadata("primitiveIntArrayElementIncrement.kt")
+    public void testPrimitiveIntArrayElementIncrement() {
+      run("primitiveIntArrayElementIncrement.kt");
+    }
+
+    @Test
+    @TestMetadata("primitiveIntArrayElementUnaryMinus.kt")
+    public void testPrimitiveIntArrayElementUnaryMinus() {
+      run("primitiveIntArrayElementUnaryMinus.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinus.kt")
+    public void testUnaryMinus() {
+      run("unaryMinus.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryNot.kt")
+    public void testUnaryNot() {
+      run("unaryNot.kt");
+    }
+  }
 }
