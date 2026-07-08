@@ -90,6 +90,21 @@ sealed class BlockEnd(form: Form, args: List<Node?>) : Controlled(form, args) {
 }
 
 
+class Halt internal constructor(form: Form, control: Controlling?) : BlockEnd(form, listOf(control)) {
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "control"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitHalt(this)
+    companion object {
+        internal fun form(session: Session) = SimpleControlFlowForm(session, "Halt")
+    }
+}
+
+
 class Return internal constructor(form: Form, control: Controlling?, result: Node?) : BlockEnd(form, listOf(control, result)) {
     val resultIndex: Int = 1
     

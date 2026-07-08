@@ -58,6 +58,21 @@ object Memory : ModelDSL() {
         interfaces(globalOp, anyStore)
     }
 
+
+    val arrayMemoryOp by abstractClass(pinnedMemoryOp) {
+        formParam("elementType", HairType::class)
+        param("array")
+        param("index")
+    }
+
+    val loadArrayElement by node(arrayMemoryOp) {
+        interfaces(anyLoad)
+    }
+
+    val storeArrayElement by node(arrayMemoryOp) {
+        interfaces(anyStore)
+    }
+
     // TODO floating loads
 
 }

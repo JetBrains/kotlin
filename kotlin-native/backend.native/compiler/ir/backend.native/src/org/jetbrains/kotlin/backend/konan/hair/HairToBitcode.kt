@@ -155,6 +155,7 @@ internal class HairToBitcode(
         }
 
         override fun visitUnreachable(node: Unreachable): LLVMValueRef? = emit { unreachable() }
+        override fun visitHalt(node: Halt): LLVMValueRef? = emit { unreachable() }
 
         // ---------------------------------------------------------------
         // Values
@@ -277,12 +278,15 @@ internal class HairToBitcode(
             val llvmTarget = when (hairTarget) {
                 is HairFunctionImpl -> codegen.llvmFunction(hairTarget.irFunction)
                 RuntimeInterface.isSubtype -> llvm.isSubtypeFunction
+                RuntimeInterface.throwArrayIndexOutOfBounds ->
+                    codegen.llvmFunction(context.symbols.throwArrayIndexOutOfBoundsException.owner)
                 else -> error("Unexpected function $hairTarget")
             }
             // FIXME derive param types from the Hair type system, not from IrFunction
             val llvmParamTypes = when (hairTarget) {
                 is HairFunctionImpl -> hairTarget.irFunction.parameters.map { it.type.toLLVMType(llvm) }
                 RuntimeInterface.isSubtype -> listOf(llvm.pointerType, llvm.pointerType)
+                RuntimeInterface.throwArrayIndexOutOfBounds -> emptyList()
                 else -> error("Unexpected function $hairTarget")
             }
             // TODO there are more things to do around the function call (EH, thread-state, …)
@@ -334,6 +338,44 @@ internal class HairToBitcode(
             irField.type.toLLVMType(llvm)
             fgc.storeIrField(irField, node.obj.value(), node.value.value())
             return null
+        }
+
+        override fun visitArraySize(node: ArraySize): LLVMValueRef = emit {
+            // TODO maybe move to lowering?
+            val countPtr = structGep(runtime.arrayHeaderType, node.array.value(), 1, "count_")
+            load(llvm.int32Type, countPtr)
+        }
+
+        private fun FunctionGenerationContext.arrayElementAddress(
+                array: LLVMValueRef, index: LLVMValueRef, elementType: LLVMTypeRef
+        ): LLVMValueRef {
+            val arrayType = llvm.structType(runtime.arrayHeaderType, LLVMArrayType(elementType, 0)!!)
+            val body = structGep(arrayType, array, 1, "arrayBody")
+            return gep(elementType, body, index)
+        }
+
+        override fun visitLoadArrayElement(node: LoadArrayElement): LLVMValueRef = emit {
+            val elementType = node.elementType.asLLVMType()
+            val address = arrayElementAddress(node.array.value(), node.index.value(), elementType)
+            loadSlot(
+                    elementType,
+                    isObjectType = node.elementType == HairType.REFERENCE,
+                    address,
+                    isVar = true,
+                    resultSlot = null,
+            )
+        }
+
+        override fun visitStoreArrayElement(node: StoreArrayElement): LLVMValueRef? = emit {
+            val elementType = node.elementType.asLLVMType()
+            val address = arrayElementAddress(node.array.value(), node.index.value(), elementType)
+            storeAny(
+                    node.value.value(),
+                    address,
+                    isObjectRef = node.elementType == HairType.REFERENCE,
+                    onStack = false,
+            )
+            null
         }
 
         // ---------------------------------------------------------------

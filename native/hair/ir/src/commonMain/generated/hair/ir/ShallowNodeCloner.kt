@@ -22,6 +22,8 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitBlockEntry(node: BlockEntry): BlockEntry = context(nodeBuilder, NoControlFlowBuilder) { BlockEntry(*Array(node.preds.size) { null }) } as BlockEntry
 
+    override fun visitHalt(node: Halt): Halt = context(nodeBuilder, NoControlFlowBuilder) { Halt(null) } as Halt
+
     override fun visitReturn(node: Return): Return = context(nodeBuilder, NoControlFlowBuilder) { Return(null, null) } as Return
 
     override fun visitGoto(node: Goto): Goto = context(nodeBuilder, NoControlFlowBuilder) { Goto(null) } as Goto
@@ -106,6 +108,10 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitConstTypeInfo(node: ConstTypeInfo): ConstTypeInfo = context(nodeBuilder, NoControlFlowBuilder) { ConstTypeInfo(node.type) }
 
+    override fun visitArraySize(node: ArraySize): ArraySize = context(nodeBuilder, NoControlFlowBuilder) { ArraySize(null) } as ArraySize
+
+    override fun visitArrayIndexCheck(node: ArrayIndexCheck): ArrayIndexCheck = context(nodeBuilder, NoControlFlowBuilder) { ArrayIndexCheck(null, null, null) } as ArrayIndexCheck
+
     override fun visitLoad(node: Load): Load = context(nodeBuilder, NoControlFlowBuilder) { Load(node.type)(null, null) } as Load
 
     override fun visitStore(node: Store): Store = context(nodeBuilder, NoControlFlowBuilder) { Store(node.type)(null, null, null) } as Store
@@ -117,6 +123,10 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
     override fun visitLoadGlobal(node: LoadGlobal): LoadGlobal = context(nodeBuilder, NoControlFlowBuilder) { LoadGlobal(node.field)(null) } as LoadGlobal
 
     override fun visitStoreGlobal(node: StoreGlobal): StoreGlobal = context(nodeBuilder, NoControlFlowBuilder) { StoreGlobal(node.field)(null, null) } as StoreGlobal
+
+    override fun visitLoadArrayElement(node: LoadArrayElement): LoadArrayElement = context(nodeBuilder, NoControlFlowBuilder) { LoadArrayElement(node.elementType)(null, null, null) } as LoadArrayElement
+
+    override fun visitStoreArrayElement(node: StoreArrayElement): StoreArrayElement = context(nodeBuilder, NoControlFlowBuilder) { StoreArrayElement(node.elementType)(null, null, null, null) } as StoreArrayElement
 
     override fun visitInvokeStatic(node: InvokeStatic): InvokeStatic = context(nodeBuilder, NoControlFlowBuilder) { InvokeStatic(node.function)(null, *Array(node.callArgs.size) { null }) } as InvokeStatic
 

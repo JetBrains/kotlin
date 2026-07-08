@@ -11,4 +11,6 @@ object RuntimeInterface {
     }
 
     val isSubtype = RTFun("isSubtype", HairType.INT)
+
+    val throwArrayIndexOutOfBounds = RTFun("ThrowArrayIndexOutOfBoundsException", HairType.NOTHING)
 }

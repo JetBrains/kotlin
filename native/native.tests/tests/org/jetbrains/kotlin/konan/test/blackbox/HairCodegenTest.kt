@@ -97,4 +97,10 @@ class HairCodegenTest : AbstractNativeSimpleTest() {
 
     // Objects
     @Test fun instanceFields() = runHairTest("objects/instanceFields.kt")
+
+    // Arrays
+    @Test fun arraySize() = runHairTest("arrays/arraySize.kt")
+    @Test fun intArrayGetSet() = runHairTest("arrays/intArrayGetSet.kt")
+    @Test fun longArrayGetSet() = runHairTest("arrays/longArrayGetSet.kt")
+    @Test fun referenceArrayGetSet() = runHairTest("arrays/referenceArrayGetSet.kt")
 }

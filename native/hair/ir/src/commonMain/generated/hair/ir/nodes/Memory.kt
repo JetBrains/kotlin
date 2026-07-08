@@ -179,3 +179,57 @@ class StoreGlobal internal constructor(form: Form, control: Controlling?, value:
 }
 
 
+sealed class ArrayMemoryOp(form: Form, args: List<Node?>) : PinnedMemoryOp(form, args) {
+    abstract val elementType: HairType
+    val arrayIndex: Int = 1
+    val indexIndex: Int = 2
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitArrayMemoryOp(this)
+}
+
+
+class LoadArrayElement internal constructor(form: Form, control: Controlling?, array: Node?, index: Node?) : ArrayMemoryOp(form, listOf(control, array, index)), AnyLoad {
+    class Form internal constructor(metaForm: MetaForm, val elementType: HairType) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
+        override val args = listOf<Any>(elementType)
+    }
+    
+    override val elementType: HairType by form::elementType
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "control"
+        1 -> "array"
+        2 -> "index"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitLoadArrayElement(this)
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "LoadArrayElement")
+    }
+}
+
+
+class StoreArrayElement internal constructor(form: Form, control: Controlling?, array: Node?, index: Node?, value: Node?) : ArrayMemoryOp(form, listOf(control, array, index, value)), AnyStore {
+    class Form internal constructor(metaForm: MetaForm, val elementType: HairType) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
+        override val args = listOf<Any>(elementType)
+    }
+    
+    override val elementType: HairType by form::elementType
+    override val valueIndex: Int = 3
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "control"
+        1 -> "array"
+        2 -> "index"
+        3 -> "value"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitStoreArrayElement(this)
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "StoreArrayElement")
+    }
+}
+
+

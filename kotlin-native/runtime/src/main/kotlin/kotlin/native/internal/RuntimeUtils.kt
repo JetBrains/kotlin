@@ -34,6 +34,7 @@ internal fun ThrowIndexOutOfBoundsException(): Nothing {
 }
 
 @ExportForCppRuntime
+@UsedFromCompilerGeneratedCode
 internal fun ThrowArrayIndexOutOfBoundsException(): Nothing {
     @Suppress("DEPRECATION")
     throw ArrayIndexOutOfBoundsException()
