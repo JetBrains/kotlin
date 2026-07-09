@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
+import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -74,7 +77,11 @@ class JKlibIrLinker(
             override fun needToConstructFakeOverrides(clazz: IrClass): Boolean =
                 clazz.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         },
+        externalOverridabilityConditions = listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
     )
+
+    override fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext =
+        JvmIrTypeSystemContext(irBuiltIns)
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
