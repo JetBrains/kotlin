@@ -14,7 +14,7 @@ abstract class Parent<T> {
 
 class Child : Parent<String>() {
     fun doStuff() {
-        <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>logger<!>.log("Hello")
+        <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING!>logger<!>.log("Hello")
     }
 }
 

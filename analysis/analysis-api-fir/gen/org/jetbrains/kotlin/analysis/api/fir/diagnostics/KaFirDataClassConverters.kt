@@ -4953,6 +4953,12 @@ private fun KaDiagnosticConverterBuilder.addConversions109() {
             token,
         )
     }
+    add(FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING) { firDiagnostic ->
+        SubclassCantCallCompanionProtectedNonStaticWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE) { firDiagnostic ->
         JavaSamInterfaceConstructorReferenceImpl(
             firDiagnostic as KtPsiDiagnostic,
