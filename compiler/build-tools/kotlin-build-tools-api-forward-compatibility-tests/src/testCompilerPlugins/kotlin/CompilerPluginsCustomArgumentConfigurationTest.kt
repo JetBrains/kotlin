@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation
+package org.jetbrains.kotlin.buildtools.future.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrder
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Assertions.assertTrue

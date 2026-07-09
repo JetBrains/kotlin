@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation.model
+package org.jetbrains.kotlin.buildtools.future.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.*
-import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.Scenario
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.jvmScenario
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.junit.jupiter.api.Named

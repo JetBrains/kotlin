@@ -3,16 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation
+package org.jetbrains.kotlin.buildtools.future.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.readText

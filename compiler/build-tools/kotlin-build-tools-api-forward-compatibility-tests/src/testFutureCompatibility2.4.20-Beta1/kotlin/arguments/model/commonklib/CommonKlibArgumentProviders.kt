@@ -5,7 +5,7 @@
 
 @file:OptIn(DeprecatedCompilerArgument::class, ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonklib
 
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments
@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.PartialLinkageLogLevel
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.PartialLinkageMode
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.JS_KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.JS_LINKING
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.WASM_KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.WASM_LINKING
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.JS_KLIB
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.JS_LINKING
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.WASM_KLIB
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.WASM_LINKING
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext

@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.jvm
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.JvmCompilerArgument
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.ArgumentConfiguration
 
 internal class JvmArgumentConfiguration<T>(
     kotlinToolchain: KotlinToolchains,

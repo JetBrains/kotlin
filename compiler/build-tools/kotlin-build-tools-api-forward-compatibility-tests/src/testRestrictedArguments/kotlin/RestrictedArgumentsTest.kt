@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.restricted
+package org.jetbrains.kotlin.buildtools.future.tests.restricted
 
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogContainsLines
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogDoesNotContainPatterns
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

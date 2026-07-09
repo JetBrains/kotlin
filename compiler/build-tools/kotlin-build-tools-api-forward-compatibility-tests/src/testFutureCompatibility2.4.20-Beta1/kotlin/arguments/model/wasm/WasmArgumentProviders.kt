@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.wasm
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerKlibArguments
@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerLinkingArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerLinkingArguments.Companion.X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerLinkingArguments.Companion.X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WasmTarget
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.WasmArgumentOperationKind.KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.WasmArgumentOperationKind.LINKING
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.wasm.WasmArgumentOperationKind.KLIB
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.wasm.WasmArgumentOperationKind.LINKING
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext

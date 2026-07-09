@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests
+package org.jetbrains.kotlin.buildtools.future.tests
 
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.BuildOperation.Companion.METRICS_COLLECTOR
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.ModuleContext
 
 /**
  * Invokes [Module.compile] with autoconfiguration of [org.jetbrains.kotlin.buildtools.api.BuildOperation.METRICS_COLLECTOR].

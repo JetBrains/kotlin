@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests
+package org.jetbrains.kotlin.buildtools.future.tests
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain.Companion.abiValidation
 import org.jetbrains.kotlin.buildtools.api.abi.compareAbiTextFilesOperation
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

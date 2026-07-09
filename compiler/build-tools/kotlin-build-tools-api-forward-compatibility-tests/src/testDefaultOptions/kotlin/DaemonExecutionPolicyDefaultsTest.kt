@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.defaults
+package org.jetbrains.kotlin.buildtools.future.tests.defaults
 
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH
 import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_COUNT_LIMIT
 import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_DIRECTORY

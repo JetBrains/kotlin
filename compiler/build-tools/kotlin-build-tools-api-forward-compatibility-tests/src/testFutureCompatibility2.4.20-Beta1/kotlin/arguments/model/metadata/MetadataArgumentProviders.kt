@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.metadata
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.metadata
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.CLASSPATH
@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.X_REFINES_PATHS
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.X_TARGET_PLATFORM
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.MetadataTargetPlatform
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext

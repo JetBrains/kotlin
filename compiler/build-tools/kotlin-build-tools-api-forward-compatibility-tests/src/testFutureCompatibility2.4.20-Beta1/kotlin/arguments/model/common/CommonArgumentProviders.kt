@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.common
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.common
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.OPT_IN
@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.WarningLevel
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext

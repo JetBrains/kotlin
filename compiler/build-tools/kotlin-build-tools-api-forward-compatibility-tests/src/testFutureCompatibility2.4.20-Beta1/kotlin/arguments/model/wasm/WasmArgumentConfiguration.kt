@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalBuildToolsApi::class, ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.wasm
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.WasmArgumentOperationKind.KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.WasmArgumentOperationKind.LINKING
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.supportsWasm
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.ArgumentConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.wasm.WasmArgumentOperationKind.KLIB
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.wasm.WasmArgumentOperationKind.LINKING
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.supportsWasm
 import java.nio.file.Paths
 
 internal class WasmArgumentConfiguration<T>(

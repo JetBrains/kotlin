@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation
+package org.jetbrains.kotlin.buildtools.future.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

@@ -2,15 +2,15 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-package org.jetbrains.kotlin.buildtools.tests.compilation
+package org.jetbrains.kotlin.buildtools.future.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.compile
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.moduleWithFir
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.jvmScenario
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.util.compile
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.util.moduleWithFir
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 

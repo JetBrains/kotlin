@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests
+package org.jetbrains.kotlin.buildtools.future.tests
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.buildtools.api.jvm.classpathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.jvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.snapshotBasedIcConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.TestKotlinLogger
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.TestKotlinLogger
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation
+package org.jetbrains.kotlin.buildtools.future.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.jvm
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.NullabilityAnnotation
 import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named

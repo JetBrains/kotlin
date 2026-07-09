@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
+package org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.*
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LinkableModule
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.ExecutionOutcome
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.LinkableModule
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.ModuleContext
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.*

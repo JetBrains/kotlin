@@ -3,26 +3,26 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation
+package org.jetbrains.kotlin.buildtools.future.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_EXPLICIT_BACKING_FIELDS
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogDoesNotContainPatterns
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertNoCompiledSources
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.ScenarioCreator
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.ScenarioModule
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.assertAddedOutputs
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.assertNoOutputSetChanges
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.assertRemovedOutputs
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 

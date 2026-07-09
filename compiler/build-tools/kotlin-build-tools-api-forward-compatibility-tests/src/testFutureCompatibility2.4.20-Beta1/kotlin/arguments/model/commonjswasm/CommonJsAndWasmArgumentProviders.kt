@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonjswasm
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.IR_OUTPUT_DIR
@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsMainCallMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SourceMapEmbedSources
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SourceMapNamesPolicy
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_LINKING
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_LINKING
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_KLIB
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_LINKING
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_KLIB
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_LINKING
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext

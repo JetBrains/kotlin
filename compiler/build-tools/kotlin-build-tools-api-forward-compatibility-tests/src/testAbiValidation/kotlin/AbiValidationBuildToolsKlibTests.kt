@@ -3,7 +3,7 @@
 // * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 // */
 //
-//package org.jetbrains.kotlin.buildtools.tests
+//package org.jetbrains.kotlin.buildtools.future.tests
 //
 //import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 //import org.jetbrains.kotlin.buildtools.api.abi.AbiFilters
@@ -13,9 +13,9 @@
 //import org.jetbrains.kotlin.buildtools.api.abi.dumpKlibAbiToStringOperation
 //import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpKlibAbiToStringOperation
 //import org.jetbrains.kotlin.buildtools.api.abi.operations.filters
-//import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-//import org.jetbrains.kotlin.buildtools.tests.compilation.model.jsProject
-//import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+//import org.jetbrains.kotlin.buildtools.future.tests.compilation.BaseCompilationTest
+//import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.jsProject
+//import org.jetbrains.kotlin.buildtools.future.tests.compilation.util.btaClassloader
 //import org.jetbrains.kotlin.test.TestMetadata
 //import org.junit.jupiter.api.Assertions.assertEquals
 //import org.junit.jupiter.api.DisplayName

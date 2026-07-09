@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model
 
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 

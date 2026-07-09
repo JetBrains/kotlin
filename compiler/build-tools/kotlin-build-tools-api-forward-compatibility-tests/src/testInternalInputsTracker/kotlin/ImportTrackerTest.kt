@@ -2,15 +2,15 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-package org.jetbrains.kotlin.buildtools.tests.compilation
+package org.jetbrains.kotlin.buildtools.future.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.initializeBtaClassloader
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.util.initializeBtaClassloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

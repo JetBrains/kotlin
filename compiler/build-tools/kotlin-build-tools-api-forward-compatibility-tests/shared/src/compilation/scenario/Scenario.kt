@@ -3,17 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
+package org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.Dependency
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.FileDependency
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.AbstractProject
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.Dependency
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.FileDependency
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.SnapshotConfig
 
 interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> {
     val kotlinToolchains: KotlinToolchains

@@ -3,16 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation
+package org.jetbrains.kotlin.buildtools.future.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.BACKUP_CLASSES
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.KEEP_IC_CACHES_IN_MEMORY
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.*
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.execute
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.ModuleContext
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.*
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.util.execute
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

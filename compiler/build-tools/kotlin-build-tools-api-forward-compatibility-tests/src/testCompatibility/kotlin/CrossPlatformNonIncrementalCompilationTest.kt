@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests
+package org.jetbrains.kotlin.buildtools.future.tests
 
-import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputsContains
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertOutputsContains
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.expectFailWithError
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 

@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation.model
+package org.jetbrains.kotlin.buildtools.future.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.*
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module.Companion.EXECUTION_TIMEOUT_SECONDS
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.Module.Companion.EXECUTION_TIMEOUT_SECONDS
 import java.nio.file.Path
 
 interface Module<O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> :

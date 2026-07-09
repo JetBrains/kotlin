@@ -3,6 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.defaults
+package org.jetbrains.kotlin.buildtools.future.tests.defaults
 
 val DefaultCompilerMessageRendererClassName = "org.jetbrains.kotlin.buildtools.internal.DefaultCompilerMessageRenderer"

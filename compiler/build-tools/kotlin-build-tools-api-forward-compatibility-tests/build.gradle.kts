@@ -286,10 +286,10 @@ testing {
 
                         // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
                         exclude(
-                            "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptTemplate.class",
-                            "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptCustomExtensionTemplate.class",
-                            "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptMyExtensionTemplate.class",
-                            "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptDefinition.class",
+                            "org/jetbrains/kotlin/buildtools/future/tests/compilation/GreetScriptTemplate.class",
+                            "org/jetbrains/kotlin/buildtools/future/tests/compilation/GreetScriptCustomExtensionTemplate.class",
+                            "org/jetbrains/kotlin/buildtools/future/tests/compilation/GreetScriptMyExtensionTemplate.class",
+                            "org/jetbrains/kotlin/buildtools/future/tests/compilation/GreetScriptDefinition.class",
                         )
                     }
                 }

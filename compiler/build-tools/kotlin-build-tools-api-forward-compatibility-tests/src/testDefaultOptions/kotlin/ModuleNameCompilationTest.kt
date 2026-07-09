@@ -3,24 +3,24 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.defaults
+package org.jetbrains.kotlin.buildtools.future.tests.defaults
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.MODULE_NAME
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.EXPLICIT_NULL_MODULE_NAME_MARKER
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogDoesNotContainPatterns
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.EXPLICIT_NULL_MODULE_NAME_MARKER
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 

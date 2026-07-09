@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalBuildToolsApi::class, ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonjswasm
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_LINKING
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_LINKING
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.supportsJs
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.supportsWasm
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.ArgumentConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_KLIB
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_LINKING
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_KLIB
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_LINKING
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.supportsJs
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.supportsWasm
 import java.nio.file.Paths
 
 internal class CommonJsAndWasmArgumentConfiguration<T>(

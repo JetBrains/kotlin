@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.js
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.js
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments
@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext

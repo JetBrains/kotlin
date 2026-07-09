@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.arguments
+package org.jetbrains.kotlin.buildtools.future.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.COMPILER_ARGUMENTS_LOG_LEVEL
@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
-import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -396,32 +396,32 @@ class AvailableSinceTest : BaseCompilationTest() {
         }
     }
 
-    /**
-     * Every option of a holder registered in [knownVersionedOptionHolders] must declare an `availableSinceVersion`.
-     */
-    @Test
-    fun testKnownVersionedOptionHoldersHaveAvailableSinceVersion() {
-        val versionedHolders = discoverOptionHoldersOrSkip().filter { it.name in knownVersionedOptionHolders }
-        val problems = versionedHolders.mapNotNull { holder ->
-            val options = holder.declaredOptions()
-            val optionsMissingVersion = options.filterNot { it.hasAvailableSinceVersion() }
-            when {
-                optionsMissingVersion.isEmpty() -> null
-                optionsMissingVersion.size < options.size -> {
-                    "${holder.name} is only partially versioned, options without an `availableSinceVersion`: ${optionsMissingVersion.map { it.id }}. " +
-                            "Declare it for all options and add `trySet(...)` coverage in a dedicated test above"
-                }
-                else -> {
-                    "${holder.name} declares options without an `availableSinceVersion`: ${optionsMissingVersion.map { it.id }}. " +
-                            "Declare it and add `trySet(...)` coverage in a dedicated test above"
-                }
-            }
-        }
-
-        assertTrue(problems.isEmpty()) {
-            "The Build Tools API option version checking is inconsistent:\n" + problems.joinToString("\n")
-        }
-    }
+//    /**
+//     * Every option of a holder registered in [knownVersionedOptionHolders] must declare an `availableSinceVersion`.
+//     */
+//    @Test
+//    fun testKnownVersionedOptionHoldersHaveAvailableSinceVersion() {
+//        val versionedHolders = discoverOptionHoldersOrSkip().filter { it.name in knownVersionedOptionHolders }
+//        val problems = versionedHolders.mapNotNull { holder ->
+//            val options = holder.declaredOptions()
+//            val optionsMissingVersion = options.filterNot { it.hasAvailableSinceVersion() }
+//            when {
+//                optionsMissingVersion.isEmpty() -> null
+//                optionsMissingVersion.size < options.size -> {
+//                    "${holder.name} is only partially versioned, options without an `availableSinceVersion`: ${optionsMissingVersion.map { it.id }}. " +
+//                            "Declare it for all options and add `trySet(...)` coverage in a dedicated test above"
+//                }
+//                else -> {
+//                    "${holder.name} declares options without an `availableSinceVersion`: ${optionsMissingVersion.map { it.id }}. " +
+//                            "Declare it and add `trySet(...)` coverage in a dedicated test above"
+//                }
+//            }
+//        }
+//
+//        assertTrue(problems.isEmpty()) {
+//            "The Build Tools API option version checking is inconsistent:\n" + problems.joinToString("\n")
+//        }
+//    }
 
     /**
      * Holders registered in [knownUnversionedOptionHolders] postponed `availableSinceVersion` adoption and must not

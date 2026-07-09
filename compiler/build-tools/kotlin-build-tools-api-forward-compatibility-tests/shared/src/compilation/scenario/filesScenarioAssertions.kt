@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
+package org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario
 
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.ModuleContext
 
 /**
  * This assertion has side effects modifying the expected total outputs list!

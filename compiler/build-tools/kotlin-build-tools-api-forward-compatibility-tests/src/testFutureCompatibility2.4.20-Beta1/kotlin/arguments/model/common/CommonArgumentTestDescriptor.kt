@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.common
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.common
 
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentTestDescriptor
+import org.jetbrains.kotlin.buildtools.future.tests.arguments.model.ArgumentTestDescriptor
 
 internal class CommonArgumentTestDescriptor<T>(
     override val argumentName: String,

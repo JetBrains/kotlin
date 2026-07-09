@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation
+package org.jetbrains.kotlin.buildtools.future.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.assertions.assertLogContainsLines
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.model.ScenarioCreator
 import org.junit.jupiter.api.DisplayName
 
 class SandboxPluginTest : BaseCompilationTest() {

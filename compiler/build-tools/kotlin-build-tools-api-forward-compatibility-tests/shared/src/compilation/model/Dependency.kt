@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation.model
+package org.jetbrains.kotlin.buildtools.future.tests.compilation.model
 
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioDependency
+import org.jetbrains.kotlin.buildtools.future.tests.compilation.scenario.ScenarioDependency
 import java.nio.file.Path
 
 /**

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib
+package org.jetbrains.kotlin.buildtools.future.tests.arguments.model.commonklib
 
 internal enum class CommonKlibArgumentOperationKind(val displayName: String) {
     JS_KLIB("JS KLIB"),
