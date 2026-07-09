@@ -7,20 +7,13 @@ package org.jetbrains.kotlin.ir.evaluation
 
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.path
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetField
-import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.irAttribute
@@ -28,37 +21,32 @@ import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.shallowCopy
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 var IrConst.wasInlined: Boolean? by irAttribute(copyByDefault = true)
 
 class IrConstFieldInliner(
     private val irFile: IrFile,
     private val inlineConstTracker: InlineConstTracker?,
-) : IrTransformer<Nothing?>() {
-    override fun visitFunction(declaration: IrFunction, data: Nothing?): IrStatement {
-        // It is useless to visit default accessor, we probably want to leave code there as it is
-        if (declaration.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return declaration
-        return visitDeclaration(declaration, data)
+) : IrVisitor<IrExpression?, Nothing?>() {
+    override fun visitElement(element: IrElement, data: Nothing?): IrExpression? = null
+
+    override fun visitConst(expression: IrConst, data: Nothing?): IrConst = expression
+
+    override fun visitCall(expression: IrCall, data: Nothing?): IrExpression? {
+        val field = expression.correspondingProperty?.backingField ?: return null
+        if (!field.canBeInlined()) return null
+        return expression.tryToInline(field)
     }
 
-    override fun visitCall(expression: IrCall, data: Nothing?): IrElement {
-        return expression.correspondingProperty?.backingField?.let {
-            expression.tryToInline(it)
-        } ?: visitElement(expression, data)
-    }
-
-    override fun visitGetField(expression: IrGetField, data: Nothing?): IrExpression {
+    override fun visitGetField(expression: IrGetField, data: Nothing?): IrExpression? {
         val field = expression.symbol.owner
-        return expression.tryToInline(field) ?: visitExpression(expression, data)
+        if (!field.canBeInlined()) return null
+        return expression.tryToInline(field)
     }
 
     // Split the given expression into access to receiver (to keep semantic intact) and const value if applicable
     private fun IrExpression.tryToInline(field: IrField): IrExpression? {
-        if (!field.canBeInlined()) return null
-
-        transformChildren(this@IrConstFieldInliner, null)
-
         val receiver = when (this) {
             is IrCall -> dispatchReceiver
             is IrGetField -> receiver
