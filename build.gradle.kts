@@ -558,6 +558,7 @@ tasks {
     }
 
     testLifecycleTask("codebaseTests") {
+        dependsOn(":repo:auto-code-review:test")
         dependsOn(":repo:codebase-tests:test")
     }
 

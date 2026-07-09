@@ -467,6 +467,7 @@
 /prepare/analysis-api/ "Kotlin Analysis API"
 
 /repo/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+/repo/auto-code-review svyatoslav.scherbina@jetbrains.com sergey.bogolepov@jetbrains.com simon.ogorodnik@jetbrains.com
 /repo/gradle-build-conventions/kgp-npm-tooling-helper "Kotlin Build Tools"
 
 /resources/ "Kotlin Build Infrastructure"
@@ -498,6 +499,7 @@
 /SECURITY.md "Kotlin Build Infrastructure"
 /CLAUDE.md "Kotlin Build Infrastructure"
 /AGENTS.md "Kotlin Build Infrastructure"
+/code-rules.md "Kotlin"
 
 # Diagnostic Messages
 /compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com

@@ -383,6 +383,7 @@ fun Project.configureTests() {
 
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
             ":plugins:scripting:scripting-tests",
+            ":repo:auto-code-review", // Runs processes, traverses all repo files. Quick.
             ":repo:artifacts-tests",
             ":repo:codebase-tests",
             ":tools:binary-compatibility-validator",

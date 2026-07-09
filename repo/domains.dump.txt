@@ -207,6 +207,7 @@ Unknown:
  - SECURITY.md
  - annotations
  - benchmarks
+ - code-rules.md
  - dependencies
  - docs
  - generators
