@@ -637,8 +637,8 @@ private inline fun <T : JsNode> T.addSourceInfoIfNeed(
     val sourceMapsInfo = context.staticContext.backendContext.sourceMapsInfo ?: return
     val originalName = useNameOf?.originalNameForUseInSourceMap(sourceMapsInfo.namesPolicy)
     val location = context.getStartLocationForIrElement(node, originalName) ?: return
-    val isNodeFromCurrentModule = context.currentInlineFunction?.fileOrNull?.module?.descriptor?.let { moduleOfCurrentFunction ->
-        moduleOfCurrentFunction == context.staticContext.backendContext.module
+    val isNodeFromCurrentModule = context.currentInlineFunction?.fileOrNull?.module?.let { moduleOfCurrentFunction ->
+        moduleOfCurrentFunction == context.staticContext.backendContext.irModule
     } ?: true
 
     // TODO maybe it's better to fix in JsExpressionStatement

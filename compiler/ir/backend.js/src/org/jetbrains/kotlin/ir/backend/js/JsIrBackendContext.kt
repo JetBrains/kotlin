@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNull
 import java.util.*
 
 class JsIrBackendContext(
-    val module: ModuleDescriptor,
+    val irModule: IrModuleFragment,
     override val irBuiltIns: IrBuiltIns,
     override val symbolTable: SymbolTable,
     override val configuration: CompilerConfiguration,

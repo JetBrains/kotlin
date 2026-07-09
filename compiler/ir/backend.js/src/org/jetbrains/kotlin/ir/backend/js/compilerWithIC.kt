@@ -44,7 +44,7 @@ class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDe
         configuration: CompilerConfiguration,
     ): JsCommonBackendContext {
         return JsIrBackendContext(
-            mainModule.descriptor,
+            mainModule,
             irBuiltIns,
             symbolTable,
             configuration = configuration,

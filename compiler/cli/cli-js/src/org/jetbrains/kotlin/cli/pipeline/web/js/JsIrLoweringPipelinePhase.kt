@@ -37,16 +37,14 @@ object JsIrLoweringPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, Js
 
     private fun lowerIr(input: WebLoadedIrPipelineArtifact): JsLoweredIrPipelineArtifact {
         val configuration = input.configuration
-        val module = input.moduleStructure
         (val moduleFragment = module, val moduleDependencies = dependencies, val irBuiltIns = bultins, val symbolTable, val deserializer) = input.moduleInfo
         require(deserializer is JsIrLinker) {
             "jsCompiler needs JsIrLinker, but got ${deserializer.javaClass.name}"
         }
-        val moduleDescriptor = moduleFragment.descriptor
         val irFactory = symbolTable.irFactory
         val shouldGeneratePolyfills = configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
         val context = JsIrBackendContext(
-            moduleDescriptor,
+            moduleFragment,
             irBuiltIns = irBuiltIns,
             symbolTable = symbolTable,
             configuration = configuration,
