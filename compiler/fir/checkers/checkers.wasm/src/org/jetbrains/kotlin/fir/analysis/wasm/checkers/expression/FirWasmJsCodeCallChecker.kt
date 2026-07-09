@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    private val KOTLIN_PACKAGE = FqName("kotlin")
 
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
@@ -79,7 +78,7 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
                         // Disallow mixing js(...) with any annotation that isn't a standard Kotlin
                         // annotation (e.g. @Suppress, @OptIn, etc.)
                         val classId = annotation.toAnnotationClassId(context.session) ?: continue
-                        if (!classId.packageFqName.startsWith(KOTLIN_PACKAGE)) {
+                        if (!classId.packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_FQ_NAME)) {
                             reporter.reportOn(
                                 source,
                                 FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND,
