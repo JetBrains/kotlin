@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-
 private fun ClassId.toConeFlexibleType(
     typeArguments: Array<out ConeTypeProjection>,
     typeArgumentsForUpper: Array<out ConeTypeProjection>,
@@ -248,24 +246,8 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         null -> {
-            var classId: ClassId? = null
-            val fqName = FqName(this.classifierQualifiedName)
-            if (!fqName.isRoot) {
-                var pkgFqn = fqName.parent()
-                var classFqn = FqName.topLevel(fqName.shortName())
-
-                while (true) {
-                    if (pkgFqn.isRoot || session.symbolProvider.hasPackage(pkgFqn)) {
-                        classId = ClassId(pkgFqn, classFqn, isLocal = false)
-                        break
-                    }
-                    classFqn = FqName(pkgFqn.shortName().asString() + "." + classFqn.asString())
-                    pkgFqn = pkgFqn.parent()
-                }
-            }
-
-            val finalClassId = classId ?: ClassId.topLevel(fqName)
-            finalClassId.constructClassLikeType(emptyArray(), isMarkedNullable = lowerBound != null, attributes)
+            val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
+            classId.constructClassLikeType(isMarkedNullable = lowerBound != null, attributes = attributes)
         }
 
         else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))

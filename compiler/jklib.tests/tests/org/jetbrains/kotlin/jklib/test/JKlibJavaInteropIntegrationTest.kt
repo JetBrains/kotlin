@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -24,6 +25,7 @@ import java.io.File
 class JKlibJavaInteropIntegrationTest {
 
     @Test
+    @Disabled("The fix is reverted due to KT-87507")
     fun testJavaExtendingNestedKotlinClassFromKlib(@TempDir tempDir: File) {
         val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
         val stdlibJar = ForTestCompileRuntime.runtimeJarForTests().path
