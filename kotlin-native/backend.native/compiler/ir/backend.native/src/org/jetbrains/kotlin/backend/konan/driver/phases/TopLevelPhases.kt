@@ -224,8 +224,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             }
         }
 
-        val fragments = backendEngine.splitIntoFragments(irModule, performanceManager)
-        val fragmentsList = fragments.toList()
+        val fragmentsList = backendEngine.splitIntoFragments(irModule, performanceManager).toList()
         val generationStates = performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
             fragmentsList.runAllLowerings()
         }
@@ -265,7 +264,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
         }
 
         if (performanceManager != null) {
-            fragments.forEach {
+            fragmentsList.forEach {
                 performanceManager.addOtherUnitStats(it.performanceManager?.unitStats)
             }
         }
