@@ -126,7 +126,7 @@ internal val StackProtectorPhaseInLLVM = optimizationPipelinePass(
         pipeline = ::StackProtectorPipeline
 )
 
-internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
+internal val RemoveRedundantSafepointsPhaseInCompiler = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
         name = "RemoveRedundantSafepoints",
         postactions = getDefaultLlvmModuleActions(),
         op = { context, _ ->
@@ -135,6 +135,11 @@ internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<Bit
                     isSafepointInliningAllowed = context.shouldInlineSafepoints()
             )
         }
+)
+
+internal val RemoveRedundantSafepointsPhaseInLLVM = optimizationPipelinePass(
+        name = "RemoveRedundantSafepoints",
+        pipeline = ::RemoveRedundantSafepointsPipeline
 )
 
 internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
@@ -181,6 +186,11 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
             null -> {}
         }
+        if (!context.config.runLLVMPassesInCompiler) {
+            it.runAndMeasurePhase(RemoveRedundantSafepointsPhaseInLLVM, module)
+        }
     }
-    runAndMeasurePhase(RemoveRedundantSafepointsPhase)
+    if (context.config.runLLVMPassesInCompiler) {
+        runAndMeasurePhase(RemoveRedundantSafepointsPhaseInCompiler)
+    }
 }
