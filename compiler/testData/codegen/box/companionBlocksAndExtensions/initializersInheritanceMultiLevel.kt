@@ -1,5 +1,4 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: NATIVE
 
 var initOrder = ""
 
