@@ -6,26 +6,27 @@
 // ISSUE: KT-87507
 // RUN_PIPELINE_TILL: FRONTEND
 // MODULE: a
-// FILE: a/b/c/Some.kt
-package a.b.c
+// FILE: a/b/Some.kt
+package a.b
 
-class Some
+class C {
+    class Some
+}
 
 // MODULE: b(a)
 // FILE: a/b/d/Base.java
 package a.b.d;
 
-import a.b.c.Some;
+import a.b.C.Some;
 
 public abstract class Base {
-    // classId: a/b/c/Some
     public abstract void foo(Some some);
 }
 
 // FILE: a/b/d/Derived.kt
 package a.b.d
 
-import a.b.c.Some
+import a.b.C.Some
 
 open class Derived : Base() {
     override fun foo(some: Some) {}
