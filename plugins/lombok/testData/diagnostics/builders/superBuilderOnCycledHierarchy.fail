@@ -1,0 +1,12 @@
+java.lang.StackOverflowError
+	at java.base/java.lang.String.indexOf(String.java:1691)
+	at kotlin.text.StringsKt__StringsKt.indexOf(Strings.kt:1149)
+	at kotlin.text.StringsKt__StringsJVMKt.replace(StringsJVM.kt:88)
+	at kotlin.text.StringsKt__StringsJVMKt.replace$default(StringsJVM.kt:86)
+	at org.jetbrains.kotlin.lombok.generators.AbstractBuilderGenerator.getBuilderClassShortName(AbstractBuilderGenerator.kt:685)
+	at org.jetbrains.kotlin.lombok.generators.AbstractBuilderGenerator.createAndInitializeBuilder(AbstractBuilderGenerator.kt:321)
+	at org.jetbrains.kotlin.lombok.generators.AbstractBuilderGenerator.access$createAndInitializeBuilder(AbstractBuilderGenerator.kt:69)
+	at org.jetbrains.kotlin.lombok.generators.AbstractBuilderGenerator$special$$inlined$createCache$1.invoke(FirCachesFactory.kt:157)
+	at org.jetbrains.kotlin.lombok.generators.AbstractBuilderGenerator$special$$inlined$createCache$1.invoke(FirCachesFactory.kt:141)
+	at org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCache.getValue(FirThreadUnsafeCachesFactory.kt:53)
+	...
