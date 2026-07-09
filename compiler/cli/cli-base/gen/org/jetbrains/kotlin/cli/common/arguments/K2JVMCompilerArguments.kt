@@ -340,18 +340,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
         }
 
     @Argument(
-        value = "-Xklib",
-        valueDescription = "<path>",
-        description = "Paths to cross-platform libraries in the .klib format.",
-        delimiter = Argument.Delimiters.pathSeparator,
-    )
-    var klibLibraries: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xlambdas",
         valueDescription = "{class|indy}",
         description = """Select the code generation scheme for lambdas.

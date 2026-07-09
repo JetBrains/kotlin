@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase.getSourceFiles
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase.writeOutputsIfNeeded
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.K1JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LOOKUP_TRACKER
@@ -32,9 +31,7 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.ir.backend.jvm.loadJvmKlibs
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.FqName
@@ -44,6 +41,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K1JvmIrCodegenFactory
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.K1JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -259,8 +257,6 @@ internal object KotlinToJVMBytecodeCompiler {
     }
 
     private fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
-        val klibs: List<KotlinLibrary> = loadJvmKlibs(environment.configuration).all
-
         val sourceFiles = environment.getSourceFiles()
 
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(environment.configuration)
@@ -286,7 +282,6 @@ internal object KotlinToJVMBytecodeCompiler {
                 environment.configuration,
                 environment::createPackagePartProvider,
                 sourceModuleSearchScope = scope,
-                klibList = klibs
             )
         }
 

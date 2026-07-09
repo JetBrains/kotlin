@@ -353,10 +353,5 @@ private fun CompilerConfiguration.parseBackendThreads(stringValue: String): Int 
     return value
 }
 
-fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) {
-    val libraries = arguments.klibLibraries ?: return
-    put(JVMConfigurationKeys.KLIB_PATHS, libraries.split(File.pathSeparator.toRegex()).filterNot(String::isEmpty))
-}
-
 private fun getJavaVersion(): Int =
     System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6

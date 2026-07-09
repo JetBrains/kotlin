@@ -8396,7 +8396,7 @@
                                     "introducedVersion": "1.4.0",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.5.0"
                                 },
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.SearchPathType",

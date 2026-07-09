@@ -69,7 +69,6 @@ where advanced options include:
   -Xjvm-enable-preview       Allow using Java features that are in the preview phase.
                              This works like '--enable-preview' in Java. All class files are marked as compiled with preview features, meaning it won't be possible to use them in release environments.
   -Xjvm-expose-boxed         Expose inline classes and functions, accepting and returning them, to Java.
-  -Xklib=<path>              Paths to cross-platform libraries in the .klib format.
   -Xlambdas={class|indy}     Select the code generation scheme for lambdas.
                              -Xlambdas=indy                  Generate lambdas using 'invokedynamic' with 'LambdaMetafactory.metafactory'.
                                                              A lambda object created using 'LambdaMetafactory.metafactory' will have a different 'toString()'.

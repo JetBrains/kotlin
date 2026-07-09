@@ -712,21 +712,6 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         )
     }
 
-    @OptIn(ExperimentalArgumentApi::class)
-    compilerArgument {
-        name = "Xklib"
-        compilerName = "klibLibraries"
-        description = "Paths to cross-platform libraries in the .klib format.".asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "<path>".asReleaseDependent()
-        argumentType = SearchPathType.defaultNull
-        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_4_0,
-        )
-    }
-
     compilerArgument {
         name = "Xno-reset-jar-timestamps"
         description = "Don't reset jar entry timestamps to a fixed date.".asReleaseDependent()

@@ -103,10 +103,6 @@ object JVMConfigurationKeys {
     @JvmField
     val LAMBDAS = CompilerConfigurationKey.create<JvmClosureGenerationScheme>("LAMBDAS")
 
-    // Paths to .klib libraries.
-    @JvmField
-    val KLIB_PATHS = CompilerConfigurationKey.create<List<String>>("KLIB_PATHS")
-
     // ABI stability of class files produced by JVM IR and/or FIR.
     @JvmField
     val ABI_STABILITY = CompilerConfigurationKey.create<JvmAbiStability>("ABI_STABILITY")
@@ -292,10 +288,6 @@ var CompilerConfiguration.samConversions: JvmClosureGenerationScheme?
 var CompilerConfiguration.lambdas: JvmClosureGenerationScheme?
     get() = get(JVMConfigurationKeys.LAMBDAS)
     set(value) { put(JVMConfigurationKeys.LAMBDAS, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.klibPaths: List<String>
-    get() = getList(JVMConfigurationKeys.KLIB_PATHS)
-    set(value) { put(JVMConfigurationKeys.KLIB_PATHS, value) }
 
 var CompilerConfiguration.abiStability: JvmAbiStability?
     get() = get(JVMConfigurationKeys.ABI_STABILITY)

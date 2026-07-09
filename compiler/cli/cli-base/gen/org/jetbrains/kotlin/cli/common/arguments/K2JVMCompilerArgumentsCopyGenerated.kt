@@ -48,7 +48,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.jvmDefaultStable = from.jvmDefaultStable
     to.jvmExposeBoxed = from.jvmExposeBoxed
     to.jvmTarget = from.jvmTarget
-    to.klibLibraries = from.klibLibraries
     to.lambdas = from.lambdas
     @Suppress("DEPRECATION")
     to.linkViaSignatures = from.linkViaSignatures

@@ -216,8 +216,6 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
     setupJvmSpecificArguments(compilerArguments)
 
     configureAdvancedJvmOptions(compilerArguments)
-
-    configureKlibPaths(compilerArguments)
 }
 
 fun makeScriptCompilerArguments(compilerOptions: List<String>): K2JVMCompilerArguments {

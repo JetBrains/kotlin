@@ -404,9 +404,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Paths to cross-platform libraries in the .klib format.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_KLIB: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("X_KLIB", KotlinReleaseVersion(1, 4, 0))
 
