@@ -111,11 +111,9 @@ fun loadIr(
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${modulesStructure.mainModulePath} found")
-    val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
     val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
 
     return getIrModuleInfoForKlib(
-        moduleDescriptor = moduleDescriptor,
         klibs = modulesStructure.klibs,
         friendModules = friendModules,
         configuration = configuration,
@@ -216,7 +214,6 @@ fun loadIrForSingleModule(
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getIrModuleInfoForKlib(
-    moduleDescriptor: ModuleDescriptor,
     klibs: LoadedKlibs,
     friendModules: Map<String, List<String>>,
     configuration: CompilerConfiguration,
