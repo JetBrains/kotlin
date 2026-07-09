@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Java-direct-side resolver for cross-language `const val` references used by
- * [org.jetbrains.kotlin.java.direct.model.JavaFieldOverAst.initializerValue] and the
- * enum-vs-const-field disambiguation in
- * [org.jetbrains.kotlin.java.direct.model.createAnnotationArgumentFromValue].
+ * Resolves cross-language `const val` references appearing in Java field initializers and
+ * annotation arguments.
  */
 
 /**
@@ -94,18 +92,10 @@ private fun FirSession.tryResolveAsCompanionMember(classIds: List<ClassId>, prop
 }
 
 /**
- * Tries to resolve a reference inside an annotation argument as a const field value.
- *
- * Used by the enum-vs-const disambiguation in
- * [org.jetbrains.kotlin.java.direct.model.createAnnotationArgumentFromValue] for annotation
- * arguments that *syntactically* look like enum entries (e.g. `RetentionPolicy.RUNTIME`) but may
- * actually denote a Kotlin `const val` (e.g. `KConstsKt.WARNING`), resolved here through the
- * session-backed lookup.
- *
- * Checks, in order: enum-class companion only (the entry/const split shape used by Java
- * `@Retention(RUNTIME)` and friends), class member, class companion member, top-level facade.
- * Returns `null` when [classId] is unknown to the session or none of the lookups produces a
- * `const val` initializer.
+ * Tries to resolve a reference inside an annotation argument as a const field value. Checks, in
+ * order: enum-class companion only, class member, class companion member, top-level facade.
+ * Returns `null` when [classId] is unknown to the session or no lookup produces a `const val`
+ * initializer.
  */
 @OptIn(SymbolInternals::class)
 internal fun FirSession.resolveConstFieldValue(classId: ClassId, fieldName: Name): Any? {

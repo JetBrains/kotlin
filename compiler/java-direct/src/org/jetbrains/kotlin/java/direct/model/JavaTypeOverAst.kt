@@ -41,12 +41,9 @@ abstract class JavaTypeOverAst(
     val node: JavaLightNode,
     val tree: JavaLightTree,
     protected val resolutionContext: JavaResolutionContext,
-    // Annotations from type positions (TYPE node → JAVA_CODE_REFERENCE pass-through).
-    // These are TYPE_USE by syntactic position and returned unconditionally.
-    // Non-empty only for a TYPE_USE annotation written on the type itself, where the
-    // ANNOTATION is a direct child of the TYPE node and a sibling of the wrapped
-    // JAVA_CODE_REFERENCE — e.g. `@NotNull` on the type argument in `List<@NotNull Integer>`.
-    // Relevant tests: `testAnnotatedTypeArguments`, `repeatedAnnotations.kt` and others.
+    // Annotations written in the type position itself (e.g. `@NotNull` in `List<@NotNull Integer>`,
+    // where ANNOTATION is a direct child of the TYPE node) — TYPE_USE by syntactic position,
+    // returned unconditionally.
     private val extraAnnotations: Collection<JavaAnnotation> = emptyList(),
     // Annotations from the containing member's modifier list (method/field/parameter).
     // Kept TYPE_USE-only: filtered via [isTypeUseAnnotationClass] lazily on first read of
@@ -126,17 +123,9 @@ class JavaClassifierTypeOverAst(
 
         with(resolutionContext) {
             if (parts.size == 1) {
-                // Resolution order for simple names (matches Java scoping rules):
-                // 1. OWN type parameters (method/class own — high priority, win over inner class names)
-                //
-                // Known, accepted javac divergence (compiler-wide, not java-direct-specific): javac
-                // resolves a same-named nested class over the class's own type parameter in one
-                // narrow JLS-scoping edge case (`T` used both as an own type parameter and as the
-                // name of a same-named nested class), which this priority order — own type params
-                // before inner classes — does not match. This mirrors PSI's existing behavior
-                // (parity is the target here, not independently re-deriving JLS), so it is
-                // intentionally left as-is; tracked separately as a pre-existing PSI/javac
-                // inconsistency, not fixed in this module alone.
+                // 1. OWN type parameters (high priority). Known javac divergence: javac prefers a
+                // same-named nested class over the own type parameter in one narrow JLS-scoping
+                // edge case; this order mirrors PSI, and PSI parity is the target.
                 findTypeParameter(parts[0])?.let { return it }
                 // 2. Inner/local class names (shadow INHERITED outer type params)
                 val localClass = findClassInCurrentScope(Name.identifier(parts[0]))
@@ -159,13 +148,8 @@ class JavaClassifierTypeOverAst(
                 return current
             }
 
-            // Cross-file branch: resolve to a `ClassId` and wrap it in a `FirBackedJavaClassAdapter`.
-            // The adapter's outer-class chain exposes [FirBackedJavaTypeParameter] wrappers consumed
-            // by the qualified-form raw-detection walk in `computeIsRaw` (counts only). FIR's
-            // own `is JavaTypeParameter ->` branch in `JavaTypeConversion` is never reached for
-            // these wrappers under the model's resolver invariants; the stack-lookup fallback there
-            // would not find them either. `classifierAdapterFor` returns null on sessions with no
-            // symbol provider (parsing-level fixtures), so `classifier` stays null there.
+            // Cross-file branch: resolve to a `ClassId` and wrap it in a `FirBackedJavaClassAdapter`
+            // (null on sessions without a symbol provider).
             resolve(rawTypeName)?.let { return classifierAdapterFor(it) }
         }
         return null
@@ -188,16 +172,11 @@ class JavaClassifierTypeOverAst(
         get() = computeIsRaw()
 
     private fun computeIsRaw(): Boolean {
-        // Raw when:
-        //  (a) own type params declared but fewer args provided — e.g. `List` for `List<E>`.
-        //  (b) qualified `Outer.Inner` with no explicit `<>` on any non-static generic outer:
-        //      JLS 4.6 raw semantics propagate down; the inner reference must surface as a
-        //      `ConeRawType` so FIR's `getProjectionsForRawType` synthesises raw projections
-        //      for the outer's type parameters. `Inner<U>` written inside the outer's body
-        //      (implicit outer args in scope) is NOT raw — (b) only fires for multi-part
-        //      references where the outer name is written explicitly.
-        // REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children); use raw-text
-        // part count for the qualified-form check rather than relying on a particular AST shape.
+        // Raw when (JLS 4.6):
+        //  (a) own type params declared but fewer args provided — e.g. `List` for `List<E>`;
+        //  (b) qualified `Outer.Inner` with no explicit `<>` on any non-static generic outer —
+        //      raw semantics propagate down, so FIR must see a `ConeRawType`. `Inner<U>` written
+        //      inside the outer's body (implicit outer args in scope) is NOT raw.
         val javaClass = classifier as? JavaClass ?: return false
 
         val parameterList = tree.findChildByType(node, JavaSyntaxElementType.REFERENCE_PARAMETER_LIST)
@@ -213,13 +192,10 @@ class JavaClassifierTypeOverAst(
                 tree.getChildren(pl).any { tree.getType(it) == JavaSyntaxElementType.TYPE }
             }
             if (!outerHasExplicitArgs) {
-                // Walk the outer chain, one hop per qualifier in the source. NB: don't use
-                // `outer.isStatic` to bound the walk. `FirBackedJavaClassAdapter.isStatic` reports
-                // `true` for a top-level outer (no `FirOuterClassTypeParameterRef`s on its
-                // `nonEnhancedTypeParameters`), which would stop the walk before checking the
-                // top-level's own type parameters. For the qualified raw form
-                // `Outer.Inner` where `Outer` is a top-level generic class, those own type
-                // parameters are precisely what's missing.
+                // Walk the outer chain, one hop per qualifier in the source. NB: don't bound the
+                // walk with `outer.isStatic` — `FirBackedJavaClassAdapter.isStatic` reports `true`
+                // for a top-level outer, which would skip exactly the top-level generic outer
+                // whose type parameters make the qualified form raw.
                 var outer: JavaClass? = javaClass.outerClass
                 var levels = rawTypeNameParts.size - 1
                 while (outer != null && levels > 0) {
@@ -436,25 +412,16 @@ fun createJavaType(
 
 /**
  * If [typeNode] encodes an array (one or more `[]`) or vararg (`...`) wrapping another TYPE,
- * returns the wrapped [JavaArrayTypeOverAst] chain. Returns `null` when [typeNode] is neither.
+ * returns the wrapped [JavaArrayTypeOverAst] chain; `null` when it is neither. The KMP parser
+ * places all `[]` pairs as siblings under the same TYPE node, so the inner type is wrapped in N
+ * dimensions, innermost first.
  *
- * The KMP parser places all `[]` pairs as siblings under the same TYPE node
- * (e.g. `List<Double>[][]` → `TYPE[TYPE[List<Double>], [], []]`), so we wrap the inner type in
- * N array dimensions, innermost first.
- *
- * For varargs (`@NonNull String... args`), member annotations (from the parameter's
- * MODIFIER_LIST) apply to the component type, not the array wrapper — matching PSI behaviour
- * where TYPE_USE annotations like `@NonNull` enhance the component type's nullability, not the
- * array's.
- *
- * Non-vararg arrays never receive [memberAnnotations] on the outer wrapper or component:
- * a method/parameter MODIFIER_LIST annotation is delivered to FIR via the member's own
- * `annotations` (containerAnnotations in [AbstractSignatureParts]), and FIR's array-head
- * TYPE_USE filter (KT-24392) intentionally drops TYPE_USE container annotations on the array
- * head to avoid double-application — `@NotNull Foo[] f()` should give `Array<Foo!>!` (flexible
- * array, non-null component), not `Array<Foo!>` (non-null array). PSI achieves this by leaving
- * `PsiArrayType.getAnnotations()` empty for method-level annotations; we match that by never
- * attaching [memberAnnotations] to the outer [JavaArrayTypeOverAst] for non-vararg arrays.
+ * [memberAnnotations] placement matches PSI:
+ * - varargs: on the component type (TYPE_USE annotations enhance the component's nullability);
+ * - non-vararg arrays: nowhere — the member's own `annotations` already deliver them to FIR as
+ *   container annotations, and FIR's array-head TYPE_USE filter (KT-24392) drops them from the
+ *   array head; attaching them here as *type* annotations would double-apply them
+ *   (`@NotNull Foo[] f()` must give `Array<Foo!>!`, not `Array<Foo!>`).
  */
 private fun tryCreateArrayOrVarargFromTypeNode(
     typeNode: JavaLightNode,
@@ -471,10 +438,7 @@ private fun tryCreateArrayOrVarargFromTypeNode(
     val componentMemberAnnotations = if (hasVarargEllipsis) memberAnnotations else emptyList()
     var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext, memberAnnotations = componentMemberAnnotations)
     repeat(dims) {
-        // memberAnnotations always empty for non-vararg arrays (see this function's KDoc and
-        // FIR's array-head TYPE_USE filter). extraAnnotations omitted: no caller ever supplies
-        // TYPE-position annotations on the outer TYPE node for an array — those live inside
-        // the wrapped TYPE child and are picked up by the recursive createJavaType call above.
+        // No annotations on the array wrapper — see this function's KDoc.
         result = JavaArrayTypeOverAst(typeNode, tree, resolutionContext, result)
     }
     return result
@@ -545,12 +509,6 @@ fun createJavaTypeWithAnnotations(
 /**
  * Maps the ANNOTATION children of a MODIFIER_LIST node to [JavaAnnotationOverAst], or returns an
  * empty list when [modifierList] is `null`.
- *
- * Shared by every element whose `annotations` come straight from its modifier list — classes,
- * members (fields/methods/constructors/record components) and value parameters — which differ only
- * in *which* [resolutionContext] and modifier-list node they pass in. Mirrors how the value-parameter
- * parsing is shared via the free [parseValueParameters] helper rather than a base-class property,
- * since the resolution context comes from three different sources.
  */
 internal fun parseAnnotationsFromModifierList(
     modifierList: JavaLightNode?,
@@ -563,13 +521,9 @@ internal fun parseAnnotationsFromModifierList(
     } ?: emptyList()
 
 /**
- * Collects annotations attached syntactically to [node], in source order:
- *  1. annotations nested inside the node's MODIFIER_LIST (if any), then
- *  2. annotations that are direct children of the node.
- *
- * Shared by [JavaTypeOverAst.typePositionAnnotations] and [JavaTypeParameterOverAst.annotations],
- * which both need exactly this walk (the KMP parser may place annotations either inside a
- * MODIFIER_LIST or directly under the enclosing node, depending on the construct).
+ * Collects annotations attached syntactically to [node]: those nested inside its MODIFIER_LIST,
+ * then direct ANNOTATION children (the KMP parser places them in either position, depending on
+ * the construct).
  */
 private fun collectModifierListAndDirectAnnotations(
     node: JavaLightNode,
@@ -587,25 +541,13 @@ private fun collectModifierListAndDirectAnnotations(
 }
 
 /**
- * AST-backed [JavaTypeParameter].
- *
- * Two-phase construction invariant
- * --------------------------------
- * A type parameter's upper bounds may forward-reference its sibling type parameters
- * (e.g. `<S extends JsStubElement<E>, E>`). At construction time, however, only the
- * containing-class context is known — the sibling list is not yet available. We therefore
- * build a [JavaTypeParameterOverAst] in two phases:
- *
- *  1. Create each parameter with the bare [initialResolutionContext] (containing class only).
- *  2. Once **all** sibling parameters in the same declaration list have been created,
- *     [updateResolutionContext] is called exactly once with a context enriched by the full
- *     sibling list (see `computeTypeParameters` in `utils.kt`).
- *
- * The [upperBounds] property is `lazy(PUBLICATION)`, so it must not be touched between
- * phases 1 and 2 — otherwise it would cache a context that cannot resolve sibling references.
- * This contract is enforced by convention: only `computeTypeParameters` constructs
- * [JavaTypeParameterOverAst], and it always invokes [updateResolutionContext] before exposing
- * the parameters to any caller.
+ * AST-backed [JavaTypeParameter], built in two phases because upper bounds may forward-reference
+ * sibling type parameters (`<S extends JsStubElement<E>, E>`):
+ *  1. each parameter is created with the bare [initialResolutionContext];
+ *  2. once all siblings exist, [updateResolutionContext] is called with a context enriched by
+ *     the full sibling list (see `computeTypeParameters` in `utils.kt`).
+ * [upperBounds] is lazy and must not be read between the phases; by convention only
+ * `computeTypeParameters` constructs instances and always completes phase 2 first.
  */
 class JavaTypeParameterOverAst(
     node: JavaLightNode,
@@ -615,15 +557,7 @@ class JavaTypeParameterOverAst(
 
     private var resolutionContext: JavaResolutionContext = initialResolutionContext
 
-    /**
-     * Phase 2 of the two-phase construction (see class KDoc).
-     * Replaces the resolution context with one that knows about all sibling type parameters,
-     * so that forward references in upper bounds can be resolved.
-     *
-     * Must be called exactly once, before [upperBounds] is first accessed.
-     * Marked `internal` because only the `utils.kt` `computeTypeParameters` factory is allowed
-     * to invoke it; external callers must not break the construction invariant.
-     */
+    /** Phase 2 of the two-phase construction (see class KDoc). */
     internal fun updateResolutionContext(newContext: JavaResolutionContext) {
         resolutionContext = newContext
     }
@@ -703,13 +637,9 @@ class SimpleClassifierType(
 }
 
 /**
- * [JavaClassifierType] backed by a resolved FIR [ConeClassLikeType]. Used to expose
+ * [JavaClassifierType] backed by a resolved FIR [ConeClassLikeType]. Exposes
  * [FirBackedJavaClassAdapter.supertypes] (and, recursively, their cone type arguments) back
  * through the public Java-model interface so FIR's `JavaTypeConversion` can re-convert them.
- *
- * The model-side inherited-outer-argument recovery in [JavaClassifierTypeOverAst.computeTypeArguments]
- * reads [coneType] directly (it is `internal`) to walk the supertype hierarchy and substitute type
- * arguments at the cone level.
  */
 internal class FirBackedJavaClassifierType(
     val coneType: ConeClassLikeType,
@@ -747,14 +677,10 @@ internal class FirBackedJavaWildcardType(
 
 /**
  * Wraps a cone [ConeTypeProjection] as a [JavaType] so FIR's `JavaTypeConversion` reproduces the
- * original projection when re-converting a [FirBackedJavaClassifierType]'s type arguments:
- *  - star projection → unbounded wildcard (`? `) → `ConeStarProjection`
- *  - `in`/`out` projection → bounded wildcard → `ConeKotlinTypeProjection{In, Out}`
- *  - invariant class type  → [FirBackedJavaClassifierType]
- *
- * Type-parameter (and other non-class-like) invariant projections fall back to an unbounded
- * wildcard: the recovery substitutes them to concrete arguments at the cone level before any
- * wrapper is produced, so this fallback is only reached for unsubstituted residual projections.
+ * original projection when re-converting a [FirBackedJavaClassifierType]'s type arguments.
+ * Non-class-like invariant projections (type-parameter / flexible / error) fall back to an
+ * unbounded wildcard — the recovery substitutes type parameters to concrete arguments at the
+ * cone level before wrapping, so the fallback is only reached for unsubstituted residuals.
  */
 internal fun firBackedJavaType(projection: ConeTypeProjection, session: FirSession): JavaType {
     return when (projection) {
@@ -764,9 +690,6 @@ internal fun firBackedJavaType(projection: ConeTypeProjection, session: FirSessi
         is ConeKotlinTypeProjectionOut ->
             FirBackedJavaWildcardType(bound = firBackedClassifierOrNull(projection.type, session), isExtends = true)
         is ConeClassLikeType -> FirBackedJavaClassifierType(projection, session)
-        // Type-parameter / flexible / conflicting / error projections: fall back to an unbounded
-        // wildcard. The recovery substitutes type parameters to concrete arguments at the cone
-        // level before wrapping, so this fallback is only reached for unsubstituted residuals.
         else -> FirBackedJavaWildcardType(bound = null, isExtends = true)
     }
 }

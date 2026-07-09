@@ -28,37 +28,19 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 /**
- * Direct-injection seam used to plug `java-direct` into the FIR JVM sessions through the
- * `createJavaFacade` lambda parameter on `FirJvmSessionFactory.createSourceSession` and
- * `FirJvmSessionFactory.createLibrarySession`. `JvmFrontendPipelinePhase.prepareJvmSessions`
- * populates the builder when the `JvmAnalysisFlags.useJavaDirect` flag is set.
+ * Direct-injection seam that plugs `java-direct` into the FIR JVM sessions through the
+ * `createJavaFacade` lambda on `FirJvmSessionFactory.createSourceSession` /
+ * `createLibrarySession` (populated by `JvmFrontendPipelinePhase.prepareJvmSessions` when
+ * `JvmAnalysisFlags.useJavaDirect` is set).
  *
  * The facade dispatches on the search scope:
+ *  - **Library scope** (`scope === librariesScope`): a [NoOpJavaClassFinder]-backed facade —
+ *    binary classes are read by the deserializer through [JvmBinaryClassFinderInputsOverIndex].
+ *  - **Source scope**: a [JavaClassFinderOverAstImpl] over the configured Java source roots
+ *    (with no roots the finder is effectively a no-op, so no special-casing is needed).
  *
- *  - **Library scope** (`scope === librariesScope`): a [NoOpJavaClassFinder]-backed
- *    [FirJavaFacadeForSource]. The deserializer ([JvmClassFileBasedSymbolProvider]) reads
- *    binary `.class`/`.sig` files through the deserializer-side
- *    [JvmBinaryClassFinderInputsOverIndex] adapter (built by
- *    [createJavaDirectBinaryClassFinderInputsBuilder]); the only consumer of this library
- *    facade is `JvmClassFileBasedSymbolProvider.extractClassMetadata` →
- *    `javaFacade.convertJavaClassToFir(...)`, which reads only the resolved [JavaClass] and the
- *    cached `javaPackage` annotations. A null `javaPackage` (returned by [NoOpJavaClassFinder])
- *    yields the same effective empty list of package annotations for downstream consumers
- *    ([FirAnnotationTypeQualifierResolver], [FirMustUseReturnValueStatusComponent]).
- *  - **Source scope** (any non-library scope): a [JavaClassFinderOverAstImpl] backed by the
- *    configured Java source roots. It overrides `isInSourceIndex` to delegate to
- *    `isClassInIndex`, so `JavaSymbolProvider`'s source-only gate works correctly — binary
- *    classes flow through the deserializer.
- *  - **No Java source roots** (pure-Kotlin compile): the source facade is also backed by a
- *    [JavaClassFinderOverAstImpl] over the (empty) source-root list. A finder over an empty
- *    index is effectively a no-op — `findClass`/`findPackage` always return `null` — so this
- *    is functionally identical to the library branch and needs no special-casing.
- *
- * Identity comparison `scope === librariesScope` is the correct dispatch key because
- * [AbstractProjectFileSearchScope] instances are constructed once in
- * `FirJvmSessionFactory.prepareSessions` (or the test-fixture equivalent) and threaded through
- * unchanged; `javaSourcesScope` and `librariesScope` are distinct objects with disjoint
- * identity.
+ * Identity comparison is the correct dispatch key: the scope instances are constructed once in
+ * `FirJvmSessionFactory.prepareSessions` and threaded through unchanged.
  */
 fun createJavaDirectSourceJavaFacadeBuilder(
     configuration: CompilerConfiguration,
@@ -93,20 +75,12 @@ fun createJavaDirectSourceJavaFacadeBuilder(
 }
 
 /**
- * Companion to [createJavaDirectSourceJavaFacadeBuilder]. Produces the deserializer-side
- * [JvmBinaryClassFinderInputs] lambda passed to
- * [org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.createLibrarySession] as
- * `createBinaryClassFinderInputs`.
- *
- * For the CLI java-direct path (where `CliVirtualFileFinderFactory` is available) the lambda
- * returns a [JvmBinaryClassFinderInputsOverIndex] backed by the same [JvmDependenciesIndex]
- * `CliVirtualFileFinder` uses, memoised per `(scope identityHash, enableCtSym)`. The
- * deserializer ([org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider])
- * then reads binary `.class` (and optionally `.sig`) files directly through this adapter
- * instead of routing through `FirJavaFacade`.
- *
- * For non-CLI environments without a `JvmDependenciesIndex`, the lambda returns `null` and
- * the deserializer falls back to `FirJavaFacade`.
+ * Companion to [createJavaDirectSourceJavaFacadeBuilder]: produces the deserializer-side
+ * [JvmBinaryClassFinderInputs] lambda for `FirJvmSessionFactory.createLibrarySession`. On the
+ * CLI path it returns a [JvmBinaryClassFinderInputsOverIndex] over the same index
+ * `CliVirtualFileFinder` uses, memoised per `(scope identityHash, enableCtSym)`; in non-CLI
+ * environments (no `JvmDependenciesIndex`) it returns `null` and the deserializer falls back to
+ * `FirJavaFacade`.
  */
 @Suppress("UnstableApiUsage")
 fun createJavaDirectBinaryClassFinderInputsBuilder(
@@ -118,9 +92,6 @@ fun createJavaDirectBinaryClassFinderInputsBuilder(
         val vfff = VirtualFileFinderFactory.getInstance(projectEnvironment.project) as? CliVirtualFileFinderFactory
         val key = BinaryInputsCacheKey(System.identityHashCode(psiSearchScope), vfff?.enableSearchInCtSym)
         cache.getOrPut(key) {
-            // Only the CLI environment has a `JvmDependenciesIndex`. PSI-based non-CLI
-            // environments (scripting, REPL, IC outside CLI) don't, so the deserializer
-            // routes through `FirJavaFacade` instead.
             if (vfff != null) {
                 JvmBinaryClassFinderInputsOverIndex(vfff.index, psiSearchScope, vfff.enableSearchInCtSym)
             } else {
@@ -133,19 +104,10 @@ fun createJavaDirectBinaryClassFinderInputsBuilder(
 private data class BinaryInputsCacheKey(val scopeIdentity: Int, val enableCtSym: Boolean?)
 
 /**
- * No-op [JavaClassFinder] for the `java-direct` **library-session** facade. Binary lookups go
- * through the [JvmBinaryClassFinderInputsOverIndex] adapter at the deserializer level (see
- * [createJavaDirectBinaryClassFinderInputsBuilder]), so the facade's finder is consulted only on
- * two paths, both of which are satisfied by returning empty/`null`:
- *
- *  1. [org.jetbrains.kotlin.fir.java.FirJavaFacade]'s `packageCache`, read once per class by
- *     `convertJavaClassToFir`. A `null` [findPackage] yields an empty package-annotation list
- *     for downstream consumers ([FirAnnotationTypeQualifierResolver],
- *     [FirMustUseReturnValueStatusComponent]).
- *  2. [org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider]'s
- *     `findBinaryClass` / `hasTopLevelBinaryClass` Elvis fallbacks, which only run when the
- *     adapter returns `null` (e.g. a binary class carrying `@Metadata`, handled by the Kotlin
- *     metadata branch instead). Returning `null`/`false` here is the correct outcome.
+ * No-op [JavaClassFinder] for the library-session facade. Binary lookups go through the
+ * [JvmBinaryClassFinderInputsOverIndex] adapter at the deserializer level, so this finder is
+ * consulted only for package annotations (`null` yields an empty list) and for deserializer
+ * Elvis fallbacks where `null`/`false` is the correct outcome.
  */
 private object NoOpJavaClassFinder : JavaClassFinder {
     override fun findClass(request: JavaClassFinder.Request): JavaClass? = null

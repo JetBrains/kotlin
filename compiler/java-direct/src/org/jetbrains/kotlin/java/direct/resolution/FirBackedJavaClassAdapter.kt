@@ -41,14 +41,9 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Minimal [JavaClass] adapter exposing a [ClassId] resolved by the model's own resolver. Used to
  * populate `JavaClassifierType.classifier` for cross-file references so `JavaTypeConversion`'s
- * `(javaType.classifier as? JavaClass)?.classId` path resolves without a side-channel.
- *
- * The adapter also exposes a real [outerClass] chain whose [typeParameters] are
- * [FirBackedJavaTypeParameter] wrappers carrying the corresponding `FirTypeParameterSymbol`.
- * They are used by `JavaClassifierTypeOverAst`'s qualified-form raw-detection walk
- * (`computeIsRaw`) to inspect outer-class type-parameter counts across files; FIR's own
- * `is JavaTypeParameter ->` branch in `JavaTypeConversion` resolves them through the
- * regular per-`FirJavaClass` `MutableJavaTypeParameterStack` lookup.
+ * `(javaType.classifier as? JavaClass)?.classId` path resolves without a side-channel. Also
+ * exposes a real [outerClass] chain whose [typeParameters] carry `FirTypeParameterSymbol`s, so
+ * outer-class type-parameter counts can be inspected across files.
  */
 internal class FirBackedJavaClassAdapter(
     private val resolvedClassId: ClassId,
@@ -67,13 +62,8 @@ internal class FirBackedJavaClassAdapter(
         get() = false
 
     /**
-     * Lazily resolved FIR symbol for [resolvedClassId]. Reads
-     * [FirJavaClass.nonEnhancedTypeParameters] for Java sources to dodge the
-     * `FirSignatureEnhancement` cycle through `JavaTypeConversion.isRaw` that the enhanced
-     * `typeParameters` path triggers.
-     *
-     * Returns `null` when no symbol is registered for [resolvedClassId] (cross-file reference to
-     * a class the symbol provider does not know — the adapter still answers `classId` correctly).
+     * Lazily resolved FIR symbol for [resolvedClassId]; `null` when the symbol provider does not
+     * know it (the adapter still answers `classId` correctly).
      */
     @OptIn(SymbolInternals::class)
     private val firRegularClass: FirRegularClass? by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -81,18 +71,10 @@ internal class FirBackedJavaClassAdapter(
     }
 
     /**
-     * Inner-class detection.
-     *
-     * `FirJavaClass.nonEnhancedTypeParameters` includes [FirOuterClassTypeParameterRef] entries
-     * for each outer type parameter when the class is non-static inner (added in
-     * [org.jetbrains.kotlin.fir.java.FirJavaFacade.convertJavaClassToFir] when
-     * `!javaClass.isStatic && parentClassSymbol != null`). Their presence is the structural
-     * indicator we use to decide [isStatic] without reading `firClass.status` (which is lazy and
-     * runs status-transformer extensions).
-     *
-     * For non-Java FIR classes (Kotlin / built-in / deserialized) the same encoding does not
-     * apply; fall back to `status.isInner` (Kotlin's `inner` keyword). Top-level classes return
-     * `true` (no outer type-param capture).
+     * For a [FirJavaClass], decided structurally from [FirOuterClassTypeParameterRef] entries
+     * (present iff the class is a non-static inner class) — avoids reading `firClass.status`,
+     * which is lazy and runs status-transformer extensions. Non-Java FIR classes fall back to
+     * `status.isInner`.
      */
     override val isStatic: Boolean
         get() {
@@ -104,15 +86,10 @@ internal class FirBackedJavaClassAdapter(
         }
 
     /**
-     * Own type parameters as [FirBackedJavaTypeParameter] wrappers carrying their
-     * `FirTypeParameterSymbol`s. Outer-class type params ([FirOuterClassTypeParameterRef] entries
-     * on `FirJavaClass.nonEnhancedTypeParameters`) are filtered out — [outerClass] is walked
-     * recursively by `JavaClassifierTypeOverAst.computeTypeArguments` to add them instead.
-     *
-     * Reading `nonEnhancedTypeParameters` (rather than `typeParameters`) avoids the
-     * `FirSignatureEnhancement` cycle through `JavaTypeConversion.isRaw`. Cached (`lazy`) because
-     * FIR matches Java type parameters by object identity, and the qualified-form-raw walk in
-     * `JavaTypeOverAst.computeIsRaw` reads outer type parameters across files.
+     * Own type parameters (outer-class params are filtered out; callers walk [outerClass] for
+     * them). Reads `nonEnhancedTypeParameters` rather than `typeParameters` to avoid the
+     * `FirSignatureEnhancement` cycle through `JavaTypeConversion.isRaw`. Cached because FIR
+     * matches Java type parameters by object identity.
      */
     override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         val fir = firRegularClass ?: return@lazy emptyList()
@@ -140,19 +117,10 @@ internal class FirBackedJavaClassAdapter(
         get() = Visibilities.Public
 
     /**
-     * Real, fully-shaped resolved supertype chain — the `java-direct` analog of the PSI light
-     * class's `EXTENDS_LIST` (see [org.jetbrains.kotlin.fir.java.FirJavaElementFinder]). Mirrors
-     * its `resolveSupertypesOnAir` strategy: prefer already-resolved `superTypeRefs`; otherwise
-     * resolve on-air using a fresh, throwaway `SupertypeComputationSession` / `ScopeSession` and
-     * `FirSupertypeResolverVisitor`, against the adapter's existing shared [session].
-     *
-     * Each resolved [ConeClassLikeType] is exposed as a [FirBackedJavaClassifierType] so the
-     * model-side inherited-outer-argument recovery in `JavaClassifierTypeOverAst.computeTypeArguments`
-     * (and FIR's own re-conversion) can read the cone arguments back.
-     *
-     * Cycle safety: the walk is wrapped in [cycleGuardedSupertypeWalk] keyed by [resolvedClassId]
-     * and symbol resolution funnels through [cycleSafeClassLikeSymbol] (via [firRegularClass]);
-     * sessions without a symbol provider (parsing-level fixtures) yield `emptyList()`.
+     * Resolved supertype chain, mirroring `FirJavaElementFinder.resolveSupertypesOnAir`: prefer
+     * already-resolved `superTypeRefs`, otherwise resolve on-air. Each cone type is exposed as a
+     * [FirBackedJavaClassifierType] so its arguments can be read back. Guarded by
+     * [cycleGuardedSupertypeWalk]; symbol resolution funnels through [cycleSafeClassLikeSymbol].
      */
     override val supertypes: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val fir = firRegularClass ?: return@lazy emptyList()
@@ -168,16 +136,9 @@ internal class FirBackedJavaClassAdapter(
     }
 
     /**
-     * Enumeration of directly declared nested-classifier simple names, sourced from the same
-     * enhancement-free primitives as [findInnerClass]:
-     *  - For a [FirJavaClass] target, [FirJavaClass.existingNestedClassifierNames] — populated
-     *    structurally at [org.jetbrains.kotlin.fir.java.FirJavaFacade] conversion time from
-     *    `JavaClass.innerClassNames`, never touching `declarations`/enhancement.
-     *  - For any other [FirRegularClass] (Kotlin source / deserialized), [nestedClassifierNames]
-     *    reads `declarations` directly — see its KDoc for why that's safe here.
-     *
-     * Terminal-lookup only: results returned by [findInnerClass] are themselves fresh
-     * [FirBackedJavaClassAdapter] instances (see its KDoc for the identity caveat).
+     * Directly declared nested-classifier simple names, from enhancement-free primitives:
+     * [FirJavaClass.existingNestedClassifierNames] for Java (populated structurally at
+     * conversion time), or [nestedClassifierNames] for other FIR classes.
      */
     override val innerClassNames: Collection<Name>
         get() {
@@ -190,17 +151,10 @@ internal class FirBackedJavaClassAdapter(
         }
 
     /**
-     * Resolves a directly declared nested class of this class by [name], without forcing FIR
-     * enhancement or [FirRegularClass.declarations] on a [FirJavaClass] target.
-     *
-     * The candidate `ClassId` is probed for existence via [cycleSafeClassLikeSymbol] — the same
-     * KT-74097-safe existence probe [tryResolve] wraps elsewhere in this module, minus the
-     * builtins filter (irrelevant here: a nested class of a real class is never a Kotlin builtin).
-     *
-     * A found result is wrapped in another [FirBackedJavaClassAdapter] — chaining further through
-     * it loses same-file object identity if navigation ever loops back into source, but none of
-     * this adapter's own nested classes can be same-file source (a Kotlin/binary class's body
-     * cannot declare a class from a different, source-only compilation unit), so this is safe.
+     * Resolves a directly declared nested class by [name], probing the candidate `ClassId` via
+     * [cycleSafeClassLikeSymbol] without forcing FIR enhancement or `declarations`. Wrapping the
+     * result in another adapter is identity-safe: none of this adapter's nested classes can be
+     * same-file source (a Kotlin/binary class cannot declare a class from a source-only unit).
      */
     override fun findInnerClass(name: Name): JavaClass? {
         firRegularClass ?: return null
@@ -244,13 +198,9 @@ internal class FirBackedJavaClassAdapter(
 }
 
 /**
- * [JavaTypeParameter] wrapper that exposes a `FirTypeParameterSymbol`-backed name and identity
- * so that `JavaClassifierTypeOverAst.computeIsRaw`'s qualified-form raw-detection walk can
- * count outer-class type parameters across files without depending on the per-`FirJavaClass`
- * `MutableJavaTypeParameterStack` (which is populated at `FirJavaFacade.convertJavaClassToFir`
- * time and does not see resolution-time-synthesised adapters).
- *
- * Used by [FirBackedJavaClassAdapter] to surface cross-file outer-class type parameters.
+ * [JavaTypeParameter] wrapper with `FirTypeParameterSymbol`-backed name and identity, so
+ * outer-class type parameters can be counted across files without the per-`FirJavaClass`
+ * `MutableJavaTypeParameterStack` (which does not see resolution-time-synthesised adapters).
  */
 internal class FirBackedJavaTypeParameter(
     val firTypeParameterSymbol: FirTypeParameterSymbol,
@@ -262,9 +212,8 @@ internal class FirBackedJavaTypeParameter(
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
     /**
-     * Empty bounds — the adapter's role is to carry the symbol so FIR can substitute through it,
-     * not to expose the parameter's own type-bound structure. Bound resolution for the parameter
-     * is driven by the enhanced symbol's own `FirTypeParameter`, not by the wrapper.
+     * Empty — the wrapper only carries the symbol; bound resolution is driven by the enhanced
+     * symbol's own `FirTypeParameter`.
      */
     override val upperBounds: Collection<JavaClassifierType> get() = emptyList()
 
@@ -276,13 +225,9 @@ internal class FirBackedJavaTypeParameter(
 }
 
 /**
- * Resolves this class's supertypes on-air using a fresh, throwaway [SupertypeComputationSession]
- * and [ScopeSession] (and the [FirSupertypeResolverVisitor] itself) against the given shared
- * [session] — the [FirSession] is the real, long-lived compiler session and is **not** disposable;
- * only the per-call computation/scope caches are. Mirrors `FirJavaElementFinder.resolveSupertypesOnAir`.
- * Used by [FirBackedJavaClassAdapter.supertypes] only when `superTypeRefs` are not yet all
- * [FirResolvedTypeRef] (the common case for already resolved outer/super classes reuses
- * `superTypeRefs` directly and never reaches this path).
+ * Resolves this class's supertypes on-air with a fresh, throwaway [SupertypeComputationSession]
+ * and [ScopeSession] against the shared, long-lived [session]. Mirrors
+ * `FirJavaElementFinder.resolveSupertypesOnAir`.
  */
 private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
     val visitor = FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())

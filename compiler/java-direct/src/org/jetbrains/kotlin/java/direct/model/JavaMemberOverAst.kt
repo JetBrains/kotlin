@@ -177,11 +177,8 @@ class JavaFieldOverAst(
                     (fieldType.classifierQualifiedName == "java.lang.String" ||
                             fieldType.classifierQualifiedName == "String")
             if (fieldType !is JavaPrimitiveType && !isString) return false
-            // Verify the initializer is a potentially constant expression form.
-            // This mirrors how PSI checks computeConstantValue() != null: method calls, object
-            // creation, etc. can never be compile-time constants per JLS 15.29.
-            // For cross-language references (e.g., Foo.FOO from Kotlin), we conservatively return
-            // true (qualified names might be resolvable via the callback in resolveInitializerValue).
+            // Mirrors PSI's computeConstantValue() != null check: method calls, object creation,
+            // etc. can never be compile-time constants per JLS 15.29.
             return isInitializerPotentiallyConstant(init)
         }
 
@@ -264,24 +261,12 @@ class JavaFieldOverAst(
         }
 
     /**
-     * Apply JLS 5.1 widening and 5.2 narrowing-of-constant-expression conversions so the
-     * field's compile-time constant value matches the field's declared primitive type.
-     *
-     * Without this, Java source `public static final long T = 100;` produces an `Int 100`
-     * value (matching the int literal's surface form) instead of `Long 100L` (matching the
-     * field's declared type). FIR's `createConstantIfAny` picks `ConstantValueKind` from the
-     * value's runtime Kotlin class, so the resulting `FirJavaField` carries
-     * `ConstantValueKind.Int`. At the use site Kotlin's IR then emits an int push (e.g.
-     * `BIPUSH 100`) into a slot the call descriptor reads as `J` (long) — producing
-     * malformed bytecode that crashes `org.jetbrains.org.objectweb.asm.Frame.merge` with
-     * `NegativeArraySizeException` during stack-frame computation. PSI is unaffected because
-     * `PsiField.computeConstantValue()` already returns the value coerced to the field's
-     * declared type.
-     *
-     * Real example: `RemoteSdkUtil.TEST_CONNECTION_POLL_TIMEOUT` (`static final long = 100`)
-     * used as the `timeout: Long` argument of `Future<*>.waitForConnection(timeout, unit)` in
-     * `RemoteSdkSessionUtil.kt` — `testIntellij_remoteRun` (and the equivalent IntelliJ.android.transport
-     * `NegativeArraySizeException` at ASM `Frame.merge`).
+     * Applies JLS 5.1 widening and 5.2 narrowing-of-constant-expression conversions so the
+     * constant value matches the field's declared primitive type. Without this,
+     * `public static final long T = 100;` yields an `Int 100`; FIR then stamps the
+     * `FirJavaField` with `ConstantValueKind.Int`, and the IR backend emits an int push into a
+     * slot read as `long` — malformed bytecode that crashes ASM's `Frame.merge` with
+     * `NegativeArraySizeException`. PSI's `PsiField.computeConstantValue()` coerces implicitly.
      */
     private fun coerceConstantToFieldType(value: Any?): Any? {
         if (value == null) return null

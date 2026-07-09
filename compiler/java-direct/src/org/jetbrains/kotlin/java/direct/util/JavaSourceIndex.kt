@@ -17,10 +17,8 @@ import com.intellij.openapi.vfs.VirtualFile
  */
 
 // The trailing `;` is optional: while Java requires it, PSI's Java parser is error-tolerant and
-// accepts `package foo` without a semicolon. Several Kotlin diagnostic test-data files written
-// as inline `// FILE: foo/Bar.java` blocks declare `package foo` without `;` and rely on PSI's
-// tolerance — see e.g. `compiler/testData/diagnostics/tests/regressions/kt57845.kt`,
-// `EnumEntryVsStaticAmbiguity4.kt`, etc. Accepting both forms keeps source-side parity with PSI
+// accepts `package foo` without a semicolon (some diagnostic test-data files rely on that);
+// accepting both forms keeps source-side parity with PSI.
 internal val PACKAGE_REGEX = Regex("""\bpackage\s+([\w.]+)\s*;?""")
 internal val DECLARATION_REGEX = Regex("""\b(class|interface|enum|record)\s+([A-Za-z_]\w*)""")
 

@@ -8,13 +8,7 @@ package org.jetbrains.kotlin.java.direct.resolution
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.name.FqName
 
-/**
- * Per-file immutable data shared across all scope variants of a [JavaResolutionContext].
- *
- * [imports] is the four-bucket [JavaImports] holder produced by
- * [JavaImportResolver.extractImports]; see its KDoc for the JLS 7.5 / 6.4.1 semantics of each
- * bucket.
- */
+/** Per-file immutable data shared across all scope variants of a [JavaResolutionContext]. */
 internal class JavaFileContext(
     val packageFqName: FqName,
     val imports: JavaImports,

@@ -11,15 +11,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Stateless type-parameter scoping and current-scope class lookup for Java source resolution,
- * operating upon the given [JavaResolutionContext].
- *
- * Responsible for:
- * - Type parameter lookup (own high-priority params and inherited low-priority params)
- * - Current scope class resolution (inner classes, sibling classes, supertype-inherited classes,
- *   top-level classes)
- *
- * This is the scope-side counterpart of the simple/qualified-name dispatcher in [JavaTypeResolver].
+ * Stateless type-parameter scoping and current-scope class lookup for Java source resolution —
+ * the scope-side counterpart of the name dispatchers in [JavaTypeResolver].
  */
 
 /** Returns type parameters with HIGH priority (method/class own params, win over inner class names). */
@@ -33,32 +26,21 @@ internal fun findInheritedTypeParameter(name: String): JavaTypeParameter? =
     c.scopeContext.inheritedTypeParametersInScope[name]
 
 /**
- * Finds a [JavaClass] for a simple name in the AST-side scope.
- *
- * Checks (in order):
- * 1. Declared-plus-fully-inherited member types ([declaredOrFullyInherited]) at every level of
- *    the containing-class chain, innermost to outermost. Per JLS 6.4.1, a member type declared
- *    or inherited at an inner level shadows one at an enclosing level, so every level gets the
- *    same lookup.
- * 2. Top-level classes declared in the same file (`sameFileTopLevelClassProvider`).
+ * Finds a [JavaClass] for a simple name in the AST-side scope: declared-plus-inherited member
+ * types at every level of the containing-class chain (innermost to outermost — per JLS 6.4.1 an
+ * inner level shadows an enclosing one), then same-file top-level classes.
  *
  * Returns a structural [JavaClass] (not a bare `ClassId`) because callers need its AST-side
- * outer-class chain: [org.jetbrains.kotlin.java.direct.model.JavaTypeOverAst]'s
- * `computeClassifier` navigates further via [JavaClass.findInnerClass] and substitutes
- * outer-class type arguments, and [org.jetbrains.kotlin.java.direct.JavaClassCache] /
- * [org.jetbrains.kotlin.java.direct.util.ConstantEvaluator] materialise inner-class symbols and
- * constant references from it.
+ * outer-class chain for further navigation and outer-class type-argument substitution.
  */
 context(c: JavaResolutionContext)
 internal fun findClassInCurrentScope(name: Name): JavaClass? {
     val scope = c.scopeContext
-    // 1. Declared-plus-fully-inherited lookup at every level of the containing-class chain.
     var current = scope.containingClass
     while (current != null) {
         declaredOrFullyInherited(current, name)?.let { return it }
         current = current.outerClass
     }
-    // 2. Top-level classes declared in the same file.
     return scope.sameFileTopLevelClassProvider(name)
 }
 
@@ -73,13 +55,8 @@ internal fun JavaClass.declaredOrSameFileInherited(name: Name): JavaClass? =
 
 /**
  * [declaredOrSameFileInherited] extended with cross-file Java source, binary Java, and Kotlin
- * inherited member types ([findInnerClassFromSupertypes]) — the full declared-plus-inherited
- * lookup for one level of a containing-class chain.
- *
- * Used by [findClassInCurrentScope] at every level of the chain, and by
- * [org.jetbrains.kotlin.java.direct.model.JavaTypeOverAst]'s multi-part navigation loop for the
- * same reason: an intermediate segment of a qualified reference can be inherited from any of
- * those representations, not just a same-file supertype.
+ * inherited member types — the full declared-plus-inherited lookup for one level of a
+ * containing-class chain.
  */
 context(c: JavaResolutionContext)
 internal fun declaredOrFullyInherited(cls: JavaClass, name: Name): JavaClass? {
@@ -90,17 +67,13 @@ internal fun declaredOrFullyInherited(cls: JavaClass, name: Name): JavaClass? {
 
 /**
  * Searches for an inner class in the supertypes of [cls], working purely on raw AST text
- * ([JavaClassOverAst.directSupertypeRefNames]), never touching `javaClass.supertypes`.
- *
- * Kept separate from [findInnerClassFromSupertypes] for cycle safety:
- * reading `javaClass.supertypes` here would re-enter type construction (`classifier →
- * findClassInCurrentScope → findInnerClass`), causing infinite recursion. [findInnerClassFromSupertypes],
- * in turn, needs resolved supertypes to detect cross-file ambiguities that this raw-text walk
- * cannot see.
+ * ([JavaClassOverAst.directSupertypeRefNames]) — reading `javaClass.supertypes` here would
+ * re-enter type construction and recurse infinitely. [findInnerClassFromSupertypes], in turn,
+ * needs resolved supertypes to detect cross-file ambiguities this raw-text walk cannot see.
  *
  * Each supertype reference is resolved within the walked class's *own*
- * [JavaClassOverAst.resolutionContext] (its own imports/scope) — using the caller's ambient
- * context would mis-resolve names and can loop.
+ * [JavaClassOverAst.resolutionContext] — the caller's ambient context would mis-resolve names
+ * and can loop.
  */
 internal fun findInnerClassInSameFileSupertypes(
     cls: JavaClassOverAst,
@@ -120,19 +93,11 @@ internal fun findInnerClassInSameFileSupertypes(
 }
 
 /**
- * Resolves a raw same-file supertype reference — a [JavaClassOverAst.directSupertypeRefNames]
- * entry such as `S`, `x.S`, or `com.example.Base` — to the [JavaClassOverAst] it denotes,
- * navigating every dotted segment through the module's own reference resolution.
- *
- * - A qualified same-file supertype (`class x1 extends x.S`, both top-level in this file)
- *   resolves the head `x` via [findClassInCurrentScope] and navigates `.S` via
- *   [JavaClass.findInnerClass].
- * - A package-qualified supertype (`extends com.example.Base`) has a head (`com`) that is not a
- *   class in scope, so navigation returns `null` here and the reference is picked up instead by
- *   the cross-file / `ClassId` paths ([findInnerClassFromSupertypes], [resolve]).
- *
- * The tail segments use the declared-only [JavaClass.findInnerClass], keeping this resolution
- * from re-entering the supertype walk.
+ * Resolves a raw same-file supertype reference (`S`, `x.S`, …) to the [JavaClassOverAst] it
+ * denotes: the head segment via [findClassInCurrentScope], the tail via the declared-only
+ * [JavaClass.findInnerClass] (which cannot re-enter the supertype walk). A package-qualified
+ * reference (`extends com.example.Base`) has a head that is not a class in scope, so it returns
+ * `null` here and is picked up by the cross-file / `ClassId` paths instead.
  */
 context(c: JavaResolutionContext)
 private fun resolveSameFileSupertypeRefToClass(supertypeRef: String): JavaClassOverAst? {

@@ -23,8 +23,6 @@ import pkg.E;
 
 public class Outer<E> {
     public static class Inner {
-        // javac: returns pkg.E (Outer's E is not in scope in a static nested type).
-        // Kotlin (PSI & java-direct): returns Outer's type parameter E.
         public E get() { return null; }
     }
 }
@@ -35,8 +33,6 @@ package main
 import outer.Outer
 
 fun test(inner: Outer.Inner) {
-    // javac compiles this (Inner.get() returns pkg.E); Kotlin rejects it because
-    // Inner.get() is seen as returning Outer's type parameter E instead of pkg.E.
     inner.get().<!UNRESOLVED_REFERENCE!>onlyOnImportedE<!>()
 }
 

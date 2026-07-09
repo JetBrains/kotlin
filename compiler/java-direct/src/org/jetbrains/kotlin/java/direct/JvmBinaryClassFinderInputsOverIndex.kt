@@ -24,24 +24,11 @@ import org.jetbrains.kotlin.name.FqName
 
 /**
  * Index-based, PSI-free implementation of [JvmBinaryClassFinderInputs] for binary `.class`
- * (and optionally `.sig`) files on the `java-direct` library session. It is the single
- * binary-side entry point the deserializer
- * ([org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider]) reads
- * through on the `java-direct` path, instead of routing binary lookups via
- * [org.jetbrains.kotlin.fir.java.FirJavaFacade].
- *
- * ASM-driven materialization is delegated to [BinaryJavaClass].
- *
- * Method semantics:
- *
- *  - [hasTopLevelBinaryClass] checks the outermost-class name against the known names of the
- *    package.
- *  - [knownBinaryClassNamesInPackage] enumerates the `.class`/`.sig` files in the package
- *    directly off the [JvmDependenciesIndex].
- *  - [hasBinaryPackage] reports whether the package is present.
- *  - [findBinaryClass] materialises a [BinaryJavaClass] from the bytecode, filtering out Kotlin
- *    classes carrying `@Metadata` (`isFromSource || !hasMetadataAnnotation()`) — those are
- *    handled by the Kotlin branch of `extractClassMetadata`.
+ * (and optionally `.sig`) files on the `java-direct` library session — the single binary-side
+ * entry point the deserializer reads through instead of routing via `FirJavaFacade`. ASM-driven
+ * materialization is delegated to [BinaryJavaClass]. [findBinaryClass] filters out Kotlin
+ * classes carrying `@Metadata` — those are handled by the Kotlin branch of
+ * `extractClassMetadata`.
  *
  * @param index The same classpath index `CliVirtualFileFinder` uses for class/package lookups.
  * @param scope PSI search scope used to filter candidate `.class`/`.sig` virtual files; must

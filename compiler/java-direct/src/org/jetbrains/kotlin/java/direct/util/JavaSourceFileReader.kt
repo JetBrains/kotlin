@@ -11,20 +11,10 @@ import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
 /**
- * Abstraction over file access used by [org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl] for reading `.java`
- * source files and walking source roots.
- *
- * The input is always a [VirtualFile] — the class finder receives roots as virtual files
- * (via `VfsBasedProjectEnvironment.getFirJavaFacade` → `localFs`) so all I/O goes through the
- * IntelliJ VFS caching layer. Extracting this interface serves two purposes:
- *  1. The class finder no longer performs direct I/O — it delegates to a collaborator that can
- *     be swapped in tests or alternative environments (e.g. a fake in-memory VFS).
- *  2. "Not a regular file / directory / invalid" is explicitly distinguished from a real read
- *     at the API boundary so callers can reason about missing vs. broken inputs.
- *
- * I/O errors (`IOException` from the VFS) are **not** caught here. They propagate to the
- * compiler's top-level error handling, consistent with how the rest of the compiler handles
- * filesystem failures.
+ * Abstraction over file access for reading `.java` source files and walking source roots. The
+ * input is always a [VirtualFile], so all I/O goes through the IntelliJ VFS caching layer.
+ * I/O errors (`IOException` from the VFS) are **not** caught here — they propagate to the
+ * compiler's top-level error handling, like the rest of the compiler's filesystem failures.
  */
 interface JavaSourceFileReader {
     /**

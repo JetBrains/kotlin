@@ -1,18 +1,10 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
-// Regression test for a java-direct resolution-pipeline gap: `Outer` implements a generic
-// interface parameterized by `Outer.Nested` — a qualified reference to `Outer`'s own nested
-// class `Nested`, which `Outer` does not declare itself but inherits transitively through
-// `Base` from `Grandparent`. Resolving that generic argument happens while `Outer`'s own
-// `implements` clause (and so its own supertype list) is still being computed, so
-// `directSupertypeClassIds(Outer)` can be cycle-guard-skipped at exactly that moment.
-//
-// Before the fix, `JavaTypeResolver.findInheritedNestedClass` seeded its supertype search
-// directly from `directSupertypeClassIds(outerClassId)`, so this guard-skip made the qualified
-// `Outer.Nested` reference silently fail to resolve. The fix instead reads `Outer`'s own direct
-// supertypes from raw AST text (the same technique already used by
-// `JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId` for `containingClass`'s own
-// supertypes), so it never depends on `Outer`'s own guarded supertype computation.
+// `Outer`'s own `implements` clause references the qualified `Outer.Nested` — a nested class
+// `Outer` inherits transitively through `Base` from `Grandparent`. The reference is resolved
+// while `Outer`'s own supertype list is still being computed, which the resolver must survive
+// (see `findInheritedNestedClass`). Simple-name companion:
+// `simpleInheritedNestedClassInOwnImplementsClause.kt`.
 
 // FILE: test/Grandparent.java
 package test;

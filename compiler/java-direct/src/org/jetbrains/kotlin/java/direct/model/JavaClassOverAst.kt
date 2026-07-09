@@ -133,11 +133,7 @@ class JavaClassOverAst(
         }
 
         if (innerClassNode != null) {
-            // Check if the inner class is effectively static:
-            // - Explicitly marked with 'static' keyword
-            // - Is an interface (interfaces are implicitly static in Java; JLS 8.5.1)
-            // - Is an enum (enums are implicitly static in Java; JLS 8.5.1)
-            // - Is a record (records are implicitly static; JLS 8.10.3)
+            // Member interfaces/enums/records are implicitly static (JLS 8.5.1, 8.10.3).
             val hasStaticKeyword = tree.findChildByType(innerClassNode, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
                 tree.hasChildOfType(ml, JavaSyntaxTokenType.STATIC_KEYWORD)
             } ?: false
@@ -146,15 +142,11 @@ class JavaClassOverAst(
             val innerIsRecord = tree.findChildByType(innerClassNode, JavaSyntaxTokenType.RECORD_KEYWORD) != null
             val innerIsEffectivelyStatic = hasStaticKeyword || innerIsInterface || innerIsEnum || innerIsRecord
 
-            // Non-static inner classes get outer type params as OWN (high priority, can't be shadowed
-            // by inner class names) via memberResolutionContext.
-            // Static nested types get them as INHERITED (low priority, shadowable by inner class names).
-            // (Per JLS 6.5.5/8.1.3 the outer class's type parameter `E` is NOT in scope inside the
-            // static nested types, but PSI has the same behavior (`JavaClassifierTypeImpl.computeResolveResult`)
-            // and making it JLS-strict breaks `InnerClassInGeneric.kt` test.
-            // Moreover, false negative is currently possible due to this behavior. Added as
-            // `staticNestedTypeParamShadowsImportedClass.kt` test, which reports incorrect `UNRESOLVED_REFERENCE`
-            // both on PSI and on java-direct.
+            // Non-static inner classes see outer type params as OWN (high priority); static
+            // nested types see them as INHERITED (low priority, shadowable by inner class names).
+            // Per JLS 6.5.5/8.1.3 outer type params are not in scope in static nested types at
+            // all, but PSI resolves them anyway (`JavaClassifierTypeImpl.computeResolveResult`)
+            // and java-direct matches it — see `staticNestedTypeParamShadowsImportedClass.kt`.
             val contextForInner = if (innerIsEffectivelyStatic)
                 resolutionContext.withContainingClass(this).withInheritedTypeParameters(typeParameters)
             else
@@ -162,22 +154,15 @@ class JavaClassOverAst(
             return JavaClassOverAst(innerClassNode, tree, contextForInner, outerClass = this)
         }
 
-        // Inner class is not directly declared. Like the PSI (`JavaClassImpl.findInnerClassByName(name, false)`)
-        // and binary (`BinaryJavaClass.ownInnerClassNameToAccess`) implementations, `findInnerClass` returns
-        // only directly declared member types. Inherited member types (JLS 8.5) are resolved by the resolution
-        // layer (see [org.jetbrains.kotlin.java.direct.resolution.findInnerClassInSameFileSupertypes] and
-        // [org.jetbrains.kotlin.java.direct.resolution.findInnerClassFromSupertypes]).
+        // Like the PSI and binary implementations, `findInnerClass` returns only directly
+        // declared member types; inherited ones (JLS 8.5) are resolved by the resolution layer.
         return null
     }
 
     /**
-     * Direct supertype reference names exactly as written in the source — the raw `EXTENDS_LIST` and
-     * `IMPLEMENTS_LIST` `JAVA_CODE_REFERENCE` text, with any generic arguments stripped.
-     *
-     * This is purely **syntactic**: it does NOT resolve the references, so it is safe to read during
-     * resolution without re-entering type construction (touching `supertypes` would call
-     * `classifier → findLocalClass → findInnerClass` and recurse). The resolution layer uses it for the
-     * recursion-safe same-file supertype walk that resolves inherited member types.
+     * Direct supertype reference names exactly as written in the source, with generic arguments
+     * stripped. Purely syntactic — does NOT resolve the references, so it is safe to read during
+     * resolution without re-entering type construction (unlike `supertypes`).
      */
     internal val directSupertypeRefNames: List<String>
         get() {
@@ -229,54 +214,26 @@ class JavaClassOverAst(
                     .map { JavaClassifierTypeOverAst(it, tree, memberResolutionContext) }
                     .asSequence()
             }
-            // No explicit permits clause — sealed class: infer permitted types from the subtypes
-            // declared anywhere in the same compilation unit (JLS 8.1.6 / 9.1.4). See
-            // deriveImplicitPermittedTypes for the rationale.
             if (!isSealed) return emptySequence()
             return deriveImplicitPermittedTypes()
         }
 
     /**
-     * Implicit-`permits` fallback: when a sealed type has no `permits` clause, Java infers its
-     * permitted direct subtypes as *each top-level or nested class declared in the same compilation
-     * unit (the whole `.java` file) whose direct superclass is this type* (JLS 8.1.6 / 9.1.4). We
-     * therefore scan **every** CLASS node in the file — top-level siblings and member types at any
-     * nesting depth — not just this type's own directly-nested members. This mirrors the PSI
-     * reference (`JavaClassImpl.lazilyComputePermittedTypesInSameFile`), which walks the entire
-     * `containingFile` with `SyntaxTraverser.psiTraverser`.
-     *
-     * The match is **resolution-based**, exactly like PSI's `isInheritor(this, checkDeep = false)`:
-     * a candidate is permitted iff one of its *directly declared* `extends`/`implements` supertypes
-     * **resolves** to this sealed type (compared by [fqName]). Resolving — rather than matching the
-     * raw reference text — is what makes this honour imports, packages and scoping, so it has
-     * neither of the false-positive/false-negative gaps of a textual match:
-     * - a candidate extending a *different* type that merely shares this type's simple name (e.g.
-     *   imported from another package) resolves to that other classifier and is excluded;
-     * - a candidate naming this type through a differently-spelled qualified path (fully-qualified
-     *   or via a single-type import) resolves to this type and is included.
-     *
-     * Resolution here re-enters type construction (`classifier -> findLocalClass -> findInnerClass`)
-     * and can recurse while `permittedTypes` is itself being computed during this type's resolution.
-     * To stay recursion-safe we mirror PSI's second design choice and defer it: only the candidate
-     * **enumeration** (walking the file for CLASS nodes) is eager; both the node→[JavaClass]
-     * resolution and the per-candidate supertype resolution happen **lazily** inside the returned
-     * `Sequence`, so they run only when the caller iterates it — by which point this type's own
-     * resolution is no longer on the stack (FIR consumes `permittedTypes` from a deferred
-     * `setSealedClassInheritors { ... }` provider). PSI defers the same `isInheritor` filter behind
-     * its `Sequence` "because that resolution can cause contract violations".
-     *
-     * Only *direct* declared supertypes are compared (no transitive walk), matching JLS's "direct
-     * superclass" wording and PSI's `checkDeep = false`.
+     * Implicit-`permits` fallback: a sealed type without a `permits` clause permits each class
+     * declared anywhere in the same compilation unit whose *direct* declared supertype resolves to
+     * this type (JLS 8.1.6 / 9.1.4). Mirrors PSI's `JavaClassImpl.lazilyComputePermittedTypesInSameFile`:
+     * - the match is resolution-based, like PSI's `isInheritor(this, checkDeep = false)` — a raw
+     *   textual match would both miss differently-spelled references to this type and wrongly
+     *   accept unrelated types sharing its simple name;
+     * - only the candidate enumeration (walking the file for CLASS nodes) is eager; resolution is
+     *   deferred behind the returned `Sequence` because it re-enters type construction and could
+     *   recurse while this type's own `permittedTypes` is being computed (FIR consumes it from a
+     *   deferred `setSealedClassInheritors { ... }` provider).
      */
     private fun deriveImplicitPermittedTypes(): Sequence<JavaClassifierType> {
         val myFqName = fqName
-        // Eagerly enumerate every CLASS node in the compilation unit (top-level siblings and member
-        // types at any depth). Enumeration is purely structural (by node type) and recursion-safe.
         val candidateNodes = mutableListOf<JavaLightNode>()
         collectClassNodes(tree.getRoot(), candidateNodes)
-        // Lazily resolve each candidate and keep those whose direct superclass resolves to this type.
-        // Resolution is deferred behind the Sequence so it never runs while this type's own
-        // permittedTypes is being computed during resolution.
         return candidateNodes.asSequence().mapNotNull { classNode ->
             val candidate = resolveSameFileClassNode(classNode) ?: return@mapNotNull null
             // A type is never its own subtype; skip it without forcing its supertype resolution.
@@ -288,10 +245,7 @@ class JavaClassOverAst(
         }
     }
 
-    /**
-     * Recursively collects every CLASS node under [container] (top-level siblings and member types
-     * at any depth) into [out]. Enumeration is purely structural — no references are resolved here.
-     */
+    /** Recursively collects every CLASS node under [container]; purely structural. */
     private fun collectClassNodes(container: JavaLightNode, out: MutableList<JavaLightNode>) {
         for (child in tree.getChildren(container)) {
             if (tree.getType(child) != JavaSyntaxElementType.CLASS) continue

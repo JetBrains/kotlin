@@ -16,24 +16,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Four-bucket holder for the imports of a Java compilation unit. The split mirrors JLS 7.5
- * (`ImportDeclaration` productions) and is consumed by the JLS 6.4.1 shadowing rules in
- * [JavaResolutionContext.resolveSimpleNameToClassIdImpl]:
+ * Four-bucket holder for the imports of a Java compilation unit, mirroring the JLS 7.5
+ * `ImportDeclaration` productions:
+ * - [simpleTypeImports] — `import a.b.C;`
+ * - [staticSingleImports] — `import static a.b.C.X;` (`X` may be a type, method, or field)
+ * - [typeStarImports] — `import a.b.*;` (values are *packages*)
+ * - [staticStarImports] — `import static a.b.C.*;` (values are *outer-class* FqNames)
  *
- * - [simpleTypeImports] — `import a.b.C;` (single-type-import). Always a type. JLS shadowing
- *   rank 4.
- * - [staticSingleImports] — `import static a.b.C.X;` (single-static-import). The referent `X`
- *   may be a type, a method, or a field; only the type case contributes to classifier
- *   resolution, the other two are dead noise that drops out cleanly via `tryResolve` returning
- *   `false`. JLS shadowing rank 4 (same as [simpleTypeImports]) — but probed after it because
- *   a same-simple-name collision between the two is malformed Java in practice and the
- *   single-type-import is the canonical form.
- * - [typeStarImports] — `import a.b.*;` (type-import-on-demand). Values are *packages*. The
- *   downstream probe is `ClassId(pkg, simpleName)`. JLS shadowing rank 6.
- * - [staticStarImports] — `import static a.b.C.*;` (static-import-on-demand). Values are
- *   *outer-class* FqNames (`a.b.C`); the downstream probe is the nested-class shape
- *   `ClassId(outerClass.packageFqName, outerClass.relativeClassName.child(simpleName))`. JLS
- *   shadowing rank 7 (strictly lower than [typeStarImports] per JLS 6.4.1).
+ * The JLS 6.4.1 shadowing ranks between the buckets are applied by the step functions in
+ * `JavaTypeResolver.kt`.
  */
 internal class JavaImports(
     val simpleTypeImports: Map<String, FqName>,
@@ -41,14 +32,7 @@ internal class JavaImports(
     val typeStarImports: List<FqName>,
     val staticStarImports: List<FqName>,
 ) {
-    /**
-     * Unified single-import lookup: tries [simpleTypeImports] first, then [staticSingleImports].
-     * Used by model-side consumers ([JavaTypeOverAst], [JavaAnnotationOverAst],
-     * [JavaMemberOverAst]) that need a yes/no answer to "is there *any* single-import of this
-     * simple name?". The dispatcher inside [JavaResolutionContext] probes the two buckets
-     * separately so it can distinguish JLS rank-4 type imports from rank-4 static type imports
-     * (both treated as types via `tryResolve`).
-     */
+    /** Unified single-import lookup: [simpleTypeImports] first, then [staticSingleImports]. */
     fun getSingleImport(simpleName: String): FqName? =
         simpleTypeImports[simpleName] ?: staticSingleImports[simpleName]
 
@@ -58,19 +42,11 @@ internal class JavaImports(
 }
 
 /**
- * Handles extraction and lookup of Java import declarations from AST nodes.
- *
- * Responsible for:
- * - Parsing import statements (normal, static, error-recovery, fragmented) from the AST
- * - Extracting the package name from a compilation unit
- * - Finding top-level class nodes by name
- *
+ * Extracts the package name and import declarations (normal, static, error-recovery, fragmented)
+ * from a compilation-unit AST.
  */
 internal object JavaImportResolver {
 
-    /**
-     * Extracts the package name from a compilation unit root node.
-     */
     fun extractPackageName(tree: JavaLightTree, root: JavaLightNode): FqName {
         val packageStmt = tree.findChildByType(root, JavaSyntaxElementType.PACKAGE_STATEMENT)
         val packageName = packageStmt?.let {
@@ -80,10 +56,8 @@ internal object JavaImportResolver {
     }
 
     /**
-     * Extracts all import declarations from a compilation unit root into a [JavaImports]
-     * four-bucket holder. Dispatches to per-shape helpers below to cover the well-formed case
-     * plus two parser-recovery shapes (ERROR_ELEMENT inside / outside IMPORT_LIST). See
-     * [JavaImports] for the JLS shadowing-rank semantics of each bucket.
+     * Extracts all import declarations into a [JavaImports] holder, covering the well-formed
+     * case plus two parser-recovery shapes (ERROR_ELEMENT inside / outside IMPORT_LIST).
      */
     fun extractImports(tree: JavaLightTree, root: JavaLightNode): JavaImports {
         val simpleTypeImports = mutableMapOf<String, FqName>()

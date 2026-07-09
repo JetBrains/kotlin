@@ -1,24 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
-// Regression test for a java-direct resolution-pipeline gap: `Sub` inherits two *different*
-// nested classes both named `Foo` — one from a direct cross-file Java-source supertype
-// (`JavaAncestor`), the other reachable only through a Kotlin supertype (`KotlinMiddle`) into a
-// further Java-source ancestor (`JavaGrandparent`) — a Java-Kotlin-Java (j-k-j) shape. Per JLS
-// 8.5, inheriting two unrelated member types with the same simple name is ambiguous, so `make()`'s
-// return type must fail to resolve, matching javac's `MISSING_DEPENDENCY_CLASS`-shaped error.
-//
-// Before the fix, both the `ClassId`-returning and the structural (`JavaClass`-returning)
-// resolution pipelines special-cased cross-file Java-source supertypes as a fast, classFinder-only
-// path that returned as soon as it had a single non-ambiguous *source-only* answer, without ever
-// checking whether a Kotlin/binary supertype at the same level had a conflicting one:
-//  - `resolveInheritedInnerForLevel` (`JavaTypeResolver.kt`) found `JavaAncestor.Foo` via the
-//    cached `collectInheritedInnerClasses` map and returned it directly, never running the BFS
-//    that would have reached `KotlinMiddle` -> `JavaGrandparent.Foo`.
-//  - `findInnerClassFromSupertypes` (`JavaInheritedMemberResolver.kt`) had the same shape: its
-//    `classFinder`-backed cross-file-source arm returned before its separate binary/Kotlin tail
-//    ever ran.
-// Both are now merged into one origin-agnostic ladder that compares every candidate — regardless
-// of whether it is same-file, cross-file source, Kotlin, or binary — before deciding.
+// `Sub` inherits two different nested classes named `Foo`: one from a direct Java-source
+// supertype (`JavaAncestor`), the other reachable only through a Kotlin supertype
+// (`KotlinMiddle`) from a further Java-source ancestor (`JavaGrandparent`). Per JLS 8.5,
+// inheriting two unrelated member types with the same simple name is ambiguous, so `make()`'s
+// return type must fail to resolve. Checks that candidates from Java-source and Kotlin/binary
+// supertypes are compared for ambiguity together.
 
 // FILE: a/JavaAncestor.java
 package a;

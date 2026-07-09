@@ -1,16 +1,9 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
-// Regression test for the level-1 exception documented on
-// `resolveInheritedInnerClassToClassId`: `A` implements a generic interface parameterized by
-// the unqualified `Nested` — a simple-name reference to `A`'s own nested class, which `A` does
-// not declare itself but inherits transitively through `Base` from `Grandparent`. Resolving that
-// generic argument happens while `A`'s own `implements` clause (and so its own supertype list)
-// is still being computed, so `directSupertypeClassIds(A)` can be cycle-guard-skipped at exactly
-// that moment.
-//
-// `resolveInheritedInnerClassToClassId` instead reads `A`'s own direct supertypes from raw AST
-// text (never `directSupertypeClassIds`) for this exact reason, so it never depends on `A`'s own
-// guarded supertype computation. Companion test for the qualified-reference shape:
+// `A`'s own `implements` clause references the unqualified `Nested` — a nested class `A` inherits
+// transitively through `Base` from `Grandparent`. The reference is resolved while `A`'s own
+// supertype list is still being computed, which the resolver must survive (see
+// `resolveInheritedInnerClassToClassId`). Qualified-reference companion:
 // `qualifiedInheritedNestedClassInOwnImplementsClause.kt`.
 
 // FILE: test/Grandparent.java
