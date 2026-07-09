@@ -13,7 +13,10 @@ import kotlin.metadata.ClassKind
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.jvm.internal.types.*
+import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
+import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext
+import kotlin.reflect.jvm.internal.types.areEqualKTypes
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
 
@@ -77,7 +80,7 @@ internal fun computeFakeOverrideMembersForName(kClass: KClassImpl<*>, name: Stri
         }
     }
     for (supertype in kClass.supertypes) {
-        val supertypeKClass = supertype.classifier as? KClass<*>
+        val supertypeKClass = supertype.classifier as? KClassImpl<*>
             ?: error(
                 "Non-denotable supertypes are not possible. " +
                         "Supertype '$supertype' appears non-denotable in class '$kClass'"
@@ -146,7 +149,7 @@ internal fun computeOverriddenFunctions(
 ): Collection<ReflectKFunction> {
     val result = mutableListOf<ReflectKFunction>()
     for (supertype in container.supertypes) {
-        val supertypeKClass = supertype.classifier as? KClass<*> ?: continue
+        val supertypeKClass = supertype.classifier as? KClassImpl<*> ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
         for ((_, notSubstitutedMember) in supertypeKClass.getFakeOverrideMembersByName(signature.name)) {
             if (notSubstitutedMember !is ReflectKFunction) continue
@@ -186,13 +189,6 @@ internal val ReflectKCallable<*>.isStatic: Boolean
 
 private val ReflectKCallable<*>.isJavaField: Boolean
     get() = this is KProperty<*> && this.javaField?.declaringClass?.isKotlinClassOrPackage == false
-
-internal fun KClass<*>.getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap =
-    when (this) {
-        is KClassImpl<*> -> getFakeOverrideMembersByName(name)
-        is MutableCollectionKClass<*> -> readonlyClass.getFakeOverrideMembersByName(name)
-        else -> error("Unknown type ${this::class}")
-    }
 
 internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature(equalityMode: T): EquatableCallableSignature<T> {
     val parameters = (this as? JavaKNamedFunction)?.originalParameters ?: allParameters
