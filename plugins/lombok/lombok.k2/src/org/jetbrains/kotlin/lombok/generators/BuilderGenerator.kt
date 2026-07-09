@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.lombok.generators
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
@@ -87,7 +86,7 @@ class BuilderGenerator(
     }
 
     override fun FirJavaClassBuilder.completeBuilder(
-        classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext,
+        classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>, builder: Builder,
     ) {
         superTypeRefs += listOf(session.builtinTypes.anyType)
     }

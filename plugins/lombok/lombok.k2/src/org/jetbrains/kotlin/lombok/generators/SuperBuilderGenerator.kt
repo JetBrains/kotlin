@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.lombok.generators
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
-import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.moduleData
@@ -91,7 +91,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
     override fun FirJavaClassBuilder.completeBuilder(
         classSymbol: FirClassSymbol<*>,
         builderSymbol: FirClassSymbol<*>,
-        context: NestedClassGenerationContext,
+        builder: SuperBuilder,
     ) {
         val classTypeParameterSymbol = FirTypeParameterSymbol()
         val builderTypeParameterSymbol = FirTypeParameterSymbol()
@@ -132,13 +132,15 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
 
         val superBuilderClassAndTypeRef = classSymbol.resolvedSuperTypeRefs.mapNotNull { superTypeRef ->
             val superTypeSymbol = superTypeRef.toRegularClassSymbol(session) ?: return@mapNotNull null
-            val superBuilders = builderClassesCache.getValue(superTypeSymbol, context) ?: return@mapNotNull null
-            require(superBuilders.size <= 1) { "@SuperBuilder is only supported on types -> not more than one super type is possible" }
-            val superBuilder = superBuilders.firstNotNullOfOrNull { it.component2() }
-            return@mapNotNull if (superBuilder != null)
-                superBuilder.symbol to superTypeRef
-            else
-                null
+
+            val builderNames = getBuilderNames(superTypeSymbol)
+
+            // `@SingleBuilder` is only applicable to classes. It means it can be <= 1 builder in a super type.
+            val builderName = builderNames.singleOrNull() ?: return@mapNotNull null
+
+            val superBuilder = builderClassesCache.getValue(BuilderKey(superTypeSymbol, builderName)) ?: return@mapNotNull null
+
+            superBuilder to superTypeRef
         }.singleOrNull()
 
         val superBuilderTypeRef = if (superBuilderClassAndTypeRef != null) {

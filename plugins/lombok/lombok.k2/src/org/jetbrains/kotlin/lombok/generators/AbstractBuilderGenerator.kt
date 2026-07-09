@@ -74,8 +74,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     protected val lombokService: LombokService
         get() = session.lombokService
 
-    protected val builderClassesCache: FirCache<FirClassSymbol<*>, Map<Name, FirJavaClass>?, NestedClassGenerationContext> =
-        session.firCachesFactory.createCache(::createAndInitializeBuilders)
+    protected data class BuilderKey(val owner: FirClassSymbol<*>, val name: Name)
+
+    protected val builderClassesCache: FirCache<BuilderKey, FirRegularClassSymbol?, Nothing?> =
+        session.firCachesFactory.createCache(::createAndInitializeBuilder)
 
     private val builderWithDeclarationsCache: FirCache<FirClassSymbol<*>, List<BuilderWithDeclaration<T>>?, Nothing?> =
         session.firCachesFactory.createCache(::extractBuilderWithDeclarations)
@@ -105,7 +107,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     protected abstract fun FirJavaClassBuilder.completeBuilder(
         classSymbol: FirClassSymbol<*>,
         builderSymbol: FirClassSymbol<*>,
-        context: NestedClassGenerationContext,
+        builder: T,
     )
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
@@ -115,8 +117,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
-        val classesMap = builderClassesCache.getValue(classSymbol, context) ?: return emptySet()
-        return classesMap.keys
+        return getBuilderNames(classSymbol)
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
@@ -130,7 +131,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
         if (!owner.isSuitableJavaClass()) return null
-        return builderClassesCache.getValue(owner, context)?.get(name)?.symbol
+        return builderClassesCache.getValue(BuilderKey(owner, name))
     }
 
     private fun createFunctions(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext?): Map<Name, FirJavaMethod>? {
@@ -291,35 +292,46 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         this@getExistingFunctionNames?.declaredScope?.collectAllFunctions()?.mapTo(this) { it.name }
     }
 
-    private fun createAndInitializeBuilders(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Map<Name, FirJavaClass>? {
-        val builderWithDeclarations = builderWithDeclarationsCache.getValue(classSymbol) ?: return null
-
+    protected fun getBuilderNames(classSymbol: FirClassSymbol<*>): Set<Name> = buildSet {
         @OptIn(SymbolInternals::class)
-        val existingClassifiers =
-            classSymbol.fir.scopeProvider.getNestedClassifierScope(classSymbol.fir, session, ScopeSession())?.getClassifierNames()
+        val existingClassifiers = classSymbol.fir.scopeProvider.getNestedClassifierScope(classSymbol.fir, session, ScopeSession())?.getClassifierNames()
                 ?: emptySet()
+        val builderWithDeclarations = builderWithDeclarationsCache.getValue(classSymbol)
 
-        return buildMap {
+        if (builderWithDeclarations != null) {
             for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
-                val visibility = builder.visibility ?: continue
-
+                if (builder.visibility == null) continue
                 val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
 
                 // Don't generate classes if they already exist
-                if (containsKey(builderName) || existingClassifiers.contains(builderName)) continue
+                if (!existingClassifiers.contains(builderName)) {
+                    add(builderName)
+                }
+            }
+        }
+    }
 
-                val builderClass = classSymbol.createEmptyBuilderClass(
+    private fun createAndInitializeBuilder(key: BuilderKey): FirRegularClassSymbol? {
+        val [owner, name] = key
+
+        val builderWithDeclarations = builderWithDeclarationsCache.getValue(owner) ?: return null
+
+        for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
+            val visibility = builder.visibility ?: continue
+            val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
+
+            if (builderName == name) {
+                return owner.createEmptyBuilderClass(
                     session,
                     builderName,
                     visibility,
                     builderDeclaration,
-                    context,
-                )
-                if (builderClass != null) {
-                    this[builderName] = builderClass
-                }
+                    builder,
+                )?.symbol
             }
-        }.takeIf { it.isNotEmpty() }
+        }
+
+        return null
     }
 
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
@@ -489,7 +501,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         name: Name,
         visibility: Visibility,
         builderDeclaration: FirDeclaration,
-        context: NestedClassGenerationContext,
+        builder: T,
     ): FirJavaClass? {
         val containingClass = this.fir as? FirJavaClass ?: return null
         val classId = containingClass.classId.createNestedClassId(name)
@@ -530,7 +542,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 isFun = classKind == ClassKind.INTERFACE
             }
 
-            completeBuilder(this@createEmptyBuilderClass, builderSymbol, context)
+            completeBuilder(this@createEmptyBuilderClass, builderSymbol, builder)
         }
     }
 
