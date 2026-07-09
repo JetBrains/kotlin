@@ -11,12 +11,7 @@ import com.intellij.openapi.vfs.VirtualFileSet
 import com.intellij.openapi.vfs.VirtualFileSetFactory
 
 /**
- * A [VirtualFileSetFactory] the compiler registers as an application service, since the core application
- * environment does not provide one.
- *
- * It constructs [CompactVirtualFileSet] directly through its public API. Note that it must NOT delegate to
- * `VfsUtilCore.createCompactVirtualFileSet`: that method resolves the registered `VirtualFileSetFactory`
- * service -- which is this very object -- and would recurse into a `StackOverflowError`.
+ * A clone of a package-private [com.intellij.openapi.vfs.CompactVirtualFileSetFactory].
  */
 @Suppress("UnstableApiUsage", "TestOnlyProblems")
 internal object KotlinCoreVirtualFileSetFactory : VirtualFileSetFactory {

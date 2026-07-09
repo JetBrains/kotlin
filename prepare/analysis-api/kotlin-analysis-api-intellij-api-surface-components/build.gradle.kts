@@ -12,6 +12,6 @@ dependencies {
 
 analysisApiArtifact {
     content {
-        project(":dependencies:intellij-java-psi-api", isTransitive = true)
+        project(":dependencies:intellij-java-psi-api")
     }
 }

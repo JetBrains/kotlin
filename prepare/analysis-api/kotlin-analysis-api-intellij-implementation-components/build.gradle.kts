@@ -38,6 +38,6 @@ dependencies {
 
 analysisApiArtifact {
     content {
-        project(":dependencies:intellij-core-implementation", isTransitive = true)
+        project(":dependencies:intellij-core-implementation")
     }
 }
