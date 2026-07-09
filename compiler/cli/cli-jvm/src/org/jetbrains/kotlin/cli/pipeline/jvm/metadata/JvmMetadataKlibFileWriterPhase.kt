@@ -25,7 +25,7 @@ import kotlin.io.path.absolute
 internal object JvmMetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerializationArtifact, MetadataSerializationArtifact>(
     name = "JvmMetadataKlibFileWriterPhase",
     preActions = setOf(),
-    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = setOf(PerformanceNotifications.KlibMetadataWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataInMemorySerializationArtifact): MetadataSerializationArtifact {
         val destDir = input.configuration.metadataDestinationDirectory!!

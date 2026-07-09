@@ -94,6 +94,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         var irPreLoweringTime: Time? = null
         var irSerializationTime: Time? = null
         var klibWritingTime: Time? = null
+        var klibMetadataWritingTime: Time? = null
         var irLinkingTime: Time? = null
         var irLoweringTime: Time? = null
         var backendTime: Time? = null
@@ -106,6 +107,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
                 PhaseType.IrPreLowering -> irPreLoweringTime = time
                 PhaseType.IrSerialization -> irSerializationTime = time
                 PhaseType.KlibWriting -> klibWritingTime = time
+                PhaseType.KlibMetadataWriting -> klibMetadataWritingTime = time
                 PhaseType.IrLinking -> irLinkingTime = time
                 PhaseType.IrLowering -> irLoweringTime = time
                 PhaseType.Backend -> backendTime = time
@@ -137,6 +139,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             irPreLoweringTime,
             irSerializationTime,
             klibWritingTime,
+            klibMetadataWritingTime,
             irLinkingTime,
             irLoweringTime,
             backendTime,
