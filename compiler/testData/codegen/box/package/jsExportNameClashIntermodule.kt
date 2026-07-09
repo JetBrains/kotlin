@@ -1,6 +1,6 @@
 // ISSUE: KT-60832, KT-65779
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
+// DONT_TARGET_EXACT_BACKEND: JVM, JVM_IR, NATIVE, WASM_WASI
+// IGNORE_BACKEND: WASM_JS
 // KT-65779: SyntaxError: Identifier 'bar' has already been declared
 
 // FILE: f1.kt
