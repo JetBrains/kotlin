@@ -362,39 +362,6 @@ context(c: SessionAndScopeSessionHolder)
 private fun FirRegularClass.getSingleAbstractMethodOrNull(): FirNamedFunction? {
     if (classKind != ClassKind.INTERFACE || hasMoreThenOneAbstractFunctionOrHasAbstractProperty()) return null
 
-    val samCandidateNames = computeSamCandidateNames()
-    return findSingleAbstractMethodByNames(samCandidateNames)
-}
-
-context(c: SessionHolder)
-private fun FirRegularClass.computeSamCandidateNames(): Set<Name> {
-    val classes =
-        // Note: we search only for names in this function, so substitution is not needed      V
-        lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = c.session, substituteTypes = false)
-            .mapNotNullTo(mutableListOf(this)) {
-                (it.lookupTag.toRegularClassSymbol())?.fir
-            }
-
-    val samCandidateNames = mutableSetOf<Name>()
-    for (clazz in classes) {
-        for (declaration in clazz.declarations) {
-            when (declaration) {
-                is FirProperty -> if (declaration.resolvedIsAbstract) {
-                    samCandidateNames.add(declaration.name)
-                }
-                is FirNamedFunction -> if (declaration.resolvedIsAbstract) {
-                    samCandidateNames.add(declaration.name)
-                }
-                else -> {}
-            }
-        }
-    }
-
-    return samCandidateNames
-}
-
-context(c: SessionAndScopeSessionHolder)
-private fun FirRegularClass.findSingleAbstractMethodByNames(samCandidateNames: Set<Name>): FirNamedFunction? {
     var resultMethod: FirNamedFunction? = null
     var metIncorrectMember = false
 
@@ -403,7 +370,7 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(samCandidateNames: S
         memberRequiredPhase = null,
     )
 
-    for (candidateName in samCandidateNames) {
+    for (candidateName in classUseSiteMemberScope.getCallableNames()) {
         if (metIncorrectMember) break
 
         classUseSiteMemberScope.processPropertiesByName(candidateName) {

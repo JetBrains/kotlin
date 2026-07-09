@@ -6,8 +6,8 @@ FILE: samInterfaceWithGeneratedFunction.kt
     public final fun makeFoo(foo: R|Foo|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/makeFoo<Inapplicable(INAPPLICABLE): /makeFoo>#|(makeFoo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        R|/makeFoo|(<L> = SAM(makeFoo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@makeFoo Unit
         }
-        )
+        ))
     }
