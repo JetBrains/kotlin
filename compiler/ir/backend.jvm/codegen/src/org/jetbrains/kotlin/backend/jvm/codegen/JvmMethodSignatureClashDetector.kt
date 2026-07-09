@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureClashDetector
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
+import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
 
 class JvmMethodSignatureClashDetector(
@@ -172,11 +174,15 @@ internal class JvmIrConflictingDeclarationsData(
     fun render(): String = renderer.render(this)
 
     companion object {
-        @OptIn(K1Deprecation::class)
         private val renderer = CommonRenderers.renderConflictingSignatureData(
             signatureKind = "JVM",
-            sortUsing = MemberComparator.INSTANCE,
-            declarationRenderer = Renderers.WITHOUT_MODIFIERS,
+            sortUsing = { a, b -> MemberComparator.INSTANCE.compare(a, b) },
+            declarationRenderer = object : DiagnosticParameterRenderer<DeclarationDescriptor> {
+                override fun render(obj: DeclarationDescriptor, renderingContext: RenderingContext): String =
+                    DescriptorRenderer.WITHOUT_MODIFIERS.withOptions {
+                        classifierNamePolicy = renderingContext.adaptiveClassifierPolicy
+                    }.render(obj)
+            },
             renderSignature = {
                 append(it.signature.name)
                 append(it.signature.desc)

@@ -1,0 +1,7 @@
+/kotlinAndJavaCollections.kt:5:1: error: Platform declaration clash: The following declarations have the same JVM signature (foo(Ljava/util/List;)V):
+    fun foo(s: java.util.List<String>): Unit defined in root package
+    fun foo(s: kotlin.collections.List<String>): Unit defined in root package
+
+/kotlinAndJavaCollections.kt:6:1: error: Platform declaration clash: The following declarations have the same JVM signature (foo(Ljava/util/List;)V):
+    fun foo(s: java.util.List<String>): Unit defined in root package
+    fun foo(s: kotlin.collections.List<String>): Unit defined in root package
