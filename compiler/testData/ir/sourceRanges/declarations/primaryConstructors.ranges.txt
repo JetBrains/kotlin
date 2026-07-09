@@ -74,7 +74,7 @@
   @13:0..15:23 CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]
     @15:0..23 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test4 [primary]
       annotations:
-        @14:0..28 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+        @14:0..28 ANNOTATION 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:Suppress modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Suppress origin=null
           @14:10..27 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
             @14:10..27 CONST String type=kotlin.String value="UNUSED_VARIABLE"
       @15:12..22 VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int

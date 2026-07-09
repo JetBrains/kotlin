@@ -40,7 +40,7 @@
     @10:0..11 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Test3
   @13:0..14:11 CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      @13:0..23 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+      @13:0..23 ANNOTATION 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:Suppress modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Suppress origin=null
         @13:10..22 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           @13:10..22 CONST String type=kotlin.String value="UNUSED_VAR"
     @13:0..14:11 CONSTRUCTOR visibility:public <> () returnType:<root>.Test4 [primary]
@@ -82,7 +82,7 @@
       @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.Test5>
     @-1:-1..-1 PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
       annotations:
-        @-1:-1..-1 CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.internal.IntrinsicConstEvaluation' type=kotlin.internal.IntrinsicConstEvaluation origin=null
+        @-1:-1..-1 ANNOTATION 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:IntrinsicConstEvaluation modality:OPEN visibility:internal superTypes:[kotlin.Annotation]' type=kotlin.internal.IntrinsicConstEvaluation origin=null
       @-1:-1..-1 FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> (<this>:kotlin.Enum<<root>.Test5>) returnType:kotlin.String [fake_override]
         @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.Test5>
     @-1:-1..-1 PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]

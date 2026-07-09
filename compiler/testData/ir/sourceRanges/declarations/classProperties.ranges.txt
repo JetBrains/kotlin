@@ -26,7 +26,7 @@
               @10:4..13 GET_VAR '<this>: test.Test declared in test.Test.<get-test1>' type=test.Test origin=null
     @16:4..18 PROPERTY name:test2 visibility:public modality:FINAL [val]
       annotations:
-        @13:4..15:5 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+        @13:4..15:5 ANNOTATION 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:Suppress modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Suppress origin=null
           @14:8..25 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
             @14:8..25 CONST String type=kotlin.String value="UNUSED_VARIABLE"
       @16:4..18 FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [final]
@@ -69,7 +69,7 @@
     @37:4..41:18 PROPERTY name:test7 visibility:public modality:FINAL [val]
       @38:8..41:18 FUN name:<get-test7> visibility:public modality:FINAL <> (<this>:test.Test) returnType:kotlin.Int
         annotations:
-          @38:8..40:9 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+          @38:8..40:9 ANNOTATION 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:Suppress modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Suppress origin=null
             @39:12..29 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
               @39:12..29 CONST String type=kotlin.String value="UNUSED_VARIABLE"
         @38:8..41:18 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test
@@ -173,7 +173,7 @@
               @69:4..14 GET_VAR '<this>: test.Test declared in test.Test.<get-test13>' type=test.Test origin=null
       @70:8..75:9 FUN name:<set-test13> visibility:public modality:FINAL <> (<this>:test.Test, value:kotlin.Int) returnType:kotlin.Unit
         annotations:
-          @70:8..72:9 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+          @70:8..72:9 ANNOTATION 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:Suppress modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Suppress origin=null
             @71:12..29 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
               @71:12..29 CONST String type=kotlin.String value="UNUSED_VARIABLE"
         @70:8..75:9 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Test

@@ -19,7 +19,7 @@
         @2:0..5:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @4:9..30 FUN name:annotatedFun visibility:public modality:OPEN <> (<this>:<root>.Base) returnType:kotlin.Unit
       annotations:
-        @3:4..17 CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyAnnotation' type=<root>.MyAnnotation origin=null
+        @3:4..17 ANNOTATION 'CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=<root>.MyAnnotation origin=null
       @4:9..30 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
       @4:28..30 BLOCK_BODY
     @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -37,7 +37,7 @@
         @7:0..22 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]' type=kotlin.Unit
     @-1:-1..-1 FUN FAKE_OVERRIDE name:annotatedFun visibility:public modality:OPEN <> (<this>:<root>.Base) returnType:kotlin.Unit [fake_override]
       annotations:
-        @-1:-1..-1 CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyAnnotation' type=<root>.MyAnnotation origin=null
+        @-1:-1..-1 ANNOTATION 'CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=<root>.MyAnnotation origin=null
       @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
     @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
