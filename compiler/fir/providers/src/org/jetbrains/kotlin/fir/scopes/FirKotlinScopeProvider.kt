@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -64,7 +66,11 @@ class FirKotlinScopeProvider(
                 memberRequiredPhase
             ).let {
                 val delegateFields = klass.delegateFields
-                if (delegateFields.isEmpty())
+                if (delegateFields.isEmpty() || klass.superConeTypes.any { superType ->
+                        val diagnosticKind = ((superType as? ConeErrorType)?.diagnostic as? ConeSimpleDiagnostic)?.kind
+                        diagnosticKind == DiagnosticKind.LoopInSupertype
+                    }
+                )
                     it
                 else
                     FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
