@@ -14,7 +14,7 @@ package org.jetbrains.kotlin.buildtools.api
  *
  * @since 2.4.20
  */
-@ExperimentalBuildToolsApi
-public class KotlinCompilationProcessFailedException(
-    message: String
-) : KotlinBuildToolsException(message)
+//@ExperimentalBuildToolsApi
+//public class KotlinCompilationProcessFailedException(
+//    message: String
+//) : KotlinBuildToolsException(message)
