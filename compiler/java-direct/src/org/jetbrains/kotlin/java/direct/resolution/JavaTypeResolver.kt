@@ -102,9 +102,10 @@ internal fun resolveQualifiedNameToClassIdFromParts(
  *
  * [fullResolution] selects the flavor. `true` is the full primary path. `false` is the
  * reentrance-safe fallback used while an inherited-inner-class walk
- * ([resolveInheritedInnerClassToClassId]) is already in progress: it skips Step 1 and downgrades
- * the explicit/star-import steps to their single-split forms, since those are exactly the steps
- * that would otherwise recurse back into the same walk.
+ * ([resolveInheritedInnerClassToClassId]) is already in progress: it skips Step 1 (the local-scope
+ * member-type lookup that would recurse back into the same walk) and probes class existence via
+ * the source-index-aware [tryResolveInherited] rather than [tryResolve]. Every import step still
+ * uses the same full package/class split in both flavors.
  */
 context(c: JavaResolutionContext)
 internal fun resolveSimpleNameToClassIdImpl(
@@ -186,13 +187,11 @@ private fun resolveFromExplicitImport(
     fullResolution: Boolean,
 ): ClassId? {
     val imported = c.fileContext.imports.simpleTypeImports[simpleName] ?: return null
-    if (fullResolution) {
-        // Use resolveAsClassId to handle nested class FQNs like "a.x.b.b.b" where
-        // ClassId.topLevel would incorrectly split as package="a.x.b.b", class="b".
-        return resolveAsClassId(imported, fullResolution)
-    }
-    val classId = ClassId.topLevel(imported)
-    return if (classExists(classId, fullResolution)) classId else null
+    // resolveAsClassId handles nested-class import FQNs like `a.x.b.b.b`, where ClassId.topLevel
+    // would mis-split as package `a.x.b.b`, class `b`. This holds on the reentrance-safe path too:
+    // resolveAsClassId only probes class existence, never re-entering inherited-inner-class
+    // resolution, so the full split is safe in both flavors (matching the static/star import steps).
+    return resolveAsClassId(imported, fullResolution)
 }
 
 /**

@@ -1,6 +1,6 @@
 # Java-Direct: Iteration Results Log
 
-**Current status**: `:compiler:java-direct:test` full suite green, 2836/2836 (100%). No known won't-fix.
+**Current status**: `:compiler:java-direct:test` full suite green, 2837/2837 (100%). No known won't-fix.
 
 **Last archived**: `implDocs/archive/ITERATION_RESULTS_2026_06_01.md` (entries through 2026-06-01).
 
@@ -35,6 +35,18 @@ This log is read into the agent's context every session, so **entries must stay 
 ---
 
 <!-- Add new entries below, newest first. -->
+
+### 2026-07-09 — Fix explicit-import nested-class mis-split on the reentrance-safe path
+- **Change**: `resolveFromExplicitImport` used the last-dot `ClassId.topLevel` split in the
+  reentrance-safe (`fullResolution = false`) flavor, so an explicitly imported *nested* class
+  used as a supertype (`import a.b.Outer.Middle; class C extends Middle`) mis-split as package
+  `a.b.Outer` / class `Middle` and its inherited inner classes failed to resolve. Now always uses
+  `resolveAsClassId` (reentrance-safe: it only probes existence, never re-enters inherited
+  lookup), matching the static/star import steps. Closes review comment #2.
+- **Files**: `JavaTypeResolver.kt` (unify one import branch + KDoc); new box test
+  `codegen/box/javaDirect/inheritedInnerClassFromExplicitlyImportedNestedSupertype.kt`.
+- **Tests**: box + phased + `JavaParsingTest` green, 0 failures; new box test fails before / passes after.
+- **Result**: green.
 
 ### 2026-07-08 — Drop walkSupertypeClassIds' now-redundant lambda parameters
 - **Change**: `walkSupertypeClassIds` had exactly one call site

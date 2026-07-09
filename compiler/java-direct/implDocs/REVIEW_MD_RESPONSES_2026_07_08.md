@@ -20,7 +20,7 @@ flagged and consciously left as accepted trade-offs. Each entry below quotes (pa
 | # | `review.md` comment (file) | Status | Where it's addressed |
 |---|-----------------------------|--------|-----------------------|
 | 1 | `name.isEmpty()` / `a.B<String>.C` truncation — `JavaInheritedMemberResolver.kt` | **Fixed** | `resolveInheritedInnerClassToClassId`'s `initialAncestorIds` now uses `splitCanonicalFqName()` |
-| 2 | `resolveWithoutInheritance`'s `fullResolution` silently weakens imported-name resolution — `JavaTypeResolver.kt` | **Confirmed, narrow, left as-is** | `resolveFromExplicitImport` line 304-310 |
+| 2 | `resolveWithoutInheritance`'s `fullResolution` silently weakens imported-name resolution — `JavaTypeResolver.kt` | **Fixed** (2026-07-09) | `resolveFromExplicitImport` now always uses `resolveAsClassId`; see §2 update |
 | 3 | "Isn't `resolve` always `tryResolve`?" — `JavaTypeResolver.kt` | **Fixed** | dead parameter removed |
 | 4 | Re-entrance-safe finder fallback confusing (`CopyBuilder` example) — `JavaTypeResolver.kt` | **Answered** (design explanation, unify request N/A) | `resolveQualifiedNameToClassIdFromParts` lines 130-138, `RESOLUTION_SCHEMA.md` Scenario D |
 | 5 | Why only `nestedParts.size == 1`? — `JavaTypeResolver.kt` | **Answered** (telescoping-recursion argument) | `RESOLUTION_SCHEMA.md` Scenario D corner cases |
@@ -33,8 +33,8 @@ flagged and consciously left as accepted trade-offs. Each entry below quotes (pa
 | 12 | Sibling/outer-class lookup could be "part of the loop below" — `JavaScopeResolver.kt` | **Fixed** | unified per-level loop (Step 4) |
 | 13 | Why not use `collectInheritedInnerClasses` for same-file supertypes too? — `JavaInheritedMemberResolver.kt` | **Fixed** | same-file arm folded into the single ladder, see §13 below |
 
-11 of 13 comments are now fixed by code changes; 1 is an out-of-scope pre-existing item explicitly
-tracked as accepted; the remaining 2 (#2, #4/#5 as one topic, #9) are direct design
+12 of 13 comments are now fixed by code changes; 1 is an out-of-scope pre-existing item explicitly
+tracked as accepted; the remaining ones (#4/#5 as one topic, #9) are direct design
 explanations, since they ask "why does it work this way" rather than flag a bug. None is left as
 an open question.
 
@@ -99,6 +99,21 @@ and was not in the collapse plan's scope. It is a real, narrow edge case — wor
 low risk in practice (a supertype reference that is itself an explicitly-imported *nested* class,
 reached transitively through a chain that revisits the reentrant path) and is called out here
 rather than silently left unaddressed.
+
+**Update (2026-07-09): fixed.** The `fullResolution` branch in `resolveFromExplicitImport` has
+been removed — both flavors now call `resolveAsClassId(imported, fullResolution)`, the same full
+package/class split the sibling static-single, type-on-demand and static-on-demand import steps
+already use. This is reentrance-safe: `resolveAsClassId` only *probes class existence* (via the
+`fullResolution`-selected `tryResolve`/`tryResolveInherited`), it never re-enters
+`resolveInheritedInnerClassToClassId`, so it cannot cause the recursion the reentrance-safe flavor
+guards against. The narrow mis-split (`import a.b.Outer.Middle; class C extends Middle`, where the
+inherited `Inner` was unresolvable because `Middle` was split last-dot-first as package
+`a.b.Outer` / class `Middle`) is gone. Covered end-to-end by the box test
+`inheritedInnerClassFromExplicitlyImportedNestedSupertype.kt` (fails before the change with
+`MISSING_DEPENDENCY_CLASS: Cannot access class 'Inner'`, passes after). The
+`resolveSimpleNameToClassIdImpl` KDoc was updated accordingly: the only remaining differences of
+the reentrance-safe flavor are that it skips the local-scope step and uses the source-index-aware
+existence probe — no import step is "downgraded to a single-split form" any more.
 
 ---
 
