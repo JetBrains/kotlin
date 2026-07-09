@@ -13,7 +13,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
@@ -64,7 +63,9 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
     @get:Internal
     internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty().convention(compilation.npmToolingDir())
 
-    @get:OutputDirectory
+    // this is intentional to prevent gradle warnings about tasks writing to the same location
+    // FIXME: KT-87599 Design host-wide toolchain management
+    @get:Internal
     internal val outputDir: DirectoryProperty = objects.directoryProperty().fileProvider(
         PropertiesProvider(project).playwrightBrowsersPath
             .orElse(providers.environmentVariable("PLAYWRIGHT_BROWSERS_PATH"))

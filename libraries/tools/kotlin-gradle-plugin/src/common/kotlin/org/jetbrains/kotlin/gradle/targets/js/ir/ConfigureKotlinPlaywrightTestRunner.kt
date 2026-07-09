@@ -62,6 +62,9 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             val objects = project.objects
             val inputs = KotlinPlaywrightJsTestFramework.createInputs(objects)
 
+            // dependsOn is required because outputDir is internal and doesn't carry task dependencies
+            // FIXME: KT-87599 Design host-wide toolchain management
+            testTask.dependsOn(playwrightBrowserInstallTask)
             inputs.playwrightBrowsersDirectory.set(playwrightBrowserInstallTask.flatMap { it.outputDir })
 
             inputs.chromiumRunners.set(
