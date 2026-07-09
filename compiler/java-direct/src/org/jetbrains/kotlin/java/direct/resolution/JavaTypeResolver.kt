@@ -593,7 +593,12 @@ private fun substituteTypeArgs(
 
 /**
  * Per-origin direct-supertype-`ClassId` dispatcher, guarded by [cycleGuardedSupertypeWalk] so
- * direct (`A extends A`) and indirect (`A → B → A`) Java-side cycles terminate cleanly.
+ * direct (`A extends A`) and indirect (`A → B → A`) Java-side cycles terminate cleanly, and
+ * memoized per session via [memoizedDirectSupertypeClassIds] so each class's direct supertypes
+ * are resolved once. The memoization is essential, not merely an optimization: the source arm
+ * reads each supertype's `.classifier`, which re-enters resolution and re-descends the hierarchy,
+ * so the transitive-closure walks that inherited-inner-class resolution performs would otherwise
+ * re-resolve every ancestor exponentially and stall on deep hierarchies.
  *
  *  1. **Source Java arm** — `classFinder.findClass(classId)` hits: walk `JavaClass.supertypes`
  *     directly (no FIR phase involved).
@@ -607,32 +612,34 @@ private fun substituteTypeArgs(
 @OptIn(SymbolInternals::class)
 context(c: JavaResolutionContext)
 internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
-    c.fileContext.session.cycleGuardedSupertypeWalk(classId, default = emptyList()) {
-        // 1. Source Java arm — walk our own AST. Supertype names are syntactically
-        // knowable; no FIR phase is involved.
-        val finder = c.fileContext.classFinder
-        if (finder != null && finder.isClassInIndex(classId)) {
-            val javaClass = finder.findClass(JavaClassFinder.Request(classId))
-            if (javaClass != null) {
-                return@cycleGuardedSupertypeWalk resolveSupertypeNames(javaClass)
+    c.fileContext.session.memoizedDirectSupertypeClassIds(classId) {
+        c.fileContext.session.cycleGuardedSupertypeWalk(classId, default = emptyList()) {
+            // 1. Source Java arm — walk our own AST. Supertype names are syntactically
+            // knowable; no FIR phase is involved.
+            val finder = c.fileContext.classFinder
+            if (finder != null && finder.isClassInIndex(classId)) {
+                val javaClass = finder.findClass(JavaClassFinder.Request(classId))
+                if (javaClass != null) {
+                    return@cycleGuardedSupertypeWalk resolveSupertypeNames(javaClass)
+                }
             }
-        }
 
-        // 2. & 3. Look up the FIR symbol — the model's only handle for non-source-Java
-        // classes (binary Java, Kotlin, deserialized).
-        val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return@cycleGuardedSupertypeWalk emptyList()
-        val firClass = symbol.fir as? FirRegularClass ?: return@cycleGuardedSupertypeWalk emptyList()
+            // 2. & 3. Look up the FIR symbol — the model's only handle for non-source-Java
+            // classes (binary Java, Kotlin, deserialized).
+            val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return@cycleGuardedSupertypeWalk emptyList()
+            val firClass = symbol.fir as? FirRegularClass ?: return@cycleGuardedSupertypeWalk emptyList()
 
-        // 2. Binary Java arm — read the pre-resolved cache on FirJavaClass; never
-        // touches the lazy `superTypeRefs` enhancement.
-        if (firClass is FirJavaClass) {
-            return@cycleGuardedSupertypeWalk firClass.directSupertypeClassIds()
-        }
+            // 2. Binary Java arm — read the pre-resolved cache on FirJavaClass; never
+            // touches the lazy `superTypeRefs` enhancement.
+            if (firClass is FirJavaClass) {
+                return@cycleGuardedSupertypeWalk firClass.directSupertypeClassIds()
+            }
 
-        // 3. Kotlin / built-in / deserialized arm — lazyResolveToPhase is honest here.
-        symbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-        firClass.superTypeRefs.mapNotNull { ref ->
-            ((ref as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType)?.lookupTag?.classId
+            // 3. Kotlin / built-in / deserialized arm — lazyResolveToPhase is honest here.
+            symbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+            firClass.superTypeRefs.mapNotNull { ref ->
+                ((ref as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType)?.lookupTag?.classId
+            }
         }
     }
 

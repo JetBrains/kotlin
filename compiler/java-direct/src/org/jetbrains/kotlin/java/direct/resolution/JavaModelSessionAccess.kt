@@ -147,6 +147,58 @@ internal fun <R> FirSession.cycleGuardedSupertypeWalk(classId: ClassId, default:
 }
 
 /**
+ * Per-session `ClassId -> List<ClassId>` cache of resolved direct-supertype `ClassId`s for
+ * [directSupertypeClassIds].
+ *
+ * A class's direct supertypes are a pure function of the class and the session, so memoizing them
+ * turns the transitive supertype-closure walk that inherited-inner-class resolution performs from
+ * repeated re-resolution — each source-arm `.classifier` read re-descends the hierarchy, so an
+ * un-cached walk is exponential in the hierarchy depth — into a single computation per class.
+ * Without it, resolving inherited inner classes over deep Java source hierarchies re-walks the
+ * whole closure for every name at every level, which makes large mixed Kotlin/Java compilations
+ * effectively hang.
+ *
+ * Registered by [registerJavaModelDirectSupertypeCacheIfAbsent]; sessions without it fall back to
+ * the un-cached walk inside [directSupertypeClassIds].
+ */
+internal class JavaModelDirectSupertypeCache : FirSessionComponent {
+    val classIdToSupertypes: ConcurrentHashMap<ClassId, List<ClassId>> = ConcurrentHashMap()
+}
+
+private val FirSession.javaModelDirectSupertypeCache: JavaModelDirectSupertypeCache?
+        by FirSession.nullableSessionComponentAccessor()
+
+/** Registers a [JavaModelDirectSupertypeCache] on this session if one is not already present. */
+@OptIn(SessionConfiguration::class)
+internal fun FirSession.registerJavaModelDirectSupertypeCacheIfAbsent() {
+    if (javaModelDirectSupertypeCache == null) {
+        register(JavaModelDirectSupertypeCache::class, JavaModelDirectSupertypeCache())
+    }
+}
+
+/**
+ * Memoizes [compute] (the per-origin direct-supertype walk of [directSupertypeClassIds]) per
+ * [classId] on the session, so each class's direct supertypes are resolved at most once.
+ *
+ * Only non-empty results are cached. An empty result is never authoritative here: it is what both
+ * [cycleGuardedSupertypeWalk] and [cycleSafeClassLikeSymbol] return for a re-entrant / in-flight
+ * [classId] (cycle break), so caching it could pin a transient empty over a class that does have
+ * supertypes. Recomputing an empty result is cheap — a class with no cached supertypes either has
+ * none (a root interface) or is mid-cycle — and the exponential re-resolution this cache exists to
+ * prevent is driven entirely by classes that *do* have supertypes, which are cached.
+ */
+internal fun FirSession.memoizedDirectSupertypeClassIds(
+    classId: ClassId,
+    compute: () -> List<ClassId>,
+): List<ClassId> {
+    val cache = javaModelDirectSupertypeCache?.classIdToSupertypes ?: return compute()
+    cache[classId]?.let { return it }
+    val result = compute()
+    if (result.isNotEmpty()) cache[classId] = result
+    return result
+}
+
+/**
  * Per-session `ClassId -> Boolean` cache of TYPE_USE-ness for annotation classes.
  *
  * Populated by [isTypeUseAnnotationClass]; the predicate is a static property of the annotation
