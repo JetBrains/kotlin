@@ -121,7 +121,7 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
                     PhaseType.TranslationToIr -> "Translation"
                     PhaseType.IrPreLowering,
                     PhaseType.IrSerialization,
-                    PhaseType.KlibWriting,
+                    PhaseType.KlibIrWriting,
                     PhaseType.KlibMetadataWriting,
                     PhaseType.IrLinking -> {
                         return@forEachPhaseMeasurement

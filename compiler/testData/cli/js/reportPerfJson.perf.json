@@ -31,7 +31,7 @@
     "userNanos": $UINT$,
     "cpuNanos": $UINT$
   },
-  "klibWritingStats": {
+  "klibIrWritingStats": {
     "nanos": $UINT$,
     "userNanos": $UINT$,
     "cpuNanos": $UINT$

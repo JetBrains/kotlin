@@ -53,7 +53,7 @@ object TestData {
             translationToIrStats = totalTime * 0.2,
             irPreLoweringStats = totalTime * 0.01,
             irSerializationStats = totalTime * 0.01,
-            klibWritingStats = totalTime * 0.01,
+            klibIrWritingStats = totalTime * 0.01,
             klibMetadataWritingStats = null,
             irLinkingStats = totalTime * 0.005,
             irLoweringStats = totalTime * 0.005,

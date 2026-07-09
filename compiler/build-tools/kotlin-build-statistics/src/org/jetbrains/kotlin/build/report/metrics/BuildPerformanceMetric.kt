@@ -209,13 +209,13 @@ object IR_SERIALIZATION_LPS : GradleBuildPerformanceMetric(
     private fun readResolve(): Any = IR_SERIALIZATION_LPS
 }
 
-object KLIB_WRITING_LPS : GradleBuildPerformanceMetric(
-    name = "KLIB_WRITING_LPS",
-    readableString = "KLib Writing lines per second",
+object KLIB_IR_WRITING_LPS : GradleBuildPerformanceMetric(
+    name = "KLIB_IR_WRITING_LPS",
+    readableString = "KLib IR writing lines per second",
     type = ValueType.NUMBER,
     parent = COMPILE_ITERATION
 ) {
-    private fun readResolve(): Any = KLIB_WRITING_LPS
+    private fun readResolve(): Any = KLIB_IR_WRITING_LPS
 }
 
 object KLIB_METADATA_WRITING_LPS : GradleBuildPerformanceMetric(

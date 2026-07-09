@@ -32,7 +32,7 @@ class MarkdownRendererTests {
 | ↳ IrPreLoweringDynamicStat2   |     0.25% (15 ms) |     0.25% (11 ms) |     0.25% (18 ms) |
 | ↳ IrPreLoweringDynamicStat3   |     0.25% (15 ms) |     0.25% (11 ms) |     0.25% (18 ms) |
 | IR SERIALIZATION              |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
-| KLIB WRITING                  |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
+| KLIB IR WRITING               |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
 | IR LINKING                    |     0.50% (30 ms) |     0.50% (22 ms) |     0.50% (37 ms) |
 | IR LOWERING                   |     0.50% (30 ms) |     0.50% (22 ms) |     0.50% (37 ms) |
 | BACKEND                       |   16.00% (960 ms) |   16.00% (720 ms) |  16.00% (1200 ms) |
@@ -104,7 +104,7 @@ class MarkdownRendererTests {
 | ↳ IrPreLoweringDynamicStat2   |      0.25% (5 ms) |      0.25% (3 ms) |      0.25% (6 ms) |
 | ↳ IrPreLoweringDynamicStat3   |      0.25% (5 ms) |      0.25% (3 ms) |      0.25% (6 ms) |
 | IR SERIALIZATION              |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
-| KLIB WRITING                  |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
+| KLIB IR WRITING               |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
 | IR LINKING                    |     0.50% (10 ms) |      0.50% (7 ms) |     0.50% (12 ms) |
 | IR LOWERING                   |     0.50% (10 ms) |      0.50% (7 ms) |     0.50% (12 ms) |
 | BACKEND                       |   16.00% (320 ms) |   16.00% (240 ms) |   16.00% (400 ms) |

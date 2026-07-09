@@ -354,7 +354,7 @@ fun serializeModuleIntoKlib(
         addLanguageFeaturesToManifest(p, configuration.languageVersionSettings)
     }
 
-    performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
+    performanceManager.tryMeasurePhaseTime(PhaseType.KlibIrWriting) {
         KlibWriter {
             format(if (nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
             manifest {

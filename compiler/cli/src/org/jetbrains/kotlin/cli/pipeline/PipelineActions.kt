@@ -75,8 +75,8 @@ object PerformanceNotifications {
     object KlibMetadataWritingFinished : AbstractNotification(PhaseType.KlibMetadataWriting, start = false)
 
     // klib writing
-    object KlibWritingStarted : AbstractNotification(PhaseType.KlibWriting, start = true)
-    object KlibWritingFinished : AbstractNotification(PhaseType.KlibWriting, start = false)
+    object KlibIrWritingStarted : AbstractNotification(PhaseType.KlibIrWriting, start = true)
+    object KlibIrWritingFinished : AbstractNotification(PhaseType.KlibIrWriting, start = false)
 
     // backend lowerings
     object IrLoweringStarted : AbstractNotification(PhaseType.IrLowering, start = true)
