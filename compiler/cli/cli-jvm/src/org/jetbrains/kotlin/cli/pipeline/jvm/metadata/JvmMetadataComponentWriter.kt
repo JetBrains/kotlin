@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm.metadata
 
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.library.SerializedFirMetadata
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
@@ -29,17 +30,34 @@ internal class JvmMetadataComponentWriter(
             layout.getPackageFragmentsDir(packageFqName).createDirectories()
 
             metadata.fragments[index].forEach { packageFragmentPart ->
-                val sourceFile = packageFragmentPart.path?.let { Path(it) }
-                val sourceFileName = packageFragmentPart.name
+                val sourceFileName = getMetadataFileName(packageFragmentPart.name, packageFragmentPart.path)
 
                 val packageFragmentFile = layout.getPackageFragmentFile(packageFqName = packageFqName, partName = sourceFileName)
                 // Such duplications are not allowed in JVM compilation
                 check(packageFragmentFile.exists().not()) { "Duplicate package fragment name '${packageFragmentFile.pathString}'" }
                 packageFragmentFile.writeBytes(packageFragmentPart.content)
 
-                fragmentTracker?.recordSourceFile(sourceFile, packageFragmentFile)
+                fragmentTracker?.recordSourceFile(packageFragmentPart.path?.let { Path(it) }, packageFragmentFile)
             }
         }
+    }
+
+    // TODO(KT-87183): Switch to filename-based naming for KLIB package fragment files.
+    // Until then the source file path is kept absolute and hashed into a per-file suffix that
+    // disambiguate same-named files within a package. This is a temporary solution that is safe
+    // for JVM incremental compilation: IC records the source-to-output mapping and, on a change,
+    // deletes exactly the previously recorded output(s) and re-records the freshly produced one
+    // (InputsCache.removeOutputForSourceFiles) — it never recomputes this fragment name from the
+    // source path. IC stores that mapping with relative (relocatable) paths when project/build
+    // dirs are supplied and absolute paths otherwise, but it round-trips per machine either way,
+    // so the absolute path here is just an opaque, per-machine-deterministic token.
+    private fun getMetadataFileName(firFileName: String, sourceFilePath: String?): String {
+        val fileNameWithoutExtension = Path(firFileName).nameWithoutExtension
+        if (sourceFilePath == null) {
+            return fileNameWithoutExtension
+        }
+
+        return fileNameWithoutExtension.plus("_${sourceFilePath.cityHash64String()}")
     }
 
     private fun ICFileMappingTracker.recordSourceFile(sourceFile: Path?, packageFragmentFile: Path) {
