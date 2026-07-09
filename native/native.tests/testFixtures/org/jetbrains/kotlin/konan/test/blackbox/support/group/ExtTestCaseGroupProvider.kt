@@ -740,11 +740,10 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
                     val dir = directivesParser.convertToRegisteredDirective(rawDir) ?: continue
 
                     // Register a given directive either globally or in a current module. (Registering in a file is not needed ATM.)
-                    if (dir.directive.applicability == DirectiveApplicability.Global) {
+                    if (module != null && dir.directive.applicability.forModule) {
+                        module.directivesBuilder.addParsedDirective(dir)
+                    } else if (dir.directive.applicability.forGlobal) {
                         directivesParser.addParsedDirective(dir)
-                    }
-                    if (dir.directive.applicability == DirectiveApplicability.Module) {
-                        module?.directivesBuilder?.addParsedDirective(dir)
                     }
                 }
             }
