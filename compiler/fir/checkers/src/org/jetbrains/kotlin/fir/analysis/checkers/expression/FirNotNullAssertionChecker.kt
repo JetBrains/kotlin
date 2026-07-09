@@ -45,7 +45,7 @@ object FirNotNullAssertionChecker : FirCheckNotNullCallChecker(MppCheckerKind.Co
 
         val type = resolvedType.fullyExpandedType()
 
-        if (!type.canBeNull(context.session) && LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
+        if (!type.canBeNull() && LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
             reporter.reportOn(expression.source, FirErrors.UNNECESSARY_NOT_NULL_ASSERTION, type)
         }
     }

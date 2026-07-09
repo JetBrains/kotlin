@@ -581,7 +581,7 @@ abstract class FirDataFlowAnalyzer(
                                 flow.addImplication((expressionVariable eq isType) implies (operandVariable valueNotEq complementarySymbols))
                             }
                         }
-                        if (!type.canBeNull(components.session)) {
+                        if (!type.canBeNull()) {
                             // x is (T & Any) => x != null
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable notEq null))
                         } else if (type.isMarkedNullable) {
@@ -600,7 +600,7 @@ abstract class FirDataFlowAnalyzer(
                         flow.addTypeStatement(operandVariable valueNotEq complementarySymbols)
                     }
                 }
-                if (!type.canBeNull(components.session)) {
+                if (!type.canBeNull()) {
                     flow.commitOperationStatement(operandVariable notEq null)
                 } else {
                     val expressionVariable = SyntheticVariable(typeOperatorCall)

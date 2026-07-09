@@ -149,7 +149,7 @@ private fun checkDispatchReceiver(
 
 context(context: CheckerContext)
 private fun ConeKotlinType.canLowerBoundBeNull(): Boolean {
-    return lowerBoundIfFlexible().canBeNull(context.session)
+    return lowerBoundIfFlexible().canBeNull()
 }
 
 /**

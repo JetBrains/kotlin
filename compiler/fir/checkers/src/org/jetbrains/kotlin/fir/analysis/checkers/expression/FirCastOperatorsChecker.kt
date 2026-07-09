@@ -167,7 +167,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         rUserType: ConeKotlinType,
         forceWarning: Boolean = false,
     ) {
-        val areBothTypesNullable = l.smartCastType.canBeNull(context.session) && r.canBeNull(context.session)
+        val areBothTypesNullable = l.smartCastType.canBeNull() && r.canBeNull()
 
         val diagnostic = when (applicability) {
             Applicability.IMPOSSIBLE_CAST -> getImpossibilityDiagnostic(l, r, areBothTypesNullable, expression)

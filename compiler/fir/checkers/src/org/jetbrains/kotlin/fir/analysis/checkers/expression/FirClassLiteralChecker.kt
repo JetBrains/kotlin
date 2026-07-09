@@ -87,7 +87,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
             LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isDisabled() &&
             resolvedFullyExpandedType.toTypeParameterSymbol()?.isReified == true &&
             !resolvedFullyExpandedType.isMarkedNullable &&
-            resolvedFullyExpandedType.canBeNull(context.session)
+            resolvedFullyExpandedType.canBeNull()
         ) {
             reporter.reportOn(
                 argument.source,
@@ -111,7 +111,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         if (this !is ConeTypeParameterType) return false
         val typeParameter = lookupTag.typeParameterSymbol
         // E.g., fun <T> f2(t: T): Any = t::class
-        return canBeNull(context.session) &&
+        return canBeNull() &&
                 (!typeParameter.isReified || isExpression && LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isEnabled())
     }
 

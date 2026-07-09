@@ -32,8 +32,8 @@ object FirJavaWhenExhaustivenessWarningChecker : FirWhenExpressionChecker(MppChe
         val variable = expression.subjectVariable ?: return
         val coneType = variable.returnTypeRef.coneType
         val enhancedType = coneType.enhancedTypeForWarning ?: return
-        if (!enhancedType.lowerBoundIfFlexible().canBeNull(context.session) ||
-            coneType.lowerBoundIfFlexible().canBeNull(context.session)
+        if (!enhancedType.lowerBoundIfFlexible().canBeNull() ||
+            coneType.lowerBoundIfFlexible().canBeNull()
         ) return
 
         val hasNullCheck = expression.branches.any {

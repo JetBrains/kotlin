@@ -24,7 +24,7 @@ object FirSpreadOfNullableChecker : FirFunctionCallChecker(MppCheckerKind.Common
     override fun check(expression: FirFunctionCall) {
         fun checkAndReport(argument: FirExpression, source: KtSourceElement?) {
             val coneType = argument.resolvedType
-            if (argument is FirSpreadArgumentExpression && !argument.isFakeSpread && coneType !is ConeFlexibleType && coneType.canBeNull(context.session)) {
+            if (argument is FirSpreadArgumentExpression && !argument.isFakeSpread && coneType !is ConeFlexibleType && coneType.canBeNull()) {
                 reporter.reportOn(source, FirErrors.SPREAD_OF_NULLABLE)
             }
         }

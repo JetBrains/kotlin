@@ -39,7 +39,7 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
             reporter.reportOn(declaration.source, FirErrors.VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD)
         }
 
-        if (backingField.isLateInit && backingField.returnTypeRef.coneType.canBeNull(context.session)) {
+        if (backingField.isLateInit && backingField.returnTypeRef.coneType.canBeNull()) {
             reporter.reportOn(backingField.source, FirErrors.LATEINIT_NULLABLE_BACKING_FIELD)
         }
 

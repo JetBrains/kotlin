@@ -32,7 +32,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType): Boolean {
     if (isNonReifiedTypeParameter && !isUpcast) {
         // hack to save previous behavior in case when `x is T`, where T is not nullable, see IsErasedNullableTasT.kt
         val nullableToDefinitelyNotNull =
-            !subtype.canBeNull(context.session) && supertype.withNullability(nullable = false, typeContext) == subtype
+            !subtype.canBeNull() && supertype.withNullability(nullable = false, typeContext) == subtype
         if (!nullableToDefinitelyNotNull) {
             return true
         }
