@@ -45,36 +45,36 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         version = version,
         expectedCinteropAPIs = mapOf(
             "firestoreForApp" to """
-        swiftPMImport.emptyxcode/FIRFirestoreMeta.firestoreForApp|objc:firestoreForApp:[1]
-        swiftPMImport.emptyxcode/FIRFirestoreMeta.firestoreForApp|objc:firestoreForApp:database:[1]
+        public open expect fun swiftPMImport/emptyxcode/FIRFirestoreMeta.firestoreForApp(app: swiftPMImport/emptyxcode/FIRApp): swiftPMImport/emptyxcode/FIRFirestore
+        public open expect fun swiftPMImport/emptyxcode/FIRFirestoreMeta.firestoreForApp(app: swiftPMImport/emptyxcode/FIRApp, database: kotlin/String): swiftPMImport/emptyxcode/FIRFirestore
     """.trimIndent(),
             "FIRAnalytics" to """
-        swiftPMImport.emptyxcode/FIRAnalytics.<init>|objc:init#Constructor[1]
-        swiftPMImport.emptyxcode/FIRAnalytics.Companion|null[1]
-        swiftPMImport.emptyxcode/FIRAnalytics.init|objc:init[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.<init>|<init>(){}[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.allocWithZone|objc:allocWithZone:[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.alloc|objc:alloc[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.appInstanceID|objc:appInstanceID[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.logEventWithName|objc:logEventWithName:parameters:[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.new|objc:new[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.resetAnalyticsData|objc:resetAnalyticsData[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.sessionIDWithCompletion|objc:sessionIDWithCompletion:[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.setAnalyticsCollectionEnabled|objc:setAnalyticsCollectionEnabled:[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.setDefaultEventParameters|objc:setDefaultEventParameters:[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.setSessionTimeoutInterval|objc:setSessionTimeoutInterval:[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.setUserID|objc:setUserID:[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta.setUserPropertyString|objc:setUserPropertyString:forName:[1]
-        swiftPMImport.emptyxcode/FIRAnalyticsMeta|null[1]
-        swiftPMImport.emptyxcode/FIRAnalytics|null[1]
-        swiftPMImport.emptyxcode/handleEventsForBackgroundURLSession|FIRAnalyticsMeta.objc:handleEventsForBackgroundURLSession:completionHandler:[1]
-        swiftPMImport.emptyxcode/handleOpenURL|FIRAnalyticsMeta.objc:handleOpenURL:[1]
-        swiftPMImport.emptyxcode/handleUserActivity|FIRAnalyticsMeta.objc:handleUserActivity:[1]
-        swiftPMImport.emptyxcode/initiateOnDeviceConversionMeasurementWithEmailAddress|FIRAnalyticsMeta.objc:initiateOnDeviceConversionMeasurementWithEmailAddress:[1]
-        swiftPMImport.emptyxcode/initiateOnDeviceConversionMeasurementWithHashedEmailAddress|FIRAnalyticsMeta.objc:initiateOnDeviceConversionMeasurementWithHashedEmailAddress:[1]
-        swiftPMImport.emptyxcode/initiateOnDeviceConversionMeasurementWithHashedPhoneNumber|FIRAnalyticsMeta.objc:initiateOnDeviceConversionMeasurementWithHashedPhoneNumber:[1]
-        swiftPMImport.emptyxcode/initiateOnDeviceConversionMeasurementWithPhoneNumber|FIRAnalyticsMeta.objc:initiateOnDeviceConversionMeasurementWithPhoneNumber:[1]
-        swiftPMImport.emptyxcode/setConsent|FIRAnalyticsMeta.objc:setConsent:[1]
+        public open expect class swiftPMImport/emptyxcode/FIRAnalytics : platform/darwin/NSObject
+        public /* secondary */ constructor swiftPMImport/emptyxcode/FIRAnalytics.<init>()
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalytics.init(): swiftPMImport/emptyxcode/FIRAnalytics?
+        public final expect companion object swiftPMImport/emptyxcode/FIRAnalytics.Companion : swiftPMImport/emptyxcode/FIRAnalyticsMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/FIRAnalytics>
+        public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/darwin/NSObjectMeta
+        protected /* secondary */ constructor swiftPMImport/emptyxcode/FIRAnalyticsMeta.<init>()
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.alloc(): swiftPMImport/emptyxcode/FIRAnalytics?
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/FIRAnalytics?
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.appInstanceID(): kotlin/String?
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.logEventWithName(name: kotlin/String, parameters: kotlin/collections/Map<kotlin/Any?, *>?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.new(): swiftPMImport/emptyxcode/FIRAnalytics?
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.resetAnalyticsData(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.sessionIDWithCompletion(completion: kotlin/Function2<kotlin/Long, platform/Foundation/NSError?, kotlin/Unit>): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.setAnalyticsCollectionEnabled(analyticsCollectionEnabled: kotlin/Boolean): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.setDefaultEventParameters(parameters: kotlin/collections/Map<kotlin/Any?, *>?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.setSessionTimeoutInterval(sessionTimeoutInterval: kotlin/Double): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.setUserID(userID: kotlin/String?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.setUserPropertyString(value: kotlin/String?, forName: kotlin/String): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.swiftPMImport/emptyxcode/handleEventsForBackgroundURLSession(identifier: kotlin/String, completionHandler: kotlin/Function0<kotlin/Unit>?): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.swiftPMImport/emptyxcode/handleOpenURL(url: platform/Foundation/NSURL): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.swiftPMImport/emptyxcode/handleUserActivity(userActivity: kotlin/Any): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.swiftPMImport/emptyxcode/initiateOnDeviceConversionMeasurementWithEmailAddress(emailAddress: kotlin/String): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.swiftPMImport/emptyxcode/initiateOnDeviceConversionMeasurementWithHashedEmailAddress(hashedEmailAddress: platform/Foundation/NSData): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.swiftPMImport/emptyxcode/initiateOnDeviceConversionMeasurementWithHashedPhoneNumber(hashedPhoneNumber: platform/Foundation/NSData): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.swiftPMImport/emptyxcode/initiateOnDeviceConversionMeasurementWithPhoneNumber(phoneNumber: kotlin/String): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/FIRAnalyticsMeta.swiftPMImport/emptyxcode/setConsent(consentSettings: kotlin/collections/Map<kotlin/Any?, *>): kotlin/Unit
     """.trimIndent(),
         ),
         ktSnippet = """
@@ -121,9 +121,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
     fun `direct dependency on GoogleMaps`(version: GradleVersion, isStatic: Boolean) = testSwiftPackageIntegration(
         version = version,
         expectedCinteropAPIs = mapOf(
-            "provideAPIKey" to """
-        swiftPMImport.emptyxcode/GMSServicesMeta.provideAPIKey|objc:provideAPIKey:[1]
-    """.trimIndent(),
+            "provideAPIKey" to "public open expect fun swiftPMImport/emptyxcode/GMSServicesMeta.provideAPIKey(APIKey: kotlin/String): kotlin/Boolean",
         ),
         swiftSnippet = """
             import GoogleMaps
@@ -161,9 +159,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
     fun `direct dependency on Sentry`(version: GradleVersion, isStatic: Boolean) = testSwiftPackageIntegration(
         version = version,
         expectedCinteropAPIs = mapOf(
-            "startWithConfigureOptions" to """
-        swiftPMImport.emptyxcode/SentrySDKMeta.startWithConfigureOptions|objc:startWithConfigureOptions:[1]
-    """.trimIndent(),
+            "startWithConfigureOptions" to "public open expect fun swiftPMImport/emptyxcode/SentrySDKMeta.startWithConfigureOptions(configureOptions: kotlin/Function1<swiftPMImport/emptyxcode/SentryOptions?, kotlin/Unit>): kotlin/Unit",
         ),
         ktSnippet = """
             @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
@@ -202,14 +198,14 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         version = version,
         expectedCinteropAPIs = mapOf(
             "purchaseProduct" to """
-        swiftPMImport.emptyxcode/RCPurchases.purchaseProduct|objc:purchaseProduct:withCompletion:[1]
-        swiftPMImport.emptyxcode/RCPurchases.purchaseProduct|objc:purchaseProduct:withPromotionalOffer:completion:[1]
-        swiftPMImport.emptyxcode/RCPurchasesTypeProtocol.purchaseProduct|objc:purchaseProduct:withCompletion:[1]
-        swiftPMImport.emptyxcode/RCPurchasesTypeProtocol.purchaseProduct|objc:purchaseProduct:withPromotionalOffer:completion:[1]
-        swiftPMImport.emptyxcode/purchaseProduct|RCPurchases.objc:purchaseProduct:withCompletion:[1]
-        swiftPMImport.emptyxcode/purchaseProduct|RCPurchases.objc:purchaseProduct:withCompletionBlock:[1]
-        swiftPMImport.emptyxcode/purchaseProduct|RCPurchases.objc:purchaseProduct:withDiscount:completionBlock:[1]
-        swiftPMImport.emptyxcode/purchaseProduct|RCPurchases.objc:purchaseProduct:withPromotionalOffer:completion:[1]
+        public open expect fun swiftPMImport/emptyxcode/RCPurchases.purchaseProduct(product: swiftPMImport/emptyxcode/RCStoreProduct, withCompletion: kotlin/Function4<swiftPMImport/emptyxcode/RCStoreTransaction?, swiftPMImport/emptyxcode/RCCustomerInfo?, platform/Foundation/NSError?, kotlin/Boolean, kotlin/Unit>): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/RCPurchases.purchaseProduct(product: swiftPMImport/emptyxcode/RCStoreProduct, withPromotionalOffer: swiftPMImport/emptyxcode/RCPromotionalOffer, completion: kotlin/Function4<swiftPMImport/emptyxcode/RCStoreTransaction?, swiftPMImport/emptyxcode/RCCustomerInfo?, platform/Foundation/NSError?, kotlin/Boolean, kotlin/Unit>): kotlin/Unit
+        public abstract expect fun swiftPMImport/emptyxcode/RCPurchasesTypeProtocol.purchaseProduct(product: swiftPMImport/emptyxcode/RCStoreProduct, withCompletion: kotlin/Function4<swiftPMImport/emptyxcode/RCStoreTransaction?, swiftPMImport/emptyxcode/RCCustomerInfo?, platform/Foundation/NSError?, kotlin/Boolean, kotlin/Unit>): kotlin/Unit
+        public abstract expect fun swiftPMImport/emptyxcode/RCPurchasesTypeProtocol.purchaseProduct(product: swiftPMImport/emptyxcode/RCStoreProduct, withPromotionalOffer: swiftPMImport/emptyxcode/RCPromotionalOffer, completion: kotlin/Function4<swiftPMImport/emptyxcode/RCStoreTransaction?, swiftPMImport/emptyxcode/RCCustomerInfo?, platform/Foundation/NSError?, kotlin/Boolean, kotlin/Unit>): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/RCPurchases.swiftPMImport/emptyxcode/purchaseProduct(product: objcnames/classes/SKProduct, withCompletionBlock: kotlin/Function4<swiftPMImport/emptyxcode/RCStoreTransaction?, swiftPMImport/emptyxcode/RCCustomerInfo?, platform/Foundation/NSError?, kotlin/Boolean, kotlin/Unit>): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/RCPurchases.swiftPMImport/emptyxcode/purchaseProduct(product: swiftPMImport/emptyxcode/RCStoreProduct, withCompletion: kotlin/Function4<swiftPMImport/emptyxcode/RCStoreTransaction?, swiftPMImport/emptyxcode/RCCustomerInfo?, platform/Foundation/NSError?, kotlin/Boolean, kotlin/Unit>): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/RCPurchases.swiftPMImport/emptyxcode/purchaseProduct(product: objcnames/classes/SKProduct, withDiscount: objcnames/classes/SKPaymentDiscount, completionBlock: kotlin/Function4<swiftPMImport/emptyxcode/RCStoreTransaction?, swiftPMImport/emptyxcode/RCCustomerInfo?, platform/Foundation/NSError?, kotlin/Boolean, kotlin/Unit>): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/RCPurchases.swiftPMImport/emptyxcode/purchaseProduct(product: swiftPMImport/emptyxcode/RCStoreProduct, withPromotionalOffer: swiftPMImport/emptyxcode/RCPromotionalOffer, completion: kotlin/Function4<swiftPMImport/emptyxcode/RCStoreTransaction?, swiftPMImport/emptyxcode/RCCustomerInfo?, platform/Foundation/NSError?, kotlin/Boolean, kotlin/Unit>): kotlin/Unit
     """.trimIndent(),
         ),
         ktSnippet = """
@@ -251,90 +247,104 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
     fun `direct dependency on AWS`(version: GradleVersion, isStatic: Boolean) = testSwiftPackageIntegration(
         version = version,
         expectedCinteropAPIs = mapOf(
-            "defaultEC2" to """
-        swiftPMImport.emptyxcode/AWSEC2Meta.defaultEC2|objc:defaultEC2[1]
-    """.trimIndent(),
+            "defaultEC2" to "public open expect fun swiftPMImport/emptyxcode/AWSEC2Meta.defaultEC2(): swiftPMImport/emptyxcode/AWSEC2",
             "AWSEC2DescribeInstancesRequest" to """
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.<init>|objc:init#Constructor[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.<init>|objc:initWithCoder:#Constructor[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.<init>|objc:initWithDictionary:error:#Constructor[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.Companion|null[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.dryRun.<get-dryRun>|<get-dryRun>(){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.dryRun.<set-dryRun>|<set-dryRun>(<set-?>:platform.Foundation.NSNumber?){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.dryRun|objc:dryRun[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.dryRun|{}dryRun[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.filters.<get-filters>|<get-filters>(){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.filters.<set-filters>|<set-filters>(<set-?>:kotlin.collections.List<*>?){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.filters|objc:filters[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.filters|{}filters[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.initWithCoder|objc:initWithCoder:[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.initWithDictionary|objc:initWithDictionary:error:[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.init|objc:init[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.instanceIds.<get-instanceIds>|<get-instanceIds>(){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.instanceIds.<set-instanceIds>|<set-instanceIds>(<set-?>:kotlin.collections.List<*>?){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.instanceIds|objc:instanceIds[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.instanceIds|{}instanceIds[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.maxResults.<get-maxResults>|<get-maxResults>(){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.maxResults.<set-maxResults>|<set-maxResults>(<set-?>:platform.Foundation.NSNumber?){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.maxResults|objc:maxResults[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.maxResults|{}maxResults[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.nextToken.<get-nextToken>|<get-nextToken>(){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.nextToken.<set-nextToken>|<set-nextToken>(<set-?>:kotlin.String?){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.nextToken|objc:nextToken[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.nextToken|{}nextToken[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.setDryRun|objc:setDryRun:[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.setFilters|objc:setFilters:[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.setInstanceIds|objc:setInstanceIds:[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.setMaxResults|objc:setMaxResults:[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest.setNextToken|objc:setNextToken:[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequestMeta.<init>|<init>(){}[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequestMeta.allocWithZone|objc:allocWithZone:[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequestMeta.alloc|objc:alloc[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequestMeta.modelWithDictionary|objc:modelWithDictionary:error:[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequestMeta.new|objc:new[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequestMeta|null[1]
-        swiftPMImport.emptyxcode/AWSEC2DescribeInstancesRequest|null[1]
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2.describeInstances(request: swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest): swiftPMImport/emptyxcode/AWSTask
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2.describeInstances(request: swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest, completionHandler: kotlin/Function2<swiftPMImport/emptyxcode/AWSEC2DescribeInstancesResult?, platform/Foundation/NSError?, kotlin/Unit>?): kotlin/Unit
+        public open expect class swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest : swiftPMImport/emptyxcode/AWSRequest
+        public /* secondary */ constructor swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.<init>()
+        public /* secondary */ constructor swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.<init>(coder: platform/Foundation/NSCoder)
+        public /* secondary */ constructor swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.<init>(dictionary: kotlin/collections/Map<kotlin/Any?, *>?, error: kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCObjectVar<platform/Foundation/NSError?>>?)
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.dryRun(): platform/Foundation/NSNumber?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.filters(): kotlin/collections/List<*>?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.init(): swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.initWithCoder(coder: platform/Foundation/NSCoder): swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.initWithDictionary(dictionaryValue: kotlin/collections/Map<kotlin/Any?, *>?, error: kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCObjectVar<platform/Foundation/NSError?>>?): swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.instanceIds(): kotlin/collections/List<*>?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.maxResults(): platform/Foundation/NSNumber?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.nextToken(): kotlin/String?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.setDryRun(dryRun: platform/Foundation/NSNumber?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.setFilters(filters: kotlin/collections/List<*>?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.setInstanceIds(instanceIds: kotlin/collections/List<*>?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.setMaxResults(maxResults: platform/Foundation/NSNumber?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.setNextToken(nextToken: kotlin/String?): kotlin/Unit
+        public final expect var swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.dryRun: platform/Foundation/NSNumber?
+        public final /* getter */ swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.dryRun.<get-dryRun>
+        public final /* setter */ swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.dryRun.<set-dryRun>
+        public final expect var swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.filters: kotlin/collections/List<*>?
+        public final /* getter */ swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.filters.<get-filters>
+        public final /* setter */ swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.filters.<set-filters>
+        public final expect var swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.instanceIds: kotlin/collections/List<*>?
+        public final /* getter */ swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.instanceIds.<get-instanceIds>
+        public final /* setter */ swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.instanceIds.<set-instanceIds>
+        public final expect var swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.maxResults: platform/Foundation/NSNumber?
+        public final /* getter */ swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.maxResults.<get-maxResults>
+        public final /* setter */ swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.maxResults.<set-maxResults>
+        public final expect var swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.nextToken: kotlin/String?
+        public final /* getter */ swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.nextToken.<get-nextToken>
+        public final /* setter */ swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.nextToken.<set-nextToken>
+        public final expect companion object swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest.Companion : swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequestMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest>
+        public open expect class swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequestMeta : swiftPMImport/emptyxcode/AWSRequestMeta
+        protected /* secondary */ constructor swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequestMeta.<init>()
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequestMeta.alloc(): swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequestMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequestMeta.modelWithDictionary(dictionaryValue: kotlin/collections/Map<kotlin/Any?, *>?, error: kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCObjectVar<platform/Foundation/NSError?>>?): swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest?
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequestMeta.new(): swiftPMImport/emptyxcode/AWSEC2DescribeInstancesRequest?
     """.trimIndent(),
             "AWSEC2ImageAttributeName" to """
-        swiftPMImport.emptyxcode/AWSEC2DescribeImageAttributeRequest.attribute.<set-attribute>|<set-attribute>(<set-?>:swiftPMImport.emptyxcode.AWSEC2ImageAttributeName){}[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameBlockDeviceMapping|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameBootMode|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameDeregistrationProtection|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameDescription|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameImdsSupport|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameKernel|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameLastLaunchedTime|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameLaunchPermission|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameProductCodes|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameRAMDisk|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameSriovNetSupport|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameTpmSupport|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameUefiData|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameUnknown|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.Companion.byValue|byValue(kotlin.Long){}[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.Companion|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.Var.<init>|<init>(kotlin.native.internal.NativePtr){}[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.Var.Companion|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.Var.value.<get-value>|<get-value>(){}[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.Var.value.<set-value>|<set-value>(swiftPMImport.emptyxcode.AWSEC2ImageAttributeName){}[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.Var.value|{}value[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.Var|null[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.value.<get-value>|<get-value>(){}[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName.value|{}value[1]
-        swiftPMImport.emptyxcode/AWSEC2ImageAttributeName|null[1]
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeImageAttributeRequest.attribute(): swiftPMImport/emptyxcode/AWSEC2ImageAttributeName
+        public open expect fun swiftPMImport/emptyxcode/AWSEC2DescribeImageAttributeRequest.setAttribute(attribute: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName): kotlin/Unit
+        public final expect var swiftPMImport/emptyxcode/AWSEC2DescribeImageAttributeRequest.attribute: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName
+        public final expect enum class swiftPMImport/emptyxcode/AWSEC2ImageAttributeName : kotlin/Enum<swiftPMImport/emptyxcode/AWSEC2ImageAttributeName>, kotlinx/cinterop/CEnum
+        public open expect val swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.value: kotlin/Long
+        public open /* getter */ swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.value.<get-value>
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameSriovNetSupport
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameLastLaunchedTime
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameUnknown
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameBootMode
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameLaunchPermission
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameBlockDeviceMapping
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameDeregistrationProtection
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameImdsSupport
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameUefiData
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameProductCodes
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameTpmSupport
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameRAMDisk
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameKernel
+        enum entry swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.AWSEC2ImageAttributeNameDescription
+        public final expect companion object swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Companion : kotlin/Any
+        public final expect fun swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Companion.byValue(value: kotlin/Long): swiftPMImport/emptyxcode/AWSEC2ImageAttributeName
+        public final expect class swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Var : kotlinx/cinterop/CEnumVar
+        public constructor swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Var.<init>(rawPtr: kotlin/native/internal/NativePtr)
+        public final expect var swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Var.value: swiftPMImport/emptyxcode/AWSEC2ImageAttributeName
+        public final /* getter */ swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Var.value.<get-value>
+        public final /* setter */ swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Var.value.<set-value>
+        public final expect companion object swiftPMImport/emptyxcode/AWSEC2ImageAttributeName.Var.Companion : kotlinx/cinterop/CPrimitiveVar.Type
     """.trimIndent(),
             "AWSS3TransferUtilityDownloadTask" to """
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTask.<init>|objc:init#Constructor[1]
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTask.Companion|null[1]
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTask.init|objc:init[1]
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTask.setCompletionHandler|objc:setCompletionHandler:[1]
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTask.setProgressBlock|objc:setProgressBlock:[1]
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTaskMeta.<init>|<init>(){}[1]
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTaskMeta.allocWithZone|objc:allocWithZone:[1]
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTaskMeta.alloc|objc:alloc[1]
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTaskMeta.new|objc:new[1]
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTaskMeta|null[1]
-        swiftPMImport.emptyxcode/AWSS3TransferUtilityDownloadTask|null[1]
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtility.downloadDataForKey(key: kotlin/String, expression: swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadExpression?, completionHandler: kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?): swiftPMImport/emptyxcode/AWSTask
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtility.downloadDataFromBucket(bucket: kotlin/String, key: kotlin/String, expression: swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadExpression?, completionHandler: kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?): swiftPMImport/emptyxcode/AWSTask
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtility.downloadToURL(fileURL: platform/Foundation/NSURL, key: kotlin/String, expression: swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadExpression?, completionHandler: kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?): swiftPMImport/emptyxcode/AWSTask
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtility.downloadToURL(fileURL: platform/Foundation/NSURL, bucket: kotlin/String, key: kotlin/String, expression: swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadExpression?, completionHandler: kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?): swiftPMImport/emptyxcode/AWSTask
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtility.enumerateToAssignBlocksForUploadTask(uploadBlocksAssigner: kotlin/Function3<swiftPMImport/emptyxcode/AWSS3TransferUtilityUploadTask?, kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityTask?, platform/Foundation/NSProgress?, kotlin/Unit>?>>?, kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityUploadTask?, platform/Foundation/NSError?, kotlin/Unit>?>>?, kotlin/Unit>?, downloadTask: kotlin/Function3<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityTask?, platform/Foundation/NSProgress?, kotlin/Unit>?>>?, kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?>>?, kotlin/Unit>?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtility.enumerateToAssignBlocksForUploadTask(uploadBlocksAssigner: kotlin/Function3<swiftPMImport/emptyxcode/AWSS3TransferUtilityUploadTask?, kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityTask?, platform/Foundation/NSProgress?, kotlin/Unit>?>>?, kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityUploadTask?, platform/Foundation/NSError?, kotlin/Unit>?>>?, kotlin/Unit>, multiPartUploadBlocksAssigner: kotlin/Function3<swiftPMImport/emptyxcode/AWSS3TransferUtilityMultiPartUploadTask?, kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityMultiPartUploadTask?, platform/Foundation/NSProgress?, kotlin/Unit>?>>?, kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityMultiPartUploadTask?, platform/Foundation/NSError?, kotlin/Unit>?>>?, kotlin/Unit>, downloadBlocksAssigner: kotlin/Function3<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityTask?, platform/Foundation/NSProgress?, kotlin/Unit>?>>?, kotlinx/cinterop/CPointer<kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?>>?, kotlin/Unit>): kotlin/Unit
+        public /* secondary */ constructor swiftPMImport/emptyxcode/AWSS3TransferUtilityBlocks.<init>(uploadProgress: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityTask?, platform/Foundation/NSProgress?, kotlin/Unit>?, multiPartUploadProgress: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityMultiPartUploadTask?, platform/Foundation/NSProgress?, kotlin/Unit>?, downloadProgress: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityTask?, platform/Foundation/NSProgress?, kotlin/Unit>?, uploadCompleted: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityUploadTask?, platform/Foundation/NSError?, kotlin/Unit>?, multiPartUploadCompleted: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityMultiPartUploadTask?, platform/Foundation/NSError?, kotlin/Unit>?, downloadCompleted: kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?)
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtilityBlocks.downloadCompletedBlock(): kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtilityBlocks.initWithUploadProgress(uploadProgressBlock: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityTask?, platform/Foundation/NSProgress?, kotlin/Unit>?, multiPartUploadProgress: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityMultiPartUploadTask?, platform/Foundation/NSProgress?, kotlin/Unit>?, downloadProgress: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityTask?, platform/Foundation/NSProgress?, kotlin/Unit>?, uploadCompleted: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityUploadTask?, platform/Foundation/NSError?, kotlin/Unit>?, multiPartUploadCompleted: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityMultiPartUploadTask?, platform/Foundation/NSError?, kotlin/Unit>?, downloadCompleted: kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?): swiftPMImport/emptyxcode/AWSS3TransferUtilityBlocks
+        public final expect val swiftPMImport/emptyxcode/AWSS3TransferUtilityBlocks.downloadCompletedBlock: kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?
+        public open expect class swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask : swiftPMImport/emptyxcode/AWSS3TransferUtilityTask
+        public /* secondary */ constructor swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask.<init>()
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask.init(): swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask.setCompletionHandler(completionHandler: kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask.setProgressBlock(progressBlock: kotlin/Function2<swiftPMImport/emptyxcode/AWSS3TransferUtilityTask?, platform/Foundation/NSProgress?, kotlin/Unit>?): kotlin/Unit
+        public final expect companion object swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask.Companion : swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTaskMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask>
+        public open expect class swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTaskMeta : swiftPMImport/emptyxcode/AWSS3TransferUtilityTaskMeta
+        protected /* secondary */ constructor swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTaskMeta.<init>()
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTaskMeta.alloc(): swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTaskMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?
+        public open expect fun swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTaskMeta.new(): swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?
+        public typealias swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadCompletionHandlerBlock = kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?
+        public typealias swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadCompletionHandlerBlockVar = kotlinx/cinterop/ObjCNotImplementedVar<kotlin/Function4<swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTask?, platform/Foundation/NSURL?, platform/Foundation/NSData?, platform/Foundation/NSError?, kotlin/Unit>?>
     """.trimIndent(),
         ),
         ktSnippet = """
@@ -381,26 +391,26 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         version = version,
         expectedCinteropAPIs = mapOf(
             "MapView" to """
-        swiftPMImport.emptyxcode/MapView.<init>|objc:init#Constructor[1]
-        swiftPMImport.emptyxcode/MapView.<init>|objc:initWithCoder:#Constructor[1]
-        swiftPMImport.emptyxcode/MapView.<init>|objc:initWithFrame:#Constructor[1]
-        swiftPMImport.emptyxcode/MapView.Companion|null[1]
-        swiftPMImport.emptyxcode/MapView.awakeFromNib|objc:awakeFromNib[1]
-        swiftPMImport.emptyxcode/MapView.initWithCoder|objc:initWithCoder:[1]
-        swiftPMImport.emptyxcode/MapView.initWithFrame|objc:initWithFrame:[1]
-        swiftPMImport.emptyxcode/MapView.init|objc:init[1]
-        swiftPMImport.emptyxcode/MapViewMeta.<init>|<init>(){}[1]
-        swiftPMImport.emptyxcode/MapViewMeta.allocWithZone|objc:allocWithZone:[1]
-        swiftPMImport.emptyxcode/MapViewMeta.alloc|objc:alloc[1]
-        swiftPMImport.emptyxcode/MapViewMeta.appearanceForTraitCollection|objc:appearanceForTraitCollection:[1]
-        swiftPMImport.emptyxcode/MapViewMeta.appearanceForTraitCollection|objc:appearanceForTraitCollection:whenContainedIn:[1]
-        swiftPMImport.emptyxcode/MapViewMeta.appearanceForTraitCollection|objc:appearanceForTraitCollection:whenContainedInInstancesOfClasses:[1]
-        swiftPMImport.emptyxcode/MapViewMeta.appearanceWhenContainedInInstancesOfClasses|objc:appearanceWhenContainedInInstancesOfClasses:[1]
-        swiftPMImport.emptyxcode/MapViewMeta.appearanceWhenContainedIn|objc:appearanceWhenContainedIn:[1]
-        swiftPMImport.emptyxcode/MapViewMeta.appearance|objc:appearance[1]
-        swiftPMImport.emptyxcode/MapViewMeta.new|objc:new[1]
-        swiftPMImport.emptyxcode/MapViewMeta|null[1]
-        swiftPMImport.emptyxcode/MapView|null[1]
+        public open expect class swiftPMImport/emptyxcode/MapView : platform/UIKit/UIView
+        public /* secondary */ constructor swiftPMImport/emptyxcode/MapView.<init>()
+        public /* secondary */ constructor swiftPMImport/emptyxcode/MapView.<init>(frame: kotlinx/cinterop/CValue<platform/CoreGraphics/CGRect>)
+        public /* secondary */ constructor swiftPMImport/emptyxcode/MapView.<init>(coder: platform/Foundation/NSCoder)
+        public open expect fun swiftPMImport/emptyxcode/MapView.awakeFromNib(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/MapView.init(): swiftPMImport/emptyxcode/MapView
+        public open expect fun swiftPMImport/emptyxcode/MapView.initWithCoder(coder: platform/Foundation/NSCoder): swiftPMImport/emptyxcode/MapView?
+        public open expect fun swiftPMImport/emptyxcode/MapView.initWithFrame(frame: kotlinx/cinterop/CValue<platform/CoreGraphics/CGRect>): swiftPMImport/emptyxcode/MapView
+        public final expect companion object swiftPMImport/emptyxcode/MapView.Companion : swiftPMImport/emptyxcode/MapViewMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/MapView>
+        public open expect class swiftPMImport/emptyxcode/MapViewMeta : platform/UIKit/UIViewMeta
+        protected /* secondary */ constructor swiftPMImport/emptyxcode/MapViewMeta.<init>()
+        public open expect fun swiftPMImport/emptyxcode/MapViewMeta.alloc(): swiftPMImport/emptyxcode/MapView?
+        public open expect fun swiftPMImport/emptyxcode/MapViewMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/MapView?
+        public open expect fun swiftPMImport/emptyxcode/MapViewMeta.appearance(): swiftPMImport/emptyxcode/MapView
+        public open expect fun swiftPMImport/emptyxcode/MapViewMeta.appearanceForTraitCollection(trait: platform/UIKit/UITraitCollection): swiftPMImport/emptyxcode/MapView
+        public open expect fun swiftPMImport/emptyxcode/MapViewMeta.appearanceForTraitCollection(trait: platform/UIKit/UITraitCollection, whenContainedInInstancesOfClasses: kotlin/collections/List<*>): swiftPMImport/emptyxcode/MapView
+        public open expect fun swiftPMImport/emptyxcode/MapViewMeta.appearanceForTraitCollection(trait: platform/UIKit/UITraitCollection, whenContainedIn: platform/UIKit/UIAppearanceContainerProtocol?, vararg args: kotlin/Any?): swiftPMImport/emptyxcode/MapView
+        public open expect fun swiftPMImport/emptyxcode/MapViewMeta.appearanceWhenContainedIn(ContainerClass: platform/UIKit/UIAppearanceContainerProtocol?, vararg args: kotlin/Any?): swiftPMImport/emptyxcode/MapView
+        public open expect fun swiftPMImport/emptyxcode/MapViewMeta.appearanceWhenContainedInInstancesOfClasses(containerTypes: kotlin/collections/List<*>): swiftPMImport/emptyxcode/MapView
+        public open expect fun swiftPMImport/emptyxcode/MapViewMeta.new(): swiftPMImport/emptyxcode/MapView?
     """.trimIndent(),
         ),
         ktSnippet = """
@@ -440,13 +450,13 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         version = version,
         expectedCinteropAPIs = mapOf(
             "socks5_tunnel" to """
-        swiftPMImport.emptyxcode/hev_socks5_tunnel_main_from_file|hev_socks5_tunnel_main_from_file(kotlin.String?;kotlin.Int){}[1]
-        swiftPMImport.emptyxcode/hev_socks5_tunnel_main_from_file|hev_socks5_tunnel_main_from_file(kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ByteVarOf<kotlin.Byte>>?;kotlin.Int){}[1]
-        swiftPMImport.emptyxcode/hev_socks5_tunnel_main_from_str|hev_socks5_tunnel_main_from_str(kotlinx.cinterop.CValuesRef<kotlinx.cinterop.UByteVarOf<kotlin.UByte>>?;kotlin.UInt;kotlin.Int){}[1]
-        swiftPMImport.emptyxcode/hev_socks5_tunnel_main|hev_socks5_tunnel_main(kotlin.String?;kotlin.Int){}[1]
-        swiftPMImport.emptyxcode/hev_socks5_tunnel_main|hev_socks5_tunnel_main(kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ByteVarOf<kotlin.Byte>>?;kotlin.Int){}[1]
-        swiftPMImport.emptyxcode/hev_socks5_tunnel_quit|hev_socks5_tunnel_quit(){}[1]
-        swiftPMImport.emptyxcode/hev_socks5_tunnel_stats|hev_socks5_tunnel_stats(kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ULongVarOf<kotlin.ULong>>?;kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ULongVarOf<kotlin.ULong>>?;kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ULongVarOf<kotlin.ULong>>?;kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ULongVarOf<kotlin.ULong>>?){}[1]
+        public final expect fun swiftPMImport/emptyxcode/hev_socks5_tunnel_main(config_path: kotlin/String?, tun_fd: kotlin/Int): kotlin/Int
+        public final expect fun swiftPMImport/emptyxcode/hev_socks5_tunnel_main(config_path: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/ByteVarOf<kotlin/Byte>>?, tun_fd: kotlin/Int): kotlin/Int
+        public final expect fun swiftPMImport/emptyxcode/hev_socks5_tunnel_main_from_file(config_path: kotlin/String?, tun_fd: kotlin/Int): kotlin/Int
+        public final expect fun swiftPMImport/emptyxcode/hev_socks5_tunnel_main_from_file(config_path: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/ByteVarOf<kotlin/Byte>>?, tun_fd: kotlin/Int): kotlin/Int
+        public final expect fun swiftPMImport/emptyxcode/hev_socks5_tunnel_main_from_str(config_str: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UByteVarOf<kotlin/UByte>>?, config_len: kotlin/UInt, tun_fd: kotlin/Int): kotlin/Int
+        public final expect fun swiftPMImport/emptyxcode/hev_socks5_tunnel_quit(): kotlin/Unit
+        public final expect fun swiftPMImport/emptyxcode/hev_socks5_tunnel_stats(tx_packets: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/ULongVarOf<kotlin/ULong>>?, tx_bytes: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/ULongVarOf<kotlin/ULong>>?, rx_packets: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/ULongVarOf<kotlin/ULong>>?, rx_bytes: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/ULongVarOf<kotlin/ULong>>?): kotlin/Unit
     """.trimIndent(),
         ),
         ktSnippet = """
@@ -493,59 +503,59 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         version = version,
         expectedCinteropAPIs = mapOf(
             "Datadog" to """
-        swiftPMImport.emptyxcode/DDDatadog.<init>|objc:init#Constructor[1]
-        swiftPMImport.emptyxcode/DDDatadog.Companion|null[1]
-        swiftPMImport.emptyxcode/DDDatadog.init|objc:init[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.<init>|<init>(){}[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.addAccountExtraInfo|objc:addAccountExtraInfo:[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.addUserExtraInfo|objc:addUserExtraInfo:[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.allocWithZone|objc:allocWithZone:[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.alloc|objc:alloc[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.clearAccountInfo|objc:clearAccountInfo[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.clearAllData|objc:clearAllData[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.clearUserInfo|objc:clearUserInfo[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.initializeWithConfiguration|objc:initializeWithConfiguration:trackingConsent:[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.isInitialized|objc:isInitialized[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.new|objc:new[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.setAccountInfoWithAccountId|objc:setAccountInfoWithAccountId:name:extraInfo:[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.setTrackingConsentWithConsent|objc:setTrackingConsentWithConsent:[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.setUserInfoWithUserId|objc:setUserInfoWithUserId:name:email:extraInfo:[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.setVerbosityLevel|objc:setVerbosityLevel:[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.stopInstance|objc:stopInstance[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta.verbosityLevel|objc:verbosityLevel[1]
-        swiftPMImport.emptyxcode/DDDatadogMeta|null[1]
-        swiftPMImport.emptyxcode/DDDatadog|null[1]
+        public open expect class swiftPMImport/emptyxcode/DDDatadog : platform/darwin/NSObject
+        public /* secondary */ constructor swiftPMImport/emptyxcode/DDDatadog.<init>()
+        public open expect fun swiftPMImport/emptyxcode/DDDatadog.init(): swiftPMImport/emptyxcode/DDDatadog
+        public final expect companion object swiftPMImport/emptyxcode/DDDatadog.Companion : swiftPMImport/emptyxcode/DDDatadogMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/DDDatadog>
+        public open expect class swiftPMImport/emptyxcode/DDDatadogMeta : platform/darwin/NSObjectMeta
+        protected /* secondary */ constructor swiftPMImport/emptyxcode/DDDatadogMeta.<init>()
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.addAccountExtraInfo(extraInfo: kotlin/collections/Map<kotlin/Any?, *>): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.addUserExtraInfo(extraInfo: kotlin/collections/Map<kotlin/Any?, *>): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.alloc(): swiftPMImport/emptyxcode/DDDatadog?
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/DDDatadog?
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.clearAccountInfo(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.clearAllData(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.clearUserInfo(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.initializeWithConfiguration(configuration: swiftPMImport/emptyxcode/DDConfiguration, trackingConsent: swiftPMImport/emptyxcode/DDTrackingConsent): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.isInitialized(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.new(): swiftPMImport/emptyxcode/DDDatadog?
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.setAccountInfoWithAccountId(accountId: kotlin/String, name: kotlin/String?, extraInfo: kotlin/collections/Map<kotlin/Any?, *>): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.setTrackingConsentWithConsent(consent: swiftPMImport/emptyxcode/DDTrackingConsent): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.setUserInfoWithUserId(userId: kotlin/String, name: kotlin/String?, email: kotlin/String?, extraInfo: kotlin/collections/Map<kotlin/Any?, *>): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.setVerbosityLevel(verbosityLevel: kotlin/Long): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.stopInstance(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDDatadogMeta.verbosityLevel(): kotlin/Long
     """.trimIndent(),
             "DDLogs" to """
-        swiftPMImport.emptyxcode/DDLogs.<init>|objc:init#Constructor[1]
-        swiftPMImport.emptyxcode/DDLogs.Companion|null[1]
-        swiftPMImport.emptyxcode/DDLogs.init|objc:init[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.<init>|objc:init#Constructor[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.<init>|objc:initWithCustomEndpoint:#Constructor[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.Companion|null[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.customEndpoint.<get-customEndpoint>|<get-customEndpoint>(){}[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.customEndpoint.<set-customEndpoint>|<set-customEndpoint>(platform.Foundation.NSURL?){}[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.customEndpoint|objc:customEndpoint[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.customEndpoint|{}customEndpoint[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.initWithCustomEndpoint|objc:initWithCustomEndpoint:[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.init|objc:init[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.setCustomEndpoint|objc:setCustomEndpoint:[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration.setEventMapper|objc:setEventMapper:[1]
-        swiftPMImport.emptyxcode/DDLogsConfigurationMeta.<init>|<init>(){}[1]
-        swiftPMImport.emptyxcode/DDLogsConfigurationMeta.allocWithZone|objc:allocWithZone:[1]
-        swiftPMImport.emptyxcode/DDLogsConfigurationMeta.alloc|objc:alloc[1]
-        swiftPMImport.emptyxcode/DDLogsConfigurationMeta.new|objc:new[1]
-        swiftPMImport.emptyxcode/DDLogsConfigurationMeta|null[1]
-        swiftPMImport.emptyxcode/DDLogsConfiguration|null[1]
-        swiftPMImport.emptyxcode/DDLogsMeta.<init>|<init>(){}[1]
-        swiftPMImport.emptyxcode/DDLogsMeta.addAttributeForKey|objc:addAttributeForKey:value:[1]
-        swiftPMImport.emptyxcode/DDLogsMeta.allocWithZone|objc:allocWithZone:[1]
-        swiftPMImport.emptyxcode/DDLogsMeta.alloc|objc:alloc[1]
-        swiftPMImport.emptyxcode/DDLogsMeta.enableWith|objc:enableWith:[1]
-        swiftPMImport.emptyxcode/DDLogsMeta.new|objc:new[1]
-        swiftPMImport.emptyxcode/DDLogsMeta.removeAttributeForKey|objc:removeAttributeForKey:[1]
-        swiftPMImport.emptyxcode/DDLogsMeta|null[1]
-        swiftPMImport.emptyxcode/DDLogs|null[1]
+        public open expect class swiftPMImport/emptyxcode/DDLogs : platform/darwin/NSObject
+        public /* secondary */ constructor swiftPMImport/emptyxcode/DDLogs.<init>()
+        public open expect fun swiftPMImport/emptyxcode/DDLogs.init(): swiftPMImport/emptyxcode/DDLogs
+        public final expect companion object swiftPMImport/emptyxcode/DDLogs.Companion : swiftPMImport/emptyxcode/DDLogsMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/DDLogs>
+        public open expect class swiftPMImport/emptyxcode/DDLogsConfiguration : platform/darwin/NSObject
+        public /* secondary */ constructor swiftPMImport/emptyxcode/DDLogsConfiguration.<init>()
+        public /* secondary */ constructor swiftPMImport/emptyxcode/DDLogsConfiguration.<init>(customEndpoint: platform/Foundation/NSURL?)
+        public open expect fun swiftPMImport/emptyxcode/DDLogsConfiguration.customEndpoint(): platform/Foundation/NSURL?
+        public open expect fun swiftPMImport/emptyxcode/DDLogsConfiguration.init(): swiftPMImport/emptyxcode/DDLogsConfiguration?
+        public open expect fun swiftPMImport/emptyxcode/DDLogsConfiguration.initWithCustomEndpoint(customEndpoint: platform/Foundation/NSURL?): swiftPMImport/emptyxcode/DDLogsConfiguration
+        public open expect fun swiftPMImport/emptyxcode/DDLogsConfiguration.setCustomEndpoint(customEndpoint: platform/Foundation/NSURL?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDLogsConfiguration.setEventMapper(mapper: kotlin/Function1<swiftPMImport/emptyxcode/DDLogEvent?, swiftPMImport/emptyxcode/DDLogEvent?>): kotlin/Unit
+        public final expect var swiftPMImport/emptyxcode/DDLogsConfiguration.customEndpoint: platform/Foundation/NSURL?
+        public final /* getter */ swiftPMImport/emptyxcode/DDLogsConfiguration.customEndpoint.<get-customEndpoint>
+        public final /* setter */ swiftPMImport/emptyxcode/DDLogsConfiguration.customEndpoint.<set-customEndpoint>
+        public final expect companion object swiftPMImport/emptyxcode/DDLogsConfiguration.Companion : swiftPMImport/emptyxcode/DDLogsConfigurationMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/DDLogsConfiguration>
+        public open expect class swiftPMImport/emptyxcode/DDLogsConfigurationMeta : platform/darwin/NSObjectMeta
+        protected /* secondary */ constructor swiftPMImport/emptyxcode/DDLogsConfigurationMeta.<init>()
+        public open expect fun swiftPMImport/emptyxcode/DDLogsConfigurationMeta.alloc(): swiftPMImport/emptyxcode/DDLogsConfiguration?
+        public open expect fun swiftPMImport/emptyxcode/DDLogsConfigurationMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/DDLogsConfiguration?
+        public open expect fun swiftPMImport/emptyxcode/DDLogsConfigurationMeta.new(): swiftPMImport/emptyxcode/DDLogsConfiguration?
+        public open expect class swiftPMImport/emptyxcode/DDLogsMeta : platform/darwin/NSObjectMeta
+        protected /* secondary */ constructor swiftPMImport/emptyxcode/DDLogsMeta.<init>()
+        public open expect fun swiftPMImport/emptyxcode/DDLogsMeta.addAttributeForKey(key: kotlin/String, value: kotlin/Any): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDLogsMeta.alloc(): swiftPMImport/emptyxcode/DDLogs?
+        public open expect fun swiftPMImport/emptyxcode/DDLogsMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/DDLogs?
+        public open expect fun swiftPMImport/emptyxcode/DDLogsMeta.enableWith(configuration: swiftPMImport/emptyxcode/DDLogsConfiguration): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/DDLogsMeta.new(): swiftPMImport/emptyxcode/DDLogs?
+        public open expect fun swiftPMImport/emptyxcode/DDLogsMeta.removeAttributeForKey(key: kotlin/String): kotlin/Unit
     """.trimIndent(),
         ),
         ktSnippet = """
@@ -586,127 +596,130 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         version = version,
         expectedCinteropAPIs = mapOf(
             "WKWebView" to """
-        swiftPMImport.emptyxcode/AdjustBridge.loadWKWebViewBridge|objc:loadWKWebViewBridge:[1]
-        swiftPMImport.emptyxcode/AdjustBridge.wkWebView.<set-wkWebView>|<set-wkWebView>(platform.WebKit.WKWebView){}[1]
+        public open expect fun swiftPMImport/emptyxcode/AdjustBridge.loadWKWebViewBridge(wkWebView: platform/WebKit/WKWebView): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/AdjustBridge.setWkWebView(wkWebView: platform/WebKit/WKWebView): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/AdjustBridge.wkWebView(): platform/WebKit/WKWebView
+        public final expect var swiftPMImport/emptyxcode/AdjustBridge.wkWebView: platform/WebKit/WKWebView
     """.trimIndent(),
             "ADJConfig" to """
-        swiftPMImport.emptyxcode/ADJConfig.<init>|objc:init#Constructor[1]
-        swiftPMImport.emptyxcode/ADJConfig.<init>|objc:initWithAppToken:environment:#Constructor[1]
-        swiftPMImport.emptyxcode/ADJConfig.<init>|objc:initWithAppToken:environment:suppressLogLevel:#Constructor[1]
-        swiftPMImport.emptyxcode/ADJConfig.Companion|null[1]
-        swiftPMImport.emptyxcode/ADJConfig.appToken.<get-appToken>|<get-appToken>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.appToken|objc:appToken[1]
-        swiftPMImport.emptyxcode/ADJConfig.appToken|{}appToken[1]
-        swiftPMImport.emptyxcode/ADJConfig.attConsentWaitingInterval.<get-attConsentWaitingInterval>|<get-attConsentWaitingInterval>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.attConsentWaitingInterval.<set-attConsentWaitingInterval>|<set-attConsentWaitingInterval>(kotlin.ULong){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.attConsentWaitingInterval|objc:attConsentWaitingInterval[1]
-        swiftPMImport.emptyxcode/ADJConfig.attConsentWaitingInterval|{}attConsentWaitingInterval[1]
-        swiftPMImport.emptyxcode/ADJConfig.copyWithZone|objc:copyWithZone:[1]
-        swiftPMImport.emptyxcode/ADJConfig.defaultTracker.<get-defaultTracker>|<get-defaultTracker>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.defaultTracker.<set-defaultTracker>|<set-defaultTracker>(kotlin.String?){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.defaultTracker|objc:defaultTracker[1]
-        swiftPMImport.emptyxcode/ADJConfig.defaultTracker|{}defaultTracker[1]
-        swiftPMImport.emptyxcode/ADJConfig.delegate.<get-delegate>|<get-delegate>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.delegate.<set-delegate>|<set-delegate>(platform.darwin.NSObject?){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.delegate|objc:delegate[1]
-        swiftPMImport.emptyxcode/ADJConfig.delegate|{}delegate[1]
-        swiftPMImport.emptyxcode/ADJConfig.disableAdServices|objc:disableAdServices[1]
-        swiftPMImport.emptyxcode/ADJConfig.disableAppTrackingTransparencyUsage|objc:disableAppTrackingTransparencyUsage[1]
-        swiftPMImport.emptyxcode/ADJConfig.disableIdfaReading|objc:disableIdfaReading[1]
-        swiftPMImport.emptyxcode/ADJConfig.disableIdfvReading|objc:disableIdfvReading[1]
-        swiftPMImport.emptyxcode/ADJConfig.disableSkanAttribution|objc:disableSkanAttribution[1]
-        swiftPMImport.emptyxcode/ADJConfig.enableCoppaCompliance|objc:enableCoppaCompliance[1]
-        swiftPMImport.emptyxcode/ADJConfig.enableCostDataInAttribution|objc:enableCostDataInAttribution[1]
-        swiftPMImport.emptyxcode/ADJConfig.enableDeviceIdsReadingOnce|objc:enableDeviceIdsReadingOnce[1]
-        swiftPMImport.emptyxcode/ADJConfig.enableFirstSessionDelay|objc:enableFirstSessionDelay[1]
-        swiftPMImport.emptyxcode/ADJConfig.enableLinkMe|objc:enableLinkMe[1]
-        swiftPMImport.emptyxcode/ADJConfig.enableSendingInBackground|objc:enableSendingInBackground[1]
-        swiftPMImport.emptyxcode/ADJConfig.environment.<get-environment>|<get-environment>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.environment|objc:environment[1]
-        swiftPMImport.emptyxcode/ADJConfig.environment|{}environment[1]
-        swiftPMImport.emptyxcode/ADJConfig.eventDeduplicationIdsMaxSize.<get-eventDeduplicationIdsMaxSize>|<get-eventDeduplicationIdsMaxSize>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.eventDeduplicationIdsMaxSize.<set-eventDeduplicationIdsMaxSize>|<set-eventDeduplicationIdsMaxSize>(kotlin.Long){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.eventDeduplicationIdsMaxSize|objc:eventDeduplicationIdsMaxSize[1]
-        swiftPMImport.emptyxcode/ADJConfig.eventDeduplicationIdsMaxSize|{}eventDeduplicationIdsMaxSize[1]
-        swiftPMImport.emptyxcode/ADJConfig.externalDeviceId.<get-externalDeviceId>|<get-externalDeviceId>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.externalDeviceId.<set-externalDeviceId>|<set-externalDeviceId>(kotlin.String?){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.externalDeviceId|objc:externalDeviceId[1]
-        swiftPMImport.emptyxcode/ADJConfig.externalDeviceId|{}externalDeviceId[1]
-        swiftPMImport.emptyxcode/ADJConfig.initWithAppToken|objc:initWithAppToken:environment:[1]
-        swiftPMImport.emptyxcode/ADJConfig.initWithAppToken|objc:initWithAppToken:environment:suppressLogLevel:[1]
-        swiftPMImport.emptyxcode/ADJConfig.init|objc:init[1]
-        swiftPMImport.emptyxcode/ADJConfig.isAdServicesEnabled.<get-isAdServicesEnabled>|<get-isAdServicesEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isAdServicesEnabled|objc:isAdServicesEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isAdServicesEnabled|{}isAdServicesEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isAppTrackingTransparencyUsageEnabled.<get-isAppTrackingTransparencyUsageEnabled>|<get-isAppTrackingTransparencyUsageEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isAppTrackingTransparencyUsageEnabled|objc:isAppTrackingTransparencyUsageEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isAppTrackingTransparencyUsageEnabled|{}isAppTrackingTransparencyUsageEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isCoppaComplianceEnabled.<get-isCoppaComplianceEnabled>|<get-isCoppaComplianceEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isCoppaComplianceEnabled.<set-isCoppaComplianceEnabled>|<set-isCoppaComplianceEnabled>(kotlin.Boolean){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isCoppaComplianceEnabled|objc:isCoppaComplianceEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isCoppaComplianceEnabled|{}isCoppaComplianceEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isCostDataInAttributionEnabled.<get-isCostDataInAttributionEnabled>|<get-isCostDataInAttributionEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isCostDataInAttributionEnabled|objc:isCostDataInAttributionEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isCostDataInAttributionEnabled|{}isCostDataInAttributionEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isDataResidency.<get-isDataResidency>|<get-isDataResidency>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isDataResidency|objc:isDataResidency[1]
-        swiftPMImport.emptyxcode/ADJConfig.isDataResidency|{}isDataResidency[1]
-        swiftPMImport.emptyxcode/ADJConfig.isDeviceIdsReadingOnceEnabled.<get-isDeviceIdsReadingOnceEnabled>|<get-isDeviceIdsReadingOnceEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isDeviceIdsReadingOnceEnabled|objc:isDeviceIdsReadingOnceEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isDeviceIdsReadingOnceEnabled|{}isDeviceIdsReadingOnceEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isFirstSessionDelayEnabled.<get-isFirstSessionDelayEnabled>|<get-isFirstSessionDelayEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isFirstSessionDelayEnabled|objc:isFirstSessionDelayEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isFirstSessionDelayEnabled|{}isFirstSessionDelayEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isIdfaReadingEnabled.<get-isIdfaReadingEnabled>|<get-isIdfaReadingEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isIdfaReadingEnabled|objc:isIdfaReadingEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isIdfaReadingEnabled|{}isIdfaReadingEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isIdfvReadingEnabled.<get-isIdfvReadingEnabled>|<get-isIdfvReadingEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isIdfvReadingEnabled|objc:isIdfvReadingEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isIdfvReadingEnabled|{}isIdfvReadingEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isLinkMeEnabled.<get-isLinkMeEnabled>|<get-isLinkMeEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isLinkMeEnabled|objc:isLinkMeEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isLinkMeEnabled|{}isLinkMeEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isSendingInBackgroundEnabled.<get-isSendingInBackgroundEnabled>|<get-isSendingInBackgroundEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isSendingInBackgroundEnabled|objc:isSendingInBackgroundEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isSendingInBackgroundEnabled|{}isSendingInBackgroundEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isSkanAttributionEnabled.<get-isSkanAttributionEnabled>|<get-isSkanAttributionEnabled>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.isSkanAttributionEnabled|objc:isSkanAttributionEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isSkanAttributionEnabled|{}isSkanAttributionEnabled[1]
-        swiftPMImport.emptyxcode/ADJConfig.isValid|objc:isValid[1]
-        swiftPMImport.emptyxcode/ADJConfig.logLevel.<get-logLevel>|<get-logLevel>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.logLevel.<set-logLevel>|<set-logLevel>(kotlin.ULong){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.logLevel|objc:logLevel[1]
-        swiftPMImport.emptyxcode/ADJConfig.logLevel|{}logLevel[1]
-        swiftPMImport.emptyxcode/ADJConfig.sdkPrefix.<get-sdkPrefix>|<get-sdkPrefix>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.sdkPrefix.<set-sdkPrefix>|<set-sdkPrefix>(kotlin.String?){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.sdkPrefix|objc:sdkPrefix[1]
-        swiftPMImport.emptyxcode/ADJConfig.sdkPrefix|{}sdkPrefix[1]
-        swiftPMImport.emptyxcode/ADJConfig.setAttConsentWaitingInterval|objc:setAttConsentWaitingInterval:[1]
-        swiftPMImport.emptyxcode/ADJConfig.setDefaultTracker|objc:setDefaultTracker:[1]
-        swiftPMImport.emptyxcode/ADJConfig.setDelegate|objc:setDelegate:[1]
-        swiftPMImport.emptyxcode/ADJConfig.setEventDeduplicationIdsMaxSize|objc:setEventDeduplicationIdsMaxSize:[1]
-        swiftPMImport.emptyxcode/ADJConfig.setExternalDeviceId|objc:setExternalDeviceId:[1]
-        swiftPMImport.emptyxcode/ADJConfig.setIsCoppaComplianceEnabled|objc:setIsCoppaComplianceEnabled:[1]
-        swiftPMImport.emptyxcode/ADJConfig.setLogLevel|objc:setLogLevel:[1]
-        swiftPMImport.emptyxcode/ADJConfig.setSdkPrefix|objc:setSdkPrefix:[1]
-        swiftPMImport.emptyxcode/ADJConfig.setStoreInfo|objc:setStoreInfo:[1]
-        swiftPMImport.emptyxcode/ADJConfig.setUrlStrategy|objc:setUrlStrategy:useSubdomains:isDataResidency:[1]
-        swiftPMImport.emptyxcode/ADJConfig.storeInfo.<get-storeInfo>|<get-storeInfo>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.storeInfo.<set-storeInfo>|<set-storeInfo>(swiftPMImport.emptyxcode.ADJStoreInfo){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.storeInfo|objc:storeInfo[1]
-        swiftPMImport.emptyxcode/ADJConfig.storeInfo|{}storeInfo[1]
-        swiftPMImport.emptyxcode/ADJConfig.urlStrategyDomains.<get-urlStrategyDomains>|<get-urlStrategyDomains>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.urlStrategyDomains|objc:urlStrategyDomains[1]
-        swiftPMImport.emptyxcode/ADJConfig.urlStrategyDomains|{}urlStrategyDomains[1]
-        swiftPMImport.emptyxcode/ADJConfig.useSubdomains.<get-useSubdomains>|<get-useSubdomains>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfig.useSubdomains|objc:useSubdomains[1]
-        swiftPMImport.emptyxcode/ADJConfig.useSubdomains|{}useSubdomains[1]
-        swiftPMImport.emptyxcode/ADJConfigMeta.<init>|<init>(){}[1]
-        swiftPMImport.emptyxcode/ADJConfigMeta.allocWithZone|objc:allocWithZone:[1]
-        swiftPMImport.emptyxcode/ADJConfigMeta.alloc|objc:alloc[1]
-        swiftPMImport.emptyxcode/ADJConfigMeta.new|objc:new[1]
-        swiftPMImport.emptyxcode/ADJConfigMeta|null[1]
-        swiftPMImport.emptyxcode/ADJConfig|null[1]
+        public open expect class swiftPMImport/emptyxcode/ADJConfig : platform/darwin/NSObject, platform/Foundation/NSCopyingProtocol
+        public /* secondary */ constructor swiftPMImport/emptyxcode/ADJConfig.<init>()
+        public /* secondary */ constructor swiftPMImport/emptyxcode/ADJConfig.<init>(appToken: kotlin/String, environment: kotlin/String)
+        public /* secondary */ constructor swiftPMImport/emptyxcode/ADJConfig.<init>(appToken: kotlin/String, environment: kotlin/String, suppressLogLevel: kotlin/Boolean)
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.appToken(): kotlin/String
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.attConsentWaitingInterval(): kotlin/ULong
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.copyWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): kotlin/Any
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.defaultTracker(): kotlin/String?
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.delegate(): platform/darwin/NSObject?
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.disableAdServices(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.disableAppTrackingTransparencyUsage(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.disableIdfaReading(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.disableIdfvReading(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.disableSkanAttribution(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.enableCoppaCompliance(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.enableCostDataInAttribution(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.enableDeviceIdsReadingOnce(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.enableFirstSessionDelay(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.enableLinkMe(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.enableSendingInBackground(): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.environment(): kotlin/String
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.eventDeduplicationIdsMaxSize(): kotlin/Long
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.externalDeviceId(): kotlin/String?
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.init(): swiftPMImport/emptyxcode/ADJConfig?
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.initWithAppToken(appToken: kotlin/String, environment: kotlin/String): swiftPMImport/emptyxcode/ADJConfig?
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.initWithAppToken(appToken: kotlin/String, environment: kotlin/String, suppressLogLevel: kotlin/Boolean): swiftPMImport/emptyxcode/ADJConfig?
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isAdServicesEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isAppTrackingTransparencyUsageEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isCoppaComplianceEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isCostDataInAttributionEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isDataResidency(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isDeviceIdsReadingOnceEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isFirstSessionDelayEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isIdfaReadingEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isIdfvReadingEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isLinkMeEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isSendingInBackgroundEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isSkanAttributionEnabled(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.isValid(): kotlin/Boolean
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.logLevel(): kotlin/ULong
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.sdkPrefix(): kotlin/String?
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.setAttConsentWaitingInterval(attConsentWaitingInterval: kotlin/ULong): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.setDefaultTracker(defaultTracker: kotlin/String?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.setDelegate(delegate: platform/darwin/NSObject?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.setEventDeduplicationIdsMaxSize(eventDeduplicationIdsMaxSize: kotlin/Long): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.setExternalDeviceId(externalDeviceId: kotlin/String?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.setIsCoppaComplianceEnabled(isCoppaComplianceEnabled: kotlin/Boolean): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.setLogLevel(logLevel: kotlin/ULong): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.setSdkPrefix(sdkPrefix: kotlin/String?): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.setStoreInfo(storeInfo: swiftPMImport/emptyxcode/ADJStoreInfo): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.setUrlStrategy(urlStrategyDomains: kotlin/collections/List<*>?, useSubdomains: kotlin/Boolean, isDataResidency: kotlin/Boolean): kotlin/Unit
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.storeInfo(): swiftPMImport/emptyxcode/ADJStoreInfo
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.urlStrategyDomains(): kotlin/collections/List<*>?
+        public open expect fun swiftPMImport/emptyxcode/ADJConfig.useSubdomains(): kotlin/Boolean
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.appToken: kotlin/String
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.appToken.<get-appToken>
+        public final expect var swiftPMImport/emptyxcode/ADJConfig.attConsentWaitingInterval: kotlin/ULong
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.attConsentWaitingInterval.<get-attConsentWaitingInterval>
+        public final /* setter */ swiftPMImport/emptyxcode/ADJConfig.attConsentWaitingInterval.<set-attConsentWaitingInterval>
+        public final expect var swiftPMImport/emptyxcode/ADJConfig.defaultTracker: kotlin/String?
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.defaultTracker.<get-defaultTracker>
+        public final /* setter */ swiftPMImport/emptyxcode/ADJConfig.defaultTracker.<set-defaultTracker>
+        public final expect var swiftPMImport/emptyxcode/ADJConfig.delegate: platform/darwin/NSObject?
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.delegate.<get-delegate>
+        public final /* setter */ swiftPMImport/emptyxcode/ADJConfig.delegate.<set-delegate>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.environment: kotlin/String
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.environment.<get-environment>
+        public final expect var swiftPMImport/emptyxcode/ADJConfig.eventDeduplicationIdsMaxSize: kotlin/Long
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.eventDeduplicationIdsMaxSize.<get-eventDeduplicationIdsMaxSize>
+        public final /* setter */ swiftPMImport/emptyxcode/ADJConfig.eventDeduplicationIdsMaxSize.<set-eventDeduplicationIdsMaxSize>
+        public final expect var swiftPMImport/emptyxcode/ADJConfig.externalDeviceId: kotlin/String?
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.externalDeviceId.<get-externalDeviceId>
+        public final /* setter */ swiftPMImport/emptyxcode/ADJConfig.externalDeviceId.<set-externalDeviceId>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isAdServicesEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isAdServicesEnabled.<get-isAdServicesEnabled>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isAppTrackingTransparencyUsageEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isAppTrackingTransparencyUsageEnabled.<get-isAppTrackingTransparencyUsageEnabled>
+        public final expect var swiftPMImport/emptyxcode/ADJConfig.isCoppaComplianceEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isCoppaComplianceEnabled.<get-isCoppaComplianceEnabled>
+        public final /* setter */ swiftPMImport/emptyxcode/ADJConfig.isCoppaComplianceEnabled.<set-isCoppaComplianceEnabled>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isCostDataInAttributionEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isCostDataInAttributionEnabled.<get-isCostDataInAttributionEnabled>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isDataResidency: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isDataResidency.<get-isDataResidency>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isDeviceIdsReadingOnceEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isDeviceIdsReadingOnceEnabled.<get-isDeviceIdsReadingOnceEnabled>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isFirstSessionDelayEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isFirstSessionDelayEnabled.<get-isFirstSessionDelayEnabled>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isIdfaReadingEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isIdfaReadingEnabled.<get-isIdfaReadingEnabled>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isIdfvReadingEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isIdfvReadingEnabled.<get-isIdfvReadingEnabled>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isLinkMeEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isLinkMeEnabled.<get-isLinkMeEnabled>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isSendingInBackgroundEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isSendingInBackgroundEnabled.<get-isSendingInBackgroundEnabled>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.isSkanAttributionEnabled: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.isSkanAttributionEnabled.<get-isSkanAttributionEnabled>
+        public final expect var swiftPMImport/emptyxcode/ADJConfig.logLevel: kotlin/ULong
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.logLevel.<get-logLevel>
+        public final /* setter */ swiftPMImport/emptyxcode/ADJConfig.logLevel.<set-logLevel>
+        public final expect var swiftPMImport/emptyxcode/ADJConfig.sdkPrefix: kotlin/String?
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.sdkPrefix.<get-sdkPrefix>
+        public final /* setter */ swiftPMImport/emptyxcode/ADJConfig.sdkPrefix.<set-sdkPrefix>
+        public final expect var swiftPMImport/emptyxcode/ADJConfig.storeInfo: swiftPMImport/emptyxcode/ADJStoreInfo
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.storeInfo.<get-storeInfo>
+        public final /* setter */ swiftPMImport/emptyxcode/ADJConfig.storeInfo.<set-storeInfo>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.urlStrategyDomains: kotlin/collections/List<*>?
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.urlStrategyDomains.<get-urlStrategyDomains>
+        public final expect val swiftPMImport/emptyxcode/ADJConfig.useSubdomains: kotlin/Boolean
+        public final /* getter */ swiftPMImport/emptyxcode/ADJConfig.useSubdomains.<get-useSubdomains>
+        public final expect companion object swiftPMImport/emptyxcode/ADJConfig.Companion : swiftPMImport/emptyxcode/ADJConfigMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/ADJConfig>
+        public open expect class swiftPMImport/emptyxcode/ADJConfigMeta : platform/darwin/NSObjectMeta, platform/Foundation/NSCopyingProtocolMeta
+        protected /* secondary */ constructor swiftPMImport/emptyxcode/ADJConfigMeta.<init>()
+        public open expect fun swiftPMImport/emptyxcode/ADJConfigMeta.alloc(): swiftPMImport/emptyxcode/ADJConfig?
+        public open expect fun swiftPMImport/emptyxcode/ADJConfigMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/ADJConfig?
+        public open expect fun swiftPMImport/emptyxcode/ADJConfigMeta.new(): swiftPMImport/emptyxcode/ADJConfig?
+        public open expect fun swiftPMImport/emptyxcode/AdjustMeta.initSdk(adjustConfig: swiftPMImport/emptyxcode/ADJConfig?): kotlin/Unit
     """.trimIndent(),
         ),
         ktSnippet = """
@@ -741,16 +754,11 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         version = version,
         expectedCinteropAPIs = mapOf(
             "initWithAuthorizationEndpoint" to """
-        swiftPMImport.emptyxcode/OIDServiceConfiguration.<init>|objc:initWithAuthorizationEndpoint:tokenEndpoint:#Constructor[1]
-        swiftPMImport.emptyxcode/OIDServiceConfiguration.<init>|objc:initWithAuthorizationEndpoint:tokenEndpoint:issuer:#Constructor[1]
-        swiftPMImport.emptyxcode/OIDServiceConfiguration.<init>|objc:initWithAuthorizationEndpoint:tokenEndpoint:issuer:registrationEndpoint:#Constructor[1]
-        swiftPMImport.emptyxcode/OIDServiceConfiguration.<init>|objc:initWithAuthorizationEndpoint:tokenEndpoint:issuer:registrationEndpoint:endSessionEndpoint:#Constructor[1]
-        swiftPMImport.emptyxcode/OIDServiceConfiguration.<init>|objc:initWithAuthorizationEndpoint:tokenEndpoint:registrationEndpoint:#Constructor[1]
-        swiftPMImport.emptyxcode/OIDServiceConfiguration.initWithAuthorizationEndpoint|objc:initWithAuthorizationEndpoint:tokenEndpoint:[1]
-        swiftPMImport.emptyxcode/OIDServiceConfiguration.initWithAuthorizationEndpoint|objc:initWithAuthorizationEndpoint:tokenEndpoint:issuer:[1]
-        swiftPMImport.emptyxcode/OIDServiceConfiguration.initWithAuthorizationEndpoint|objc:initWithAuthorizationEndpoint:tokenEndpoint:issuer:registrationEndpoint:[1]
-        swiftPMImport.emptyxcode/OIDServiceConfiguration.initWithAuthorizationEndpoint|objc:initWithAuthorizationEndpoint:tokenEndpoint:issuer:registrationEndpoint:endSessionEndpoint:[1]
-        swiftPMImport.emptyxcode/OIDServiceConfiguration.initWithAuthorizationEndpoint|objc:initWithAuthorizationEndpoint:tokenEndpoint:registrationEndpoint:[1]
+        public open expect fun swiftPMImport/emptyxcode/OIDServiceConfiguration.initWithAuthorizationEndpoint(authorizationEndpoint: platform/Foundation/NSURL, tokenEndpoint: platform/Foundation/NSURL): swiftPMImport/emptyxcode/OIDServiceConfiguration
+        public open expect fun swiftPMImport/emptyxcode/OIDServiceConfiguration.initWithAuthorizationEndpoint(authorizationEndpoint: platform/Foundation/NSURL, tokenEndpoint: platform/Foundation/NSURL, issuer: platform/Foundation/NSURL?): swiftPMImport/emptyxcode/OIDServiceConfiguration
+        public open expect fun swiftPMImport/emptyxcode/OIDServiceConfiguration.initWithAuthorizationEndpoint(authorizationEndpoint: platform/Foundation/NSURL, tokenEndpoint: platform/Foundation/NSURL, registrationEndpoint: platform/Foundation/NSURL?): swiftPMImport/emptyxcode/OIDServiceConfiguration
+        public open expect fun swiftPMImport/emptyxcode/OIDServiceConfiguration.initWithAuthorizationEndpoint(authorizationEndpoint: platform/Foundation/NSURL, tokenEndpoint: platform/Foundation/NSURL, issuer: platform/Foundation/NSURL?, registrationEndpoint: platform/Foundation/NSURL?): swiftPMImport/emptyxcode/OIDServiceConfiguration
+        public open expect fun swiftPMImport/emptyxcode/OIDServiceConfiguration.initWithAuthorizationEndpoint(authorizationEndpoint: platform/Foundation/NSURL, tokenEndpoint: platform/Foundation/NSURL, issuer: platform/Foundation/NSURL?, registrationEndpoint: platform/Foundation/NSURL?, endSessionEndpoint: platform/Foundation/NSURL?): swiftPMImport/emptyxcode/OIDServiceConfiguration
     """.trimIndent(),
         ),
         ktSnippet = """
@@ -792,9 +800,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
     fun `local SwiftPM package with relative path`(version: GradleVersion, isStatic: Boolean) = testSwiftPackageIntegration(
         version = version,
         expectedCinteropAPIs = mapOf(
-            "greeting" to """
-        swiftPMImport.emptyxcode/LocalHelperMeta.greeting|objc:greeting[1]
-    """.trimIndent(),
+            "greeting" to "public open expect fun swiftPMImport/emptyxcode/LocalHelperMeta.greeting(): kotlin/String",
         ),
         ktSnippet = """
             @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
@@ -1064,9 +1070,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
             // Verify cinterop API signatures from producer (same API as local SwiftPM test)
             testVisibleSignatures(
                 expectedCinteropAPIs = mapOf(
-                    "greeting" to """
-        swiftPMImport.emptyxcode.producer/LocalHelperMeta.greeting|objc:greeting[1]
-    """.trimIndent(),
+                    "greeting" to "public open expect fun swiftPMImport/emptyxcode/producer/LocalHelperMeta.greeting(): kotlin/String",
                 ),
                 commonizerBasePath = producerPath,
                 commonizeTask = ":producer:commonizeCInterop"

@@ -1379,31 +1379,32 @@ fun TestProject.commonizeAndDumpCinteropSignatures(
 }
 
 private val CINTEROP_NOISE_SIGNATURE_LINES = setOf(
-    "swiftPMImport.emptyxcode/SWIFT_TYPEDEFS.<get-SWIFT_TYPEDEFS>|<get-SWIFT_TYPEDEFS>(){}[0]",
-    "swiftPMImport.emptyxcode/SWIFT_TYPEDEFS|{}SWIFT_TYPEDEFS[0]",
-    "swiftPMImport.emptyxcode/char16_tVar|null[0]",
-    "swiftPMImport.emptyxcode/char16_t|null[0]",
-    "swiftPMImport.emptyxcode/char32_tVar|null[0]",
-    "swiftPMImport.emptyxcode/char32_t|null[0]",
-    "swiftPMImport.emptyxcode/char8_tVar|null[0]",
-    "swiftPMImport.emptyxcode/char8_t|null[0]",
-    "swiftPMImport.emptyxcode/swift_double2Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_double2|null[0]",
-    "swiftPMImport.emptyxcode/swift_float3Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_float3|null[0]",
-    "swiftPMImport.emptyxcode/swift_float4Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_float4|null[0]",
-    "swiftPMImport.emptyxcode/swift_int3Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_int3|null[0]",
-    "swiftPMImport.emptyxcode/swift_int4Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_int4|null[0]",
-    "swiftPMImport.emptyxcode/swift_uint3Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_uint3|null[0]",
-    "swiftPMImport.emptyxcode/swift_uint4Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_uint4|null[0]",
+    "val swiftPMImport/emptyxcode/SWIFT_TYPEDEFS: kotlin/Int",
+    "/* getter */ swiftPMImport/emptyxcode/SWIFT_TYPEDEFS.<get-SWIFT_TYPEDEFS>",
+    "typealias swiftPMImport/emptyxcode/char16_t",
+    "typealias swiftPMImport/emptyxcode/char16_tVar",
+    "typealias swiftPMImport/emptyxcode/char32_t",
+    "typealias swiftPMImport/emptyxcode/char32_tVar",
+    "typealias swiftPMImport/emptyxcode/char8_t",
+    "typealias swiftPMImport/emptyxcode/char8_tVar",
+    "typealias swiftPMImport/emptyxcode/swift_double2Var",
+    "typealias swiftPMImport/emptyxcode/swift_float3",
+    "typealias swiftPMImport/emptyxcode/swift_float3Var",
+    "typealias swiftPMImport/emptyxcode/swift_float4",
+    "typealias swiftPMImport/emptyxcode/swift_float4Var",
+    "typealias swiftPMImport/emptyxcode/swift_int3",
+    "typealias swiftPMImport/emptyxcode/swift_int3Var",
+    "typealias swiftPMImport/emptyxcode/swift_int4",
+    "typealias swiftPMImport/emptyxcode/swift_int4Var",
+    "typealias swiftPMImport/emptyxcode/swift_uint3",
+    "typealias swiftPMImport/emptyxcode/swift_uint3Var",
+    "typealias swiftPMImport/emptyxcode/swift_uint4",
+    "typealias swiftPMImport/emptyxcode/swift_uint4Var",
+    "typealias swiftPMImport/emptyxcode/swift_double2",
 )
 
-fun String.filterOutNoiseSignatures() =
-    lines().filter { it !in CINTEROP_NOISE_SIGNATURE_LINES }.joinToString("\n").trim()
+fun String.filterOutNoiseSignatures() = lineSequence().filter { line ->
+    CINTEROP_NOISE_SIGNATURE_LINES.none { it in line }
+}.joinToString("\n").trim()
 
 const val SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH = "build/${FingerprintSyntheticPackage.SYNTHETIC_PACKAGE_FINGERPRINT_PATH}"
