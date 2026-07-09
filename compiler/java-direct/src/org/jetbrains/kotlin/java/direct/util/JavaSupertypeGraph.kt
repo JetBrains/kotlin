@@ -9,7 +9,8 @@ package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
-import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.java.direct.JavaClassCache
+import org.jetbrains.kotlin.java.direct.JavaPackageIndexer
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.java.direct.resolution.JavaImportResolver
 import org.jetbrains.kotlin.java.direct.resolution.JavaImports
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.getImports
-import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.splitCanonicalFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -34,22 +34,20 @@ import kotlin.collections.iterator
  * (fast path, no I/O). When a class hasn't been cached yet, the owning file is re-parsed as a
  * fallback (slow path). Results are memoized in per-instance caches.
  *
- * This component intentionally does NOT own the source index or the class cache — it consults
- * them via callbacks passed to the constructor, so that a single authoritative copy lives in
- * [org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl].
+ * This component intentionally does NOT own the source index or the class cache — it reads them
+ * through the [JavaPackageIndexer] and [JavaClassCache] passed to the constructor, so that a
+ * single authoritative copy lives in [org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl].
  *
- * @param classCacheLookup returns the cached [org.jetbrains.kotlin.load.java.structure.JavaClass] for a given [org.jetbrains.kotlin.name.ClassId], or `null` if
- *     it hasn't been parsed/cached yet.
- * @param filesForClassLookup returns the candidate source files that may contain the top-level
- *     class identified by the given [org.jetbrains.kotlin.name.ClassId].
- * @param sameClassInSameFilePackage returns whether the given simple name exists as a top-level
- *     class in the given package in the source index (for same-package supertype resolution).
- * @param sourceFileReader reader used to fetch the text of a [com.intellij.openapi.vfs.VirtualFile] on the slow path.
+ * @param packageIndexer source index consulted for candidate files of a top-level class
+ *     ([JavaPackageIndexer.findFilesForClass]) and for same-package top-level class existence
+ *     ([JavaPackageIndexer.ensurePackageIndexed]).
+ * @param classCache cache of already-parsed [org.jetbrains.kotlin.load.java.structure.JavaClass]
+ *     instances (fast path, no I/O).
+ * @param sourceFileReader reader used to fetch the text of a source file on the slow path.
  */
 internal class JavaSupertypeGraph(
-    private val classCacheLookup: (ClassId) -> JavaClass?,
-    private val filesForClassLookup: (ClassId) -> List<VirtualFile>,
-    private val sameClassInSameFilePackage: (FqName, String) -> Boolean,
+    private val packageIndexer: JavaPackageIndexer,
+    private val classCache: JavaClassCache,
     private val sourceFileReader: JavaSourceFileReader,
 ) {
     // Cache: ClassId -> list of supertype ClassIds (direct only)
@@ -72,7 +70,7 @@ internal class JavaSupertypeGraph(
             // IMPORTANT: we read raw JAVA_CODE_REFERENCE text from the node, NOT classifierQualifiedName,
             // because the latter triggers full classifier resolution, which could recurse back into
             // this same computation for another class in the hierarchy.
-            val cachedClass = classCacheLookup(classId)
+            val cachedClass = classCache[classId]
             if (cachedClass is JavaClassOverAst) {
                 val imports = with(cachedClass.resolutionContext) { getImports() }
                 return@computeIfAbsent extractSupertypeRefsFromNode(
@@ -81,10 +79,7 @@ internal class JavaSupertypeGraph(
             }
 
             // Slow path: re-parse the file to extract supertype references.
-            val files = filesForClassLookup(classId)
-            if (files.isEmpty()) return@computeIfAbsent emptyList()
-
-            val file = files.first()
+            val file = packageIndexer.findFilesForClass(classId).firstOrNull()?.file ?: return@computeIfAbsent emptyList()
             val source = sourceFileReader.readFileContent(file) ?: return@computeIfAbsent emptyList()
             val tree = parseJavaToLightTree(source, 0)
             val root = tree.getRoot()
@@ -147,7 +142,7 @@ internal class JavaSupertypeGraph(
 
     private fun getInnerClassNames(classId: ClassId): Set<String> {
         // Fast path: use the cached JavaClass (no file I/O, no parsing)
-        val cachedClass = classCacheLookup(classId)
+        val cachedClass = classCache[classId]
         if (cachedClass != null) {
             val inner = cachedClass.innerClassNames
             if (inner.isEmpty()) return emptySet()
@@ -155,10 +150,7 @@ internal class JavaSupertypeGraph(
         }
 
         // Slow path: re-parse for inner class names.
-        val files = filesForClassLookup(classId)
-        if (files.isEmpty()) return emptySet()
-
-        val file = files.first()
+        val file = packageIndexer.findFilesForClass(classId).firstOrNull()?.file ?: return emptySet()
         val source = sourceFileReader.readFileContent(file) ?: return emptySet()
         val tree = parseJavaToLightTree(source, 0)
         val root = tree.getRoot()
@@ -230,7 +222,7 @@ internal class JavaSupertypeGraph(
 
         if (simpleName != null) {
             // Same-package source class — resolves to the in-module ClassId.
-            if (sameClassInSameFilePackage(packageFqName, simpleName)) {
+            if (packageIndexer.ensurePackageIndexed(packageFqName).containsKey(simpleName)) {
                 return listOf(ClassId(packageFqName, Name.identifier(simpleName)))
             }
 
@@ -247,7 +239,7 @@ internal class JavaSupertypeGraph(
             // package) are emitted so the caller can probe supertypes that live on the classpath.
             val candidates = mutableListOf<ClassId>()
             for (starPkg in imports.typeStarImports) {
-                if (sameClassInSameFilePackage(starPkg, simpleName)) {
+                if (packageIndexer.ensurePackageIndexed(starPkg).containsKey(simpleName)) {
                     candidates.add(ClassId(starPkg, Name.identifier(simpleName)))
                 }
             }

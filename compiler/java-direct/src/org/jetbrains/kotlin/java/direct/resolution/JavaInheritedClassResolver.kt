@@ -63,9 +63,9 @@ internal fun resolveInheritedInnerClassToClassId(simpleName: String, containingC
 context(c: JavaResolutionContext)
 private fun resolveWithoutInheritance(name: String): ClassId? =
     if (name.contains('.')) {
-        resolveQualifiedNameToClassIdFromParts(name.split('.'), { tryResolveInherited(it) }, fullResolution = false)
+        resolveQualifiedNameToClassIdFromParts(name.split('.'), fullResolution = false)
     } else {
-        resolveSimpleNameToClassIdImpl(name, { tryResolveInherited(it) }, fullResolution = false)
+        resolveSimpleNameToClassIdImpl(name, fullResolution = false)
     }
 
 /**

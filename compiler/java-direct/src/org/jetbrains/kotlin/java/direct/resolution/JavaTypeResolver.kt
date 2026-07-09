@@ -46,16 +46,9 @@ import org.jetbrains.kotlin.name.Name
 context(c: JavaResolutionContext)
 internal fun resolve(name: String): ClassId? {
     if (name.contains('.')) {
-        // The recursive prefix splitting probes the same ClassIds many times (e.g. "com" is tried
-        // as a class for each prefix of "com.google.protobuf.Foo"); the probe is deterministic
-        // within one resolve() call, so cache it. Simple names skip the HashMap allocation.
-        val cache = HashMap<ClassId, Boolean>()
-        val cachedTryResolve: (ClassId) -> Boolean = { classId ->
-            cache.getOrPut(classId) { tryResolve(classId) }
-        }
-        return resolveQualifiedNameToClassIdFromParts(name.split('.'), cachedTryResolve, fullResolution = true)
+        return resolveQualifiedNameToClassIdFromParts(name.split('.'), fullResolution = true)
     }
-    return resolveSimpleNameToClassIdImpl(name, { tryResolve(it) }, fullResolution = true)
+    return resolveSimpleNameToClassIdImpl(name, fullResolution = true)
 }
 
 /**
@@ -68,7 +61,6 @@ internal fun resolve(name: String): ClassId? {
 context(c: JavaResolutionContext)
 internal fun resolveQualifiedNameToClassIdFromParts(
     parts: List<String>,
-    tryResolve: (ClassId) -> Boolean,
     fullResolution: Boolean,
 ): ClassId? {
     // Try resolving increasing prefixes as outer classes using normal resolution rules.
@@ -78,9 +70,9 @@ internal fun resolveQualifiedNameToClassIdFromParts(
         val nestedParts = parts.subList(i, parts.size)
 
         val outerClassId = if (outerParts.size > 1) {
-            resolveQualifiedNameToClassIdFromParts(outerParts, tryResolve, fullResolution)
+            resolveQualifiedNameToClassIdFromParts(outerParts, fullResolution)
         } else {
-            resolveSimpleNameToClassIdImpl(outerParts[0], tryResolve, fullResolution = fullResolution)
+            resolveSimpleNameToClassIdImpl(outerParts[0], fullResolution = fullResolution)
         }
 
         if (outerClassId != null) {
@@ -88,7 +80,7 @@ internal fun resolveQualifiedNameToClassIdFromParts(
                 outerClassId.relativeClassName.pathSegments().map { it.asString() } + nestedParts
             )
             val nestedClassId = ClassId(outerClassId.packageFqName, nestedClassName, isLocal = false)
-            if (tryResolve(nestedClassId)) return nestedClassId
+            if (classExists(nestedClassId, fullResolution)) return nestedClassId
 
             // Nested class not directly declared — search supertypes for inherited inner classes.
             // This handles cases like SimpleFunctionDescriptor.CopyBuilder where CopyBuilder is
@@ -102,7 +94,7 @@ internal fun resolveQualifiedNameToClassIdFromParts(
 
     // Fall back: try as fully qualified name with different package/class splits
     // (longest package to shortest).
-    return probeFqnSplits(parts, tryResolve)
+    return probeFqnSplits(parts, fullResolution)
 }
 
 /**
@@ -117,28 +109,27 @@ internal fun resolveQualifiedNameToClassIdFromParts(
 context(c: JavaResolutionContext)
 internal fun resolveSimpleNameToClassIdImpl(
     simpleName: String,
-    tryResolve: (ClassId) -> Boolean,
     fullResolution: Boolean,
 ): ClassId? {
     // JLS 6.4.1: member types of the enclosing class shadow single-type imports.
     if (fullResolution) {
-        resolveFromLocalScope(simpleName, tryResolve)?.let { return it }
+        resolveFromLocalScope(simpleName)?.let { return it }
     }
     // JLS 6.4.1: same-file top-level types shadow single-type imports.
-    resolveFromSameFile(simpleName, tryResolve)?.let { return it }
+    resolveFromSameFile(simpleName, fullResolution)?.let { return it }
     // JLS 7.5.1: single-type imports.
-    resolveFromExplicitImport(simpleName, tryResolve, fullResolution)?.let { return it }
+    resolveFromExplicitImport(simpleName, fullResolution)?.let { return it }
     // JLS 7.5.3: single-static imports (rank 4, same as 7.5.1; tried after).
-    resolveFromStaticSingleImport(simpleName, tryResolve)?.let { return it }
+    resolveFromStaticSingleImport(simpleName, fullResolution)?.let { return it }
     // JLS 6.4.1: same-package top-level types from *other* files are
     // shadowed by the import (Step 3), so this step runs after it.
-    resolveFromSamePackage(simpleName, tryResolve)?.let { return it }
+    resolveFromSamePackage(simpleName, fullResolution)?.let { return it }
     // JLS 7.3: java.lang.* is implicitly imported.
-    resolveFromJavaLang(simpleName, tryResolve)?.let { return it }
+    resolveFromJavaLang(simpleName, fullResolution)?.let { return it }
     // JLS 7.5.2: type-import-on-demand.
-    resolveFromTypeStarImports(simpleName, tryResolve)?.let { return it }
+    resolveFromTypeStarImports(simpleName, fullResolution)?.let { return it }
     // JLS 7.5.4: static-import-on-demand (strictly lower rank than 7.5.2).
-    return resolveFromStaticStarImports(simpleName, tryResolve, fullResolution)
+    return resolveFromStaticStarImports(simpleName, fullResolution)
 }
 
 /**
@@ -153,10 +144,7 @@ internal fun resolveSimpleNameToClassIdImpl(
  * same-package cross-file classes, so [resolveFromSamePackage] picks them up.
  */
 context(c: JavaResolutionContext)
-private fun resolveFromLocalScope(
-    simpleName: String,
-    tryResolve: (ClassId) -> Boolean,
-): ClassId? {
+private fun resolveFromLocalScope(simpleName: String): ClassId? {
     val nameId = Name.identifier(simpleName)
     var current: JavaClass? = c.scopeContext.containingClass
     while (current != null) {
@@ -181,11 +169,11 @@ private fun resolveFromLocalScope(
 context(c: JavaResolutionContext)
 private fun resolveFromSameFile(
     simpleName: String,
-    tryResolve: (ClassId) -> Boolean,
+    fullResolution: Boolean,
 ): ClassId? {
     c.scopeContext.sameFileTopLevelClassProvider(Name.identifier(simpleName)) ?: return null
     val classId = ClassId(c.packageFqName, Name.identifier(simpleName))
-    return if (tryResolve(classId)) classId else null
+    return if (classExists(classId, fullResolution)) classId else null
 }
 
 /**
@@ -195,32 +183,31 @@ private fun resolveFromSameFile(
 context(c: JavaResolutionContext)
 private fun resolveFromExplicitImport(
     simpleName: String,
-    tryResolve: (ClassId) -> Boolean,
     fullResolution: Boolean,
 ): ClassId? {
     val imported = c.fileContext.imports.simpleTypeImports[simpleName] ?: return null
     if (fullResolution) {
         // Use resolveAsClassId to handle nested class FQNs like "a.x.b.b.b" where
         // ClassId.topLevel would incorrectly split as package="a.x.b.b", class="b".
-        return resolveAsClassId(imported, tryResolve)
+        return resolveAsClassId(imported, fullResolution)
     }
     val classId = ClassId.topLevel(imported)
-    return if (tryResolve(classId)) classId else null
+    return if (classExists(classId, fullResolution)) classId else null
 }
 
 /**
  * Step 3b: single-static imports (JLS 7.5.3) — the type-only arm; method and field imports drop
- * out when [tryResolve] returns `false`. Same JLS rank (4) as [resolveFromExplicitImport]; a
+ * out when the class-existence probe returns `false`. Same JLS rank (4) as [resolveFromExplicitImport]; a
  * same-name collision between the two is malformed Java (`javac` flags it), so trying the type
  * import first is a no-op for well-formed code.
  */
 context(c: JavaResolutionContext)
 private fun resolveFromStaticSingleImport(
     simpleName: String,
-    tryResolve: (ClassId) -> Boolean,
+    fullResolution: Boolean,
 ): ClassId? {
     val imported = c.fileContext.imports.staticSingleImports[simpleName] ?: return null
-    return resolveAsClassId(imported, tryResolve)
+    return resolveAsClassId(imported, fullResolution)
 }
 
 /**
@@ -228,15 +215,16 @@ private fun resolveFromStaticSingleImport(
  * JLS 6.4.1). The probe also matches same-file types, but Step 2 already short-circuited those.
  */
 context(c: JavaResolutionContext)
-private fun resolveFromSamePackage(simpleName: String, tryResolve: (ClassId) -> Boolean): ClassId? {
+private fun resolveFromSamePackage(simpleName: String, fullResolution: Boolean): ClassId? {
     val classId = ClassId(c.packageFqName, Name.identifier(simpleName))
-    return if (tryResolve(classId)) classId else null
+    return if (classExists(classId, fullResolution)) classId else null
 }
 
 /** Step 5: `java.lang.*` — implicitly imported by every Java file. */
-private fun resolveFromJavaLang(simpleName: String, tryResolve: (ClassId) -> Boolean): ClassId? {
+context(c: JavaResolutionContext)
+private fun resolveFromJavaLang(simpleName: String, fullResolution: Boolean): ClassId? {
     val classId = ClassId(FqName("java.lang"), Name.identifier(simpleName))
-    if (JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName()) != null || tryResolve(classId)) {
+    if (JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName()) != null || classExists(classId, fullResolution)) {
         return classId
     }
     return null
@@ -251,20 +239,20 @@ private fun resolveFromJavaLang(simpleName: String, tryResolve: (ClassId) -> Boo
 context(c: JavaResolutionContext)
 private fun resolveFromTypeStarImports(
     simpleName: String,
-    tryResolve: (ClassId) -> Boolean,
+    fullResolution: Boolean,
 ): ClassId? {
     var foundClassId: ClassId? = null
     for (starImport in c.fileContext.imports.typeStarImports) {
         val candidateClassId = ClassId(starImport, Name.identifier(simpleName))
-        if (tryResolve(candidateClassId)) {
+        if (classExists(candidateClassId, fullResolution)) {
             if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
             foundClassId = candidateClassId
         } else {
             // Class-level fallback: `import a.D.*` where `a.D` is a class.
-            val outerClassId = resolveAsClassId(starImport, tryResolve)
+            val outerClassId = resolveAsClassId(starImport, fullResolution)
             if (outerClassId != null) {
                 val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
-                if (tryResolve(nestedClassId)) {
+                if (classExists(nestedClassId, fullResolution)) {
                     if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
                     foundClassId = nestedClassId
                 }
@@ -283,14 +271,13 @@ private fun resolveFromTypeStarImports(
 context(c: JavaResolutionContext)
 private fun resolveFromStaticStarImports(
     simpleName: String,
-    tryResolve: (ClassId) -> Boolean,
     fullResolution: Boolean,
 ): ClassId? {
     var foundClassId: ClassId? = null
     for (outerFqName in c.fileContext.imports.staticStarImports) {
-        val outerClassId = resolveAsClassId(outerFqName, tryResolve) ?: continue
+        val outerClassId = resolveAsClassId(outerFqName, fullResolution) ?: continue
         val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
-        if (tryResolve(nestedClassId)) {
+        if (classExists(nestedClassId, fullResolution)) {
             if (!fullResolution) return nestedClassId
             if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
             foundClassId = nestedClassId
@@ -338,6 +325,16 @@ internal fun tryResolveInherited(classId: ClassId): Boolean {
     }
     return tryResolve(classId)
 }
+
+/**
+ * Selects the class-existence probe for the current resolution flavor: [tryResolve] for the
+ * primary path, [tryResolveInherited] for the reentrance-safe inherited-inner-class walk (the
+ * latter also consults the source index). [fullResolution] is `true` exactly on the primary
+ * path, so it fully determines which probe applies.
+ */
+context(c: JavaResolutionContext)
+private fun classExists(classId: ClassId, fullResolution: Boolean): Boolean =
+    if (fullResolution) tryResolve(classId) else tryResolveInherited(classId)
 
 /**
  * Whether [classId] denotes an annotation class whose declared `@Target` lists `TYPE_USE`
@@ -568,11 +565,12 @@ private fun fqNameToClassId(fqName: FqName): ClassId =
  * shortest — "a.x.b.b.b" tries ClassId(a.x.b.b, b), ClassId(a.x.b, b.b), … — unlike
  * ClassId.topLevel, which only splits at the last dot.
  */
-private fun resolveAsClassId(fqName: FqName, tryResolve: (ClassId) -> Boolean): ClassId? {
+context(c: JavaResolutionContext)
+private fun resolveAsClassId(fqName: FqName, fullResolution: Boolean): ClassId? {
     if (fqName.isRoot) return null
 
     // most common case: the longest-package split
-    ClassId.topLevel(fqName).takeIf(tryResolve)?.let { return it }
+    ClassId.topLevel(fqName).takeIf { classExists(it, fullResolution) }?.let { return it }
 
     val parts = fqName.pathSegments()
     val stringParts = parts.map { it.asString() }
@@ -584,27 +582,28 @@ private fun resolveAsClassId(fqName: FqName, tryResolve: (ClassId) -> Boolean): 
         val cls = FqName.fromSegments(stringParts.subList(classStartIndex, stringParts.size))
         val classId = ClassId(pkg, cls, false)
 
-        if (tryResolve(classId)) return classId
+        if (classExists(classId, fullResolution)) return classId
     }
     return null
 }
 
 /**
  * Probes every package/class split of [parts] from longest package prefix down to the root
- * package, returning the first [ClassId] accepted by [tryResolve].
+ * package, returning the first [ClassId] accepted by the class-existence probe.
  *
  * Mirrors the fallback branch of `findClassId(fqn, session, accept)` in
  * `compiler/fir/fir-jvm/.../JavaTypeConversion.kt`; kept as a local copy because `java-direct`
  * must not depend on `fir-jvm`. The two probe loops are intentionally identical.
  */
-private fun probeFqnSplits(parts: List<String>, tryResolve: (ClassId) -> Boolean): ClassId? {
+context(c: JavaResolutionContext)
+private fun probeFqnSplits(parts: List<String>, fullResolution: Boolean): ClassId? {
     if (parts.isEmpty()) return null
     for (classStartIndex in (parts.size - 1) downTo 0) {
         val packageFqName = if (classStartIndex == 0) FqName.ROOT
         else FqName.fromSegments(parts.subList(0, classStartIndex))
         val relativeClassName = FqName.fromSegments(parts.subList(classStartIndex, parts.size))
         val candidate = ClassId(packageFqName, relativeClassName, isLocal = false)
-        if (tryResolve(candidate)) return candidate
+        if (classExists(candidate, fullResolution)) return candidate
     }
     return null
 }

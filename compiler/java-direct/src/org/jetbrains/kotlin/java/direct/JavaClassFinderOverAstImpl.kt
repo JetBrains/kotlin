@@ -75,9 +75,8 @@ class JavaClassFinderOverAstImpl internal constructor(
     )
 
     private val supertypeGraph = JavaSupertypeGraph(
-        classCacheLookup = { classCache[it] },
-        filesForClassLookup = { classId -> packageIndexer.findFilesForClass(classId).map { it.file } },
-        sameClassInSameFilePackage = { pkg, name -> packageIndexer.ensurePackageIndexed(pkg).containsKey(name) },
+        packageIndexer = packageIndexer,
+        classCache = classCache,
         sourceFileReader = sourceFileReader,
     )
 
