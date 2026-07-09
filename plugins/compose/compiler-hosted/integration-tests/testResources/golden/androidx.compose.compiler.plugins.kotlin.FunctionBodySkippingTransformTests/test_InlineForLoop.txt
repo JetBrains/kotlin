@@ -47,7 +47,7 @@ fun Test(%composer: Composer?, %changed: Int) {
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
 @FunctionKeyMeta(key = 1884885184, startOffset = 252, endOffset = 385)
-fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = "item")] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(Bug)N(items,content):Test.kt")
   %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "*<conten...>")

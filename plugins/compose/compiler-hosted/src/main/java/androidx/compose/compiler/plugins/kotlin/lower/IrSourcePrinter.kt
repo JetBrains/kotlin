@@ -658,6 +658,7 @@ class IrSourcePrinterVisitor(
     }
 
     override fun visitAnnotation(expression: IrAnnotation) {
+        print("@")
         print(renderAsAnnotation(expression))
     }
 
@@ -1587,14 +1588,18 @@ class IrSourcePrinterVisitor(
             is IrAnnotation -> renderAsAnnotation(irElement)
             is IrConstructorCall -> renderAsAnnotation(irElement)
             is IrConst -> {
-                append('\'')
-                append(irElement.value.toString())
-                append('\'')
+                val value = irElement.value
+                if (value is String) append('"')
+                append(value.toString())
+                if (value is String) append('"')
             }
             is IrVararg -> {
                 appendListWith(irElement.elements, "[", "]", ", ") {
                     renderAsAnnotationArgument(it)
                 }
+            }
+            is IrGetEnumValue -> {
+                append(irElement.symbol.owner.parentAsClass.name.asString() + "." + irElement.symbol.owner.name)
             }
             else -> append(irElement.accept(this@IrSourcePrinterVisitor, null))
         }

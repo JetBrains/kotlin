@@ -31,5 +31,5 @@ class ReturningProfileObViewModel : NewProfileOBViewModel {
       return field
     }
 }
-@Target(allowedTargets = AnnotationTarget.TYPE)
+@Target(allowedTargets = [AnnotationTarget.TYPE])
 open annotation class Type : Annotation
