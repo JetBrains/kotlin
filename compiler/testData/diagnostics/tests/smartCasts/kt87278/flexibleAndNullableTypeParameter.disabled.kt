@@ -19,7 +19,7 @@ fun Any.callOnNotNull() = Unit
 fun <T> f(a: T) {
     val x = JavaType.DEFAULT
     if (a == x) {
-        a<!UNSAFE_CALL!>.<!>callOnNotNull()
+        a.callOnNotNull()
     }
 }
 

@@ -543,6 +543,13 @@ enum class LanguageFeature(
     JsAllowExportingStarProjection(sinceVersion = KOTLIN_2_5, "KT-83462"),
     AllowReturnsResultOfContract(sinceVersion = KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_4, issue = "KT-85948", forcesPreReleaseBinaries = true),
     ForbidAliasedRepeatedAnnotationsOnExpressionsInMultiplatform(sinceVersion = KOTLIN_2_5, "KTLC-409"),
+    ProhibitIllegalNotNullSmartCastsInEqualities(KOTLIN_2_5, "KTLC-410"),
+    ProhibitNotNullSmartCastsBasedOnFlexibleComponentsInEqualities(KOTLIN_2_5, "KTLC-410") {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledNotEarlierThan(ProhibitIllegalNotNullSmartCastsInEqualities)
+        }
+    },
 
     CallCompletionRefinementsFor25(sinceVersion = KOTLIN_2_5, "KT-86042"),
 

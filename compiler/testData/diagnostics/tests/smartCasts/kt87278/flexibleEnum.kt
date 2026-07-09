@@ -1,4 +1,6 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE_FEATURE_TOGGLED: ProhibitNotNullSmartCastsBasedOnFlexibleComponentsInEqualities
+// LANGUAGE: +ProhibitIllegalNotNullSmartCastsInEqualities
 
 // FILE: q/JavaType.java
 package q;
@@ -24,14 +26,14 @@ class JavaTypeWrapper(val javaType: JavaType) {
 
 fun t1(j: JavaTypeWrapper?) {
     if (j?.javaType == JavaType.DEFAULT) {
-        j.javaTypeWrapperMethod()
-        j.javaType.javaTypeMethod()
+        j<!UNSAFE_CALL!>.<!>javaTypeWrapperMethod()
+        j<!UNSAFE_CALL!>.<!>javaType.javaTypeMethod()
     }
 }
 
 fun t2(j: JavaTypeWrapper?) {
     if (j?.javaType !== JavaType.DEFAULT) return
-    j.javaTypeWrapperMethod()
+    j<!UNSAFE_CALL!>.<!>javaTypeWrapperMethod()
 }
 
 fun t3() {
@@ -43,7 +45,7 @@ fun t3() {
 fun t4() {
     val from42: JavaType? = JavaType.fromInt(42)
     if (JavaType.DEFAULT === from42) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("q.JavaType")!>from42<!>.javaTypeMethod()
+        <!DEBUG_INFO_EXPRESSION_TYPE("(q.JavaType..q.JavaType?)")!>from42<!>.javaTypeMethod()
     }
 }
 

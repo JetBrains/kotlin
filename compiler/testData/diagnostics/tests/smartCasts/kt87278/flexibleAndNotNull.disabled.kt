@@ -14,14 +14,13 @@ package q;
 
 fun <T> id(t: T): T = t
 
-fun Any.callOnNotNull() = Unit
-
-fun <T> f(a: T) {
+fun f(a: Any) {
     val x = JavaType.DEFAULT
     if (a == x) {
-        a<!UNSAFE_CALL!>.<!>callOnNotNull()
+        var b = id(x)
+        b = null
     }
 }
 
-/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, funWithExtensionReceiver, functionDeclaration, ifExpression,
-javaProperty, localProperty, nullableType, propertyDeclaration, typeParameter */
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, flexibleType, functionDeclaration, ifExpression, javaProperty,
+localProperty, nullableType, propertyDeclaration, typeParameter */

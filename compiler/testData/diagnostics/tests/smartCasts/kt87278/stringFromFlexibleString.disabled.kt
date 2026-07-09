@@ -19,10 +19,10 @@ fun String.onString() = Unit
 
 fun test(a: Any?) {
     if (JavaUtils.getString() == a) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>a<!>.onNullableString()
-        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>a<!>.onString()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>a<!>.onNullableString()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>a<!>.onString()
         var x = id(a)
-        x = null
+        x = <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 }
 

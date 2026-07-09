@@ -765,8 +765,18 @@ abstract class FirDataFlowAnalyzer(
      * Applies for both `===` and `==`.
      */
     private fun ProcessEqContext.processEqNotNullContracts() {
-        val leftIsNullable = leftOperand.resolvedType.isMarkedNullable
-        val rightIsNullable = rightOperand.resolvedType.isMarkedNullable
+        fun ConeKotlinType.canBeNullConsideringLegacy(): Boolean {
+            return when {
+                isMarkedNullable -> true
+                !canBeNull() -> false
+                this is ConeFlexibleType && !lowerBound.canBeNull() ->
+                    LanguageFeature.ProhibitNotNullSmartCastsBasedOnFlexibleComponentsInEqualities.isEnabled()
+                else -> LanguageFeature.ProhibitIllegalNotNullSmartCastsInEqualities.isEnabled()
+            }
+        }
+
+        val leftIsNullable = leftOperand.resolvedType.canBeNullConsideringLegacy()
+        val rightIsNullable = rightOperand.resolvedType.canBeNullConsideringLegacy()
 
         // The logic system is not complex enough for second level implications when both are nullable:
         // if either `== null` then this creates the same implications as a constant null comparison,

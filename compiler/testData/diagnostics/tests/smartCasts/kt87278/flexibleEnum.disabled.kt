@@ -5,11 +5,13 @@
 // FILE: q/JavaType.java
 package q;
 
-public class JavaType {
-    public static JavaType DEFAULT = new JavaType();
+public enum JavaType {
+    A, B;
+
+    public static JavaType DEFAULT = A;
 
     public static JavaType fromInt(int i){
-        return new JavaType();
+        return B;
     }
 }
 
@@ -24,26 +26,26 @@ class JavaTypeWrapper(val javaType: JavaType) {
 
 fun t1(j: JavaTypeWrapper?) {
     if (j?.javaType == JavaType.DEFAULT) {
-        j<!UNSAFE_CALL!>.<!>javaTypeWrapperMethod()
-        j<!UNSAFE_CALL!>.<!>javaType.javaTypeMethod()
+        j.javaTypeWrapperMethod()
+        j.javaType.javaTypeMethod()
     }
 }
 
 fun t2(j: JavaTypeWrapper?) {
     if (j?.javaType !== JavaType.DEFAULT) return
-    j<!UNSAFE_CALL!>.<!>javaTypeWrapperMethod()
+    j.javaTypeWrapperMethod()
 }
 
 fun t3() {
     val from42: JavaType? = JavaType.fromInt(42)
     if (JavaType.DEFAULT != from42) return
-    from42<!UNSAFE_CALL!>.<!>javaTypeMethod()
+    from42.javaTypeMethod()
 }
 
 fun t4() {
     val from42: JavaType? = JavaType.fromInt(42)
     if (JavaType.DEFAULT === from42) {
-        from42.javaTypeMethod()
+        <!DEBUG_INFO_EXPRESSION_TYPE("q.JavaType")!>from42<!>.javaTypeMethod()
     }
 }
 
