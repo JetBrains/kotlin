@@ -742,19 +742,6 @@ abstract class FirDataFlowAnalyzer(
         rightOperand: FirExpression,
         operation: FirOperation,
     ) {
-        val isEq = operation.isEq()
-        val leftOperandType = leftOperand.resolvedType
-        val rightOperandType = rightOperand.resolvedType
-        val leftIsNullable = leftOperandType.isMarkedNullable
-        val rightIsNullable = rightOperandType.isMarkedNullable
-
-        if (leftIsNullable && rightIsNullable) {
-            // The logic system is not complex enough to express a second level of implications this creates:
-            // if either `== null` then this creates the same implications as a constant null comparison,
-            // otherwise the same as if the corresponding `...IsNullable` is false.
-            return
-        }
-
         // Only consider the LHS variable if it has not been reassigned in the RHS.
         val leftOperandVariable = flow.getVariableIfUsedOrReal(leftOperand)
             .takeIf { isSameValueIn(lhsExitFlow, leftOperand, flow) }
@@ -762,21 +749,64 @@ abstract class FirDataFlowAnalyzer(
         if (leftOperandVariable == null && rightOperandVariable == null) return
         val expressionVariable = SyntheticVariable(expression)
 
-        if (leftIsNullable || rightIsNullable) {
-            // `a == b:Any` => `a != null`; the inverse is not true - we don't know when `a` *is* `null`
+        val context = ProcessEqContext(
+            flow, leftOperand, rightOperand, leftOperandVariable, rightOperandVariable, expressionVariable, operation,
+        )
+
+        context.processEqNotNullContracts()
+        context.processEqContractsBasedOnPrimitiveEquals()
+        context.processEqContractsForExhaustiveness()
+    }
+
+    /**
+     * - LHS can't be null => RHS != null
+     * - RHS can't be null => LHS != null
+     *
+     * Applies for both `===` and `==`.
+     */
+    private fun ProcessEqContext.processEqNotNullContracts() {
+        val leftIsNullable = leftOperand.resolvedType.isMarkedNullable
+        val rightIsNullable = rightOperand.resolvedType.isMarkedNullable
+
+        // The logic system is not complex enough for second level implications when both are nullable:
+        // if either `== null` then this creates the same implications as a constant null comparison,
+        // otherwise the same as if the corresponding `...IsNullable` is false.
+        if (leftIsNullable xor rightIsNullable) {
             val nullableOperand = if (leftIsNullable) leftOperandVariable else rightOperandVariable
             if (nullableOperand != null) {
                 flow.addImplication((expressionVariable eq isEq) implies (nullableOperand notEq null))
             }
         }
+    }
 
-        if (leftOperandVariable !is RealVariable && rightOperandVariable !is RealVariable) return
+    /**
+     * When equality is known to be primitive (identity-like):
+     *  - RHS is typeOf(LHS)
+     *  - LHS it typeOf(RHS)
+     *
+     * Equality is primitive if it is identity (`===`) or `equals` implementation is known to come from:
+     *  - `Any` (final classes that don't override `equals`)
+     *  - `String`
+     *  - `Enum` (enum classes)
+     */
+    private fun ProcessEqContext.processEqContractsBasedOnPrimitiveEquals() {
+        // TODO: this check should not be here (KT-87406)
+        if (leftOperand.resolvedType.isMarkedNullable && rightOperand.resolvedType.isMarkedNullable) return
 
-        val equalsContract = when {
-            operation != FirOperation.EQ && operation != FirOperation.NOT_EQ -> EqualsOverrideContract.SAFE_FOR_SMART_CAST
-            else -> computeEqualsOverrideContract(leftOperandType, components.session, components.scopeSession, trustExpectClasses = false)
+        if (leftOperandVariable is RealVariable && equalsContract == EqualsOverrideContract.SAFE_FOR_SMART_CAST) {
+            flow.addImplication((expressionVariable eq isEq) implies (leftOperandVariable typeEq rightOperand.resolvedType))
         }
+        if (rightOperandVariable is RealVariable && equalsContract == EqualsOverrideContract.SAFE_FOR_SMART_CAST) {
+            flow.addImplication((expressionVariable eq isEq) implies (rightOperandVariable typeEq leftOperand.resolvedType))
+        }
+    }
 
+    /**
+     * Suppose one of the operands is enum entry / object access. Then
+     *  - if `==` / `===`, the other operand is not any of the "complementary" entries / classes
+     *  - if `!=` / `!==`, the other operand is not this enum entry / object
+     */
+    private fun ProcessEqContext.processEqContractsForExhaustiveness() {
         fun FirBasedSymbol<*>.isSingleton(): Boolean = this is FirEnumEntrySymbol
                 // If the object has a problematic `equals()`, it will be reported during `when` exhaustiveness analysis.
                 || this is FirRegularClassSymbol && classKind.isObject
@@ -784,24 +814,19 @@ abstract class FirDataFlowAnalyzer(
         fun addEqualityImplications(variable: DataFlowVariable?, otherOperand: FirExpression) {
             if (variable !is RealVariable) return
 
-            if (equalsContract == EqualsOverrideContract.SAFE_FOR_SMART_CAST) {
-                flow.addImplication((expressionVariable eq isEq) implies (variable typeEq otherOperand.resolvedType))
-            }
-
             val symbol = when (val other = otherOperand.unwrapSmartcastExpression()) {
                 is FirPropertyAccessExpression -> other.calleeReference.toResolvedBaseSymbol()?.takeIf { it.isSingleton() }
                 is FirResolvedQualifier -> other.accessedObjectSymbol?.takeIf { it.isSingleton() }
                 else -> null
             }
-            if (symbol != null) {
-                flow.addImplication((expressionVariable eq !isEq) implies (variable valueNotEq symbol))
-            }
+            if (symbol == null) return
+            flow.addImplication((expressionVariable eq !isEq) implies (variable valueNotEq symbol))
             val complementarySymbols = when (symbol) {
                 is FirEnumEntrySymbol -> with(components) { symbol.getComplementarySymbols() }
                 is FirRegularClassSymbol if symbol.classKind.isObject -> with(components) { symbol.getComplementarySymbols() }
                 else -> null
             }
-            if (complementarySymbols != null && complementarySymbols.isNotEmpty()) {
+            if (!complementarySymbols.isNullOrEmpty()) {
                 flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq complementarySymbols))
             }
         }
@@ -809,6 +834,28 @@ abstract class FirDataFlowAnalyzer(
         addEqualityImplications(leftOperandVariable, rightOperand)
         addEqualityImplications(rightOperandVariable, leftOperand)
     }
+
+    private inner class ProcessEqContext(
+        val flow: MutableFlow,
+        val leftOperand: FirExpression,
+        val rightOperand: FirExpression,
+        val leftOperandVariable: DataFlowVariable?,
+        val rightOperandVariable: DataFlowVariable?,
+        val expressionVariable: SyntheticVariable,
+        val operation: FirOperation,
+    ) {
+        val equalsContract by lazy(LazyThreadSafetyMode.NONE) {
+            when {
+                operation != FirOperation.EQ && operation != FirOperation.NOT_EQ -> EqualsOverrideContract.SAFE_FOR_SMART_CAST
+                else -> computeEqualsOverrideContract(
+                    leftOperand.resolvedType, components.session, components.scopeSession, trustExpectClasses = false,
+                )
+            }
+        }
+    }
+
+    private val ProcessEqContext.isEq: Boolean
+        get() = operation.isEq()
 
     // ----------------------------------- Jump -----------------------------------
 
