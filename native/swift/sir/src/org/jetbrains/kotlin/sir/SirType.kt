@@ -19,6 +19,27 @@ sealed interface SirType {
         val never get() = SirNominalType(SirSwiftModule.never)
         val void get() = SirNominalType(SirSwiftModule.void)
     }
+
+    class Metatype(
+        val type: SirType,
+        override val attributes: List<SirAttribute> = emptyList(),
+    ) : SirWrappedType {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || other !is Metatype) return false
+
+            if (type != other.type) return false
+            if (attributes != other.attributes) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = type.hashCode()
+            result = 31 * result + attributes.hashCode()
+            return result
+        }
+    }
 }
 
 /**

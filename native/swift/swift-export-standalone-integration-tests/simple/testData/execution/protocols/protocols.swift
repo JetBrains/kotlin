@@ -133,4 +133,5 @@ func testExistentialWithExportedSuperclass() throws {
 func testExistentialInheritsExportedSuperInterface() throws {
     let x: any InhIface = returnInhIface()
     #expect(x.ping() == 42)
+    #expect(x is InhBarWithIface)
 }
