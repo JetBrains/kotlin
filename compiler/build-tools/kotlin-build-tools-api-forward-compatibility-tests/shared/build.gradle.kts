@@ -9,7 +9,8 @@ dependencies {
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
     compileOnly(libs.junit.jupiter.params)
-    compileOnly("org.jetbrains.kotlin:kotlin-build-tools-api:2.3.0")
+    compileOnly("org.jetbrains.kotlin:kotlin-build-tools-api:2.4.0")
+    compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
 }
 
 sourceSets {
@@ -19,5 +20,8 @@ sourceSets {
 kotlin {
     compilerOptions {
         optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
+        optIn.add("kotlin.ExperimentalStdlibApi")
+        optIn.add("kotlin.io.path.ExperimentalPathApi")
+        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }

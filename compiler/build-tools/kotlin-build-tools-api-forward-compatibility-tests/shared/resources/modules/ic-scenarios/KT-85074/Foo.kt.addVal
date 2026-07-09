@@ -1,0 +1,6 @@
+package org.example.foo
+
+interface Foo {
+    val foo: String
+    val bar: String
+}

@@ -38,9 +38,8 @@ kotlin {
 }
 
 val compatibilityTestsVersions = listOf(
-    KotlinToolingVersion(2, 3, 0, null),
-    KotlinToolingVersion(2, 3, 20, null),
     KotlinToolingVersion(2, 4, 0, null),
+    KotlinToolingVersion(2, 4, 20, "Beta1"),
 )
 
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"

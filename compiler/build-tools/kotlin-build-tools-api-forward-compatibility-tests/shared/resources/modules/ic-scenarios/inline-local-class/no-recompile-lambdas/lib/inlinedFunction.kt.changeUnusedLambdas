@@ -1,0 +1,12 @@
+private val unusedBefore1 = { 100 }
+private val unusedBefore2 = { "changed" }
+
+inline fun calculate(): Int {
+    val lambda = {
+        40 + 2
+    }
+    return lambda()
+}
+
+private val unusedAfter1 = { false }
+private val unusedAfter2 = { 99.9 }
