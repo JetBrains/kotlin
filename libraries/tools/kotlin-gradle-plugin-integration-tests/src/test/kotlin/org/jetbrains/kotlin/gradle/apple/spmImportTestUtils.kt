@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportExecu
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportTestExecutionKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportTestExecutionService
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.noSyncIdentifier
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
 import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
@@ -52,6 +53,7 @@ import kotlin.io.path.createFile
 import kotlin.io.path.readText
 import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 import kotlin.io.path.writeText
 import kotlin.io.readText
 import kotlin.test.assertEquals
@@ -579,8 +581,11 @@ internal fun TestProject.localIphonesimulatorDerivedDataDir(
 internal fun sharedRootBucketDir(dumpDir: Path): Path =
     dumpDir.parent.parent
 
-internal fun xcodeDumpFingerprintStamp(dumpDir: Path): Path =
-    dumpDir.resolve("xcode-dump-fingerprint.json")
+internal fun TestProject.noSynchronization(): PackageResolvedSynchronization {
+    return PackageResolvedSynchronization.Identifier(
+        noSyncIdentifier(this.projectName)
+    )
+}
 
 internal fun assertDumpDirectoryContainsXcodebuildArgsDump(dumpDir: Path) {
     assertDirectoryExists(dumpDir)
@@ -754,9 +759,6 @@ internal fun TestProject.selectedPersistedPackageResolvedPath(
     when (sync) {
         is PackageResolvedSynchronization.Identifier ->
             projectPath.resolve(".swiftpm-locks/${sync.identifier}/swiftImport/Package.resolved")
-
-        PackageResolvedSynchronization.None ->
-            projectPath.resolve("Package.resolved")
     }
 
 internal fun TestProject.initSwiftPmProject(

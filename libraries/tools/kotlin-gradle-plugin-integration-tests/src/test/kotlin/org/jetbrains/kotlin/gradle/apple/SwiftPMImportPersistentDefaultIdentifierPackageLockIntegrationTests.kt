@@ -9,7 +9,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintSyntheticPackage
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -963,7 +962,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                 val rightProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.None
+                            packageResolvedSynchronization = noSynchronization()
                         }
                     }
                 }
@@ -985,6 +984,11 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":right:iosSimulatorArm64MainKlibrary",
                         ":right:compileTestKotlinIosSimulatorArm64",
                         ":right:linkDebugTestIosSimulatorArm64",
+                        ":right:fingerprintSyntheticPackage",
+                        ":right:serializeSwiftPMDependenciesMetadataForLockFiles",
+                        ":right:generateUmbrellaPackageIdentifierBasedResolutionForNoSyncRight",
+                        ":right:fetchUmbrellaPackageIdentifierForNoSyncRight",
+                        ":right:fingerprintXcodebuildIphonesimulator",
                     )
                 }
 
