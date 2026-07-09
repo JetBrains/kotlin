@@ -9,37 +9,41 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.util.PsiUtilCore
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.containingFile
+import org.jetbrains.kotlin.analysis.api.symbols.containingModule
+import org.jetbrains.kotlin.analysis.api.symbols.isLocal
+import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
-fun KtClassOrObject.shouldNotBeVisibleAsLightClass(): Boolean {
-    val containingFile = containingFile
-    if (containingFile is KtCodeFragment) {
+
+context(_: KaSession)
+internal fun KaClassSymbol.shouldNotBeVisibleAsLightClass(): Boolean {
+    if ((containingFile?.containingModule as? KaDanglingFileModule)?.isCodeFragment == true) {
         // Avoid building light classes for code fragments
         return true
     }
 
+    val containingKtFile = containingFile?.psi as? KtFile
     // Avoid building light classes for decompiled built-ins
-    if ((containingFile as? KtFile)?.isCompiled == true &&
-        containingFile.virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
+    if (containingKtFile?.isCompiled == true &&
+        containingKtFile.virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
     ) {
         return true
     }
 
-    if (parentsWithSelf.filterIsInstance<KtClassOrObject>().any { it.hasExpectModifier() }) {
+    if (isExpect) {
         return true
     }
 
-    if (isLocal) {
-        if (containingFile.originalFile.virtualFile == null) return true
-        if (hasParseErrorsAround(this) || PsiUtilCore.hasErrorElementChild(this)) return true
-        if (classDeclaredInUnexpectedPosition(this)) return true
-    }
-
-    if (isEnumEntryWithoutBody(this)) {
-        return true
+    val classOrObjectPsi = sourcePsiSafe<KtClassOrObject>()
+    if (isLocal && classOrObjectPsi != null) {
+        if (containingKtFile?.virtualFile == null) return true
+        if (hasParseErrorsAround(classOrObjectPsi) || PsiUtilCore.hasErrorElementChild(classOrObjectPsi)) return true
+        if (classDeclaredInUnexpectedPosition(classOrObjectPsi)) return true
     }
 
     return false
@@ -60,13 +64,6 @@ private fun classDeclaredInUnexpectedPosition(classOrObject: KtClassOrObject): B
 
     return classParent !is KtBlockExpression &&
             classParent !is KtDeclarationContainer
-}
-
-private fun isEnumEntryWithoutBody(classOrObject: KtClassOrObject): Boolean {
-    if (classOrObject !is KtEnumEntry) {
-        return false
-    }
-    return classOrObject.getBody()?.declarations?.isEmpty() ?: true
 }
 
 private fun hasParseErrorsAround(psi: PsiElement): Boolean {

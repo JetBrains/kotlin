@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -22,11 +23,11 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike<KaAnonymousObjectSymbol>, PsiAnonymousClass {
     constructor(
-        anonymousObjectDeclaration: KtClassOrObject,
+        anonymousObjectDeclaration: KaAnonymousObjectSymbol,
         useSiteModule: KaModule,
     ) : this(
-        classOrObjectDeclaration = anonymousObjectDeclaration,
-        classSymbolPointer = anonymousObjectDeclaration.createSymbolPointer(useSiteModule),
+        classOrObjectDeclaration = anonymousObjectDeclaration.sourcePsiSafe(),
+        classSymbolPointer = anonymousObjectDeclaration.createPointer(),
         useSiteModule = useSiteModule,
     )
 
