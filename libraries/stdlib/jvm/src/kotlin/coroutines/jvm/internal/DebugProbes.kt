@@ -19,10 +19,10 @@ private val IS_ANDROID: Boolean = try {
 }
 
 private val hasNoProbes: Boolean
-private val debugProbes: Array<DebugProbes> = run {
+private val debugProbes: DebugProbes? = run {
     if (IS_ANDROID) {
         hasNoProbes = true
-        return@run emptyArray()
+        return@run null
     }
     /*
     Respect debug probes loading explicitly being enabled or disabled by the System Property.
@@ -40,10 +40,10 @@ private val debugProbes: Array<DebugProbes> = run {
             result.add(service)
         }
         hasNoProbes = noProbes
-        result.toTypedArray()
+        result.firstOrNull()
     } else {
         hasNoProbes = true
-        emptyArray()
+        null
     }
 }
 
@@ -82,11 +82,7 @@ private val debugProbes: Array<DebugProbes> = run {
  */
 @SinceKotlin("1.3")
 internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuation<T> {
-    fun slowPath(completion: Continuation<T>): Continuation<T> = if (debugProbes.size == 1) {
-        debugProbes[0].probeCoroutineCreated(completion)
-    } else {
-        debugProbes.foldRight(completion) { probe, acc -> probe.probeCoroutineCreated(acc) }
-    }
+    fun slowPath(completion: Continuation<T>): Continuation<T> = debugProbes!!.probeCoroutineCreated(completion)
     /** implementation of this function can be replaced by debugger */
     if (hasNoProbes) return completion
     return slowPath(completion)
@@ -107,11 +103,7 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
-    fun slowPath(completion: Continuation<*>): Unit = if (debugProbes.size == 1) {
-        debugProbes[0].probeCoroutineResumed(completion)
-    } else {
-        debugProbes.forEach { it.probeCoroutineResumed(frame) }
-    }
+    fun slowPath(completion: Continuation<*>): Unit = debugProbes!!.probeCoroutineResumed(completion)
     /** implementation of this function can be replaced by debugger */
     if (hasNoProbes) return
     slowPath(frame)
@@ -130,11 +122,7 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
-    fun slowPath(completion: Continuation<*>): Unit = if (debugProbes.size == 1) {
-        debugProbes[0].probeCoroutineSuspended(completion)
-    } else {
-        debugProbes.forEach { it.probeCoroutineSuspended(frame) }
-    }
+    fun slowPath(completion: Continuation<*>): Unit = debugProbes!!.probeCoroutineSuspended(completion)
     /** implementation of this function can be replaced by debugger */
     if (hasNoProbes) return
     slowPath(frame)
