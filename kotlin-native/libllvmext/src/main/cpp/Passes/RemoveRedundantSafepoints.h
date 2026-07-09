@@ -16,9 +16,9 @@ class RemoveRedundantSafepointsPass
 public:
   explicit RemoveRedundantSafepointsPass(bool IsSafepointInliningAllowed);
 
-  PreservedAnalyses run(Module &M, ModuleAnalysisManager &AF);
+  PreservedAnalyses run(Function &F, FunctionAnalysisManager &AF);
 
-  bool run(Module &M);
+  bool run(Function &F);
 
 private:
   bool IsSafepointInliningAllowed;
