@@ -144,20 +144,20 @@ public func enumWithFactory(
     return main.EnumWithFactory(__externalRCRefUnsafe: __root___EnumWithFactory__TypesOfArguments__Swift_Int32__(x), options: .asBestFittingWrapper)
 }
 public func interfaceWithFactory() -> any main.InterfaceWithFactory {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory()) as! any main.InterfaceWithFactory
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory(), conformsTo: main.InterfaceWithFactory.Type.self) as! any main.InterfaceWithFactory
 }
 public func interfaceWithFactory(
     arg: any KotlinRuntimeSupport._KotlinBridgeable
 ) -> any main.InterfaceWithFactory {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef())) as! any main.InterfaceWithFactory
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef()), conformsTo: main.InterfaceWithFactory.Type.self) as! any main.InterfaceWithFactory
 }
 public func job() -> main.TCJ {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job()) as! any main.CompletableJob
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job(), conformsTo: main.CompletableJob.Type.self) as! any main.CompletableJob
 }
 public func job(
     parent: (any main.Job)?
 ) -> any main.CompletableJob {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___(parent.map { it in it.__externalRCRef() } ?? nil)) as! any main.CompletableJob
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___(parent.map { it in it.__externalRCRef() } ?? nil), conformsTo: main.CompletableJob.Type.self) as! any main.CompletableJob
 }
 public func objectWithFactory() -> main.ObjectWithFactory {
     return main.ObjectWithFactory.__createClassWrapper(externalRCRef: __root___ObjectWithFactory())

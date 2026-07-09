@@ -243,6 +243,9 @@ public class SirTypeProviderImpl(
             is SirTupleType -> {
                 types.forEach { [_, type] -> type.handleImports(processTypeImports) }
             }
+            is SirType.Metatype -> {
+                type.handleImports(processTypeImports)
+            }
             is SirErrorType -> {}
             SirUnsupportedType -> {}
             is SirArrayType, is SirDictionaryType, is SirOptionalType ->

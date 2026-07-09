@@ -225,6 +225,14 @@ func testStateFlow() async {
 
 @Test
 @MainActor
+func testStateFlowIsMutableStateFlow() async {
+    let stateFlow = CurrentSubject().stateFlow
+    #expect(stateFlow is KotlinTypedMutableStateFlow<Elem>)
+    #expect(stateFlow.wrapped is KotlinMutableStateFlow)
+}
+
+@Test
+@MainActor
 func testCollectMutableStateFlowInKotlin() async {
     let expected: [Elem] = [Element1.shared, Element2.shared, Element3.shared]
 
@@ -334,6 +342,48 @@ func testExplicitCancellation() async {
     #expect(collectResult == .success(Element1.shared))
     try! await Task.sleep(nanoseconds: 300_000_000)
     #expect(trackedFlow.count == 0)
+}
+
+@Test
+@MainActor
+func testElementUpcasting() async throws {
+    let foo: Foo? = try await testBarClassAsFoo().asAsyncSequence().makeAsyncIterator().next()
+    #expect(foo != nil)
+    #expect(foo is FooClass)
+    let bar: Bar? = try await testBarClassAsBar().asAsyncSequence().makeAsyncIterator().next()
+    #expect(bar != nil)
+    #expect((bar as? FooClass) == nil)
+    let fooClass: FooClass? = try await testBarClassAsFooClass().asAsyncSequence().makeAsyncIterator().next()
+    #expect(fooClass != nil)
+}
+
+@Test
+@MainActor
+func testStateFlowValueUpcasting() async throws {
+    let fooStateFlow = try await testBarClassAsFooStateFlow()
+    var foo: Foo = fooStateFlow.value
+    #expect(foo is FooClass)
+
+    let fooMutableStateFlow = fooStateFlow as! KotlinTypedMutableStateFlow<Foo>
+    foo = fooMutableStateFlow.value
+    #expect(foo is FooClass)
+
+    let barStateFlow = try await testBarClassAsBarStateFlow()
+    var bar: Bar = barStateFlow.value
+    #expect((bar as? FooClass) == nil)
+
+    let barMutableStateFlow = barStateFlow as! KotlinTypedMutableStateFlow<Bar>
+    bar = barMutableStateFlow.value
+    #expect((bar as? FooClass) == nil)
+}
+
+@Test
+@MainActor
+func testSharedFlowReplayCacheUpcasting() async throws {
+    let fooReplayCache: [Foo] = try await testBarClassAsFooStateFlow().replayCache
+    #expect(fooReplayCache[0] is FooClass)
+    let barReplayCache: [Bar] = try await testBarClassAsBarStateFlow().replayCache
+    #expect((barReplayCache[0] as? FooClass) == nil)
 }
 
 func ==<T>(_ lhs: Result<T, any Error>, _ rhs: Result<T, any Error>) -> Bool where T: Equatable {

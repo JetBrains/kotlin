@@ -65,3 +65,21 @@ suspend fun testCollect(flow: Flow<Elem>, count: Int): List<Elem> = flow.take(co
 fun testUpdateValue(flow: MutableStateFlow<Elem>, value: Elem) {
     flow.value = value
 }
+
+interface Foo
+
+interface Bar
+
+open class FooClass : Foo
+
+internal class BarClass : FooClass(), Bar
+
+fun testBarClassAsFoo(): Flow<Foo> = flowOf(BarClass())
+
+fun testBarClassAsFooStateFlow(): StateFlow<Foo> = MutableStateFlow(BarClass())
+
+fun testBarClassAsBar(): Flow<Bar> = flowOf(BarClass())
+
+fun testBarClassAsBarStateFlow(): StateFlow<Bar> = MutableStateFlow(BarClass())
+
+fun testBarClassAsFooClass(): Flow<FooClass> = flowOf(BarClass())

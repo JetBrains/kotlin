@@ -190,7 +190,7 @@ public final class FunctionalBox: main.Box {
 public final class GenericWithComparableUpperBound: KotlinRuntime.KotlinBase {
     public var t: any ExportedKotlinPackages.kotlin.Comparable {
         get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: GenericWithComparableUpperBound_t_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.Comparable
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: GenericWithComparableUpperBound_t_get(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.Comparable.Type.self) as! any ExportedKotlinPackages.kotlin.Comparable
         }
     }
     public init(
@@ -331,7 +331,7 @@ public var baz: main.Holder {
     }
 }
 public func a() -> any main.A {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___A()) as! any main.A
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___A(), conformsTo: main.A.Type.self) as! any main.A
 }
 public func bar(
     param1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
@@ -444,7 +444,7 @@ extension main.A {
 @_documentation(visibility: internal)
 extension main.AFactory where Self : main.__AFactory {
     public func create() -> any main.A {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: AFactory_create(self.__externalRCRef())) as! any main.A
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: AFactory_create(self.__externalRCRef()), conformsTo: main.A.Type.self) as! any main.A
     }
 }
 extension main.AFactory {
@@ -536,42 +536,42 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._AFactory {
 }
 @_cdecl("AFactory_create__reverse_swift")
 package func AFactory_create__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.AFactory
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.AFactory.Type.self) as! any main.AFactory
     let _result: any main.A = _self.create()
     return _result.__externalRCRef()
 }
 
 @_cdecl("A_foo_get__reverse_swift")
 package func A_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.A
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.A.Type.self) as! any main.A
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.foo
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("B_foo_get__reverse_swift")
 package func B_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.B
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.B.Type.self) as! any main.B
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.foo
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ item: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Consumer
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Consumer.Type.self) as! any main.Consumer
     let _result: Swift.Void = _self.consume(item: { switch item { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return { _result; return true }()
 }
 
 @_cdecl("Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ input: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Processor
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Processor.Type.self) as! any main.Processor
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.process(input: { switch input { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("Producer_produce__reverse_swift")
 package func Producer_produce__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Producer
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Producer.Type.self) as! any main.Producer
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.produce()
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
