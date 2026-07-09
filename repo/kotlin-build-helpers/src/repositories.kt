@@ -145,14 +145,29 @@ fun RepositoryHandler.teamcityRepository() {
     }
 }
 
+fun RepositoryHandler.androidxSnapshotRepository(composeSnapshotId: String) {
+    maven { repository ->
+        repository.setUrl("https://androidx.dev/snapshots/builds/$composeSnapshotId/artifacts/repository")
+        repository.content { content ->
+            content.includeGroup("androidx.compose.runtime")
+            content.includeGroup("androidx.collection")
+            content.includeGroup("androidx.annotation")
+        }
+    }
+}
+
 fun RepositoryHandler.googleAndroidRepository() {
     exclusiveContent { exclusive ->
         exclusive.forRepository {
-            google()
+            maven { repository ->
+                repository.url = google().url
+                repository.content { content ->
+                    content.includeGroupByRegex("""androidx(\..*)?""")
+                }
+            }
         }
         exclusive.filter { content ->
             content.includeGroupByRegex("""com\.android(\..*)?""")
-            content.includeGroupByRegex("""androidx(\..*)?""")
             content.includeGroup("com.google.testing.platform")
         }
     }
