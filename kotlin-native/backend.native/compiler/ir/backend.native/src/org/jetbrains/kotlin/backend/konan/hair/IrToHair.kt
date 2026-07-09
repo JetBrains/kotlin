@@ -225,9 +225,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                                     val call = InvokeStatic(HairFunctionImpl(function))(callArgs = args.toTypedArray())
                                     when {
                                         function.returnType.isNothing() -> {
-                                            // FIXME can this all be a single node?
-                                            Halt()
-                                            Unreachable()
+                                            breakControlFlowWithUnreachable()
                                             NoValue()
                                         }
                                         function.returnType.isUnit() -> UnitValue()

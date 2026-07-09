@@ -77,8 +77,7 @@ fun Session.lower() {
                                     cond = Cmp(HairType.INT, CmpOp.U_GE)(node.index, size),
                                     trueInit = {
                                         InvokeStatic(RuntimeInterface.throwArrayIndexOutOfBounds)()
-                                        Halt()
-                                        Unreachable()
+                                        breakControlFlowWithUnreachable()
                                     },
                                     falseInit = { },
                                 )
