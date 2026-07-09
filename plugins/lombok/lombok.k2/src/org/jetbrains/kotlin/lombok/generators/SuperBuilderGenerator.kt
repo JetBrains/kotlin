@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.lombok.generators
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.createCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
+import org.jetbrains.kotlin.fir.declarations.utils.isClass
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.moduleData
@@ -23,9 +29,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.SuperBuilder
 import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.SuperBuilder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -36,6 +43,8 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         const val BUILDER_TYPE_PARAMETER_INDEX_FROM_END = 1
         private val startProjectionsList = listOf(ConeStarProjection, ConeStarProjection)
     }
+
+    private val processedBuilderKeys: FirCache<BuilderKey, Boolean, Nothing?> = session.firCachesFactory.createCache { true }
 
     override val builderModality: Modality = Modality.ABSTRACT
 
@@ -130,32 +139,41 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             }
         }
 
-        val superBuilderClassAndTypeRef = classSymbol.resolvedSuperTypeRefs.mapNotNull { superTypeRef ->
-            val superTypeSymbol = superTypeRef.toRegularClassSymbol(session) ?: return@mapNotNull null
+        val superTypeRef = classSymbol.resolvedSuperTypeRefs.firstNotNullOfOrNull { superTypeRef ->
+            val superTypeSymbol = superTypeRef.toRegularClassSymbol(session) ?: return@firstNotNullOfOrNull null
+
+            if (!superTypeSymbol.isClass) return@firstNotNullOfOrNull null
 
             val builderNames = getBuilderNames(superTypeSymbol)
 
             // `@SingleBuilder` is only applicable to classes. It means it can be <= 1 builder in a super type.
-            val builderName = builderNames.singleOrNull() ?: return@mapNotNull null
+            val builderName = builderNames.firstOrNull() ?: return@firstNotNullOfOrNull null
 
-            val superBuilder = builderClassesCache.getValue(BuilderKey(superTypeSymbol, builderName)) ?: return@mapNotNull null
+            val builderKey = BuilderKey(superTypeSymbol, builderName)
 
-            superBuilder to superTypeRef
-        }.singleOrNull()
+            if (processedBuilderKeys.getValueIfComputed(builderKey) != null) {
+                return@firstNotNullOfOrNull buildErrorTypeRef {
+                    diagnostic = ConeSimpleDiagnostic(
+                        "Loop in supertypes involving ${superTypeSymbol.classId}",
+                        DiagnosticKind.LoopInSupertype,
+                    )
+                }
+            } else {
+                // Use the mutating `getValue` because the `FirCache` doesn't provide API for elements putting
+                require(processedBuilderKeys.getValue(builderKey))
+            }
 
-        val superBuilderTypeRef = if (superBuilderClassAndTypeRef != null) {
-            val [symbol, superTypeRef] = superBuilderClassAndTypeRef
-            symbol.constructType(
+            val superBuilder = builderClassesCache.getValue(builderKey) ?: return@firstNotNullOfOrNull null
+
+            superBuilder.constructType(
                 typeArguments = arrayOf(
                     *superTypeRef.coneType.typeArguments,
                     classTypeParameterSymbol.defaultType,
                     builderTypeParameterSymbol.defaultType,
                 )
             ).toFirResolvedTypeRef()
-        } else {
-            session.builtinTypes.anyType
         }
 
-        superTypeRefs += listOf(superBuilderTypeRef)
+        superTypeRefs += superTypeRef ?: session.builtinTypes.anyType
     }
 }

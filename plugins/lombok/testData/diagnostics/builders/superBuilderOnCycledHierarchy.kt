@@ -21,6 +21,6 @@ class X2 extends X1 {
 // FILE: test.kt
 
 fun test() {
-    X1.builder().field1("str1").field2(1).build()
-    X2.builder().field2(2).field1("str2").build()
+    X1.builder().field1("str1").<!UNRESOLVED_REFERENCE!>field2<!>(1).build()
+    X2.builder().field2(2).<!UNRESOLVED_REFERENCE!>field1<!>("str2").build()
 }
