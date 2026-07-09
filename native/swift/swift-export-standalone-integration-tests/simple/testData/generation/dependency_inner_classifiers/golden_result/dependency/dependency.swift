@@ -81,11 +81,11 @@ extension ExportedKotlinPackages.datetime {
                 return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: datetime_LocalDate_Companion_Format__TypesOfArguments__U28anyU20dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDateU29202D_U20Swift_Void__(self.__externalRCRef(), {
                     let originalBlock: (any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate) -> Swift.Void = block
                     return { (arg0: Swift.UnsafeMutableRawPointer) in
-                        let _arg0: any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate
+                        let _arg0: any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate.Type.self) as! any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate
                         let _result = originalBlock(_arg0)
                         return { _result; return true }()
                     }
-                }())) as! any ExportedKotlinPackages.datetime.DateTimeFormat
+                }()), conformsTo: ExportedKotlinPackages.datetime.DateTimeFormat.Type.self) as! any ExportedKotlinPackages.datetime.DateTimeFormat
             }
         }
         public init() {

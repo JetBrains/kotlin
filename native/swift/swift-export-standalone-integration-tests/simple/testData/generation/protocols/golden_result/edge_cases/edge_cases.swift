@@ -238,35 +238,35 @@ extension ExportedKotlinPackages.conflictingTypealiases {
 }
 @_cdecl("Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift")
 package func Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ result: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any edge_cases.Baz
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.Baz.Type.self) as! any edge_cases.Baz
     let _result: Swift.Void = _self.foo(result: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: result))
     return { _result; return true }()
 }
 
 @_cdecl("InterfaceA_foo__reverse_swift")
 package func InterfaceA_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any edge_cases.InterfaceA
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.InterfaceA.Type.self) as! any edge_cases.InterfaceA
     let _result: Swift.Void = _self.foo()
     return { _result; return true }()
 }
 
 @_cdecl("InterfaceB_bar__reverse_swift")
 package func InterfaceB_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any edge_cases.InterfaceB
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.InterfaceB.Type.self) as! any edge_cases.InterfaceB
     let _result: Swift.Void = _self.bar()
     return { _result; return true }()
 }
 
 @_cdecl("SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo____reverse_swift")
 package func SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String, _ count: Swift.Int32, _ _2: Swift.UnsafeMutableRawPointer, _ _3: Swift.UnsafeMutableRawPointer) -> Any {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any edge_cases.SomeInterface
-    let _result: Swift.Array<Swift.String> = _self.repeatWithContext((KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _2) as! any edge_cases.Baz, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _3) as! any ExportedKotlinPackages.conflictingTypealiases.Foo), receiver, count: count)
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.SomeInterface.Type.self) as! any edge_cases.SomeInterface
+    let _result: Swift.Array<Swift.String> = _self.repeatWithContext((KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _2, conformsTo: edge_cases.Baz.Type.self) as! any edge_cases.Baz, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _3, conformsTo: ExportedKotlinPackages.conflictingTypealiases.Foo.Type.self) as! any ExportedKotlinPackages.conflictingTypealiases.Foo), receiver, count: count)
     return _result
 }
 
 @_cdecl("SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32____reverse_swift")
 package func SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String, _ count: Swift.Int32) -> Any {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any edge_cases.SomeInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.SomeInterface.Type.self) as! any edge_cases.SomeInterface
     let _result: Swift.Array<Swift.String> = _self.repeat(receiver, count: count)
     return _result
 }

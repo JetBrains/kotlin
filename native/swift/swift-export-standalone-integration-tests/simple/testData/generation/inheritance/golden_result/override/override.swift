@@ -71,13 +71,13 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: override._P {
 @_cdecl("Base_g__TypesOfArguments__anyU20override_P____reverse_swift")
 package func Base_g__TypesOfArguments__anyU20override_P____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ x: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = override.Base.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.Void = _self.g(x: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: x) as! any override.P)
+    let _result: Swift.Void = _self.g(x: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: x, conformsTo: override.P.Type.self) as! any override.P)
     return { _result; return true }()
 }
 
 @_cdecl("P_f__reverse_swift")
 package func P_f__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any override.P
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: override.P.Type.self) as! any override.P
     let _result: Swift.Void = _self.f()
     return { _result; return true }()
 }
@@ -85,6 +85,6 @@ package func P_f__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swif
 @_cdecl("Sub_g__TypesOfArguments__anyU20override_P____reverse_swift")
 package func Sub_g__TypesOfArguments__anyU20override_P____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ x: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = override.Sub.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.Void = _self.g(x: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: x) as! any override.P)
+    let _result: Swift.Void = _self.g(x: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: x, conformsTo: override.P.Type.self) as! any override.P)
     return { _result; return true }()
 }

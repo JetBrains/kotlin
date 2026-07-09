@@ -198,20 +198,25 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     return [[bestFittingClass alloc] initWithExternalRCRefUnsafe:ref options:KotlinBaseConstructionOptionsAsBestFittingWrapper];
 }
 
-+ (id)_createProtocolWrapperForExternalRCRef:(void *)ref {
++ (id)_createProtocolWrapperForExternalRCRef:(void *)ref conformsTo:(NS_NOESCAPE BOOL (^)(Class))conformsTo {
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
     kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 
     auto externalRCRef = reinterpret_cast<kotlin::mm::RawExternalRCRef*>(ref);
 
     const TypeInfo *typeInfo = kotlin::mm::typeOfExternalRCRef(externalRCRef);
-    Class wrapperClass = kotlin::swiftExportRuntime::protocolWrapperFor(typeInfo);
     Class bestFittingClass = kotlin::swiftExportRuntime::classWrapperFor(typeInfo);
 
-    KotlinBaseConstructionOptions options = wrapperClass == bestFittingClass ?
-        KotlinBaseConstructionOptionsAsBestFittingWrapper : KotlinBaseConstructionOptionsAsExistentialWrapper;
+    if (conformsTo != nil && conformsTo(bestFittingClass)) {
+        return [[bestFittingClass alloc] initWithExternalRCRefUnsafe:ref options:KotlinBaseConstructionOptionsAsBestFittingWrapper];
+    } else {
+        Class wrapperClass = kotlin::swiftExportRuntime::protocolWrapperFor(typeInfo);
 
-    return [[wrapperClass alloc] initWithExternalRCRefUnsafe:ref options:options];
+        KotlinBaseConstructionOptions options = wrapperClass == bestFittingClass ?
+            KotlinBaseConstructionOptionsAsBestFittingWrapper : KotlinBaseConstructionOptionsAsExistentialWrapper;
+
+        return [[wrapperClass alloc] initWithExternalRCRefUnsafe:ref options:options];
+    }
 }
 
 /*
