@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import kotlin.io.path.moveTo
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.DisplayName
-import kotlin.test.Ignore
+import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertContains
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -224,6 +224,9 @@ class JsBrowserTestsIT : KGPBaseTest() {
 
     @DisplayName("KT-86958: Unclear error for js test failure on timeout")
     @GradleTest
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+        enabledOnCI = [OS.LINUX, OS.MAC])
     fun `prints clear error message when a test times out`(gradleVersion: GradleVersion) {
         project("empty", gradleVersion = gradleVersion) {
             plugins {

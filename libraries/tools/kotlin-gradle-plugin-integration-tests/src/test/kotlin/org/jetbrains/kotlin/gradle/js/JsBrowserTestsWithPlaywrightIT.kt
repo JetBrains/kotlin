@@ -28,12 +28,16 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.junit.jupiter.api.condition.OS
 import java.net.URI
 import javax.inject.Inject
 import kotlin.io.path.writeText
 import kotlin.test.Ignore
 
 @OptIn(ExperimentalJsTestDsl::class)
+@OsCondition(
+    supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+    enabledOnCI = [OS.LINUX, OS.MAC])
 @JsBrowserGradlePluginTests
 class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
