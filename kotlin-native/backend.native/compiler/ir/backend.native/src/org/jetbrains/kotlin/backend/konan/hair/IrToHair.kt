@@ -204,9 +204,24 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             function.origin == StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER -> ThreadLocalInit()
                             function.origin == StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> StandaloneThreadLocalInit()
                             !function.isReal -> notImplemented(HairTODO.FAKE_OVERRIDE_CALL)
-                            else -> if (expression.isVirtual()) {
-                                notImplemented(HairTODO.VIRTUAL_CALLS)
-                            } else {
+                            expression.isVirtual() -> notImplemented(HairTODO.VIRTUAL_CALLS)
+                            else -> {
+                                val arrayOp = expression.getArrayOp()
+                                if (arrayOp != null) {
+                                    if (arrayOp.needsIndexCheck) {
+                                        ArrayIndexCheck(args[0], args[1])
+                                    }
+                                    when (arrayOp) {
+                                        ArrayOp.GET,
+                                        ArrayOp.GET_UNCHECKED -> LoadArrayElement(resultType)(args[0], args[1])
+                                        ArrayOp.SET,
+                                        ArrayOp.SET_UNCHECKED -> {
+                                            val elementType = function.parameters.last().type.asHairType()
+                                            StoreArrayElement(elementType)(args[0], args[1], args[2])
+                                        }
+                                        ArrayOp.SIZE -> ArraySize(args[0])
+                                    }
+                                } else {
                                     val call = InvokeStatic(HairFunctionImpl(function))(callArgs = args.toTypedArray())
                                     when {
                                         function.returnType.isNothing() -> {
@@ -218,6 +233,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                                         function.returnType.isUnit() -> UnitValue()
                                         else -> call
                                     }
+                                }
                             }
                         }
                     }
@@ -325,7 +341,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         val result = if (exits.isNotEmpty()) {
                             require(exits.size == values.size)
                             val merge = BlockEntry(*exits.toTypedArray())
-                            Phi( merge, *((exits.map { it!! }).zip(values)).toTypedArray())
+                            Phi(merge, *((exits.map { it!! }).zip(values)).toTypedArray())
                         } else NoValue()
 
                         return result
