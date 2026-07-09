@@ -3,10 +3,10 @@
 package {
 
   // signature: mark(I)LVector;
-  public final static fun Vector.mark(len: kotlin/Int): Vector
+  public final fun mark(len: kotlin/Int): Vector
 
   // getter: getUnitX()LVector;
-  public final static val Vector.UnitX: Vector
+  public final val UnitX: Vector
     public final /* non-default */ get
 
   // module name: test-module

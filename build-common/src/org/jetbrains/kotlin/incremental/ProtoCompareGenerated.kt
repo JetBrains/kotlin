@@ -462,6 +462,16 @@ open class ProtoCompareGenerated(
             if (!checkEquals(oldTypeTable.getType(old.receiverTypeId), newTypeTable.getType(new.receiverTypeId))) return false
         }
 
+        if (old.hasCompanionExtensionReceiverType() != new.hasCompanionExtensionReceiverType()) return false
+        if (old.hasCompanionExtensionReceiverType()) {
+            if (!checkEquals(old.companionExtensionReceiverType, new.companionExtensionReceiverType)) return false
+        }
+
+        if (old.hasCompanionExtensionReceiverTypeId() != new.hasCompanionExtensionReceiverTypeId()) return false
+        if (old.hasCompanionExtensionReceiverTypeId()) {
+            if (!checkEquals(oldTypeTable.getType(old.companionExtensionReceiverTypeId), newTypeTable.getType(new.companionExtensionReceiverTypeId))) return false
+        }
+
         if (!checkEqualsFunctionContextReceiverType(old, new)) return false
 
         if (!checkEqualsFunctionContextReceiverTypeId(old, new)) return false
@@ -580,6 +590,16 @@ open class ProtoCompareGenerated(
         if (old.hasReceiverTypeId() != new.hasReceiverTypeId()) return false
         if (old.hasReceiverTypeId()) {
             if (!checkEquals(oldTypeTable.getType(old.receiverTypeId), newTypeTable.getType(new.receiverTypeId))) return false
+        }
+
+        if (old.hasCompanionExtensionReceiverType() != new.hasCompanionExtensionReceiverType()) return false
+        if (old.hasCompanionExtensionReceiverType()) {
+            if (!checkEquals(old.companionExtensionReceiverType, new.companionExtensionReceiverType)) return false
+        }
+
+        if (old.hasCompanionExtensionReceiverTypeId() != new.hasCompanionExtensionReceiverTypeId()) return false
+        if (old.hasCompanionExtensionReceiverTypeId()) {
+            if (!checkEquals(oldTypeTable.getType(old.companionExtensionReceiverTypeId), newTypeTable.getType(new.companionExtensionReceiverTypeId))) return false
         }
 
         if (!checkEqualsPropertyContextReceiverType(old, new)) return false
@@ -2245,6 +2265,14 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + typeById(receiverTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
+    if (hasCompanionExtensionReceiverType()) {
+        hashCode = 31 * hashCode + companionExtensionReceiverType.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasCompanionExtensionReceiverTypeId()) {
+        hashCode = 31 * hashCode + typeById(companionExtensionReceiverTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
     for(i in 0..contextReceiverTypeCount - 1) {
         hashCode = 31 * hashCode + getContextReceiverType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
@@ -2351,6 +2379,14 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     if (hasReceiverTypeId()) {
         hashCode = 31 * hashCode + typeById(receiverTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasCompanionExtensionReceiverType()) {
+        hashCode = 31 * hashCode + companionExtensionReceiverType.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasCompanionExtensionReceiverTypeId()) {
+        hashCode = 31 * hashCode + typeById(companionExtensionReceiverTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..contextReceiverTypeCount - 1) {
