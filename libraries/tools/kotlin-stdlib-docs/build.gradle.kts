@@ -54,6 +54,7 @@ dependencies {
     dokkaPlugin(project(":plugins:dokka-samples-transformer-plugin"))
     dokkaPlugin(project(":plugins:dokka-version-filter-plugin"))
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:$dokka_version")
+    dokkaPlugin("org.jetbrains.dokka:kotlin-playground-samples-plugin:$dokka_version")
 }
 
 fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
@@ -557,7 +558,6 @@ fun AbstractDokkaTask.fixIntersectedSourceRootsAndSamples(
 
         // replace samples here
         sourceSet.samples.setFrom(sourceSet.samples.map { replacements[it] ?: it })
-        sourceSet.samples.forEach { println(it) }
     }
 
     val kotlin_library_url = "https://github.com/JetBrains/kotlin/tree/$githubRevision/libraries/$libraryName"
