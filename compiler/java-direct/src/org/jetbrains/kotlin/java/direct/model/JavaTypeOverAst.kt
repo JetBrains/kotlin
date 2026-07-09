@@ -125,7 +125,12 @@ class JavaClassifierTypeOverAst(
             if (parts.size == 1) {
                 // 1. OWN type parameters (high priority). Known javac divergence: javac prefers a
                 // same-named nested class over the own type parameter in one narrow JLS-scoping
-                // edge case; this order mirrors PSI, and PSI parity is the target.
+                // edge case; this order mirrors PSI, and PSI parity is the target. This priority is
+                // pinned by the compiler-wide test
+                // `diagnostics/tests/javac/typeParameters/OwnNestedClassAndTypeParameterWithSameNames.kt`
+                // (and its inherited-nested-class sibling `InheritedInnerAndTypeParameterWithSameNames.kt`),
+                // both of which also run in this module's phased suite and would fail if this step
+                // were reordered after the nested-class lookup below.
                 findTypeParameter(parts[0])?.let { return it }
                 // 2. Inner/local class names (shadow INHERITED outer type params)
                 val localClass = findClassInCurrentScope(Name.identifier(parts[0]))

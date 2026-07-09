@@ -1,6 +1,6 @@
 # Java-Direct: Iteration Results Log
 
-**Current status**: `:compiler:java-direct:test` full suite green, 2837/2837 (100%). No known won't-fix.
+**Current status**: `:compiler:java-direct:test` full suite green, 2838/2838 (100%). No known won't-fix.
 
 **Last archived**: `implDocs/archive/ITERATION_RESULTS_2026_06_01.md` (entries through 2026-06-01).
 
@@ -35,6 +35,23 @@ This log is read into the agent's context every session, so **entries must stay 
 ---
 
 <!-- Add new entries below, newest first. -->
+
+### 2026-07-09 — Pin the javac type-param-vs-nested-class divergence (review comment #6) with a test
+- **Change**: Review comment #6 (own type parameter `T` shadows a same-named nested `class T`,
+  diverging from javac) was accepted/out-of-scope but only described in prose. Confirmed via
+  `javac` that the divergence is real (javac binds the bare `T` to the nested class `a.x.T`),
+  established there was no compiler-wide test pinning the *own-declared* nested-class case (only
+  the inherited-case sibling `InheritedInnerAndTypeParameterWithSameNames.kt` existed), and added
+  one. It is a shared diagnostics test, so it runs both compiler-wide and in this module's phased
+  suite. Verified the reviewer's proposed reordering (nested class before type parameter) makes it
+  fail with `UNRESOLVED_REFERENCE ... on receiver of type 'x.T'`, then reverted. No production
+  behavior changed.
+- **Files**: new `testData/diagnostics/tests/javac/typeParameters/OwnNestedClassAndTypeParameterWithSameNames.kt`;
+  `model/JavaTypeOverAst.kt` (`computeClassifier`'s `findTypeParameter` step now references both
+  pinning tests inline — comment-only); `implDocs/REVIEW_MD_RESPONSES_2026_07_08.md` §6 + table.
+- **Tests**: new test green in `JavaUsingAstPhasedTestGenerated`; fails as expected under the
+  temporary flip, passes after revert.
+- **Result**: green.
 
 ### 2026-07-09 — Fix explicit-import nested-class mis-split on the reentrance-safe path
 - **Change**: `resolveFromExplicitImport` used the last-dot `ClassId.topLevel` split in the

@@ -24,7 +24,7 @@ flagged and consciously left as accepted trade-offs. Each entry below quotes (pa
 | 3 | "Isn't `resolve` always `tryResolve`?" — `JavaTypeResolver.kt` | **Fixed** | dead parameter removed |
 | 4 | Re-entrance-safe finder fallback confusing (`CopyBuilder` example) — `JavaTypeResolver.kt` | **Answered** (design explanation, unify request N/A) | `resolveQualifiedNameToClassIdFromParts` lines 130-138, `RESOLUTION_SCHEMA.md` Scenario D |
 | 5 | Why only `nestedParts.size == 1`? — `JavaTypeResolver.kt` | **Answered** (telescoping-recursion argument) | `RESOLUTION_SCHEMA.md` Scenario D corner cases |
-| 6 | javac priority divergence (`T` type param vs `T` inner class) — `JavaTypeOverAst.kt` | **Accepted, tracked, out of scope** | plan Scope §Out of scope; pre-existing, compiler-wide |
+| 6 | javac priority divergence (`T` type param vs `T` inner class) — `JavaTypeOverAst.kt` | **Accepted, out of scope — now pinned by a test** (2026-07-09) | pre-existing, compiler-wide; behavior locked by `javac/typeParameters/OwnNestedClassAndTypeParameterWithSameNames.kt` (+ inherited sibling), referenced from `computeClassifier`; see §6 update |
 | 7 | Source/binary mixed-hierarchy ambiguity not detected — `JavaInheritedMemberResolver.kt` | **Fixed** | single BFS + collapsed structural pipeline compare every origin together, see §7 below |
 | 8 | `includeOuterClasses` "looks always false" — `JavaTypeResolver.kt` / `JavaInheritedMemberResolver.kt` | **Fixed** | parameter and outer-walk loop removed |
 | 9 | Does `resolve(rawTypeName)` already cover same-scope? — `JavaTypeOverAst.kt` | **Answered** (design explanation) | see §9 below |
@@ -33,10 +33,11 @@ flagged and consciously left as accepted trade-offs. Each entry below quotes (pa
 | 12 | Sibling/outer-class lookup could be "part of the loop below" — `JavaScopeResolver.kt` | **Fixed** | unified per-level loop (Step 4) |
 | 13 | Why not use `collectInheritedInnerClasses` for same-file supertypes too? — `JavaInheritedMemberResolver.kt` | **Fixed** | same-file arm folded into the single ladder, see §13 below |
 
-12 of 13 comments are now fixed by code changes; 1 is an out-of-scope pre-existing item explicitly
-tracked as accepted; the remaining ones (#4/#5 as one topic, #9) are direct design
-explanations, since they ask "why does it work this way" rather than flag a bug. None is left as
-an open question.
+12 of 13 comments are now fixed by code changes; 1 (#6) is an out-of-scope pre-existing item
+explicitly tracked as accepted — and, as of 2026-07-09, additionally locked down by a
+compiler-wide regression test (see §6 update); the remaining ones (#4/#5 as one topic, #9) are
+direct design explanations, since they ask "why does it work this way" rather than flag a bug.
+None is left as an open question.
 
 ---
 
@@ -194,6 +195,29 @@ order 1→2→3), so the divergence from `javac` is a compiler-wide behavior, no
 or fixable in `java-direct` alone. Reproducing `javac`'s narrower shadowing rule here would make
 `java-direct` diverge from the rest of the Kotlin compiler's Java-source handling instead of from
 `javac` — a strictly worse trade-off. Left as-is with this note as the tracked rationale.
+
+**Update (2026-07-09): now pinned by a compiler-wide test.** The behavior is no longer only
+described in prose — it is locked down by a shared diagnostics test that runs both in the
+compiler-wide FIR diagnostics suites and in this module's `JavaUsingAstPhasedTestGenerated`
+phased suite. Two tests cover it:
+
+- `compiler/testData/diagnostics/tests/javac/typeParameters/OwnNestedClassAndTypeParameterWithSameNames.kt`
+  — new, added for the reviewer's *literal* example: `class x<T extends CharSequence>` with an
+  **own-declared** `static class T`, `T getT()`, consumed from Kotlin as `x<String>().getT().length`.
+  `length` (a `CharSequence` member) resolves only because `getT()` returns the **type parameter**;
+  if the priority were flipped to prefer the nested class, `getT()` returns the empty `a.x.T` and
+  the test fails with `UNRESOLVED_REFERENCE: Unresolved reference 'length' on receiver of type 'x.T'`.
+- `compiler/testData/diagnostics/tests/javac/typeParameters/InheritedInnerAndTypeParameterWithSameNames.kt`
+  — pre-existing sibling, the same clash but with the nested class `T` **inherited** from a
+  supertype. Also runs in this module's phased suite.
+
+Both were verified against the proposed change: temporarily reordering `findTypeParameter` after
+`findClassInCurrentScope` in `JavaTypeOverAst.computeClassifier` makes
+`OwnNestedClassAndTypeParameterWithSameNames.kt` fail exactly as above (change then reverted). The
+`findTypeParameter` step in `JavaTypeOverAst.computeClassifier` now references these tests inline.
+This confirms the divergence is intentionally and durably locked to the compiler-wide
+(type-parameter-first) behavior rather than being an untested accident — so the item stays
+**out of scope to "fix"**, but is now regression-protected.
 
 ---
 
