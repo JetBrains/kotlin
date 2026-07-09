@@ -1,0 +1,8 @@
+abstract class MyKotlinClass : JavaClass {
+  constructor() /* primary */ {
+    super/*JavaClass*/()
+    /* <init>() */
+
+  }
+
+}

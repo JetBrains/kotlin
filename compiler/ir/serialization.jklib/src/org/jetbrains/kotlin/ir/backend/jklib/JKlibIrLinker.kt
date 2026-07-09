@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
+import org.jetbrains.kotlin.ir.overrides.MemberWithOriginal
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.isBoolean
+import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -78,7 +81,7 @@ class JKlibIrLinker(
             override fun needToConstructFakeOverrides(clazz: IrClass): Boolean =
                 clazz.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         },
-        externalOverridabilityConditions = externalOverridabilityConditions
+        externalOverridabilityConditions = externalOverridabilityConditions + J2clMappedCollectionsOverridabilityCondition()
     )
 
     override fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext =
@@ -263,4 +266,39 @@ class JKlibIrLinker(
 private fun DeclarationDescriptor.isCleanDescriptor(): Boolean {
     if (this is PropertyAccessorDescriptor) return correspondingProperty.isCleanDescriptor()
     return this is DeserializedDescriptor
+}
+
+private class J2clMappedCollectionsOverridabilityCondition : IrExternalOverridabilityCondition {
+  override fun isOverridable(
+    superMember: MemberWithOriginal,
+    subMember: MemberWithOriginal,
+  ): IrExternalOverridabilityCondition.Result {
+    val superFun =
+      superMember.original as? IrSimpleFunction
+        ?: return IrExternalOverridabilityCondition.Result.UNKNOWN
+    val subFun =
+      subMember.original as? IrSimpleFunction
+        ?: return IrExternalOverridabilityCondition.Result.UNKNOWN
+
+    if (superFun.name == subFun.name && superFun.parameters.size == subFun.parameters.size) {
+      val superRet = superFun.returnType
+      val subRet = subFun.returnType
+      if (superRet.isBoolean() != subRet.isBoolean() || superRet.isInt() != subRet.isInt()) {
+        return IrExternalOverridabilityCondition.Result.UNKNOWN
+      }
+      if (superFun.overridesRealJavaMember()) {
+        return IrExternalOverridabilityCondition.Result.OVERRIDABLE
+      }
+    }
+    return IrExternalOverridabilityCondition.Result.UNKNOWN
+  }
+
+  override val contract: IrExternalOverridabilityCondition.Contract
+    get() = IrExternalOverridabilityCondition.Contract.SUCCESS_ONLY
+
+  private fun IrDeclaration.overridesRealJavaMember(): Boolean {
+    if (this.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return true
+    if (this !is IrSimpleFunction) return false
+    return overriddenSymbols.any { it.owner.overridesRealJavaMember() }
+  }
 }
