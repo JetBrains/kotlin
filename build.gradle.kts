@@ -194,7 +194,7 @@ val dist = tasks.register("dist") {
     dependsOn(":kotlin-compiler:dist")
 }
 
-tasks.register("createIdeaHomeForTests") {
+val createIdeaHomeForTests = tasks.register("createIdeaHomeForTests") {
     val ideaBuildNumberFileForTests = ideaBuildNumberFileForTests()
     val intellijSdkVersion = kotlinBuildProperties.versionsProperty("intellijSdk").get()
     outputs.dir(ideaHomePathForTests())
@@ -204,6 +204,10 @@ tasks.register("createIdeaHomeForTests") {
             writeText("IC-$intellijSdkVersion")
         }
     }
+}
+val ideaHomeForTests = configurations.consumable("ideaHomeForTests")
+artifacts {
+    add(ideaHomeForTests.name, createIdeaHomeForTests)
 }
 
 val publishedMark: NamedDomainObjectProvider<DependencyScopeConfiguration> = configurations.dependencyScope("publishedMark")
