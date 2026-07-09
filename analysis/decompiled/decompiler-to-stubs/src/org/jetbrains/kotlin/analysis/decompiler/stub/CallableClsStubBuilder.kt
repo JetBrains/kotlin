@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -186,13 +187,14 @@ abstract class CallableClsStubBuilder(
     protected fun createModifierListStubForCallableDeclaration(
         flags: Int,
         flagsToTranslate: List<FlagsToModifiers>,
+        additionalModifiers: List<KtModifierKeywordToken>,
         returnValueStatus: Flags.FlagField<ProtoBuf.ReturnValueStatus>,
     ): KotlinModifierListStubImpl {
         val modifierListStub = createModifierListStubForDeclaration(
             callableStub,
             flags,
             flagsToTranslate,
-            additionalModifiers = emptyList(),
+            additionalModifiers,
             returnValueStatus = returnValueStatus,
         )
 
@@ -243,7 +245,7 @@ private class FunctionClsStubBuilder(
     private val functionProto: ProtoBuf.Function
 ) : CallableClsStubBuilder(parent, outerContext, protoContainer, functionProto.typeParameterList) {
     override val receiverType: ProtoBuf.Type?
-        get() = functionProto.receiverType(c.typeTable)
+        get() = functionProto.receiverOrCompanionExtensionReceiverType(c.typeTable)
 
     override val receiverAnnotations: List<AnnotationWithTarget>
         get() {
@@ -288,6 +290,7 @@ private class FunctionClsStubBuilder(
                     add(MODALITY)
                 }
             },
+            additionalModifiers = if (functionProto.hasCompanionExtensionReceiver()) listOf(KtTokens.COMPANION_KEYWORD) else emptyList(),
             returnValueStatus = Flags.RETURN_VALUE_STATUS_FUNCTION,
         )
 
@@ -309,7 +312,7 @@ private class FunctionClsStubBuilder(
             callableName.ref(),
             isTopLevel,
             c.containerFqName.child(callableName),
-            isExtension = functionProto.hasReceiver(),
+            isExtension = functionProto.hasReceiver() || functionProto.hasCompanionExtensionReceiver(),
             hasNoExpressionBody = true,
             hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
             hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
@@ -334,7 +337,7 @@ private class PropertyClsStubBuilder(
     private val isVar = Flags.IS_VAR.get(propertyProto.flags)
 
     override val receiverType: ProtoBuf.Type?
-        get() = propertyProto.receiverType(c.typeTable)
+        get() = propertyProto.receiverOrCompanionExtensionReceiverType(c.typeTable)
 
     override val receiverAnnotations: List<AnnotationWithTarget>
         get() = c.components.annotationLoader
@@ -375,6 +378,7 @@ private class PropertyClsStubBuilder(
                     add(MODALITY)
                 }
             },
+            additionalModifiers = if (propertyProto.hasCompanionExtensionReceiver()) listOf(KtTokens.COMPANION_KEYWORD) else emptyList(),
             returnValueStatus = Flags.RETURN_VALUE_STATUS_PROPERTY,
         )
 
@@ -409,7 +413,7 @@ private class PropertyClsStubBuilder(
             hasDelegate = isDelegatedProperty,
             hasDelegateExpression = isDelegatedProperty,
             hasInitializer = initializer != null,
-            isExtension = propertyProto.hasReceiver(),
+            isExtension = propertyProto.hasReceiver() || propertyProto.hasCompanionExtensionReceiver(),
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName),
             initializer,
@@ -605,6 +609,7 @@ private class ConstructorClsStubBuilder(
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(VISIBILITY),
+            additionalModifiers = emptyList(),
             returnValueStatus = Flags.RETURN_VALUE_STATUS_CTOR,
         )
 

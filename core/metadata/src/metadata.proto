@@ -346,6 +346,9 @@ message Function {
   optional Type receiver_type = 5;
   optional int32 receiver_type_id = 8 [(type_id_in_table) = true];
 
+  optional Type companion_extension_receiver_type = 14;
+  optional int32 companion_extension_receiver_type_id = 15 [(type_id_in_table) = true];
+
   repeated Type context_receiver_type = 10;
   repeated int32 context_receiver_type_id = 11 [packed = true, (type_id_in_table) = true];
 
@@ -400,6 +403,9 @@ message Property {
 
   optional Type receiver_type = 5;
   optional int32 receiver_type_id = 10 [(type_id_in_table) = true];
+
+  optional Type companion_extension_receiver_type = 18;
+  optional int32 companion_extension_receiver_type_id = 19 [(type_id_in_table) = true];
 
   repeated Type context_receiver_type = 12;
   repeated int32 context_receiver_type_id = 13 [packed = true, (type_id_in_table) = true];
