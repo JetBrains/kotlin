@@ -516,6 +516,21 @@ internal open class TCServiceMessagesClient(
     private fun pop() = leaf!!.also { leaf = it.parent }
 
     fun ensureNodesClosed(root: RootNode? = null, cause: Throwable? = null, throwError: Boolean = true): Error? {
+        fun createTestProcessCrashedError(currentTest: TestNode?, output: String): Error {
+            return Error(
+                buildString {
+                    append("Test running process exited unexpectedly.\n")
+                    if (currentTest != null) {
+                        append("Current test: ${currentTest.cleanName}\n")
+                    }
+                    if (output.isNotBlank()) {
+                        append("Process output:\n $output")
+                    }
+                },
+                cause
+            )
+        }
+
         val ts = System.currentTimeMillis()
 
         when (leaf) {
@@ -523,38 +538,28 @@ internal open class TCServiceMessagesClient(
             root -> close(ts, leaf!!.localId)
             else -> {
                 val output = StringBuilder()
-                var currentTest: TestNode? = null
+                var currentError: Error? = null
 
                 while (leaf != null) {
                     val currentLeaf = leaf!!
 
                     if (currentLeaf is TestNode) {
-                        currentTest = currentLeaf
                         output.append(currentLeaf.allOutput)
-                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, null as Throwable?), false)
+                        currentError = createTestProcessCrashedError(currentLeaf, output.toString())
+                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, currentError), false)
                     }
 
                     close(ts, currentLeaf.localId)
                 }
 
-                @Suppress("ThrowableNotThrown")
-                val error = Error(
-                    buildString {
-                        append("Test running process exited unexpectedly.\n")
-                        if (currentTest != null) {
-                            append("Current test: ${currentTest.cleanName}\n")
-                        }
-                        if (output.toString().isNotBlank()) {
-                            append("Process output:\n $output")
-                        }
-                    },
-                    cause
-                )
+                if (currentError == null) {
+                    currentError = createTestProcessCrashedError(currentTest = null, output.toString())
+                }
 
                 if (throwError) {
-                    throw error
+                    throw currentError
                 } else {
-                    return error
+                    return currentError
                 }
             }
         }
