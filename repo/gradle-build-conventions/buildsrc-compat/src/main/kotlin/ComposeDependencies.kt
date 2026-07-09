@@ -25,18 +25,6 @@ fun RepositoryHandler.androidXMavenLocal(androidXMavenLocalPath: String?) {
     }
 }
 
-fun RepositoryHandler.androidxSnapshotRepo(composeSnapshotId: String) {
-    maven {
-        url = URI("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
-    }.apply {
-        content {
-            includeGroup("androidx.compose.runtime")
-            includeGroup("androidx.collection")
-            includeGroup("androidx.annotation")
-        }
-    }
-}
-
 fun RepositoryHandler.composeGoogleMaven(composeStableVersion: String) {
     google {
         content {
