@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
-// LANGUAGE_FEATURE_TOGGLED: CompanionBlocksAndExtensions
+// LANGUAGE_FEATURE_TOGGLED: CompanionBlocks
+// LANGUAGE_FEATURE_TOGGLED: CompanionExtensions
 // LANGUAGE: -ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs
 
 class C<A> {

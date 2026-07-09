@@ -1,58 +1,58 @@
 KtFile: 'companionExtensionInapplicableOperator.kt'
   NO_CANDIDATES
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   NO_CANDIDATES
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   NO_CANDIDATES
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   NO_CANDIDATES
 
-KtClass(57,64): 'class C'
+KtClass(65,72): 'class C'
   NO_CANDIDATES
 
-KtNamedFunction(66,112): 'companion operator fun C.plus(i: Int): C = C()'
+KtNamedFunction(74,120): 'companion operator fun C.plus(i: Int): C = C()'
   NO_CANDIDATES
 
-KtDeclarationModifierList(66,84): 'companion operator'
+KtDeclarationModifierList(74,92): 'companion operator'
   NO_CANDIDATES
 
-KtTypeReference(89,90): 'C'
+KtTypeReference(97,98): 'C'
   NO_CANDIDATES
 
-KtUserType(89,90): 'C'
+KtUserType(97,98): 'C'
   NO_CANDIDATES
 
-KtNameReferenceExpression(89,90): 'C'
+KtNameReferenceExpression(97,98): 'C'
   NO_CANDIDATES
 
-KtParameterList(95,103): '(i: Int)'
+KtParameterList(103,111): '(i: Int)'
   NO_CANDIDATES
 
-KtParameter(96,102): 'i: Int'
+KtParameter(104,110): 'i: Int'
   NO_CANDIDATES
 
-KtTypeReference(99,102): 'Int'
+KtTypeReference(107,110): 'Int'
   NO_CANDIDATES
 
-KtUserType(99,102): 'Int'
+KtUserType(107,110): 'Int'
   NO_CANDIDATES
 
-KtNameReferenceExpression(99,102): 'Int'
+KtNameReferenceExpression(107,110): 'Int'
   NO_CANDIDATES
 
-KtTypeReference(105,106): 'C'
+KtTypeReference(113,114): 'C'
   NO_CANDIDATES
 
-KtUserType(105,106): 'C'
+KtUserType(113,114): 'C'
   NO_CANDIDATES
 
-KtNameReferenceExpression(105,106): 'C'
+KtNameReferenceExpression(113,114): 'C'
   NO_CANDIDATES
 
-KtCallExpression(109,112): 'C()'
+KtCallExpression(117,120): 'C()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -70,7 +70,7 @@ KtCallExpression(109,112): 'C()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(109,110): 'C'
+KtNameReferenceExpression(117,118): 'C'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -88,19 +88,19 @@ KtNameReferenceExpression(109,110): 'C'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtValueArgumentList(110,112): '()'
+KtValueArgumentList(118,120): '()'
   NO_CANDIDATES
 
-KtNamedFunction(114,143): 'fun usage() {'
+KtNamedFunction(122,151): 'fun usage() {'
   NO_CANDIDATES
 
-KtParameterList(123,125): '()'
+KtParameterList(131,133): '()'
   NO_CANDIDATES
 
-KtBlockExpression(126,143): '{'
+KtBlockExpression(134,151): '{'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(132,141): 'C.plus(1)'
+KtDotQualifiedExpression(140,149): 'C.plus(1)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -137,7 +137,7 @@ KtDotQualifiedExpression(132,141): 'C.plus(1)'
       }
     isInBestCandidates = true
 
-KtNameReferenceExpression(132,133): 'C'
+KtNameReferenceExpression(140,141): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -156,7 +156,7 @@ KtNameReferenceExpression(132,133): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtCallExpression(134,141): 'plus(1)'
+KtCallExpression(142,149): 'plus(1)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -193,7 +193,7 @@ KtCallExpression(134,141): 'plus(1)'
       }
     isInBestCandidates = true
 
-KtNameReferenceExpression(134,138): 'plus'
+KtNameReferenceExpression(142,146): 'plus'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -230,11 +230,11 @@ KtNameReferenceExpression(134,138): 'plus'
       }
     isInBestCandidates = true
 
-KtValueArgumentList(138,141): '(1)'
+KtValueArgumentList(146,149): '(1)'
   NO_CANDIDATES
 
-KtValueArgument(139,140): '1'
+KtValueArgument(147,148): '1'
   NO_CANDIDATES
 
-KtConstantExpression(139,140): '1'
+KtConstantExpression(147,148): '1'
   NO_CANDIDATES

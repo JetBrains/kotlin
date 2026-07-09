@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +MultiPlatformProjects +CompanionBlocksAndExtensions
+// LANGUAGE: +MultiPlatformProjects +CompanionBlocks +CompanionExtensions
 // WITH_STDLIB
 // MODULE: common
 // FILE: common.kt

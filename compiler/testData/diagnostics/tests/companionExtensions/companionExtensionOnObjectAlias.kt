@@ -1,6 +1,6 @@
 // ISSUE: KT-87226
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 
 object SingletonObject
 typealias AliasToObject = SingletonObject

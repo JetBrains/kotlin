@@ -1,67 +1,67 @@
 KtFile: 'companionBlock.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   null
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtClass(57,221): 'class C {'
+KtClass(65,229): 'class C {'
   null
 
-KtClassBody(65,221): '{'
+KtClassBody(73,229): '{'
   null
 
-KtCompanionBlock(71,155): 'companion {'
+KtCompanionBlock(79,163): 'companion {'
   null
 
-KtDeclarationModifierList(71,80): 'companion'
+KtDeclarationModifierList(79,88): 'companion'
   null
 
-KtClassBody(81,155): '{'
+KtClassBody(89,163): '{'
   null
 
-KtNamedFunction(91,103): 'fun foo() {}'
+KtNamedFunction(99,111): 'fun foo() {}'
   null
 
-KtParameterList(98,100): '()'
+KtParameterList(106,108): '()'
   null
 
-KtBlockExpression(101,103): '{}'
+KtBlockExpression(109,111): '{}'
   null
 
-KtProperty(112,123): 'val bar = 1'
+KtProperty(120,131): 'val bar = 1'
   null
 
-KtConstantExpression(122,123): '1'
+KtConstantExpression(130,131): '1'
   null
 
-KtProperty(132,149): 'val baz get() = 2'
+KtProperty(140,157): 'val baz get() = 2'
   null
 
-KtPropertyAccessor(140,149): 'get() = 2'
+KtPropertyAccessor(148,157): 'get() = 2'
   null
 
-KtParameterList(143,145): '()'
+KtParameterList(151,153): '()'
   null
 
-KtConstantExpression(148,149): '2'
+KtConstantExpression(156,157): '2'
   null
 
-KtNamedFunction(161,219): 'fun inside() {'
+KtNamedFunction(169,227): 'fun inside() {'
   null
 
-KtParameterList(171,173): '()'
+KtParameterList(179,181): '()'
   null
 
-KtBlockExpression(174,219): '{'
+KtBlockExpression(182,227): '{'
   null
 
-KtCallExpression(184,189): 'foo()'
+KtCallExpression(192,197): 'foo()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -80,7 +80,7 @@ KtCallExpression(184,189): 'foo()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(184,187): 'foo'
+KtNameReferenceExpression(192,195): 'foo'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -99,10 +99,10 @@ KtNameReferenceExpression(184,187): 'foo'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtValueArgumentList(187,189): '()'
+KtValueArgumentList(195,197): '()'
   null
 
-KtNameReferenceExpression(198,201): 'bar'
+KtNameReferenceExpression(206,209): 'bar'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -121,7 +121,7 @@ KtNameReferenceExpression(198,201): 'bar'
         callableId = test/C.bar
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(210,213): 'baz'
+KtNameReferenceExpression(218,221): 'baz'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -140,16 +140,16 @@ KtNameReferenceExpression(210,213): 'baz'
         callableId = test/C.baz
       typeArgumentsMapping = {}
 
-KtNamedFunction(223,311): 'fun usage() {'
+KtNamedFunction(231,319): 'fun usage() {'
   null
 
-KtParameterList(232,234): '()'
+KtParameterList(240,242): '()'
   null
 
-KtBlockExpression(235,311): '{'
+KtBlockExpression(243,319): '{'
   null
 
-KtDotQualifiedExpression(241,248): 'C.foo()'
+KtDotQualifiedExpression(249,256): 'C.foo()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -169,10 +169,10 @@ KtDotQualifiedExpression(241,248): 'C.foo()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(241,242): 'C'
+KtNameReferenceExpression(249,250): 'C'
   null
 
-KtCallExpression(243,248): 'foo()'
+KtCallExpression(251,256): 'foo()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -192,7 +192,7 @@ KtCallExpression(243,248): 'foo()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(243,246): 'foo'
+KtNameReferenceExpression(251,254): 'foo'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -212,10 +212,10 @@ KtNameReferenceExpression(243,246): 'foo'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtValueArgumentList(246,248): '()'
+KtValueArgumentList(254,256): '()'
   null
 
-KtDotQualifiedExpression(253,258): 'C.bar'
+KtDotQualifiedExpression(261,266): 'C.bar'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -235,10 +235,10 @@ KtDotQualifiedExpression(253,258): 'C.bar'
         callableId = test/C.bar
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(253,254): 'C'
+KtNameReferenceExpression(261,262): 'C'
   null
 
-KtNameReferenceExpression(255,258): 'bar'
+KtNameReferenceExpression(263,266): 'bar'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -258,30 +258,7 @@ KtNameReferenceExpression(255,258): 'bar'
         callableId = test/C.bar
       typeArgumentsMapping = {}
 
-KtDotQualifiedExpression(263,268): 'C.baz'
-  KaCallResolutionSuccess:
-    call = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = baz
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val baz: kotlin.Int
-        contextParameters = []
-        callableId = test/C.baz
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(263,264): 'C'
-  null
-
-KtNameReferenceExpression(265,268): 'baz'
+KtDotQualifiedExpression(271,276): 'C.baz'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -301,28 +278,30 @@ KtNameReferenceExpression(265,268): 'baz'
         callableId = test/C.baz
       typeArgumentsMapping = {}
 
-KtCallableReferenceExpression(274,280): 'C::foo'
-  KaCallResolutionSuccess:
-    call = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = test/C.foo(): kotlin.Unit
-        valueParameters = []
-        contextParameters = []
-        callableId = test/C.foo
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(274,275): 'C'
+KtNameReferenceExpression(271,272): 'C'
   null
 
-KtNameReferenceExpression(277,280): 'foo'
+KtNameReferenceExpression(273,276): 'baz'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val baz: kotlin.Int
+        contextParameters = []
+        callableId = test/C.baz
+      typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(282,288): 'C::foo'
   KaCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
@@ -340,7 +319,28 @@ KtNameReferenceExpression(277,280): 'foo'
         callableId = test/C.foo
       typeArgumentsMapping = {}
 
-KtCallableReferenceExpression(285,291): 'C::bar'
+KtNameReferenceExpression(282,283): 'C'
+  null
+
+KtNameReferenceExpression(285,288): 'foo'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.foo
+      typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(293,299): 'C::bar'
   KaCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
@@ -358,10 +358,10 @@ KtCallableReferenceExpression(285,291): 'C::bar'
         callableId = test/C.bar
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(285,286): 'C'
+KtNameReferenceExpression(293,294): 'C'
   null
 
-KtNameReferenceExpression(288,291): 'bar'
+KtNameReferenceExpression(296,299): 'bar'
   KaCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
@@ -379,7 +379,7 @@ KtNameReferenceExpression(288,291): 'bar'
         callableId = test/C.bar
       typeArgumentsMapping = {}
 
-KtDotQualifiedExpression(297,309): 'test.C.foo()'
+KtDotQualifiedExpression(305,317): 'test.C.foo()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -399,16 +399,16 @@ KtDotQualifiedExpression(297,309): 'test.C.foo()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtDotQualifiedExpression(297,303): 'test.C'
+KtDotQualifiedExpression(305,311): 'test.C'
   null
 
-KtNameReferenceExpression(297,301): 'test'
+KtNameReferenceExpression(305,309): 'test'
   null
 
-KtNameReferenceExpression(302,303): 'C'
+KtNameReferenceExpression(310,311): 'C'
   null
 
-KtCallExpression(304,309): 'foo()'
+KtCallExpression(312,317): 'foo()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -428,7 +428,7 @@ KtCallExpression(304,309): 'foo()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(304,307): 'foo'
+KtNameReferenceExpression(312,315): 'foo'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -448,5 +448,5 @@ KtNameReferenceExpression(304,307): 'foo'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtValueArgumentList(307,309): '()'
+KtValueArgumentList(315,317): '()'
   null

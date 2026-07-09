@@ -1,70 +1,70 @@
 KtFile: 'companionExtensionWinsOverCompanionObjectMember.kt'
   NO_CANDIDATES
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   NO_CANDIDATES
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   NO_CANDIDATES
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   NO_CANDIDATES
 
-KtClass(57,120): 'class C {'
+KtClass(65,128): 'class C {'
   NO_CANDIDATES
 
-KtClassBody(65,120): '{'
+KtClassBody(73,128): '{'
   NO_CANDIDATES
 
-KtObjectDeclaration(71,118): 'companion object {'
+KtObjectDeclaration(79,126): 'companion object {'
   NO_CANDIDATES
 
-KtDeclarationModifierList(71,80): 'companion'
+KtDeclarationModifierList(79,88): 'companion'
   NO_CANDIDATES
 
-KtClassBody(88,118): '{'
+KtClassBody(96,126): '{'
   NO_CANDIDATES
 
-KtNamedFunction(98,112): 'fun same() = 1'
+KtNamedFunction(106,120): 'fun same() = 1'
   NO_CANDIDATES
 
-KtParameterList(106,108): '()'
+KtParameterList(114,116): '()'
   NO_CANDIDATES
 
-KtConstantExpression(111,112): '1'
+KtConstantExpression(119,120): '1'
   NO_CANDIDATES
 
-KtNamedFunction(122,149): 'companion fun C.same() = ""'
+KtNamedFunction(130,157): 'companion fun C.same() = ""'
   NO_CANDIDATES
 
-KtDeclarationModifierList(122,131): 'companion'
+KtDeclarationModifierList(130,139): 'companion'
   NO_CANDIDATES
 
-KtTypeReference(136,137): 'C'
+KtTypeReference(144,145): 'C'
   NO_CANDIDATES
 
-KtUserType(136,137): 'C'
+KtUserType(144,145): 'C'
   NO_CANDIDATES
 
-KtNameReferenceExpression(136,137): 'C'
+KtNameReferenceExpression(144,145): 'C'
   NO_CANDIDATES
 
-KtParameterList(142,144): '()'
+KtParameterList(150,152): '()'
   NO_CANDIDATES
 
-KtStringTemplateExpression(147,149): '""'
+KtStringTemplateExpression(155,157): '""'
   NO_CANDIDATES
 
-KtNamedFunction(151,179): 'fun usage() {'
+KtNamedFunction(159,187): 'fun usage() {'
   NO_CANDIDATES
 
-KtParameterList(160,162): '()'
+KtParameterList(168,170): '()'
   NO_CANDIDATES
 
-KtBlockExpression(163,179): '{'
+KtBlockExpression(171,187): '{'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(169,177): 'C.same()'
+KtDotQualifiedExpression(177,185): 'C.same()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -105,7 +105,7 @@ KtDotQualifiedExpression(169,177): 'C.same()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(169,170): 'C'
+KtNameReferenceExpression(177,178): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -124,7 +124,7 @@ KtNameReferenceExpression(169,170): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtCallExpression(171,177): 'same()'
+KtCallExpression(179,185): 'same()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -165,7 +165,7 @@ KtCallExpression(171,177): 'same()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(171,175): 'same'
+KtNameReferenceExpression(179,183): 'same'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -206,5 +206,5 @@ KtNameReferenceExpression(171,175): 'same'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtValueArgumentList(175,177): '()'
+KtValueArgumentList(183,185): '()'
   NO_CANDIDATES

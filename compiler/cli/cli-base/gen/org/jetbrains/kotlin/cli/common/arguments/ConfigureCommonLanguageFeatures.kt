@@ -49,8 +49,13 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.CollectionLiterals, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.companionBlocks) {
+        put(LanguageFeature.CompanionBlocks, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.companionBlocksAndExtensions) {
-        put(LanguageFeature.CompanionBlocksAndExtensions, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.CompanionBlocks, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.CompanionExtensions, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.consistentDataClassCopyVisibility) {

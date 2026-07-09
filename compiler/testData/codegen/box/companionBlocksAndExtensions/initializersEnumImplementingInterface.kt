@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // IGNORE_BACKEND: JVM_IR
 
 var initOrder = ""

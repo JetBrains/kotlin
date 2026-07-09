@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 
 interface MyInterface {
     companion {

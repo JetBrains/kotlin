@@ -1,7 +1,8 @@
 // LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // ISSUE: KT-85641
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE_FEATURE_TOGGLED: CompanionBlocksAndExtensions
+// LANGUAGE_FEATURE_TOGGLED: CompanionBlocks
+// LANGUAGE_FEATURE_TOGGLED: CompanionExtensions
 // LANGUAGE: -ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs
 
 object Obj {

@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 package test
 
 import kotlin.test.assertEquals

@@ -35,11 +35,11 @@ object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKi
     override fun check(declaration: FirCallableDeclaration) {
         if (!declaration.isCompanionExtension) return
 
-        if (LanguageFeature.CompanionBlocksAndExtensions.isDisabled()) {
+        if (LanguageFeature.CompanionExtensions.isDisabled()) {
             reporter.reportOn(
                 declaration.getModifier(KtTokens.COMPANION_KEYWORD)?.source,
                 FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.CompanionBlocksAndExtensions to context.languageVersionSettings
+                LanguageFeature.CompanionExtensions to context.languageVersionSettings
             )
         }
 

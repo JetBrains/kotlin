@@ -4,7 +4,7 @@ KtFile: mixOfRegularAndStaticMethods.kt
   IMPORT_LIST
     <empty list>
   CLASS
-    PsiComment(EOL_COMMENT)('// LANGUAGE: +CompanionBlocksAndExtensions')
+    PsiComment(EOL_COMMENT)('// LANGUAGE: +CompanionBlocks +CompanionExtensions')
     PsiWhiteSpace('\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')

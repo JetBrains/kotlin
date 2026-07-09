@@ -1,151 +1,151 @@
 KtFile: 'companionExtensionInvalidReceivers.kt'
   NO_CANDIDATES
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   NO_CANDIDATES
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   NO_CANDIDATES
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   NO_CANDIDATES
 
-KtClass(57,64): 'class C'
+KtClass(65,72): 'class C'
   NO_CANDIDATES
 
-KtClass(65,75): 'class G<T>'
+KtClass(73,83): 'class G<T>'
   NO_CANDIDATES
 
-KtTypeParameterList(72,75): '<T>'
+KtTypeParameterList(80,83): '<T>'
   NO_CANDIDATES
 
-KtTypeParameter(73,74): 'T'
+KtTypeParameter(81,82): 'T'
   NO_CANDIDATES
 
-KtObjectDeclaration(76,84): 'object O'
+KtObjectDeclaration(84,92): 'object O'
   NO_CANDIDATES
 
-KtNamedFunction(86,124): 'companion fun C?.nullableReceiver() {}'
+KtNamedFunction(94,132): 'companion fun C?.nullableReceiver() {}'
   NO_CANDIDATES
 
-KtDeclarationModifierList(86,95): 'companion'
+KtDeclarationModifierList(94,103): 'companion'
   NO_CANDIDATES
 
-KtTypeReference(100,102): 'C?'
+KtTypeReference(108,110): 'C?'
   NO_CANDIDATES
 
-KtNullableType(100,102): 'C?'
+KtNullableType(108,110): 'C?'
   NO_CANDIDATES
 
-KtUserType(100,101): 'C'
+KtUserType(108,109): 'C'
   NO_CANDIDATES
 
-KtNameReferenceExpression(100,101): 'C'
+KtNameReferenceExpression(108,109): 'C'
   NO_CANDIDATES
 
-KtParameterList(119,121): '()'
+KtParameterList(127,129): '()'
   NO_CANDIDATES
 
-KtBlockExpression(122,124): '{}'
+KtBlockExpression(130,132): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(125,160): 'companion fun O.objectReceiver() {}'
+KtNamedFunction(133,168): 'companion fun O.objectReceiver() {}'
   NO_CANDIDATES
 
-KtDeclarationModifierList(125,134): 'companion'
+KtDeclarationModifierList(133,142): 'companion'
   NO_CANDIDATES
 
-KtTypeReference(139,140): 'O'
+KtTypeReference(147,148): 'O'
   NO_CANDIDATES
 
-KtUserType(139,140): 'O'
+KtUserType(147,148): 'O'
   NO_CANDIDATES
 
-KtNameReferenceExpression(139,140): 'O'
+KtNameReferenceExpression(147,148): 'O'
   NO_CANDIDATES
 
-KtParameterList(155,157): '()'
+KtParameterList(163,165): '()'
   NO_CANDIDATES
 
-KtBlockExpression(158,160): '{}'
+KtBlockExpression(166,168): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(161,222): 'companion inline fun <reified T> T.typeParameterReceiver() {}'
+KtNamedFunction(169,230): 'companion inline fun <reified T> T.typeParameterReceiver() {}'
   NO_CANDIDATES
 
-KtDeclarationModifierList(161,177): 'companion inline'
+KtDeclarationModifierList(169,185): 'companion inline'
   NO_CANDIDATES
 
-KtTypeParameterList(182,193): '<reified T>'
+KtTypeParameterList(190,201): '<reified T>'
   NO_CANDIDATES
 
-KtTypeParameter(183,192): 'reified T'
+KtTypeParameter(191,200): 'reified T'
   NO_CANDIDATES
 
-KtDeclarationModifierList(183,190): 'reified'
+KtDeclarationModifierList(191,198): 'reified'
   NO_CANDIDATES
 
-KtTypeReference(194,195): 'T'
+KtTypeReference(202,203): 'T'
   NO_CANDIDATES
 
-KtUserType(194,195): 'T'
+KtUserType(202,203): 'T'
   NO_CANDIDATES
 
-KtNameReferenceExpression(194,195): 'T'
+KtNameReferenceExpression(202,203): 'T'
   NO_CANDIDATES
 
-KtParameterList(217,219): '()'
+KtParameterList(225,227): '()'
   NO_CANDIDATES
 
-KtBlockExpression(220,222): '{}'
+KtBlockExpression(228,230): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(223,273): 'companion fun G<String>.typeArgumentsReceiver() {}'
+KtNamedFunction(231,281): 'companion fun G<String>.typeArgumentsReceiver() {}'
   NO_CANDIDATES
 
-KtDeclarationModifierList(223,232): 'companion'
+KtDeclarationModifierList(231,240): 'companion'
   NO_CANDIDATES
 
-KtTypeReference(237,246): 'G<String>'
+KtTypeReference(245,254): 'G<String>'
   NO_CANDIDATES
 
-KtUserType(237,246): 'G<String>'
+KtUserType(245,254): 'G<String>'
   NO_CANDIDATES
 
-KtNameReferenceExpression(237,238): 'G'
+KtNameReferenceExpression(245,246): 'G'
   NO_CANDIDATES
 
-KtTypeArgumentList(238,246): '<String>'
+KtTypeArgumentList(246,254): '<String>'
   NO_CANDIDATES
 
-KtTypeProjection(239,245): 'String'
+KtTypeProjection(247,253): 'String'
   NO_CANDIDATES
 
-KtTypeReference(239,245): 'String'
+KtTypeReference(247,253): 'String'
   NO_CANDIDATES
 
-KtUserType(239,245): 'String'
+KtUserType(247,253): 'String'
   NO_CANDIDATES
 
-KtNameReferenceExpression(239,245): 'String'
+KtNameReferenceExpression(247,253): 'String'
   NO_CANDIDATES
 
-KtParameterList(268,270): '()'
+KtParameterList(276,278): '()'
   NO_CANDIDATES
 
-KtBlockExpression(271,273): '{}'
+KtBlockExpression(279,281): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(275,368): 'fun usage() {'
+KtNamedFunction(283,376): 'fun usage() {'
   NO_CANDIDATES
 
-KtParameterList(284,286): '()'
+KtParameterList(292,294): '()'
   NO_CANDIDATES
 
-KtBlockExpression(287,368): '{'
+KtBlockExpression(295,376): '{'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(293,313): 'C.nullableReceiver()'
+KtDotQualifiedExpression(301,321): 'C.nullableReceiver()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -166,7 +166,7 @@ KtDotQualifiedExpression(293,313): 'C.nullableReceiver()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(293,294): 'C'
+KtNameReferenceExpression(301,302): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -185,7 +185,7 @@ KtNameReferenceExpression(293,294): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtCallExpression(295,313): 'nullableReceiver()'
+KtCallExpression(303,321): 'nullableReceiver()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -206,7 +206,7 @@ KtCallExpression(295,313): 'nullableReceiver()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(295,311): 'nullableReceiver'
+KtNameReferenceExpression(303,319): 'nullableReceiver'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -227,13 +227,13 @@ KtNameReferenceExpression(295,311): 'nullableReceiver'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtValueArgumentList(311,313): '()'
+KtValueArgumentList(319,321): '()'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(318,336): 'O.objectReceiver()'
+KtDotQualifiedExpression(326,344): 'O.objectReceiver()'
   NO_CANDIDATES
 
-KtNameReferenceExpression(318,319): 'O'
+KtNameReferenceExpression(326,327): 'O'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -252,16 +252,16 @@ KtNameReferenceExpression(318,319): 'O'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtCallExpression(320,336): 'objectReceiver()'
+KtCallExpression(328,344): 'objectReceiver()'
   NO_CANDIDATES
 
-KtNameReferenceExpression(320,334): 'objectReceiver'
+KtNameReferenceExpression(328,342): 'objectReceiver'
   NO_CANDIDATES
 
-KtValueArgumentList(334,336): '()'
+KtValueArgumentList(342,344): '()'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(341,366): 'G.typeArgumentsReceiver()'
+KtDotQualifiedExpression(349,374): 'G.typeArgumentsReceiver()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -282,7 +282,7 @@ KtDotQualifiedExpression(341,366): 'G.typeArgumentsReceiver()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(341,342): 'G'
+KtNameReferenceExpression(349,350): 'G'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -301,7 +301,7 @@ KtNameReferenceExpression(341,342): 'G'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtCallExpression(343,366): 'typeArgumentsReceiver()'
+KtCallExpression(351,374): 'typeArgumentsReceiver()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -322,7 +322,7 @@ KtCallExpression(343,366): 'typeArgumentsReceiver()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(343,364): 'typeArgumentsReceiver'
+KtNameReferenceExpression(351,372): 'typeArgumentsReceiver'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -343,5 +343,5 @@ KtNameReferenceExpression(343,364): 'typeArgumentsReceiver'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtValueArgumentList(364,366): '()'
+KtValueArgumentList(372,374): '()'
   NO_CANDIDATES

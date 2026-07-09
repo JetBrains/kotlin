@@ -1,6 +1,6 @@
 // MODULE: lib
 // MODULE_KIND: LibrarySource
-// LANGUAGE: +CompanionBlocksAndExtensions +CollectionLiterals
+// LANGUAGE: +CompanionBlocks +CompanionExtensions +CollectionLiterals
 // RUN_PIPELINE_TILL: BACKEND
 
 // FILE: MyCollection.kt
@@ -18,7 +18,7 @@ fun testInLib() {
 }
 
 // MODULE: main(lib)
-// LANGUAGE: +CompanionBlocksAndExtensions +CollectionLiterals
+// LANGUAGE: +CompanionBlocks +CompanionExtensions +CollectionLiterals
 // WITH_STDLIB
 // RUN_PIPELINE_TILL: FRONTEND
 

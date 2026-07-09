@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 class A
 
 private companion fun A.o() = "O"

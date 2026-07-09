@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 
 class Box<T>(val item: T)
 

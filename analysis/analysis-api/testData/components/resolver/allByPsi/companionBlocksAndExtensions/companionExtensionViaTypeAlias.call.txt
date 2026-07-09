@@ -1,94 +1,94 @@
 KtFile: 'companionExtensionViaTypeAlias.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   null
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtClass(57,64): 'class C'
+KtClass(65,72): 'class C'
   null
 
-KtTypeAlias(66,82): 'typealias TA = C'
+KtTypeAlias(74,90): 'typealias TA = C'
   null
 
-KtTypeReference(81,82): 'C'
+KtTypeReference(89,90): 'C'
   null
 
-KtUserType(81,82): 'C'
+KtUserType(89,90): 'C'
   null
 
-KtNameReferenceExpression(81,82): 'C'
+KtNameReferenceExpression(89,90): 'C'
   null
 
-KtNamedFunction(84,108): 'companion fun C.foo() {}'
+KtNamedFunction(92,116): 'companion fun C.foo() {}'
   null
 
-KtDeclarationModifierList(84,93): 'companion'
+KtDeclarationModifierList(92,101): 'companion'
   null
 
-KtTypeReference(98,99): 'C'
+KtTypeReference(106,107): 'C'
   null
 
-KtUserType(98,99): 'C'
+KtUserType(106,107): 'C'
   null
 
-KtNameReferenceExpression(98,99): 'C'
+KtNameReferenceExpression(106,107): 'C'
   null
 
-KtParameterList(103,105): '()'
+KtParameterList(111,113): '()'
   null
 
-KtBlockExpression(106,108): '{}'
+KtBlockExpression(114,116): '{}'
   null
 
-KtProperty(109,144): 'companion val C.prop: Int get() = 1'
+KtProperty(117,152): 'companion val C.prop: Int get() = 1'
   null
 
-KtDeclarationModifierList(109,118): 'companion'
+KtDeclarationModifierList(117,126): 'companion'
   null
 
-KtTypeReference(123,124): 'C'
+KtTypeReference(131,132): 'C'
   null
 
-KtUserType(123,124): 'C'
+KtUserType(131,132): 'C'
   null
 
-KtNameReferenceExpression(123,124): 'C'
+KtNameReferenceExpression(131,132): 'C'
   null
 
-KtTypeReference(131,134): 'Int'
+KtTypeReference(139,142): 'Int'
   null
 
-KtUserType(131,134): 'Int'
+KtUserType(139,142): 'Int'
   null
 
-KtNameReferenceExpression(131,134): 'Int'
+KtNameReferenceExpression(139,142): 'Int'
   null
 
-KtPropertyAccessor(135,144): 'get() = 1'
+KtPropertyAccessor(143,152): 'get() = 1'
   null
 
-KtParameterList(138,140): '()'
+KtParameterList(146,148): '()'
   null
 
-KtConstantExpression(143,144): '1'
+KtConstantExpression(151,152): '1'
   null
 
-KtNamedFunction(146,199): 'fun usage() {'
+KtNamedFunction(154,207): 'fun usage() {'
   null
 
-KtParameterList(155,157): '()'
+KtParameterList(163,165): '()'
   null
 
-KtBlockExpression(158,199): '{'
+KtBlockExpression(166,207): '{'
   null
 
-KtDotQualifiedExpression(164,172): 'TA.foo()'
+KtDotQualifiedExpression(172,180): 'TA.foo()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -108,10 +108,10 @@ KtDotQualifiedExpression(164,172): 'TA.foo()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(164,166): 'TA'
+KtNameReferenceExpression(172,174): 'TA'
   null
 
-KtCallExpression(167,172): 'foo()'
+KtCallExpression(175,180): 'foo()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -131,7 +131,7 @@ KtCallExpression(167,172): 'foo()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(167,170): 'foo'
+KtNameReferenceExpression(175,178): 'foo'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -151,10 +151,10 @@ KtNameReferenceExpression(167,170): 'foo'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtValueArgumentList(170,172): '()'
+KtValueArgumentList(178,180): '()'
   null
 
-KtDotQualifiedExpression(177,184): 'TA.prop'
+KtDotQualifiedExpression(185,192): 'TA.prop'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -174,10 +174,10 @@ KtDotQualifiedExpression(177,184): 'TA.prop'
         callableId = test/prop
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(177,179): 'TA'
+KtNameReferenceExpression(185,187): 'TA'
   null
 
-KtNameReferenceExpression(180,184): 'prop'
+KtNameReferenceExpression(188,192): 'prop'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -197,7 +197,7 @@ KtNameReferenceExpression(180,184): 'prop'
         callableId = test/prop
       typeArgumentsMapping = {}
 
-KtCallableReferenceExpression(190,197): 'TA::foo'
+KtCallableReferenceExpression(198,205): 'TA::foo'
   KaCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
@@ -215,10 +215,10 @@ KtCallableReferenceExpression(190,197): 'TA::foo'
         callableId = test/foo
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(190,192): 'TA'
+KtNameReferenceExpression(198,200): 'TA'
   null
 
-KtNameReferenceExpression(194,197): 'foo'
+KtNameReferenceExpression(202,205): 'foo'
   KaCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []

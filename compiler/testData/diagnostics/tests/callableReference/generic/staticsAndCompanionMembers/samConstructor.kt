@@ -1,6 +1,7 @@
 // LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE_FEATURE_TOGGLED: CompanionBlocksAndExtensions
+// LANGUAGE_FEATURE_TOGGLED: CompanionBlocks
+// LANGUAGE_FEATURE_TOGGLED: CompanionExtensions
 
 // FILE: J.java
 

@@ -1,7 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
 //           (^ changes positioning of `WRONG_NUMBER_OF_TYPE_ARGUMENTS`)
-// LANGUAGE_FEATURE_TOGGLED: CompanionBlocksAndExtensions
+// LANGUAGE_FEATURE_TOGGLED: CompanionBlocks
+// LANGUAGE_FEATURE_TOGGLED: CompanionExtensions
 // LANGUAGE_FEATURE_TOGGLED: ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs
 
 class G<A> {

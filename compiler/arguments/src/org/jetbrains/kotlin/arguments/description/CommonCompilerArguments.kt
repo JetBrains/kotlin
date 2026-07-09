@@ -1429,11 +1429,27 @@ Warning: this flag is not intended for production use. If you want to configure 
         """.trimIndent().asReleaseDependent()
         valueType = BooleanType.defaultFalse
         additionalAnnotations(
-            Enables(LanguageFeature.CompanionBlocksAndExtensions),
+            Enables(LanguageFeature.CompanionBlocks),
+            Enables(LanguageFeature.CompanionExtensions),
         )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_20
+        )
+    }
+
+    compilerArgument {
+        name = "Xcompanion-blocks"
+        description = """
+            Enables companion blocks.
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.CompanionBlocks),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
         )
     }
 

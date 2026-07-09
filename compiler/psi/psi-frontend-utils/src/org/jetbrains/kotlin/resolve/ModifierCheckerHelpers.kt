@@ -402,7 +402,7 @@ val possibleParentTargetPredicateMap = mapOf(
             KotlinTarget.ANNOTATION_CLASS,
         ),
         ifSupported(
-            LanguageFeature.CompanionBlocksAndExtensions,
+            LanguageFeature.CompanionExtensions,
             KotlinTarget.FILE,
         )
     ),

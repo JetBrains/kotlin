@@ -1,82 +1,82 @@
 KtFile: 'illegalCompanionBlock.kt'
   NO_CANDIDATES
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   NO_CANDIDATES
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   NO_CANDIDATES
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   NO_CANDIDATES
 
-KtObjectDeclaration(57,112): 'object O {'
+KtObjectDeclaration(65,120): 'object O {'
   NO_CANDIDATES
 
-KtClassBody(66,112): '{'
+KtClassBody(74,120): '{'
   NO_CANDIDATES
 
-KtCompanionBlock(72,110): 'companion {'
+KtCompanionBlock(80,118): 'companion {'
   NO_CANDIDATES
 
-KtDeclarationModifierList(72,81): 'companion'
+KtDeclarationModifierList(80,89): 'companion'
   NO_CANDIDATES
 
-KtClassBody(82,110): '{'
+KtClassBody(90,118): '{'
   NO_CANDIDATES
 
-KtNamedFunction(92,104): 'fun foo() {}'
+KtNamedFunction(100,112): 'fun foo() {}'
   NO_CANDIDATES
 
-KtParameterList(99,101): '()'
+KtParameterList(107,109): '()'
   NO_CANDIDATES
 
-KtBlockExpression(102,104): '{}'
+KtBlockExpression(110,112): '{}'
   NO_CANDIDATES
 
-KtClass(114,204): 'enum class E {'
+KtClass(122,212): 'enum class E {'
   NO_CANDIDATES
 
-KtDeclarationModifierList(114,118): 'enum'
+KtDeclarationModifierList(122,126): 'enum'
   NO_CANDIDATES
 
-KtClassBody(127,204): '{'
+KtClassBody(135,212): '{'
   NO_CANDIDATES
 
-KtEnumEntry(133,202): 'Entry {'
+KtEnumEntry(141,210): 'Entry {'
   NO_CANDIDATES
 
-KtClassBody(139,201): '{'
+KtClassBody(147,209): '{'
   NO_CANDIDATES
 
-KtCompanionBlock(149,195): 'companion {'
+KtCompanionBlock(157,203): 'companion {'
   NO_CANDIDATES
 
-KtDeclarationModifierList(149,158): 'companion'
+KtDeclarationModifierList(157,166): 'companion'
   NO_CANDIDATES
 
-KtClassBody(159,195): '{'
+KtClassBody(167,203): '{'
   NO_CANDIDATES
 
-KtNamedFunction(173,185): 'fun bar() {}'
+KtNamedFunction(181,193): 'fun bar() {}'
   NO_CANDIDATES
 
-KtParameterList(180,182): '()'
+KtParameterList(188,190): '()'
   NO_CANDIDATES
 
-KtBlockExpression(183,185): '{}'
+KtBlockExpression(191,193): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(206,245): 'fun usage() {'
+KtNamedFunction(214,253): 'fun usage() {'
   NO_CANDIDATES
 
-KtParameterList(215,217): '()'
+KtParameterList(223,225): '()'
   NO_CANDIDATES
 
-KtBlockExpression(218,245): '{'
+KtBlockExpression(226,253): '{'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(224,231): 'O.foo()'
+KtDotQualifiedExpression(232,239): 'O.foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -97,7 +97,7 @@ KtDotQualifiedExpression(224,231): 'O.foo()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(224,225): 'O'
+KtNameReferenceExpression(232,233): 'O'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -116,7 +116,7 @@ KtNameReferenceExpression(224,225): 'O'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtCallExpression(226,231): 'foo()'
+KtCallExpression(234,239): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -137,7 +137,7 @@ KtCallExpression(226,231): 'foo()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(226,229): 'foo'
+KtNameReferenceExpression(234,237): 'foo'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -158,10 +158,10 @@ KtNameReferenceExpression(226,229): 'foo'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtValueArgumentList(229,231): '()'
+KtValueArgumentList(237,239): '()'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(236,243): 'E.Entry'
+KtDotQualifiedExpression(244,251): 'E.Entry'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -182,7 +182,7 @@ KtDotQualifiedExpression(236,243): 'E.Entry'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(236,237): 'E'
+KtNameReferenceExpression(244,245): 'E'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -201,7 +201,7 @@ KtNameReferenceExpression(236,237): 'E'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtNameReferenceExpression(238,243): 'Entry'
+KtNameReferenceExpression(246,251): 'Entry'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []

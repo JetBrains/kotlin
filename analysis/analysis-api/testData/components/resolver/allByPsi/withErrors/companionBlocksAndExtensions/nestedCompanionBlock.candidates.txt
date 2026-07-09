@@ -1,67 +1,67 @@
 KtFile: 'nestedCompanionBlock.kt'
   NO_CANDIDATES
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   NO_CANDIDATES
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   NO_CANDIDATES
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   NO_CANDIDATES
 
-KtClass(57,171): 'class C {'
+KtClass(65,179): 'class C {'
   NO_CANDIDATES
 
-KtClassBody(65,171): '{'
+KtClassBody(73,179): '{'
   NO_CANDIDATES
 
-KtCompanionBlock(71,169): 'companion {'
+KtCompanionBlock(79,177): 'companion {'
   NO_CANDIDATES
 
-KtDeclarationModifierList(71,80): 'companion'
+KtDeclarationModifierList(79,88): 'companion'
   NO_CANDIDATES
 
-KtClassBody(81,169): '{'
+KtClassBody(89,177): '{'
   NO_CANDIDATES
 
-KtCompanionBlock(91,139): 'companion {'
+KtCompanionBlock(99,147): 'companion {'
   NO_CANDIDATES
 
-KtDeclarationModifierList(91,100): 'companion'
+KtDeclarationModifierList(99,108): 'companion'
   NO_CANDIDATES
 
-KtClassBody(101,139): '{'
+KtClassBody(109,147): '{'
   NO_CANDIDATES
 
-KtNamedFunction(115,129): 'fun inner() {}'
+KtNamedFunction(123,137): 'fun inner() {}'
   NO_CANDIDATES
 
-KtParameterList(124,126): '()'
+KtParameterList(132,134): '()'
   NO_CANDIDATES
 
-KtBlockExpression(127,129): '{}'
+KtBlockExpression(135,137): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(149,163): 'fun outer() {}'
+KtNamedFunction(157,171): 'fun outer() {}'
   NO_CANDIDATES
 
-KtParameterList(158,160): '()'
+KtParameterList(166,168): '()'
   NO_CANDIDATES
 
-KtBlockExpression(161,163): '{}'
+KtBlockExpression(169,171): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(173,202): 'fun usage() {'
+KtNamedFunction(181,210): 'fun usage() {'
   NO_CANDIDATES
 
-KtParameterList(182,184): '()'
+KtParameterList(190,192): '()'
   NO_CANDIDATES
 
-KtBlockExpression(185,202): '{'
+KtBlockExpression(193,210): '{'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(191,200): 'C.outer()'
+KtDotQualifiedExpression(199,208): 'C.outer()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -82,7 +82,7 @@ KtDotQualifiedExpression(191,200): 'C.outer()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(191,192): 'C'
+KtNameReferenceExpression(199,200): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -101,7 +101,7 @@ KtNameReferenceExpression(191,192): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtCallExpression(193,200): 'outer()'
+KtCallExpression(201,208): 'outer()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -122,7 +122,7 @@ KtCallExpression(193,200): 'outer()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(193,198): 'outer'
+KtNameReferenceExpression(201,206): 'outer'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -143,5 +143,5 @@ KtNameReferenceExpression(193,198): 'outer'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtValueArgumentList(198,200): '()'
+KtValueArgumentList(206,208): '()'
   NO_CANDIDATES

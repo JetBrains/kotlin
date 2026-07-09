@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -CompanionBlocksAndExtensions
+// LANGUAGE: -CompanionBlocks -CompanionExtensions
 <!UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> fun String.foo() {}
 <!UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> val String.bar get() = 1
 

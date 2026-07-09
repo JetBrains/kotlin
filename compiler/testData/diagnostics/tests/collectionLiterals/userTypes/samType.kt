@@ -1,5 +1,5 @@
 // ISSUE: KT-85497
-// LANGUAGE: +CollectionLiterals, +CompanionBlocksAndExtensions
+// LANGUAGE: +CollectionLiterals, +CompanionBlocks +CompanionExtensions
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 

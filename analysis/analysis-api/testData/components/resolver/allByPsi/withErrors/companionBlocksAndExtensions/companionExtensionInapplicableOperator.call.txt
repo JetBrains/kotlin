@@ -1,58 +1,58 @@
 KtFile: 'companionExtensionInapplicableOperator.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   null
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtClass(57,64): 'class C'
+KtClass(65,72): 'class C'
   null
 
-KtNamedFunction(66,112): 'companion operator fun C.plus(i: Int): C = C()'
+KtNamedFunction(74,120): 'companion operator fun C.plus(i: Int): C = C()'
   null
 
-KtDeclarationModifierList(66,84): 'companion operator'
+KtDeclarationModifierList(74,92): 'companion operator'
   null
 
-KtTypeReference(89,90): 'C'
+KtTypeReference(97,98): 'C'
   null
 
-KtUserType(89,90): 'C'
+KtUserType(97,98): 'C'
   null
 
-KtNameReferenceExpression(89,90): 'C'
+KtNameReferenceExpression(97,98): 'C'
   null
 
-KtParameterList(95,103): '(i: Int)'
+KtParameterList(103,111): '(i: Int)'
   null
 
-KtParameter(96,102): 'i: Int'
+KtParameter(104,110): 'i: Int'
   null
 
-KtTypeReference(99,102): 'Int'
+KtTypeReference(107,110): 'Int'
   null
 
-KtUserType(99,102): 'Int'
+KtUserType(107,110): 'Int'
   null
 
-KtNameReferenceExpression(99,102): 'Int'
+KtNameReferenceExpression(107,110): 'Int'
   null
 
-KtTypeReference(105,106): 'C'
+KtTypeReference(113,114): 'C'
   null
 
-KtUserType(105,106): 'C'
+KtUserType(113,114): 'C'
   null
 
-KtNameReferenceExpression(105,106): 'C'
+KtNameReferenceExpression(113,114): 'C'
   null
 
-KtCallExpression(109,112): 'C()'
+KtCallExpression(117,120): 'C()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -69,7 +69,7 @@ KtCallExpression(109,112): 'C()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(109,110): 'C'
+KtNameReferenceExpression(117,118): 'C'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -86,19 +86,19 @@ KtNameReferenceExpression(109,110): 'C'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtValueArgumentList(110,112): '()'
+KtValueArgumentList(118,120): '()'
   null
 
-KtNamedFunction(114,143): 'fun usage() {'
+KtNamedFunction(122,151): 'fun usage() {'
   null
 
-KtParameterList(123,125): '()'
+KtParameterList(131,133): '()'
   null
 
-KtBlockExpression(126,143): '{'
+KtBlockExpression(134,151): '{'
   null
 
-KtDotQualifiedExpression(132,141): 'C.plus(1)'
+KtDotQualifiedExpression(140,149): 'C.plus(1)'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -134,10 +134,10 @@ KtDotQualifiedExpression(132,141): 'C.plus(1)'
           callableId = null)
       }
 
-KtNameReferenceExpression(132,133): 'C'
+KtNameReferenceExpression(140,141): 'C'
   null
 
-KtCallExpression(134,141): 'plus(1)'
+KtCallExpression(142,149): 'plus(1)'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -173,7 +173,7 @@ KtCallExpression(134,141): 'plus(1)'
           callableId = null)
       }
 
-KtNameReferenceExpression(134,138): 'plus'
+KtNameReferenceExpression(142,146): 'plus'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -209,11 +209,11 @@ KtNameReferenceExpression(134,138): 'plus'
           callableId = null)
       }
 
-KtValueArgumentList(138,141): '(1)'
+KtValueArgumentList(146,149): '(1)'
   null
 
-KtValueArgument(139,140): '1'
+KtValueArgument(147,148): '1'
   null
 
-KtConstantExpression(139,140): '1'
+KtConstantExpression(147,148): '1'
   null

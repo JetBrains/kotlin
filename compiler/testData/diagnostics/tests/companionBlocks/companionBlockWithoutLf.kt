@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -CompanionBlocksAndExtensions +ExplicitContextArguments
+// LANGUAGE: -CompanionBlocks -CompanionExtensions +ExplicitContextArguments
 // WITH_STDLIB
 class C1 {
     <!UNSUPPORTED_FEATURE!>companion<!> {}

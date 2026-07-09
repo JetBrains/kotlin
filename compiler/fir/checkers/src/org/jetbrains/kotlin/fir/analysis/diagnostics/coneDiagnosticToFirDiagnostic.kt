@@ -361,9 +361,9 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                 session,
             )
 
-            UnsupportedCompanionBlockOrExtensionCall -> FirErrors.UNSUPPORTED_FEATURE.createOn(
+            UnsupportedCompanionBlockMemberCall -> FirErrors.UNSUPPORTED_FEATURE.createOn(
                 qualifiedAccessSource ?: source,
-                LanguageFeature.CompanionBlocksAndExtensions to session.languageVersionSettings,
+                LanguageFeature.CompanionBlocks to session.languageVersionSettings,
                 session,
                 positioningStrategy = SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED,
             )

@@ -1,67 +1,67 @@
 KtFile: 'companionBlock.kt'
   NO_CANDIDATES
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   NO_CANDIDATES
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   NO_CANDIDATES
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   NO_CANDIDATES
 
-KtClass(57,221): 'class C {'
+KtClass(65,229): 'class C {'
   NO_CANDIDATES
 
-KtClassBody(65,221): '{'
+KtClassBody(73,229): '{'
   NO_CANDIDATES
 
-KtCompanionBlock(71,155): 'companion {'
+KtCompanionBlock(79,163): 'companion {'
   NO_CANDIDATES
 
-KtDeclarationModifierList(71,80): 'companion'
+KtDeclarationModifierList(79,88): 'companion'
   NO_CANDIDATES
 
-KtClassBody(81,155): '{'
+KtClassBody(89,163): '{'
   NO_CANDIDATES
 
-KtNamedFunction(91,103): 'fun foo() {}'
+KtNamedFunction(99,111): 'fun foo() {}'
   NO_CANDIDATES
 
-KtParameterList(98,100): '()'
+KtParameterList(106,108): '()'
   NO_CANDIDATES
 
-KtBlockExpression(101,103): '{}'
+KtBlockExpression(109,111): '{}'
   NO_CANDIDATES
 
-KtProperty(112,123): 'val bar = 1'
+KtProperty(120,131): 'val bar = 1'
   NO_CANDIDATES
 
-KtConstantExpression(122,123): '1'
+KtConstantExpression(130,131): '1'
   NO_CANDIDATES
 
-KtProperty(132,149): 'val baz get() = 2'
+KtProperty(140,157): 'val baz get() = 2'
   NO_CANDIDATES
 
-KtPropertyAccessor(140,149): 'get() = 2'
+KtPropertyAccessor(148,157): 'get() = 2'
   NO_CANDIDATES
 
-KtParameterList(143,145): '()'
+KtParameterList(151,153): '()'
   NO_CANDIDATES
 
-KtConstantExpression(148,149): '2'
+KtConstantExpression(156,157): '2'
   NO_CANDIDATES
 
-KtNamedFunction(161,219): 'fun inside() {'
+KtNamedFunction(169,227): 'fun inside() {'
   NO_CANDIDATES
 
-KtParameterList(171,173): '()'
+KtParameterList(179,181): '()'
   NO_CANDIDATES
 
-KtBlockExpression(174,219): '{'
+KtBlockExpression(182,227): '{'
   NO_CANDIDATES
 
-KtCallExpression(184,189): 'foo()'
+KtCallExpression(192,197): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -81,7 +81,7 @@ KtCallExpression(184,189): 'foo()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(184,187): 'foo'
+KtNameReferenceExpression(192,195): 'foo'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -101,10 +101,10 @@ KtNameReferenceExpression(184,187): 'foo'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtValueArgumentList(187,189): '()'
+KtValueArgumentList(195,197): '()'
   NO_CANDIDATES
 
-KtNameReferenceExpression(198,201): 'bar'
+KtNameReferenceExpression(206,209): 'bar'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -124,7 +124,7 @@ KtNameReferenceExpression(198,201): 'bar'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(210,213): 'baz'
+KtNameReferenceExpression(218,221): 'baz'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -144,16 +144,16 @@ KtNameReferenceExpression(210,213): 'baz'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNamedFunction(223,311): 'fun usage() {'
+KtNamedFunction(231,319): 'fun usage() {'
   NO_CANDIDATES
 
-KtParameterList(232,234): '()'
+KtParameterList(240,242): '()'
   NO_CANDIDATES
 
-KtBlockExpression(235,311): '{'
+KtBlockExpression(243,319): '{'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(241,248): 'C.foo()'
+KtDotQualifiedExpression(249,256): 'C.foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -174,7 +174,7 @@ KtDotQualifiedExpression(241,248): 'C.foo()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(241,242): 'C'
+KtNameReferenceExpression(249,250): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -193,7 +193,7 @@ KtNameReferenceExpression(241,242): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtCallExpression(243,248): 'foo()'
+KtCallExpression(251,256): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -214,7 +214,7 @@ KtCallExpression(243,248): 'foo()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(243,246): 'foo'
+KtNameReferenceExpression(251,254): 'foo'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -235,10 +235,10 @@ KtNameReferenceExpression(243,246): 'foo'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtValueArgumentList(246,248): '()'
+KtValueArgumentList(254,256): '()'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(253,258): 'C.bar'
+KtDotQualifiedExpression(261,266): 'C.bar'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -259,7 +259,7 @@ KtDotQualifiedExpression(253,258): 'C.bar'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(253,254): 'C'
+KtNameReferenceExpression(261,262): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -278,7 +278,7 @@ KtNameReferenceExpression(253,254): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtNameReferenceExpression(255,258): 'bar'
+KtNameReferenceExpression(263,266): 'bar'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -299,47 +299,7 @@ KtNameReferenceExpression(255,258): 'bar'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtDotQualifiedExpression(263,268): 'C.baz'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = baz
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val baz: kotlin.Int
-        contextParameters = []
-        callableId = test/C.baz
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-KtNameReferenceExpression(263,264): 'C'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = test.C
-        symbol = <constructor>(): test.C
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
-
-KtNameReferenceExpression(265,268): 'baz'
+KtDotQualifiedExpression(271,276): 'C.baz'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -360,26 +320,7 @@ KtNameReferenceExpression(265,268): 'baz'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtCallableReferenceExpression(274,280): 'C::foo'
-  KaApplicableCallCandidate:
-    candidate = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = test/C.foo(): kotlin.Unit
-        valueParameters = []
-        contextParameters = []
-        callableId = test/C.foo
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-KtNameReferenceExpression(274,275): 'C'
+KtNameReferenceExpression(271,272): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -398,7 +339,28 @@ KtNameReferenceExpression(274,275): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtNameReferenceExpression(277,280): 'foo'
+KtNameReferenceExpression(273,276): 'baz'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = baz
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val baz: kotlin.Int
+        contextParameters = []
+        callableId = test/C.baz
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallableReferenceExpression(282,288): 'C::foo'
   KaApplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
@@ -417,26 +379,7 @@ KtNameReferenceExpression(277,280): 'foo'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtCallableReferenceExpression(285,291): 'C::bar'
-  KaApplicableCallCandidate:
-    candidate = KaCallableReferenceCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      extensionReceiver = null
-      signature = KaVariableSignature:
-        name = bar
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val bar: kotlin.Int
-        contextParameters = []
-        callableId = test/C.bar
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-KtNameReferenceExpression(285,286): 'C'
+KtNameReferenceExpression(282,283): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -455,7 +398,26 @@ KtNameReferenceExpression(285,286): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtNameReferenceExpression(288,291): 'bar'
+KtNameReferenceExpression(285,288): 'foo'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallableReferenceExpression(293,299): 'C::bar'
   KaApplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
@@ -474,7 +436,45 @@ KtNameReferenceExpression(288,291): 'bar'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtDotQualifiedExpression(297,309): 'test.C.foo()'
+KtNameReferenceExpression(293,294): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(296,299): 'bar'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = bar
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val bar: kotlin.Int
+        contextParameters = []
+        callableId = test/C.bar
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(305,317): 'test.C.foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -495,7 +495,7 @@ KtDotQualifiedExpression(297,309): 'test.C.foo()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtDotQualifiedExpression(297,303): 'test.C'
+KtDotQualifiedExpression(305,311): 'test.C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -514,10 +514,10 @@ KtDotQualifiedExpression(297,303): 'test.C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtNameReferenceExpression(297,301): 'test'
+KtNameReferenceExpression(305,309): 'test'
   NO_CANDIDATES
 
-KtNameReferenceExpression(302,303): 'C'
+KtNameReferenceExpression(310,311): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -536,7 +536,7 @@ KtNameReferenceExpression(302,303): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtCallExpression(304,309): 'foo()'
+KtCallExpression(312,317): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -557,7 +557,7 @@ KtCallExpression(304,309): 'foo()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(304,307): 'foo'
+KtNameReferenceExpression(312,315): 'foo'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -578,5 +578,5 @@ KtNameReferenceExpression(304,307): 'foo'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtValueArgumentList(307,309): '()'
+KtValueArgumentList(315,317): '()'
   NO_CANDIDATES

@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: ANDROID
-// LANGUAGE: +CompanionBlocksAndExtensions +CollectionLiterals
+// LANGUAGE: +CompanionBlocks +CompanionExtensions +CollectionLiterals
 // WITH_STDLIB
 
 class MyStringStorage(val s: String){

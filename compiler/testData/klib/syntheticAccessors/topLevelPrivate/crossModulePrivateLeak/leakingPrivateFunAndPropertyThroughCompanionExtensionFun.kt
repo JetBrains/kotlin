@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: ANY
 // IGNORE_BACKEND: ANY
 // Should be unmuted when KT-86578 is fixed

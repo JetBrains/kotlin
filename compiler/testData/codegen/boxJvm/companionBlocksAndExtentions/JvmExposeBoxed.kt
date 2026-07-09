@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // CHECK_BYTECODE_LISTING
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 
 
 // FILE: J.java

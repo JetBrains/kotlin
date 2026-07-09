@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.ownTypeArguments
 import org.jetbrains.kotlin.fir.resolve.isSyntheticSamConstructor
-import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
+import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockLf
 
 object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -46,7 +46,7 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
             ) {
                 val diagnostic =
                     // Skip deprecation phase for companion block members/extensions but not static enum members
-                    if (symbol.requiresCompanionBlockOrExtensionLf() || LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()) {
+                    if (symbol.requiresCompanionBlockLf() || LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()) {
                         FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
                     } else {
                         FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_WARNING

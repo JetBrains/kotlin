@@ -66,7 +66,8 @@ internal abstract class FirBaseTowerResolveTask(
 ) : SessionHolder by components {
     private val handler: TowerLevelHandler = TowerLevelHandler()
 
-    protected val companionBlocksAndExtensionsEnabled = LanguageFeature.CompanionBlocksAndExtensions.isEnabled()
+    protected val companionBlocksEnabled = LanguageFeature.CompanionBlocks.isEnabled()
+    protected val companionExtensionsEnabled = LanguageFeature.CompanionExtensions.isEnabled()
 
     open fun interceptTowerGroup(towerGroup: TowerGroup) = towerGroup
     open fun onSuccessfulLevel(towerGroup: TowerGroup) {}
@@ -306,7 +307,7 @@ internal open class FirTowerResolveTask(
         // - Searching for companion extensions triggers a bunch of resolution tasks.
         // We skip them for performance reasons when the LF is disabled.
         // - Collection literal must never resolve to companion extensions
-        if (companionBlocksAndExtensionsEnabled && !info.isNonTrivialCollectionLiteralCall) {
+        if (companionExtensionsEnabled && !info.isNonTrivialCollectionLiteralCall) {
             enumerateTowerLevelsForCompanionExtensions(
                 info,
                 resolvedQualifier,
@@ -421,7 +422,7 @@ internal open class FirTowerResolveTask(
             onImplicitCompanionExtensionReceiver = { staticScopeOwnerSymbol, group ->
                 // Searching for companion extensions triggers a bunch of resolution tasks.
                 // We skip them for performance reasons when the LF is disabled.
-                if (companionBlocksAndExtensionsEnabled) {
+                if (companionExtensionsEnabled) {
                     enumerateTowerLevelsForCompanionExtensionsForImplicitReceiver(
                         info,
                         staticScopeOwnerSymbol,

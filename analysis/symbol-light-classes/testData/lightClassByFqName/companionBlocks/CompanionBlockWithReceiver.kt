@@ -1,5 +1,5 @@
 // one.C
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // COMPILATION_ERRORS
 package one
 

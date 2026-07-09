@@ -1,70 +1,70 @@
 KtFile: 'companionExtensionWinsOverCompanionObjectMember.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   null
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtClass(57,120): 'class C {'
+KtClass(65,128): 'class C {'
   null
 
-KtClassBody(65,120): '{'
+KtClassBody(73,128): '{'
   null
 
-KtObjectDeclaration(71,118): 'companion object {'
+KtObjectDeclaration(79,126): 'companion object {'
   null
 
-KtDeclarationModifierList(71,80): 'companion'
+KtDeclarationModifierList(79,88): 'companion'
   null
 
-KtClassBody(88,118): '{'
+KtClassBody(96,126): '{'
   null
 
-KtNamedFunction(98,112): 'fun same() = 1'
+KtNamedFunction(106,120): 'fun same() = 1'
   null
 
-KtParameterList(106,108): '()'
+KtParameterList(114,116): '()'
   null
 
-KtConstantExpression(111,112): '1'
+KtConstantExpression(119,120): '1'
   null
 
-KtNamedFunction(122,149): 'companion fun C.same() = ""'
+KtNamedFunction(130,157): 'companion fun C.same() = ""'
   null
 
-KtDeclarationModifierList(122,131): 'companion'
+KtDeclarationModifierList(130,139): 'companion'
   null
 
-KtTypeReference(136,137): 'C'
+KtTypeReference(144,145): 'C'
   null
 
-KtUserType(136,137): 'C'
+KtUserType(144,145): 'C'
   null
 
-KtNameReferenceExpression(136,137): 'C'
+KtNameReferenceExpression(144,145): 'C'
   null
 
-KtParameterList(142,144): '()'
+KtParameterList(150,152): '()'
   null
 
-KtStringTemplateExpression(147,149): '""'
+KtStringTemplateExpression(155,157): '""'
   null
 
-KtNamedFunction(151,179): 'fun usage() {'
+KtNamedFunction(159,187): 'fun usage() {'
   null
 
-KtParameterList(160,162): '()'
+KtParameterList(168,170): '()'
   null
 
-KtBlockExpression(163,179): '{'
+KtBlockExpression(171,187): '{'
   null
 
-KtDotQualifiedExpression(169,177): 'C.same()'
+KtDotQualifiedExpression(177,185): 'C.same()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -84,10 +84,10 @@ KtDotQualifiedExpression(169,177): 'C.same()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(169,170): 'C'
+KtNameReferenceExpression(177,178): 'C'
   null
 
-KtCallExpression(171,177): 'same()'
+KtCallExpression(179,185): 'same()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -107,7 +107,7 @@ KtCallExpression(171,177): 'same()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(171,175): 'same'
+KtNameReferenceExpression(179,183): 'same'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -127,5 +127,5 @@ KtNameReferenceExpression(171,175): 'same'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtValueArgumentList(175,177): '()'
+KtValueArgumentList(183,185): '()'
   null

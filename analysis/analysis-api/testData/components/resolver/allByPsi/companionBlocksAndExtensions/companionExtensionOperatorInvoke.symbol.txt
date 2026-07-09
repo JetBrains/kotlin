@@ -1,10 +1,10 @@
 KtFile: 'companionExtensionOperatorInvoke.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -12,31 +12,31 @@ KtNameReferenceExpression(51,55): 'test'
       test
     ]
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtClass(57,64): 'class C'
+KtClass(65,72): 'class C'
   null
 
-KtNamedFunction(66,102): 'companion operator fun C.invoke() {}'
+KtNamedFunction(74,110): 'companion operator fun C.invoke() {}'
   null
 
-KtDeclarationModifierList(66,84): 'companion operator'
+KtDeclarationModifierList(74,92): 'companion operator'
   null
 
-KtTypeReference(89,90): 'C'
+KtTypeReference(97,98): 'C'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
-KtUserType(89,90): 'C'
+KtUserType(97,98): 'C'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
-KtNameReferenceExpression(89,90): 'C'
+KtNameReferenceExpression(97,98): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -44,42 +44,25 @@ KtNameReferenceExpression(89,90): 'C'
       test/C
     ]
 
-KtParameterList(97,99): '()'
+KtParameterList(105,107): '()'
   null
 
-KtBlockExpression(100,102): '{}'
+KtBlockExpression(108,110): '{}'
   null
 
-KtNamedFunction(104,142): 'fun usage() {'
+KtNamedFunction(112,150): 'fun usage() {'
   null
 
-KtParameterList(113,115): '()'
+KtParameterList(121,123): '()'
   null
 
-KtBlockExpression(116,142): '{'
+KtBlockExpression(124,150): '{'
   null
 
-KtCallExpression(122,125): 'C()'
+KtCallExpression(130,133): 'C()'
   KaSymbolResolutionSuccess:
     symbols = [
       <constructor>(): test.C
-    ]
-
-KtNameReferenceExpression(122,123): 'C'
-  isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
-  KaSymbolResolutionSuccess:
-    symbols = [
-      test/C
-    ]
-
-KtValueArgumentList(123,125): '()'
-  null
-
-KtDotQualifiedExpression(130,140): 'C.invoke()'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      test/invoke(<extension receiver>: test.C): kotlin.Unit
     ]
 
 KtNameReferenceExpression(130,131): 'C'
@@ -90,13 +73,30 @@ KtNameReferenceExpression(130,131): 'C'
       test/C
     ]
 
-KtCallExpression(132,140): 'invoke()'
+KtValueArgumentList(131,133): '()'
+  null
+
+KtDotQualifiedExpression(138,148): 'C.invoke()'
   KaSymbolResolutionSuccess:
     symbols = [
       test/invoke(<extension receiver>: test.C): kotlin.Unit
     ]
 
-KtNameReferenceExpression(132,138): 'invoke'
+KtNameReferenceExpression(138,139): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtCallExpression(140,148): 'invoke()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/invoke(<extension receiver>: test.C): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(140,146): 'invoke'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -104,5 +104,5 @@ KtNameReferenceExpression(132,138): 'invoke'
       test/invoke(<extension receiver>: test.C): kotlin.Unit
     ]
 
-KtValueArgumentList(138,140): '()'
+KtValueArgumentList(146,148): '()'
   null

@@ -469,21 +469,25 @@ private class InvokeFunctionResolveTask(
         val receiverExpression = invokeReceiverValue.receiverExpression
         val isResolvedQualifier = receiverExpression is FirResolvedQualifier
 
-        if (isResolvedQualifier && receiverExpression.qualifierSymbol != null && companionBlocksAndExtensionsEnabled) {
+        if (isResolvedQualifier && receiverExpression.qualifierSymbol != null) {
             val group = TowerGroup.QualifierOrClassifier.withGivenInvokeReceiverGroup(InvokeResolvePriority.COMMON_INVOKE)
 
-            processCallableScope(
-                info,
-                createQualifierReceiver(receiverExpression, session, components.scopeSession),
-                group
-            )
+            if (companionBlocksEnabled) {
+                processCallableScope(
+                    info,
+                    createQualifierReceiver(receiverExpression, session, components.scopeSession),
+                    group
+                )
+            }
 
-            enumerateTowerLevelsForCompanionExtensions(
-                info,
-                receiverExpression,
-                parentGroup = group,
-                explicitReceiverKind = ExplicitReceiverKind.EXTENSION_RECEIVER
-            )
+            if (companionExtensionsEnabled) {
+                enumerateTowerLevelsForCompanionExtensions(
+                    info,
+                    receiverExpression,
+                    parentGroup = group,
+                    explicitReceiverKind = ExplicitReceiverKind.EXTENSION_RECEIVER
+                )
+            }
         }
 
         if (!isResolvedQualifier || receiverExpression.accessedObjectSymbol != null) {

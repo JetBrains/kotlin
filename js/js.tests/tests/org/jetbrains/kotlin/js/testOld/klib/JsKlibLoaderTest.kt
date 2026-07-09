@@ -50,7 +50,10 @@ class JsKlibLoaderTest : AbstractKlibLoaderTest() {
             irModuleName = parameters.sourceFile.nameWithoutExtension
             customKlibAbiVersion = parameters.abiVersion.toString()
             freeArgs = listOf(parameters.sourceFile.absolutePathString())
-            if (parameters.withCompanionBlocksAndExtensionsFeature) companionBlocksAndExtensions = true
+            if (parameters.withCompanionBlocksAndExtensionsFeature) {
+                companionBlocks = true
+                companionExtensions = true
+            }
         }
     }
 }

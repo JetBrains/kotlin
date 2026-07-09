@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +CompanionBlocksAndExtensions +ContextSensitiveResolutionUsingExpectedType
+// LANGUAGE: +CompanionBlocks +CompanionExtensions +ContextSensitiveResolutionUsingExpectedType
 
 class C {
     companion {

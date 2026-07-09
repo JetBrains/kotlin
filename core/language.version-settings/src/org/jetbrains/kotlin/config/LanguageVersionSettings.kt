@@ -622,11 +622,17 @@ enum class LanguageFeature(
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-19318", enabledInLatestLVTests = false),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308", enabledInLatestLVTests = false),
 
-    CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5, enabledInLatestLVTests = true),
+    CompanionBlocks(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5, enabledInLatestLVTests = true),
+    CompanionExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_6, enabledInLatestLVTests = true) {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledNotEarlierThan(CompanionBlocks)
+        }
+    },
     ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-84956", enabledInLatestLVTests = true) {
         context(context: CrossFeatureChecksResultsCollector)
         override fun crossFeatureChecks() {
-            checkEnabledLaterThan(CompanionBlocksAndExtensions, sinceVersionMustBeSet = true)
+            checkEnabledLaterThan(CompanionBlocks, sinceVersionMustBeSet = true)
         }
     },
 

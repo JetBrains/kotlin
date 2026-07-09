@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 interface I {

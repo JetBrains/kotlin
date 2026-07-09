@@ -267,4 +267,4 @@ class InaccessibleOuterClassReceiver(val symbol: FirClassSymbol<*>) : Resolution
 
 object InaccessibleFromClassHeader : ResolutionDiagnostic(INAPPLICABLE)
 
-object UnsupportedCompanionBlockOrExtensionCall : ResolutionDiagnostic(INAPPLICABLE)
+object UnsupportedCompanionBlockMemberCall : ResolutionDiagnostic(INAPPLICABLE)

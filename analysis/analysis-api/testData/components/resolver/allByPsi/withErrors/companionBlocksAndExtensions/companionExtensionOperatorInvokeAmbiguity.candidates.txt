@@ -1,28 +1,28 @@
 KtFile: 'companionExtensionOperatorInvokeAmbiguity.kt'
   NO_CANDIDATES
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   NO_CANDIDATES
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   NO_CANDIDATES
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   NO_CANDIDATES
 
-KtClass(57,131): 'class C {'
+KtClass(65,139): 'class C {'
   NO_CANDIDATES
 
-KtClassBody(65,131): '{'
+KtClassBody(73,139): '{'
   NO_CANDIDATES
 
-KtSecondaryConstructor(71,84): 'constructor()'
+KtSecondaryConstructor(79,92): 'constructor()'
   NO_CANDIDATES
 
-KtParameterList(82,84): '()'
+KtParameterList(90,92): '()'
   NO_CANDIDATES
 
-KtConstructorDelegationCall(84,84): ''
+KtConstructorDelegationCall(92,92): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
@@ -41,7 +41,7 @@ KtConstructorDelegationCall(84,84): ''
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtConstructorDelegationReferenceExpression(84,84): ''
+KtConstructorDelegationReferenceExpression(92,92): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
@@ -60,13 +60,13 @@ KtConstructorDelegationReferenceExpression(84,84): ''
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtSecondaryConstructor(89,102): 'constructor()'
+KtSecondaryConstructor(97,110): 'constructor()'
   NO_CANDIDATES
 
-KtParameterList(100,102): '()'
+KtParameterList(108,110): '()'
   NO_CANDIDATES
 
-KtConstructorDelegationCall(102,102): ''
+KtConstructorDelegationCall(110,110): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
@@ -85,7 +85,7 @@ KtConstructorDelegationCall(102,102): ''
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtConstructorDelegationReferenceExpression(102,102): ''
+KtConstructorDelegationReferenceExpression(110,110): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
@@ -104,25 +104,25 @@ KtConstructorDelegationReferenceExpression(102,102): ''
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtSecondaryConstructor(107,129): 'constructor(s: String)'
+KtSecondaryConstructor(115,137): 'constructor(s: String)'
   NO_CANDIDATES
 
-KtParameterList(118,129): '(s: String)'
+KtParameterList(126,137): '(s: String)'
   NO_CANDIDATES
 
-KtParameter(119,128): 's: String'
+KtParameter(127,136): 's: String'
   NO_CANDIDATES
 
-KtTypeReference(122,128): 'String'
+KtTypeReference(130,136): 'String'
   NO_CANDIDATES
 
-KtUserType(122,128): 'String'
+KtUserType(130,136): 'String'
   NO_CANDIDATES
 
-KtNameReferenceExpression(122,128): 'String'
+KtNameReferenceExpression(130,136): 'String'
   NO_CANDIDATES
 
-KtConstructorDelegationCall(129,129): ''
+KtConstructorDelegationCall(137,137): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
@@ -141,7 +141,7 @@ KtConstructorDelegationCall(129,129): ''
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtConstructorDelegationReferenceExpression(129,129): ''
+KtConstructorDelegationReferenceExpression(137,137): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
@@ -160,91 +160,91 @@ KtConstructorDelegationReferenceExpression(129,129): ''
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNamedFunction(133,169): 'companion operator fun C.invoke() {}'
+KtNamedFunction(141,177): 'companion operator fun C.invoke() {}'
   NO_CANDIDATES
 
-KtDeclarationModifierList(133,151): 'companion operator'
+KtDeclarationModifierList(141,159): 'companion operator'
   NO_CANDIDATES
 
-KtTypeReference(156,157): 'C'
+KtTypeReference(164,165): 'C'
   NO_CANDIDATES
 
-KtUserType(156,157): 'C'
+KtUserType(164,165): 'C'
   NO_CANDIDATES
 
-KtNameReferenceExpression(156,157): 'C'
+KtNameReferenceExpression(164,165): 'C'
   NO_CANDIDATES
 
-KtParameterList(164,166): '()'
+KtParameterList(172,174): '()'
   NO_CANDIDATES
 
-KtBlockExpression(167,169): '{}'
+KtBlockExpression(175,177): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(170,206): 'companion operator fun C.invoke() {}'
+KtNamedFunction(178,214): 'companion operator fun C.invoke() {}'
   NO_CANDIDATES
 
-KtDeclarationModifierList(170,188): 'companion operator'
+KtDeclarationModifierList(178,196): 'companion operator'
   NO_CANDIDATES
 
-KtTypeReference(193,194): 'C'
+KtTypeReference(201,202): 'C'
   NO_CANDIDATES
 
-KtUserType(193,194): 'C'
+KtUserType(201,202): 'C'
   NO_CANDIDATES
 
-KtNameReferenceExpression(193,194): 'C'
+KtNameReferenceExpression(201,202): 'C'
   NO_CANDIDATES
 
-KtParameterList(201,203): '()'
+KtParameterList(209,211): '()'
   NO_CANDIDATES
 
-KtBlockExpression(204,206): '{}'
+KtBlockExpression(212,214): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(207,257): 'companion operator fun C.invoke(withParam: Int) {}'
+KtNamedFunction(215,265): 'companion operator fun C.invoke(withParam: Int) {}'
   NO_CANDIDATES
 
-KtDeclarationModifierList(207,225): 'companion operator'
+KtDeclarationModifierList(215,233): 'companion operator'
   NO_CANDIDATES
 
-KtTypeReference(230,231): 'C'
+KtTypeReference(238,239): 'C'
   NO_CANDIDATES
 
-KtUserType(230,231): 'C'
+KtUserType(238,239): 'C'
   NO_CANDIDATES
 
-KtNameReferenceExpression(230,231): 'C'
+KtNameReferenceExpression(238,239): 'C'
   NO_CANDIDATES
 
-KtParameterList(238,254): '(withParam: Int)'
+KtParameterList(246,262): '(withParam: Int)'
   NO_CANDIDATES
 
-KtParameter(239,253): 'withParam: Int'
+KtParameter(247,261): 'withParam: Int'
   NO_CANDIDATES
 
-KtTypeReference(250,253): 'Int'
+KtTypeReference(258,261): 'Int'
   NO_CANDIDATES
 
-KtUserType(250,253): 'Int'
+KtUserType(258,261): 'Int'
   NO_CANDIDATES
 
-KtNameReferenceExpression(250,253): 'Int'
+KtNameReferenceExpression(258,261): 'Int'
   NO_CANDIDATES
 
-KtBlockExpression(255,257): '{}'
+KtBlockExpression(263,265): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(259,297): 'fun usage() {'
+KtNamedFunction(267,305): 'fun usage() {'
   NO_CANDIDATES
 
-KtParameterList(268,270): '()'
+KtParameterList(276,278): '()'
   NO_CANDIDATES
 
-KtBlockExpression(271,297): '{'
+KtBlockExpression(279,305): '{'
   NO_CANDIDATES
 
-KtCallExpression(277,280): 'C()'
+KtCallExpression(285,288): 'C()'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
@@ -372,212 +372,212 @@ KtCallExpression(277,280): 'C()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
-    isInBestCandidates = false
-
-KtNameReferenceExpression(277,278): 'C'
-  KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      signature = KaFunctionSignature:
-        receiverType = test.C
-        returnType = kotlin.Unit
-        symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
-        valueParameters = []
-        contextParameters = []
-        callableId = test/invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = false
-
-  KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      signature = KaFunctionSignature:
-        receiverType = test.C
-        returnType = kotlin.Unit
-        symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
-        valueParameters = []
-        contextParameters = []
-        callableId = test/invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      signature = KaFunctionSignature:
-        receiverType = test.C
-        returnType = kotlin.Unit
-        symbol = test/invoke(<extension receiver>: test.C, withParam: kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = withParam
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = withParam: kotlin.Int
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = test/invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
-    isInBestCandidates = false
-
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = test.C
-        symbol = <constructor>(): test.C
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
-
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = test.C
-        symbol = <constructor>(): test.C
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = test.C
-        symbol = <constructor>(s: kotlin.String): test.C
-        valueParameters = [
-          KaVariableSignature:
-            name = s
-            receiverType = null
-            returnType = kotlin.String
-            symbol = s: kotlin.String
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
-    isInBestCandidates = false
-
-KtValueArgumentList(278,280): '()'
-  NO_CANDIDATES
-
-KtDotQualifiedExpression(285,295): 'C.invoke()'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      signature = KaFunctionSignature:
-        receiverType = test.C
-        returnType = kotlin.Unit
-        symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
-        valueParameters = []
-        contextParameters = []
-        callableId = test/invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
-
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      signature = KaFunctionSignature:
-        receiverType = test.C
-        returnType = kotlin.Unit
-        symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
-        valueParameters = []
-        contextParameters = []
-        callableId = test/invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = C
-        isSafeNavigation = false
-        type = kotlin.Unit
-      signature = KaFunctionSignature:
-        receiverType = test.C
-        returnType = kotlin.Unit
-        symbol = test/invoke(<extension receiver>: test.C, withParam: kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = withParam
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = withParam: kotlin.Int
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = test/invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(285,286): 'C'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/invoke(<extension receiver>: test.C, withParam: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = withParam
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = withParam: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(s: kotlin.String): test.C
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
+    isInBestCandidates = false
+
+KtValueArgumentList(286,288): '()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(293,303): 'C.invoke()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/invoke(<extension receiver>: test.C, withParam: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = withParam
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = withParam: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(293,294): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -640,7 +640,7 @@ KtNameReferenceExpression(285,286): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtCallExpression(287,295): 'invoke()'
+KtCallExpression(295,303): 'invoke()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -710,7 +710,7 @@ KtCallExpression(287,295): 'invoke()'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
     isInBestCandidates = false
 
-KtNameReferenceExpression(287,293): 'invoke'
+KtNameReferenceExpression(295,301): 'invoke'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -780,5 +780,5 @@ KtNameReferenceExpression(287,293): 'invoke'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'withParam'.>
     isInBestCandidates = false
 
-KtValueArgumentList(293,295): '()'
+KtValueArgumentList(301,303): '()'
   NO_CANDIDATES

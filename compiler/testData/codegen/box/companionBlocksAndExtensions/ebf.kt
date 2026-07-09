@@ -1,5 +1,5 @@
 // ISSUE: KT-87192
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // WITH_STDLIB
 class C {
     companion {

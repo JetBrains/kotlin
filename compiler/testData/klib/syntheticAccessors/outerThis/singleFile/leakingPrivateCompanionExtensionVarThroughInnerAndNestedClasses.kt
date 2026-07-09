@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 class Outer {
     inner class Inner {
         internal inline fun internalInlineGetter() = o

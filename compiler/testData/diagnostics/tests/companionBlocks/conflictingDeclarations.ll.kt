@@ -2,7 +2,7 @@
 //   LL test doesn't report backend diagnostics
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // LATEST_LV_DIFFERENCE
 
 class C {

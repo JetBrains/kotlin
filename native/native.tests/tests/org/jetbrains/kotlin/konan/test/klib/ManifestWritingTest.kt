@@ -211,7 +211,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     fun testWithEnabledCompanionBlockFeature(testInfo: TestInfo) {
         doManifestTest(
             testInfo,
-            "-Xcompanion-blocks-and-extensions",
+            "-Xcompanion-blocks", "-Xcompanion-extensions",
         )
     }
 
@@ -220,7 +220,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     fun testWithDisabledCompanionBlockFeature(testInfo: TestInfo) {
         doManifestTest(
             testInfo,
-            "-XXLanguage:-CompanionBlocksAndExtensions",
+            "-XXLanguage:-CompanionBlocks",
         )
     }
 

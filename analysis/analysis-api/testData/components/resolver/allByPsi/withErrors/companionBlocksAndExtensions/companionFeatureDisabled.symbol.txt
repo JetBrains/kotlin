@@ -1,10 +1,10 @@
 KtFile: 'companionFeatureDisabled.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -12,50 +12,50 @@ KtNameReferenceExpression(51,55): 'test'
       test
     ]
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtClass(57,111): 'class C {'
+KtClass(65,119): 'class C {'
   null
 
-KtClassBody(65,111): '{'
+KtClassBody(73,119): '{'
   null
 
-KtCompanionBlock(71,109): 'companion {'
+KtCompanionBlock(79,117): 'companion {'
   null
 
-KtDeclarationModifierList(71,80): 'companion'
+KtDeclarationModifierList(79,88): 'companion'
   null
 
-KtClassBody(81,109): '{'
+KtClassBody(89,117): '{'
   null
 
-KtNamedFunction(91,103): 'fun foo() {}'
+KtNamedFunction(99,111): 'fun foo() {}'
   null
 
-KtParameterList(98,100): '()'
+KtParameterList(106,108): '()'
   null
 
-KtBlockExpression(101,103): '{}'
+KtBlockExpression(109,111): '{}'
   null
 
-KtNamedFunction(113,140): 'fun usage() {'
+KtNamedFunction(121,148): 'fun usage() {'
   null
 
-KtParameterList(122,124): '()'
+KtParameterList(130,132): '()'
   null
 
-KtBlockExpression(125,140): '{'
+KtBlockExpression(133,148): '{'
   null
 
-KtDotQualifiedExpression(131,138): 'C.foo()'
+KtDotQualifiedExpression(139,146): 'C.foo()'
   KaSymbolResolutionError:
     candidateSymbols = [
       test/C.foo(): kotlin.Unit
     ]
-    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks and extensions" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks-and-extensions', but note that no stability guarantees are provided.>
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks', but note that no stability guarantees are provided.>
 
-KtNameReferenceExpression(131,132): 'C'
+KtNameReferenceExpression(139,140): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -63,21 +63,21 @@ KtNameReferenceExpression(131,132): 'C'
       test/C
     ]
 
-KtCallExpression(133,138): 'foo()'
+KtCallExpression(141,146): 'foo()'
   KaSymbolResolutionError:
     candidateSymbols = [
       test/C.foo(): kotlin.Unit
     ]
-    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks and extensions" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks-and-extensions', but note that no stability guarantees are provided.>
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks', but note that no stability guarantees are provided.>
 
-KtNameReferenceExpression(133,136): 'foo'
+KtNameReferenceExpression(141,144): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       test/C.foo(): kotlin.Unit
     ]
-    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks and extensions" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks-and-extensions', but note that no stability guarantees are provided.>
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks', but note that no stability guarantees are provided.>
 
-KtValueArgumentList(136,138): '()'
+KtValueArgumentList(144,146): '()'
   null
