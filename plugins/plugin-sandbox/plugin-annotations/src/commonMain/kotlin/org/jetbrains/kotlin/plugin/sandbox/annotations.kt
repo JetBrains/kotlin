@@ -92,4 +92,7 @@ annotation class CallSpecifiedFunction(val functionName: String)
 annotation class GenerateFunctionWithAnnotatedParameters
 annotation class AnnotationWithStringValue(val value: String)
 
+@Target(AnnotationTarget.CLASS)
+annotation class GenerateSamInterfaceFunction
+
 annotation class GenerateClassFamily
