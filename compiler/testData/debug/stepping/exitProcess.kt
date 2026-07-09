@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JS_IR, WASM_JS
-// ^^^ Those backends don't support exitProcess()
+// DONT_TARGET_EXACT_BACKEND: JS_IR, WASM_JS
+// ^^^ Those targets don't support exitProcess()
 // WITH_STDLIB
 
 // FILE: test.kt
