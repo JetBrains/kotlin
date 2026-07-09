@@ -43,7 +43,6 @@ import org.jetbrains.jps.model.serialization.PathMacroUtil
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
@@ -114,11 +113,13 @@ abstract class JpsBuildTestCase {
             val targetRegistry = BuildTargetRegistryImpl(myModel)
             val index: ModuleExcludeIndex = ModuleExcludeIndexImpl(myModel)
             val ignoredFileIndex = IgnoredFileIndexImpl(myModel)
-            val dataPaths: BuildDataPaths = BuildDataPathsImpl(myDataStorageRoot)
+            val dataPaths: BuildDataPaths = BuildDataPathsImpl(myDataStorageRoot.toPath())
             val buildRootIndex = BuildRootIndexImpl(targetRegistry, myModel, index, dataPaths, ignoredFileIndex)
             val targetIndex = BuildTargetIndexImpl(targetRegistry, buildRootIndex)
             val targetsState = BuildTargetsState(dataPaths, myModel, buildRootIndex)
             val relativizer = PathRelativizerService(myModel.project)
+
+            @Suppress("removal")
             val projectStamps = ProjectStamps(myDataStorageRoot, targetsState, relativizer)
             val dataManager = BuildDataManager(dataPaths, targetsState, relativizer)
             return ProjectDescriptor(
