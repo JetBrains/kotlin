@@ -401,8 +401,7 @@ class ExpressionCodegen(
             return RECEIVER_PARAMETER_NAME
         }
 
-        val callableName = (function.propertyIfAccessor as IrDeclarationWithName).name
-
+        val callableName = function.propertyIfAccessor.name
         if (callableName.isSpecial) {
             return RECEIVER_PARAMETER_NAME
         }

@@ -57,7 +57,7 @@ object BuiltinMethodsWithSpecialGenericSignature : SpecialGenericSignatures() {
         get() = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
 
     @JvmStatic
-    fun CallableMemberDescriptor.getSpecialSignatureInfo(): SpecialSignatureInfo? {
+    internal fun CallableMemberDescriptor.getSpecialSignatureInfo(): SpecialSignatureInfo? {
         if (name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
 
         val builtinSignature = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.computeJvmSignature()
@@ -69,11 +69,11 @@ object BuiltinMethodsWithSpecialGenericSignature : SpecialGenericSignatures() {
 
 @K1Deprecation
 object BuiltinMethodsWithDifferentJvmName : SpecialGenericSignatures() {
-    fun getJvmName(functionDescriptor: SimpleFunctionDescriptor): Name? {
+    internal fun getJvmName(functionDescriptor: SimpleFunctionDescriptor): Name? {
         return SIGNATURE_TO_JVM_REPRESENTATION_NAME[functionDescriptor.computeJvmSignature() ?: return null]
     }
 
-    fun isBuiltinFunctionWithDifferentNameInJvm(functionDescriptor: SimpleFunctionDescriptor): Boolean {
+    internal fun isBuiltinFunctionWithDifferentNameInJvm(functionDescriptor: SimpleFunctionDescriptor): Boolean {
         return KotlinBuiltIns.isBuiltIn(functionDescriptor) && functionDescriptor.firstOverridden {
             SIGNATURE_TO_JVM_REPRESENTATION_NAME.containsKey(functionDescriptor.computeJvmSignature())
         } != null
@@ -160,7 +160,7 @@ fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
 }
 
 @K1Deprecation
-val CallableMemberDescriptor.isFromJava: Boolean
+private val CallableMemberDescriptor.isFromJava: Boolean
     get() {
         val descriptor = propertyIfAccessor
         return descriptor.containingDeclaration is JavaClassDescriptor

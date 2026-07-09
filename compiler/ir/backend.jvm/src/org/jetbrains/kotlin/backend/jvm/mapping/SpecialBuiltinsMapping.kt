@@ -5,34 +5,28 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
-import org.jetbrains.kotlin.load.java.getOverriddenBuiltinWithDifferentJvmName
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_VALUE_PARAMETERS_SHORT_NAMES
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_VALUE_PARAMETERS_SIGNATURES
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.SpecialSignatureInfo
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.signatures
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 class SpecialBuiltinsMapping(private val typeMapper: IrTypeMapper, private val signatureMapper: MethodSignatureMapper) {
     internal fun mapOverriddenSpecialBuiltinIfNeeded(callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
         // Do not remap calls to static replacements of inline class methods, since they have completely different signatures.
         if (callee.isStaticInlineClassReplacement) return null
-        val overriddenSpecialBuiltinFunction =
-            (callee.toIrBasedDescriptor().getOverriddenBuiltinReflectingJvmDescriptor() as IrBasedSimpleFunctionDescriptor?)?.owner
+
+        if (callee !is IrSimpleFunction) return null
+        val overriddenSpecialBuiltinFunction = callee.getOverriddenBuiltinReflectingJvmDescriptor()
         if (overriddenSpecialBuiltinFunction != null && !superCall) {
             return signatureMapper.mapSignatureSkipGeneric(overriddenSpecialBuiltinFunction)
         }
@@ -45,17 +39,45 @@ class SpecialBuiltinsMapping(private val typeMapper: IrTypeMapper, private val s
     // E.g. it returns `contains(e: E): Boolean` instead of `contains(e: String): Boolean` for implementation of Collection<String>.contains
     // Implementation differs by getting 'original' for collection methods with erased value parameters
     // Also it ignores Collection<String>.containsAll overrides because they have the same JVM descriptor
-    @Suppress("UNCHECKED_CAST")
-    @OptIn(K1Deprecation::class)
-    fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinReflectingJvmDescriptor(): T? {
+    fun IrSimpleFunction.getOverriddenBuiltinReflectingJvmDescriptor(): IrSimpleFunction? {
         getOverriddenBuiltinWithDifferentJvmName()?.let { return it }
 
         if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
 
         return firstOverridden {
-            KotlinBuiltIns.isBuiltIn(it) && it.getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false
-        }?.original as T?
+            it.isBuiltIn && it.getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter == true
+        }
     }
+
+    fun IrSimpleFunction.getOverriddenBuiltinWithDifferentJvmName(): IrSimpleFunction? {
+        if (name !in SpecialGenericSignatures.ORIGINAL_SHORT_NAMES &&
+            propertyIfAccessor.name !in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES
+        ) return null
+
+        return when {
+            isPropertyAccessor -> firstOverridden {
+                hasBuiltinSpecialPropertyFqName(it.correspondingPropertySymbol!!.owner)
+            }
+            else -> firstOverridden {
+                getDifferentNameForJvmBuiltinFunction(it) != null
+            }
+        }
+    }
+
+    private fun IrSimpleFunction.getSpecialSignatureInfo(): SpecialSignatureInfo? {
+        if (name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
+
+        val builtinSignature = firstOverridden { it.hasErasedValueParametersInJava }?.computeJvmSignature()
+            ?: return null
+
+        return SpecialGenericSignatures.getSpecialSignatureInfo(builtinSignature)
+    }
+
+    private val IrSimpleFunction.hasErasedValueParametersInJava: Boolean
+        get() = computeJvmSignature() in ERASED_VALUE_PARAMETERS_SIGNATURES
+
+    private val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
+        get() = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
 
     internal fun getDifferentNameForJvmBuiltinFunction(function: IrSimpleFunction): String? {
         if (function.name !in SpecialGenericSignatures.ORIGINAL_SHORT_NAMES) return null
@@ -78,7 +100,15 @@ class SpecialBuiltinsMapping(private val typeMapper: IrTypeMapper, private val s
         }
     }
 
-    private val IrSimpleFunction.isBuiltIn: Boolean
+    private fun hasBuiltinSpecialPropertyFqName(property: IrProperty): Boolean =
+        property.name in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES && property.hasBuiltinSpecialPropertyFqNameImpl()
+
+    private fun IrProperty.hasBuiltinSpecialPropertyFqNameImpl(): Boolean {
+        if (fqNameWhenAvailable in BuiltinSpecialProperties.SPECIAL_FQ_NAMES) return true
+        return isBuiltIn && overriddenSymbols.any { hasBuiltinSpecialPropertyFqName(it.owner) }
+    }
+
+    private val IrDeclaration.isBuiltIn: Boolean
         get() = getPackageFragment().packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
                 (parent as? IrClass)?.fqNameWhenAvailable?.toUnsafe()?.let(JavaToKotlinClassMap::mapKotlinToJava) != null
 
@@ -87,4 +117,7 @@ class SpecialBuiltinsMapping(private val typeMapper: IrTypeMapper, private val s
         val signature = signatureMapper.mapSignature(this@computeJvmSignature, skipGenericSignature = false, skipSpecial = true).toString()
         return SignatureBuildingComponents.signature(classPart, signature)
     }
+
+    private inline fun <T : IrOverridableDeclaration<*>> T.firstOverridden(predicate: (T) -> Boolean): T? =
+        allOverridden(includeSelf = true).firstOrNull(predicate)
 }
