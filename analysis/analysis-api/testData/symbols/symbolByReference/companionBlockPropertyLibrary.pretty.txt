@@ -1,0 +1,2 @@
+val static1: kotlin.Boolean
+  get()

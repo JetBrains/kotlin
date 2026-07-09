@@ -75,6 +75,30 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   }
 
   @Test
+  @TestMetadata("companionBlockFunctionLibrary.kt")
+  public void testCompanionBlockFunctionLibrary() {
+    run("companionBlockFunctionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockPropertyLibrary.kt")
+  public void testCompanionBlockPropertyLibrary() {
+    run("companionBlockPropertyLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("companionExtensionFunctionLibrary.kt")
+  public void testCompanionExtensionFunctionLibrary() {
+    run("companionExtensionFunctionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("companionExtensionPropertyLibrary.kt")
+  public void testCompanionExtensionPropertyLibrary() {
+    run("companionExtensionPropertyLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("constructorParameterViaTypeAlias.kt")
   public void testConstructorParameterViaTypeAlias() {
     run("constructorParameterViaTypeAlias.kt");
