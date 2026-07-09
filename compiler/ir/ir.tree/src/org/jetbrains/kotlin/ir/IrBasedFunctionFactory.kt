@@ -129,15 +129,8 @@ class IrBasedFunctionFactory(
         private const val FUNCTION_TYPE_INTERFACE_DIR = "function-type-interface"
         private const val FUNCTION_TYPE_INTERFACE_FILE = "[K][Suspend]Functions"
 
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
         val IrPackageFragment.isFunctionInterfaceFile: Boolean
-            get() {
-                return when {
-                    symbol.hasDescriptor && packageFragmentDescriptor is FunctionInterfacePackageFragment -> true
-                    this is IrFile && this.isSyntheticForFunctionInterfaceFile == true -> true
-                    else -> false
-                }
-            }
+            get() = this is IrFile && this.isSyntheticForFunctionInterfaceFile == true
     }
 
     public var typeSystem: IrTypeSystemContext? = null
