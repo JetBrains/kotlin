@@ -7,5 +7,5 @@ public final annotation class test/ann : kotlin/Annotation
 public constructor test/ann.<init>(vararg m: test/My)
 public final val test/ann.m: kotlin/Array<out test/My>
 public final /* getter */ test/ann.m.<get-m>
-@test/ann public final annotation class test/annotated : kotlin/Annotation
+public final annotation class test/annotated : kotlin/Annotation
 public constructor test/annotated.<init>()

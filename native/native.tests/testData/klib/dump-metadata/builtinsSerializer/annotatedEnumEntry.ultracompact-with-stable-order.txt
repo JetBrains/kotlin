@@ -8,7 +8,7 @@ public final annotation class test/Bnno : kotlin/Annotation
 public constructor test/Bnno.<init>()
 public final enum class test/Eee : kotlin/Enum<test/Eee>
 private constructor test/Eee.<init>()
-@test/Anno enum entry test/Eee.Entry1
+enum entry test/Eee.Entry1
 enum entry test/Eee.Entry2
-@test/Anno @test/Bnno enum entry test/Eee.Entry3
-@test/Anno enum entry test/Eee.Entry4
+enum entry test/Eee.Entry3
+enum entry test/Eee.Entry4

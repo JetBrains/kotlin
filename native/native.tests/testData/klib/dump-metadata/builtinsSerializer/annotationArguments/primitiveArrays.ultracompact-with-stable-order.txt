@@ -1,6 +1,6 @@
-@test/PrimitiveArrays public final class test/C1 : kotlin/Any
+public final class test/C1 : kotlin/Any
 public constructor test/C1.<init>()
-@test/PrimitiveArrays public final class test/C2 : kotlin/Any
+public final class test/C2 : kotlin/Any
 public constructor test/C2.<init>()
 public final annotation class test/PrimitiveArrays : kotlin/Annotation
 public constructor test/PrimitiveArrays.<init>(byteArray: kotlin/ByteArray, charArray: kotlin/CharArray, shortArray: kotlin/ShortArray, intArray: kotlin/IntArray, longArray: kotlin/LongArray, floatArray: kotlin/FloatArray, doubleArray: kotlin/DoubleArray, booleanArray: kotlin/BooleanArray)

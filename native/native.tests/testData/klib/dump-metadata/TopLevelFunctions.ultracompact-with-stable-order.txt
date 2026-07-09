@@ -4,7 +4,7 @@ public final annotation class B : kotlin/Annotation
 public constructor B.<init>()
 public final class Foo : kotlin/Any
 public constructor Foo.<init>()
-@A @B public final fun a(): kotlin/Unit
+public final fun a(): kotlin/Unit
 public final fun Foo.e(): kotlin/Unit
 public final fun f1(x: Foo): kotlin/Unit
 public final fun f2(x: Foo, y: Foo): kotlin/Int
@@ -13,8 +13,8 @@ public final inline fun i2(noinline block: kotlin/Function0<Foo>): kotlin/Unit
 public final inline fun i3(crossinline block: kotlin/Function0<Foo>): kotlin/Unit
 public final fun i4(block: kotlin/Function1<Foo, kotlin/Int>): kotlin/Unit
 public final fun i5(block: kotlin/Function2<Foo, Foo, kotlin/Int>): kotlin/Unit
-public final fun i6(block: @kotlin/ExtensionFunctionType kotlin/Function1<Foo, kotlin/Int>): kotlin/Unit
-public final fun i7(block: @kotlin/ExtensionFunctionType kotlin/Function2<Foo, Foo, kotlin/Int>): kotlin/Unit
+public final fun i6(block: kotlin/Function1<Foo, kotlin/Int>): kotlin/Unit
+public final fun i7(block: kotlin/Function2<Foo, Foo, kotlin/Int>): kotlin/Unit
 public final fun <T#0> t1(x: Foo): kotlin/Unit
 public final fun <T#0> t2(x: T#0): kotlin/Unit
 public final fun <T#0, T#1> t3(x: T#0, y: T#1): kotlin/Unit

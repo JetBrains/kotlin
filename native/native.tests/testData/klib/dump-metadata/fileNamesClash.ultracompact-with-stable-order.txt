@@ -1,8 +1,8 @@
 public final annotation class Bar : kotlin/Annotation
 public constructor Bar.<init>()
-@Foo public final class Class1 : kotlin/Any
+public final class Class1 : kotlin/Any
 public constructor Class1.<init>()
-@Bar public final class Class2 : kotlin/Any
+public final class Class2 : kotlin/Any
 public constructor Class2.<init>()
 public final annotation class Foo : kotlin/Annotation
 public constructor Foo.<init>()

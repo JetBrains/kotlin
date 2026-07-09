@@ -1,4 +1,4 @@
-@kotlin/Deprecated public final class Foo : kotlin/Any
+public final class Foo : kotlin/Any
 public constructor Foo.<init>()
 public final object Obj : kotlin/Any
 private constructor Obj.<init>()

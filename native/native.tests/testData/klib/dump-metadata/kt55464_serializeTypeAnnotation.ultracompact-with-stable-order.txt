@@ -1,3 +1,3 @@
 public final class test/C : kotlin/Any
 public constructor test/C.<init>()
-public final fun test/C.test/builder(c: @kotlin/ExtensionFunctionType kotlin/Function1<test/C, kotlin/Unit>): kotlin/Unit
+public final fun test/C.test/builder(c: kotlin/Function1<test/C, kotlin/Unit>): kotlin/Unit

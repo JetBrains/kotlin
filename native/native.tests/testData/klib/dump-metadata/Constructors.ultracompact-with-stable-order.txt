@@ -1,12 +1,12 @@
 public final annotation class A : kotlin/Annotation
 public constructor A.<init>()
 public final class Bar : kotlin/Any
-@A public constructor Bar.<init>(x: kotlin/Int)
+public constructor Bar.<init>(x: kotlin/Int)
 public final class Baz : kotlin/Any
 private constructor Baz.<init>(x: kotlin/Int)
 public final class Foo : kotlin/Any
 public /* secondary */ constructor Foo.<init>()
-@A public /* secondary */ constructor Foo.<init>(x: Foo)
+public /* secondary */ constructor Foo.<init>(x: Foo)
 public /* secondary */ constructor Foo.<init>(x: kotlin/Double)
 public constructor Foo.<init>(x: kotlin/Int)
 private /* secondary */ constructor Foo.<init>(x: kotlin/Long)
@@ -16,7 +16,7 @@ public final class Qux : kotlin/Any
 protected constructor Qux.<init>(x: kotlin/Int)
 public final class Typed<T#0> : kotlin/Any
 public /* secondary */ constructor Typed.<init>()
-@A public /* secondary */ constructor Typed.<init>(x: Foo)
+public /* secondary */ constructor Typed.<init>(x: Foo)
 public /* secondary */ constructor Typed.<init>(x: kotlin/Double)
 public constructor Typed.<init>(x: kotlin/Int)
 private /* secondary */ constructor Typed.<init>(x: kotlin/Long)

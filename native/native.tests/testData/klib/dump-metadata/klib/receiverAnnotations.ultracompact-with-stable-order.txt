@@ -1,10 +1,10 @@
 public final class test/A : kotlin/Any
 public constructor test/A.<init>()
-@test/Ann @receiver:test/Ann public final fun kotlin/Int.test/A.foo(@test/Ann arg: kotlin/Int): kotlin/Int
-@test/Ann @receiver:test/Ann public final val kotlin/Int.test/A.bar: kotlin/Int
+public final fun kotlin/Int.test/A.foo(@test/Ann arg: kotlin/Int): kotlin/Int
+public final val kotlin/Int.test/A.bar: kotlin/Int
 public final /* non-default */ /* getter */ test/A.bar.<get-bar>
 public final annotation class test/Ann : kotlin/Annotation
 public constructor test/Ann.<init>()
-@test/Ann @receiver:test/Ann public final fun kotlin/Int.test/foo(@test/Ann arg: kotlin/Int): kotlin/Int
-@test/Ann @receiver:test/Ann public final val kotlin/Int.test/bar: kotlin/Int
+public final fun kotlin/Int.test/foo(@test/Ann arg: kotlin/Int): kotlin/Int
+public final val kotlin/Int.test/bar: kotlin/Int
 public final /* non-default */ /* getter */ test/bar.<get-bar>

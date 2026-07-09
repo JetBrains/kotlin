@@ -1,4 +1,4 @@
-@kotlin/annotation/Retention @kotlin/annotation/Target public final annotation class test/A : kotlin/Annotation
+public final annotation class test/A : kotlin/Annotation
 public constructor test/A.<init>()
 public final enum class test/Enum : kotlin/Enum<test/Enum>
 private constructor test/Enum.<init>()
