@@ -26,6 +26,14 @@ sourceSets {
 
 configureJvmToolchain(JdkMajorVersion.JDK_11_0)
 
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
+        )
+    )
+}
+
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
         // This is required by lincheck model checking to be able to use `jdk.internal.misc.Unsafe` and similar classes under the hood.
