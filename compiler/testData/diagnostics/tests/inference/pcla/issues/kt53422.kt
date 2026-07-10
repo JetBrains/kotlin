@@ -1,10 +1,10 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // API_VERSION: 1.9
 fun test() {
     foo(
         flow { emit(0) }
-    ) { <!ARGUMENT_TYPE_MISMATCH!>it<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>collect<!> {} }
+    ) { it.collect {} }
 
     // 0. Initial
     // W <: Any / declared upper bound

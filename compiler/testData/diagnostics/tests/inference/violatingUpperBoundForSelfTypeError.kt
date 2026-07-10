@@ -6,7 +6,7 @@ fun <E : Enum<E>> createMap(enumClass: Class<E>) {}
 
 fun reproduce() {
     val enumClass: Class<Enum<*>> = "any" as Class<Enum<*>>
-    createMap(<!ARGUMENT_TYPE_MISMATCH!>enumClass<!>)
+    <!TYPE_MISMATCH!><!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>createMap<!>(enumClass)<!>
 }
 
 /* GENERATED_FIR_TAGS: asExpression, capturedType, functionDeclaration, localProperty, propertyDeclaration,

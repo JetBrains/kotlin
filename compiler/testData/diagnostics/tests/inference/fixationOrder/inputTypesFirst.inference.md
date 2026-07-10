@@ -3,7 +3,7 @@
 ### Call 1
 
 ```
-@R|kotlin/jvm/JvmName|(String(bar2)) 
+@R|kotlin/jvm/JvmName|(String(bar2))
 ```
 
 #### Candidate 1: `FirConstructorSymbol kotlin/jvm/JvmName.JvmName` --- `constructor(name: String): JvmName`

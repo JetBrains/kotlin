@@ -44,7 +44,7 @@ fun test3(shape: OperationShape) {
 
 fun test4(shape: OperationShape) {
     // A type that "feels right"
-    shape.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeTraitIfPresent<!><OperationShape, AbstractShapeBuilder<*, OperationShape>>()
+    shape.removeTraitIfPresent<OperationShape, <!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, OperationShape><!>>()
 }
 
 @Suppress("UNCHECKED_CAST", "CAST_NEVER_SUCCEEDS")
@@ -65,7 +65,7 @@ fun testB(target: SimpleShape) {
 
 fun testC(target: SimpleShape) {
     // A type that "feels right"
-    val builder: AbstractShapeBuilder<*, *> = <!INAPPLICABLE_CANDIDATE!>shapeToBuilder<!><<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, SimpleShape><!>, SimpleShape>(target)
+    val builder: AbstractShapeBuilder<*, *> = shapeToBuilder<<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, SimpleShape><!>, SimpleShape>(target)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localProperty, primaryConstructor,
