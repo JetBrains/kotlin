@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.klib.CustomWebCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.testInfraError
+import org.jetbrains.kotlin.test.util.parseLanguageFeature
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlin.wasm.test.WasmCoroutineHelpersModuleTransformer
@@ -325,7 +325,7 @@ class CustomWasmSecondStageFacade internal constructor(
                     // Second stage CLI does not accept test-only features like `ImplicitSignedToUnsignedIntegerConversion`, so they need to be filtered out.
                     // `ImplicitSignedToUnsignedIntegerConversion` is a first-stage-only feature, so it's safe not to pass it to the second stage.
                     // Should some test-only feature be relevant to the second stage, then a split of the second stage to several CLI phases would help.
-                    .filterNot { LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly }
+                    .filterNot { it.parseLanguageFeature().first.testOnly }
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
                 customOptIns.map { CommonCompilerArguments::optIn.cliArgument + "=$it" },
             )

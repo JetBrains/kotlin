@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.konan.test.klib
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
 import org.jetbrains.kotlin.konan.config.konanTarget
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLib
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
 import org.jetbrains.kotlin.test.checkTestInfrastructure
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
