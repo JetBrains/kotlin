@@ -82,11 +82,13 @@ import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
  */
 class WrapJsComposableLambdaLowering(
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
 ) : AbstractComposeLowering(
     context,
+    irModule,
     metrics,
     stabilityInferencer,
     featureFlags,
@@ -101,7 +103,7 @@ class WrapJsComposableLambdaLowering(
 
     private val rememberFunSymbol by lazy {
         val composerParamTransformer = ComposerParamTransformer(
-            context, stabilityInferencer, metrics, featureFlags
+            context, irModule, stabilityInferencer, metrics, featureFlags
         )
         getTopLevelFunctions(ComposeCallableIds.remember)
             .map {

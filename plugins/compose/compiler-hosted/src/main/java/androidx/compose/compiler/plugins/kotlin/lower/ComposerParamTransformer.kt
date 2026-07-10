@@ -54,10 +54,11 @@ import kotlin.math.min
 
 class ComposerParamTransformer(
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     stabilityInferencer: StabilityInferencer,
     metrics: ModuleMetrics,
     featureFlags: FeatureFlags,
-) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
+) : AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags),
     ModuleLoweringPass {
 
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
