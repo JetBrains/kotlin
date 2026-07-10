@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -29,7 +30,13 @@ object AtomicfuPropertyChecker: FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         if (!declaration.isKotlinxAtomicfu()) return
-        if (!declaration.effectiveVisibility.publicApi && declaration.resolvedVisibility.publicApi) {
+        if (!declaration.resolvedVisibility.privateApi && declaration.backingField?.isStatic == true) {
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN,
+                declaration.source.text.toString()
+            )
+        } else if (!declaration.effectiveVisibility.publicApi && declaration.resolvedVisibility.publicApi) {
             reporter.reportOn(
                 declaration.source,
                 AtomicfuErrors.PUBLISHED_API_ATOMICS_ARE_FORBIDDEN,

@@ -28,6 +28,18 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   }
 
   @Test
+  @TestMetadata("AtomicCompanionExtensions.kt")
+  public void testAtomicCompanionExtensions() {
+    run("AtomicCompanionExtensions.kt");
+  }
+
+  @Test
+  @TestMetadata("AtomicsInCompanionBlocks.kt")
+  public void testAtomicsInCompanionBlocks() {
+    run("AtomicsInCompanionBlocks.kt");
+  }
+
+  @Test
   @TestMetadata("CheckAtomicVisibilityTest.kt")
   public void testCheckAtomicVisibilityTest() {
     run("CheckAtomicVisibilityTest.kt");
