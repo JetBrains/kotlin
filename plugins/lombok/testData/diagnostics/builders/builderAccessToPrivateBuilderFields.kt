@@ -12,6 +12,6 @@ public class BuilderExample {
 
 fun test() {
     val builder = BuilderExample.builder()
-    builder.<!FUNCTION_CALL_EXPECTED, NO_VALUE_FOR_PARAMETER!>str<!> // Access to field despite the fact it's invisible
-    builder.<!FUNCTION_CALL_EXPECTED, NO_VALUE_FOR_PARAMETER!>id<!> // Access to field despite the fact it's invisible
+    builder.<!INVISIBLE_REFERENCE!>str<!> // Access to field despite the fact it's invisible
+    builder.<!INVISIBLE_REFERENCE!>id<!> // Access to field despite the fact it's invisible
 }

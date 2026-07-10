@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fakeElement
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
+import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
@@ -135,6 +137,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         } ?: emptyList()
     }
 
+    @UnsafePluginApi
+    override fun generateFields(callableId: CallableId, context: MemberGenerationContext?): List<FirFieldSymbol> {
+        val classSymbol = context?.owner ?: return emptyList()
+        return callablesCache.getValue(classSymbol, context)?.let {
+            it.fields[callableId.callableName]?.let { field -> listOf(field) }
+        } ?: emptyList()
+    }
+
     override fun generateNestedClassLikeDeclaration(
         owner: FirClassSymbol<*>,
         name: Name,
@@ -182,20 +192,20 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     context(generatedFunctions: MutableMap<Name, FirNamedFunctionSymbol>, generatedFields: MutableMap<Name, FirFieldSymbol>)
     private fun addBuilderCallables(
-        classSymbol: FirClassSymbol<*>,
+        builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
         existingFieldNames: Set<Name>,
     ) {
-        val containingClassSymbol = classSymbol.getContainingClassSymbol() as? FirClassSymbol<*> ?: return
+        val containingClassSymbol = builderSymbol.getContainingClassSymbol() as? FirClassSymbol<*> ?: return
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(containingClassSymbol) ?: return
-        val className = classSymbol.classId.shortClassName.asString()
-        val builderFir = classSymbol.fir as? FirJavaClass
+        val className = builderSymbol.classId.shortClassName.asString()
+        val builderFir = builderSymbol.fir as? FirJavaClass
         val entityJavaClass = containingClassSymbol.fir as FirJavaClass
 
         val nestedClassifierScope =
             containingClassSymbol.fir.scopeProvider.getNestedClassifierScope(containingClassSymbol.fir, session, ScopeSession())
         var builderSymbolAlreadyExists = false // TODO: distinguish explicit/generated builders via origin, it's blocked by KT-79778
-        nestedClassifierScope?.processClassifiersByName(classSymbol.name) {
+        nestedClassifierScope?.processClassifiersByName(builderSymbol.name) {
             builderSymbolAlreadyExists = true
         }
 
@@ -209,7 +219,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 // Unfortunately, we can't do it on nested classes generation step because scope are being traversed recursively (that would lead to StackOverflow)
                 // For Lombok-generated builders, createEmptyBuilderClass already sets up the correct mapping
                 val typeParametersMapping =
-                    declaration.initializeTypeParametersMapping(newContainingDeclarationSymbol = classSymbol, existingDeclaration = true)
+                    declaration.initializeTypeParametersMapping(newContainingDeclarationSymbol = builderSymbol, existingDeclaration = true)
                 for ([key, value] in typeParametersMapping) {
                     builderFir.classJavaTypeParameterStack.addParameter(key, value.symbol)
                 }
@@ -217,7 +227,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             generatedFunctions.addSpecialBuilderMethods(
                 builder,
-                builderSymbol = classSymbol,
+                builderSymbol = builderSymbol,
                 builderDeclaration = declaration,
                 existingFunctionNames = existingFunctionNames
             )
@@ -235,12 +245,31 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 else -> emptyList()
             }
             for (item in items) {
+                generatedFields.addIfNonClashing(item.name, existingFieldNames) {
+                    buildJavaField {
+                        isFromSource = true
+                        lazyHasConstantInitializer = lazy { false }
+                        this@buildJavaField.containingClassSymbol = builderSymbol
+
+                        moduleData = containingClassSymbol.moduleData
+                        status = FirResolvedDeclarationStatusImpl(
+                            Visibilities.Private, Modality.FINAL, Visibilities.Private.toEffectiveVisibility(builderSymbol)
+                        )
+                        isLocal = false
+                        returnTypeRef = item.returnTypeRef
+                        name = it
+                        isVar = false
+                        symbol = FirFieldSymbol(CallableId(builderSymbol.classId, it))
+                        dispatchReceiverType = builderSymbol.defaultType()
+                    }.symbol
+                }
+
                 when (val singular = lombokService.getSingular(item.symbol)) {
                     null -> {
                         generatedFunctions.addSetterMethod(
                             builder,
                             item,
-                            builderSymbol = classSymbol,
+                            builderSymbol = builderSymbol,
                             existingFunctionNames = existingFunctionNames
                         )
                     }
@@ -249,7 +278,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             builder,
                             singular,
                             item,
-                            builderSymbol = classSymbol,
+                            builderSymbol = builderSymbol,
                             existingFunctionNames = existingFunctionNames
                         )
                     }
@@ -523,13 +552,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
        The number and types of parameters don't matter, see https://projectlombok.org/features/Builder#overview
        "Each listed generated element will be silently skipped if that element already exists (disregarding parameter counts and looking only at names)"
      */
-    protected inline fun MutableMap<Name, FirNamedFunctionSymbol>.addIfNonClashing(
-        functionName: Name,
-        existingFunctionNames: Set<Name>,
-        createFunction: (name: Name) -> FirNamedFunctionSymbol
+    protected inline fun <K : FirCallableSymbol<*>> MutableMap<Name, K>.addIfNonClashing(
+        name: Name,
+        existingNames: Set<Name>,
+        createCallable: (name: Name) -> K
     ) {
-        if (functionName !in existingFunctionNames) {
-            getOrPut(functionName) { createFunction(functionName) }
+        if (name !in existingNames) {
+            getOrPut(name) { createCallable(name) }
         }
     }
 
