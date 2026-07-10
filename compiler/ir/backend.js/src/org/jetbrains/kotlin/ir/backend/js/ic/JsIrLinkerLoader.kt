@@ -133,7 +133,7 @@ internal class JsIrLinkerLoader(
     private val mainLibrary: KotlinLibrary,
 ) {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun createLinker(loadedModules: Map<ModuleDescriptor, KotlinLibrary>): JsIrLinker {
+    private fun createLinker(): JsIrLinker {
         val signaturer = IdSignatureDescriptor(JsManglerDesc)
         val symbolTable = SymbolTable(signaturer, icContext.createIrFactory())
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
@@ -188,7 +188,7 @@ internal class JsIrLinkerLoader(
         loadAllIr: Boolean = false,
     ): LoadedJsIr = compilerConfiguration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
         val loadedModules = loadModules()
-        val linker = createLinker(loadedModules)
+        val linker = createLinker()
 
         val irModules = loadedModules.entries.associate { [descriptor, module] ->
             val libraryFile = KotlinLibraryFile(module)
