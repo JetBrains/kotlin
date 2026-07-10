@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationS
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -184,7 +185,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val wasmCompilationMode: WasmCompilationMode
         get() = property(PropertyNames.KOTLIN_WASM_COMPILATION_MODE)
-            .orNull?.let {
+            .orNull?.let { value ->
                 project.reportDiagnosticOncePerBuild(
                     KotlinToolingDiagnostics.ExperimentalFeatureWarning(
                         "Wasm compilation mode selecting",
@@ -192,7 +193,17 @@ internal class PropertiesProvider private constructor(private val project: Proje
                     ),
                     key = "WasmCompilationMode"
                 )
-                WasmCompilationMode.byArgument(it)
+                WasmCompilationMode.byArgument(value) ?: run {
+                    project.reportDiagnosticOncePerBuild(
+                        KotlinToolingDiagnostics.WasmCompilationModeInvalidValue(
+                            value,
+                            PropertyNames.KOTLIN_WASM_COMPILATION_MODE,
+                            WasmCompilationMode.values().map { it.toArgument() },
+                        ),
+                        key = "WasmCompilationModeUnrecognizedValue"
+                    )
+                    null
+                }
             } ?: WasmCompilationMode.MONOLITH
 
     val incrementalMultiplatform: Boolean?
