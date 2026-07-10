@@ -108,6 +108,10 @@ object JUnit5Assertions : AssertionsService() {
         JUnit5PlatformAssertions.assertNotNull(value, message)
     }
 
+    /**
+     * Asserts that all the elements from [expected] are contained in [actual] and vice versa.
+     * The order doesn't matter.
+     */
     override fun <T> assertSameElements(expected: Collection<T>, actual: Collection<T>, message: (() -> String)?) {
         JUnit5PlatformAssertions.assertEquals(expected.toSet(), actual.toSet(), message)
     }
