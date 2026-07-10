@@ -8,6 +8,8 @@ public class PublicComanionHolder {
         <!NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN!>internal<!> val pi = atomic(0)
         @PublishedApi <!NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN!>internal<!> val pip = atomic(0)
         private val pp = atomic(0)
+
+        private <!ATOMIC_PROPERTIES_SHOULD_BE_VAL!>var<!> volatileAtomic = atomic(0)
     }
 }
 

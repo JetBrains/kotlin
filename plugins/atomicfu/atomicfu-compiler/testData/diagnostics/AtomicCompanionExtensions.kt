@@ -27,6 +27,8 @@ private companion val PublishedInternaClass.pp = atomic(0)
 @PublishedApi <!NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN!>internal<!> companion val <!EXPOSED_RECEIVER_TYPE!>PrivateClass<!>.pip = atomic(0)
 private companion val PrivateClass.pp = atomic(0)
 
+private companion <!ATOMIC_PROPERTIES_SHOULD_BE_VAL!>var<!> PrivateClass.volatileAtomic = atomic(0)
+
 fun box(): String {
     return "OK"
 }
