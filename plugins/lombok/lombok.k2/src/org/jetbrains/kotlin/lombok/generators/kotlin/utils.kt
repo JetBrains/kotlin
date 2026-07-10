@@ -85,19 +85,30 @@ fun FirExtension.initializeCompanionObjectIfNeeded(
     context: NestedClassGenerationContext,
     extractKey: () -> GeneratedDeclarationKey?,
 ): FirRegularClassSymbol? {
+    if (!isCompanionNeeded(owner, context)) return null
+
+    val key = extractKey() ?: return null
+
+    return createCompanionObject(owner, key).symbol
+}
+
+fun isCompanionNeeded(
+    owner: FirClassSymbol<*>,
+    context: NestedClassGenerationContext,
+): Boolean {
     // Companion objects are only relevant for Kotlin classes
     if (owner.hasJavaOrigin) {
-        return null
+        return false
     }
 
     // Ignore local classes and anonymous objects to prevent potential exceptions
     if (owner.isLocal) {
-        return null
+        return false
     }
 
     // Check for already existing companion or normal objects
     if (owner.classKind.isObject) {
-        return null
+        return false
     }
 
     var companionAlreadyExists = false
@@ -105,12 +116,10 @@ fun FirExtension.initializeCompanionObjectIfNeeded(
         companionAlreadyExists = companionAlreadyExists || (it as? FirClassLikeSymbol)?.isCompanion == true
     }
     if (companionAlreadyExists) {
-        return null
+        return false
     }
 
-    val key = extractKey() ?: return null
-
-    return createCompanionObject(owner, key).symbol
+    return true
 }
 
 inline fun <reified T : GeneratedDeclarationKey> FirClassSymbol<*>.needsConstructorIfGeneratedCompanion(): Boolean {
