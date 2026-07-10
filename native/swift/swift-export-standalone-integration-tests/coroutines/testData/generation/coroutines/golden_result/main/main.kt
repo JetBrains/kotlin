@@ -19,13 +19,11 @@ internal external fun FunctionalInterfaceWithSuspendFunction_emit__reverse_swift
 @BindReverseBridgeToMethod(FunctionalInterfaceWithSuspendFunction::class, "emit")
 public suspend fun FunctionalInterfaceWithSuspendFunction_emit__reverse(self: FunctionalInterfaceWithSuspendFunction): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<Unit, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        FunctionalInterfaceWithSuspendFunction_emit__reverse_swift(__self, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        FunctionalInterfaceWithSuspendFunction_emit__reverse_swift(__self, _continuation, _exception, _cancellation)
     }
 }
 

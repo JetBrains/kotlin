@@ -384,6 +384,7 @@ private class BridgeFunctionDescriptor(
                 )
                 addAll(continuation.helperBridges(typeNamer))
                 addAll(exception.helperBridges(typeNamer))
+                addAll(cancellation.helperBridges(typeNamer))
             }.distinct()
         }
 
@@ -505,19 +506,21 @@ private class BridgeFunctionDescriptor(
             val shadowedName = "__${param.name}".kotlinIdentifier
             val converted = bridge.inKotlinSources.kotlinToSwift(typeNamer, paramName)
             if (converted != paramName) {
-                shadowDeclarations.add("    val $shadowedName = $converted")
+                shadowDeclarations.add("val $shadowedName = $converted")
                 shadowedName
             } else {
                 paramName
             }
         }
 
-        val shadowDeclarationLines = shadowDeclarations.joinToString("") { "$it\n" }
+        val asyncBlock = renderKotlinSuspendSwiftCoroutine(
+            typeNamer,
+            Triple(continuation, exception, cancellation),
+        ) { continuationArg, exceptionArg, cancellationArg ->
+            "$swiftBridgeName(${(callArgs + listOf(continuationArg, exceptionArg, cancellationArg)).joinToString()})"
+        }
 
-        val continuationKotlinType = typeNamer.kotlinFqName(continuation.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
-        val exceptionKotlinType = typeNamer.kotlinFqName(exception.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
-
-        val swiftBridgeArgs = (callArgs + listOf("__continuationPtr", "__exceptionPtr", "__cancellationPtr")).joinToString()
+        val functionBody = (shadowDeclarations + "return $asyncBlock").joinToString("\n")
 
         val kotlinSource = """
             |@$importAnnotation("$swiftBridgeName")
@@ -525,14 +528,7 @@ private class BridgeFunctionDescriptor(
             |
             |@$reverseBridgeAnnotation($targetClassFqName::class, "$targetMethodName")
             |public suspend fun $cBridgeName($trampolineParams): $trampolineReturnType {
-            |${shadowDeclarationLines}    return awaitSwiftCoroutine { __resume, __cancellation ->
-            |        val __continuation: $continuationKotlinType = { _result -> __resume(kotlin.Result.success(_result)) }
-            |        val __exception: $exceptionKotlinType = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-            |        val __continuationPtr = ${continuation.inKotlinSources.kotlinToSwift(typeNamer, "__continuation")}
-            |        val __exceptionPtr = ${exception.inKotlinSources.kotlinToSwift(typeNamer, "__exception")}
-            |        val __cancellationPtr = ${cancellation.inKotlinSources.kotlinToSwift(typeNamer, "__cancellation")}
-            |        $swiftBridgeName($swiftBridgeArgs)
-            |    }
+            |${functionBody.prependIndent("    ")}
             |}
         """.trimMargin()
 
