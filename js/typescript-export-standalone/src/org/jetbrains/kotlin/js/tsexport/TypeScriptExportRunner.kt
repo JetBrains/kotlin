@@ -45,10 +45,13 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
     }
 
     val kaModules = createKaModulesForStandaloneAnalysis(klibs, config.targetPlatform)
-    val generator = ExportModelGenerator(config)
-    val exportModel = analyze(kaModules.useSiteModule) {
-        generator.generateExport(kaModules)
+    val exportModel = kaModules.use { kaModules ->
+        val generator = ExportModelGenerator(config)
+        analyze(kaModules.useSiteModule) {
+            generator.generateExport(kaModules)
+        }
     }
+
     val artifacts = TsArtifactProducer.generateArtifacts(exportModel, config.artifactConfiguration.granularity)
     config.artifactConfiguration.outputDirectory.normalizedAbsoluteFile.mkdirs()
     return when (config.artifactConfiguration.tsCompilationStrategy) {
@@ -107,4 +110,3 @@ internal data class FileArtifactKey(
     val packageFqName: FqName,
     val fileName: String,
 )
-

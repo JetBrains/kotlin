@@ -167,18 +167,20 @@ private fun translateModules(
         platformLibraries = config.platformLibsInputModule,
         cinteropReexportLibrary = cinteropReexportLibs.singleOrNull(),
     )
-    val explicitModulesTranslationResults = allModules
-        .filter { it.config.shouldBeFullyExported }
-        .map { translateModulePublicApi(it, kaModules, config) }
-    val transitiveExportRoots = allModules
-        .filterNot { it.config.shouldBeFullyExported }
-        .mapNotNull { kaModules.inputsToModules[it] }
-        .associateWith { inputModule ->
-            explicitModulesTranslationResults
-                .flatMap { it.externalTypeDeclarationReferences[inputModule] ?: emptyList() }
-        }
-    val transitiveModulesTranslationResults = translateCrossReferencingModulesTransitively(transitiveExportRoots, kaModules, config)
-    return explicitModulesTranslationResults + transitiveModulesTranslationResults
+    kaModules.use { kaModules ->
+        val explicitModulesTranslationResults = allModules
+            .filter { it.config.shouldBeFullyExported }
+            .map { translateModulePublicApi(it, kaModules, config) }
+        val transitiveExportRoots = allModules
+            .filterNot { it.config.shouldBeFullyExported }
+            .mapNotNull { kaModules.inputsToModules[it] }
+            .associateWith { inputModule ->
+                explicitModulesTranslationResults
+                    .flatMap { it.externalTypeDeclarationReferences[inputModule] ?: emptyList() }
+            }
+        val transitiveModulesTranslationResults = translateCrossReferencingModulesTransitively(transitiveExportRoots, kaModules, config)
+        return explicitModulesTranslationResults + transitiveModulesTranslationResults
+    }
 }
 
 /**
