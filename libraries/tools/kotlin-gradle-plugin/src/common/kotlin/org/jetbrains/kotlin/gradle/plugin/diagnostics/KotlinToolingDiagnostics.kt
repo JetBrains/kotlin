@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDepe
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.prettyName
 import org.jetbrains.kotlin.konan.target.Family
@@ -2399,6 +2400,22 @@ internal object KotlinToolingDiagnostics {
             title { "SwiftPM linkage package not integrated into Xcode project" }
                 .description { "You have SwiftPM dependencies with $integrationName integration." }
                 .solution { "Please integrate with synthetic import linkage project by running the following command: $command" }
+        }
+    }
+
+    internal object WasmCompilationModeInvalidValue : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(value: String, propertyName: String, validValues: List<String>) = build {
+            title { "Invalid value '$value' for the '$propertyName' property" }
+                .description {
+                    "The value '$value' is invalid for the '$propertyName' property. " +
+                            "Falling back to the default value: ${WasmCompilationMode.MONOLITH}."
+                }
+                .solution {
+                    "Please use one of the valid values: ${validValues.joinToString(", ")}."
+                }
         }
     }
 }
