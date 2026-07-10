@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 import org.jetbrains.kotlin.testFederation.SmokeTest
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.pathString
@@ -108,7 +107,6 @@ class GradleCompatibilityIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-78785: build script resolves Gradle version specific jars")
-    @Disabled("KT-86040: re-enable once max supported version in tests bumped to 9.6.0")
     @Test
     fun buildScriptResolvesGradleVersionSpecificJars() {
         fun resolveKgpJars(gradleVersion: GradleVersion): List<File> {
