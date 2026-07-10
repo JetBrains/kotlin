@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: JVM_IR, NATIVE, JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
+// IGNORE_BACKEND: JVM_IR, NATIVE, JS_IR, WASM_JS, WASM_WASI
 // ^KT-86452, KT-87390
 
 import kotlin.reflect.KFunction
@@ -25,8 +25,8 @@ fun box(): String {
     context("O", 'K') {
         val ref1 = O::foo
         val ref2 = O::foo
-        val ref3: () -> String = O::foo
-        val ref4: () -> String = O::foo
+        val ref3: (Int) -> String = O::foo
+        val ref4: (Int) -> String = O::foo
         val ref5: KFunction<String> = O::foo
         val ref6: KFunction<String> = O::foo
 
@@ -53,13 +53,13 @@ fun box(): String {
     run {
         val ref1 = context("O", 'K') { O::foo }
         val ref2 = context("O", 'K') { O::foo }
-        val ref3: () -> String = context("O", 'K') { O::foo as (() -> String) }
-        val ref4: () -> String = context("O", 'K') { O::foo as (() -> String) }
+        val ref3: (Int) -> String = context("O", 'K') { O::foo as ((Int) -> String) }
+        val ref4: (Int) -> String = context("O", 'K') { O::foo as ((Int) -> String) }
         val ref5: KFunction<String> = context("O", 'K') { O::foo }
         val ref6: KFunction<String> = context("O", 'K') { O::foo }
 
         val ref7 = context("A", 'B') { O::foo }
-        val ref8: () -> String = context("A", 'B') { O::foo as (() -> String) }
+        val ref8: (Int) -> String = context("A", 'B') { O::foo as ((Int) -> String) }
         val ref9: KFunction<String> = context("A", 'B') { O::foo }
 
         val ref1HashCode = ref1.hashCode()
