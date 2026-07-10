@@ -14,44 +14,27 @@ public abstract class Renderer<R> {
     }
 }
 
-// FILE: Scheme.java
-
-import org.jetbrains.annotations.*;
-
-public interface Scheme {
-    @NotNull default String getDisplayName() {
-        return "";
-    }
-}
-
-// FILE: Manager.java
-
-import org.jetbrains.annotations.*;
-
-public abstract class Manager {
-    public abstract Scheme getScheme(@NotNull String schemeName);
-}
-
 // FILE: test.kt
 
-fun <T> comboBox(renderer: Renderer<in T?>? = null) {}
+interface In<in X>
+
+fun <E> mtIn(): In<E> = TODO()
+
+fun <T> comboBox1(renderer: Renderer<in T?>): T = TODO()
+fun <T> comboBox2(renderer: Renderer<in T?>, w: In<T>): T = TODO()
 
 fun test() {
-    comboBox<String>(
-        renderer = Renderer.create { // it should be flexible
-            it.substring(1)
+    comboBox1<String>(
+        Renderer.create { // it should be flexible
+            it.substring(1) // OK
         }
     )
-}
 
-fun test2(manager: Manager) {
-    comboBox<String>(
-        renderer = Renderer.create { // it should be flexible
-            when (it) {
-                "" -> ""
-                else -> manager.getScheme(it)?.displayName ?: it
-            }
-        }
+    comboBox2<String>(
+        Renderer.create {
+            it.substring(1) // Unsafe call
+        },
+        w = mtIn(),
     )
 }
 
