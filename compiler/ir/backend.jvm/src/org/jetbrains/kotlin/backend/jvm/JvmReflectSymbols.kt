@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class JvmReflectSymbols(val context: JvmBackendContext, irModule: IrModuleFragment) {
+class JvmReflectSymbols(val context: JvmBackendContext, module: IrModuleFragment) {
     private val irBuiltIns: IrBuiltIns = context.irBuiltIns
 
     private val javaLangReflect: FqName = FqName("java.lang.reflect")
 
     private val javaLangReflectPackage: IrPackageFragment =
-        createEmptyExternalPackageFragment(irModule, javaLangReflect)
+        createEmptyExternalPackageFragment(module, javaLangReflect)
 
     val javaLangReflectField: IrClassSymbol =
         createJavaLangReflectClass(FqName("java.lang.reflect.Field")) { klass ->

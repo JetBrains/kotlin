@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class JvmSharedVariablesManager(
+    module: IrModuleFragment,
     val symbols: JvmSymbols,
     val irBuiltIns: IrBuiltIns,
-    irModule: IrModuleFragment,
     irFactory: IrFactory,
 ) : SharedVariablesManager() {
     private val jvmInternalPackage = createEmptyExternalPackageFragment(
-        irModule, FqName("kotlin.jvm.internal")
+        module, FqName("kotlin.jvm.internal")
     )
 
     private val refNamespaceClass = irFactory.addClass(jvmInternalPackage) {

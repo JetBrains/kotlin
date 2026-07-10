@@ -40,12 +40,12 @@ import org.jetbrains.org.objectweb.asm.Type
 class JvmBackendContext(
     val state: GenerationState,
     override val irBuiltIns: IrBuiltIns,
-    irModule: IrModuleFragment,
     val symbolTable: SymbolTable,
     val debuggerExtensions: JvmDebuggerExtensions?,
     val backendExtension: JvmBackendExtension,
     val irPluginContext: IrPluginContext?,
     val evaluatorData: JvmEvaluatorData?,
+    module: IrModuleFragment,
 ) : CommonBackendContext {
     class SharedLocalDeclarationsData(
         val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf<IrDeclaration, ClosureBuilder>(),
@@ -70,9 +70,9 @@ class JvmBackendContext(
 
     override val diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
-    override val symbols = JvmSymbols(this, irModule)
+    override val symbols = JvmSymbols(this, module)
 
-    override val sharedVariablesManager = JvmSharedVariablesManager(symbols, irBuiltIns, irModule, irFactory)
+    override val sharedVariablesManager = JvmSharedVariablesManager(module, symbols, irBuiltIns, irFactory)
 
     lateinit var getIntrinsic: (IrFunctionSymbol) -> IntrinsicMarker?
 
