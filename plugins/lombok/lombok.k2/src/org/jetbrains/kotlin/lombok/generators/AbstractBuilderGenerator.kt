@@ -137,16 +137,20 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     private fun createFunctions(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext?): Map<Name, FirJavaMethod>? {
         // The same class can have both builder and entity methods in case of names clashing.
         return buildMap {
-            addBuilderMethods(classSymbol, context)
+            val existingFunctionNames = buildSet {
+                context?.declaredScope?.collectAllFunctions()?.mapTo(this) { it.name }
+            }
+
+            addBuilderMethods(classSymbol, existingFunctionNames)
 
             builderWithDeclarationsCache.getValue(classSymbol)?.let { builderWithDeclarations ->
-                addEntityMethods(builderWithDeclarations, classSymbol, context)
+                addEntityMethods(builderWithDeclarations, classSymbol, existingFunctionNames, context)
             }
         }.takeIf { it.isNotEmpty() }
     }
 
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
-    private fun MutableMap<Name, FirJavaMethod>.addBuilderMethods(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext?) {
+    private fun MutableMap<Name, FirJavaMethod>.addBuilderMethods(classSymbol: FirClassSymbol<*>, existingFunctionNames: Set<Name>) {
         val containingClassSymbol = classSymbol.getContainingClassSymbol() as? FirClassSymbol<*> ?: return
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(containingClassSymbol) ?: return
         val className = classSymbol.classId.shortClassName.asString()
@@ -159,8 +163,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         nestedClassifierScope?.processClassifiersByName(classSymbol.name) {
             builderSymbolAlreadyExists = true
         }
-
-        val existingFunctionNames = context.getExistingFunctionNames()
 
         for ((builder, declaration) in builderWithDeclarations) {
             val containingClassBuilderName = builder.getBuilderClassShortName(declaration)
@@ -219,6 +221,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     private fun MutableMap<Name, FirJavaMethod>.addEntityMethods(
         builderWithDeclarations: List<BuilderWithDeclaration<T>>,
         entitySymbol: FirClassSymbol<*>,
+        existingFunctionNames: Set<Name>,
         context: MemberGenerationContext?,
     ) {
         for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
@@ -226,8 +229,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             val entityClassId = entitySymbol.classId
             val builderClassName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
             val builderClassId = entityClassId.createNestedClassId(builderClassName)
-
-            val existingFunctionNames = context.getExistingFunctionNames()
 
             var existingBuilder: FirClassSymbol<*>? = null
             context?.declaredScope?.processClassifiersByName(builderClassName) {
@@ -286,10 +287,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 }
             }
         }
-    }
-
-    private fun MemberGenerationContext?.getExistingFunctionNames(): Set<Name> = buildSet {
-        this@getExistingFunctionNames?.declaredScope?.collectAllFunctions()?.mapTo(this) { it.name }
     }
 
     protected fun getBuilderNames(classSymbol: FirClassSymbol<*>): Set<Name> = buildSet {
