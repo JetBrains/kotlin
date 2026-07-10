@@ -11,7 +11,10 @@
 
 -keep public class kotlin.metadata.* { public protected *; }
 -keep public class kotlin.metadata.jvm.* { public protected *; }
--keep class kotlin.metadata.jvm.internal.JvmMetadataExtensions
+
+# We need to keep JvmMetadataExtensions and all its members in place. Otherwise there might be
+# JVM-linkage problems with loading this extension through a service loader in other modules.
+-keep class kotlin.metadata.jvm.internal.JvmMetadataExtensions  { *; }
 
 # Used to load .kotlin_builtins files, in kotlinx-reflect-lite and will be used in kotlin-reflect after KT-75463
 -keep class kotlin.metadata.internal.common.* { *; }
