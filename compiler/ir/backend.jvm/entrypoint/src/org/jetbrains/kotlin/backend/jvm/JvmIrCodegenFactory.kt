@@ -109,7 +109,7 @@ class JvmIrCodegenFactory(
 
         val evaluatorData = ideCodegenSettings.evaluatorData
         val context = JvmBackendContext(
-            state, irBuiltIns, symbolTable, debuggerExtensions,
+            state, irBuiltIns, irModuleFragment, symbolTable, debuggerExtensions,
             backendExtension, irPluginContext, evaluatorData
         )
         val generationExtensions = state.configuration.filteredExtensions
