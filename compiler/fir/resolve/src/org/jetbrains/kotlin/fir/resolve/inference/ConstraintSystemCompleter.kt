@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
+import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -426,13 +427,11 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         fun ConeTypeVariable?.toTypeConstructor(): TypeConstructorMarker? =
             this?.typeConstructor?.takeIf { it in notFixedTypeVariables.keys }
 
-        fun PostponedAtomWithRevisableExpectedType.collectNotFixedVariables() {
-            revisedExpectedType?.lowerBoundIfFlexible()?.asArgumentList()?.let { typeArgumentList ->
-                for (typeArgument in typeArgumentList) {
-                    val constructor = typeArgument.getType()?.typeConstructor() ?: continue
-                    if (constructor in notFixedTypeVariables) {
-                        result.add(constructor)
-                    }
+        fun PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables.collectNotFixedVariables() {
+            for (typeVariableMarker in registeredTypeVariables) {
+                val constructor = typeVariableMarker.freshTypeConstructor()
+                if (constructor in notFixedTypeVariables) {
+                    result.add(constructor)
                 }
             }
         }
@@ -449,13 +448,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                     is ConeResolvedLambdaAtom -> {
                         result.addIfNotNull(postponedAtom.typeVariableForLambdaReturnType.toTypeConstructor())
                     }
-                    is ConeLambdaWithTypeVariableAsExpectedTypeAtom -> {
+                    is ConePostponedAtomWithRevisableExpectedType -> {
                         postponedAtom.collectNotFixedVariables()
-                    }
-                    is ConeResolvedCallableReferenceAtom -> {
-                        if (postponedAtom.needsResolution) {
-                            postponedAtom.collectNotFixedVariables()
-                        }
                     }
                     is ConeSimpleNameForContextSensitiveResolution,
                     is ConeContextSensitiveAlternativeForQualifierAtom,

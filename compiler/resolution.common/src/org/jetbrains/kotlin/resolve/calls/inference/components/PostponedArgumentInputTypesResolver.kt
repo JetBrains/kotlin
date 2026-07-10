@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
-import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
-import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
-import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.Stack
@@ -261,7 +258,7 @@ class PostponedArgumentInputTypesResolver(
     private fun Context.createTypeVariablesForParameters(
         argument: PostponedAtomWithRevisableExpectedType,
         parameterTypes: List<List<TypeWithKind?>>,
-    ): List<TypeArgumentMarker> {
+    ): List<TypeVariableMarker> {
         if (parameterTypes.isEmpty()) return emptyList()
         val csBuilder = getBuilder()
         val allGroupedParameterTypes = parameterTypes.first().indices.map { i -> parameterTypes.map { it.getOrNull(i) } }
@@ -290,9 +287,7 @@ class PostponedArgumentInputTypesResolver(
                 }
             }
 
-            val resultType = fixedTypeVariables[typeVariableConstructor] ?: parameterTypeVariable.defaultType()
-
-            resultType.asTypeArgument()
+            parameterTypeVariable
         }
     }
 
@@ -429,6 +424,11 @@ class PostponedArgumentInputTypesResolver(
 
         val variablesForParameterTypes = createTypeVariablesForParameters(argument, allParameterTypes)
         val variableForReturnType = createTypeVariableForReturnType(argument)
+
+        (argument as? PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables)?.addRegisteredTypeVariables(
+            variablesForParameterTypes + variableForReturnType
+        )
+
         val functionalConstructor = computeResultingFunctionalConstructor(
             argument,
             variablesForParameterTypes.size,
@@ -457,7 +457,7 @@ class PostponedArgumentInputTypesResolver(
 
         val newExpectedType = createSimpleType(
             functionalConstructor,
-            variablesForParameterTypes + variableForReturnType.defaultType().asTypeArgument(),
+            variablesForParameterTypes.map { it.defaultType().asTypeArgument() } + variableForReturnType.defaultType().asTypeArgument(),
             parameterTypesInfo.isNullable,
             isExtensionFunction = when {
                 shouldDiscriminateExtensionFunctionAnnotation -> false

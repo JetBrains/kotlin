@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.InferenceEnhancementsIn21
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
@@ -445,9 +446,19 @@ abstract class TypeCheckerStateForConstraintSystem(
         addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer)
 
         if (typeVariableLowerBound.isMarkedNullable()) {
-            // here is important that superType is singleClassifierType
-            return simplifiedSuperType.anyBound(::isMyTypeVariable) ||
-                    isSubtypeOfByTypeChecker(nullableNothingType(), simplifiedSuperType)
+            if (simplifiedSuperType.anyBound(::isMyTypeVariable)) {
+                if (!simplifiedSuperType.isNullableType(considerTypeVariableBounds = false) && languageVersionSettings.supportsFeature(LanguageFeature.RestrictSecondKindIncorporationToFixation)) {
+                    simplifyLowerConstraint(
+                        typeVariable = simplifiedSuperType,
+                        subType = nullableNothingType(),
+                        isNoInfer,
+                        isFromNullabilityConstraint = true
+                    )
+                }
+                return true
+            }
+
+            return isSubtypeOfByTypeChecker(nullableNothingType(), simplifiedSuperType)
         }
 
         return true

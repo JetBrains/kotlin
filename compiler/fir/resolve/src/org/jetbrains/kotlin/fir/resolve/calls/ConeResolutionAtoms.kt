@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
@@ -276,7 +277,14 @@ sealed class ConePostponedAtomWithRevisableExpectedType(
      * when creating the atom, hence no need to store this field.
      */
     val anonymousFunctionIfReturnExpression: FirAnonymousFunction?
-) : ConeFunctionTypeRelatedPostponedResolvedAtom(), PostponedAtomWithRevisableExpectedType
+) : ConeFunctionTypeRelatedPostponedResolvedAtom(), PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables {
+    final override val registeredTypeVariables: List<TypeVariableMarker>
+        field = mutableListOf<TypeVariableMarker>()
+
+    override fun addRegisteredTypeVariables(typeVariables: Collection<TypeVariableMarker>) {
+        registeredTypeVariables += typeVariables
+    }
+}
 
 class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     override val expression: FirAnonymousFunctionExpression,
