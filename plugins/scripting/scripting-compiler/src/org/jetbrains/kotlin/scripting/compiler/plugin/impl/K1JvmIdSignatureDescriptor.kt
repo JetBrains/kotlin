@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.serialization
+package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.typeUtil.contains
 
-class JvmIdSignatureDescriptor(mangler: KotlinMangler.DescriptorMangler) : IdSignatureDescriptor(mangler) {
+class K1JvmIdSignatureDescriptor(mangler: KotlinMangler.DescriptorMangler) : IdSignatureDescriptor(mangler) {
 
     private inner class JvmDescriptorBasedSignatureBuilder(type: SpecialDeclarationType) :
         DescriptorBasedSignatureBuilder(type) {

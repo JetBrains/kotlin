@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.IdeCodegenSettings
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
-import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
@@ -36,8 +34,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -91,7 +87,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 
 class K1JvmIrCodegenFactory(
     private val configuration: CompilerConfiguration,
-    private val externalMangler: JvmDescriptorMangler? = null,
+    private val externalMangler: K1JvmDescriptorMangler? = null,
     private val externalSymbolTable: SymbolTable? = null,
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
     private val ideCodegenSettings: IdeCodegenSettings = IdeCodegenSettings(),
@@ -127,9 +123,9 @@ class K1JvmIrCodegenFactory(
         val [mangler, symbolTable] =
             if (externalSymbolTable != null) externalMangler!! to externalSymbolTable
             else {
-                val mangler = JvmDescriptorMangler(MainFunctionDetector(bindingContext, languageVersionSettings))
+                val mangler = K1JvmDescriptorMangler(MainFunctionDetector(bindingContext, languageVersionSettings))
                 val signaturer =
-                    if (enableIdSignatures) JvmIdSignatureDescriptor(mangler)
+                    if (enableIdSignatures) K1JvmIdSignatureDescriptor(mangler)
                     else DisabledIdSignatureDescriptor
                 val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
                 mangler to symbolTable
@@ -162,7 +158,7 @@ class K1JvmIrCodegenFactory(
             )
 
         val irProvider = if (enableIdSignatures) {
-            JvmIrLinker(
+            K1JvmIrLinker(
                 psi2irContext.moduleDescriptor,
                 configuration,
                 JvmIrTypeSystemContext(psi2irContext.irBuiltIns),
