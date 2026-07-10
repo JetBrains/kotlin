@@ -60,11 +60,9 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
     1. `TypeVariable(F) <: kotlin/String!`
 2. Combine `ft<TypeVariable(T) & Any, TypeVariable(T)?> <: TypeVariable(F)` with `TypeVariable(F) <: kotlin/String!`
     1. `TypeVariable(T) <: kotlin/String?`
-3. Combine `TypeVariable(F) <: kotlin/String!` with `TypeVariable(T) <: TypeVariable(F)!`
-    1. `TypeVariable(T) <: kotlin/String!`
-4. Combine `kotlin/String? <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/String?`
+3. Combine `kotlin/String? <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/String?`
     1. `TypeVariable(T) == kotlin/String?`
-5. Combine `TypeVariable(T) == kotlin/String?` with `TypeVariable(T) <: TypeVariable(F)!`
+4. Combine `TypeVariable(T) == kotlin/String?` with `TypeVariable(T) <: TypeVariable(F)!`
     1. `kotlin/String? <: TypeVariable(F)`
 
 ##### Call Completion:
