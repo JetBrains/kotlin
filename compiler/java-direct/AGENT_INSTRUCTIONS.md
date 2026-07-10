@@ -217,6 +217,28 @@ test regresses:
   `FirSession.symbolProvider` consumer in `compiler/java-direct/.../resolution/` —
   funnel every probe through `FirSession.cycleSafeClassLikeSymbol` (the builtins-filtered
   class-existence probe `tryResolve` in `JavaTypeResolver.kt` is layered directly on top of it).
+  - **Why the guard and not "just make the annotations lazy" (reviewer Q on `JavaCycleBreakerTest`,
+    KT-74097).** A recurring reviewer suggestion is to stop resolving annotations eagerly while
+    `FirJavaClass.declarations` is materialised — "we already have `FirLazyJavaAnnotationList` for
+    that." The hint correctly names the *trigger*: regular Java members (`FirJavaField` /
+    `FirJavaMethod`, params, type params) already defer annotations via `FirLazyJavaAnnotationList`,
+    but the **enum-entry arm** of `convertJavaFieldToFir` (`buildEnumEntry` in `FirJavaFacade.kt`)
+    resolves them *eagerly* (`setAnnotationsFromJava` + `replaceDeprecationsProvider(... getDeprecationsProviderFromAnnotations ...)`),
+    which re-resolves the very in-flight `ClassId` (the `@Deprecated` enum constant in the
+    `IntelliJFullPipelineTestsGenerated.testIntellij_vcs_git` reproducer) → the self-cycle. It is
+    **not** a local `java-direct` fix, for three reasons: (1) `FirLazyJavaAnnotationList` is a
+    Java-declaration-specific slot (`FirJavaField`/`FirJavaMethod`); a `FirEnumEntry` is a generic
+    `FirVariable` whose `annotations` are set eagerly via `replaceAnnotations`, so there is no
+    drop-in lazy slot — it would need a new lazy mechanism or a Java-specific enum-entry node;
+    (2) `convertJavaFieldToFir` / `buildEnumEntry` live in the shared `fir-jvm` module, so switching
+    enum-entry annotations to lazy is a compiler-wide change with ordering knock-ons (deprecation
+    info is forced right there and is often needed early); (3) even if applied, laziness removes only
+    *this* trigger, not the cycle class — the guard protects the resolution chokepoint itself and
+    bounds re-entrant probes from *any* path, whereas laziness merely defers the same self-referential
+    lookup to whenever the annotation is finally forced. So the `cycleSafeClassLikeSymbol` guard stays
+    as the self-contained, defense-in-depth fix; making enum entries defer annotations like other Java
+    members (or fixing the PUBLICATION-lazy re-entrance itself) is an **upstream follow-up under
+    KT-74097**, not a replacement for the guard.
 - **`JavaSupertypeLoopChecker.guarded(classId)`** bounds supertype walks against
   cycles. When a helper both *enters* the guard and *calls another helper that
   re-enters with the same `classId`*, the inner call returns `emptyList()`

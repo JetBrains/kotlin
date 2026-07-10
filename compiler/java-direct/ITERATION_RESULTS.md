@@ -36,6 +36,21 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-10 — Document why the KT-74097 guard is kept over a lazy-annotation fix (JavaCycleBreakerTest reviewer Q)
+- **Change**: Recorded the answer to the recurring reviewer question on `JavaCycleBreakerTest.kt`'s
+  KT-74097 note ("wouldn't it help to stop resolving annotations while computing
+  `FirJavaClass.declarations`? we already have `FirLazyJavaAnnotationList` for that"). The hint is
+  correct about the *trigger* — the enum-entry arm of `convertJavaFieldToFir` / `buildEnumEntry`
+  resolves annotations eagerly (`setAnnotationsFromJava` + `replaceDeprecationsProvider`), unlike
+  other Java members that defer via `FirLazyJavaAnnotationList` — but it is not a local
+  `java-direct` fix: `FirEnumEntry` has no lazy-annotation slot, `buildEnumEntry` lives in shared
+  `fir-jvm` (compiler-wide ordering knock-ons), and laziness would remove only this trigger, not the
+  cycle class the chokepoint guard defends. Conclusion documented: the `cycleSafeClassLikeSymbol`
+  guard stays; enum-entry annotation laziness is an upstream KT-74097 follow-up.
+- **Files**: `AGENT_INSTRUCTIONS.md` (KT-74097 Critical Pattern bullet extended with the Q&A).
+- **Tests**: none (documentation-only).
+- **Result**: green; no production/behavior change.
+
 ### 2026-07-10 — Document why computeClassifier's in-scope navigation loop is not redundant (review comment #9)
 - **Change**: Re-investigated review comment #9 ("doesn't `resolve(rawTypeName)` already handle the
   same-scope case?"). Confirmed empirically that removing the explicit `findClassInCurrentScope` +
