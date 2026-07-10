@@ -47,8 +47,8 @@ import org.jetbrains.kotlin.utils.topologicalSort
 
 internal class ScriptsToClassesLowering(
     val context: IrPluginContext,
-    val symbolsForScripting: JvmSymbolsForScripting,
     private val irModuleFragment: IrModuleFragment,
+    val symbolsForScripting: JvmSymbolsForScripting,
 ) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         val scripts = mutableListOf<IrScript>()

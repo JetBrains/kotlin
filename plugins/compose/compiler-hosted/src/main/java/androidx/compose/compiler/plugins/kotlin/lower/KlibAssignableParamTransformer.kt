@@ -62,16 +62,16 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 class KlibAssignableParamTransformer(
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
-    irModule: IrModuleFragment,
 ) : AbstractComposeLowering(
     context,
+    irModule,
     metrics,
     stabilityInferencer,
     featureFlags,
-    irModule,
 ), ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         irModule.transformChildrenVoid(this)

@@ -43,11 +43,11 @@ import org.jetbrains.kotlin.name.Name
 open class DurableKeyTransformer(
     private val keyVisitor: DurableKeyVisitor,
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     stabilityInferencer: StabilityInferencer,
     metrics: ModuleMetrics,
     featureFlags: FeatureFlags,
-    irModule: IrModuleFragment,
-) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags, irModule),
+) : AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags),
     ModuleLoweringPass {
 
     override fun lower(irModule: IrModuleFragment) {

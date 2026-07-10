@@ -21,7 +21,7 @@ class ScriptLoweringExtension : IrGenerationExtension {
         when {
             platform.isJvm() -> {
                 val symbolsForScripting = JvmSymbolsForScripting(pluginContext, moduleFragment)
-                ScriptsToClassesLowering(pluginContext, symbolsForScripting, moduleFragment).lower(moduleFragment)
+                ScriptsToClassesLowering(pluginContext, moduleFragment, symbolsForScripting).lower(moduleFragment)
             }
         }
     }

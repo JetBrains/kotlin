@@ -267,11 +267,11 @@ private class ClassContext(override val declaration: IrClass) : DeclarationConte
 
 class ComposerLambdaMemoization(
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
-    irModule: IrModuleFragment,
-) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags, irModule),
+) : AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags),
 
     ModuleLoweringPass {
 

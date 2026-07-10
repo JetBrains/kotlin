@@ -46,7 +46,7 @@ import java.lang.invoke.MethodType
 
 class JvmSymbols(
     private val context: JvmBackendContext,
-    private val module: IrModuleFragment,
+    private val irModule: IrModuleFragment,
 ) : BackendSymbols(context.irBuiltIns) {
     private val irBuiltIns = context.irBuiltIns
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
@@ -83,7 +83,7 @@ class JvmSymbols(
     val kotlinJvmInternalInvokeDynamicPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal.invokeDynamic"))
 
     private fun createPackage(fqName: FqName): IrPackageFragment =
-        createEmptyExternalPackageFragment(module, fqName)
+        createEmptyExternalPackageFragment(irModule, fqName)
 
     private fun createClass(
         fqName: FqName,
@@ -567,7 +567,7 @@ class JvmSymbols(
     }
 
     val javaLangReflectSymbols: JvmReflectSymbols by lazy {
-        JvmReflectSymbols(context, module)
+        JvmReflectSymbols(context, irModule)
     }
 
     override val functionAdapter: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionAdapter"), ClassKind.INTERFACE) { klass ->
@@ -1075,7 +1075,7 @@ class JvmSymbols(
         private val javaLangAnnotation: FqName = FqName("java.lang.annotation")
 
         private val javaLangAnnotationPackage: IrPackageFragment =
-            createEmptyExternalPackageFragment(module, javaLangAnnotation)
+            createEmptyExternalPackageFragment(irModule, javaLangAnnotation)
 
         private fun buildClass(
             fqName: FqName,
