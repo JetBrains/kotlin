@@ -22,13 +22,11 @@ internal external fun AsyncAbstractBase_abstractGreet__reverse_swift(self: kotli
 @BindReverseBridgeToMethod(AsyncAbstractBase::class, "abstractGreet")
 public suspend fun AsyncAbstractBase_abstractGreet__reverse(self: AsyncAbstractBase): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<kotlin.String, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        AsyncAbstractBase_abstractGreet__reverse_swift(__self, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        AsyncAbstractBase_abstractGreet__reverse_swift(__self, _continuation, _exception, _cancellation)
     }
 }
 
@@ -38,13 +36,11 @@ internal external fun AsyncAbstractBase_concreteGreet__reverse_swift(self: kotli
 @BindReverseBridgeToMethod(AsyncAbstractBase::class, "concreteGreet")
 public suspend fun AsyncAbstractBase_concreteGreet__reverse(self: AsyncAbstractBase): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<kotlin.String, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        AsyncAbstractBase_concreteGreet__reverse_swift(__self, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        AsyncAbstractBase_concreteGreet__reverse_swift(__self, _continuation, _exception, _cancellation)
     }
 }
 
@@ -54,13 +50,11 @@ internal external fun AsyncBase_count__reverse_swift(self: kotlin.native.interna
 @BindReverseBridgeToMethod(AsyncBase::class, "count")
 public suspend fun AsyncBase_count__reverse(self: AsyncBase): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<Int, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        AsyncBase_count__reverse_swift(__self, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<Int, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        AsyncBase_count__reverse_swift(__self, _continuation, _exception, _cancellation)
     }
 }
 
@@ -71,13 +65,11 @@ internal external fun AsyncBase_greet__TypesOfArguments__Swift_String____reverse
 public suspend fun AsyncBase_greet__TypesOfArguments__Swift_String____reverse(self: AsyncBase, name: kotlin.String): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __name = name.objcPtr()
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<kotlin.String, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        AsyncBase_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        AsyncBase_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name, _continuation, _exception, _cancellation)
     }
 }
 
@@ -98,13 +90,11 @@ internal external fun AsyncDefaulter_describe__reverse_swift(self: kotlin.native
 @BindReverseBridgeToMethod(AsyncDefaulter::class, "describe")
 public suspend fun AsyncDefaulter_describe__reverse(self: AsyncDefaulter): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<kotlin.String, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        AsyncDefaulter_describe__reverse_swift(__self, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        AsyncDefaulter_describe__reverse_swift(__self, _continuation, _exception, _cancellation)
     }
 }
 
@@ -114,13 +104,11 @@ internal external fun AsyncDefaulter_tag__reverse_swift(self: kotlin.native.inte
 @BindReverseBridgeToMethod(AsyncDefaulter::class, "tag")
 public suspend fun AsyncDefaulter_tag__reverse(self: AsyncDefaulter): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<kotlin.String, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        AsyncDefaulter_tag__reverse_swift(__self, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        AsyncDefaulter_tag__reverse_swift(__self, _continuation, _exception, _cancellation)
     }
 }
 
@@ -131,13 +119,11 @@ internal external fun AsyncGreeterBase_greet__TypesOfArguments__Swift_String____
 public suspend fun AsyncGreeterBase_greet__TypesOfArguments__Swift_String____reverse(self: AsyncGreeterBase, name: kotlin.String): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __name = name.objcPtr()
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<kotlin.String, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        AsyncGreeterBase_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        AsyncGreeterBase_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name, _continuation, _exception, _cancellation)
     }
 }
 
@@ -147,13 +133,11 @@ internal external fun AsyncGreeterBase_salutation__reverse_swift(self: kotlin.na
 @BindReverseBridgeToMethod(AsyncGreeterBase::class, "salutation")
 public suspend fun AsyncGreeterBase_salutation__reverse(self: AsyncGreeterBase): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<kotlin.String, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        AsyncGreeterBase_salutation__reverse_swift(__self, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        AsyncGreeterBase_salutation__reverse_swift(__self, _continuation, _exception, _cancellation)
     }
 }
 
@@ -164,13 +148,11 @@ internal external fun AsyncGreeter_greet__TypesOfArguments__Swift_String____reve
 public suspend fun AsyncGreeter_greet__TypesOfArguments__Swift_String____reverse(self: AsyncGreeter, name: kotlin.String): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __name = name.objcPtr()
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<kotlin.String, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        AsyncGreeter_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        AsyncGreeter_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name, _continuation, _exception, _cancellation)
     }
 }
 
@@ -180,13 +162,11 @@ internal external fun AsyncGreeter_salutation__reverse_swift(self: kotlin.native
 @BindReverseBridgeToMethod(AsyncGreeter::class, "salutation")
 public suspend fun AsyncGreeter_salutation__reverse(self: AsyncGreeter): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<kotlin.String, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        AsyncGreeter_salutation__reverse_swift(__self, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        AsyncGreeter_salutation__reverse_swift(__self, _continuation, _exception, _cancellation)
     }
 }
 
