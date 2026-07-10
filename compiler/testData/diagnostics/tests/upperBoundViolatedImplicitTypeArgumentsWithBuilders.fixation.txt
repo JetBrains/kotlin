@@ -37,7 +37,9 @@ TypeVariable(B) --- Readiness(
     )
      <: AbstractShapeBuilder<TypeVariable(B), TypeVariable(T)>
      <: SmithyBuilder<TypeVariable(T)>
+     <: AbstractShapeBuilder<TypeVariable(B), OperationShape> (inferred during fixation)
      <: SmithyBuilder<OperationShape> (inferred during fixation)
+     <: AbstractShapeBuilder<out SmithyBuilder<OperationShape>, OperationShape> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	 true ALLOWED
@@ -55,9 +57,12 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
+     <: AbstractShapeBuilder<TypeVariable(B), OperationShape>
      <: SmithyBuilder<OperationShape>
-     = SmithyBuilder<OperationShape> (inferred during fixation)
-    FIXED TO: SmithyBuilder<OperationShape>
+     <: AbstractShapeBuilder<out SmithyBuilder<OperationShape>, OperationShape>
+     = CapturedType(*) (inferred during fixation)
+     <: AbstractShapeBuilder<CapturedType(*), OperationShape> (inferred during fixation)
+    FIXED TO: CapturedType(*)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -100,6 +105,7 @@ TypeVariable(B) --- Readiness(
      <: SmithyBuilder<TypeVariable(T)>
      = AbstractShapeBuilder<SmithyBuilder<OperationShape>, OperationShape>
      = SmithyBuilder<OperationShape>
+     <: AbstractShapeBuilder<TypeVariable(B), OperationShape> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	 true ALLOWED
@@ -119,6 +125,8 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
     )
      = AbstractShapeBuilder<SmithyBuilder<OperationShape>, OperationShape>
      = SmithyBuilder<OperationShape>
+     <: AbstractShapeBuilder<TypeVariable(B), OperationShape>
+     <: AbstractShapeBuilder<AbstractShapeBuilder<SmithyBuilder<OperationShape>, OperationShape>, OperationShape> (inferred during fixation)
     FIXED TO: AbstractShapeBuilder<SmithyBuilder<OperationShape>, OperationShape>
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
@@ -161,7 +169,9 @@ TypeVariable(B) --- Readiness(
      <: AbstractShapeBuilder<TypeVariable(B), TypeVariable(T)>
      <: SmithyBuilder<TypeVariable(T)>
      = kotlin/Nothing
+     <: AbstractShapeBuilder<TypeVariable(B), OperationShape> (inferred during fixation)
      <: SmithyBuilder<OperationShape> (inferred during fixation)
+     <: AbstractShapeBuilder<out SmithyBuilder<OperationShape>, OperationShape> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	 true ALLOWED
@@ -180,7 +190,10 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      = kotlin/Nothing
+     <: AbstractShapeBuilder<TypeVariable(B), OperationShape>
      <: SmithyBuilder<OperationShape>
+     <: AbstractShapeBuilder<out SmithyBuilder<OperationShape>, OperationShape>
+     <: AbstractShapeBuilder<kotlin/Nothing, OperationShape> (inferred during fixation)
     FIXED TO: kotlin/Nothing
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
@@ -223,7 +236,9 @@ TypeVariable(B) --- Readiness(
      <: AbstractShapeBuilder<TypeVariable(B), TypeVariable(T)>
      <: SmithyBuilder<TypeVariable(T)>
      = AbstractShapeBuilder<*, OperationShape>
+     <: AbstractShapeBuilder<TypeVariable(B), OperationShape> (inferred during fixation)
      <: SmithyBuilder<OperationShape> (inferred during fixation)
+     <: AbstractShapeBuilder<out SmithyBuilder<OperationShape>, OperationShape> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	 true ALLOWED
@@ -242,7 +257,10 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      = AbstractShapeBuilder<*, OperationShape>
+     <: AbstractShapeBuilder<TypeVariable(B), OperationShape>
      <: SmithyBuilder<OperationShape>
+     <: AbstractShapeBuilder<out SmithyBuilder<OperationShape>, OperationShape>
+     <: AbstractShapeBuilder<AbstractShapeBuilder<*, OperationShape>, OperationShape> (inferred during fixation)
     FIXED TO: AbstractShapeBuilder<*, OperationShape>
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
@@ -284,6 +302,7 @@ TypeVariable(B) --- Readiness(
      <: AbstractShapeBuilder<TypeVariable(B), TypeVariable(S)>
      <: AbstractShapeBuilder<*, *>
      <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, TypeVariable(S)>
+     <: AbstractShapeBuilder<TypeVariable(B), SimpleShape> (inferred during fixation)
      <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(B) --- Readiness(
@@ -303,9 +322,11 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: AbstractShapeBuilder<*, *>
+     <: AbstractShapeBuilder<TypeVariable(B), SimpleShape>
      <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>
-     = AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape> (inferred during fixation)
-    FIXED TO: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>
+     = CapturedType(*) (inferred during fixation)
+     <: AbstractShapeBuilder<CapturedType(*), SimpleShape> (inferred during fixation)
+    FIXED TO: CapturedType(*)
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true ALLOWED
@@ -352,6 +373,7 @@ TypeVariable(B) --- Readiness(
      <: AbstractShapeBuilder<in AbstractShapeBuilder<*, *>, TypeVariable(S)>
      <: AbstractShapeBuilder<kotlin/Nothing, TypeVariable(S)>
      <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, kotlin/Nothing>
+     <: AbstractShapeBuilder<TypeVariable(B), SimpleShape> (inferred during fixation)
      <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, SimpleShape> (inferred during fixation)
      <: AbstractShapeBuilder<in AbstractShapeBuilder<*, *>, SimpleShape> (inferred during fixation)
      <: AbstractShapeBuilder<kotlin/Nothing, SimpleShape> (inferred during fixation)
@@ -377,9 +399,11 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
      >: AbstractShapeBuilder<*, *>
      <: kotlin/Nothing
      <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, kotlin/Nothing>
+     <: AbstractShapeBuilder<TypeVariable(B), SimpleShape>
      <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, SimpleShape>
      <: AbstractShapeBuilder<in AbstractShapeBuilder<*, *>, SimpleShape>
      <: AbstractShapeBuilder<kotlin/Nothing, SimpleShape>
+     <: AbstractShapeBuilder<AbstractShapeBuilder<AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, SimpleShape>, SimpleShape> (inferred during fixation)
     FIXED TO: AbstractShapeBuilder<AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, SimpleShape>
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
@@ -421,6 +445,7 @@ TypeVariable(B) --- Readiness(
      = AbstractShapeBuilder<*, SimpleShape>
      <: AbstractShapeBuilder<*, *>
      <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, TypeVariable(S)>
+     <: AbstractShapeBuilder<TypeVariable(B), SimpleShape> (inferred during fixation)
      <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(B) --- Readiness(
@@ -441,6 +466,8 @@ CHOSEN for fixation: TypeVariable(B) --- Readiness(
     )
      = AbstractShapeBuilder<*, SimpleShape>
      <: AbstractShapeBuilder<*, *>
+     <: AbstractShapeBuilder<TypeVariable(B), SimpleShape>
      <: AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>
+     <: AbstractShapeBuilder<AbstractShapeBuilder<*, SimpleShape>, SimpleShape> (inferred during fixation)
     FIXED TO: AbstractShapeBuilder<*, SimpleShape>
 ********************************

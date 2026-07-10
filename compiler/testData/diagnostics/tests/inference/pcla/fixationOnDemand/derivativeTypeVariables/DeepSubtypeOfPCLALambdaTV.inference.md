@@ -419,7 +419,10 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-6. `TypeVariable(PNT) == Interloper` _from Fix variable PNT_
+6. `BaseType <: TypeVariable(PNT)` _from SimpleConstraintSystemConstraintPosition_
+7. Combine `TypeVariable(PNT) <: BaseType` with `BaseType <: TypeVariable(PNT)`
+    1. `TypeVariable(PNT) == BaseType`
+8. `TypeVariable(PNT) == Interloper` _from Fix variable PNT_
 
 ### Call 11
 
@@ -761,15 +764,24 @@ R?C|<local>/pntvOwner|.provide#()
 #### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.provide` --- `fun provide(): BaseType`
 ##### Call Completion:
 
-1. `TypeVariable(OT) == TypeVariable(PNT)` _from SimpleConstraintSystemConstraintPosition_
-2. Combine `ScopeOwner <: TypeVariable(OT)` with `TypeVariable(OT) == TypeVariable(PNT)`
+1. `CapturedType(in TypeVariable(OT)) <: TypeVariable(PNT)` _from SimpleConstraintSystemConstraintPosition_
+    1. `TypeVariable(PNT) <: TypeVariable(OT)`
+    2. `kotlin/Any? <: TypeVariable(PNT)`
+2. Combine `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))` with `CapturedType(in TypeVariable(OT)) <: TypeVariable(PNT)`
+    1. `TypeVariable(PNT) == CapturedType(in TypeVariable(OT))`
+3. Combine `TypeVariable(PNT) == CapturedType(in TypeVariable(OT))` with `TypeVariable(PNT) <: TypeVariable(OT)`
+    1. `CapturedType(in TypeVariable(OT)) <: TypeVariable(OT)`
+    2. `TypeVariable(OT) <: TypeVariable(OT)`
+    3. `kotlin/Any? <: TypeVariable(OT)`
+4. `TypeVariable(OT) == TypeVariable(PNT)` _from SimpleConstraintSystemConstraintPosition_
+5. Combine `ScopeOwner <: TypeVariable(OT)` with `TypeVariable(OT) == TypeVariable(PNT)`
     1. `ScopeOwner <: TypeVariable(PNT)`
-3. Combine `TypeVariable(OT) == TypeVariable(PNT)` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
+6. Combine `TypeVariable(OT) == TypeVariable(PNT)` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
     1. `TypeVariable(PNT) <: CapturedType(in TypeVariable(PNT))`
-4. Combine `ScopeOwner <: TypeVariable(PNT)` with `TypeVariable(PNT) <: TypeVariable(OT)`
+7. Combine `ScopeOwner <: TypeVariable(PNT)` with `TypeVariable(PNT) <: TypeVariable(OT)`
     1. `ScopeOwner <: TypeVariable(OT)`
-5. `TypeVariable(PNT) == TypeVariable(OT)` _from Fix variable PNT_
-6. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
+8. `TypeVariable(PNT) == TypeVariable(OT)` _from Fix variable PNT_
+9. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
     1. `TypeVariable(OT) <: CapturedType(in TypeVariable(OT))`
 
 ### Call 20
@@ -916,7 +928,10 @@ Null(null)!!
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `TypeVariable(K) == kotlin/Nothing` _from Fix variable K_
+2. `T? <: TypeVariable(K)` _from SimpleConstraintSystemConstraintPosition_
+3. Combine `TypeVariable(K) <: T?` with `T? <: TypeVariable(K)`
+    1. `TypeVariable(K) == T?`
+4. `TypeVariable(K) == kotlin/Nothing` _from Fix variable K_
 
 ### Call 23
 
@@ -1107,7 +1122,10 @@ Null(null)!!
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `TypeVariable(K) == kotlin/Nothing` _from Fix variable K_
+2. `OT? <: TypeVariable(K)` _from SimpleConstraintSystemConstraintPosition_
+3. Combine `TypeVariable(K) <: OT?` with `OT? <: TypeVariable(K)`
+    1. `TypeVariable(K) == OT?`
+4. `TypeVariable(K) == kotlin/Nothing` _from Fix variable K_
 
 ##### Some isEquallyOrMoreSpecific() call:
 

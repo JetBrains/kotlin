@@ -65,7 +65,10 @@ R|<local>/k|.foo#(R?C|/JavaBox.JavaBox|(Null(null)))
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `TypeVariable(T) == kotlin/Nothing?` _from Fix variable T_
+2. `kotlin/String <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
+3. Combine `TypeVariable(T) <: kotlin/String` with `kotlin/String <: TypeVariable(T)`
+    1. `TypeVariable(T) == kotlin/String`
+4. `TypeVariable(T) == kotlin/Nothing?` _from Fix variable T_
 
 ### Call 3
 
@@ -242,4 +245,7 @@ foo3#(R?C|/JavaBox.JavaBox|(Null(null)))
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `TypeVariable(T) == kotlin/Nothing?` _from Fix variable T_
+2. `kotlin/String <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
+3. Combine `TypeVariable(T) <: kotlin/String` with `kotlin/String <: TypeVariable(T)`
+    1. `TypeVariable(T) == kotlin/String`
+4. `TypeVariable(T) == kotlin/Nothing?` _from Fix variable T_

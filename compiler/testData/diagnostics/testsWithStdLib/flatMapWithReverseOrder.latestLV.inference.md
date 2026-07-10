@@ -641,18 +641,25 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-13. `TypeVariable(R) == kotlin/Int` _from Fix variable R_
-14. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: TypeVariable(E)`
+13. `kotlin/Int! <: TypeVariable(R)` _from SimpleConstraintSystemConstraintPosition_
+14. Combine `TypeVariable(R) <: kotlin/Int!` with `kotlin/Int! <: TypeVariable(R)`
+    1. `TypeVariable(R) == kotlin/Int!`
+15. Combine `TypeVariable(R) == kotlin/Int!` with `TypeVariable(R) <: TypeVariable(E)`
+    1. `kotlin/Int! <: TypeVariable(E)`
+16. Combine `TypeVariable(E) <: kotlin/Int!` with `kotlin/Int! <: TypeVariable(E)`
+    1. `TypeVariable(E) == kotlin/Int!`
+17. `TypeVariable(R) == kotlin/Int` _from Fix variable R_
+18. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: TypeVariable(E)`
     1. `kotlin/Int <: TypeVariable(E)`
-15. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(C) <: kotlin/collections/MutableCollection<in TypeVariable(R)>`
+19. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(C) <: kotlin/collections/MutableCollection<in TypeVariable(R)>`
     1. `TypeVariable(C) <: kotlin/collections/MutableCollection<in kotlin/Int>`
-16. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
+20. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(E) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
     1. `TypeVariable(E) <: kotlin/Comparable<kotlin/Int!>?`
-17. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
+21. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!`
     1. `TypeVariable(R) <: kotlin/Comparable<kotlin/Int!>!`
-18. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
+22. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?`
     1. `TypeVariable(R) <: kotlin/Comparable<kotlin/Int!>?`
-19. Choose `TypeVariable(E)` with `Readiness(
+23. Choose `TypeVariable(E)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -684,10 +691,10 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-20. `TypeVariable(E) == kotlin/Int` _from Fix variable E_
-21. Combine `TypeVariable(E) == kotlin/Int` with `java/util/TreeSet<TypeVariable(E)> <: TypeVariable(C)`
+24. `TypeVariable(E) == kotlin/Int` _from Fix variable E_
+25. Combine `TypeVariable(E) == kotlin/Int` with `java/util/TreeSet<TypeVariable(E)> <: TypeVariable(C)`
     1. `java/util/TreeSet<kotlin/Int> <: TypeVariable(C)`
-22. Choose `TypeVariable(C)` with `Readiness(
+26. Choose `TypeVariable(C)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -703,7 +710,10 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )`
-23. `TypeVariable(C) == java/util/TreeSet<kotlin/Int>` _from Fix variable C_
+27. `kotlin/collections/MutableCollection<in kotlin/Int> <: TypeVariable(C)` _from SimpleConstraintSystemConstraintPosition_
+28. Combine `TypeVariable(C) <: kotlin/collections/MutableCollection<in kotlin/Int>` with `kotlin/collections/MutableCollection<in kotlin/Int> <: TypeVariable(C)`
+    1. `TypeVariable(C) == kotlin/collections/MutableCollection<in kotlin/Int>`
+29. `TypeVariable(C) == java/util/TreeSet<kotlin/Int>` _from Fix variable C_
 
 ### Call 5
 

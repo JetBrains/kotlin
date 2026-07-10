@@ -331,7 +331,7 @@ catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
 )</tt></pre>"]
     class variableReadiness40 nowrapClass;
     class variableReadiness40 readinessStyle;
-    constraint51["<tt>TypeVariable(P) == Result</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable P</tt></pre></i>"]
+    constraint51["<tt>Result &lt;: TypeVariable(P)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>SimpleConstraintSystemConstraintPosition</tt></pre></i>"]
     class constraint51 nowrapClass;
     variableReadiness40 ~~~ constraint51
     constraint52["<tt>Result &lt;: TypeVariable(K)</tt>"]
@@ -342,9 +342,22 @@ catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
     class constraint53 nowrapClass;
     constraint51 --> constraint53
     constraint47 --> constraint53
+    constraint54["<tt>TypeVariable(P) == Result</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable P</tt></pre></i>"]
+    class constraint54 nowrapClass;
+    variableReadiness40 ~~~ constraint54
+    constraint55["<tt>Result &lt;: TypeVariable(K)</tt>"]
+    class constraint55 nowrapClass;
+    constraint54 --> constraint55
+    constraint33 --> constraint55
+    constraint56["<tt>Result &lt;: TypeVariable(T)</tt>"]
+    class constraint56 nowrapClass;
+    constraint54 ---> constraint56
+    constraint47 --> constraint56
 
-    constraint52 ~~~ variableReadiness41
-    constraint53 ~~~ variableReadiness41
+    constraint52 ~~~~ variableReadiness41
+    constraint53 ~~~~ variableReadiness41
+    constraint55 ~~~~ variableReadiness41
+    constraint56 ~~~ variableReadiness41
 
     variableReadiness41["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
@@ -364,15 +377,19 @@ catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
 )</tt></pre>"]
     class variableReadiness41 nowrapClass;
     class variableReadiness41 readinessStyle;
-    constraint54["<tt>TypeVariable(T) == Result</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
-    class constraint54 nowrapClass;
-    variableReadiness41 ~~~ constraint54
-    constraint55["<tt>TypeVariable(K) &lt;: Result?</tt>"]
-    class constraint55 nowrapClass;
-    constraint43 --> constraint55
-    constraint54 --> constraint55
+    constraint57["<tt>Result &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>SimpleConstraintSystemConstraintPosition</tt></pre></i>"]
+    class constraint57 nowrapClass;
+    variableReadiness41 ~~~ constraint57
+    constraint58["<tt>TypeVariable(T) == Result</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint58 nowrapClass;
+    variableReadiness41 ~~~ constraint58
+    constraint59["<tt>TypeVariable(K) &lt;: Result?</tt>"]
+    class constraint59 nowrapClass;
+    constraint43 --> constraint59
+    constraint58 --> constraint59
 
-    constraint55 ~~~ variableReadiness42
+    constraint57 ~~~~ variableReadiness42
+    constraint59 ~~~ variableReadiness42
 
     variableReadiness42["Choose <tt>TypeVariable(K)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
@@ -392,9 +409,16 @@ catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
 )</tt></pre>"]
     class variableReadiness42 nowrapClass;
     class variableReadiness42 readinessStyle;
-    constraint56["<tt>TypeVariable(K) == Result?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
-    class constraint56 nowrapClass;
-    variableReadiness42 ~~~ constraint56
+    constraint60["<tt>Result? &lt;: TypeVariable(K)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>SimpleConstraintSystemConstraintPosition</tt></pre></i>"]
+    class constraint60 nowrapClass;
+    variableReadiness42 ~~~ constraint60
+    constraint61["<tt>TypeVariable(K) == Result?</tt>"]
+    class constraint61 nowrapClass;
+    constraint45 --> constraint61
+    constraint60 --> constraint61
+    constraint62["<tt>TypeVariable(K) == Result?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
+    class constraint62 nowrapClass;
+    variableReadiness42 ~~~ constraint62
 
     linkStyle 4 stroke:#990000
     linkStyle 9 stroke:#009999
@@ -429,11 +453,20 @@ catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
     linkStyle 63 stroke:#992400
     linkStyle 64 stroke:#3a9900
     linkStyle 65 stroke:#009921
-    linkStyle 66 stroke:#5e0099
-    linkStyle 67 stroke:#993600
-    linkStyle 69 stroke:#279900
-    linkStyle 70 stroke:#006299
-    linkStyle 71 stroke:#159900
+    linkStyle 67 stroke:#5e0099
+    linkStyle 68 stroke:#992400
+    linkStyle 69 stroke:#5e0099
+    linkStyle 70 stroke:#009921
+    linkStyle 71 stroke:#993600
+    linkStyle 72 stroke:#006299
+    linkStyle 73 stroke:#159900
+    linkStyle 74 stroke:#830099
+    linkStyle 77 stroke:#279900
+    linkStyle 78 stroke:#995b00
+    linkStyle 79 stroke:#003d99
+    linkStyle 80 stroke:#00990e
+    linkStyle 82 stroke:#996d00
+    linkStyle 83 stroke:#99008a
     style constraint4 stroke:#990000;
     style constraint9 stroke:#009999;
     style constraint11 stroke:#4c9900;
@@ -453,7 +486,12 @@ catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
     style constraint49 stroke:#991200;
     style constraint50 stroke:#008699;
     style constraint51 stroke:#3a9900;
-    style constraint52 stroke:#5e0099;
-    style constraint53 stroke:#993600;
-    style constraint54 stroke:#006299;
+    style constraint54 stroke:#5e0099;
+    style constraint52 stroke:#993600;
+    style constraint53 stroke:#006299;
     style constraint55 stroke:#159900;
+    style constraint56 stroke:#830099;
+    style constraint58 stroke:#995b00;
+    style constraint57 stroke:#003d99;
+    style constraint59 stroke:#00990e;
+    style constraint60 stroke:#99008a;

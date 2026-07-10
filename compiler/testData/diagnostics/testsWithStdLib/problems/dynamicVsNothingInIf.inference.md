@@ -124,10 +124,12 @@ when () {
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-2. `TypeVariable(T) == dynamic` _from Fix variable T_
-3. Combine `TypeVariable(T) == dynamic` with `TypeVariable(T) <: TypeVariable(K)`
+2. `dynamic <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
+3. Combine `TypeVariable(T) <: dynamic` with `dynamic <: TypeVariable(T)`
+    1. `TypeVariable(T) == dynamic`
+4. Combine `TypeVariable(T) == dynamic` with `TypeVariable(T) <: TypeVariable(K)`
     1. `dynamic <: TypeVariable(K)`
-4. Choose `TypeVariable(K)` with `Readiness(
+5. Choose `TypeVariable(K)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -143,7 +145,7 @@ when () {
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-5. `TypeVariable(K) == dynamic` _from Fix variable K_
+6. `TypeVariable(K) == dynamic` _from Fix variable K_
 
 ### Call 4
 

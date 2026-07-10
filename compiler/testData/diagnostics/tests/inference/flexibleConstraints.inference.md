@@ -360,4 +360,7 @@ Q|JavaClass|.consumeWithBounds#<R|kotlin/String|, >(R|<local>/s|)
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-5. `TypeVariable(U) == kotlin/String?` _from Fix variable U_
+5. `kotlin/String! <: TypeVariable(U)` _from SimpleConstraintSystemConstraintPosition_
+6. Combine `TypeVariable(U) <: kotlin/String!` with `kotlin/String! <: TypeVariable(U)`
+    1. `TypeVariable(U) == kotlin/String!`
+7. `TypeVariable(U) == kotlin/String?` _from Fix variable U_

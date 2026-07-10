@@ -226,12 +226,13 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-9. `TypeVariable(P) == Result` _from Fix variable P_
-10. Combine `TypeVariable(P) == Result` with `TypeVariable(P) <: TypeVariable(K)`
+9. `Result <: TypeVariable(P)` _from SimpleConstraintSystemConstraintPosition_
+10. Combine `Result <: TypeVariable(P)` with `TypeVariable(P) <: TypeVariable(K)`
     1. `Result <: TypeVariable(K)`
-11. Combine `TypeVariable(P) == Result` with `TypeVariable(P) <: TypeVariable(T)?`
+11. Combine `Result <: TypeVariable(P)` with `TypeVariable(P) <: TypeVariable(T)?`
     1. `Result <: TypeVariable(T)`
-12. Choose `TypeVariable(T)` with `Readiness(
+12. `TypeVariable(P) == Result` _from Fix variable P_
+13. Choose `TypeVariable(T)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -263,8 +264,8 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-13. `TypeVariable(T) == Result` _from Fix variable T_
-14. Choose `TypeVariable(K)` with `Readiness(
+14. `TypeVariable(T) == Result` _from Fix variable T_
+15. Choose `TypeVariable(K)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -280,4 +281,6 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )`
-15. `TypeVariable(K) == Result?` _from Fix variable K_
+16. `Result? <: TypeVariable(K)` _from SimpleConstraintSystemConstraintPosition_
+17. Combine `TypeVariable(K) <: Result?` with `Result? <: TypeVariable(K)`
+    1. `TypeVariable(K) == Result?`

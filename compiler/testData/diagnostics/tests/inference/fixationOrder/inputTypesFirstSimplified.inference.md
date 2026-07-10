@@ -343,4 +343,7 @@ bar#(R?C|/foo|(R|<local>/derived|, String(), foo@fun <anonymous>(it: R|kotlin/St
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `TypeVariable(R2) == kotlin/String` _from Fix variable R2_
+2. `kotlin/Any <: TypeVariable(R2)` _from SimpleConstraintSystemConstraintPosition_
+3. Combine `TypeVariable(R2) <: kotlin/Any` with `kotlin/Any <: TypeVariable(R2)`
+    1. `TypeVariable(R2) == kotlin/Any`
+4. `TypeVariable(R2) == kotlin/String` _from Fix variable R2_

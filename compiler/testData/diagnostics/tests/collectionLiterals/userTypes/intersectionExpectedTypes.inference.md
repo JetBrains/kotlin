@@ -356,7 +356,10 @@ Null(null)!!
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `TypeVariable(K) == kotlin/Nothing` _from Fix variable K_
+2. `U? <: TypeVariable(K)` _from SimpleConstraintSystemConstraintPosition_
+3. Combine `TypeVariable(K) <: U?` with `U? <: TypeVariable(K)`
+    1. `TypeVariable(K) == U?`
+4. `TypeVariable(K) == kotlin/Nothing` _from Fix variable K_
 
 ### Call 9
 
