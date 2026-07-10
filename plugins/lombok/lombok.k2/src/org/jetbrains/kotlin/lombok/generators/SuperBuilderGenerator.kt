@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.fir.declarations.utils.isClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
@@ -64,7 +64,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         return builderSymbol.typeParameterSymbols.elementAtOrNull(builderSymbol.typeParameterSymbols.size - BUILDER_TYPE_PARAMETER_INDEX_FROM_END)?.defaultType
     }
 
-    override fun MutableMap<Name, FirJavaMethod>.addSpecialBuilderMethods(
+    override fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
         builder: SuperBuilder,
         builderSymbol: FirClassSymbol<*>,
         builderDeclaration: FirDeclaration,
@@ -84,7 +84,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                 returnTypeRef = builderType.toFirResolvedTypeRef(),
                 visibility = Visibilities.Protected,
                 modality = Modality.ABSTRACT
-            )
+            ).symbol
         }
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) {
             builderSymbol.createJavaMethod(
@@ -93,7 +93,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                 returnTypeRef = classType.toFirResolvedTypeRef(),
                 visibility = Visibilities.Public,
                 modality = Modality.ABSTRACT
-            )
+            ).symbol
         }
     }
 

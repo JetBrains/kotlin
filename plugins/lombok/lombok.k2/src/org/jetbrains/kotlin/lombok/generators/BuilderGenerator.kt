@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
@@ -48,7 +49,7 @@ class BuilderGenerator(
         return builderSymbol.defaultType()
     }
 
-    override fun MutableMap<Name, FirJavaMethod>.addSpecialBuilderMethods(
+    override fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
         builder: Builder,
         builderSymbol: FirClassSymbol<*>,
         builderDeclaration: FirDeclaration,
@@ -81,7 +82,7 @@ class BuilderGenerator(
                 },
                 visibility = builder.visibility,
                 modality = Modality.FINAL
-            )
+            ).symbol
         }
     }
 
