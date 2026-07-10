@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.pathString
@@ -50,6 +51,7 @@ class GradleCompatibilityIT : KGPBaseTest() {
             TestVersions.Gradle.G_8_11,
             TestVersions.Gradle.G_8_12,
             TestVersions.Gradle.G_8_13,
+            TestVersions.Gradle.G_9_5,
         ],
     )
     @GradleTest
@@ -57,6 +59,7 @@ class GradleCompatibilityIT : KGPBaseTest() {
         project("kotlinProject", gradleVersion) {
             build("help") {
                 val expectedVariant = when (gradleVersion) {
+                    //GradleVersion.version(TestVersions.Gradle.G_9_6) -> "gradle96"
                     GradleVersion.version(TestVersions.Gradle.G_9_5) -> "gradle813"
                     GradleVersion.version(TestVersions.Gradle.G_9_4) -> "gradle813"
                     GradleVersion.version(TestVersions.Gradle.G_9_3) -> "gradle813"
@@ -105,6 +108,7 @@ class GradleCompatibilityIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-78785: build script resolves Gradle version specific jars")
+    @Disabled("KT-86040: re-enable once max supported version in tests bumped to 9.6.0")
     @Test
     fun buildScriptResolvesGradleVersionSpecificJars() {
         fun resolveKgpJars(gradleVersion: GradleVersion): List<File> {
