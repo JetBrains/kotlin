@@ -25,7 +25,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask() {
+    testTask {
         addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
         systemProperty("kotlin.daemon.custom.run.files.path.for.tests", "build/daemon")
     }

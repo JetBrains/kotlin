@@ -37,7 +37,6 @@ private fun Test.muteWithDatabase() {
             mutesFile.fileValue(File(project.rootDir, "tests/mute-common.csv"))
         })
     systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (project.rootProject.hasProperty("skipMutedTests")) "true" else "false")
-    // This system property is only useful for JUnit Platform, but it does no harm on JUnit4
     systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 }
 
@@ -71,10 +70,6 @@ abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineAr
     )
 }
 
-/**
- * @param parallel is redundant if @param jUnit5Enabled is true, because
- *   JUnit5 supports parallel test execution by itself, without gradle help
- */
 internal fun Project.createGeneralTestTask(
     taskName: String = "test",
     javaLauncher: JdkMajorVersion = DEFAULT_JAVA_LAUNCHER_FOR_TESTS,
