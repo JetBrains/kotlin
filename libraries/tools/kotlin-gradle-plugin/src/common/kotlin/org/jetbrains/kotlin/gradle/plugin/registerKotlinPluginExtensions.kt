@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportActionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
+import org.jetbrains.kotlin.gradle.plugin.internal.buildNeededDependentTasksWiringProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXcodeSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CheckXcodeTargetsConfigurationSetupAction
@@ -127,7 +128,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, CreateTargetConfigurationsSideEffect)
         register(project, NativeForwardImplementationToApiElementsSideEffect)
         register(project, CreateArtifactsSideEffect)
-        register(project, ConfigureBuildSideEffect)
+        register(project, project.buildNeededDependentTasksWiringProvider.wireSideEffect())
         register(project, KotlinNativeConfigureBinariesSideEffect)
         register(project, CreateDefaultTestRunSideEffect)
         register(project, ConfigureFrameworkExportSideEffect)

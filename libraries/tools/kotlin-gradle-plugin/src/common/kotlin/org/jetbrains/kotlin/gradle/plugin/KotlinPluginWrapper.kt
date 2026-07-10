@@ -241,6 +241,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             ProjectDependencyAccessor.Factory::class,
             DefaultProjectDependencyAccessor.Factory()
         )
+
+        factories.putIfAbsent(
+            BuildNeededDependentTasksWiringProvider.Factory::class,
+            DefaultBuildNeededDependentTaskWiringProvider.Factory()
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(
