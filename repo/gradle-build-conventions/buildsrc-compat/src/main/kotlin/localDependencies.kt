@@ -23,5 +23,3 @@ fun ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
     Ide.Kind.AndroidStudio -> "android-studio-ide"
     Ide.Kind.IntelliJ -> "ideaIC"
 }
-
-fun Project.ideaBuildNumberFileForTests() = objects.directoryProperty().value(ideaHomePathForTests()).file("build.txt")

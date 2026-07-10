@@ -64,9 +64,6 @@ tasks.withType<Test> {
         project(":analysis:analysis-api").isolated.projectDirectory.dir("testData"),
     ).joinToString(File.pathSeparator)
     systemProperty("test.data.dirs", testDataDirs)
-
-    dependsOn(":createIdeaHomeForTests")
-    systemProperty("idea.home.path", ideaHomePathForTests().get().asFile.canonicalPath)
 }
 
 val flexGeneratorDependencies = configurations.dependencyScope("flexGeneratorDependencies")

@@ -113,10 +113,6 @@ internal fun Project.createGeneralTestTask(
             classpath = sourceSets.getByName("test").runtimeClasspath
             testClassesDirs = sourceSets.getByName("test").output.classesDirs
         }
-        inputs.file(
-            rootProject.tasks.named("createIdeaHomeForTests")
-                .map { task -> task.outputs.files.singleFile.resolve("build.txt") })
-            .withPathSensitivity(PathSensitivity.RELATIVE).withPathSensitivity(PathSensitivity.RELATIVE)
 
         muteWithDatabase()
         if (jUnitMode == JUnitMode.JUnit4) {
@@ -226,7 +222,6 @@ internal fun Project.createGeneralTestTask(
         }
 
         systemProperty("idea.is.unit.test", "true")
-        systemProperty("idea.home.path", project.ideaHomePathForTests().get().asFile.canonicalPath)
         systemProperty("idea.use.native.fs.for.win", false)
         systemProperty("java.awt.headless", "true")
         environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
