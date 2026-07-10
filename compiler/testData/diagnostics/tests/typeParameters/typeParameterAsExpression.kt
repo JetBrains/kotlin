@@ -3,7 +3,7 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
 class C<T> {
     inline fun <reified T> f() {
-        when (<!NONE_APPLICABLE("TT")!>T<!>) {
+        when (<!NONE_APPLICABLE("T:  Type parameter 'T' is not an expression.T:  Type parameter 'T' is not an expression.")!>T<!>) {
         }
         T::class
     }
