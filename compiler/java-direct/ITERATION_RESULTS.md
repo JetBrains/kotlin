@@ -36,6 +36,23 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-10 — Remove the redundant in-scope navigation loop in computeClassifier (review comment #9)
+- **Change**: Re-investigated review comment #9 ("doesn't `resolve(rawTypeName)` already handle the
+  same-scope case?"). It does: `resolve` → `resolveSimpleNameToClassIdImpl` probes enclosing-class
+  and same-file classes before imports (JLS 6.4.1) and navigates the tail as member types (JLS
+  6.5.2, incl. cross-file/binary/Kotlin inherited segments), and `classifierAdapterFor` preserves
+  the canonical `JavaClassOverAst` identity — so the prior §9 priority/identity justifications were
+  stale. Removed the explicit `findClassInCurrentScope` + `declaredOrFullyInherited` multi-part
+  loop; multi-part names now go straight through `resolve`. The only unique behavior lost is a
+  pathological JLS hard-fail (in-scope head vs package reinterpretation) with no test.
+- **Files**: `model/JavaTypeOverAst.kt` (`computeClassifier` loop removed + accurate comment, unused
+  import dropped); `implDocs/REVIEW_MD_RESPONSES_2026_07_08.md` §9 + table + summary;
+  `RESOLUTION_SCHEMA.md` Scenario A; comment in
+  `testData/codegen/box/javaDirect/inheritedNestedClassFromKotlinSupertype.kt`.
+- **Tests**: box + phased + `JavaParsingTest` green, 0 failures (verified the suite is also green
+  with the loop removed, incl. that former dedicated regression test).
+- **Result**: green.
+
 ### 2026-07-09 — Pin the javac type-param-vs-nested-class divergence (review comment #6) with a test
 - **Change**: Review comment #6 (own type parameter `T` shadows a same-named nested `class T`,
   diverging from javac) was accepted/out-of-scope but only described in prose. Confirmed via
