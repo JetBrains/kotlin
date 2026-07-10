@@ -622,7 +622,8 @@ open class FirDeclarationsResolveTransformer(
         // Temporary declare all the "outer" variables as proper (i.e., all inner variables as improper)
         // Without that, all variables (both inner and outer ones) would be considered as improper,
         // while we want to fix to assume `Delegate<Tv>` as proper because `Tv` belongs to the outer system
-        candidateSystem.withTypeVariablesThatAreCountedAsProperTypes(candidateSystem.outerTypeVariables.orEmpty()) {
+        // testData/diagnostics/tests/delegatedProperty/inference/provideDelegateFixationResultContainsOtherInnerVariable.kt
+        candidateSystem.withTypeVariablesThatAreCountedAsProperTypes(candidateSystem.notFixedTypeVariables.keys) {
             // TODO: reconsider the approach here (KT-61781 for tracking)
             // Actually, this code might fail with an exception in some rare cases (see KT-61781)
             // The problem is that in the issue example, when fixing T type variable, it has two upper bounds: X and Delegate<Y>
@@ -643,7 +644,13 @@ open class FirDeclarationsResolveTransformer(
             // We don't actually fix it, but add an equality constraint as approximation
             candidateSystem.addEqualityConstraint(returnTypeBasedOnVariable, resultType, ProvideDelegateFixationPosition)
 
-            check(!candidateStorage.hasContradiction) {
+            check(
+                !candidateStorage.hasContradiction ||
+                        session.languageVersionSettings.supportsFeature(LanguageFeature.RestrictSecondKindIncorporationToFixation)
+            ) {
+                // With RestrictSecondKindIncorporationToFixation, the equality constraint triggers the postponed second-kind
+                // incorporation (see the re-incorporation case in ConstraintInjector.processGivenConstraints), which may surface
+                // a conflict that eager incorporation used to derive before this point, so a contradiction is a valid outcome.
                 "Currently, we see no cases when contradiction might happen after adding equality constraint like that." +
                         "But if you see the message, please report your case to https://youtrack.jetbrains.com/newIssue?project=KT"
             }
