@@ -1732,6 +1732,13 @@ private fun KaDiagnosticConverterBuilder.addConversions34() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions35() {
+    add(FirErrors.MEMBER_EXTENSION_TWO_PHASE_INFERENCE) { firDiagnostic ->
+        MemberExtensionTwoPhaseInferenceImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS) { firDiagnostic ->
         InconsistentReturnTypesInOfOverloadsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

@@ -86,6 +86,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         PlatformClassMappedToKotlinConstructorCallChecker,
         RedundantCallOfConversionMethodChecker,
         FirImplicitPropertyTypeMakesBehaviorOrderDependantChecker,
+        FirMemberExtensionTwoPhaseInferenceChecker,
         FirUnsupportedCollectionLiteralWithCollectionLiteralResolutionChecker,
     )
 

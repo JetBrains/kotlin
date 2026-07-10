@@ -263,6 +263,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR by error<KtExpression>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirPropertySymbol>("property")
         }
+        val MEMBER_EXTENSION_TWO_PHASE_INFERENCE by info<KtExpression>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<String>("json")
+        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

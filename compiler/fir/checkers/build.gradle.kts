@@ -11,6 +11,7 @@ dependencies {
     api(project(":compiler:fir:providers"))
     api(project(":compiler:fir:semantics"))
     api(project(":compiler:fir:raw-fir:raw-fir.common"))
+    implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:frontend.common-psi"))

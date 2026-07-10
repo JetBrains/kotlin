@@ -423,6 +423,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MEMBER_EXTENSION_TWO_PHASE_INFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INACCESSIBLE_OUTER_CLASS_RECEIVER
@@ -1205,6 +1206,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR,
             implicitPropertyTypeMakesBehaviorOrderDependantMessage,
             SYMBOL_WITH_CONTAINING_DECLARATION,
+        )
+        map.put(
+            MEMBER_EXTENSION_TWO_PHASE_INFERENCE,
+            "MEMBER_EXTENSION_TWO_PHASE_INFERENCE: {0}",
+            STRING,
         )
         map.put(
             PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL,

@@ -526,6 +526,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val property: KaVariableSymbol
     }
 
+    interface MemberExtensionTwoPhaseInference : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = MemberExtensionTwoPhaseInference::class
+        val json: String
+    }
+
     interface SuperIsNotAnExpression : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SuperIsNotAnExpression::class
     }
