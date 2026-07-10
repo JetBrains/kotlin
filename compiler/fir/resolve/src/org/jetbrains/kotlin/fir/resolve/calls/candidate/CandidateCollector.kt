@@ -84,7 +84,6 @@ open class CandidateCollector(
          *   to fix the KT-65218, which provoked by different stdlib declarations order in CLI compilation mode and AA mode (see
          *   the issue for more details)
          */
-        @OptIn(ApplicabilityDetail::class)
         if ((applicability == currentApplicability && group == bestGroup) || currentApplicability < CandidateApplicability.RESOLVED_LOW_PRIORITY) {
             candidates.add(candidate)
         }
