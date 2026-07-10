@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.tooling
 
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.*
 
 class SchemaVersionTest {
 
@@ -49,9 +47,9 @@ class SchemaVersionTest {
 
     @Test
     fun `parseSchemaVersion failure`() {
-        assertThrows<IllegalArgumentException> { SchemaVersion.parseStringOrThrow("1.0") }
-        assertThrows<IllegalArgumentException> { SchemaVersion.parseStringOrThrow("1.0.0.0") }
-        assertThrows<IllegalArgumentException> { SchemaVersion.parseStringOrThrow("a.b.c") }
+        assertFailsWith<IllegalArgumentException> { SchemaVersion.parseStringOrThrow("1.0") }
+        assertFailsWith<IllegalArgumentException> { SchemaVersion.parseStringOrThrow("1.0.0.0") }
+        assertFailsWith<IllegalArgumentException> { SchemaVersion.parseStringOrThrow("a.b.c") }
     }
 
     @Test

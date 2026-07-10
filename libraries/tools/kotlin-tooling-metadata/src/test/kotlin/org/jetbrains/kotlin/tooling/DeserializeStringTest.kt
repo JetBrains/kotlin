@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.tooling
 
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertNotNull
-import org.junit.jupiter.api.assertNull
+import kotlin.test.*
 
 class DeserializeStringTest {
     @Test
@@ -112,8 +109,7 @@ class DeserializeStringTest {
 
         val nativeTarget = metadata.projectTargets.single { it.platformType == "native" }
         assertEquals("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests", nativeTarget.target)
-        val nativeExtras = nativeTarget.extras.native
-        assertNotNull(nativeExtras)
+        val nativeExtras = assertNotNull(nativeTarget.extras.native)
         assertEquals("linux_x64", nativeExtras.konanTarget)
         assertEquals("1.5-dev-17775", nativeExtras.konanVersion)
         assertEquals("1.4.2", nativeExtras.konanAbiVersion)
@@ -226,8 +222,7 @@ class DeserializeStringTest {
 
         val nativeTarget = metadata.projectTargets.single { it.platformType == "native" }
         assertEquals("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests", nativeTarget.target)
-        val nativeExtras = nativeTarget.extras.native
-        assertNotNull(nativeExtras)
+        val nativeExtras = assertNotNull(nativeTarget.extras.native)
         assertEquals("linux_x64", nativeExtras.konanTarget)
         assertEquals("1.5-dev-17775", nativeExtras.konanVersion)
         assertEquals("1.4.2", nativeExtras.konanAbiVersion)
