@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(Fir2IrBuiltInsInternals::class, InternalSymbolFinderAPI::class)
 class IrBuiltInsOverFir(
@@ -42,13 +40,13 @@ class IrBuiltInsOverFir(
 
     // ------------------------------------- basic stuff -------------------------------------
 
-    private val moduleDescriptor: FirModuleDescriptor = run {
+    private val irModule: IrModuleFragment = run {
         val session = c.session
         val moduleData = when (session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
             false -> session.moduleData.dependencies.first()
             true -> session.moduleData
         }
-        c.declarationStorage.getDependenciesModuleDescriptor(moduleData)
+        c.declarationStorage.getDependenciesIrModule(moduleData)
     }
 
     private val session: FirSession
@@ -262,7 +260,7 @@ class IrBuiltInsOverFir(
 
     // ------------------------------------- private utilities -------------------------------------
     private fun createPackage(fqName: FqName): IrExternalPackageFragment =
-        createEmptyExternalPackageFragment(moduleDescriptor, fqName)
+        createEmptyExternalPackageFragment(irModule, fqName)
 
     private fun createFunction(
         name: String,

@@ -132,8 +132,8 @@ private class Fir2IrPipeline(
     val irModuleFragmentPostCompute: (IrModuleFragment) -> Unit,
 ) {
     private class Fir2IrConversionResult(
-        val mainIrFragment: IrModuleFragmentImpl,
-        val dependentIrFragments: List<IrModuleFragmentImpl>,
+        val mainIrFragment: IrModuleFragment,
+        val dependentIrFragments: List<IrModuleFragment>,
         val componentsStoragePerSourceSession: Map<FirSession, Fir2IrComponentsStorage>,
         val commonMemberStorage: Fir2IrCommonMemberStorage,
         val generatedDataValueClassSyntheticFunctions: Map<IrClass, DataValueClassGeneratedMembersInfo>,

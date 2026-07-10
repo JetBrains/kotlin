@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FILLED_FOR_UNBOUND_SYMBOL
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.*
@@ -66,12 +67,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 class Fir2IrDeclarationStorage(
     private val c: Fir2IrComponents,
-    private val sourceModuleDescriptor: FirModuleDescriptor,
+    private val sourceModule: IrModuleFragment,
     commonMemberStorage: Fir2IrCommonMemberStorage
 ) : Fir2IrComponents by c {
 
     private val fragmentCache: ConcurrentHashMap<FqName, ExternalPackageFragments> = ConcurrentHashMap()
-    private val moduleDescriptorCache: ConcurrentHashMap<FirModuleData, FirModuleDescriptor> = ConcurrentHashMap()
+    private val irModuleCache: ConcurrentHashMap<FirModuleData, IrModuleFragment> = ConcurrentHashMap()
 
     private class ExternalPackageFragments(
         val fragmentsForDependencies: ConcurrentHashMap<FirModuleData, IrExternalPackageFragment>,
@@ -226,12 +227,10 @@ class Fir2IrDeclarationStorage(
 
     // ------------------------------------ package fragments ------------------------------------
 
-    fun getDependenciesModuleDescriptor(moduleData: FirModuleData): FirModuleDescriptor {
-        return moduleDescriptorCache.getOrPut(moduleData) {
-            FirModuleDescriptor.createDependencyModuleDescriptor(
-                moduleData,
-                sourceModuleDescriptor.builtIns
-            )
+    fun getDependenciesIrModule(moduleData: FirModuleData): IrModuleFragment {
+        return irModuleCache.getOrPut(moduleData) {
+            val moduleDescriptor = FirModuleDescriptor.createDependencyModuleDescriptor(moduleData, sourceModule.descriptor.builtIns)
+            IrModuleFragmentImpl(moduleDescriptor)
         }
     }
 
@@ -251,7 +250,7 @@ class Fir2IrDeclarationStorage(
     ): IrExternalPackageFragment {
         val isBuiltIn = allowBuiltins && fqName in BUILT_INS_PACKAGE_FQ_NAMES
         val fragments = fragmentCache.getOrPut(fqName) {
-            val fragmentForPrecompiledBinaries = callablesGenerator.createExternalPackageFragment(fqName, sourceModuleDescriptor)
+            val fragmentForPrecompiledBinaries = callablesGenerator.createExternalPackageFragment(fqName, sourceModule)
             ExternalPackageFragments(ConcurrentHashMap(), ConcurrentHashMap(), fragmentForPrecompiledBinaries)
         }
         // Make sure that external package fragments have a different module descriptor. The module descriptors are compared
@@ -260,14 +259,14 @@ class Fir2IrDeclarationStorage(
         return when (firOrigin) {
             FirDeclarationOrigin.Precompiled -> fragments.fragmentForPrecompiledBinaries
             else -> {
-                val moduleDescriptor = getDependenciesModuleDescriptor(moduleData)
+                val irModule = getDependenciesIrModule(moduleData)
                 if (isBuiltIn) {
                     fragments.builtinFragmentsForDependencies.getOrPut(moduleData) {
-                        callablesGenerator.createExternalPackageFragment(FirBuiltInsPackageFragment(fqName, moduleDescriptor))
+                        callablesGenerator.createExternalPackageFragment(fqName, irModule, ::FirBuiltInsPackageFragment)
                     }
                 } else {
                     fragments.fragmentsForDependencies.getOrPut(moduleData) {
-                        callablesGenerator.createExternalPackageFragment(fqName, moduleDescriptor)
+                        callablesGenerator.createExternalPackageFragment(fqName, irModule)
                     }
                 }
             }
