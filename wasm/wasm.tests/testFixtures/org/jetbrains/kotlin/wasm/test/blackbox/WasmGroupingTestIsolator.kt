@@ -76,13 +76,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         if (hasCompanionJsFile)
             return BatchToken.Isolated
 
-        if (moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].any {
-                // Avoid batch-grouping path in presence of `testOnly` language features, since WasmFirstStageInvoker uses 1st stage CLI compiler
-                // which does not accept testOnly language features, see `LanguageSettingsParser.parseLanguageFeature`
-                it.parseLanguageFeature().first.testOnly
-            }
-        ) return BatchToken.Isolated
-
         val specificTokens = listOfNotNull(
             computeEHToken(moduleStructure),
             computeLanguageSettingsToken(moduleStructure),

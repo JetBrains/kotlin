@@ -157,7 +157,8 @@ class CustomWasmSecondStageFacade internal constructor(
                 listOf(batchLauncherFile.originalFile),
                 launcherKlibFile,
                 languageVersion = firstStageSettings.maxLanguageVersion.versionString,
-                customLanguageFeatures = firstStageSettings.allLanguageFeatures,
+                // CLI compiler does not accept test-only features. Anyway, ProxyLauncher does not depend on them, so they must be filtered out.
+                customLanguageFeatures = firstStageSettings.allLanguageFeatures.filterNot { it.parseLanguageFeature().first.testOnly },
                 customOptIns = firstStageSettings.allOptIns,
                 allowKotlinPackage = firstStageSettings.allAllowKotlinPackage,
                 cleanedFirstStageRegularDependencies + perTestKlibPaths,
