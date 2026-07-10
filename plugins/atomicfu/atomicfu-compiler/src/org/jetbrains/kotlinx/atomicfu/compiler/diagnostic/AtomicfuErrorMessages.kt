@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,7 +54,7 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
                 "public val a: T by _a \n" +
                 "```\n"
 
-    private const val ATOMIC_PROEPRTIES_SHOULD_BE_VAL_MESSAGE = "Consider declaring `''{0}''` as a private val or internal val.\n" +
+    private const val ATOMIC_PROPERTIES_SHOULD_BE_VAL_MESSAGE = "Consider declaring `''{0}''` as a private val or internal val.\n" +
             "If you need to declare a variable with accessors delegated to the atomic property value, you can use a delegated property declared within the same scope, e.g:\n" +
             "```\n" +
             "private val _a = atomic<T>(initial) \n" +
@@ -69,7 +69,7 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
             AtomicfuErrors.PUBLISHED_API_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
         )
         map.put(
-            AtomicfuErrors.ATOMIC_PROPERTIES_SHOULD_BE_VAL, ATOMIC_PROEPRTIES_SHOULD_BE_VAL_MESSAGE, Renderers.TO_STRING
+            AtomicfuErrors.ATOMIC_PROPERTIES_SHOULD_BE_VAL, ATOMIC_PROPERTIES_SHOULD_BE_VAL_MESSAGE, Renderers.TO_STRING
         )
     }
 
