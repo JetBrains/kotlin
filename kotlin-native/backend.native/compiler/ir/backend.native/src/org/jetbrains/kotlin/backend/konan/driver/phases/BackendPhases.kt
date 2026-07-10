@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
-import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
@@ -46,14 +45,6 @@ internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<NativeBa
         postactions = getDefaultIrActions(),
 ) { context, input ->
     SpecialBackendChecksTraversal(context, input.symbols, input.irBuiltIns).lower(input.irModule)
-}
-
-internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, Pair<IrModuleFragment, IrBuiltIns>>(
-        name = "CopyDefaultValuesToActual",
-        preactions = getDefaultIrActions(),
-        postactions = getDefaultIrActions(),
-) { _, [irModule, irBuiltins] ->
-    ExpectToActualDefaultValueCopier(irModule, irBuiltins).process()
 }
 
 internal fun <T : NativeBackendPhaseContext> PhaseEngine<T>.runSpecialBackendChecks(irModule: IrModuleFragment, irBuiltIns: IrBuiltIns, symbols: BackendNativeSymbols) {

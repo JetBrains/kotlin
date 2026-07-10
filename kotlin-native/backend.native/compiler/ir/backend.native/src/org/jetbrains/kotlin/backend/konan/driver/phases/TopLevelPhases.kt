@@ -77,7 +77,6 @@ internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
         psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
         output to additionalOutput
     }
-    runAndMeasurePhase(CopyDefaultValuesToActualPhase, Pair(linkKlibsOutput.irModule, linkKlibsOutput.irBuiltIns))
     return linkKlibsOutput to additionalOutput
 }
 
