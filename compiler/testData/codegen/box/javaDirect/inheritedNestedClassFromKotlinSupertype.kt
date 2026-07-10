@@ -2,11 +2,14 @@
 // TARGET_BACKEND: JVM_IR
 
 // Regression test for the java-direct resolution-pipeline collapse: multi-part navigation through
-// an *intermediate* segment inherited from a Kotlin (or binary) supertype must resolve. `Local` is
-// a same-file declared class, while `Local.Deeper` can only be found via the binary/Kotlin tail of
-// `findInnerClassFromSupertypes` / `resolveInheritedInnerClassToClassId` plus
-// `FirBackedJavaClassAdapter`'s `findInnerClass`; `Local.Deeper.EvenDeeper` additionally requires
-// chaining a further hop through that same inherited-nested lookup on the already-resolved `Deeper`.
+// an *intermediate* segment inherited from a Kotlin (or binary) supertype must be reachable
+// through the structural (JavaClass-returning) resolution pipeline. `Local` resolves purely via
+// same-file declared lookup (unaffected by the fix, forcing `computeClassifier`'s multi-part loop
+// into its `current is JavaClass` branch, which has no `resolve()` fallback), while `Local.Deeper`
+// can only be found via the newly-added binary/Kotlin tail of
+// `JavaInheritedMemberResolver.findInnerClassFromSupertypes` plus `FirBackedJavaClassAdapter`'s
+// newly-implemented `findInnerClass`; `Local.Deeper.EvenDeeper` additionally requires chaining a
+// further hop through that same `findInnerClass` on the already-wrapped `Deeper` result.
 
 // FILE: KotlinBase.kt
 open class KotlinBase {

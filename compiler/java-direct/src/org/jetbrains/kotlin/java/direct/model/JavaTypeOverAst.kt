@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.FirBackedJavaClassAdapter
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
+import org.jetbrains.kotlin.java.direct.resolution.declaredOrFullyInherited
 import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
 import org.jetbrains.kotlin.java.direct.resolution.findInheritedTypeParameter
 import org.jetbrains.kotlin.java.direct.resolution.findTypeParameter
@@ -138,16 +139,35 @@ class JavaClassifierTypeOverAst(
                 findInheritedTypeParameter(parts[0])?.let { return it }
             }
 
-            // Resolve the whole reference to a `ClassId` and materialize it via [classifierAdapterFor]
-            // (the canonical, identity-preserving `JavaClassOverAst` for a source-backed `ClassId`,
-            // a `FirBackedJavaClassAdapter` otherwise; `null` on sessions without a symbol provider).
-            //
-            // This single call already covers the same-scope / in-scope cases too: [resolve]'s
-            // simple-name ladder probes enclosing-class member types and same-file top-level
-            // classes (JLS 6.4.1) *before* imports, so an in-scope head is honored; its
-            // qualified-name step then navigates every remaining segment as a declared or
-            // inherited member type of that head (JLS 6.5.2), including intermediate segments
-            // inherited from a cross-file source, binary Java, or Kotlin supertype.
+            // In-scope navigation, kept as a distinct pass *before* the [resolve] fallback below —
+            // NOT redundant with it. Resolve the head via [findClassInCurrentScope], then walk each
+            // remaining part with [declaredOrFullyInherited] (declared members plus fully-inherited
+            // member types from any supertype representation). This pass is load-bearing because:
+            //  - it does not depend on a `FirSession` symbol provider, whereas [resolve]'s
+            //    class-existence probe does (it routes through `cycleSafeClassLikeSymbol`), so on a
+            //    session-less model [resolve] resolves nothing and this walk is the only thing that
+            //    can navigate same-file / in-scope references (exercised by the parsing-only
+            //    fixtures in `JavaParsingTypeResolutionTest`, which fail if this pass is removed);
+            //  - even with a session present it resolves in-scope references straight from the
+            //    AST/model, avoiding a symbol-provider round-trip per segment.
+            // A missing segment off an in-scope head is a hard miss (`return null`, JLS 6.5.2):
+            // once `parts[0]` is a class in scope, the tail must be its member type, so we do not
+            // fall through to [resolve]'s package/import reinterpretation of the whole reference.
+            var current: JavaClassifier? = findClassInCurrentScope(Name.identifier(parts[0]))
+
+            if (current is JavaClass) {
+                for (i in 1 until parts.size) {
+                    val part = Name.identifier(parts[i])
+                    current = declaredOrFullyInherited(current as JavaClass, part)
+                        ?: return null
+                }
+                return current
+            }
+
+            // Cross-file branch: resolve the whole reference to a `ClassId` and materialize it via
+            // [classifierAdapterFor] — the canonical, identity-preserving `JavaClassOverAst` for a
+            // source-backed `ClassId`, a `FirBackedJavaClassAdapter` otherwise; `null` on sessions
+            // without a symbol provider.
             resolve(rawTypeName)?.let { return classifierAdapterFor(it) }
         }
         return null

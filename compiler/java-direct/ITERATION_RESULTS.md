@@ -36,22 +36,20 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
-### 2026-07-10 — Remove the redundant in-scope navigation loop in computeClassifier (review comment #9)
+### 2026-07-10 — Document why computeClassifier's in-scope navigation loop is not redundant (review comment #9)
 - **Change**: Re-investigated review comment #9 ("doesn't `resolve(rawTypeName)` already handle the
-  same-scope case?"). It does: `resolve` → `resolveSimpleNameToClassIdImpl` probes enclosing-class
-  and same-file classes before imports (JLS 6.4.1) and navigates the tail as member types (JLS
-  6.5.2, incl. cross-file/binary/Kotlin inherited segments), and `classifierAdapterFor` preserves
-  the canonical `JavaClassOverAst` identity — so the prior §9 priority/identity justifications were
-  stale. Removed the explicit `findClassInCurrentScope` + `declaredOrFullyInherited` multi-part
-  loop; multi-part names now go straight through `resolve`. The only unique behavior lost is a
-  pathological JLS hard-fail (in-scope head vs package reinterpretation) with no test.
-- **Files**: `model/JavaTypeOverAst.kt` (`computeClassifier` loop removed + accurate comment, unused
-  import dropped); `implDocs/REVIEW_MD_RESPONSES_2026_07_08.md` §9 + table + summary;
-  `RESOLUTION_SCHEMA.md` Scenario A; comment in
-  `testData/codegen/box/javaDirect/inheritedNestedClassFromKotlinSupertype.kt`.
-- **Tests**: box + phased + `JavaParsingTest` green, 0 failures (verified the suite is also green
-  with the loop removed, incl. that former dedicated regression test).
-- **Result**: green.
+  same-scope case?"). Confirmed empirically that removing the explicit `findClassInCurrentScope` +
+  `declaredOrFullyInherited` multi-part loop keeps the box + phased suite (2793) green **but** breaks
+  4 `JavaParsingTypeResolutionTest` unit tests (`Outer.Inner`, `a.b`, `SimpleFunctionDescriptor.CopyBuilder`,
+  + sibling): those parsing fixtures have no `FirSession`, and `resolve`'s existence probe needs the
+  session's symbol provider (`cycleSafeClassLikeSymbol`), so the AST/model walk is the only path that
+  resolves same-file / in-scope references there (and it also saves a symbol-provider round-trip per
+  segment when a session is present). Kept the loop; replaced its comment with this concrete,
+  test-cited reason.
+- **Files**: `model/JavaTypeOverAst.kt` (`computeClassifier` loop kept + reason documented);
+  `implDocs/REVIEW_MD_RESPONSES_2026_07_08.md` §9 + table + summary; `RESOLUTION_SCHEMA.md` Scenario A.
+- **Tests**: `JavaParsingTest` + `JavaParsingTypeResolutionTest`, box + phased — all green, 0 failures.
+- **Result**: green; no production behavior change (comment/doc-only after the round trip).
 
 ### 2026-07-09 — Pin the javac type-param-vs-nested-class divergence (review comment #6) with a test
 - **Change**: Review comment #6 (own type parameter `T` shadows a same-named nested `class T`,
