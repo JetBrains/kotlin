@@ -1,5 +1,4 @@
 import kotlinx.benchmark.gradle.JmhBytecodeGeneratorTask
-import kotlinx.benchmark.gradle.benchmark
 
 plugins {
     id("common-configuration")
@@ -64,13 +63,6 @@ benchmark {
 }
 
 tasks.withType<JavaExec>().matching { it.name == "testBenchmark" }.configureEach {
-    val ideaHomeForTests = this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
-    jvmArgumentProviders.add(this.project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
-        property.set("idea.home.path")
-        classpath.from(ideaHomeForTests)
-        directory.value(ideaHomePathForTests())
-    })
-
     systemProperty("idea.use.native.fs.for.win", false)
 }
 

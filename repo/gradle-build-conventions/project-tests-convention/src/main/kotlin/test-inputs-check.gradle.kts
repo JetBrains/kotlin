@@ -163,11 +163,6 @@ tasks.withType<Test>().configureEach {
                     listOf(
                         """permission java.io.FilePermission "${file.absolutePath}", "read,write";""",
                     )
-                } else if (file.parentFile.name == "ideaHomeForTests") {
-                    listOf(
-                        """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read,write";""",
-                        """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
-                    )
                 } else {
                     val parents = parentsReadPermission(file)
                     listOf(

@@ -113,12 +113,6 @@ internal fun Project.createGeneralTestTask(
             classpath = sourceSets.getByName("test").runtimeClasspath
             testClassesDirs = sourceSets.getByName("test").output.classesDirs
         }
-        val ideaHomeForTests = this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
-        jvmArgumentProviders.add(this.project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
-            property.set("idea.home.path")
-            classpath.from(ideaHomeForTests)
-            directory.value(ideaHomePathForTests())
-        })
 
         muteWithDatabase()
         if (jUnitMode == JUnitMode.JUnit4) {

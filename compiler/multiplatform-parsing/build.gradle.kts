@@ -64,13 +64,6 @@ tasks.withType<Test> {
         project(":analysis:analysis-api").isolated.projectDirectory.dir("testData"),
     ).joinToString(File.pathSeparator)
     systemProperty("test.data.dirs", testDataDirs)
-
-    val ideaHomeForTests = this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
-    jvmArgumentProviders.add(this.project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
-        property.set("idea.home.path")
-        classpath.from(ideaHomeForTests)
-        directory.value(ideaHomePathForTests())
-    })
 }
 
 val flexGeneratorDependencies = configurations.dependencyScope("flexGeneratorDependencies")
