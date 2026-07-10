@@ -116,6 +116,9 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
                 returnType = overridden[0].owner.returnType
             }
             function.parameters += function.createDispatchReceiverParameterWithClassParent()
+            overridden[0].owner.parameters
+                    .filter { it.kind == IrParameterKind.Regular }
+                    .forEach { function.parameters += it.copyTo(function) }
             function.overriddenSymbols += overridden
             function.body = context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +irReturn(value(function))
@@ -123,13 +126,24 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         }
 
         val fields = functionReferenceClass.fields.toList()
-        when (fields.size) {
-            0 -> {}
-            1 -> addOverrideInner("computeReceiver") { f ->
-                irGetField(irGet(f.dispatchReceiverParameter!!), fields[0])
-            }
-            else -> TODO("Code generation for references with several bound receivers is not supported yet")
+        if (fields.isEmpty()) return
+
+        addOverrideInner("boundValueAt") { function -> irBoundValueAt(function, fields) }
+    }
+
+    private fun IrBuilderWithScope.irBoundValueAt(function: IrFunction, fields: List<IrField>): IrExpression {
+        val dispatchReceiver = function.dispatchReceiverParameter!!
+        fun boundValue(field: IrField) = irGetField(irGet(dispatchReceiver), field)
+
+        if (fields.size == 1) {
+            return boundValue(fields[0])
         }
+
+        val indexParameter = function.parameters.single { it.kind == IrParameterKind.Regular }
+        val branches = (0..<fields.lastIndex).map { index ->
+            irBranch(irEquals(irGet(indexParameter), irInt(index)), boundValue(fields[index]))
+        } + irElseBranch(boundValue(fields.last()))
+        return irWhen(context.irBuiltIns.anyNType, branches)
     }
 
     private fun IrBuilderWithScope.irKFunctionDescription(functionReference: IrRichFunctionReference, description: KFunctionDescription, reflectionTargetLinkageError: PartialLinkageCase?): IrConstantValue {
@@ -154,6 +168,7 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
                     mapOf(
                             "flags" to irConstantPrimitive(irInt(description.getFlags())),
                             "arity" to irConstantPrimitive(irInt(description.getArity())),
+                            "boundValueCount" to irConstantPrimitive(irInt(description.getBoundValueCount())),
                             "fqName" to irConstantPrimitive(irString(description.getFqName())),
                             "name" to irConstantPrimitive(irString(description.getName())),
                             "returnType" to kTypeGenerator.irKType(description.returnType()),
@@ -192,6 +207,10 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
 
         fun getArity(): Int {
             return functionReference.invokeFunction.parameters.size - functionReference.boundValues.size + if (functionReference.invokeFunction.isSuspend) 1 else 0
+        }
+
+        fun getBoundValueCount(): Int {
+            return functionReference.boundValues.size
         }
 
         fun returnType(): IrType {

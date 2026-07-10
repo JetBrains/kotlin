@@ -1,7 +1,7 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
 // DONT_TARGET_EXACT_BACKEND: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
 // WITH_REFLECT
-// IGNORE_BACKEND: JVM_IR, NATIVE
+// IGNORE_BACKEND: JVM_IR
 // ^KT-86452, KT-87390
 
 object O {

@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: JVM_IR, NATIVE
+// IGNORE_BACKEND: JVM_IR
 // ^KT-86452, KT-87390
 
 object O {
