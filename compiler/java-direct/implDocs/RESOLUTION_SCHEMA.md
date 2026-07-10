@@ -136,21 +136,23 @@ classifier a written reference denotes.
    1. own type parameter — `JavaScopeResolver.findTypeParameter` (high priority).
    2. in-scope class — `JavaScopeResolver.findClassInCurrentScope` (Scenario C).
    3. inherited (outer) type parameter — `findInheritedTypeParameter` (low priority, shadowed by 2).
-3. Resolve `parts[0]` via `findClassInCurrentScope`. If it is a `JavaClass`, navigate each
-   remaining part with `declaredOrFullyInherited` — declared members plus the class's full
-   inherited member types (same-file, cross-file Java source, binary Java, and Kotlin, Scenario C) —
-   and return the final inner class. This now correctly navigates through an intermediate segment
-   inherited from *any* of those representations, not just a same-file supertype.
-4. Otherwise resolve the whole name to a `ClassId` via `JavaTypeResolver.resolve` (Scenarios B/D)
-   and materialize it via `classifierAdapterFor`: the canonical, identity-preserving
-   `JavaClassOverAst` when the `ClassId` is source-backed, or a `FirBackedJavaClassAdapter`
-   otherwise.
-5. If nothing matched, return `null` (FIR's `findClassId` fallback then runs).
+3. Resolve the whole name to a `ClassId` via `JavaTypeResolver.resolve` (Scenarios B/D) and
+   materialize it via `classifierAdapterFor`: the canonical, identity-preserving `JavaClassOverAst`
+   when the `ClassId` is source-backed, or a `FirBackedJavaClassAdapter` otherwise. This one call
+   also covers the same-scope / in-scope cases (single- and multi-part): `resolve`'s simple-name
+   ladder probes enclosing-class and same-file classes before imports (JLS 6.4.1), then navigates
+   every remaining segment as a declared or inherited member type of that head (JLS 6.5.2),
+   including intermediate segments inherited from a cross-file source, binary Java, or Kotlin
+   supertype. There is no separate explicit in-scope navigation loop — an earlier
+   `findClassInCurrentScope` + `declaredOrFullyInherited` pass here was found redundant with this
+   `resolve` call and removed.
+4. If nothing matched, return `null` (FIR's `findClassId` fallback then runs).
 
-Corner cases: type-parameter-vs-inner-class shadowing (2 before 3); step 4's identity routing
-matters because a same-file class reached this way must be the exact same object FIR already
-matches its type parameters against by reference identity — a second, non-navigable
-`FirBackedJavaClassAdapter` wrapper would break that (see Scenario A/C's identity note below).
+Corner cases: type-parameter-vs-inner-class shadowing (step 2 tries the own type parameter, then
+the in-scope class, then the inherited type parameter); step 3's identity routing matters because a
+same-file class reached this way must be the exact same object FIR already matches its type
+parameters against by reference identity — a second, non-navigable `FirBackedJavaClassAdapter`
+wrapper would break that (see Scenario A/C's identity note below).
 
 ### Scenario B — Simple name to `ClassId` (JLS 6.4.1 shadowing ladder)
 

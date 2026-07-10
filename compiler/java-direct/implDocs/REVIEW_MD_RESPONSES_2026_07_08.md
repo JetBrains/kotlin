@@ -27,7 +27,7 @@ flagged and consciously left as accepted trade-offs. Each entry below quotes (pa
 | 6 | javac priority divergence (`T` type param vs `T` inner class) — `JavaTypeOverAst.kt` | **Accepted, out of scope — now pinned by a test** (2026-07-09) | pre-existing, compiler-wide; behavior locked by `javac/typeParameters/OwnNestedClassAndTypeParameterWithSameNames.kt` (+ inherited sibling), referenced from `computeClassifier`; see §6 update |
 | 7 | Source/binary mixed-hierarchy ambiguity not detected — `JavaInheritedMemberResolver.kt` | **Fixed** | single BFS + collapsed structural pipeline compare every origin together, see §7 below |
 | 8 | `includeOuterClasses` "looks always false" — `JavaTypeResolver.kt` / `JavaInheritedMemberResolver.kt` | **Fixed** | parameter and outer-walk loop removed |
-| 9 | Does `resolve(rawTypeName)` already cover same-scope? — `JavaTypeOverAst.kt` | **Answered** (design explanation) | see §9 below |
+| 9 | Does `resolve(rawTypeName)` already cover same-scope? — `JavaTypeOverAst.kt` | **Fixed** (2026-07-10; reviewer right, loop removed) | see §9 below |
 | 10 | `sameFileTopLevelClassProvider` would be enough? — `JavaClassCache.kt` | **Fixed** | `parseTopLevelClassFromFile` now calls it directly |
 | 11 | Inheriting a nested class from a compiled/Kotlin supertype "didn't get how it works" — `JavaScopeResolver.kt` | **Fixed** | binary/Kotlin tail wired in (Steps 1-3) |
 | 12 | Sibling/outer-class lookup could be "part of the loop below" — `JavaScopeResolver.kt` | **Fixed** | unified per-level loop (Step 4) |
@@ -35,9 +35,11 @@ flagged and consciously left as accepted trade-offs. Each entry below quotes (pa
 
 12 of 13 comments are now fixed by code changes; 1 (#6) is an out-of-scope pre-existing item
 explicitly tracked as accepted — and, as of 2026-07-09, additionally locked down by a
-compiler-wide regression test (see §6 update); the remaining ones (#4/#5 as one topic, #9) are
-direct design explanations, since they ask "why does it work this way" rather than flag a bug.
-None is left as an open question.
+compiler-wide regression test (see §6 update); the remaining one (#4/#5 as one topic) is a
+direct design explanation, since it asks "why does it work this way" rather than flag a bug.
+(#9 was originally answered as a design explanation but, on re-investigation, the reviewer was
+right — the extra pass was redundant and has been removed; see §9.) None is left as an open
+question.
 
 ---
 
@@ -278,29 +280,30 @@ level."*
 > types ... so an intermediate segment inherited from a supertype still navigates correctly." —
 > "But doesn't `resolve(rawTypeName)` already handle the case for defined-in-the-same-scope, too?"
 
-**Answered as a design explanation.** `resolve(rawTypeName)` (the JLS 6.5.2 qualified-name
-pipeline, `resolveQualifiedNameToClassIdFromParts`) *can*, in many cases, land on the same
-`ClassId` — but it is not a substitute for the explicit `findClassInCurrentScope` +
-`declaredOrFullyInherited` multi-part loop in `computeClassifier` (Scenario A step 3 in
-`RESOLUTION_SCHEMA.md`), for two reasons:
+**Reviewer is right — the loop was redundant and has been removed (2026-07-10).** The original
+answer defended the explicit `findClassInCurrentScope` + `declaredOrFullyInherited` multi-part loop
+in `computeClassifier` on two grounds; on re-investigation both turned out to be already satisfied
+by the subsequent `resolve(rawTypeName)` call, so the loop was collapsed and multi-part names now go
+straight through `resolve` + `classifierAdapterFor`.
 
-1. **Priority order.** JLS 6.4.1 requires an in-scope member type (and its inherited member
-   types) to be found *before* falling to the JLS 6.5.2 qualified-name treatment of the whole
-   reference — which would otherwise try every `outerParts`/`nestedParts` split point using
-   different (package/import-driven) resolution rules that don't respect "parts[0] is already an
-   in-scope class" the way `findClassInCurrentScope` does. `computeClassifier`'s step 2 (own type
-   parameter → in-scope class → inherited type parameter) exists precisely to get this priority
-   right for the single-part case; step 3 extends the same in-scope-first principle to the
-   multi-part case.
-2. **Cost.** Even where both paths agree on the result, `findClassInCurrentScope` for `parts[0]`
-   plus a per-level `declaredOrFullyInherited` chain is cheaper than the full qualified-name
-   ladder (which tries every split point and, on a miss, falls through to `probeFqnSplits`'s
-   package/class guesses) — worth keeping as the fast, direct path rather than routing every
-   multi-part reference through the general fallback.
+- **Priority order was not a real difference.** `resolve` → `resolveSimpleNameToClassIdImpl` resolves
+  the head segment via `resolveFromEnclosingClasses` (enclosing-class declared + inherited member
+  types) and `resolveFromSameFile` (same-file top-level) *before* any import step, so an in-scope
+  head is already honored (JLS 6.4.1); the qualified step then navigates the tail as declared /
+  inherited member types of that head (JLS 6.5.2), including intermediate segments inherited from a
+  cross-file source, binary Java, or Kotlin supertype (via the telescoping recursion of item #4/#5).
+- **Identity was not a real difference either.** `classifierAdapterFor` routes a source-backed
+  `ClassId` to its canonical, identity-preserving `JavaClassOverAst`, so the object FIR matches its
+  type parameters against by reference identity is preserved on the `resolve` path too.
 
-Since Step 4 of the collapse work, this loop now genuinely reaches cross-file/Kotlin/binary
-inherited intermediate segments too (not just same-file ones), so the KDoc's claim is no longer an
-overclaim — see item #12 and `RESOLUTION_SCHEMA.md` Scenario A step 3.
+The only behavior unique to the loop was a narrow JLS 6.5.2 nicety — once the head is a class in
+scope, hard-failing (`return null`) on a member miss instead of letting `probeFqnSplits` reinterpret
+the head as a package prefix — reachable only with a package literally named after the in-scope
+class, which no test exercises and which the module's Simplification Discipline says not to keep on
+hypothetical grounds. Verified empirically: with the loop removed, the full box + phased suite
+(2793) stays green, including the loop's own former dedicated regression test
+`inheritedNestedClassFromKotlinSupertype.kt` (`Local.Deeper.EvenDeeper`), which its comment claimed
+depended on the loop's no-`resolve()`-fallback branch — it resolves fine through `resolve`.
 
 ---
 

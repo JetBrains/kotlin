@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.FirBackedJavaClassAdapter
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
-import org.jetbrains.kotlin.java.direct.resolution.declaredOrFullyInherited
 import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
 import org.jetbrains.kotlin.java.direct.resolution.findInheritedTypeParameter
 import org.jetbrains.kotlin.java.direct.resolution.findTypeParameter
@@ -139,22 +138,16 @@ class JavaClassifierTypeOverAst(
                 findInheritedTypeParameter(parts[0])?.let { return it }
             }
 
-            // Multi-part names: navigate from base class through inner classes. Each hop uses
-            // [declaredOrFullyInherited] so an intermediate segment inherited from any supertype
-            // representation still navigates correctly.
-            var current: JavaClassifier? = findClassInCurrentScope(Name.identifier(parts[0]))
-
-            if (current is JavaClass) {
-                for (i in 1 until parts.size) {
-                    val part = Name.identifier(parts[i])
-                    current = declaredOrFullyInherited(current as JavaClass, part)
-                        ?: return null
-                }
-                return current
-            }
-
-            // Cross-file branch: resolve to a `ClassId` and wrap it in a `FirBackedJavaClassAdapter`
-            // (null on sessions without a symbol provider).
+            // Resolve the whole reference to a `ClassId` and materialize it via [classifierAdapterFor]
+            // (the canonical, identity-preserving `JavaClassOverAst` for a source-backed `ClassId`,
+            // a `FirBackedJavaClassAdapter` otherwise; `null` on sessions without a symbol provider).
+            //
+            // This single call already covers the same-scope / in-scope cases too: [resolve]'s
+            // simple-name ladder probes enclosing-class member types and same-file top-level
+            // classes (JLS 6.4.1) *before* imports, so an in-scope head is honored; its
+            // qualified-name step then navigates every remaining segment as a declared or
+            // inherited member type of that head (JLS 6.5.2), including intermediate segments
+            // inherited from a cross-file source, binary Java, or Kotlin supertype.
             resolve(rawTypeName)?.let { return classifierAdapterFor(it) }
         }
         return null
