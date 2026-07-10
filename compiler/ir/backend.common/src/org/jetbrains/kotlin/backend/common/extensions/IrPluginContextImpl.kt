@@ -47,9 +47,6 @@ open class IrPluginContextImpl(
 
     override val platform: TargetPlatform? = module.platform
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val moduleDescriptor: ModuleDescriptor = module
-
     @ObsoleteDescriptorBasedAPI
     override val symbolTable: ReferenceSymbolTable = st
 

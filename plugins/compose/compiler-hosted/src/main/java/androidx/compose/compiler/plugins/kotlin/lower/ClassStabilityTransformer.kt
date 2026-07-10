@@ -54,12 +54,12 @@ enum class StabilityBits(val bits: Int) {
  */
 class ClassStabilityTransformer(
     context: IrPluginContext,
-    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
     private val reporter: IrDiagnosticReporter,
-) : AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags),
+    irModule: IrModuleFragment,
+) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags, irModule),
     ClassLoweringPass,
     ModuleLoweringPass {
 

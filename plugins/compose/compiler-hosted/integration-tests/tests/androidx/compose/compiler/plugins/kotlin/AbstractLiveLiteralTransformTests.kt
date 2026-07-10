@@ -64,7 +64,6 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
                                     liveLiteralsV2Enabled,
                                     keyVisitor,
                                     pluginContext,
-                                    moduleFragment,
                                     ModuleMetricsImpl("temp", featureFlags) { type, fileContainingDependent ->
                                         stabilityInferencer.stabilityOf(
                                             type,
@@ -73,6 +72,7 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
                                     },
                                     stabilityInferencer,
                                     featureFlags,
+                                    moduleFragment,
                                 ) {
                                     override fun makeKeySet(): MutableSet<String> {
                                         return super.makeKeySet().also { builtKeys = it }

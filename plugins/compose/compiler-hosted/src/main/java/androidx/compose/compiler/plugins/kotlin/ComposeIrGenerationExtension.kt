@@ -77,20 +77,20 @@ class ComposeIrGenerationExtension(
         if (pluginContext.platform.isNative()) {
             AddHiddenFromObjCLowering(
                 pluginContext,
-                moduleFragment,
                 metrics,
                 stabilityInferencer,
                 featureFlags,
+                moduleFragment,
             ).lower(moduleFragment)
         }
 
         ClassStabilityTransformer(
             pluginContext,
-            moduleFragment,
             metrics,
             stabilityInferencer,
             featureFlags,
             pluginContext.diagnosticReporter,
+            moduleFragment,
         ).lower(moduleFragment)
 
         ProgressManager.checkCanceled()
@@ -101,10 +101,10 @@ class ComposeIrGenerationExtension(
                 usePerFileEnabledFlag = liveLiteralsV2Enabled,
                 keyVisitor = DurableKeyVisitor(),
                 context = pluginContext,
-                irModule = moduleFragment,
                 metrics = metrics,
                 stabilityInferencer = stabilityInferencer,
                 featureFlags = featureFlags,
+                irModule = moduleFragment,
             ).lower(moduleFragment)
         }
 
@@ -114,10 +114,10 @@ class ComposeIrGenerationExtension(
 
         val functionKeyTransformer = DurableFunctionKeyTransformer(
             pluginContext,
-            moduleFragment,
             metrics,
             stabilityInferencer,
             featureFlags,
+            moduleFragment,
         )
 
         functionKeyTransformer.lower(moduleFragment)
@@ -131,10 +131,10 @@ class ComposeIrGenerationExtension(
         // Generate default wrappers for virtual functions
         ComposableDefaultParamLowering(
             pluginContext,
-            moduleFragment,
             metrics,
             stabilityInferencer,
             featureFlags,
+            moduleFragment,
         ).lower(moduleFragment)
 
         ProgressManager.checkCanceled()
@@ -145,10 +145,10 @@ class ComposeIrGenerationExtension(
         // ComposerLambdaMemoization so the patched type propagates into `remember<T>` wrappers.
         AdaptedComposableReferenceTypePatcher(
             pluginContext,
-            moduleFragment,
             metrics,
             stabilityInferencer,
             featureFlags,
+            moduleFragment,
         ).lower(moduleFragment)
 
         ProgressManager.checkCanceled()
@@ -156,10 +156,10 @@ class ComposeIrGenerationExtension(
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(
             pluginContext,
-            moduleFragment,
             metrics,
             stabilityInferencer,
             featureFlags,
+            moduleFragment,
         ).lower(moduleFragment)
 
         ProgressManager.checkCanceled()
@@ -169,20 +169,20 @@ class ComposeIrGenerationExtension(
         // parameter.
         ComposerParamTransformer(
             pluginContext,
-            moduleFragment,
             stabilityInferencer,
             metrics,
             featureFlags,
+            moduleFragment,
         ).lower(moduleFragment)
 
         ProgressManager.checkCanceled()
 
         ComposableTargetAnnotationsTransformer(
             pluginContext,
-            moduleFragment,
             metrics,
             stabilityInferencer,
             featureFlags,
+            moduleFragment,
         ).lower(moduleFragment)
 
         // transform calls to the currentComposer to just use the local parameter from the
@@ -193,13 +193,13 @@ class ComposeIrGenerationExtension(
 
         ComposableFunctionBodyTransformer(
             pluginContext,
-            moduleFragment,
             metrics,
             stabilityInferencer,
             sourceInformationEnabled,
             traceMarkersEnabled,
             targetRuntimeVersion,
             featureFlags,
+            moduleFragment,
         ).lower(moduleFragment)
 
         ComposableAnnotationRemover().lower(moduleFragment)
@@ -207,20 +207,20 @@ class ComposeIrGenerationExtension(
         if (isKlibTarget) {
             KlibAssignableParamTransformer(
                 pluginContext,
-                moduleFragment,
                 metrics,
                 stabilityInferencer,
                 featureFlags,
+                moduleFragment,
             ).lower(moduleFragment)
         }
 
         if (pluginContext.platform.isJs() || pluginContext.platform.isWasm()) {
             WrapJsComposableLambdaLowering(
                 pluginContext,
-                moduleFragment,
                 metrics,
                 stabilityInferencer,
                 featureFlags,
+                moduleFragment,
             ).lower(moduleFragment)
         }
 

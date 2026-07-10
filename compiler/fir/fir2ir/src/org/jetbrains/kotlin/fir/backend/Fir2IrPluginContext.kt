@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.extensions.DeclarationFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -45,7 +44,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 class Fir2IrPluginContext(
     private val c: Fir2IrComponents,
     override val irBuiltIns: IrBuiltIns,
-    @property:ObsoleteDescriptorBasedAPI override val moduleDescriptor: ModuleDescriptor,
     @property:ObsoleteDescriptorBasedAPI override val symbolTable: ReferenceSymbolTable,
     @property:Deprecated(
         "Consider using diagnosticReporter instead. See https://youtrack.jetbrains.com/issue/KT-78277 for more details",

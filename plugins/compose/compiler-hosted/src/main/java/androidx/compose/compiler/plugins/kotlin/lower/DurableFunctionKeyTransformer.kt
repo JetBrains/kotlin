@@ -85,17 +85,17 @@ class KeyInfo(
  */
 class DurableFunctionKeyTransformer(
     context: IrPluginContext,
-    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
+    irModule: IrModuleFragment,
 ) : DurableKeyTransformer(
     DurableKeyVisitor(),
     context,
-    irModule,
     stabilityInferencer,
     metrics,
     featureFlags,
+    irModule,
 ) {
 
     fun realizeKeyMetaAnnotations(moduleFragment: IrModuleFragment) {

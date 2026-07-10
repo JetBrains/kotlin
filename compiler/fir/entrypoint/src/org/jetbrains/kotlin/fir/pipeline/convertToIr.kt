@@ -245,7 +245,7 @@ private class Fir2IrPipeline(
         val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: IrExpectActualMap()
 
         val pluginContext = Fir2IrPluginContext(
-            componentsStorage, irBuiltIns, componentsStorage.moduleDescriptor, symbolTable,
+            componentsStorage, irBuiltIns, symbolTable,
             @OptIn(MessageCollectorAccess::class) // deprecated in IrPluginContext
             fir2IrConfiguration.messageCollector,
             fir2IrConfiguration.diagnosticReporter

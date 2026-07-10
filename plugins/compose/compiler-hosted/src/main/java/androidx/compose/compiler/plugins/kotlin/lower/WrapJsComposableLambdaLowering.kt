@@ -82,16 +82,16 @@ import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
  */
 class WrapJsComposableLambdaLowering(
     context: IrPluginContext,
-    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
+    irModule: IrModuleFragment,
 ) : AbstractComposeLowering(
     context,
-    irModule,
     metrics,
     stabilityInferencer,
     featureFlags,
+    irModule,
 ) {
     private fun IrValueParameter.isArtificialComposeParameter(): Boolean =
         when {
@@ -103,7 +103,7 @@ class WrapJsComposableLambdaLowering(
 
     private val rememberFunSymbol by lazy {
         val composerParamTransformer = ComposerParamTransformer(
-            context, irModule, stabilityInferencer, metrics, featureFlags
+            context, stabilityInferencer, metrics, featureFlags, irModule
         )
         getTopLevelFunctions(ComposeCallableIds.remember)
             .map {

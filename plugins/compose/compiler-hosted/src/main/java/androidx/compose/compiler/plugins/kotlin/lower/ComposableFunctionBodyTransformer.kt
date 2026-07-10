@@ -379,15 +379,15 @@ interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
  */
 class ComposableFunctionBodyTransformer(
     context: IrPluginContext,
-    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     private val collectSourceInformation: Boolean,
     private val traceMarkersEnabled: Boolean,
     targetRuntimeVersion: ComposeRuntimeVersion?,
     featureFlags: FeatureFlags,
+    irModule: IrModuleFragment,
 ) :
-    AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags),
+    AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags, irModule),
     FileLoweringPass,
     ModuleLoweringPass {
 
