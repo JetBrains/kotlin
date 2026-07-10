@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.Name
 class BuilderGenerator(
     session: FirSession,
 ) : AbstractBuilderGenerator<Builder>(session) {
-    override val builderModality: Modality = Modality.FINAL
+    override val builderModality: Modality = Modality.OPEN
 
     override val annotationClassId: ClassId = LombokNames.BUILDER_ID
 
@@ -81,7 +81,7 @@ class BuilderGenerator(
                     }
                 },
                 visibility = builder.visibility,
-                modality = Modality.FINAL
+                modality = Modality.OPEN,
             ).symbol
         }
     }

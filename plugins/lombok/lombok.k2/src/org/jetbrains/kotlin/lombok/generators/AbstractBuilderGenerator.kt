@@ -263,7 +263,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
                         moduleData = containingClassSymbol.moduleData
                         status = FirResolvedDeclarationStatusImpl(
-                            Visibilities.Private, Modality.FINAL, Visibilities.Private.toEffectiveVisibility(builderSymbol)
+                            Visibilities.Private, Modality.OPEN, Visibilities.Private.toEffectiveVisibility(builderSymbol)
                         )
                         isLocal = false
                         returnTypeRef = item.returnTypeRef
@@ -342,7 +342,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     valueParameters = emptyList(),
                     returnTypeRef = createBuilderTypeRef(methodTypeParameters.map { it.symbol }),
                     visibility = visibility,
-                    modality = Modality.FINAL,
+                    modality = Modality.OPEN,
                     dispatchReceiverType = if (isStatic) null else builderDeclaration.dispatchReceiverType,
                     isStatic = isStatic,
                     methodSymbol = methodSymbol,
@@ -360,7 +360,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         valueParameters = emptyList(),
                         returnTypeRef = createBuilderTypeRef(entitySymbol.typeParameterSymbols),
                         visibility = visibility,
-                        modality = Modality.FINAL,
+                        modality = Modality.OPEN,
                         methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name)),
                     ).symbol
                 }
@@ -448,7 +448,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 name = it,
                 valueParameters = listOf(ConeLombokValueParameter(fieldName, item.returnTypeRef)),
                 returnTypeRef = builderType.toFirResolvedTypeRef(),
-                modality = Modality.FINAL,
+                modality = Modality.OPEN,
                 visibility = builder.visibility
             ).symbol
         }
@@ -531,7 +531,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 name = it,
                 valueParameters,
                 returnTypeRef = builderType,
-                modality = Modality.FINAL,
+                modality = Modality.OPEN,
                 visibility = visibility
             ).symbol
         }
@@ -541,7 +541,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 name = it,
                 valueParameters = listOf(ConeLombokValueParameter(item.name, addMultipleParameterType)),
                 returnTypeRef = builderType,
-                modality = Modality.FINAL,
+                modality = Modality.OPEN,
                 visibility = visibility
             ).symbol
         }
@@ -551,7 +551,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 name = it,
                 valueParameters = listOf(),
                 returnTypeRef = builderType,
-                modality = Modality.FINAL,
+                modality = Modality.OPEN,
                 visibility = visibility
             ).symbol
         }
