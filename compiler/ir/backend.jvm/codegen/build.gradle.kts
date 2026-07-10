@@ -11,7 +11,6 @@ dependencies {
     api(project(":compiler:backend.jvm"))
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:backend.common.jvm"))
-    implementation(project(":compiler:frontend"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":core:descriptors"))
