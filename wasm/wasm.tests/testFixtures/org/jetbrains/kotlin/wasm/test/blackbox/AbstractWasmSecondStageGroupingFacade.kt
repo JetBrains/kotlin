@@ -114,13 +114,14 @@ abstract class AbstractWasmSecondStageGroupingFacade(
                 """.trimIndent()
             )
             for ([services, _] in filteredOutputs.groupBy { it.testServices }) {
-                val mainModule = services.moduleStructure.modules.last()
                 val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
-                val fileWithBox = mainModule.files.firstOrNull {
-                    val content = services.sourceFileProvider.getContentOfSourceFile(it)
-                    MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(content)
+                val fileWithBox = services.moduleStructure.modules.asReversed().firstNotNullOfOrNull { module ->
+                    module.files.firstOrNull {
+                        val content = services.sourceFileProvider.getContentOfSourceFile(it)
+                        MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(content)
+                    }
                 }
-                if (fileWithBox == null) continue
+                if (fileWithBox == null) testInfraError("No file with box() function found in any module of the test ${services.testInfo}")
 
                 val originalPackage = fileWithBox.let { MainFunctionForBlackBoxTestsSourceProvider.detectPackage(it) }
 
