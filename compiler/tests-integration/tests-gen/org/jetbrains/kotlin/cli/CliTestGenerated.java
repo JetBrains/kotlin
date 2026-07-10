@@ -2741,6 +2741,18 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("distStdlibWasmJs.args")
+    public void testDistStdlibWasmJs() {
+      run("distStdlibWasmJs.args");
+    }
+
+    @Test
+    @TestMetadata("distStdlibWasmWasi.args")
+    public void testDistStdlibWasmWasi() {
+      run("distStdlibWasmWasi.args");
+    }
+
+    @Test
     @TestMetadata("exportKDoc.args")
     public void testExportKDoc() {
       run("exportKDoc.args");
