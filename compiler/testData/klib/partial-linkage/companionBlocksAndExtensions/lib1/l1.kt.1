@@ -52,3 +52,17 @@ class B {
         //fun removedCompanionFun() = "removedCompanionFun"
     //}
 }
+
+open class BaseClass {
+    companion {
+        fun movedToParentClassFun() = "moved"
+        val movedToParentClassProp = 42
+    }
+}
+interface Interface {
+    companion {
+        fun movedToParentInterfaceFun() = "moved"
+        val movedToParentInterfaceProp = 42
+    }
+}
+class Derived : BaseClass(), Interface {}

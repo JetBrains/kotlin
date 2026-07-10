@@ -33,4 +33,9 @@ fun box() = abiTest {
 
     expectFailure(linkage("Function 'sameFun' can not be called: No function found for symbol '/RemovedBlock.sameFun'")) { noBlockSameFunCall() }
     expectSuccess("object") { newBlockSameFunCall() }
+
+    expectSuccess("moved") { movedToParentClassFun() }
+    expectSuccess(42) { movedToParentClassProp() }
+    expectFailure(linkage("Function 'movedToParentInterfaceFun' can not be called: No function found for symbol '/Derived.movedToParentInterfaceFun'")) { movedToParentInterfaceFun() }
+    expectFailure(linkage("Property accessor 'movedToParentInterfaceProp.<get-movedToParentInterfaceProp>' can not be called: No property accessor found for symbol '/Derived.movedToParentInterfaceProp.<get-movedToParentInterfaceProp>'")) { movedToParentInterfaceProp() }
 }

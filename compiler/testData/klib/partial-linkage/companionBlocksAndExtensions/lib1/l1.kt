@@ -48,3 +48,14 @@ class B {
         fun removedCompanionFun() = "removedCompanionFun"
     }
 }
+
+open class BaseClass {}
+interface Interface {}
+class Derived : BaseClass(), Interface {
+   companion {
+       fun movedToParentClassFun() = "moved"
+       val movedToParentClassProp = 42
+       fun movedToParentInterfaceFun() = "moved"
+       val movedToParentInterfaceProp = 42
+   }
+}

@@ -34,3 +34,8 @@ fun objectToBlockCall() = A.objectToBlock()
 
 fun noBlockSameFunCall() = RemovedBlock.sameFun()
 fun newBlockSameFunCall() = NewBlock.sameFun()
+
+fun movedToParentClassFun() = Derived.movedToParentClassFun()
+fun movedToParentClassProp() = Derived.movedToParentClassProp
+fun movedToParentInterfaceFun() = Derived.movedToParentInterfaceFun()
+fun movedToParentInterfaceProp() = Derived.movedToParentInterfaceProp
