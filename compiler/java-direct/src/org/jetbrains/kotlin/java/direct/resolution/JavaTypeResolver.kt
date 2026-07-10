@@ -63,8 +63,13 @@ internal fun resolveQualifiedNameToClassIdFromParts(
     parts: List<String>,
     fullResolution: Boolean,
 ): ClassId? {
-    // Try resolving increasing prefixes as outer classes using normal resolution rules.
-    // This respects JLS 6.5.2: nested class takes priority when the outer class is in scope.
+    // Try every split point of `parts` into an outer-class prefix and a nested-class tail, from
+    // the shortest outer prefix up. Every split is tried (not just the last one, `outerParts =
+    // parts[0..n-2]`) because the outer/nested boundary is not known up front: for `a.b.C.D` the
+    // outer class might be `a.b.C` (tail `D`) or `a.b` might be the package with `C.D` a two-part
+    // nested chain. Each candidate outer prefix is resolved with the same rules (recursively for
+    // multi-part prefixes), so JLS 6.5.2 is respected — a nested-class interpretation wins as soon
+    // as the outer prefix resolves to a class in scope.
     for (i in 1 until parts.size) {
         val outerParts = parts.subList(0, i)
         val nestedParts = parts.subList(i, parts.size)
@@ -82,9 +87,19 @@ internal fun resolveQualifiedNameToClassIdFromParts(
             val nestedClassId = ClassId(outerClassId.packageFqName, nestedClassName, isLocal = false)
             if (classExists(nestedClassId, fullResolution)) return nestedClassId
 
-            // Nested class not directly declared — search supertypes for inherited inner classes.
-            // This handles cases like SimpleFunctionDescriptor.CopyBuilder where CopyBuilder is
-            // declared in FunctionDescriptor (superinterface) but referenced via SimpleFunctionDescriptor.
+            // Nested class not directly declared — search the outer class's supertypes for an
+            // inherited inner class. Handles cases like `SimpleFunctionDescriptor.CopyBuilder`,
+            // where `CopyBuilder` is declared in the `FunctionDescriptor` superinterface but
+            // referenced via the subtype `SimpleFunctionDescriptor`.
+            //
+            // Restricted to a single inherited segment (`nestedParts.size == 1`) on purpose — this
+            // is not a coverage gap for longer tails. A tail of size >= 2 (e.g. resolving
+            // `Outer.CopyBuilder.Deeper`) is reached one recursion level down: the split at the
+            // next `i` resolves `outerClassId` for the prefix `Outer.CopyBuilder` via the recursive
+            // `resolveQualifiedNameToClassIdFromParts` call above, and that call's own loop hits its
+            // `i` where `nestedParts == [CopyBuilder]` (size 1) and performs the inherited lookup
+            // there. So every "outer class plus one inherited segment" sub-problem is still covered;
+            // handling it only at size 1 here just avoids duplicating that work at every prefix.
             if (fullResolution && nestedParts.size == 1) {
                 val inherited = findInheritedNestedClass(outerClassId, nestedParts[0])
                 if (inherited != null) return inherited
@@ -114,7 +129,7 @@ internal fun resolveSimpleNameToClassIdImpl(
 ): ClassId? {
     // JLS 6.4.1: member types of the enclosing class shadow single-type imports.
     if (fullResolution) {
-        resolveFromLocalScope(simpleName)?.let { return it }
+        resolveFromEnclosingClasses(simpleName)?.let { return it }
     }
     // JLS 6.4.1: same-file top-level types shadow single-type imports.
     resolveFromSameFile(simpleName, fullResolution)?.let { return it }
@@ -145,7 +160,7 @@ internal fun resolveSimpleNameToClassIdImpl(
  * same-package cross-file classes, so [resolveFromSamePackage] picks them up.
  */
 context(c: JavaResolutionContext)
-private fun resolveFromLocalScope(simpleName: String): ClassId? {
+private fun resolveFromEnclosingClasses(simpleName: String): ClassId? {
     val nameId = Name.identifier(simpleName)
     var current: JavaClass? = c.scopeContext.containingClass
     while (current != null) {
