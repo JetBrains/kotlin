@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
@@ -313,16 +314,23 @@ private fun findInheritedNestedClass(
 ): ClassId? = resolveInheritedInnerClassToClassId(nestedName, classifierAdapterFor(outerClassId))
 
 /**
- * Builtins-filtered class-existence probe: `true` if [classId] is known to the session's symbol
- * provider and is not a Kotlin builtin. Returns `false` for sessions with no symbol provider.
+ * Builtins- and typealias-filtered class-existence probe: `true` if [classId] is known to the
+ * session's symbol provider and denotes a real class (not a Kotlin builtin, not a `typealias`).
+ * Returns `false` for sessions with no symbol provider.
  *
- * The `origin != BuiltIns` filter matches PSI's file-backed class finder: PSI only resolves a
- * Java type reference when an actual `.class`/`.java` file exists, whereas FIR's symbol provider
- * also fetches the `kotlin.*` builtins bundled into the compiler.
+ * Both filters exist to match PSI's file-backed class finder, which only resolves a Java type
+ * reference when an actual `.class`/`.java` file exists:
+ *  - `origin != BuiltIns` drops the `kotlin.*` builtins that FIR's symbol provider bundles into
+ *    the compiler but PSI never sees;
+ *  - `!is FirTypeAliasSymbol` drops Kotlin type aliases, which are a Kotlin-only concept with no
+ *    corresponding `.class` file, hence invisible to Java. FIR's symbol provider returns them
+ *    from [cycleSafeClassLikeSymbol] (a `FirClassLikeSymbol`), so without this filter a bare
+ *    Java reference could wrongly resolve to a `typealias`.
  */
 context(c: JavaResolutionContext)
 internal fun tryResolve(classId: ClassId): Boolean {
     val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return false
+    if (symbol is FirTypeAliasSymbol) return false
     return symbol.origin != FirDeclarationOrigin.BuiltIns
 }
 
