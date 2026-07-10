@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager.getApplication
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Disposer.dispose
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -22,13 +26,16 @@ import org.jetbrains.kotlin.platform.TargetPlatform
  * @property cinteropReexportLibrary User cinterop klibs whose types originate from an externally-defined
  *   ObjC module; treated as platform-like (no generated Swift module), but distinguished from distribution
  *   platform libs since they are opted in by the caller.
+ *
+ * The underlying standalone Analysis API project should be disposed with [close] after the modules have been used.
  */
 public class KaModules<Config> internal constructor(
+    private val projectDisposable: Disposable,
     public val useSiteModule: KaModule,
     private val modulesToInputs: Map<KaLibraryModule, KlibInputModule<Config>>,
     public val platformLibraries: List<KaLibraryModule>,
     public val cinteropReexportLibrary: KaLibraryModule?,
-) {
+) : AutoCloseable {
     public val inputsToModules: Map<KlibInputModule<Config>, KaLibraryModule> = modulesToInputs.map { it.value to it.key }.toMap()
     public val mainModules: List<KaLibraryModule> = modulesToInputs.keys.toList()
 
@@ -37,6 +44,17 @@ public class KaModules<Config> internal constructor(
 
     public fun configFor(module: KaLibraryModule): Config =
         inputModuleFor(module)?.config ?: error("No config for module ${module.libraryName}")
+
+    public override fun close() {
+        val application = getApplication()
+        if (application.isWriteAccessAllowed) {
+            dispose(projectDisposable)
+        } else {
+            application.runWriteAction {
+                dispose(projectDisposable)
+            }
+        }
+    }
 }
 
 public fun <Config> createKaModulesForStandaloneAnalysis(
@@ -45,11 +63,13 @@ public fun <Config> createKaModulesForStandaloneAnalysis(
     platformLibraries: Collection<KlibInputModule<Config>> = emptyList(),
     cinteropReexportLibrary: KlibInputModule<Config>? = null,
 ): KaModules<Config> {
+    val projectDisposable = Disposer.newDisposable("KaModules.project")
     lateinit var binaryModules: Map<KaLibraryModule, KlibInputModule<Config>>
     lateinit var fakeSourceModule: KaSourceModule
     var platformLibraryModules: List<KaLibraryModule> = emptyList()
     var cinteropReexportLibraryModule: KaLibraryModule? = null
-    buildStandaloneAnalysisAPISession {
+
+    buildStandaloneAnalysisAPISession(projectDisposable) {
         buildKtModuleProvider {
             platform = targetPlatform
             binaryModules = inputs.associateBy { inputModuleIntoKaLibraryModule(it, targetPlatform) }
@@ -67,7 +87,7 @@ public fun <Config> createKaModulesForStandaloneAnalysis(
             )
         }
     }
-    return KaModules(fakeSourceModule, binaryModules, platformLibraryModules, cinteropReexportLibraryModule)
+    return KaModules(projectDisposable, fakeSourceModule, binaryModules, platformLibraryModules, cinteropReexportLibraryModule)
 }
 
 private fun <Config> KaModuleContainerBuilder.inputModuleIntoKaLibraryModule(
