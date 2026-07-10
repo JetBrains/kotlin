@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test.blackbox
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.test.model.GroupingTestIsolator
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator.BatchToken.Custom
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.util.parseLanguageFeature
 
 class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     override val directiveContainers: List<DirectivesContainer>
@@ -79,7 +79,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         if (moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].any {
                 // Avoid batch-grouping path in presence of `testOnly` language features, since WasmFirstStageInvoker uses 1st stage CLI compiler
                 // which does not accept testOnly language features, see `LanguageSettingsParser.parseLanguageFeature`
-                LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly
+                it.parseLanguageFeature().first.testOnly
             }
         ) return BatchToken.Isolated
 
