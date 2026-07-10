@@ -947,7 +947,11 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     fun testBrowserNullPrint(gradleVersion: GradleVersion) {
         project("kt-63230", gradleVersion) {
             build("check", "-Pkotlin.tests.individualTaskReports=true") {
-                assertTestResults(projectPath.resolve("TEST-wasm.xml"), "wasmJsBrowserTest")
+                assertTestResults(
+                    projectPath.resolve("TEST-wasm.xml"),
+                    "wasmJsBrowserTest",
+                    stripBrowserVersionInfoFromTestCaseNames = true,
+                )
             }
         }
     }
