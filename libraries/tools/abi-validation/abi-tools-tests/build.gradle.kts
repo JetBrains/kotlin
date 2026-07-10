@@ -40,6 +40,7 @@ configurations.getByName("testEmbeddableImplementation").extendsFrom(configurati
 dependencies {
     // common dependencies for all tests
     testImplementation(kotlinStdlib())
+    testImplementation(kotlinTest("junit5"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

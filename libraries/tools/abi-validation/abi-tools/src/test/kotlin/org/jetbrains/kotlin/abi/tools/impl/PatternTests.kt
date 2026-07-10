@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.abi.tools.impl
 
 import org.jetbrains.kotlin.abi.tools.impl.filtering.wildcardsToRegex
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class PatternTests {
     @Test

@@ -3,8 +3,8 @@ package org.jetbrains.kotlin.abi.tools.impl
 import org.jetbrains.kotlin.abi.tools.impl.naming.jvmInternalToCanonical
 import org.jetbrains.kotlin.abi.tools.impl.naming.jvmTypeDescToCanonical
 import org.jetbrains.kotlin.abi.tools.impl.naming.metadataNameToQualified
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class NamingTests {
     @Test

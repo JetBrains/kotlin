@@ -5,8 +5,8 @@
 
 package org.jetbrains.abi.tools.test.api
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 internal object Assertions {
     fun assertThat(text: String): Asserter {
@@ -16,7 +16,7 @@ internal object Assertions {
 
 internal class Asserter(val value: String) {
     fun contains(other: String): Asserter {
-        assertTrue(value.contains(other))
+        assertContains(value, other)
         return this
     }
 

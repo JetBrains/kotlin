@@ -28,6 +28,7 @@ dependencies {
     testImplementation(gradleTestKit())
     testImplementation(project(":kotlin-compiler-embeddable"))
 
+    testImplementation(kotlinTest("junit5"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testImplementation(kotlinStdlib())
