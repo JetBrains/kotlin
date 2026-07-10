@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeMismatch
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
@@ -284,15 +286,15 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             // Make sure the current class is really a builder of the containing parent
             if (builderName != containingClassBuilderName) continue
 
+            val typeParametersMapping =
+                declaration.extractTypeParametersMapping(newContainingDeclarationSymbol = builderSymbol, existingDeclaration = true)
+            val substitutor = substitutorByMap(typeParametersMapping.entries.associate { it.key.symbol to it.value.toConeType() }, session)
+
             if (builderSymbolAlreadyExists && builderFir is FirJavaClass) {
                 // For already existing explicit builders, initialize and populate type parameters to link generated functions with them.
-                // Unfortunately, we can't do it on nested classes generation step because scope are being traversed recursively (that would lead to StackOverflow)
+                // Unfortunately, we can't do it on the nested classes generation step because scope is being traversed recursively (that would lead to StackOverflow)
                 // For Lombok-generated builders, createEmptyBuilderClass already sets up the correct mapping
-                val typeParametersMapping =
-                    declaration.initializeTypeParametersMapping(newContainingDeclarationSymbol = builderSymbol, existingDeclaration = true)
-                for ([key, value] in typeParametersMapping) {
-                    builderFir.classJavaTypeParameterStack.addParameter(key, value.symbol)
-                }
+                builderFir.classJavaTypeParameterStack.populateTypeParametersMapping(typeParametersMapping)
             }
 
             generatedFunctions.addSpecialBuilderMethods(
@@ -345,7 +347,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             owner = builderSymbol,
                             key = BuilderGeneratorKey(BuilderDeclarationType.Field),
                             name = it,
-                            returnType = item.returnTypeRef.coneType,
+                            returnType = substitutor.substituteOrSelf(item.returnTypeRef.coneType),
                             isVal = false,
                         ) {
                             modality = Modality.FINAL
@@ -359,6 +361,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         generatedFunctions.addSetterMethod(
                             builder,
                             item,
+                            substitutor,
                             builderSymbol = builderSymbol,
                             existingFunctionNames = existingFunctionNames
                         )
@@ -429,7 +432,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 addIfNonClashing(Name.identifier(builder.builderMethodName), existingFunctionNames) { name ->
                     if (containingClassSymbol.hasJavaOrigin) {
                         val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
-                        val methodTypeParameters = builderDeclaration.initializeTypeParametersMapping(methodSymbol).values
+                        val methodTypeParameters =
+                            builderDeclaration.extractTypeParametersMapping(methodSymbol, existingDeclaration = false).values
 
                         entitySymbol.createJavaMethod(
                             name,
@@ -443,6 +447,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             methodTypeParameters = methodTypeParameters,
                         ).symbol
                     } else {
+                        val builderTypeParameters = when (builderDeclaration) {
+                            is FirClass -> builderDeclaration.typeParameters
+                            is FirConstructor -> builderDeclaration.typeParameters
+                            is FirNamedFunction -> builderDeclaration.typeParameters
+                            else -> emptyList() // Use the fallback just in case, although it's normally unreachable
+                        }
+
                         createMemberFunction(
                             owner = containingClassSymbol,
                             key = BuilderGeneratorKey(BuilderDeclarationType.Builder),
@@ -452,6 +463,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             },
                             config = {
                                 this.visibility = visibility
+                                builderTypeParameters.forEach { typeParameter ->
+                                    val typeParameterSymbol = typeParameter.symbol
+                                    typeParameter(typeParameterSymbol.name, typeParameterSymbol.variance) {
+                                        typeParameterSymbol.resolvedBounds.forEach { bound(it.coneType) }
+                                    }
+                                }
                             }
                         ).apply {
                             if (isStaticBuilderFunction) {
@@ -581,6 +598,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     private fun MutableMap<Name, FirNamedFunctionSymbol>.addSetterMethod(
         builder: AbstractBuilder,
         item: FirVariable,
+        substitutor: ConeSubstitutor,
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
     ) {
@@ -607,7 +625,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 ) {
                     valueParameter(
                         name = fieldName,
-                        type = item.returnTypeRef.coneType,
+                        type = substitutor.substituteOrSelf(item.returnTypeRef.coneType),
                     )
                     modality = Modality.OPEN
                     visibility = builder.visibility
@@ -746,6 +764,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderSymbol = FirRegularClassSymbol(classId)
         val effectiveVisibility: EffectiveVisibility
 
+        val typeParametersMapping = builderDeclaration.extractTypeParametersMapping(builderSymbol, existingDeclaration = false)
+
         val builderBuilder = if (hasJavaOrigin) {
             effectiveVisibility = containingClass.effectiveVisibility.lowerBound(
                 visibility.toEffectiveVisibility(this@createEmptyBuilderClass, forClass = true),
@@ -756,14 +776,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 containingClassSymbol = containingClass
                 isFromSource = true
 
-                val typeParametersMapping = builderDeclaration.initializeTypeParametersMapping(builderSymbol)
-                typeParametersMapping.mapTo(typeParameters) { it.value }
                 // Remap Java type parameters from the containing declaration to the newly created type parameters to make the Java resolve work.
                 // Don't care about outer type parameters because builder classes are always static (nested).
                 javaTypeParameterStack = MutableJavaTypeParameterStack().apply {
-                    for ([key, value] in typeParametersMapping) {
-                        addParameter(key, value.symbol)
-                    }
+                    populateTypeParametersMapping(typeParametersMapping)
                 }
 
                 scopeProvider = JavaScopeProvider
@@ -798,8 +814,18 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 isFun = classKind == ClassKind.INTERFACE
             }
 
+            typeParametersMapping.mapTo(typeParameters) { it.value }
+
             completeBuilder(this@createEmptyBuilderClass, builderSymbol, builder)
         }.build()
+    }
+
+    private fun MutableJavaTypeParameterStack.populateTypeParametersMapping(
+        extractedTypeParameters: Map<FirTypeParameter, FirTypeParameter>
+    ) {
+        for ([oldTypeParameter, newTypeParameter] in extractedTypeParameters) {
+            addParameter((oldTypeParameter as FirJavaTypeParameter).javaTypeParameter, newTypeParameter.symbol)
+        }
     }
 
     /**
@@ -889,10 +915,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * @return a map used for remapping type parameters on a Java stack
      */
     @OptIn(SymbolInternals::class)
-    private fun FirDeclaration.initializeTypeParametersMapping(
+    private fun FirDeclaration.extractTypeParametersMapping(
         newContainingDeclarationSymbol: FirBasedSymbol<*>,
-        existingDeclaration: Boolean = false,
-    ): Map<JavaTypeParameter, FirTypeParameter> {
+        existingDeclaration: Boolean,
+    ): Map<FirTypeParameter, FirTypeParameter> {
         val typeParameters: List<FirTypeParameter> = when (this) {
             is FirClass -> typeParameters.map { it.symbol.fir }
             is FirConstructor -> typeParameters.map { it.symbol.fir }
@@ -900,11 +926,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             else -> emptyList() // Use the fallback just in case, although it's normally unreachable
         }
         return buildMap {
-            for ([index, typeParameter] in typeParameters.withIndex()) {
-                // Normally it's always `FirJavaTypeParameter` but check just in case to avoid potential exceptions.
-                if (typeParameter !is FirJavaTypeParameter) continue
-
-                this[typeParameter.javaTypeParameter] = runIf(existingDeclaration) {
+            typeParameters.forEachIndexed { index, typeParameter ->
+                this[typeParameter] = runIf(existingDeclaration) {
                     newContainingDeclarationSymbol.typeParameterSymbols?.getOrNull(index)?.fir
                 } ?: buildTypeParameterCopy(typeParameter.symbol.fir) {
                     symbol = FirTypeParameterSymbol()
@@ -973,4 +996,3 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
 fun JavaType.makeNullable(): JavaType = withAnnotations(annotations + NullabilityJavaAnnotation.Nullable)
 fun JavaType.makeNotNullable(): JavaType = withAnnotations(annotations + NullabilityJavaAnnotation.NotNull)
-
