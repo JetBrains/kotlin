@@ -9,13 +9,38 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.Serializable
 import kotlin.io.encoding.Base64
 
+@JvmInline
+value class LightIrTypeArguments(val arguments: Map<Int, LightIrType>) : Serializable {
+    fun reify(otherArguments: LightIrTypeArguments): LightIrTypeArguments {
+        return LightIrTypeArguments(arguments.mapValues { it.value.reify(otherArguments) })
+    }
+
+    fun encode(): String {
+        val bytes = java.io.ByteArrayOutputStream().use { bos ->
+            java.io.ObjectOutputStream(bos).use { it.writeObject(this.arguments) }
+            bos.toByteArray()
+        }
+        return Base64.encode(bytes)
+    }
+
+    companion object {
+        fun decode(s: String): LightIrTypeArguments {
+            val bytes = Base64.decode(s)
+            val arguments = java.io.ObjectInputStream(java.io.ByteArrayInputStream(bytes))
+                .use { @Suppress("UNCHECKED_CAST") (it.readObject() as Map<Int, LightIrType>) }
+            return LightIrTypeArguments(arguments)
+        }
+    }
+}
+
 data class LightIrType(
-    val classifier: Classifier,
-    val arguments: List<TypeArgument>,
     val nullable: Boolean,
     val asmTypeInternalName: String,
     val unreified: LightIrType?,
 ) : Serializable {
+    lateinit var classifier: Classifier
+    lateinit var arguments: List<TypeArgument>
+
     val asmTypeDesc: String
         get() = when {
             asmTypeInternalName.startsWith("[") -> asmTypeInternalName
@@ -60,7 +85,21 @@ data class LightIrType(
         }
     }
 
-    data class InlineAbi(val unboxedDesc: String, val nullableIsBoxed: Boolean) : Serializable
+    data class InlineAbi(
+        val unboxedDesc: String,
+        val nullableIsBoxed: Boolean,
+        val replacements: List<Replacement>,
+    ) : Serializable {
+        data class Replacement(
+            val isInterface: Boolean,
+            val repName: String,
+            val repDesc: String,
+            val origName: String,
+            val origDesc: String,
+            val changedParameters: List<Pair<Int, LightIrType>>,
+            val changedReturnType: LightIrType?,
+        ) : Serializable
+    }
 
     sealed interface TypeArgument : Serializable {
         class StarProjection : TypeArgument
@@ -72,23 +111,28 @@ data class LightIrType(
         }
     }
 
-    fun markNullable(): LightIrType = copy(nullable = true)
+    fun markNullable(): LightIrType =
+        copy(nullable = true).also { it.classifier = classifier; it.arguments = arguments }
+
+    private fun markUnreified(unreified: LightIrType): LightIrType =
+        copy(unreified = unreified).also { it.classifier = classifier; it.arguments = arguments }
 
     fun reify(reificationArgument: ReificationArgument): LightIrType {
         var arrayWrapped = this
         repeat(reificationArgument.arrayDepth) {
             arrayWrapped = LightIrType(
-                Classifier.Clazz(
+                false,
+                "[" + arrayWrapped.asmTypeDesc,
+                null,
+            ).apply {
+                classifier = Classifier.Clazz(
                     "kotlin/Array",
                     null,
                     // TODO: is this actually correct?
                     ClassInstance.ConstClass("[" + arrayWrapped.asmTypeDesc),
-                ),
-                listOf(TypeArgument.TypeProjection(arrayWrapped.markNullable(), TypeArgument.VARIANCE_INV)),
-                false,
-                "[" + arrayWrapped.asmTypeDesc,
-                null,
-            )
+                )
+                arguments = listOf(TypeArgument.TypeProjection(arrayWrapped.markNullable(), TypeArgument.VARIANCE_INV))
+            }
         }
         return if (reificationArgument.nullable && !arrayWrapped.nullable) {
             arrayWrapped.markNullable()
@@ -97,20 +141,12 @@ data class LightIrType(
         }
     }
 
-    fun encode(): String {
-        val bytes = java.io.ByteArrayOutputStream().use { bos ->
-            java.io.ObjectOutputStream(bos).use { it.writeObject(this) }
-            bos.toByteArray()
-        }
-        return Base64.encode(bytes)
-    }
-
-    fun reify(mapping: Map<Int, LightIrType>): LightIrType {
-        when (classifier) {
+    fun reify(mapping: LightIrTypeArguments): LightIrType {
+        when (val classifier = this.classifier) {
             is Classifier.TypeParameter -> {
-                mapping[classifier.index]
+                mapping.arguments[classifier.index]
                     ?.let { if (nullable && !it.nullable) it.markNullable() else it }
-                    ?.let { if (!classifier.isReified) it.copy(unreified = this) else it }
+                    ?.let { if (!classifier.isReified) it.markUnreified(this) else it }
                     ?.also { return it }
                 return this
             }
@@ -130,9 +166,11 @@ data class LightIrType(
                 }
 
                 return copy(
-                    arguments = reifiedArgs,
                     asmTypeInternalName = reifiedAsmTypeInternalName ?: asmTypeInternalName,
-                )
+                ).also {
+                    it.classifier = classifier
+                    it.arguments = reifiedArgs
+                }
             }
         }
     }
@@ -162,29 +200,6 @@ data class LightIrType(
         }
 
         return null
-    }
-
-    companion object {
-        fun decode(s: String): LightIrType {
-            val bytes = Base64.decode(s)
-            return java.io.ObjectInputStream(java.io.ByteArrayInputStream(bytes)).use { it.readObject() as LightIrType }
-        }
-
-        fun decodeTypeParameters(str: String): Map<Int, LightIrType> {
-            val map = HashMap<Int, LightIrType>()
-            for (line in str.lines()) {
-                if (line.isEmpty()) continue
-                val eqIdx = line.indexOf('=')
-                val key = line.substring(0, eqIdx).toInt()
-                val value = line.substring(eqIdx + 1)
-                map[key] = decode(value)
-            }
-            return map
-        }
-
-        fun encodeTypeParameters(map: Map<Int, LightIrType>): String {
-            return map.entries.joinToString("\n") { [k, v] -> "$k=${v.encode()}" }
-        }
     }
 }
 

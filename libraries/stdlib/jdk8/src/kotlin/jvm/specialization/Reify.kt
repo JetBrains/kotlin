@@ -6,6 +6,7 @@
 package kotlin.jvm.specialization
 
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrTypeArguments
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.processCatch
@@ -24,7 +25,7 @@ internal fun reify(
     methodNode: MethodNode,
     markerInsn: MethodInsnNode,
     typeParametersNames: List<String>,
-    specializedTypeParameters: Map<Int, LightIrType>
+    specializedTypeParameters: LightIrTypeArguments,
 ) {
     val instructions = methodNode.instructions
     val prev = markerInsn.previous ?: error("no previous instruction")
@@ -35,7 +36,7 @@ internal fun reify(
 
     val typeParameterIndex = typeParametersNames.indexOf(reificationArgument.parameterName).takeIf { it != -1 }
         ?: error("type parameter name not found in generic signature: ${reificationArgument.parameterName}")
-    val rawTypeParameterValue = specializedTypeParameters[typeParameterIndex]
+    val rawTypeParameterValue = specializedTypeParameters.arguments[typeParameterIndex]
         ?: error("reified type parameter must be specialized: ${reificationArgument.parameterName}")
     val typeParameterValue = rawTypeParameterValue.reify(reificationArgument)
 

@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.isJavaLangDeprecatedOnlyAddedByCompiler
+import org.jetbrains.kotlin.backend.jvm.mapping.LightIrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeParameter
 import org.jetbrains.kotlin.backend.jvm.mapping.specTypeParametersUsages
-import org.jetbrains.kotlin.backend.jvm.mapping.toLightIrType
 import org.jetbrains.kotlin.backend.jvm.originalOfSuspendForInline
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -184,7 +184,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             context.evaluatorData!!.capturedTypeParametersMapping,
             allReified = false,
             classCodegen.typeMapper::mapTypeParameter
-        ) { it.toLightIrType(context) }
+        ) { LightIrTypeMapper(classCodegen.context).mapType(it) }
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
             IrInlineIntrinsicsSupport(classCodegen, irFunction, irFunction.fileParent),

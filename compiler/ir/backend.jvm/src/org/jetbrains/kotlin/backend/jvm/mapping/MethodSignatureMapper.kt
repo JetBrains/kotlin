@@ -192,7 +192,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         function is IrConstructor || (function.returnType.isUnit() && !function.isGetter)
 
     // See also: KotlinTypeMapper.forceBoxedReturnType
-    private fun forceBoxedReturnType(function: IrFunction): Boolean =
+    fun forceBoxedReturnType(function: IrFunction): Boolean =
         (function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && function.returnType.isInlineClassType()) ||
                 isBoxMethodForInlineClass(function) ||
                 forceFoxedReturnTypeOnOverride(function) ||

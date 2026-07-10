@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.codegen.optimization.specialization
 import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrTypeArguments
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecTypeParametersUsages
-import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecializedTypeAbi
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.InsnList
@@ -38,18 +38,37 @@ class AdjustSpecializedCallsMethodTransformer : MethodTransformer() {
             adjustSpecializedCall(node.instructions, specCall)
         }
 
+        for ([i, specInterfaceCall] in interpreter.specializedInterfaceCalls.values.withIndex()) {
+            val receiverTypeParameterUsage = specInterfaceCall.receiverArg.insn.name.substring("specializedReceiverMarker".length)
+            for (arg in specInterfaceCall.arguments) {
+                val prefix = "specializedMethodCallArgumentMarker"
+                val defaultPrefix = "$prefix-1$"
+                require(arg.insn.name.startsWith(defaultPrefix))
+                arg.insn.name = "${prefix}$i$${arg.insn.name.substring(defaultPrefix.length)}"
+            }
+            node.instructions.insertBefore(
+                specInterfaceCall.insn, MethodInsnNode(
+                    Opcodes.INVOKESTATIC,
+                    "kotlin/jvm/internal/Intrinsics",
+                    "specializedInterfaceCall$i$$receiverTypeParameterUsage",
+                    "()V",
+                    false,
+                )
+            )
+        }
+
         node.instructions.removeAll { it is MethodInsnNode && it.isSpecializedArgumentMarker }
     }
 }
 
 private fun adjustSpecializedCall(instructions: InsnList, specCall: SpecializedCall) {
     val specTypeParametersUsages = SpecTypeParametersUsages.decode(specCall.insn.bsmArgs[2] as String)
-    val specializedTypeParameters = LightIrType.decodeTypeParameters(specCall.insn.bsmArgs[3] as String)
+    val specializedTypeArguments = LightIrTypeArguments.decode(specCall.insn.bsmArgs[3] as String)
     var newReturnType = Type.getReturnType(specCall.insn.desc)
     val newDescArgs = Type.getArgumentTypes(specCall.insn.desc)
 
     for ([argI, typeParameterUsage] in specTypeParametersUsages.parameterGenericIndices) {
-        val typeParameter = typeParameterUsage.adjustType(specializedTypeParameters) ?: continue
+        val typeParameter = typeParameterUsage.adjustType(specializedTypeArguments) ?: continue
         when (val classifier = typeParameter.classifier) {
             is LightIrType.Classifier.Clazz -> {
                 val abi = typeParameter.specializedAbi() ?: continue
@@ -80,7 +99,7 @@ private fun adjustSpecializedCall(instructions: InsnList, specCall: SpecializedC
         }
     }
 
-    specTypeParametersUsages.returnType?.adjustType(specializedTypeParameters)?.let { typeParameter ->
+    specTypeParametersUsages.returnType?.adjustType(specializedTypeArguments)?.let { typeParameter ->
         when (val classifier = typeParameter.classifier) {
             is LightIrType.Classifier.Clazz -> {
                 typeParameter.specializedAbi()?.also { abi ->

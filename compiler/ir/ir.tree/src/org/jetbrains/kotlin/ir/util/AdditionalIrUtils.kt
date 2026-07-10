@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrLazilyBoundAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.IrReturn
@@ -440,6 +441,9 @@ val IrFunction.isJvmSpecialized: Boolean
 
 val IrType.isJvmSpecializedGeneric: Boolean
     get() = (this.classifierOrNull as? IrTypeParameterSymbol)?.owner?.isJvmSpecialized ?: false
+
+val IrFunctionAccessExpression.isJvmSpecializedInterfaceCall: Boolean
+    get() = symbol.owner.hasInterfaceParent() && dispatchReceiver?.type?.isJvmSpecializedGeneric == true
 
 val IrType.genericTypeParameterIndex: Int?
     get() = (this.classifierOrNull as? IrTypeParameterSymbol)?.owner?.index

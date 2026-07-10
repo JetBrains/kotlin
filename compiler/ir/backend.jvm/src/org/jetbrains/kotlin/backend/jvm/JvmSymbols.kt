@@ -715,11 +715,11 @@ class JvmSymbols(
         }.symbol
 
     /**
-     * fun <T> `<jvm-box-marker>`(value: T): T
+     * fun <T> `<jvm-$debugName-marker>`(value: T): T
      */
-    val jvmBoxMarkerIntrinsic: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
-            name = Name.special("<jvm-box-marker>")
+    private fun jvmSpecializationMarker(debugName: String): IrSimpleFunctionSymbol {
+        return irFactory.buildFun {
+            name = Name.special("<jvm-$debugName-marker>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
             parent = kotlinJvmInternalPackage
@@ -727,32 +727,25 @@ class JvmSymbols(
             addValueParameter("value", t.defaultType)
             returnType = t.defaultType
         }.symbol
+    }
+
+    val jvmBoxMarkerIntrinsic: IrSimpleFunctionSymbol = jvmSpecializationMarker("box")
+    val jvmUnboxMarkerIntrinsic: IrSimpleFunctionSymbol = jvmSpecializationMarker("unbox")
+    val jvmSpecializedArgumentMarker: IrSimpleFunctionSymbol = jvmSpecializationMarker("specialized-argument")
+    val jvmSpecializedReceiverMarker: IrSimpleFunctionSymbol = jvmSpecializationMarker("specialized-receiver")
 
     /**
-     * fun <T> `<jvm-unbox-marker>`(value: T): T
+     * fun <T> `<jvm-specialized-method-call-argument-marker>`(value: T, i: Int): T
      */
-    val jvmUnboxMarkerIntrinsic: IrSimpleFunctionSymbol =
+    val jvmSpecializedMethodCallArgumentMarker: IrSimpleFunctionSymbol =
         irFactory.buildFun {
-            name = Name.special("<jvm-unbox-marker>")
+            name = Name.special("<jvm-specialized-method-call-argument-marker>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
             parent = kotlinJvmInternalPackage
             val t = addTypeParameter("T", irBuiltIns.anyNType)
             addValueParameter("value", t.defaultType)
-            returnType = t.defaultType
-        }.symbol
-
-    /**
-     * fun <T> `<jvm-specialized-argument-marker>`(value: T): T
-     */
-    val jvmMaybeUnboxMarkerIntrinsic: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
-            name = Name.special("<jvm-specialized-argument-marker>")
-            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
-        }.apply {
-            parent = kotlinJvmInternalPackage
-            val t = addTypeParameter("T", irBuiltIns.anyNType)
-            addValueParameter("value", t.defaultType)
+            addValueParameter("i", irBuiltIns.intType)
             returnType = t.defaultType
         }.symbol
 

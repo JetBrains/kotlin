@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrTypeArguments
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReificationArgument
@@ -137,7 +138,7 @@ class ReifiedTypeInliner(
         maxStackSize = 0
         maxLocals = 0
         val result = ReifiedTypeParametersUsages()
-        var toLightIrTypeMapping: Map<Int, LightIrType>? = null
+        var toLightIrTypeMapping: LightIrTypeArguments? = null
         for (insn in node.instructions.toArray()) {
             if (isOperationReifiedMarker(insn)) {
                 val newNames = processReifyMarker(insn as MethodInsnNode, node)
@@ -146,12 +147,11 @@ class ReifiedTypeInliner(
                 }
             } else if (insn is InvokeDynamicInsnNode && insn.isBootstrapSpecializedCall) {
                 if (toLightIrTypeMapping == null) {
-                    toLightIrTypeMapping =
-                        parametersMapping?.values.orEmpty().associate { it.index to parametersMapping!!.mapTypeToLightIrType(it.type)!! }
+                    toLightIrTypeMapping = LightIrTypeArguments(
+                        parametersMapping?.values.orEmpty().associate { it.index to parametersMapping!!.mapTypeToLightIrType(it.type)!! })
                 }
-                val specializedTypeParameters =
-                    LightIrType.decodeTypeParameters(insn.bsmArgs[3] as String).mapValues { it.value.reify(toLightIrTypeMapping) }
-                insn.bsmArgs = insn.bsmArgs.copyOf().apply { this[3] = LightIrType.encodeTypeParameters(specializedTypeParameters) }
+                val specializedTypeArguments = LightIrTypeArguments.decode(insn.bsmArgs[3] as String).reify(toLightIrTypeMapping)
+                insn.bsmArgs = insn.bsmArgs.copyOf().apply { this[3] = specializedTypeArguments.encode() }
             }
         }
 

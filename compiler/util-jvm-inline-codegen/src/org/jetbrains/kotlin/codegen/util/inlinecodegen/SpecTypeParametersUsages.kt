@@ -12,8 +12,8 @@ data class SpecTypeParametersUsages(
     val isNotEmpty: Boolean get() = parameterGenericIndices.isNotEmpty() || returnType != null
 
     data class Usage(val genericIndex: Int, val nullable: Boolean) {
-        fun adjustType(typeParameters: Map<Int, LightIrType>): LightIrType? {
-            val type = typeParameters[genericIndex] ?: return null
+        fun adjustType(typeArguments: LightIrTypeArguments): LightIrType? {
+            val type = typeArguments.arguments[genericIndex] ?: return null
             if (nullable) return type.markNullable()
             return type
         }

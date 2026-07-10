@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.kClassReference
 import org.jetbrains.kotlin.backend.jvm.mapping.specTypeParametersUsages
-import org.jetbrains.kotlin.backend.jvm.mapping.toLightIrType
+import org.jetbrains.kotlin.backend.jvm.mapping.LightIrTypeMapper
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrTypeArguments
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irRawFunctionReference
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irSet
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isJvmSpecialized
 import org.jetbrains.kotlin.ir.util.isJvmSpecializedGeneric
+import org.jetbrains.kotlin.ir.util.isJvmSpecializedInterfaceCall
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -139,9 +142,29 @@ class JvmSpecializationLowering(val backendContext: JvmBackendContext) :
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
-        if (expression.symbol.owner.isJvmSpecialized) {
+        val callee = expression.symbol.owner
+
+        // Call to an interface method on a specialized value
+        if (expression.isJvmSpecializedInterfaceCall) {
+            val irBuilder = irBuilder(expression)
+            expression.dispatchReceiver = irBuilder.wrapExprInSpecializedReceiverMarker(
+                irBuilder.wrapExprInUnboxMarker(
+                    expression.dispatchReceiver!!,
+                    expression.dispatchReceiver!!.type
+                ),
+            )
+            for ([i, arg] in expression.arguments.withIndex()) {
+                if (callee.parameters[i].kind != IrParameterKind.DispatchReceiver && arg != null) {
+                    expression.arguments[i] = irBuilder.wrapExprInSpecializedMethodCallArgument(arg, i)
+                }
+            }
+        }
+
+        // Replace call to a specialized function with a jvm-indy intrinsic
+        if (callee.isJvmSpecialized) {
             return transformSpecializedCall(expression)
         }
+
         return expression
     }
 
@@ -161,27 +184,48 @@ class JvmSpecializationLowering(val backendContext: JvmBackendContext) :
         }
     }
 
+    private fun JvmIrBuilder.wrapExprInSpecializedArgumentMarker(expr: IrExpression): IrExpression {
+        return irCall(backendContext.symbols.jvmSpecializedArgumentMarker, expr.type).apply {
+            typeArguments[0] = expr.type
+            arguments[0] = expr
+        }
+    }
+
+    private fun JvmIrBuilder.wrapExprInSpecializedReceiverMarker(expr: IrExpression): IrExpression {
+        return irCall(backendContext.symbols.jvmSpecializedReceiverMarker, expr.type).apply {
+            typeArguments[0] = expr.type
+            arguments[0] = expr
+        }
+    }
+
+    private fun JvmIrBuilder.wrapExprInSpecializedMethodCallArgument(expr: IrExpression, i: Int): IrExpression {
+        return irCall(backendContext.symbols.jvmSpecializedMethodCallArgumentMarker, expr.type).apply {
+            typeArguments[0] = expr.type
+            arguments[0] = expr
+            arguments[1] = irInt(i, context.irBuiltIns.intType)
+        }
+    }
+
     private fun transformSpecializedCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitExpression(expression: IrExpression): IrExpression {
-                val irBuilder = irBuilder(expression)
-                return irBuilder.irCall(backendContext.symbols.jvmMaybeUnboxMarkerIntrinsic, expression.type).apply {
-                    typeArguments[0] = expression.type
-                    arguments[0] = expression
-                }
+                return irBuilder(expression).wrapExprInSpecializedArgumentMarker(expression)
             }
         })
 
+        val lightIrTypeMapper = LightIrTypeMapper(backendContext)
+
         fun mapTypeArgument(typeArgument: IrType?): LightIrType {
             if (typeArgument == null) error("specialized type is null in ${expression.render()}")
-            return typeArgument.toLightIrType(backendContext) ?: error("could not convert to light type: ${typeArgument.render()}")
+            return lightIrTypeMapper.mapType(typeArgument) ?: error("could not convert to light type: ${typeArgument.render()}")
         }
 
         val callee = expression.symbol.owner
 
         val typeParametersStr = (callee.typeParameters zip expression.typeArguments)
             .filter { [param, _] -> param.isJvmSpecialized }
-            .joinToString("\n") { [param, arg] -> "${param.index}=${mapTypeArgument(arg).encode()}" }
+            .associate { [param, arg] -> param.index to mapTypeArgument(arg) }
+            .let { LightIrTypeArguments(it).encode() }
 
         val irBuilder = irBuilder(expression)
 
@@ -194,7 +238,7 @@ class JvmSpecializationLowering(val backendContext: JvmBackendContext) :
             },
             // specTypeParametersUsagesStr
             irBuilder.irString(callee.specTypeParametersUsages().encode()),
-            // specializedTypeParametersStr
+            // specializedTypeArgumentsStr
             irBuilder.irString(typeParametersStr),
         )
 

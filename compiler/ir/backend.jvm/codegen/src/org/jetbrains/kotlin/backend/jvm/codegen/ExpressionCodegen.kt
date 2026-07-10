@@ -1588,7 +1588,9 @@ class ExpressionCodegen(
                 it.symbol to (element.typeArguments[it.index] ?: it.defaultType)
             }
 
-        val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter) { it.toLightIrType(context) }
+        val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter) {
+            LightIrTypeMapper(classCodegen.context).mapType(it)
+        }
         val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data, context.evaluatorData)
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,

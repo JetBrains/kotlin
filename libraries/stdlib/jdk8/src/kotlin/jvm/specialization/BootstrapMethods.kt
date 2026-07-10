@@ -5,8 +5,10 @@
 
 package kotlin.jvm.specialization
 
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.InlineClass
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.JvmSpecializeMetadataValue
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrTypeArguments
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecTypeParametersUsages
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecializedTypeAbi
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.extractJvmSpecializeMetadataValue
@@ -36,7 +38,7 @@ public object BootstrapMethods {
      * @param genericImplClass The class that contains the generic implementation of the specialized method
      * @param genericImplMethodType The method type of the generic implementation of the specialized method
      * @param specTypeParametersUsagesStr TODO
-     * @param specializedTypeParametersStr TODO
+     * @param specializedTypeArgumentsStr TODO
      */
     @JvmStatic
     public fun bootstrapSpecializedGeneric(
@@ -46,14 +48,14 @@ public object BootstrapMethods {
         genericImplClass: Class<*>,
         genericImplMethodType: MethodType,
         specTypeParametersUsagesStr: String, // needed for nested calls to avoid expensive reflection
-        specializedTypeParametersStr: String,
+        specializedTypeArgumentsStr: String,
     ): CallSite {
         val genericImplDesc = genericImplMethodType.toMethodDescriptorString()
 
         val cacheEntryName =
             System.identityHashCode(lookup.lookupClass().classLoader).toString() + "#" + // Lookup class loader
                     genericImplClass.name + "." + methodName + ":" + genericImplDesc + "#" + // Generic method
-                    specializedTypeParametersStr // Type parameters
+                    specializedTypeArgumentsStr // Type arguments
 
         cache[cacheEntryName]?.let { return ConstantCallSite(it) }
 
@@ -87,13 +89,15 @@ public object BootstrapMethods {
         peeholeAdapt(
             specializedMethodNode,
             specializedMethodType.parameterArray(),
-            LightIrType.decodeTypeParameters(specializedTypeParametersStr),
+            LightIrTypeArguments.decode(specializedTypeArgumentsStr),
             metadata,
         )
 
-        val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS).apply { specializedClassNode.accept(this) }
+        if (System.getenv("SPEC_DUMP_CLASS_NO_PARSED") != null) dumpClass(specializedClassNode)
+        val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS)
+        specializedClassNode.accept(classWriter)
         val bytecode = classWriter.toByteArray()
-        if (System.getenv("SPEC_DUMP_CLASS") != null) dumpClass(bytecode)
+        if (System.getenv("SPEC_DUMP_CLASS_PARSED") != null) dumpClass(bytecode)
 
         val implHandle = defineClass(bytecode, specializedMethodType, lookup)
         cache[cacheEntryName] = implHandle
@@ -170,6 +174,11 @@ private fun dumpClass(bytecode: ByteArray) {
     classReader.accept(TraceClassVisitor(PrintWriter(System.out)), 0)
 }
 
+private fun dumpClass(classNode: ClassNode) {
+    println("Dumping class (no parsing)")
+    classNode.accept(TraceClassVisitor(PrintWriter(System.out)))
+}
+
 private val Class<*>.width: Int
     get() = when (this) {
         Long::class.javaPrimitiveType, Double::class.javaPrimitiveType -> 2
@@ -178,14 +187,14 @@ private val Class<*>.width: Int
 
 private fun adaptLVT(
     methodNode: MethodNode,
-    typeParameters: Map<Int, LightIrType>,
+    typeArguments: LightIrTypeArguments,
     metadata: JvmSpecializeMetadataValue,
     widenedSlots: WidenedSlots,
 ) {
     methodNode.localVariables.forEach { it.index = widenedSlots.adjustIndex(it.index) }
     for (specLVTEntry in metadata.specLVT) {
         specLVTEntry.typeParameterUsage
-            .adjustType(typeParameters)
+            .adjustType(typeArguments)
             ?.specializedAbi()
             ?.also { methodNode.localVariables[specLVTEntry.lvtEntryIndex].desc = it.reprDesc }
     }
@@ -194,7 +203,7 @@ private fun adaptLVT(
 private fun peeholeAdapt(
     methodNode: MethodNode,
     specializedArgumentsTypes: Array<Class<*>>,
-    typeParameters: Map<Int, LightIrType>,
+    typeArguments: LightIrTypeArguments,
     metadata: JvmSpecializeMetadataValue,
 ) {
     fun AbstractInsnNode.isIntrinsic(namePredicate: (String) -> Boolean): Boolean =
@@ -210,7 +219,16 @@ private fun peeholeAdapt(
     fun AbstractInsnNode.isUnboxMarker() = isIntrinsic { it.startsWith("unboxMarker") }
     fun AbstractInsnNode.isCoerce2NullableMarker() = isIntrinsic { it.startsWith("coerce2NullableMarker") }
     fun AbstractInsnNode.isCoerce2NonNullableMarker() = isIntrinsic { it.startsWith("coerce2NonNullableMarker") }
+    fun AbstractInsnNode.isSpecializedReceiverMarker() = isIntrinsic { it.startsWith("specializedReceiverMarker") }
+    fun AbstractInsnNode.isSpecializedMethodCallArgumentMarker() = isIntrinsic { it.startsWith("specializedMethodCallArgumentMarker") }
+    fun AbstractInsnNode.isSpecializedInterfaceCallMarker() = isIntrinsic { it.startsWith("specializedInterfaceCall") }
     fun AbstractInsnNode.isReifiedOperationMarker() = isIntrinsic { it == "reifiedOperationMarker" }
+
+    fun AbstractInsnNode.specializedInterfaceCallIndex() =
+        (this as MethodInsnNode).name.substring("specializedInterfaceCall".length).split('$')[0].toInt()
+
+    fun AbstractInsnNode.specializedInterfaceCallReceiverTypeUsage() =
+        SpecTypeParametersUsages.Usage.decode((this as MethodInsnNode).name.split('$')[1])
 
     // local variable index -> parameter index
     val varIxdToParamIdx = specializedArgumentsTypes
@@ -220,7 +238,7 @@ private fun peeholeAdapt(
         .associate { [i, offset] -> offset to i }
 
     val typeParametersAbi = buildMap {
-        for ([k, v] in typeParameters) {
+        for ([k, v] in typeArguments.arguments) {
             v.specializedAbi()?.also { put(k, it) }
         }
     }
@@ -228,7 +246,20 @@ private fun peeholeAdapt(
     val instructions = methodNode.instructions
     val widenedSlots = metadata.calcWidenedSlots(typeParametersAbi)
 
-    adaptLVT(methodNode, typeParameters, metadata, widenedSlots)
+    adaptLVT(methodNode, typeArguments, metadata, widenedSlots)
+
+    val specializedInterfaceCalls = mutableMapOf<Int, SpecializedInterfaceCallInfo>()
+    for (insn in instructions) {
+        if (!insn.isSpecializedInterfaceCallMarker()) continue
+        val receiverAbi = insn.specializedInterfaceCallReceiverTypeUsage().adjustType(typeArguments)?.specializedAbi() ?: continue
+        require(receiverAbi is InlineClass) { "specialized interface calls on non-inline-classes are not supported yet" }
+        val methodCall = insn.next as MethodInsnNode
+        require(methodCall.opcode == Opcodes.INVOKEINTERFACE) { "only interface calls may be specialized yet" }
+        val staticReplacement =
+            receiverAbi.inlineAbi.replacements.find { it.isInterface && it.origName == methodCall.name && it.origDesc == methodCall.desc }
+                ?: continue
+        specializedInterfaceCalls[insn.specializedInterfaceCallIndex()] = SpecializedInterfaceCallInfo(receiverAbi, staticReplacement)
+    }
 
     for (insn in instructions.toArray()) {
         when {
@@ -257,7 +288,7 @@ private fun peeholeAdapt(
                         val typeParameterUsage =
                             SpecTypeParametersUsages.Usage.decode((prev as MethodInsnNode).name.substring("specializedTypeMarker".length))
                         instructions.set(prev, InsnNode(Opcodes.NOP))
-                        typeParameterUsage.adjustType(typeParameters)
+                        typeParameterUsage.adjustType(typeArguments)
                             ?.specializedAbi()
                             ?.also { instructions.set(insn, VarInsnNode(insn.opcode - 4 + it.loadStoreReturnOpcodeOffset, insn.`var`)) }
                     }
@@ -265,7 +296,7 @@ private fun peeholeAdapt(
             }
 
             insn.opcode == Opcodes.ARETURN -> {
-                metadata.specTypeParametersUsages.returnType?.adjustType(typeParameters)
+                metadata.specTypeParametersUsages.returnType?.adjustType(typeArguments)
                     ?.specializedAbi()
                     ?.also { instructions.set(insn, InsnNode(Opcodes.IRETURN + it.loadStoreReturnOpcodeOffset)) }
             }
@@ -273,7 +304,7 @@ private fun peeholeAdapt(
             insn.isBoxMarker() -> {
                 val typeParameterUsage =
                     SpecTypeParametersUsages.Usage.decode((insn as MethodInsnNode).name.substring("boxMarker".length))
-                when (val abi = typeParameterUsage.adjustType(typeParameters)?.specializedAbi()) {
+                when (val abi = typeParameterUsage.adjustType(typeArguments)?.specializedAbi()) {
                     null -> instructions.set(insn, InsnNode(Opcodes.NOP))
                     else -> abi.genBox(instructions, insn)
                 }
@@ -282,7 +313,7 @@ private fun peeholeAdapt(
             insn.isUnboxMarker() -> {
                 val typeParameterUsage =
                     SpecTypeParametersUsages.Usage.decode((insn as MethodInsnNode).name.substring("unboxMarker".length))
-                when (val abi = typeParameterUsage.adjustType(typeParameters)?.specializedAbi()) {
+                when (val abi = typeParameterUsage.adjustType(typeArguments)?.specializedAbi()) {
                     null -> instructions.set(insn, InsnNode(Opcodes.NOP))
                     else -> abi.genUnbox(instructions, insn)
                 }
@@ -290,7 +321,7 @@ private fun peeholeAdapt(
 
             insn.isCoerce2NullableMarker() -> {
                 val typeParameterIndex = (insn as MethodInsnNode).name.substring("coerce2NullableMarker".length).toInt()
-                when (val abi = typeParameters[typeParameterIndex]?.specializedAbi()) {
+                when (val abi = typeArguments.arguments[typeParameterIndex]?.specializedAbi()) {
                     null -> instructions.set(insn, InsnNode(Opcodes.NOP))
                     else -> abi.genCoerce2Nullable(instructions, insn)
                 }
@@ -298,34 +329,80 @@ private fun peeholeAdapt(
 
             insn.isCoerce2NonNullableMarker() -> {
                 val typeParameterIndex = (insn as MethodInsnNode).name.substring("coerce2NonNullableMarker".length).toInt()
-                when (val abi = typeParameters[typeParameterIndex]?.specializedAbi()) {
+                when (val abi = typeArguments.arguments[typeParameterIndex]?.specializedAbi()) {
                     null -> instructions.set(insn, InsnNode(Opcodes.NOP))
                     else -> abi.genCoerce2NonNullable(instructions, insn)
                 }
             }
 
-            insn.isReifiedOperationMarker() -> reify(methodNode, insn as MethodInsnNode, metadata.typeParametersNames, typeParameters)
+            insn.isSpecializedReceiverMarker() -> {
+                val typeParameterUsage =
+                    SpecTypeParametersUsages.Usage.decode((insn as MethodInsnNode).name.substring("specializedReceiverMarker".length))
+                when (val abi = typeParameterUsage.adjustType(typeArguments)?.specializedAbi()) {
+                    null -> instructions.set(insn, InsnNode(Opcodes.NOP))
+                    else -> abi.genSpecializedReceiver(instructions, insn)
+                }
+            }
+
+            insn.isSpecializedMethodCallArgumentMarker() -> {
+                require(insn is MethodInsnNode)
+                val prefix = "specializedMethodCallArgumentMarker"
+                val callIndex = insn.name.substring(prefix.length).split('$')[0].toInt()
+                val argumentIndex = insn.name.split('$')[1].toInt()
+                var unboxed = false
+                specializedInterfaceCalls[callIndex]
+                    ?.staticReplacement
+                    ?.changedParameters
+                    ?.find { it.first == argumentIndex }
+                    ?.second
+                    ?.specializedAbi()
+                    ?.let { parameterReplacementAbi ->
+                        parameterReplacementAbi.genUnbox(instructions, insn)
+                        unboxed = true
+                    }
+                if (!unboxed) instructions.set(insn, InsnNode(Opcodes.NOP))
+            }
+
+            insn.isSpecializedInterfaceCallMarker() -> {
+                specializedInterfaceCalls[insn.specializedInterfaceCallIndex()]?.let { info ->
+                    info.staticReplacement.changedReturnType?.specializedAbi()?.let { returnTypeReplacementAbi ->
+                        instructions.insert(insn.next, InsnNode(Opcodes.NOP))
+                        returnTypeReplacementAbi.genBox(instructions, insn.next.next)
+                    }
+                    instructions.set(
+                        insn.next,
+                        MethodInsnNode(
+                            Opcodes.INVOKESTATIC,
+                            info.receiverAbi.boxedInternalName,
+                            info.staticReplacement.repName,
+                            info.staticReplacement.repDesc
+                        )
+                    )
+                }
+                instructions.set(insn, InsnNode(Opcodes.NOP))
+            }
+
+            insn.isReifiedOperationMarker() -> reify(methodNode, insn as MethodInsnNode, metadata.typeParametersNames, typeArguments)
 
             insn is InvokeDynamicInsnNode && insn.isBootstrapSpecializedCall -> {
                 val nestedSpecTypeParametersUsages = SpecTypeParametersUsages.decode(insn.bsmArgs[2] as String)
-                val nestedTypeParameters =
-                    LightIrType.decodeTypeParameters(insn.bsmArgs[3] as String).mapValues { it.value.reify(typeParameters) }
-
+                val nestedTypeArguments = LightIrTypeArguments.decode(insn.bsmArgs[3] as String).reify(typeArguments)
                 val nestedDescriptorParameterTypes = Type.getArgumentTypes(insn.desc)
+
                 for ([parameterIndex, usage] in nestedSpecTypeParametersUsages.parameterGenericIndices) {
-                    usage.adjustType(nestedTypeParameters)
+                    usage.adjustType(nestedTypeArguments)
                         ?.specializedAbi()
                         ?.also { nestedDescriptorParameterTypes[parameterIndex] = Type.getType(it.reprDesc) }
                 }
 
                 var nestedDescriptorReturnType = Type.getReturnType(insn.desc)
                 nestedSpecTypeParametersUsages.returnType
-                    ?.adjustType(nestedTypeParameters)
+                    ?.adjustType(nestedTypeArguments)
                     ?.specializedAbi()
                     ?.also { nestedDescriptorReturnType = Type.getType(it.reprDesc) }
 
                 insn.desc = Type.getMethodType(nestedDescriptorReturnType, *nestedDescriptorParameterTypes).descriptor
-                insn.bsmArgs[3] = nestedTypeParameters.entries.joinToString("\n") { [k, v] -> "$k=${v.encode()}" }
+                insn.bsmArgs[3] = nestedTypeArguments.encode()
             }
         }
     }
@@ -362,3 +439,8 @@ private fun JvmSpecializeMetadataValue.calcWidenedSlots(specializedTypeParameter
     }
     return WidenedSlots(slots.toList())
 }
+
+private data class SpecializedInterfaceCallInfo(
+    val receiverAbi: SpecializedTypeAbi,
+    val staticReplacement: LightIrType.InlineAbi.Replacement,
+)

@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
+import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceOwnerKClassType
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
@@ -25,81 +27,116 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrStarProjection
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.withNullability
+import org.jetbrains.kotlin.ir.util.arguments
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.genericTypeParameterIndex
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isJvmSpecialized
 import org.jetbrains.kotlin.ir.util.isJvmSpecializedGeneric
+import org.jetbrains.kotlin.ir.util.isTypeParameter
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.MUTABLE_PROPERTY_REFERENCE_IMPL
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_REFERENCE_IMPL
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Type
 
-fun IrType.toLightIrType(context: JvmBackendContext, visitedTypeParameters: MutableSet<IrTypeParameter> = HashSet()): LightIrType? {
-    val simpleType = this as? IrSimpleType ?: return null
-    val sw = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
+data class LightIrTypeMapper(
+    private val backendContext: JvmBackendContext,
+    private val irTypeToTy: MutableMap<IrType, LightIrType> = mutableMapOf(),
+) {
+    fun mapType(type: IrType): LightIrType? {
+        irTypeToTy[type]?.let { return it }
 
-    val classifier = when (val classifier = simpleType.classifier) {
-        is IrClassSymbol -> {
-            LightIrType.Classifier.Clazz(
-                classifier.owner.fqNameWhenAvailable?.asString() ?: return null,
-                InlineClassAbi.unboxType(simpleType.withNullability(false))?.let { unboxed ->
-                    LightIrType.InlineAbi(
-                        context.defaultTypeMapper.mapType(unboxed).descriptor,
-                        InlineClassAbi.unboxType(simpleType.withNullability(true)) == null,
+        val lightIrType = LightIrType(
+            type.isMarkedNullable(),
+            backendContext.defaultTypeMapper.mapTypeParameter(type, BothSignatureWriter(BothSignatureWriter.Mode.TYPE)).internalName,
+            null,
+        )
+
+        irTypeToTy[type] = lightIrType
+
+        lightIrType.classifier = when (val classifier = type.classifierOrNull) {
+            is IrClassSymbol -> {
+                LightIrType.Classifier.Clazz(
+                    classifier.owner.fqNameWhenAvailable?.asString() ?: return null,
+                    mapInlineAbi(type as IrSimpleType, classifier),
+                    backendContext.defaultTypeMapper.generateClassInstance(type, false)
+                )
+            }
+            is IrTypeParameterSymbol -> mapTypeParameter(classifier.owner) ?: return null
+            is IrScriptSymbol -> TODO("IrScriptSymbol classifiers are not supported yet")
+            null -> TODO("NULL classifiers aro not supported yet")
+        }
+
+        lightIrType.arguments = type.arguments.orEmpty().map {
+            when (it) {
+                is IrStarProjection -> LightIrType.TypeArgument.StarProjection()
+                is IrTypeProjection -> LightIrType.TypeArgument.TypeProjection(
+                    mapType(it.type) ?: return null,
+                    it.variance.toLightIrTreeChar()
+                )
+            }
+        }
+
+        return lightIrType
+    }
+
+    private fun mapTypeParameter(typeParameter: IrTypeParameter): LightIrType.Classifier.TypeParameter? {
+        return LightIrType.Classifier.TypeParameter(
+            name = typeParameter.name.asString(),
+            index = typeParameter.index,
+            variance = typeParameter.variance.toLightIrTreeChar(),
+            isReified = typeParameter.isReified,
+            specialized = typeParameter.isJvmSpecialized,
+            parent = typeParameter.parent.toLightIrTypeParameterParent(backendContext) ?: return null,
+            upperBounds = if (!typeParameter.isReified) typeParameter.superTypes.map { mapType(it) ?: return null } else null,
+        )
+    }
+
+    private fun mapInlineAbi(simpleType: IrSimpleType, classifier: IrClassSymbol): LightIrType.InlineAbi? {
+        val unboxed = InlineClassAbi.unboxType(simpleType.withNullability(false)) ?: return null
+
+        val replacements = mutableListOf<LightIrType.InlineAbi.Replacement>()
+        for (replacement in classifier.owner.functions) {
+            if (replacement.origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) continue
+            for (overriddenSymbol in replacement.overriddenSymbols) {
+                val overridden = overriddenSymbol.owner
+                val replacementForceBoxedReturn = backendContext.defaultMethodSignatureMapper.forceBoxedReturnType(replacement)
+                replacements.add(
+                    LightIrType.InlineAbi.Replacement(
+                        isInterface = overridden.parentAsClass.isInterface,
+                        repName = replacement.name.asString(),
+                        repDesc = backendContext.defaultMethodSignatureMapper.mapSignatureSkipGeneric(replacement).asmMethod.descriptor,
+                        origName = overridden.name.asString(),
+                        origDesc = backendContext.defaultMethodSignatureMapper.mapSignatureSkipGeneric(overridden).asmMethod.descriptor,
+                        changedParameters = replacement.parameters.zip(overridden.parameters)
+                            .filter { [_, orig] -> orig.type.isTypeParameter() }
+                            .map { [rep, orig] -> orig.indexInParameters to mapType(rep.type)!! },
+                        changedReturnType = if (overridden.returnType.isTypeParameter() && !replacementForceBoxedReturn) mapType(replacement.returnType) else null,
                     )
-                },
-                context.defaultTypeMapper.generateClassInstance(this, false)
-            )
+                )
+            }
         }
-        is IrTypeParameterSymbol -> classifier.owner.toLightIrTypeParameter(context, visitedTypeParameters) ?: return null
-        is IrScriptSymbol -> TODO("IrScriptSymbol classifiers are not supported yet")
-    }
 
-    val arguments = simpleType.arguments.map {
-        when (it) {
-            is IrStarProjection -> LightIrType.TypeArgument.StarProjection()
-            is IrTypeProjection -> LightIrType.TypeArgument.TypeProjection(
-                it.type.toLightIrType(context, visitedTypeParameters) ?: return null,
-                it.variance.toLightIrTreeChar()
-            )
-        }
+        return LightIrType.InlineAbi(
+            backendContext.defaultTypeMapper.mapType(unboxed).descriptor,
+            InlineClassAbi.unboxType(simpleType.withNullability(true)) == null,
+            replacements,
+        )
     }
-
-    return LightIrType(
-        classifier,
-        arguments,
-        isMarkedNullable(),
-        context.defaultTypeMapper.mapTypeParameter(simpleType, sw).internalName,
-        null,
-    )
 }
 
 private fun Variance.toLightIrTreeChar(): Char = when (this) {
     Variance.INVARIANT -> LightIrType.TypeArgument.VARIANCE_INV
     Variance.IN_VARIANCE -> LightIrType.TypeArgument.VARIANCE_IN
     Variance.OUT_VARIANCE -> LightIrType.TypeArgument.VARIANCE_OUT
-}
-
-private fun IrTypeParameter.toLightIrTypeParameter(
-    context: JvmBackendContext,
-    visitedTypeParameters: MutableSet<IrTypeParameter>,
-): LightIrType.Classifier.TypeParameter? {
-    if (!visitedTypeParameters.add(this)) error("recursive non-reified type parameter bounds not supported (TODO: report proper diagnostic)")
-    return LightIrType.Classifier.TypeParameter(
-        name.asString(),
-        index,
-        variance.toLightIrTreeChar(),
-        isReified,
-        isJvmSpecialized,
-        parent.toLightIrTypeParameterParent(context) ?: return null,
-        if (!isReified) superTypes.map { it.toLightIrType(context, visitedTypeParameters) ?: return null } else null,
-    ).also {
-        visitedTypeParameters.remove(this)
-    }
 }
 
 private fun IrDeclarationParent.toLightIrTypeParameterParent(context: JvmBackendContext): LightIrType.Classifier.TypeParameter.Parent? {

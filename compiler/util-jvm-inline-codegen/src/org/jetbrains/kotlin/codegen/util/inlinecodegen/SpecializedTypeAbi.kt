@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.codegen.util.inlinecodegen
 
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.InsnNode
+import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
+import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 
@@ -24,6 +27,7 @@ sealed interface SpecializedTypeAbi {
     fun genUnbox(instructions: InsnList, targetInsn: AbstractInsnNode)
     fun genCoerce2Nullable(instructions: InsnList, targetInsn: AbstractInsnNode)
     fun genCoerce2NonNullable(instructions: InsnList, targetInsn: AbstractInsnNode)
+    fun genSpecializedReceiver(instructions: InsnList, targetInsn: AbstractInsnNode)
 }
 
 data class Primitive(
@@ -33,32 +37,35 @@ data class Primitive(
     override val loadStoreReturnOpcodeOffset: Int,
     override val defaultOpcode: Int,
 ) : SpecializedTypeAbi {
+    val boxInsnNode = MethodInsnNode(
+        Opcodes.INVOKESTATIC,
+        boxedInternalName,
+        "valueOf",
+        "($reprDesc)L$boxedInternalName;",
+        false,
+    )
 
     override fun genBox(instructions: InsnList, targetInsn: AbstractInsnNode) {
-        instructions.set(
-            targetInsn,
-            MethodInsnNode(
-                Opcodes.INVOKESTATIC,
-                boxedInternalName,
-                "valueOf",
-                "($reprDesc)L$boxedInternalName;",
-                false,
-            )
-        )
+        instructions.set(targetInsn, boxInsnNode)
     }
 
     override fun genUnbox(instructions: InsnList, targetInsn: AbstractInsnNode) {
-        instructions.insertBefore(targetInsn, TypeInsnNode(Opcodes.CHECKCAST, boxedInternalName))
-        instructions.set(
-            targetInsn,
-            MethodInsnNode(
-                Opcodes.INVOKEVIRTUAL,
-                boxedInternalName,
-                "${javaName}Value",
-                "()$reprDesc",
-                false
+        if (boxInsnNode.isSameAs(targetInsn.previous)) {
+            instructions.set(targetInsn.previous, InsnNode(Opcodes.NOP))
+            instructions.set(targetInsn, InsnNode(Opcodes.NOP))
+        } else {
+            instructions.insertBefore(targetInsn, TypeInsnNode(Opcodes.CHECKCAST, boxedInternalName))
+            instructions.set(
+                targetInsn,
+                MethodInsnNode(
+                    Opcodes.INVOKEVIRTUAL,
+                    boxedInternalName,
+                    "${javaName}Value",
+                    "()$reprDesc",
+                    false
+                )
             )
-        )
+        }
     }
 
     override fun genCoerce2Nullable(instructions: InsnList, targetInsn: AbstractInsnNode) {
@@ -67,6 +74,10 @@ data class Primitive(
 
     override fun genCoerce2NonNullable(instructions: InsnList, targetInsn: AbstractInsnNode) {
         genUnbox(instructions, targetInsn)
+    }
+
+    override fun genSpecializedReceiver(instructions: InsnList, targetInsn: AbstractInsnNode) {
+        genBox(instructions, targetInsn)
     }
 
     companion object {
@@ -97,19 +108,53 @@ data class InlineClass(
     val boxedDesc: String get() = "L$boxedInternalName;"
     override val reprDesc get() = if (isNullable && inlineAbi.nullableIsBoxed) boxedDesc else inlineAbi.unboxedDesc
 
+    val boxInsnNode = MethodInsnNode(
+        Opcodes.INVOKESTATIC,
+        boxedInternalName,
+        "box-impl",
+        "(${reprDesc})L$boxedInternalName;",
+        false,
+    )
+
     override fun genBox(instructions: InsnList, targetInsn: AbstractInsnNode) {
-        if (reprDesc != boxedDesc) {
-            instructions.set(
-                targetInsn,
-                MethodInsnNode(Opcodes.INVOKESTATIC, boxedInternalName, "box-impl", "(${reprDesc})L$boxedInternalName;", false)
-            )
-        } else {
+        if (reprDesc == boxedDesc) {
             instructions.set(targetInsn, InsnNode(Opcodes.NOP))
+            return
         }
+
+        instructions.set(targetInsn, boxInsnNode)
     }
 
     override fun genUnbox(instructions: InsnList, targetInsn: AbstractInsnNode) {
-        if (reprDesc != boxedDesc) {
+        if (reprDesc == boxedDesc) {
+            instructions.set(targetInsn, InsnNode(Opcodes.NOP))
+            return
+        }
+
+        if (boxInsnNode.isSameAs(targetInsn.previous)) {
+            instructions.set(targetInsn.previous, InsnNode(Opcodes.NOP))
+            instructions.set(targetInsn, InsnNode(Opcodes.NOP))
+        } else if (isNullable) {
+            val ifNullLbl = LabelNode()
+            val endLbl = LabelNode()
+            instructions.insertBefore(targetInsn, InsnNode(Opcodes.DUP))
+            instructions.insertBefore(targetInsn, JumpInsnNode(Opcodes.IFNULL, ifNullLbl))
+            instructions.insertBefore(targetInsn, TypeInsnNode(Opcodes.CHECKCAST, boxedInternalName))
+            instructions.insertBefore(
+                targetInsn,
+                MethodInsnNode(
+                    Opcodes.INVOKEVIRTUAL,
+                    boxedInternalName,
+                    "unbox-impl",
+                    "()${reprDesc}",
+                    false
+                )
+            )
+            instructions.insertBefore(targetInsn, JumpInsnNode(Opcodes.GOTO, endLbl))
+            instructions.insertBefore(targetInsn, ifNullLbl)
+            instructions.insertBefore(targetInsn, TypeInsnNode(Opcodes.CHECKCAST, Type.getType(reprDesc).internalName))
+            instructions.set(targetInsn, endLbl)
+        } else {
             instructions.insertBefore(targetInsn, TypeInsnNode(Opcodes.CHECKCAST, boxedInternalName))
             instructions.set(
                 targetInsn,
@@ -121,8 +166,6 @@ data class InlineClass(
                     false
                 )
             )
-        } else {
-            instructions.set(targetInsn, InsnNode(Opcodes.NOP))
         }
     }
 
@@ -141,4 +184,17 @@ data class InlineClass(
             instructions.set(targetInsn, InsnNode(Opcodes.NOP))
         }
     }
+
+    override fun genSpecializedReceiver(instructions: InsnList, targetInsn: AbstractInsnNode) {
+        instructions.set(targetInsn, InsnNode(Opcodes.NOP))
+    }
+}
+
+private fun MethodInsnNode.isSameAs(other: AbstractInsnNode): Boolean {
+    val other = other as? MethodInsnNode ?: return false
+    return opcode == other.opcode &&
+            owner == other.owner &&
+            name == other.name &&
+            desc == other.desc &&
+            itf == other.itf
 }

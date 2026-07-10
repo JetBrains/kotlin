@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.optimization.specialization
 
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.JvmSpecializeMetadataValue
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrTypeArguments
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecTypeParametersUsages
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.isBootstrapSpecializedCall
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -202,8 +203,8 @@ internal class SpecializationInterpreter(
 internal fun AbstractInsnNode.isCallWithSpecializedReturnType(): SpecTypeParametersUsages.Usage? {
     if (this is InvokeDynamicInsnNode && this.isBootstrapSpecializedCall) {
         val returnTypeGenericUsage = SpecTypeParametersUsages.decode(this.bsmArgs[2] as String).returnType ?: return null
-        val specializedTypeParameters = LightIrType.decodeTypeParameters(this.bsmArgs[3] as String)
-        val returnTypeSpecializedTo = returnTypeGenericUsage.adjustType(specializedTypeParameters) ?: return null
+        val specializedTypeArguments = LightIrTypeArguments.decode(this.bsmArgs[3] as String)
+        val returnTypeSpecializedTo = returnTypeGenericUsage.adjustType(specializedTypeArguments) ?: return null
         val returnTypeParameter = returnTypeSpecializedTo.classifier as? LightIrType.Classifier.TypeParameter ?: return null
         if (!returnTypeParameter.specialized) return null
         return SpecTypeParametersUsages.Usage(returnTypeParameter.index, returnTypeSpecializedTo.nullable)
