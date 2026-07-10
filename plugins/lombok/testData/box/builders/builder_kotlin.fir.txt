@@ -1,0 +1,66 @@
+FILE: builder_kotlin.kt
+    @R|lombok/Builder|(toBuilder = Boolean(true) [evaluated = Boolean(true)]) public final class User : R|kotlin/Any| {
+        public constructor(name: R|kotlin/String|, age: R|kotlin/Int|, info: R|kotlin/String?|): R|User| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public final val age: R|kotlin/Int| = R|<local>/age|
+            public get(): R|kotlin/Int|
+
+        public final val info: R|kotlin/String?| = R|<local>/info|
+            public get(): R|kotlin/String?|
+
+        public open fun toBuilder(): R|User.UserBuilder|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun builder(): R|User.UserBuilder|
+
+            private constructor(): R|User.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open class UserBuilder : R|kotlin/Any| {
+            public open fun build(): R|User|
+
+            public open fun name(name: R|kotlin/String|): R|User.UserBuilder|
+
+            private final var name: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            public open fun age(age: R|kotlin/Int|): R|User.UserBuilder|
+
+            private final var age: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            public open fun info(info: R|kotlin/String?|): R|User.UserBuilder|
+
+            private final var info: R|kotlin/String?|
+                private get(): R|kotlin/String?|
+                private set(value: R|kotlin/String?|): R|kotlin/Unit|
+
+            private constructor(): R|User.UserBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval user: R|User| = Q|User|.R|/User.Companion.builder|().R|/User.UserBuilder.name|(String(John)).R|/User.UserBuilder.age|(Int(42)).R|/User.UserBuilder.info|(Null(null)).R|/User.UserBuilder.build|()
+        R|/assertEquals|<R|kotlin/String|>(String(John), R|<local>/user|.R|/User.name|)
+        R|/assertEquals|<R|kotlin/Int|>(Int(42), R|<local>/user|.R|/User.age|)
+        lval user2: R|User| = R|/User.User|(String(Sarah), Int(30), Null(null))
+        lval builder2: R|User.UserBuilder| = R|<local>/user2|.R|/User.toBuilder|()
+        lval user3: R|User| = R|<local>/builder2|.R|/User.UserBuilder.build|()
+        R|/assertEquals|<R|kotlin/String|>(R|<local>/user2|.R|/User.name|, R|<local>/user3|.R|/User.name|)
+        R|/assertEquals|<R|kotlin/Int|>(R|<local>/user2|.R|/User.age|, R|<local>/user3|.R|/User.age|)
+        R|/assertEquals|<R|kotlin/String?|>(R|<local>/user2|.R|/User.info|, R|<local>/user3|.R|/User.info|)
+        ^box String(OK)
+    }

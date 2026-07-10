@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.lombok.generators.BuilderGeneratorKey
 import org.jetbrains.kotlin.lombok.generators.EqualsAndHashCodeGeneratorKey
 import org.jetbrains.kotlin.lombok.generators.LombokDeclarationKey
 import org.jetbrains.kotlin.lombok.generators.ToStringGeneratorKey
@@ -32,6 +33,7 @@ class IrBodyBuilderVisitor(private val context: IrPluginContext) : IrVisitorVoid
     private val bodyBuilders: Map<KClass<out LombokDeclarationKey>, IrBodyBuilder<out LombokDeclarationKey>> = mapOf(
         ToStringGeneratorKey::class to ToStringBodyBuilder,
         EqualsAndHashCodeGeneratorKey::class to EqualsAndHashCodeIrBodyBuilder,
+        BuilderGeneratorKey::class to BuilderBodyBuilder,
     )
 
     override fun visitElement(element: IrElement) {
@@ -53,6 +55,11 @@ class IrBodyBuilderVisitor(private val context: IrPluginContext) : IrVisitorVoid
                     is EqualsAndHashCodeIrBodyBuilder -> {
                         with(bodyBuilder) {
                             build(generatorKey as EqualsAndHashCodeGeneratorKey, declaration)
+                        }
+                    }
+                    is BuilderBodyBuilder -> {
+                        with(bodyBuilder) {
+                            build(generatorKey as BuilderGeneratorKey, declaration)
                         }
                     }
                 }
