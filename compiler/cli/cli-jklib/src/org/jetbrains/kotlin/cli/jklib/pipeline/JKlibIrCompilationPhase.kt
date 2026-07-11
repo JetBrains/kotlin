@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -154,11 +154,14 @@ class JKlibIrCompilationPhase :
         // so that we don't rely on linker side effects for proper deserialization.
         lateinit var mainModuleFragment: IrModuleFragment
         for ((dep, descriptor) in dependencyDescriptorsByKlib) {
-            when {
-                descriptor == mainModule -> {
-                    mainModuleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
-                }
-                else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
+            val strategy = if (descriptor == mainModule || dep.isJklibStdlib) {
+                DeserializationStrategy.ALL
+            } else {
+                DeserializationStrategy.WITH_INLINE_BODIES
+            }
+            val moduleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { strategy })
+            if (descriptor == mainModule) {
+                mainModuleFragment = moduleFragment
             }
         }
 
