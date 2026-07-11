@@ -105,6 +105,12 @@
           <version>2.18.0</version>
         </dependency>
         <dependency>
+          <!-- Force plexus-utils to 4.0.3 because of CVE-2025-67030 (Directory Traversal) -->
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-utils</artifactId>
+          <version>4.0.3</version>
+        </dependency>
+        <dependency>
           <groupId>org.junit</groupId>
           <artifactId>junit-bom</artifactId>
           <version>6.0.1</version>
