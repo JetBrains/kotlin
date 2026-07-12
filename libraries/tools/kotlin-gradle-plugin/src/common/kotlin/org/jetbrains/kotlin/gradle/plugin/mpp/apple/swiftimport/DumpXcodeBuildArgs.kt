@@ -191,6 +191,7 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
 
             is CoordinationClaim.Existing -> {
                 testExecutionHooks.get().beforeXcodebuildOwnerStartedAwait()
+                coordinationService.awaitXcodeDumpOwnerStarted(claim.bucket.key)
                 testExecutionHooks.get().beforeXcodebuildJoinerWorkerSubmission()
                 workerExecutor.noIsolation().submit(
                     XcodebuildArgsDumpAwaitWorkAction::class.java

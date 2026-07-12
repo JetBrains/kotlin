@@ -65,6 +65,7 @@ internal abstract class SwiftResolveWorkAction @Inject constructor(
         val errorFile = parameters.errorFile.get().asFile
         if (parameters.coordinationEnabled.get()) {
             parameters.testExecutionHooks.get().beforeSwiftResolveStarted()
+            parameters.coordinationService.get().markSwiftResolveStarted(parameters.syntheticPackageHash.get())
         }
         parameters.testExecutionHooks.get().beforeSwiftResolveExecution()
         errorFile.delete()

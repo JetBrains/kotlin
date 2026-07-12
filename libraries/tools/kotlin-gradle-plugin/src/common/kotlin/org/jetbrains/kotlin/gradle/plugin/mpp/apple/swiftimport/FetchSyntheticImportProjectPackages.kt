@@ -143,6 +143,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         when (claim) {
             is CoordinationClaim.Existing -> {
                 testExecutionHooks.get().beforeSwiftResolveOwnerStartedAwait()
+                coordinationService.get().awaitSwiftResolveOwnerStarted(claim.bucket.key)
                 testExecutionHooks.get().beforeSwiftResolveJoinerWorkerSubmission()
                 workerExecutor.noIsolation().submit(SwiftResolveAwaitWorkAction::class.java) {
                     it.sourcePackageResolvedFile.set(claim.bucket.ownerPackageResolvedFile)

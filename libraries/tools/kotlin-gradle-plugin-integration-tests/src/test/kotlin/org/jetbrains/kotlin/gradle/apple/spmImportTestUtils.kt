@@ -662,7 +662,7 @@ internal class SwiftImportWorkerStartGate(
     }
 
     fun beforeJoinerWorkerSubmission() {
-        check(!ownerWorkerStarted.exists()) {
+        check(ownerWorkerStarted.exists()) {
             "Joiner reached await-worker submission before the owner worker started. Missing marker: ${ownerWorkerStarted.absolutePath}"
         }
         joinerReachedWorkerSubmission.touch()
