@@ -11,7 +11,6 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
@@ -1293,8 +1292,4 @@ private fun TestProject.testPackageManifest(
 
     val actualContent = packageSwift.readText()
     assertEquals(expectedContent, actualContent, "Package.swift content mismatch")
-}
-
-internal fun KotlinMultiplatformExtension.swiftPMDependencies(configure: SwiftPMImportExtension.() -> Unit) {
-    (this.extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension).configure()
 }

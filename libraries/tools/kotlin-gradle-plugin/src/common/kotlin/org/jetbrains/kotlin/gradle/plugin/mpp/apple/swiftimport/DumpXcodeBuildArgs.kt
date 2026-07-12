@@ -75,6 +75,12 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     @get:Internal
     abstract val fingerprintCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
 
+    @get:Internal
+    abstract val testExecutionHooks: Property<SwiftImportExecutionHooks>
+
+    @get:Internal
+    abstract val testExecutionService: Property<SwiftImportTestExecutionService>
+
     private val layout = project.layout
 
     @get:Internal
@@ -138,6 +144,7 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
 
     // ./gradlew clean
     init {
+        testExecutionHooks.convention(SwiftImportExecutionHooks.NONE)
         outputs.upToDateWhen {
             xcodebuildFinishedMarkerFile.exists()
         }
@@ -168,12 +175,14 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
 
         val syntheticPackageFingerprint = syntheticPackageFingerprintFile.readText().trim().split("\n")[1]
 
+        testExecutionHooks.get().beforeXcodebuildClaim()
         val claim = fingerprintCoordinationService.get().claimOrJoinXcodeDump(
             xcodebuildExecutionHash = readXcodebuildFingerprint(),
             xcodebuildSdk = xcodebuildSdk.get(),
         )
         when (claim) {
             is CoordinationClaim.Owner -> {
+                testExecutionHooks.get().beforeXcodebuildOwnerWorkerSubmission()
                 runOwnerXcodeDump(
                     dumpDir = claim.bucket.ownerDumpDir,
                     derivedDataDir = claim.bucket.ownerDerivedDataDir,
@@ -191,6 +200,7 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
                     it.key.set(claim.bucket.key)
                     it.ideaSyncEnabled.set(ideaSyncEnabled)
                     it.errorFile.set(errorFile)
+                    it.testExecutionService.set(testExecutionService)
                 }
             }
         }
@@ -233,6 +243,7 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             params.ideaSyncEnabled.set(ideaSyncEnabled)
             params.errorFile.set(ideImportError)
             params.xcodebuildFinishedMarkerFile.set(xcodebuildFinishedMarkerFile)
+            params.testExecutionService.set(testExecutionService)
 
             if (isCoordinationEnabled) {
                 params.fingerprintCoordinationService.set(fingerprintCoordinationService)

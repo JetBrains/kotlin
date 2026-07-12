@@ -25,6 +25,7 @@ import javax.inject.Inject
 internal interface XcodebuildAwaitArgsDumpWorkParameters : WorkParameters {
     val fingerprintCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
     val key: Property<XcodeDumpBucketMapKey>
+    val testExecutionService: Property<SwiftImportTestExecutionService>
     val ideaSyncEnabled: Property<Boolean>
     val errorFile: RegularFileProperty
 }
@@ -38,6 +39,9 @@ internal abstract class XcodebuildArgsDumpAwaitWorkAction : WorkAction<Xcodebuil
         val errorFile = parameters.errorFile.get().asFile
         errorFile.delete()
         try {
+            if (parameters.testExecutionService.isPresent) {
+                parameters.testExecutionService.get().beforeXcodebuildAwaitWorkerStarted()
+            }
             parameters.fingerprintCoordinationService.get().awaitXcodeDump(parameters.key.get())
         } catch (failure: Throwable) {
             if (parameters.ideaSyncEnabled.get()) {
@@ -74,6 +78,7 @@ internal interface XcodebuildArgsDumpWorkParameters : WorkParameters {
     val ideaSyncEnabled: Property<Boolean>
     val errorFile: RegularFileProperty
     val xcodebuildFinishedMarkerFile: Property<File>
+    val testExecutionService: Property<SwiftImportTestExecutionService>
 }
 
 /**
@@ -90,6 +95,11 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
     override fun execute() {
         logger.info("Starting xcodebuild dump ${parameters.xcodebuildExecutionFingerprint.orNull?.let { "(bucket ${it})" }}}")
         val errorFile = parameters.errorFile.get().asFile
+        if (parameters.coordinationEnabled.get()) {
+            if (parameters.testExecutionService.isPresent) {
+                parameters.testExecutionService.get().beforeXcodebuildOwnerWorkerStarted()
+            }
+        }
         errorFile.delete()
         try {
             doExecute()
