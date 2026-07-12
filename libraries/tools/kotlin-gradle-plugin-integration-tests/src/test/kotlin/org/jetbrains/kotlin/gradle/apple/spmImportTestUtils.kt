@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedS
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintXcodeBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_CHECKOUT_DIR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_XCODE_DUMP_DIR
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportExecutionHooks
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
 import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
@@ -72,7 +73,7 @@ const val SYNTHETIC_IMPORT_DYLIB =
 fun createLocalSwiftPackage(
     localPackageDir: Path,
     packageName: String = "LocalSwiftPackage",
-    products : List<String> = listOf(packageName),
+    products: List<String> = listOf(packageName),
     sourceLanguage: SwiftPackageSourceLanguage = SwiftPackageSourceLanguage.SWIFT_WITH_OBJC,
 ) {
     localPackageDir.createDirectories()
@@ -117,7 +118,11 @@ fun createLocalSwiftPackageWithResources(
 
             @objc public class ResourceAccessor: NSObject {
                 @objc public static func resourceContent() -> String {
-                    guard let url = Bundle.module.url(forResource: "${resourceFileName.substringBeforeLast(".")}", withExtension: "${resourceFileName.substringAfterLast(".")}") else {
+                    guard let url = Bundle.module.url(forResource: "${resourceFileName.substringBeforeLast(".")}", withExtension: "${
+            resourceFileName.substringAfterLast(
+                "."
+            )
+        }") else {
                         return "RESOURCE_NOT_FOUND"
                     }
                     return (try? String(contentsOf: url)) ?? "RESOURCE_READ_ERROR"
@@ -327,14 +332,14 @@ internal fun createSwiftPmGitRepoWithTags(
 
     writePackageManifest(repoDir, packageName, products = products)
 
-    if(source != null){
+    if (source != null) {
         products.forEach { product ->
             repoDir.resolve("Sources/$product").createDirectories()
             repoDir.resolve("Sources/$product/$product.swift").writeText(
                 source
             )
         }
-    }else{
+    } else {
         products.forEach { product ->
             repoDir.resolve("Sources/$product").createDirectories()
             repoDir.resolve("Sources/$product/$product.swift").writeText(
@@ -453,7 +458,7 @@ internal fun swiftPMPackageFingerprint(
     projectDir.resolve("build").resolve(FingerprintSyntheticPackage.SYNTHETIC_PACKAGE_FINGERPRINT_PATH)
 
 internal fun swiftPMFingerprintCheckoutDir(
-    projectDir : Path,
+    projectDir: Path,
     rootProject: Path,
 ): Path {
     val packageFingerprint = parseSwiftPMFingerprint(swiftPMSyntheticPackageFingerprint(projectDir))
@@ -630,6 +635,140 @@ internal data class RepoRef(
     val url: String,
 ) : java.io.Serializable
 
+internal class SwiftImportWorkerStartGate(
+    markerDir: File,
+) : java.io.Serializable {
+    private val ownerClaimed = markerDir.resolve("owner-claimed")
+    private val joinerWaitingForOwnerStart = markerDir.resolve("joiner-waiting-for-owner-start")
+    private val ownerWorkerStarted = markerDir.resolve("owner-worker-started")
+    private val joinerReachedWorkerSubmission = markerDir.resolve("joiner-reached-worker-submission")
+
+    fun beforeJoinerClaim() {
+        ownerClaimed.waitUntilExists("owner to claim the shared SwiftPM import bucket")
+    }
+
+    fun beforeOwnerWorkerSubmission() {
+        ownerClaimed.touch()
+        joinerWaitingForOwnerStart.waitUntilExists("joiner to reach the owner-start wait point")
+        Thread.sleep(OWNER_WORKER_SUBMISSION_DELAY_MS)
+    }
+
+    fun beforeJoinerOwnerStartedAwait() {
+        joinerWaitingForOwnerStart.touch()
+    }
+
+    fun beforeOwnerWorkerStarted() {
+        ownerWorkerStarted.touch()
+    }
+
+    fun beforeJoinerWorkerSubmission() {
+        check(!ownerWorkerStarted.exists()) {
+            "Joiner reached await-worker submission before the owner worker started. Missing marker: ${ownerWorkerStarted.absolutePath}"
+        }
+        joinerReachedWorkerSubmission.touch()
+    }
+
+    fun assertJoinerSubmittedAfterOwnerWorkerStarted() {
+        assertFileExists(ownerClaimed)
+        assertFileExists(joinerWaitingForOwnerStart)
+        assertFileExists(ownerWorkerStarted)
+        assertFileExists(joinerReachedWorkerSubmission)
+    }
+
+    private fun File.touch() {
+        parentFile.mkdirs()
+        writeText("ready")
+    }
+
+    private fun File.waitUntilExists(description: String) {
+        val deadline = System.currentTimeMillis() + MARKER_WAIT_TIMEOUT_MS
+        while (!exists()) {
+            check(System.currentTimeMillis() < deadline) {
+                "Timed out waiting for $description at $absolutePath"
+            }
+            Thread.sleep(MARKER_POLL_INTERVAL_MS)
+        }
+    }
+
+    private companion object {
+        private const val MARKER_WAIT_TIMEOUT_MS = 30_000L
+        private const val MARKER_POLL_INTERVAL_MS = 50L
+        private const val OWNER_WORKER_SUBMISSION_DELAY_MS = 2_000L
+    }
+}
+
+internal class SwiftResolveOwnerExecutionHooks(
+    private val gate: SwiftImportWorkerStartGate,
+) : SwiftImportExecutionHooks {
+    override fun beforeSwiftResolveOwnerWorkerSubmission() {
+        gate.beforeOwnerWorkerSubmission()
+    }
+
+    override fun beforeSwiftResolveStarted() {
+        gate.beforeOwnerWorkerStarted()
+    }
+
+    override fun beforeSwiftResolveOwnerStartedAwait() {
+        error("Expected this project to own Swift package resolve, but it joined an existing bucket")
+    }
+}
+
+internal class SwiftResolveJoinerExecutionHooks(
+    private val gate: SwiftImportWorkerStartGate,
+) : SwiftImportExecutionHooks {
+    override fun beforeSwiftResolveClaim() {
+        gate.beforeJoinerClaim()
+    }
+
+    override fun beforeSwiftResolveOwnerWorkerSubmission() {
+        error("Expected this project to join Swift package resolve, but it owned the bucket")
+    }
+
+    override fun beforeSwiftResolveOwnerStartedAwait() {
+        gate.beforeJoinerOwnerStartedAwait()
+    }
+
+    override fun beforeSwiftResolveJoinerWorkerSubmission() {
+        gate.beforeJoinerWorkerSubmission()
+    }
+}
+
+internal class XcodebuildOwnerExecutionHooks(
+    private val gate: SwiftImportWorkerStartGate,
+) : SwiftImportExecutionHooks {
+    override fun beforeXcodebuildOwnerWorkerSubmission() {
+        gate.beforeOwnerWorkerSubmission()
+    }
+
+    override fun beforeXcodebuildStarted() {
+        gate.beforeOwnerWorkerStarted()
+    }
+
+    override fun beforeXcodebuildOwnerStartedAwait() {
+        error("Expected this project to own xcodebuild args dump, but it joined an existing bucket")
+    }
+}
+
+internal class XcodebuildJoinerExecutionHooks(
+    private val gate: SwiftImportWorkerStartGate,
+) : SwiftImportExecutionHooks {
+    override fun beforeXcodebuildClaim() {
+        gate.beforeJoinerClaim()
+    }
+
+    override fun beforeXcodebuildOwnerWorkerSubmission() {
+        error("Expected this project to join xcodebuild args dump, but it owned the bucket")
+    }
+
+    override fun beforeXcodebuildOwnerStartedAwait() {
+        gate.beforeJoinerOwnerStartedAwait()
+    }
+
+    override fun beforeXcodebuildJoinerWorkerSubmission() {
+        gate.beforeJoinerWorkerSubmission()
+    }
+}
+
 internal fun TestProject.withLockFileFixture(
     packageResolvedSynchronization: PackageResolvedSynchronization = PackageResolvedSynchronization.Identifier("default"),
     block: LockFileTestFixture.() -> Unit,
@@ -728,7 +867,7 @@ internal fun TestProject.dumpTaskGraph(
     return taskGraph
 }
 
-internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks : String) {
+internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks: String) {
     val taskToExclude = setOf(
         ":kmpPartiallyResolvedDependenciesChecker",
         ":downloadKotlinNativeDistribution",
@@ -743,7 +882,7 @@ internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks : Strin
     filteredGraph.assertExactTaskGraph(*tasks)
 }
 
-internal fun Set<String>.assertExactTaskGraph(vararg tasks : String) {
+internal fun Set<String>.assertExactTaskGraph(vararg tasks: String) {
     val expected = tasks.toSet()
 
     val difference = (this - expected + (expected - this)).toSet()
@@ -838,7 +977,7 @@ private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, versi
 
 internal fun assertGitIgnoreEquals(
     gitIgnorePath: Path,
-    expectedGitIgnoreContent: String
+    expectedGitIgnoreContent: String,
 ) {
     val actualGitIgnoreContent = gitIgnorePath.toFile().readText()
 

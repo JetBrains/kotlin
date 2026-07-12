@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.createKotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_CHECKOUT_DIR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_SYNTHETIC_PACKAGE_DIR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependenc
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
@@ -56,6 +58,69 @@ import kotlin.test.assertNotEquals
 )
 @SwiftPMImportGradlePluginTests
 class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
+    fun `fetch task - joiner waits for owner worker start before submitting await worker`(version: GradleVersion) {
+        val testBuildOptions = defaultBuildOptions.copy(
+            maxWorkers = 2,
+            configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+        )
+
+        project("empty", version, buildOptions = testBuildOptions) {
+            withLockFileFixture {
+                val gate = SwiftImportWorkerStartGate(projectPath.resolve("swift-resolve-worker-start-gate").toFile())
+                val sharedRepo = repoRef("SharedPackage").also { createRepo(it.name, listOf("1.0.0")) }
+                val ownerProjectName = "owner"
+                val joinerProjectName = "joiner"
+
+                initSwiftPmProject(cacheDirFile) {}
+
+                val ownerProject = project("empty", version, buildOptions = testBuildOptions) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("sharedLock")
+                            swiftPackage(
+                                url = url(sharedRepo.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product(sharedRepo.name)),
+                            )
+                            testExecutionHooks.set(SwiftResolveOwnerExecutionHooks(gate))
+                        }
+                    }
+                }
+
+                val joinerProject = project("empty", version, buildOptions = testBuildOptions) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("sharedLock")
+                            swiftPackage(
+                                url = url(sharedRepo.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product(sharedRepo.name)),
+                            )
+                            testExecutionHooks.set(SwiftResolveJoinerExecutionHooks(gate))
+                        }
+                    }
+                }
+
+                include(ownerProject, ownerProjectName)
+                include(joinerProject, joinerProjectName)
+
+                build(
+                    ":$ownerProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                    ":$joinerProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                    buildOptions = testBuildOptions,
+                ) {
+                    assertTasksExecuted(
+                        ":$ownerProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                        ":$joinerProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                    )
+                    gate.assertJoinerSubmittedAfterOwnerWorkerStarted()
+                }
+            }
+        }
+    }
 
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
@@ -432,4 +497,3 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
         }
     }
 }
-

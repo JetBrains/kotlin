@@ -50,6 +50,7 @@ internal interface SwiftResolveWorkParameters : WorkParameters {
     val workspaceStateJson: RegularFileProperty
     val ideaSyncEnabled: Property<Boolean>
     val errorFile: RegularFileProperty
+    val testExecutionHooks: Property<SwiftImportExecutionHooks>
 }
 
 
@@ -62,6 +63,10 @@ internal abstract class SwiftResolveWorkAction @Inject constructor(
 
     override fun execute() {
         val errorFile = parameters.errorFile.get().asFile
+        if (parameters.coordinationEnabled.get()) {
+            parameters.testExecutionHooks.get().beforeSwiftResolveStarted()
+        }
+        parameters.testExecutionHooks.get().beforeSwiftResolveExecution()
         errorFile.delete()
         try {
             // Copy lock file from persisted

@@ -31,6 +31,25 @@ import java.io.OutputStream
 import java.io.Serializable
 import javax.inject.Inject
 
+internal interface SwiftImportExecutionHooks : Serializable {
+    fun beforeSwiftResolveClaim() {}
+    fun beforeSwiftResolveOwnerWorkerSubmission() {}
+    fun beforeSwiftResolveOwnerStartedAwait() {}
+    fun beforeSwiftResolveJoinerWorkerSubmission() {}
+    fun beforeSwiftResolveStarted() {}
+    fun beforeSwiftResolveExecution() {}
+    fun beforeXcodebuildClaim() {}
+    fun beforeXcodebuildOwnerWorkerSubmission() {}
+    fun beforeXcodebuildOwnerStartedAwait() {}
+    fun beforeXcodebuildJoinerWorkerSubmission() {}
+    fun beforeXcodebuildStarted() {}
+    fun beforeXcodebuildExecution() {}
+
+    companion object {
+        val NONE: SwiftImportExecutionHooks = object : SwiftImportExecutionHooks {}
+    }
+}
+
 internal fun Project.locateOrRegisterSwiftPMDependenciesExtension(): SwiftPMImportExtension {
     val existingExtension = kotlinExtension.extensions.findByName(SwiftPMImportExtension.EXTENSION_NAME)
     if (existingExtension != null) {
@@ -89,6 +108,14 @@ abstract class SwiftPMImportExtension @Inject constructor(
 
     /** Minimum tvOS deployment target written to generated SwiftPM manifests. */
     val tvosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
+
+    /**
+     * Test-only hooks that can block specific scheduling points in SwiftPM import tasks.
+     *
+     * The default value is a no-op implementation. Integration tests may replace this with a controlled hook object.
+     */
+    internal val testExecutionHooks: Property<SwiftImportExecutionHooks> =
+        objects.property(SwiftImportExecutionHooks::class.java).convention(SwiftImportExecutionHooks.NONE)
 
     /**
      * Enables implicit discovery of Clang modules from imported SwiftPM packages.

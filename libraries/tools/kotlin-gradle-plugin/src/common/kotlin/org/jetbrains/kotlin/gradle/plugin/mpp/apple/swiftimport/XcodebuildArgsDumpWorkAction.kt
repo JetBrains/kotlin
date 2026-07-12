@@ -57,6 +57,7 @@ internal interface XcodebuildArgsDumpWorkParameters : WorkParameters {
     val ideaSyncEnabled: Property<Boolean>
     val errorFile: RegularFileProperty
     val xcodebuildFinishedMarkerFile: Property<File>
+    val testExecutionHooks: Property<SwiftImportExecutionHooks>
 }
 
 /**
@@ -72,6 +73,10 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
 
     override fun execute() {
         val errorFile = parameters.errorFile.get().asFile
+        if (parameters.coordinationEnabled.get()) {
+            parameters.testExecutionHooks.get().beforeXcodebuildStarted()
+        }
+        parameters.testExecutionHooks.get().beforeXcodebuildExecution()
         errorFile.delete()
         try {
             doExecute()

@@ -9,10 +9,13 @@ package org.jetbrains.kotlin.gradle.apple
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
+import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.SwiftPMImportGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContainsExactlyTimes
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
@@ -32,6 +35,70 @@ import kotlin.test.assertNotEquals
 )
 @SwiftPMImportGradlePluginTests
 class DumpXcodeBuildArgsTests : KGPBaseTest() {
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
+    fun `dump task - joiner waits for owner worker start before submitting await worker`(version: GradleVersion) {
+        val testBuildOptions = defaultBuildOptions.copy(
+            maxWorkers = 2,
+            configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+        )
+
+        project("empty", version, buildOptions = testBuildOptions) {
+            withLockFileFixture {
+                val gate = SwiftImportWorkerStartGate(projectPath.resolve("xcodebuild-worker-start-gate").toFile())
+                val sharedRepo = repoRef("SharedPackage").also { createRepo(it.name, listOf("1.0.0")) }
+                val ownerProjectName = "owner"
+                val joinerProjectName = "joiner"
+
+                initSwiftPmProject(cacheDirFile) {}
+
+                val ownerProject = project("empty", version, buildOptions = testBuildOptions) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("sharedLock")
+                            swiftPackage(
+                                url = url(sharedRepo.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product(sharedRepo.name)),
+                            )
+                            testExecutionHooks.set(XcodebuildOwnerExecutionHooks(gate))
+                        }
+                    }
+                }
+
+                val joinerProject = project("empty", version, buildOptions = testBuildOptions) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("sharedLock")
+                            swiftPackage(
+                                url = url(sharedRepo.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product(sharedRepo.name)),
+                            )
+                            testExecutionHooks.set(XcodebuildJoinerExecutionHooks(gate))
+                        }
+                    }
+                }
+
+                include(ownerProject, ownerProjectName)
+                include(joinerProject, joinerProjectName)
+
+                build(
+                    ":$ownerProjectName:dumpXcodebuildArgsIphoneos",
+                    ":$joinerProjectName:dumpXcodebuildArgsIphoneos",
+                    buildOptions = testBuildOptions,
+                ) {
+                    assertTasksExecuted(
+                        ":$ownerProjectName:dumpXcodebuildArgsIphoneos",
+                        ":$joinerProjectName:dumpXcodebuildArgsIphoneos",
+                    )
+                    assertOutputContainsExactlyTimes("Starting process 'command 'xcodebuild''", 1)
+                    gate.assertJoinerSubmittedAfterOwnerWorkerStarted()
+                }
+            }
+        }
+    }
 
     @GradleTest
     fun `smoke test - xcodebuild args are dumped into task output directory`(version: GradleVersion) {
