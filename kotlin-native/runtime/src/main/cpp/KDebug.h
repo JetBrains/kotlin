@@ -75,6 +75,15 @@ int32_t Konan_DebugGetFieldType(KRef obj, int32_t index);
 RUNTIME_EXPORT RUNTIME_WEAK
 void* Konan_DebugGetFieldAddress(KRef obj, int32_t index);
 
+// Compute addresses of fields or array elements at the indices, storing null for incorrect indices.
+RUNTIME_EXPORT RUNTIME_WEAK
+void Konan_DebugBatchGetFieldAddress(KRef obj, const int32_t* indices, int32_t count, void** result);
+
+// Compute field counts of fields or array elements at the indices, storing 0 for incorrect indices
+// or primitive values.
+RUNTIME_EXPORT RUNTIME_WEAK
+void Konan_DebugBatchGetFieldCount(KRef obj, const int32_t* indices, int32_t count, int32_t* result);
+
 // Compute address of field or an array element at the index, or null, if incorrect.
 RUNTIME_EXPORT RUNTIME_WEAK
 const char* Konan_DebugGetFieldName(KRef obj, int32_t index);
