@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.testbase.assertFileNotExists
 import org.jetbrains.kotlin.gradle.testbase.assertFilesContentEquals
 import org.jetbrains.kotlin.gradle.testbase.assertFilesExist
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
+import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.assertTasksUpToDate
 import org.jetbrains.kotlin.gradle.testbase.build
@@ -116,12 +117,12 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                 include(ownerProject, ownerProjectName)
                 include(joinerProject, joinerProjectName)
 
-                buildAndFail(
+                build(
                     ":$ownerProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}",
                     ":$joinerProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}",
                     buildOptions = testBuildOptions,
                 ) {
-                    assertOutputContains(
+                    assertOutputDoesNotContain(
                         "Await worker started before the owner worker start hook timed out."
                     )
                 }

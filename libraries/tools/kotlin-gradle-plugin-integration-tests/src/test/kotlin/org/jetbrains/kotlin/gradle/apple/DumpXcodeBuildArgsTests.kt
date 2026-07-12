@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContainsExactlyTimes
+import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndFail
@@ -93,12 +94,12 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                 include(ownerProject, ownerProjectName)
                 include(joinerProject, joinerProjectName)
 
-                buildAndFail(
+                build(
                     ":$ownerProjectName:dumpXcodebuildArgsIphoneos",
                     ":$joinerProjectName:dumpXcodebuildArgsIphoneos",
                     buildOptions = testBuildOptions,
                 ) {
-                    assertOutputContains(
+                    assertOutputDoesNotContain(
                         "Await worker started before the owner worker start hook timed out."
                     )
                 }
