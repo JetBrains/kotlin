@@ -451,6 +451,8 @@ fun ProjectTestsExtension.nativeTestTask(
                     }
                 }
             )
+
+            logger.info("$path task classpath: " + classpath.files.joinToString(File.pathSeparator))
         }
     } else
         doFirst {
