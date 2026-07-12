@@ -99,6 +99,9 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
             if (parameters.testExecutionService.isPresent) {
                 parameters.testExecutionService.get().beforeXcodebuildOwnerWorkerStarted()
             }
+            parameters.fingerprintCoordinationService.get().markXcodeDumpStarted(
+                key = parameters.xcodebuildExecutionFingerprint.get(),
+            )
         }
         errorFile.delete()
         try {

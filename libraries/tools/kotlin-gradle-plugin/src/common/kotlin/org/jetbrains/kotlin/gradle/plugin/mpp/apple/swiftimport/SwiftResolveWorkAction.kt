@@ -89,6 +89,7 @@ internal abstract class SwiftResolveWorkAction @Inject constructor(
             if (parameters.testExecutionService.isPresent) {
                 parameters.testExecutionService.get().beforeSwiftResolveOwnerWorkerStarted()
             }
+            parameters.coordinationService.get().markSwiftResolveStarted(parameters.syntheticPackageHash.get())
         }
         errorFile.delete()
         try {
