@@ -166,6 +166,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
         it.ideaSyncEnabled.set(ideaSyncEnabled)
+        it.testExecutionHooks.set(swiftPMImportExtension.testExecutionHooks)
+        it.testExecutionService.set(swiftPMImportExtension.testExecutionService)
         it.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
         it.dependsOn(syncPersistedPackageResolvedToSyntheticSwiftPMPackage)
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
@@ -919,6 +921,8 @@ private fun Project.registerDumpXcodebuildArgsTask(
         dumpTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
         dumpTask.onlyIf("Project does not have any SwiftPM dependencies") { hasDirectOrTransitiveSwiftPMDependencies.get() }
         dumpTask.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
+        dumpTask.testExecutionHooks.set(locateOrRegisterSwiftPMDependenciesExtension().testExecutionHooks)
+        dumpTask.testExecutionService.set(locateOrRegisterSwiftPMDependenciesExtension().testExecutionService)
         dumpTask.resolvedPackagesState.from(
             fetchSyntheticImportProjectPackages.map { it.inputManifests },
             fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
