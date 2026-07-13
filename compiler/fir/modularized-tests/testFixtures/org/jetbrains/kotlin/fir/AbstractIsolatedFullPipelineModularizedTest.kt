@@ -121,6 +121,9 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
             args.jvmTarget = config.jvmTarget
             args.allowKotlinPackage = true
         }
+        // Measurement override: `-Pfir.force.javaDirect=<bool>` forces the java-direct source
+        // facade on/off regardless of the model dump's own `javaDirect` value.
+        System.getProperty("fir.force.javaDirect")?.let { args.javaDirect = it.toBoolean() }
         args.reportPerf = true
         args.jdkHome = moduleData.jdkHome?.absolutePath ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absolutePath
         args.renderInternalDiagnosticNames = true

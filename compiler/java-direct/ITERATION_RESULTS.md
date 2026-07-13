@@ -35,3 +35,15 @@ This log is read into the agent's context every session, so **entries must stay 
 ---
 
 <!-- Add new entries below, newest first. -->
+
+### 2026-07-13 — Memoize `JavaClassOverAst.supertypes` (IJ-FP regression)
+- **Change**: `supertypes` was a recomputing `get()` that returned fresh `JavaClassifierTypeOverAst`
+  instances on every read; FIR forces it from two lazy slots per class (`FirJavaClass.superTypeRefs`
+  enhancement and `directSupertypeClassIdsCache`), so each supertype's `classifier` (a per-instance
+  lazy hitting the symbol provider) resolved from cold twice. Made it `by lazy(PUBLICATION)` so both
+  reads share instances and each supertype resolves once. List build allocates wrappers only → still
+  resolution-safe.
+- **Files**: `model/JavaClassOverAst.kt` (supertypes get()→by lazy).
+- **Tests**: box 1178/1178, phased 1513/1513 (0 FAILED).
+- **Result**: regression fixed. IntelliJ `testIntellij_platform_ide_impl` warm frontend (isolated bench,
+  4 iters, same build): java-direct 21.5s wall / 20.8s CPU vs legacy 25.3s / 23.6s — was ~+8% before.

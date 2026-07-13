@@ -78,33 +78,38 @@ class JavaClassOverAst(
         computeTypeParameters(node, tree, resolutionContext)
     }
 
-    override val supertypes: Collection<JavaClassifierType>
-        get() {
-            val result = mutableListOf<JavaClassifierType>()
+    // Memoized so repeated reads share the same `JavaClassifierType` instances. FIR forces the
+    // supertype list from more than one lazy slot per class (super-type-ref enhancement and the
+    // direct-supertype-`ClassId` walk); each `JavaClassifierTypeOverAst` resolves its `classifier`
+    // through a per-instance lazy that hits the symbol provider, so recomputing the list would
+    // re-resolve every supertype from cold on each access. Building the list allocates wrappers
+    // only — it does not resolve classifiers — so forcing it eagerly here stays resolution-safe.
+    override val supertypes: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val result = mutableListOf<JavaClassifierType>()
 
-            if (isEnum) {
-                result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
-            } else if (isAnnotationType) {
-                result.add(SimpleClassifierType("java.lang.annotation.Annotation", memberResolutionContext))
-            }
-
-            tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
-                tree.getChildrenByType(extList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
-                    result.add(JavaClassifierTypeOverAst(it, tree, memberResolutionContext))
-                }
-            }
-
-            if (result.isEmpty() && !isInterface) {
-                result.add(SimpleClassifierType("java.lang.Object", memberResolutionContext))
-            }
-
-            tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->
-                tree.getChildrenByType(implList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
-                    result.add(JavaClassifierTypeOverAst(it, tree, memberResolutionContext))
-                }
-            }
-            return result
+        if (isEnum) {
+            result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
+        } else if (isAnnotationType) {
+            result.add(SimpleClassifierType("java.lang.annotation.Annotation", memberResolutionContext))
         }
+
+        tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
+            tree.getChildrenByType(extList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
+                result.add(JavaClassifierTypeOverAst(it, tree, memberResolutionContext))
+            }
+        }
+
+        if (result.isEmpty() && !isInterface) {
+            result.add(SimpleClassifierType("java.lang.Object", memberResolutionContext))
+        }
+
+        tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->
+            tree.getChildrenByType(implList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
+                result.add(JavaClassifierTypeOverAst(it, tree, memberResolutionContext))
+            }
+        }
+        result
+    }
 
     override val innerClassNames: Collection<Name>
         get() = tree.getChildren(node).filter { tree.getType(it) == JavaSyntaxElementType.CLASS }.map {
