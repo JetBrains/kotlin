@@ -134,6 +134,10 @@ abstract class ConeClassLikeType : ConeLookupTagBasedType() {
     abstract override val lookupTag: ConeClassLikeLookupTag
 }
 
+abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
+    abstract override val lookupTag: ConeTypeParameterLookupTag
+}
+
 /**
  * Represents types with two bounds. [lowerBound] must be a subtype of [upperBound].
  */

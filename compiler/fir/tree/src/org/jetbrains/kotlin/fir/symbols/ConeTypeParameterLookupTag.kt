@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
-
-abstract class ConeTypeParameterLookupTag : ConeClassifierLookupTag(), TypeParameterMarker
 
 data class ConeTypeParameterLookupTagImpl(
     val typeParameterSymbol: FirTypeParameterSymbol
