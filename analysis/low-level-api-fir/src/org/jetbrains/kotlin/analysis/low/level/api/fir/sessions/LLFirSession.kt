@@ -57,9 +57,9 @@ import kotlin.uuid.Uuid
 @KaImplementationDetail
 abstract class LLFirSession(
     val ktModule: KaModule,
-    override val builtinTypes: BuiltinTypes,
+    builtinTypes: BuiltinTypes,
     kind: Kind,
-) : FirSession(kind) {
+) : FirSession(kind, builtinTypes) {
     abstract fun getScopeSession(): ScopeSession
 
     val project: Project
