@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.isNullableType

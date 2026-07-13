@@ -6,12 +6,17 @@
 package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
-data class ConeTypeParameterLookupTag(
+abstract class ConeTypeParameterLookupTag : ConeClassifierLookupTag(), TypeParameterMarker {
+    abstract val symbol: FirTypeParameterSymbol
+}
+
+data class ConeTypeParameterLookupTagImpl(
     val typeParameterSymbol: FirTypeParameterSymbol
-) : ConeClassifierLookupTagWithFixedSymbol(), TypeParameterMarker {
+) : ConeTypeParameterLookupTag(), TypeParameterMarker {
     override val name: Name get() = typeParameterSymbol.name
     override val symbol: FirTypeParameterSymbol
         get() = typeParameterSymbol

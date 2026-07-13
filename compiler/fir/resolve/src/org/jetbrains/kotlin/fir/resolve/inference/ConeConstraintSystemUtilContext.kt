@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedAtomWithRevisableExpe
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeRegularLambdaArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds

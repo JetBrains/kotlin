@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnknownLambdaParameterTypeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
