@@ -51,6 +51,19 @@ int32_t Konan_DebugBufferSizeWithObject(KRef obj);
 RUNTIME_EXPORT RUNTIME_WEAK
 int32_t Konan_DebugObjectToUtf8Array(KRef obj, char* buffer, int32_t bufferSize);
 
+// Put string representations of array elements at the provided indices into the buffer.
+// `offsets` receives byte offsets within `buffer` and `lengths` receives written byte counts.
+RUNTIME_EXPORT RUNTIME_WEAK
+void Konan_DebugBatchObjectToUtf8Array(
+    KRef obj,
+    const int32_t* indices,
+    int32_t count,
+    int32_t* offsets,
+    int32_t* lengths,
+    char* buffer,
+    int32_t bufferSize
+);
+
 // Print to console string representation of an object.
 RUNTIME_EXPORT RUNTIME_WEAK
 int32_t Konan_DebugPrint(KRef obj);
