@@ -60,6 +60,12 @@ internal sealed class KlibToolCommand(
 
     protected fun KotlinIrSignatureVersion?.checkSupportedInLibrary(library: KotlinLibrary): Boolean {
         if (this != null) {
+            if (library.isCInteropLibrary()) {
+                // C-interop libraries basically support all versions of signatures,
+                // as the signatures are anyway generated on the fly.
+                return true
+            }
+
             val supportedSignatureVersions = library.versions.irSignatureVersions
             if (this !in supportedSignatureVersions) {
                 output.logError(
@@ -310,19 +316,17 @@ internal class DumpMetadata(output: KlibToolOutput, args: ParsedArguments) : Kli
 
 internal class DumpIrSignatures(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
     override fun execute() {
+        if (!args.signatureVersion.checkSupportedInLibrary(args.library)) return
+
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
-        val signaturesExtractor = if (args.library.isCInteropLibrary()) {
-            // Don't call `checkSupportedInLibrary()` - the signatures are anyway generated on the fly.
-
-            IdSignaturesExtractorFromCInteropKlib(args.library)
-        } else if (args.library.ir != null) {
-            if (!args.signatureVersion.checkSupportedInLibrary(args.library)) return
-
-            IdSignaturesExtractorFromRegularKlib(args.library)
-        } else {
-            output.logError("This library does not have IR and is not a C-interop library: ${args.library.path}")
-            return
+        val signaturesExtractor = when {
+            args.library.isCInteropLibrary() -> IdSignaturesExtractorFromCInteropKlib(args.library)
+            args.library.ir != null -> IdSignaturesExtractorFromRegularKlib(args.library)
+            else -> {
+                output.logError("This library does not have IR and is not a C-interop library: ${args.library.path}")
+                return
+            }
         }
 
         val signatures = with(signaturesExtractor) {
