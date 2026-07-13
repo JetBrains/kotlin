@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.isInlineClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
@@ -603,3 +603,6 @@ val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatCom
 @OptIn(ValueClassBackendAgnosticApi::class)
 fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType =
     getInlineClassUnderlyingType(irClass, treatCompatibleFullValueClassesAsInline = false)
+
+val IrType.isNonReplacedJvmSpecializedGeneric: Boolean
+    get() = isJvmSpecializedGeneric && !getRequiresMangling()

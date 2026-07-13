@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceOwnerKClassType
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
+import org.jetbrains.kotlin.backend.jvm.ir.isNonReplacedJvmSpecializedGeneric
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ClassInstance
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
@@ -32,13 +33,11 @@ import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.withNullability
 import org.jetbrains.kotlin.ir.util.arguments
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.genericTypeParameterIndex
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isJvmSpecialized
-import org.jetbrains.kotlin.ir.util.isJvmSpecializedGeneric
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
@@ -175,7 +174,7 @@ private fun IrDeclarationParent.toLightIrTypeParameterParent(context: JvmBackend
 }
 
 fun IrType.asSpecTypeParameterUsage(): SpecTypeParametersUsages.Usage? =
-    if (isJvmSpecializedGeneric) SpecTypeParametersUsages.Usage(genericTypeParameterIndex!!, isMarkedNullable()) else null
+    if (isNonReplacedJvmSpecializedGeneric) SpecTypeParametersUsages.Usage(genericTypeParameterIndex!!, isMarkedNullable()) else null
 
 fun IrFunction.specTypeParametersUsages(): SpecTypeParametersUsages {
     return SpecTypeParametersUsages(

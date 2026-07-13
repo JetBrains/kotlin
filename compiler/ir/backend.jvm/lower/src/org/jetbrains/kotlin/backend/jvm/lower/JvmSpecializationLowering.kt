@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.isNonReplacedJvmSpecializedGeneric
 import org.jetbrains.kotlin.backend.jvm.ir.kClassReference
 import org.jetbrains.kotlin.backend.jvm.mapping.specTypeParametersUsages
 import org.jetbrains.kotlin.backend.jvm.mapping.LightIrTypeMapper
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isJvmSpecialized
-import org.jetbrains.kotlin.ir.util.isJvmSpecializedGeneric
 import org.jetbrains.kotlin.ir.util.isJvmSpecializedInterfaceCall
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
@@ -98,7 +98,7 @@ class JvmSpecializationLowering(val backendContext: JvmBackendContext) :
     override fun visitGetValue(expression: IrGetValue): IrExpression {
         val valueDecl = expression.symbol.owner
         if (valueDecl.origin == IrDeclarationOrigin.DEFINED &&
-            valueDecl.type.isJvmSpecializedGeneric
+            valueDecl.type.isNonReplacedJvmSpecializedGeneric
         ) {
             return irBuilder(expression).wrapExprInBoxMarker(expression)
         }
@@ -109,7 +109,7 @@ class JvmSpecializationLowering(val backendContext: JvmBackendContext) :
         expression.transformChildrenVoid(this)
         val valueDecl = expression.symbol.owner
         if (valueDecl.origin == IrDeclarationOrigin.DEFINED &&
-            valueDecl.type.isJvmSpecializedGeneric
+            valueDecl.type.isNonReplacedJvmSpecializedGeneric
         ) {
             val irBuilder = irBuilder(expression)
             return irBuilder.irSet(valueDecl.symbol, irBuilder.wrapExprInUnboxMarker(expression.value, valueDecl.type))
@@ -122,7 +122,7 @@ class JvmSpecializationLowering(val backendContext: JvmBackendContext) :
         val valueDecl = declaration.symbol.owner
         val expression = declaration.initializer
         if (valueDecl.origin == IrDeclarationOrigin.DEFINED &&
-            valueDecl.type.isJvmSpecializedGeneric &&
+            valueDecl.type.isNonReplacedJvmSpecializedGeneric &&
             expression != null
         ) {
             declaration.initializer = irBuilder(expression).wrapExprInUnboxMarker(expression, valueDecl.type)
@@ -133,7 +133,7 @@ class JvmSpecializationLowering(val backendContext: JvmBackendContext) :
     override fun visitReturn(expression: IrReturn): IrExpression {
         expression.transformChildrenVoid(this)
         val returnType = expression.returnTargetSymbol.owner.returnType(backendContext)
-        if (returnType.isJvmSpecializedGeneric) {
+        if (returnType.isNonReplacedJvmSpecializedGeneric) {
             val irBuilder = irBuilder(expression)
             return irBuilder.irReturn(irBuilder.wrapExprInUnboxMarker(expression.value, returnType))
         }
