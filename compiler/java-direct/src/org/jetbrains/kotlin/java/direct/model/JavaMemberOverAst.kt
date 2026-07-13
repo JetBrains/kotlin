@@ -143,7 +143,9 @@ class JavaFieldOverAst(
         }
         // leadingFieldNode is null whenever the node has its own TYPE (see computeLeadingFieldNode),
         val typeSourceNode = leadingFieldNode ?: node
-        return createJavaType(typeSourceNode, tree, resolutionContext)
+        // TYPE_USE annotations (e.g. JSpecify `@Nullable`/`@NonNull`) written in the field's
+        // modifier list belong to the field type, matching PSI's `PsiField.type.annotations`.
+        return createJavaTypeWithAnnotations(typeSourceNode, modifierList, tree, resolutionContext)
     }
 
     /**

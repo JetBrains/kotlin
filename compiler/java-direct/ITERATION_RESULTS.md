@@ -36,6 +36,19 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-13 — Attach TYPE_USE annotations to field types (JSpecify warn-mode enhancement)
+- **Change**: `JavaFieldOverAst.computeType()` built the field type with plain `createJavaType`,
+  dropping the field's modifier-list annotations, so JSpecify `@Nullable`/`@NonNull` TYPE_USE
+  annotations never reached the field type. In `JSPECIFY_STATE: warn` the flexible field type then
+  rendered without its `@Nullable()`/`@NonNull()` type annotations and the
+  `RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS` diagnostic was missing. Now uses
+  `createJavaTypeWithAnnotations` (the same path `JavaMethodOverAst.returnType` already uses), which
+  TYPE_USE-filters the member annotations onto the type — matching PSI's `PsiField.type.annotations`.
+- **Files**: `model/JavaMemberOverAst.kt` (`computeType`, 1 line + comment).
+- **Tests**: box 1178/1178, phased 1660/1660 (full suite green); previously failing
+  `SmartCasts.Kt87278.testEnhancedNotNullWarn` / `testEnhancedNullableWarn` now pass.
+- **Result**: regression fixed (new master tests); green.
+
 ### 2026-07-10 — Document why the KT-74097 guard is kept over a lazy-annotation fix (JavaCycleBreakerTest reviewer Q)
 - **Change**: Recorded the answer to the recurring reviewer question on `JavaCycleBreakerTest.kt`'s
   KT-74097 note ("wouldn't it help to stop resolving annotations while computing
