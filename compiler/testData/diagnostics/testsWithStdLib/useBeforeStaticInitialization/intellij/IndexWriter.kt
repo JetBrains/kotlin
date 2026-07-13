@@ -9,11 +9,11 @@
 
         <!POSSIBLY_UNINITIALIZED_PROPERTY!>private val defaultParallelWriter: ParallelIndexWriter = when (PARALLEL_WRITER_IMPL) {
             "FakeIndexWriter" -> <!ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE!>FakeIndexWriter<!>
-            "ApplyViaCoroutinesWriter" -> <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS, CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>ApplyViaCoroutinesWriter()<!>
-            "LegacyMultiThreadedIndexWriter" -> <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS, CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>LegacyMultiThreadedIndexWriter()<!>
+            "ApplyViaCoroutinesWriter" -> <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>ApplyViaCoroutinesWriter()<!>
+            "LegacyMultiThreadedIndexWriter" -> <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>LegacyMultiThreadedIndexWriter()<!>
 
-            "MultiThreadedWithSuspendIndexWriter", null -> <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS, CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>MultiThreadedWithSuspendIndexWriter()<!>
-            else -> <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS, CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>MultiThreadedWithSuspendIndexWriter()<!>
+            "MultiThreadedWithSuspendIndexWriter", null -> <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>MultiThreadedWithSuspendIndexWriter()<!>
+            else -> <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>MultiThreadedWithSuspendIndexWriter()<!>
         }<!>
 
         init {

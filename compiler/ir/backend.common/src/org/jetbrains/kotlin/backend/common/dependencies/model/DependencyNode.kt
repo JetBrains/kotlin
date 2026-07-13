@@ -3,10 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dependencies
+package org.jetbrains.kotlin.backend.common.dependencies
 
-import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyNodeIndex.Companion.enclosingEntity
-import org.jetbrains.kotlin.fir.util.SetMultimap
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyNodeIndex.Companion.enclosingEntity
+import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity
+import org.jetbrains.kotlin.backend.common.dependencies.util.SetMultimap
+import org.jetbrains.kotlin.backend.common.dependencies.util.TraversalOrder
 import kotlin.collections.forEach
 import kotlin.collections.set
 import kotlin.let

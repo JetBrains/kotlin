@@ -77,10 +77,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_WITH_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS
@@ -200,7 +196,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_UPPER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFUSING_BRANCH_CONDITION_ERROR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION
@@ -698,10 +693,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJECTION_IN_TYPEREF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POSSIBLE_CYCLIC_ACCESS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POSSIBLE_INITIALIZATION_DEADLOCK
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POSSIBLY_UNINITIALIZED_ENUM_ENTRY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POSSIBLY_UNINITIALIZED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
@@ -966,7 +957,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETU
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.renderReadable
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
@@ -4030,60 +4020,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             COMPANION_EXTENSION_NULLABLE_RECEIVER,
             "Companion extension receiver type cannot be nullable.",
-        )
-        map.put(
-            POSSIBLE_INITIALIZATION_DEADLOCK,
-            "Possible initialization deadlock with ''{0}''.",
-            Renderer { classes -> classes.joinToString(transform = FqName::asString) },
-        )
-        map.put(
-            POSSIBLY_UNINITIALIZED_PROPERTY,
-            "Possibly uninitialized property ''{0}'' due to mutually dependent (direct or indirect) accesses ''{1}''.",
-            Renderer(FqName::asString),
-            Renderer { classes ->
-                if (classes.isEmpty()) "between the declarations of its containing class"
-                else classes.joinToString(prefix = "in ", transform = FqName::asString)
-            },
-        )
-        map.put(
-            POSSIBLY_UNINITIALIZED_ENUM_ENTRY,
-            "Possibly uninitialized enum entry ''{0}'' due to mutually dependent (direct or indirect) accesses ''{1}''.",
-            DECLARATION_FQ_NAME,
-            Renderer { classes ->
-                if (classes.isEmpty()) "between the declarations of its containing class"
-                else classes.joinToString(prefix = "in ", transform = FqName::asString)
-            },
-        )
-        map.put(
-            ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY,
-            "The expression accesses (either directly or indirectly) the property ''{0}'' when it is possibly uninitialized.",
-            Renderer(FqName::asString),
-        )
-        map.put(
-            ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY,
-            "The expression accesses (either directly or indirectly) the enum entry ''{0}'' when it is possibly uninitialized.",
-            DECLARATION_FQ_NAME,
-        )
-        map.put(
-            POSSIBLE_CYCLIC_ACCESS,
-            "The expression accesses (either directly or indirectly) the declaration ''{0}'' that is possibly uninitialized due to cyclic access in its own initializer.",
-            DECLARATION_FQ_NAME,
-        )
-        map.put(
-            ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE,
-            "The expression accesses (either directly or indirectly) the object ''{0}'' when it is not fully (statically) initialized (due to mutual static dependencies), any static access to its declarations may cause an NPE.",
-            Renderer(FqName::asString),
-        )
-        map.put(
-            ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS,
-            "The expression accesses (either directly or indirectly) the declaration ''{1}'' of a class ''{0}'' when it is not fully statically initialized (due to mutual static dependencies), any static access to its declarations may cause an NPE.",
-            Renderer(FqName::asString),
-            DECLARATION_FQ_NAME,
-        )
-        map.put(
-            CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS,
-            "The constructor call creates possible static initialization deadlock due to mutual static dependencies of its constructing class ''{0}''.",
-            Renderer(FqName::asString),
         )
     }
 }

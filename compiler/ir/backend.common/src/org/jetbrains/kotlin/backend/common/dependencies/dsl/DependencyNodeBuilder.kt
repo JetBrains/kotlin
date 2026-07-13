@@ -3,40 +3,38 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dependencies.dsl
+package org.jetbrains.kotlin.backend.common.dependencies.dsl
 
-import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.resolve.dependencies.AccessibleIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.AnonymousInitializerIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.BeginInstanceInitializationIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.BeginStaticInitializationIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyEdge
-import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyGraph
-import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyGraph.Companion.condenseCycles
-import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyNode
-import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyNodeIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity
-import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.asFileEntity
-import org.jetbrains.kotlin.fir.resolve.dependencies.EndInstanceInitializationIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.EndStaticInitializationIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.FunctionIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.IsCalledBy
-import org.jetbrains.kotlin.fir.resolve.dependencies.IsReferencedBy
-import org.jetbrains.kotlin.fir.resolve.dependencies.MayHappenBefore
-import org.jetbrains.kotlin.fir.resolve.dependencies.MustHappenBefore
-import org.jetbrains.kotlin.fir.resolve.dependencies.PropertyIndex
-import org.jetbrains.kotlin.fir.resolve.dependencies.beginInitializationIndex
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
-import org.jetbrains.kotlin.fir.resolve.toClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.backend.common.dependencies.AccessibleIndex
+import org.jetbrains.kotlin.backend.common.dependencies.AnonymousInitializerIndex
+import org.jetbrains.kotlin.backend.common.dependencies.BeginInstanceInitializationIndex
+import org.jetbrains.kotlin.backend.common.dependencies.BeginStaticInitializationIndex
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyEdge
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyGraph
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyGraph.Companion.condenseCycles
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyNode
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyNodeIndex
+import org.jetbrains.kotlin.backend.common.dependencies.EndInstanceInitializationIndex
+import org.jetbrains.kotlin.backend.common.dependencies.EndStaticInitializationIndex
+import org.jetbrains.kotlin.backend.common.dependencies.FunctionIndex
+import org.jetbrains.kotlin.backend.common.dependencies.IsCalledBy
+import org.jetbrains.kotlin.backend.common.dependencies.IsReferencedBy
+import org.jetbrains.kotlin.backend.common.dependencies.MayHappenBefore
+import org.jetbrains.kotlin.backend.common.dependencies.MustHappenBefore
+import org.jetbrains.kotlin.backend.common.dependencies.PropertyIndex
+import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity
+import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.asFileEntity
+import org.jetbrains.kotlin.backend.common.dependencies.util.beginInitializationIndex
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import java.util.Deque
 import java.util.LinkedList
 import kotlin.sequences.forEach
@@ -70,21 +68,17 @@ sealed class DependencyNodeBuilder(internal val context: DependencyGraphBuilderC
         }
     }
 
-    fun FirCallableSymbol<*>.postponeFileEntity() {
-        val enclosingEntity = dependencyGraph.session.firProvider.getContainingFile(this)?.symbol?.asFileEntity() ?: return
+    fun <D : IrDeclaration> IrBindableSymbol<*, D>.postponeFileEntity() {
+        val enclosingEntity = owner.fileOrNull?.asFileEntity() ?: return
         worklist.add(enclosingEntity.beginInitializationIndex)
     }
 
-    fun FirClassSymbol<*>.postponeFileEntity() {
-        val file = dependencyGraph.session.firProvider.getContainingFile(this)?.symbol ?: return
-        val enclosingEntity = file.asFileEntity()
-        worklist.add(enclosingEntity.beginInitializationIndex)
-    }
-
-    fun FirClassSymbol<*>.postponeInitSubgraph() {
+    fun IrClassSymbol.postponeInitSubgraph() {
         worklist.add(beginInitializationIndex)
         postponeFileEntity()
     }
+
+    fun IrClass.postponeInitSubgraph() = symbol.postponeInitSubgraph()
 
     private fun addEdge(edge: DependencyEdge): Boolean {
         val addedFrom = context.dependencyGraph[edge.from]?.insertOutgoingEdge(edge) ?: false
@@ -94,20 +88,20 @@ sealed class DependencyNodeBuilder(internal val context: DependencyGraphBuilderC
         return addedFrom || addedTo
     }
 
-    context(at: FirExpression)
+    context(at: IrExpression?)
     infix fun DependencyNodeIndex.calls(from: FunctionIndex<*>): Boolean = let { index ->
         when {
             from != index && from in context.dependencyGraph && index in context.dependencyGraph ->
-                addEdge(IsCalledBy(from, index, at.source))
+                addEdge(IsCalledBy(from, index, at))
             else -> false
         }
     }
 
-    context(at: FirExpression)
+    context(at: IrExpression?)
     infix fun DependencyNodeIndex.references(from: AccessibleIndex): Boolean = let { index ->
         when {
             from != index && from in context.dependencyGraph && index in context.dependencyGraph ->
-                addEdge(IsReferencedBy(from, index, at.source))
+                addEdge(IsReferencedBy(from, index, at))
             else -> false
         }
     }
@@ -137,7 +131,7 @@ class DependencyGraphBuilder(
     worklist: Deque<DependencyNodeIndex>
 ) : DependencyNodeBuilder(DependencyGraphBuilderContext(dependencyGraph, worklist)) {
 
-    inline fun <D : FirDeclaration, E : EnclosingEntity<D>> E.buildClinitSubgraph(crossinline init: StaticInitializationSubgraphBuilder<D, E>.() -> Unit = {}) {
+    inline fun <D : IrSymbolOwner, E : EnclosingEntity<D>> E.buildClinitSubgraph(crossinline init: StaticInitializationSubgraphBuilder<D, E>.() -> Unit = {}) {
         // Build the subgraph using the initializer
         StaticInitializationSubgraphBuilder(this@DependencyGraphBuilder, this).apply {
             beginInitializationIndex.buildSubgraphNode()
@@ -146,7 +140,7 @@ class DependencyGraphBuilder(
         }
     }
 
-    inline fun <C : FirClass> FirClassSymbol<C>.buildInitSubgraph(crossinline init: InstanceInitializationSubgraphBuilder<C>.() -> Unit = {}) {
+    inline fun IrClassSymbol.buildInitSubgraph(crossinline init: InstanceInitializationSubgraphBuilder.() -> Unit = {}) {
         InstanceInitializationSubgraphBuilder(this@DependencyGraphBuilder, this).apply {
             BeginInstanceInitializationIndex(this@buildInitSubgraph).buildSubgraphNode()
             init()
@@ -213,7 +207,7 @@ sealed class DependencySubgraphBuilder(
 }
 
 @DependencyGraphBuilderDsl
-class StaticInitializationSubgraphBuilder<D : FirDeclaration, E : EnclosingEntity<D>>(
+class StaticInitializationSubgraphBuilder<D : IrSymbolOwner, E : EnclosingEntity<D>>(
     delegate: DependencyNodeBuilder,
     val enclosingEntity: E
 ) : DependencySubgraphBuilder(delegate, enclosingEntity.beginInitializationIndex) {
@@ -246,7 +240,7 @@ class StaticInitializationSubgraphBuilder<D : FirDeclaration, E : EnclosingEntit
         buildSubgraphNode(this)
     }
 
-    inline fun <D : FirDeclaration, E : EnclosingEntity<D>> E.buildNestedSubgraph(crossinline init: StaticInitializationSubgraphBuilder<D, E>.() -> Unit = {}) {
+    inline fun <D : IrSymbolOwner, E : EnclosingEntity<D>> E.buildNestedSubgraph(crossinline init: StaticInitializationSubgraphBuilder<D, E>.() -> Unit = {}) {
         require(enclosingEntity == parentEnclosingEntity) {
             "The given enclosing entity ($this) must directly nested under the outer entity ($enclosingEntity)!"
         }
@@ -260,43 +254,43 @@ class StaticInitializationSubgraphBuilder<D : FirDeclaration, E : EnclosingEntit
 }
 
 @DependencyGraphBuilderDsl
-class InstanceInitializationSubgraphBuilder<C : FirClass>(
+class InstanceInitializationSubgraphBuilder(
     delegate: DependencyNodeBuilder,
-    val classSymbol: FirClassSymbol<C>
-) : DependencySubgraphBuilder(delegate, classSymbol.beginInitializationIndex) {
+    val symbol: IrClassSymbol
+) : DependencySubgraphBuilder(delegate, symbol.beginInitializationIndex) {
 
-    fun BeginInstanceInitializationIndex<C>.buildSubgraphNode() {
-        require(classSymbol == this@InstanceInitializationSubgraphBuilder.classSymbol) {
-            "The begin instance initialization node $this must be constructed in the context of its class ($classSymbol) and not ${this@InstanceInitializationSubgraphBuilder.classSymbol}!"
+    fun BeginInstanceInitializationIndex.buildSubgraphNode() {
+        require(symbol == this@InstanceInitializationSubgraphBuilder.symbol) {
+            "The begin instance initialization node $this must be constructed in the context of its class ($symbol) and not ${this@InstanceInitializationSubgraphBuilder.symbol}!"
         }
         buildSubgraphNode(this)
     }
 
-    fun EndInstanceInitializationIndex<C>.buildSubgraphNode() {
-        require(classSymbol == this@InstanceInitializationSubgraphBuilder.classSymbol) {
-            "The begin instance initialization node $this must be constructed in the context of its class ($classSymbol) and not ${this@InstanceInitializationSubgraphBuilder.classSymbol}!"
+    fun EndInstanceInitializationIndex.buildSubgraphNode() {
+        require(symbol == this@InstanceInitializationSubgraphBuilder.symbol) {
+            "The begin instance initialization node $this must be constructed in the context of its class ($symbol) and not ${this@InstanceInitializationSubgraphBuilder.symbol}!"
         }
         buildSubgraphNode(this)
     }
 
     fun PropertyIndex.buildSubgraphNode() {
-        val propertyClassSymbol = symbol.containingClassLookupTag()?.toClassSymbol(symbol.moduleData.session)
-        require(propertyClassSymbol == this@InstanceInitializationSubgraphBuilder.classSymbol) {
-            "The instance property node $this must be constructed in the context of its class ($propertyClassSymbol) and not ${this@InstanceInitializationSubgraphBuilder.classSymbol}!"
+        val containingClass = symbol.owner.parentClassOrNull?.symbol
+        require(containingClass == this@InstanceInitializationSubgraphBuilder.symbol) {
+            "The instance property node $this must be constructed in the context of its class ($containingClass) and not ${this@InstanceInitializationSubgraphBuilder.symbol}!"
         }
         buildSubgraphNode(this)
     }
 
     fun AnonymousInitializerIndex.buildSubgraphNode() {
-        val initializerClassSymbol = symbol.containingDeclarationSymbol
-        require(initializerClassSymbol == this@InstanceInitializationSubgraphBuilder.classSymbol) {
-            "The instance initializer node $this must be constructed in the context of its class ($initializerClassSymbol) and not ${this@InstanceInitializationSubgraphBuilder.classSymbol}!"
+        val containingClass = symbol.owner.parentClassOrNull?.symbol
+        require(containingClass == this@InstanceInitializationSubgraphBuilder.symbol) {
+            "The instance initializer node $this must be constructed in the context of its class ($containingClass) and not ${this@InstanceInitializationSubgraphBuilder.symbol}!"
         }
         buildSubgraphNode(this)
     }
 }
 
-typealias ClassSubgraphBuilder = StaticInitializationSubgraphBuilder<FirRegularClass, EnclosingEntity.Class>
-typealias ObjectSubgraphBuilder = StaticInitializationSubgraphBuilder<FirRegularClass, EnclosingEntity.Object>
-typealias EnumEntrySubgraphBuilder = StaticInitializationSubgraphBuilder<FirEnumEntry, EnclosingEntity.EnumEntry>
-typealias FileSubgraphBuilder = StaticInitializationSubgraphBuilder<FirFile, EnclosingEntity.File>
+typealias ClassSubgraphBuilder = StaticInitializationSubgraphBuilder<IrClass, EnclosingEntity.Class>
+typealias ObjectSubgraphBuilder = StaticInitializationSubgraphBuilder<IrClass, EnclosingEntity.Object>
+typealias EnumEntrySubgraphBuilder = StaticInitializationSubgraphBuilder<IrEnumEntry, EnclosingEntity.EnumEntry>
+typealias FileSubgraphBuilder = StaticInitializationSubgraphBuilder<IrFile, EnclosingEntity.File>

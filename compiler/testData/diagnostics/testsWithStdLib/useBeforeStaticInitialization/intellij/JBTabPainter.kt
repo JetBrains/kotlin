@@ -7,10 +7,10 @@
         val DEFAULT: JBTabPainter = <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>JBDefaultTabPainter()<!>
 
         @JvmStatic
-        val EDITOR: JBEditorTabPainter = <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS, CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>JBEditorTabPainter()<!>
+        val EDITOR: JBEditorTabPainter = <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>JBEditorTabPainter()<!>
 
         @JvmStatic
-        val TOOL_WINDOW: JBTabPainter = <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS, CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>ToolWindowTabPainter()<!>
+        val TOOL_WINDOW: JBTabPainter = <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>ToolWindowTabPainter()<!>
 
         @JvmStatic
         val DEBUGGER: JBTabPainter = <!CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS!>JBDefaultTabPainter(DebuggerTabTheme())<!>

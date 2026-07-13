@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dependencies
+package org.jetbrains.kotlin.backend.common.dependencies
 
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -26,13 +26,13 @@ sealed interface DependencyEdge {
 sealed interface InformationEdge : DependencyEdge {
     override val from: AccessibleIndex
 
-    val accessSources: Set<KtSourceElement>
+    val accessSources: Set<IrElement>
 
     override fun merge(other: DependencyEdge): InformationEdge?
 
     companion object {
         operator fun InformationEdge.component1(): AccessibleIndex = from
-        operator fun InformationEdge.component3(): Set<KtSourceElement> = accessSources
+        operator fun InformationEdge.component3(): Set<IrElement> = accessSources
     }
 }
 
@@ -45,12 +45,12 @@ sealed interface HappensBeforeEdge : DependencyEdge {
 data class IsReferencedBy(
     override val from: AccessibleIndex,
     override val to: DependencyNodeIndex,
-    override val accessSources: Set<KtSourceElement> = emptySet(),
+    override val accessSources: Set<IrElement> = emptySet(),
 ) : InformationEdge {
-    constructor(from: AccessibleIndex, to: DependencyNodeIndex, accessSource: KtSourceElement?) : this(
+    constructor(from: AccessibleIndex, to: DependencyNodeIndex, accessSource: IrElement?) : this(
         from = from,
         to = to,
-        accessSources = SmartSet.create<KtSourceElement>().also { it.addIfNotNull(accessSource) }
+        accessSources = SmartSet.create<IrElement>().also { it.addIfNotNull(accessSource) }
     )
 
     override fun merge(other: DependencyEdge): IsReferencedBy? {
@@ -65,12 +65,12 @@ data class IsReferencedBy(
 data class IsCalledBy(
     override val from: FunctionIndex<*>,
     override val to: DependencyNodeIndex,
-    override val accessSources: Set<KtSourceElement> = emptySet(),
+    override val accessSources: Set<IrElement> = emptySet(),
 ) : InformationEdge, HappensBeforeEdge {
-    constructor(from: FunctionIndex<*>, to: DependencyNodeIndex, accessSource: KtSourceElement?) : this(
+    constructor(from: FunctionIndex<*>, to: DependencyNodeIndex, accessSource: IrElement?) : this(
         from = from,
         to = to,
-        accessSources = SmartSet.create<KtSourceElement>().also { it.addIfNotNull(accessSource) }
+        accessSources = SmartSet.create<IrElement>().also { it.addIfNotNull(accessSource) }
     )
 
     override fun merge(other: DependencyEdge): IsCalledBy? {

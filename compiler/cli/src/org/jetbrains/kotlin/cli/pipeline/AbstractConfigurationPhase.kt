@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.cli.pipeline
 
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationErrors
+import org.jetbrains.kotlin.backend.common.dependencies.checker.StaticInitializationDiagnostics
 import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_COMMANDLINE_PROCESSOR_NAME
@@ -55,6 +56,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             CommonBackendErrors,
             SerializationErrors,
             IrValidationDiagnostics,
+            StaticInitializationDiagnostics
         )
 
         for (filler in configurationUpdaters) {

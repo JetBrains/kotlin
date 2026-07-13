@@ -3,21 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dependencies
+package org.jetbrains.kotlin.backend.common.dependencies
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyNode.Companion.happensBeforeAncestors
-import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyNode.Companion.happensBeforeDescendants
-import org.jetbrains.kotlin.fir.resolve.dfa.isNotEmpty
-import org.jetbrains.kotlin.fir.resolve.dfa.stackOf
-import org.jetbrains.kotlin.fir.util.SetMultimap
-import org.jetbrains.kotlin.fir.util.setMultimapOf
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyNode.Companion.happensBeforeAncestors
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyNode.Companion.happensBeforeDescendants
+import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity
+import org.jetbrains.kotlin.backend.common.dependencies.util.SetMultimap
+import org.jetbrains.kotlin.backend.common.dependencies.util.TraversalOrder
+import org.jetbrains.kotlin.backend.common.dependencies.util.setMultimapOf
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import java.util.LinkedList
 import kotlin.collections.plusAssign
 import kotlin.sequences.forEach
 
-class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<DependencyNode> {
+class DependencyGraph(val module: IrModuleFragment) : Set<DependencyNode> {
 
     private val nodes: MutableSet<DependencyNode> = mutableSetOf()
     private val entities: SetMultimap<EnclosingEntity<*>, DependencyNodeIndex> = setMultimapOf()
@@ -54,7 +53,7 @@ class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<Depend
         context(graph: DependencyGraph)
         fun Set<DependencyNode>.stronglyConnectedComponents(): List<Set<DependencyNode>> {
             val visited = mutableSetOf<DependencyNode>()
-            val sorted = stackOf<DependencyNode>()
+            val sorted = LinkedList<DependencyNode>()
             this@stronglyConnectedComponents.forEach { node ->
                 node.happensBeforeDescendants(visited, TraversalOrder.PostOrder) { it in this && !it.isComposite }
                     .forEach(sorted::push)
@@ -62,7 +61,7 @@ class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<Depend
             visited.clear()
 
             val result = LinkedList<Set<DependencyNode>>()
-            while (sorted.isNotEmpty) {
+            while (sorted.isNotEmpty()) {
                 val current = sorted.pop()
                 if (current !in visited) {
                     val component = mutableSetOf<DependencyNode>()
@@ -216,5 +215,3 @@ class DependencyGraph(val session: FirSession) : FirSessionComponent, Set<Depend
         }
     }
 }
-
-val FirSession.dependencyGraph: DependencyGraph? by FirSession.nullableSessionComponentAccessor()

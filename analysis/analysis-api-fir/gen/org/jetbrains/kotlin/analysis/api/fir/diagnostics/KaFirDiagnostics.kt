@@ -4825,54 +4825,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CompanionExtensionNullableReceiver::class
     }
 
-    interface PossibleInitializationDeadlock : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = PossibleInitializationDeadlock::class
-        val cyclicDependencies: List<FqName>
-    }
-
-    interface PossiblyUninitializedProperty : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = PossiblyUninitializedProperty::class
-        val property: FqName
-        val cyclicDependencies: List<FqName>
-    }
-
-    interface PossiblyUninitializedEnumEntry : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = PossiblyUninitializedEnumEntry::class
-        val enumEntry: KaSymbol
-        val cyclicDependencies: List<FqName>
-    }
-
-    interface AccessingPossiblyUninitializedProperty : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = AccessingPossiblyUninitializedProperty::class
-        val property: FqName
-    }
-
-    interface AccessingPossiblyUninitializedEnumEntry : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = AccessingPossiblyUninitializedEnumEntry::class
-        val enumEntry: KaSymbol
-    }
-
-    interface PossibleCyclicAccess : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = PossibleCyclicAccess::class
-        val declaration: KaSymbol
-    }
-
-    interface AccessingPossiblyInaccessibleObjectReference : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = AccessingPossiblyInaccessibleObjectReference::class
-        val inaccessibleEntity: FqName
-    }
-
-    interface AccessingDeclarationOfPossiblyInaccessibleClass : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = AccessingDeclarationOfPossiblyInaccessibleClass::class
-        val inaccessibleEntity: FqName
-        val declaration: KaSymbol
-    }
-
-    interface ConstructingPossiblyDeadlockingClass : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = ConstructingPossiblyDeadlockingClass::class
-        val deadlockingEntity: FqName
-    }
-
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }

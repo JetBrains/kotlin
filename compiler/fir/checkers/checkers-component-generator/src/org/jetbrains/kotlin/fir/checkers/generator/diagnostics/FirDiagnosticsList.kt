@@ -2452,48 +2452,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
         val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
     }
-
-    val STATIC_INITIALIZATION by object : DiagnosticGroup("Static Initialization") {
-
-        val POSSIBLE_INITIALIZATION_DEADLOCK by warning<PsiElement> {
-            parameter<List<FqName>>("cyclicDependencies")
-        }
-
-        val POSSIBLY_UNINITIALIZED_PROPERTY by warning<PsiElement> {
-            parameter<FqName>("property")
-            parameter<List<FqName>>("cyclicDependencies")
-        }
-
-        val POSSIBLY_UNINITIALIZED_ENUM_ENTRY by warning<PsiElement> {
-            parameter<FirEnumEntrySymbol>("enumEntry")
-            parameter<List<FqName>>("cyclicDependencies")
-        }
-
-        val ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY by warning<PsiElement> {
-            parameter<FqName>("property")
-        }
-
-        val ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY by warning<PsiElement> {
-            parameter<FirEnumEntrySymbol>("enumEntry")
-        }
-
-        val POSSIBLE_CYCLIC_ACCESS by warning<PsiElement> {
-            parameter<FirBasedSymbol<*>>("declaration")
-        }
-
-        val ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE by warning<PsiElement> {
-            parameter<FqName>("inaccessibleEntity")
-        }
-
-        val ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS by warning<PsiElement> {
-            parameter<FqName>("inaccessibleEntity")
-            parameter<FirBasedSymbol<*>>("declaration")
-        }
-
-        val CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS by warning<PsiElement> {
-            parameter<FqName>("deadlockingEntity")
-        }
-    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir.pipeline
 import org.jetbrains.kotlin.backend.common.BackendException
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.*
+import org.jetbrains.kotlin.backend.common.dependencies.checker.StaticInitializationChecker
+import org.jetbrains.kotlin.backend.common.dependencies.logic.DefaultFunctionParametersCollector
+import org.jetbrains.kotlin.backend.common.dependencies.logic.OverridingCallablesCollector
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -106,7 +109,13 @@ fun AllModulesFrontendOutput.convertToIrAndActualize(
         outputs,
         fir2IrExtensions,
         fir2IrConfiguration,
-        irGeneratorExtensions,
+        irGeneratorExtensions.let {
+            val extensions = it.toMutableList()
+            extensions += OverridingCallablesCollector
+            extensions += DefaultFunctionParametersCollector
+            extensions += StaticInitializationChecker
+            extensions
+        },
         irMangler,
         visibilityConverter,
         kotlinBuiltIns,

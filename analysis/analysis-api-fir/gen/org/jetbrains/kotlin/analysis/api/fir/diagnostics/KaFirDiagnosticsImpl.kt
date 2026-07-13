@@ -5792,63 +5792,6 @@ internal class CompanionExtensionNullableReceiverImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionNullableReceiver
 
-internal class PossibleInitializationDeadlockImpl(
-    override val cyclicDependencies: List<FqName>,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossibleInitializationDeadlock
-
-internal class PossiblyUninitializedPropertyImpl(
-    override val property: FqName,
-    override val cyclicDependencies: List<FqName>,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossiblyUninitializedProperty
-
-internal class PossiblyUninitializedEnumEntryImpl(
-    override val enumEntry: KaSymbol,
-    override val cyclicDependencies: List<FqName>,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossiblyUninitializedEnumEntry
-
-internal class AccessingPossiblyUninitializedPropertyImpl(
-    override val property: FqName,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AccessingPossiblyUninitializedProperty
-
-internal class AccessingPossiblyUninitializedEnumEntryImpl(
-    override val enumEntry: KaSymbol,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AccessingPossiblyUninitializedEnumEntry
-
-internal class PossibleCyclicAccessImpl(
-    override val declaration: KaSymbol,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossibleCyclicAccess
-
-internal class AccessingPossiblyInaccessibleObjectReferenceImpl(
-    override val inaccessibleEntity: FqName,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AccessingPossiblyInaccessibleObjectReference
-
-internal class AccessingDeclarationOfPossiblyInaccessibleClassImpl(
-    override val inaccessibleEntity: FqName,
-    override val declaration: KaSymbol,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AccessingDeclarationOfPossiblyInaccessibleClass
-
-internal class ConstructingPossiblyDeadlockingClassImpl(
-    override val deadlockingEntity: FqName,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConstructingPossiblyDeadlockingClass
-
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

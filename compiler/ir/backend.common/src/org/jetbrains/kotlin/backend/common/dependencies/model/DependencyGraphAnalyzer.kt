@@ -3,28 +3,34 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dependencies
+package org.jetbrains.kotlin.backend.common.dependencies.model
 
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.resolve.dependencies.AnalysisResult.Companion.with
-import org.jetbrains.kotlin.fir.resolve.dependencies.CompositeNode.Companion.subgraphFlowDescendants
-import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyEdge.Companion.component2
-import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyNodeIndex.Companion.enclosingEntity
-import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.isNotPrivate
-import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.parentEnclosingEntityOrSelf
-import org.jetbrains.kotlin.fir.resolve.dependencies.InformationEdge.Companion.component1
-import org.jetbrains.kotlin.fir.resolve.dependencies.InformationEdge.Companion.component3
+import org.jetbrains.kotlin.backend.common.dependencies.AccessibleIndex
+import org.jetbrains.kotlin.backend.common.dependencies.CompositeNode
+import org.jetbrains.kotlin.backend.common.dependencies.CompositeNode.Companion.subgraphFlowDescendants
+import org.jetbrains.kotlin.backend.common.dependencies.DeclarationIndex
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyEdge.Companion.component2
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyGraph
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyNodeIndex
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyNodeIndex.Companion.enclosingEntity
+import org.jetbrains.kotlin.backend.common.dependencies.FunctionIndex
+import org.jetbrains.kotlin.backend.common.dependencies.InformationEdge.Companion.component1
+import org.jetbrains.kotlin.backend.common.dependencies.InformationEdge.Companion.component3
+import org.jetbrains.kotlin.backend.common.dependencies.InitializationCycleAccessResult
+import org.jetbrains.kotlin.backend.common.dependencies.model.AnalysisResult.Companion.with
+import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.isNotPrivate
+import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.parentEnclosingEntityOrSelf
+import org.jetbrains.kotlin.descriptors.isInterface
+import org.jetbrains.kotlin.ir.IrElement
+import kotlin.sequences.forEach
 
-data class AnalysisResult(val type: InitializationCycleAccessResult, val accesses: Set<KtSourceElement>) {
+data class AnalysisResult(val type: InitializationCycleAccessResult, val accesses: Set<IrElement>) {
     companion object {
-        infix fun InitializationCycleAccessResult.with(accesses: Set<KtSourceElement>): AnalysisResult = AnalysisResult(this, accesses)
+        infix fun InitializationCycleAccessResult.with(accesses: Set<IrElement>): AnalysisResult = AnalysisResult(this, accesses)
     }
 }
 
-class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSessionComponent {
+class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
 
     context(accessingEntity: EnclosingEntity<*>?, cycle: CompositeNode)
     private fun analyzeTransitively(
@@ -40,6 +46,7 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
         }
         val informationFlow = cycle.informationFlowInto(node)
         for ([from, _, _] in informationFlow) {
+            println("$from -> $node")
             accessingUninitializedEntityAt(from, cycle)?.let {
                 yield(it)
                 continue
@@ -60,6 +67,7 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
                 }
                 is InitializationCycleAccessResult.ReportedAndPoisoning -> yield(result)
                 is InitializationCycleAccessResult.Reported -> {
+                    println(result)
                     yield(result)
                     yieldAll(analyzeTransitively(initial, from, visited.toMutableSet()))
                 }
@@ -95,7 +103,7 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
         // We consider 2 cases when such accesses might arise:
         return when {
             // If the accessed entity is nested under an interface...
-            (accessedEntity.parentEnclosingEntity as? EnclosingEntity.Class)?.let { it in cycle && it.symbol.isInterface } ?: false ->
+            (accessedEntity.parentEnclosingEntity as? EnclosingEntity.Class)?.let { it in cycle && it.symbol.owner.kind.isInterface } ?: false ->
                 InitializationCycleAccessResult.InaccessibleEntityAccess(accessedEntity.parentEnclosingEntity!!, accessedNode)
             // If the accessed entity's static initialization has a beginning in the happens-before cycle (enum entry and inheritance case)...
             accessedEntity.beginInitializationIndex in cycle -> InitializationCycleAccessResult.InaccessibleEntityAccess(accessedEntity, accessedNode)
@@ -109,6 +117,7 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
             val informationFlow = cycle.informationFlowInto(node)
             sequence {
                 for ([from, _, accesses] in informationFlow) {
+                    println("$from -> $node")
                     accessingUninitializedEntityAt(from, cycle)?.let {
                         yield(it with accesses)
                         continue
@@ -129,6 +138,7 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
                         }
                         is InitializationCycleAccessResult.ReportedAndPoisoning -> yield(result with accesses)
                         is InitializationCycleAccessResult.Reported -> {
+                            println(result)
                             yield(result with accesses)
                             analyzeTransitively(node, from, mutableSetOf(node))
                                 .forEach { yield(it with accesses) }
@@ -152,5 +162,3 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
                 }.distinct()
         }
 }
-
-val FirSession.dependencyGraphAnalyzer: DependencyGraphAnalyzer? by FirSession.nullableSessionComponentAccessor()
