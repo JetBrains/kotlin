@@ -62,7 +62,12 @@ abstract class UsefulDeclarationProcessor(
         override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {
             super.visitFieldAccess(expression, data)
 
-            if (ignoreFieldWrites && expression is IrSetField) return
+            if (ignoreFieldWrites && expression is IrSetField) {
+                // keep writes to fields of value classes so that the classes are kept
+                val parent = expression.symbol.owner.parent
+                if (parent !is IrClass || !parent.isValue)
+                    return
+            }
 
             val field = expression.symbol.owner.apply { enqueue(data, "field access") }
             val correspondingProperty = field.correspondingPropertySymbol?.owner ?: return
