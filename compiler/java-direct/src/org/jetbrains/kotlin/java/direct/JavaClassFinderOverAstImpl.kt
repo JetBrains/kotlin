@@ -3,18 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("UnstableApiUsage")
-
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
-import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
-import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
-import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelDirectSupertypeCacheIfAbsent
-import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelInFlightResolutionsIfAbsent
-import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelSupertypeWalkGuardIfAbsent
-import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelTypeUseCacheIfAbsent
+import org.jetbrains.kotlin.java.direct.resolution.*
 import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSupertypeGraph
@@ -85,23 +78,12 @@ class JavaClassFinderOverAstImpl internal constructor(
         return packageIndexer.ensurePackageIndexed(classId.packageFqName).containsKey(topLevelName)
     }
 
-    // ---- Source-only probes ----
-    //
-    // `JavaSymbolProvider` reads `isInSourceIndex` / `hasPackageInSources` /
-    // `sourceClassNamesInPackage` directly off this finder. `isInSourceIndex` is overridden below
-    // because the [JavaClassFinder] default is `true`; [hasPackageInSources] and
-    // [sourceClassNamesInPackage] are already source-only by construction via their defaults
-    // (`findPackage` / `knownClassNamesInPackage`).
-
-    override fun isInSourceIndex(classId: ClassId): Boolean = isClassInIndex(classId)
-
     override fun findClass(request: JavaClassFinder.Request): JavaClass? =
         classCache.getOrPutIfNotNull(request.classId) { findClasses(request).firstOrNull() }
 
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> {
         val classId = request.classId
         val segments = classId.relativeClassName.pathSegments().map(Name::asString)
-        if (segments.isEmpty()) return emptyList()
         val topLevelName = segments.first()
         val innerNames = segments.drop(1)
 

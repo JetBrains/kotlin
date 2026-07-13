@@ -328,7 +328,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_JAVA_DIRECT: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_JAVA_DIRECT", KotlinReleaseVersion(2, 4, 20))
+        JvmCompilerArgument("X_JAVA_DIRECT", KotlinReleaseVersion(2, 5, 0))
 
     /**
      * Package prefix for Java files.

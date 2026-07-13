@@ -17,26 +17,20 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaImportResolver
 import org.jetbrains.kotlin.java.direct.resolution.JavaImports
-import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.getImports
 import org.jetbrains.kotlin.load.java.structure.impl.splitCanonicalFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.iterator
 
 /**
  * Encapsulates supertype-graph queries for Java source classes: direct supertypes and
  * transitively inherited inner class names.
  *
  * The graph is computed lazily from the AST, preferring already-cached [org.jetbrains.kotlin.load.java.structure.JavaClass] instances
- * (fast path, no I/O). When a class hasn't been cached yet, the owning file is re-parsed as a
+ * (fast path, no I/O). When a class hasn't been cached yet, the owning file is reparsed as a
  * fallback (slow path). Results are memoized in per-instance caches.
- *
- * This component intentionally does NOT own the source index or the class cache — it reads them
- * through the [JavaPackageIndexer] and [JavaClassCache] passed to the constructor, so that a
- * single authoritative copy lives in [org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl].
  *
  * @param packageIndexer source index consulted for candidate files of a top-level class
  *     ([JavaPackageIndexer.findFilesForClass]) and for same-package top-level class existence
@@ -58,9 +52,6 @@ internal class JavaSupertypeGraph(
 
     /**
      * Returns the direct supertype [ClassId]s for a class.
-     *
-     * Uses [ConcurrentHashMap.computeIfAbsent] (not `getOrPut`) so that
-     * concurrent callers do not both re-parse the same file or re-extract from the same AST.
      */
     fun getDirectSupertypes(classId: ClassId): List<ClassId> {
         return supertypeCache.computeIfAbsent(classId) {
@@ -78,7 +69,7 @@ internal class JavaSupertypeGraph(
                 )
             }
 
-            // Slow path: re-parse the file to extract supertype references.
+            // Slow path: reparse the file to extract supertype references.
             val file = packageIndexer.findFilesForClass(classId).firstOrNull()?.file ?: return@computeIfAbsent emptyList()
             val source = sourceFileReader.readFileContent(file) ?: return@computeIfAbsent emptyList()
             val tree = parseJavaToLightTree(source, 0)
@@ -136,7 +127,7 @@ internal class JavaSupertypeGraph(
             }
 
             collectRecursive(classId, emptySet())
-            result.mapValues { it.value.toSet() }
+            result
         }
     }
 
@@ -149,7 +140,7 @@ internal class JavaSupertypeGraph(
             return inner.mapTo(HashSet(inner.size)) { it.asString() }
         }
 
-        // Slow path: re-parse for inner class names.
+        // Slow path: reparse for inner class names.
         val file = packageIndexer.findFilesForClass(classId).firstOrNull()?.file ?: return emptySet()
         val source = sourceFileReader.readFileContent(file) ?: return emptySet()
         val tree = parseJavaToLightTree(source, 0)

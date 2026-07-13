@@ -133,11 +133,6 @@ configurations.all {
     }
 }
 
-repositories {
-    mavenCentral()
-    maven { setUrl("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") }
-}
-
 dependencies {
     api(kotlinStdlib("jdk8"))
     api(project(":kotlin-script-runtime"))

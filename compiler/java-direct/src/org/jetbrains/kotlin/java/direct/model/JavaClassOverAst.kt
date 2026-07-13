@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("UnstableApiUsage")
-
 package org.jetbrains.kotlin.java.direct.model
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
@@ -127,36 +125,32 @@ class JavaClassOverAst(
 
     private fun findInnerClassImpl(name: Name): JavaClass? {
         val nameString = name.asString()
+        // Like the PSI and binary implementations, `findInnerClass` returns only directly
+        // declared member types; inherited ones (JLS 8.5) are resolved by the resolution layer.
         val innerClassNode = tree.getChildren(node).find { child ->
             tree.getType(child) == JavaSyntaxElementType.CLASS &&
                     tree.findChildByType(child, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.textEquals(it, nameString) } == true
-        }
+        } ?: return null
 
-        if (innerClassNode != null) {
-            // Member interfaces/enums/records are implicitly static (JLS 8.5.1, 8.10.3).
-            val hasStaticKeyword = tree.findChildByType(innerClassNode, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
-                tree.hasChildOfType(ml, JavaSyntaxTokenType.STATIC_KEYWORD)
-            } ?: false
-            val innerIsInterface = tree.findChildByType(innerClassNode, JavaSyntaxTokenType.INTERFACE_KEYWORD) != null
-            val innerIsEnum = tree.findChildByType(innerClassNode, JavaSyntaxTokenType.ENUM_KEYWORD) != null
-            val innerIsRecord = tree.findChildByType(innerClassNode, JavaSyntaxTokenType.RECORD_KEYWORD) != null
-            val innerIsEffectivelyStatic = hasStaticKeyword || innerIsInterface || innerIsEnum || innerIsRecord
+        // Member interfaces/enums/records are implicitly static (JLS 8.5.1, 8.10.3).
+        val hasStaticKeyword = tree.findChildByType(innerClassNode, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
+            tree.hasChildOfType(ml, JavaSyntaxTokenType.STATIC_KEYWORD)
+        } ?: false
+        val innerIsInterface = tree.findChildByType(innerClassNode, JavaSyntaxTokenType.INTERFACE_KEYWORD) != null
+        val innerIsEnum = tree.findChildByType(innerClassNode, JavaSyntaxTokenType.ENUM_KEYWORD) != null
+        val innerIsRecord = tree.findChildByType(innerClassNode, JavaSyntaxTokenType.RECORD_KEYWORD) != null
+        val innerIsEffectivelyStatic = hasStaticKeyword || innerIsInterface || innerIsEnum || innerIsRecord
 
-            // Non-static inner classes see outer type params as OWN (high priority); static
-            // nested types see them as INHERITED (low priority, shadowable by inner class names).
-            // Per JLS 6.5.5/8.1.3 outer type params are not in scope in static nested types at
-            // all, but PSI resolves them anyway (`JavaClassifierTypeImpl.computeResolveResult`)
-            // and java-direct matches it — see `staticNestedTypeParamShadowsImportedClass.kt`.
-            val contextForInner = if (innerIsEffectivelyStatic)
-                resolutionContext.withContainingClass(this).withInheritedTypeParameters(typeParameters)
-            else
-                memberResolutionContext
-            return JavaClassOverAst(innerClassNode, tree, contextForInner, outerClass = this)
-        }
-
-        // Like the PSI and binary implementations, `findInnerClass` returns only directly
-        // declared member types; inherited ones (JLS 8.5) are resolved by the resolution layer.
-        return null
+        // Non-static inner classes see outer type params as OWN (high priority); static
+        // nested types see them as INHERITED (low priority, shadowable by inner class names).
+        // Per JLS 6.5.5/8.1.3 outer type params are not in scope in static nested types at
+        // all, but PSI resolves them anyway (`JavaClassifierTypeImpl.computeResolveResult`)
+        // and java-direct matches it — see `staticNestedTypeParamShadowsImportedClass.kt`.
+        val contextForInner = if (innerIsEffectivelyStatic)
+            resolutionContext.withContainingClass(this).withInheritedTypeParameters(typeParameters)
+        else
+            memberResolutionContext
+        return JavaClassOverAst(innerClassNode, tree, contextForInner, outerClass = this)
     }
 
     /**
@@ -256,7 +250,7 @@ class JavaClassOverAst(
 
     /**
      * Resolves an arbitrary same-file CLASS node to its [JavaClass] without triggering supertype
-     * resolution: the top-level enclosing class is materialised through the file's same-file
+     * resolution: the top-level enclosing class is materialized through the file's same-file
      * top-level provider (which builds it against the file-level context) and each nested level is
      * reached with the declared-only [JavaClass.findInnerClass]. Returns `null` if any segment of
      * the enclosing chain cannot be resolved (e.g. a malformed/anonymous node without a name).

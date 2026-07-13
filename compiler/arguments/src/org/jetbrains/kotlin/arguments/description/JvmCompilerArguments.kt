@@ -1005,7 +1005,7 @@ The default value is 'inline'.""",
         valueType = BooleanType.defaultFalse
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_4_20
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 }

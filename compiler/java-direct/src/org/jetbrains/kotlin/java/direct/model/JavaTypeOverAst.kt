@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("UnstableApiUsage")
-
 package org.jetbrains.kotlin.java.direct.model
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
@@ -13,26 +11,10 @@ import com.intellij.java.syntax.element.SyntaxElementTypes
 import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionIn
-import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.isRaw
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
-import org.jetbrains.kotlin.java.direct.resolution.FirBackedJavaClassAdapter
-import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
-import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
-import org.jetbrains.kotlin.java.direct.resolution.declaredOrFullyInherited
-import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
-import org.jetbrains.kotlin.java.direct.resolution.findInheritedTypeParameter
-import org.jetbrains.kotlin.java.direct.resolution.findTypeParameter
-import org.jetbrains.kotlin.java.direct.resolution.isTypeUseAnnotationClass
-import org.jetbrains.kotlin.java.direct.resolution.recoverInheritedOuterTypeArguments
-import org.jetbrains.kotlin.java.direct.resolution.resolve
+import org.jetbrains.kotlin.java.direct.resolution.*
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -133,7 +115,7 @@ class JavaClassifierTypeOverAst(
                 // were reordered after the nested-class lookup below.
                 findTypeParameter(parts[0])?.let { return it }
                 // 2. Inner/local class names (shadow INHERITED outer type params)
-                val localClass = findClassInCurrentScope(Name.identifier(parts[0]))
+                val localClass = findClassInCurrentScope(parts[0])
                 if (localClass != null) return localClass
                 // 3. INHERITED type parameters from outer class (low priority — shadowed by inner classes)
                 findInheritedTypeParameter(parts[0])?.let { return it }
@@ -144,10 +126,7 @@ class JavaClassifierTypeOverAst(
             // remaining part with [declaredOrFullyInherited] (declared members plus fully-inherited
             // member types from any supertype representation). This pass is load-bearing because:
             //  - it does not depend on a `FirSession` symbol provider, whereas [resolve]'s
-            //    class-existence probe does (it routes through `cycleSafeClassLikeSymbol`), so on a
-            //    session-less model [resolve] resolves nothing and this walk is the only thing that
-            //    can navigate same-file / in-scope references (exercised by the parsing-only
-            //    fixtures in `JavaParsingTypeResolutionTest`, which fail if this pass is removed);
+            //    class-existence probe does (which also helps with parser-only tests);
             //  - even with a session present it resolves in-scope references straight from the
             //    AST/model, avoiding a symbol-provider round-trip per segment.
             // A missing segment off an in-scope head is a hard miss (`return null`, JLS 6.5.2):

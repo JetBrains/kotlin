@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// ISSUE: green-code divergence — outer type parameter shadowing an imported class
-// inside a STATIC nested type.
+
+// javac divergence — outer type parameter shadowing an imported class inside a STATIC nested type.
 //
 // Per JLS 6.5.5/8.1.3 the outer class's type parameter `E` is NOT in scope inside the
 // static nested type `Outer.Inner`, so for javac the simple name `E` in `Inner.get()`

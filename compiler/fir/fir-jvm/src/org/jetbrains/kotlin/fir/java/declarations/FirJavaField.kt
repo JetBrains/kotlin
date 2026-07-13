@@ -171,6 +171,7 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun replaceInitializer(newInitializer: FirExpression?) {
         lazyInitializer = lazyOf(newInitializer)
+        lazyHasInitializer = lazyOf(newInitializer != null)
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField {

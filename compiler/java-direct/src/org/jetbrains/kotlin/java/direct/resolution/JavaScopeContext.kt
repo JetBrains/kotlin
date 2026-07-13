@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Per-position immutable scope **data** for Java source resolution.
+ * Per-position immutable scope data for Java source resolution.
  *
  * Forked via [withTypeParameters] / [withInheritedTypeParameters] / [withContainingClass].
  */
 internal class JavaScopeContext(
     /**
-     * Same-file top-level class provider, keyed by simple name. Needed because a same-file
+     * Same-file top-level class provider, indexed by simple name. Needed because a same-file
      * top-level class shadows single-type imports (JLS 6.4.1) while a cross-file same-package
      * class does not, and the two share the same `ClassId`.
      */

@@ -44,6 +44,9 @@ internal fun findClassInCurrentScope(name: Name): JavaClass? {
     return scope.sameFileTopLevelClassProvider(name)
 }
 
+context(c: JavaResolutionContext)
+internal fun findClassInCurrentScope(name: String): JavaClass? = findClassInCurrentScope(Name.identifier(name))
+
 /**
  * Declared lookup first, then the same-file inherited-member-type walk. [JavaClass.findInnerClass]
  * is declared-only (matching the PSI / binary implementations); callers that need inherited member
@@ -102,7 +105,7 @@ internal fun findInnerClassInSameFileSupertypes(
 context(c: JavaResolutionContext)
 private fun resolveSameFileSupertypeRefToClass(supertypeRef: String): JavaClassOverAst? {
     val parts = supertypeRef.split('.')
-    var current = findClassInCurrentScope(Name.identifier(parts[0])) as? JavaClassOverAst ?: return null
+    var current = findClassInCurrentScope(parts[0]) as? JavaClassOverAst ?: return null
     for (i in 1 until parts.size) {
         current = current.findInnerClass(Name.identifier(parts[i])) as? JavaClassOverAst ?: return null
     }

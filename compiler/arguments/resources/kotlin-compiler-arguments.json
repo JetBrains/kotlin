@@ -7972,7 +7972,7 @@
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {
-                                    "introducedVersion": "2.4.20",
+                                    "introducedVersion": "2.5.0",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
                                     "removedVersion": null
@@ -7987,7 +7987,8 @@
                                         "current": false,
                                         "valueInVersions": []
                                     }
-                                }
+                                },
+                                "deprecatedMessage": null
                             },
                             {
                                 "name": "Xjava-package-prefix",

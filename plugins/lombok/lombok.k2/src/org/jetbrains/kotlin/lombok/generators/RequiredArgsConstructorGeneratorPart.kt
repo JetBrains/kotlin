@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.RequiredArgsConstructor
-import org.jetbrains.kotlin.lombok.utils.LombokNames
+import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.RequiredArgsConstructor
+import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(DirectDeclarationsAccess::class)

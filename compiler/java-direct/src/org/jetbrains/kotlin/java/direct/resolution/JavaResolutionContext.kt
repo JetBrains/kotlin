@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.util.findTopLevelClassNode
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -16,11 +15,19 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.util.concurrent.ConcurrentHashMap
 
+/** Per-file immutable data shared across all scope variants of a [JavaResolutionContext]. */
+internal class JavaFileContext(
+    val packageFqName: FqName,
+    val imports: JavaImports,
+    val classFinder: LeanJavaClassFinder?,
+    val session: FirSession,
+)
+
 /**
  * Positional **data** for resolving type references within a Java file: an immutable pair of
  * [fileContext] (per-file: package, imports, class finder, session) and [scopeContext]
  * (per-position: containing class, type parameters in scope). Scope transitions fork a new
- * record. The resolution logic itself lives in [JavaTypeResolver] and [JavaScopeResolver].
+ * record.
  */
 class JavaResolutionContext private constructor(
     internal val fileContext: JavaFileContext,

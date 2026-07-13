@@ -2,15 +2,13 @@
 description = "Kotlin Java Direct Compiler Plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("test-inputs-check")
     id("java-test-fixtures")
     id("project-tests-convention")
-}
-
-repositories {
-    mavenCentral()
-    maven { setUrl("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") }
 }
 
 dependencies {
@@ -18,15 +16,11 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
-
+    implementation(libs.org.jetbrains.syntax.api)
+    implementation(libs.org.jetbrains.java.syntax.jvm)
+    implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":compiler:plugin-api"))
     implementation(project(":compiler:cli"))
-
-    // temporary solution while we're still experimenting with this module.
-    // it should be `implementation`, but now it would require changing the repositories in the compiler jar module and maybe fixing cache redirector
-    compileOnly(libs.org.jetbrains.syntax.api)
-    compileOnly(libs.org.jetbrains.java.syntax.jvm)
-    embedded(libs.org.jetbrains.syntax.api) { isTransitive = false }
-    embedded(libs.org.jetbrains.java.syntax.jvm) { isTransitive = false }
 
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
@@ -39,8 +33,6 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.org.jetbrains.syntax.api)
-    testRuntimeOnly(libs.org.jetbrains.java.syntax.jvm)
 }
 
 sourceSets {
@@ -50,8 +42,6 @@ sourceSets {
 }
 
 optInToExperimentalCompilerApi()
-
-runtimeJar()
 
 projectTests {
     testTask(

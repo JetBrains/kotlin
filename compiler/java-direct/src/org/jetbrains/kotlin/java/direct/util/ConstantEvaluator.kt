@@ -207,7 +207,7 @@ class ConstantEvaluator(
         // Route through the shared resolution context so that sibling top-level classes are
         // retrieved from the file-level cache (same JavaClassOverAst instance, same type-parameter
         // identity) instead of being freshly constructed here.
-        return with(containingClass.resolutionContext) { findClassInCurrentScope(Name.identifier(name)) } as? JavaClassOverAst
+        return with(containingClass.resolutionContext) { findClassInCurrentScope(name) } as? JavaClassOverAst
     }
 
     private fun resolveFieldValue(javaClass: JavaClassOverAst, fieldName: String): Any? {

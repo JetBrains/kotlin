@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AllArgsConstructor
+import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.AllArgsConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorGeneratorPart<AllArgsConstructor>(session) {

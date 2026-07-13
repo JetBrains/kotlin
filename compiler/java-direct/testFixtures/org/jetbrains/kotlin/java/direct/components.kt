@@ -5,28 +5,23 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.MetaTestConfigurator
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.*
 
 /**
- * Enables `java-direct` for `JavaUsingAst*` tests by setting the
- * `JvmAnalysisFlags.useJavaDirect` analysis flag. `JvmFrontendPipelinePhase` consults this flag
- * to decide whether to wire `createJavaDirectSourceJavaFacadeBuilder` into the FIR session.
- *
- * Other tests using the same CLI test pipeline (Lombok, plain JVM black-box) leave the flag
- * unset → PSI-backed `FirJavaFacade`.
+ * Enables `java-direct` for `JavaUsingAst*` tests.
  */
 internal class JavaDirectConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun provideAdditionalAnalysisFlags(
-        directives: RegisteredDirectives,
-        languageVersion: LanguageVersion,
-    ): Map<AnalysisFlag<*>, Any?> = mapOf(JvmAnalysisFlags.useJavaDirect to true)
+    override fun configureCompilerConfiguration(
+        configuration: CompilerConfiguration,
+        module: TestModule,
+    ) {
+        super.configureCompilerConfiguration(configuration, module)
+
+        configuration.put(JVMConfigurationKeys.USE_JAVA_DIRECT, true)
+    }
 }
 
 private val javaFileRegex = Regex("""^\s*//\s* FILE:\s* .*\.java\s*$""")

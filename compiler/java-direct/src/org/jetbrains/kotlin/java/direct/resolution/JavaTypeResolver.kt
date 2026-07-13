@@ -19,11 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.java.direct.model.FirBackedJavaClassifierType
 import org.jetbrains.kotlin.java.direct.model.firBackedJavaType
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -71,6 +67,7 @@ internal fun resolveQualifiedNameToClassIdFromParts(
     // nested chain. Each candidate outer prefix is resolved with the same rules (recursively for
     // multi-part prefixes), so JLS 6.5.2 is respected — a nested-class interpretation wins as soon
     // as the outer prefix resolves to a class in scope.
+    require(parts.size > 1)
     for (i in 1 until parts.size) {
         val outerParts = parts.subList(0, i)
         val nestedParts = parts.subList(i, parts.size)
@@ -93,14 +90,12 @@ internal fun resolveQualifiedNameToClassIdFromParts(
             // where `CopyBuilder` is declared in the `FunctionDescriptor` superinterface but
             // referenced via the subtype `SimpleFunctionDescriptor`.
             //
-            // Restricted to a single inherited segment (`nestedParts.size == 1`) on purpose — this
-            // is not a coverage gap for longer tails. A tail of size >= 2 (e.g. resolving
+            // Restricted to a single inherited segment. A tail of size >= 2 (e.g. resolving
             // `Outer.CopyBuilder.Deeper`) is reached one recursion level down: the split at the
             // next `i` resolves `outerClassId` for the prefix `Outer.CopyBuilder` via the recursive
             // `resolveQualifiedNameToClassIdFromParts` call above, and that call's own loop hits its
             // `i` where `nestedParts == [CopyBuilder]` (size 1) and performs the inherited lookup
-            // there. So every "outer class plus one inherited segment" sub-problem is still covered;
-            // handling it only at size 1 here just avoids duplicating that work at every prefix.
+            // there. So every "outer class plus one inherited segment" sub-problem is still covered.
             if (fullResolution && nestedParts.size == 1) {
                 val inherited = findInheritedNestedClass(outerClassId, nestedParts[0])
                 if (inherited != null) return inherited
@@ -328,7 +323,7 @@ private fun findInheritedNestedClass(
  *    Java reference could wrongly resolve to a `typealias`.
  */
 context(c: JavaResolutionContext)
-internal fun tryResolve(classId: ClassId): Boolean {
+private fun tryResolve(classId: ClassId): Boolean {
     val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return false
     if (symbol is FirTypeAliasSymbol) return false
     return symbol.origin != FirDeclarationOrigin.BuiltIns

@@ -27,9 +27,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Nullable variant of [org.jetbrains.kotlin.fir.resolve.providers.symbolProvider]: returns `null`
- * when the session has no [FirSymbolProvider] registered. Parsing-level unit fixtures build a
- * bare-bones [FirSession] without one and must short-circuit instead of throwing.
+ * Nullable variant of [org.jetbrains.kotlin.fir.resolve.providers.symbolProvider].
+ * Needed for parsing-level unit tests that use barely initialized sessions.
  */
 internal val FirSession.nullableSymbolProvider: FirSymbolProvider? by FirSession.nullableSessionComponentAccessor()
 
@@ -40,7 +39,7 @@ internal val FirSession.nullableSymbolProvider: FirSymbolProvider? by FirSession
  * materialises declarations, which calls back into model resolution, which probes here again.
  * See [JavaCycleBreakerTest].
  *
- * Keyed per session (a re-entrant probe can arrive through a different per-file context wrapping
+ * Tied to session (a re-entrant probe can arrive through a different per-file context wrapping
  * the same session) and concurrent. Sessions without it skip the guard but cannot enter the
  * cycle anyway — [cycleSafeClassLikeSymbol] short-circuits at the missing [FirSymbolProvider].
  */
@@ -79,12 +78,12 @@ internal fun FirSession.cycleSafeClassLikeSymbol(classId: ClassId): FirClassLike
 
 /**
  * Per-session set of [ClassId]s whose Java supertype graph is currently being walked by
- * [cycleGuardedSupertypeWalk]. Re-entry returns the caller-supplied default without recursing,
+ * [cycleGuardedSupertypeWalk]. Reentry returns the caller-supplied default without recursing,
  * bounding direct (`A extends A`) and indirect (`A -> B -> A`) Java inheritance cycles — only
  * possible in malformed source, but recursing on them would end in a `StackOverflowError`.
  * See [JavaCycleBreakerTest].
  *
- * Keyed per session and concurrent, for the same reasons as [JavaModelInFlightResolutions].
+ * Tied to session and concurrent, for the same reasons as [JavaModelInFlightResolutions].
  * Sessions without it run the walk unguarded.
  */
 internal class JavaModelSupertypeWalkGuard : FirSessionComponent {
@@ -94,7 +93,6 @@ internal class JavaModelSupertypeWalkGuard : FirSessionComponent {
 private val FirSession.javaModelSupertypeWalkGuard: JavaModelSupertypeWalkGuard?
         by FirSession.nullableSessionComponentAccessor()
 
-/** Registers a [JavaModelSupertypeWalkGuard] on this session if one is not already present. */
 @OptIn(SessionConfiguration::class)
 internal fun FirSession.registerJavaModelSupertypeWalkGuardIfAbsent() {
     if (javaModelSupertypeWalkGuard == null) {
@@ -103,9 +101,7 @@ internal fun FirSession.registerJavaModelSupertypeWalkGuardIfAbsent() {
 }
 
 /**
- * Runs [block] guarded against re-entry on [classId]'s supertype walk: if [classId] is already
- * being walked on this session, returns [default] without invoking [block]; otherwise marks
- * [classId] in-flight, runs [block], and clears the mark in a `finally`.
+ * Runs [block] guarded against re-entry on [classId]'s supertype walk.
  *
  * Mirrors [cycleSafeClassLikeSymbol], but bounds the Java inheritance-graph cycle rather than the
  * KT-74097 PUBLICATION-lazy cycle. Sessions without [JavaModelSupertypeWalkGuard] run [block]
@@ -164,9 +160,6 @@ internal fun FirSession.memoizedDirectSupertypeClassIds(
  *
  * Populated by [isTypeUseAnnotationClass]; the predicate is a static property of the annotation
  * class, so the cache key is just the [ClassId] and entries never need invalidation.
- *
- * Registered by [registerJavaModelTypeUseCacheIfAbsent]; sessions without it fall back to the
- * un-cached path inside [isTypeUseAnnotationClass].
  */
 internal class JavaModelTypeUseClassIdCache : FirSessionComponent {
     val classIdToIsTypeUse: ConcurrentHashMap<ClassId, Boolean> = ConcurrentHashMap()
@@ -175,7 +168,6 @@ internal class JavaModelTypeUseClassIdCache : FirSessionComponent {
 private val FirSession.javaModelTypeUseClassIdCache: JavaModelTypeUseClassIdCache?
         by FirSession.nullableSessionComponentAccessor()
 
-/** Registers a [JavaModelTypeUseClassIdCache] on this session if one is not already present. */
 @OptIn(SessionConfiguration::class)
 internal fun FirSession.registerJavaModelTypeUseCacheIfAbsent() {
     if (javaModelTypeUseClassIdCache == null) {
@@ -188,8 +180,7 @@ internal fun FirSession.registerJavaModelTypeUseCacheIfAbsent() {
  * (Java) or `@Target(AnnotationTarget.TYPE)` (Kotlin), using [FirSession.symbolProvider] for the
  * `@Target` lookup.
  *
- * Result is cached on the session via [JavaModelTypeUseClassIdCache] so each annotation class
- * is probed at most once per build.
+ * Result is cached on the session via [JavaModelTypeUseClassIdCache].
  */
 internal fun FirSession.isTypeUseAnnotationClass(classId: ClassId): Boolean {
     val cache = javaModelTypeUseClassIdCache?.classIdToIsTypeUse
