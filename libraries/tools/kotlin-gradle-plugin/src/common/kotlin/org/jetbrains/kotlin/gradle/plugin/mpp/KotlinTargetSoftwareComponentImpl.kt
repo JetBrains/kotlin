@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_FALLBACK_VARIANT
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MERGED_KLIB_USAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.packMergedKlibTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.usageByName
@@ -72,7 +73,7 @@ internal fun KotlinTargetSoftwareComponent(
                 if (kotlinUsageContext.artifacts.any { it.extension == "klib" }) {
                     outgoing.artifact(project.packMergedKlibTask)
                     val currentUsage = attributes.getAttribute(Usage.USAGE_ATTRIBUTE)
-                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(currentUsage.name + "-merged"))
+                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(currentUsage.name + MERGED_KLIB_USAGE_SUFFIX))
                 } else {
                     artifacts.addAll(kotlinUsageContext.artifacts)
 
