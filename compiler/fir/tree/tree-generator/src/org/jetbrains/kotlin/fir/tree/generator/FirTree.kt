@@ -1143,7 +1143,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
         +field("annotationResolvePhase", annotationResolvePhaseType, withReplace = true)
-        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
+        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), asSymbolId = true) {
             withBindThis = false
         }
     }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -33,7 +34,7 @@ internal class FirErrorAnnotationCallImpl(
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirReference,
-    override val containingDeclarationSymbol: FirBasedSymbol<*>,
+    private val containingDeclarationSymbolId: FirSymbolId<FirBasedSymbol<*>>,
     override val diagnostic: ConeDiagnostic,
     override var argumentMapping: FirAnnotationArgumentMapping,
 ) : FirErrorAnnotationCall() {
@@ -43,6 +44,8 @@ internal class FirErrorAnnotationCallImpl(
     override val annotations: List<FirAnnotation>
         get() = emptyList()
     override var annotationResolvePhase: FirAnnotationResolvePhase = FirAnnotationResolvePhase.Types
+    override val containingDeclarationSymbol: FirBasedSymbol<*>
+        get() = containingDeclarationSymbolId.symbol
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotationTypeRef.accept(visitor, data)

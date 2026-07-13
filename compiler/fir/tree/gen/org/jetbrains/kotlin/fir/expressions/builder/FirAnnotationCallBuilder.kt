@@ -48,7 +48,7 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
             calleeReference,
             argumentMapping,
             annotationResolvePhase,
-            containingDeclarationSymbol,
+            containingDeclarationSymbol.symbolId,
         )
     }
 

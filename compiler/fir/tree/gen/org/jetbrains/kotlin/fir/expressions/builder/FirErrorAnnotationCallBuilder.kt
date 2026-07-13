@@ -47,7 +47,7 @@ class FirErrorAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuil
             typeArguments.toMutableOrEmpty(),
             argumentList,
             calleeReference,
-            containingDeclarationSymbol,
+            containingDeclarationSymbol.symbolId,
             diagnostic,
             argumentMapping,
         )

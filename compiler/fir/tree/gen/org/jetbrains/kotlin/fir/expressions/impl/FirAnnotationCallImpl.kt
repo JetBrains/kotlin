@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -34,13 +35,15 @@ internal class FirAnnotationCallImpl(
     override var calleeReference: FirReference,
     override var argumentMapping: FirAnnotationArgumentMapping,
     override var annotationResolvePhase: FirAnnotationResolvePhase,
-    override val containingDeclarationSymbol: FirBasedSymbol<*>,
+    private val containingDeclarationSymbolId: FirSymbolId<FirBasedSymbol<*>>,
 ) : FirAnnotationCall() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
     override val coneTypeOrNull: ConeKotlinType?
         get() = annotationTypeRef.coneTypeOrNull
     override val annotations: List<FirAnnotation>
         get() = emptyList()
+    override val containingDeclarationSymbol: FirBasedSymbol<*>
+        get() = containingDeclarationSymbolId.symbol
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotationTypeRef.accept(visitor, data)
