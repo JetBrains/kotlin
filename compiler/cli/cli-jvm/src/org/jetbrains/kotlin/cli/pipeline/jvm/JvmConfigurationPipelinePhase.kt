@@ -105,7 +105,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
             configuration.expressionToEvaluate = arguments.expression
             configuration.defaultExtensionForScripts = arguments.defaultScriptExtension
         } else {
-            configuration.replMode = arguments.repl
+            configuration.replMode = @Suppress("DEPRECATION") arguments.repl
             configuration.freeArgsForScript += arguments.freeArgs
         }
         // should be called after configuring jdk home from build file

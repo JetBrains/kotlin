@@ -219,7 +219,8 @@ where advanced options include:
   -Xprofile-phases           Profile backend phases.
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
-  -Xrepl                     Run Kotlin REPL (deprecated)
+  -Xrepl                     Run Kotlin REPL.
+                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. REPL is deprecated.
   -Xreport-all-warnings      Report all warnings even if errors are found.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.

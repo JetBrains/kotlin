@@ -5752,8 +5752,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Run Kotlin REPL (deprecated)",
-                            "valueInVersions": []
+                            "current": "Run Kotlin REPL.",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.2.0",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "Run Kotlin REPL (deprecated)"
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
@@ -5776,7 +5782,7 @@
                         "releaseVersionsMetadata": {
                             "introducedVersion": "2.2.0",
                             "stabilizedVersion": null,
-                            "deprecatedVersion": null,
+                            "deprecatedVersion": "2.2.0",
                             "removedVersion": null
                         },
                         "argumentType": {
@@ -5790,7 +5796,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "deprecatedMessage": null
+                        "deprecatedMessage": "REPL is deprecated."
                     },
                     {
                         "name": "Xreport-all-warnings",

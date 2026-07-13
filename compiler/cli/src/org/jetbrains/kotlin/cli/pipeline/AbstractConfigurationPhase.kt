@@ -77,6 +77,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         printVersion = arguments.version
         // TODO(KT-73711): move script-related configuration to JVM CLI
         scriptMode = arguments.script
+        @Suppress("DEPRECATION")
         replMode = arguments.repl
         setupCommonArguments(arguments, ::createMetadataVersion)
         val paths = computeKotlinPaths(this, arguments)?.also {

@@ -942,9 +942,11 @@ with bodies.""",
             field = value
         }
 
+    @all:Deprecated("REPL is deprecated.")
     @Argument(
         value = "-Xrepl",
-        description = "Run Kotlin REPL (deprecated)",
+        description = "Run Kotlin REPL.",
+        deprecatedVersion = "2.2.0",
     )
     var repl: Boolean = false
         set(value) {

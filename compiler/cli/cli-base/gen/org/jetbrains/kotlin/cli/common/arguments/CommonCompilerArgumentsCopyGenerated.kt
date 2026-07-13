@@ -98,6 +98,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.profilePhases = from.profilePhases
     to.progressiveMode = from.progressiveMode
     to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames
+    @Suppress("DEPRECATION")
     to.repl = from.repl
     to.reportAllWarnings = from.reportAllWarnings
     to.reportOutputFiles = from.reportOutputFiles

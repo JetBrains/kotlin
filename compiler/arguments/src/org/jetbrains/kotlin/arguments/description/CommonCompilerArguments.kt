@@ -92,11 +92,17 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     compilerArgument {
         name = "Xrepl"
         compilerName = "repl"
-        description = "Run Kotlin REPL (deprecated)".asReleaseDependent()
+        val introducedVersion = KotlinReleaseVersion.v2_2_0
+        description = ReleaseDependent(
+            "Run Kotlin REPL.",
+            introducedVersion..KotlinReleaseVersion.v2_4_20 to "Run Kotlin REPL (deprecated)"
+        )
         valueType = BooleanType.defaultFalse
+        deprecatedMessage = "REPL is deprecated."
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_2_0,
+            introducedVersion = introducedVersion,
+            deprecatedVersion = introducedVersion, // According to https://github.com/JetBrains/kotlin/commit/79a2a82637064e19f81e1d837b5b7f6ff20988be
         )
     }
 
