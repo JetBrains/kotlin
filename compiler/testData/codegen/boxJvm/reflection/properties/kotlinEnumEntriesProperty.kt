@@ -17,7 +17,7 @@ enum class Planet(val mass: Double, val radius: Double) {
 
 enum class Singleton { ONLY }
 
-private fun <E : Enum<E>> checkEntriesProperty(enumClass: KClass<E>, expectedCount: Int) {
+private inline fun <reified E : Enum<E>> checkEntriesProperty(enumClass: KClass<E>, expectedCount: Int) {
     val prop = enumClass.members.single { it.name == "entries" }
         .also { assertTrue(it is KProperty0<*>, "entries should be KProperty0") } as KProperty0<*>
 

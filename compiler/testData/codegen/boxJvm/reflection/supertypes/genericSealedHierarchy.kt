@@ -29,7 +29,7 @@ fun box(): String {
     // sealedSubclasses
     val eitherSubs = Either::class.sealedSubclasses
     assertEquals(3, eitherSubs.size)
-    val names = eitherSubs.map { it.simpleName }.sorted()
+    val names = eitherSubs.map { it.simpleName.orEmpty() }.sorted()
     assertEquals(listOf("Empty", "Left", "Right"), names)
 
     // Left implements Either<L, Nothing> — type arguments in supertype

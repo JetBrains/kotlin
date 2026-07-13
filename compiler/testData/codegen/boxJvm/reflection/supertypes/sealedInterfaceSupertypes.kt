@@ -57,7 +57,7 @@ fun box(): String {
     // sealedSubclasses of JsonElement
     val subs = JsonElement::class.sealedSubclasses
     assertEquals(4, subs.size)
-    val subNames = subs.map { it.simpleName }.sorted()
+    val subNames = subs.map { it.simpleName.orEmpty() }.sorted()
     assertEquals(listOf("JsonArray", "JsonNull", "JsonNumber", "JsonString"), subNames)
 
     // superclasses (KClass not KType form)

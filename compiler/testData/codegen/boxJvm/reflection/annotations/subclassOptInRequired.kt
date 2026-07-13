@@ -30,11 +30,11 @@ fun box(): String {
     // @SubclassOptInRequired should be findable via findAnnotation
     val ann = ExperimentalBase::class.findAnnotation<SubclassOptInRequired>()
     assertNotNull(ann, "@SubclassOptInRequired not found on ExperimentalBase")
-    assertEquals(ExperimentalFeature::class, ann.markerClass)
+    assertEquals<Any>(ExperimentalFeature::class, ann.markerClass) // TODO: Interesting. Type inference fails here without <Any> but FE shows that it is redundant
 
     val ann2 = AnotherBase::class.findAnnotation<SubclassOptInRequired>()
     assertNotNull(ann2)
-    assertEquals(AnotherExperimentalApi::class, ann2.markerClass)
+    assertEquals<Any>(AnotherExperimentalApi::class, ann2.markerClass)
 
     // hasAnnotation should return true
     assertTrue(ExperimentalBase::class.hasAnnotation<SubclassOptInRequired>())
@@ -48,7 +48,7 @@ fun box(): String {
     val annotations = ExperimentalBase::class.annotations
     val found = annotations.filterIsInstance<SubclassOptInRequired>()
     assertEquals(1, found.size)
-    assertEquals(ExperimentalFeature::class, found.single().markerClass)
+    assertEquals<Any>(ExperimentalFeature::class, found.single().markerClass)
 
     // Class modifiers are unaffected by the annotation
     assertTrue(ExperimentalBase::class.isAbstract)

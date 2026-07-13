@@ -12,7 +12,7 @@ class InlineSubject {
     inline fun <reified T> reifiedInline(): String = T::class.simpleName ?: "?"
     inline fun <reified T, reified R : T> multiReifiedInline(x: T): R? = x as? R
     inline fun withBothModifiers(crossinline cross: () -> String, noinline noin: () -> Int): String = cross() + noin()
-    noinline fun notInline(x: Int): Int = x
+    fun notInline(x: Int): Int = x
 
     infix fun infixFun(other: Int): Int = other
     operator fun plus(other: InlineSubject): InlineSubject = this

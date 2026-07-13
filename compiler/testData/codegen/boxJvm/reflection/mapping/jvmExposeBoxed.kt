@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // WITH_STDLIB
+@file:OptIn(ExperimentalStdlibApi::class)
 
 import kotlin.jvm.JvmExposeBoxed
 import kotlin.reflect.*

@@ -28,7 +28,7 @@ fun box(): String {
     // sealedSubclasses contains all 5 variants
     val subclasses = Measurement::class.sealedSubclasses
     assertEquals(5, subclasses.size)
-    val names = subclasses.map { it.simpleName }.sorted()
+    val names = subclasses.map { it.simpleName.orEmpty() }.sorted()
     assertEquals(listOf("Combined", "Distance", "Duration", "Empty", "Weight"), names)
 
     // Value class variants: isValue=true, isData=false
