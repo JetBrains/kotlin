@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LL
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCacheLimits
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -33,6 +35,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesP
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.smartPlus
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -47,6 +51,7 @@ import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
+import kotlin.reflect.KClass
 
 /**
  * [LLKotlinSourceSymbolProvider] is a [LLKotlinSymbolProvider] which provides symbols for source-based modules, such as [KaSourceModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule]
@@ -113,9 +118,14 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     )
 
     private val classLikeCache =
-        LLPsiAwareClassLikeSymbolCache(session, ::computeClassLikeSymbolByClassId) { declaration: KtClassLikeDeclaration, _ ->
-            computeClassLikeSymbolByPsi(declaration)
-        }
+        LLPsiAwareClassLikeSymbolCache<KtClassLikeDeclaration, FirClassLikeSymbol<*>?, KtClassLikeDeclaration?>(
+            session = session,
+            cacheLimits = FirCacheLimits(
+                valueStrength = FirCacheLimits.ValueReferenceStrength.WEAK,
+            ),
+            computeSymbolByClassId = ::computeClassLikeSymbolByClassId,
+            computeSymbolByPsi = { declaration, _ -> computeClassLikeSymbolByPsi(declaration) },
+        )
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
@@ -271,13 +281,15 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         destination += getTopLevelFunctionSymbols(callableId, functions.mapTo(mutableSetOf()) { it.containingKtFile })
     }
 
-    private val functionCache: FirCache<CallableId, List<FirNamedFunctionSymbol>, Collection<KtFile>?> =
-        session.firCachesFactory.createCache { callableId, context ->
-            computeCallableSymbolsByCallableId<FirNamedFunctionSymbol>(callableId, context)
-        }
+    private val functionCache = LLKotlinSourceCallableSymbolsCache(
+        session,
+        moduleComponents,
+        declarationProvider,
+        FirNamedFunctionSymbol::class,
+    )
 
     private fun getTopLevelFunctionSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirNamedFunctionSymbol> {
-        return functionCache.getValue(callableId, callableFiles)
+        return functionCache.getCallableSymbols(callableId, callableFiles)
     }
 
     override fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> {
@@ -300,17 +312,46 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         destination += getTopLevelPropertySymbols(callableId, properties.mapTo(mutableSetOf()) { it.containingKtFile })
     }
 
-    private val propertyCache: FirCache<CallableId, List<FirPropertySymbol>, Collection<KtFile>?> =
-        session.firCachesFactory.createCache { callableId, context ->
-            computeCallableSymbolsByCallableId<FirPropertySymbol>(callableId, context)
-        }
+    private val propertyCache =
+        LLKotlinSourceCallableSymbolsCache(
+            session,
+            moduleComponents,
+            declarationProvider,
+            FirPropertySymbol::class
+        )
 
     private fun getTopLevelPropertySymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirPropertySymbol> {
-        return propertyCache.getValue(callableId, callableFiles)
+        val result = propertyCache.getCallableSymbols(callableId, callableFiles)
+        return result
     }
 
+    override fun hasPackage(fqName: FqName): Boolean {
+        if (!allowKotlinPackage && fqName.isKotlinPackage()) return false
+        return packageProvider.doesKotlinOnlyPackageExist(fqName)
+    }
+}
+
+// TODO (marco): Add cache strategy notes.
+// TODO (marco): Maybe introduce a front cache so that symbol IDs don't need to be accessed on every symbol provider access.
+// TODO (marco): Check the performance of this new approach.
+private class LLKotlinSourceCallableSymbolsCache<E : FirDeclaration, S : FirBasedSymbol<E>>(
+    session: LLFirSession,
+    private val moduleComponents: LLFirModuleResolveComponents,
+    private val declarationProvider: KotlinDeclarationProvider,
+    private val symbolClass: KClass<S>,
+) {
+    // TODO (marco): Document: We need to cache the symbol IDs so that each callable can be independently weakly referenced. We don't need a
+    //  symbol ID -> callable cache, since the symbol ID itself will hold a reference to the callable.
+    private val symbolIdCache: FirCache<CallableId, List<FirSymbolId<S>>, Collection<KtFile>?> =
+        session.firCachesFactory.createCache { callableId, context ->
+            computeCallableSymbolIdsByCallableId(callableId, context)
+        }
+
+    fun getCallableSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<S> =
+        symbolIdCache.getValue(callableId, callableFiles).map { it.symbol }
+
     /**
-     * Locates all the callable symbols of required [TYPE] with the matching [callableId] within a specific set of files.
+     * Locates all [FirSymbolId]s of the callable symbols typed [S] that have the matching [callableId] within a specific set of files.
      * Uses the passed [context] files to avoid index access if available; falls back to the [declarationProvider] otherwise.
      *
      * To work correctly with the [FirCache], this function has to obey the following contract:
@@ -318,10 +359,10 @@ internal class LLKotlinSourceSymbolProvider private constructor(
      * It can be called with some [callableId] and a non-null [context] **if and only if** the returned value
      * is going to be the same for the `null` context.
      */
-    private inline fun <reified TYPE : FirCallableSymbol<*>> computeCallableSymbolsByCallableId(
+    private fun computeCallableSymbolIdsByCallableId(
         callableId: CallableId,
         context: Collection<KtFile>?,
-    ): List<TYPE> {
+    ): List<FirSymbolId<S>> {
         require(context == null || context.all { it.isPhysical })
 
         // we want to use `getTopLevelCallableFiles` instead of
@@ -334,21 +375,26 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         return buildList {
             files.forEach { ktFile ->
                 val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-                firFile.collectCallableSymbolsOfTypeTo<TYPE>(this, callableId.callableName)
+                firFile.collectSymbolIds(this, callableId.callableName)
             }
         }
     }
 
-    private inline fun <reified TYPE : FirCallableSymbol<*>> FirFile.collectCallableSymbolsOfTypeTo(result: MutableList<TYPE>, name: Name) {
-        ((declarations.singleOrNull() as? FirScript)?.declarations ?: declarations).mapNotNullTo(result) { declaration ->
+    private fun FirFile.collectSymbolIds(
+        result: MutableList<FirSymbolId<S>>,
+        name: Name,
+    ) {
+        val declarations = (declarations.singleOrNull() as? FirScript)?.declarations ?: declarations
+
+        declarations.mapNotNullTo(result) { declaration ->
             if (declaration is FirCallableDeclaration && declaration.symbol.name == name) {
-                declaration.symbol as? TYPE
+                // TODO (marco): A bit ugly with the instance check, but the refactoring of the cache into a class removed the possibility
+                //  of using a reified type parameter, since `computeCallableSymbolIdsByCallableId` is called directly from the cache, which
+                //  cannot pass a reified type parameter since it's a class property.
+                @Suppress("UNCHECKED_CAST")
+                if (symbolClass.isInstance(declaration.symbol)) declaration.symbol.symbolId as FirSymbolId<S>
+                else null
             } else null
         }
-    }
-
-    override fun hasPackage(fqName: FqName): Boolean {
-        if (!allowKotlinPackage && fqName.isKotlinPackage()) return false
-        return packageProvider.doesKotlinOnlyPackageExist(fqName)
     }
 }

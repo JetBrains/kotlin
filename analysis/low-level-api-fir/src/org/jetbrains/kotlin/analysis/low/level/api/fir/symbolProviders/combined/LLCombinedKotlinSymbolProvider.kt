@@ -69,18 +69,21 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
     private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> {
         it
             .maximumSize(500)
+            .weakValues()
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderClassCacheStatsCounter)
     }
 
     private val functionCache =
         Caffeine.newBuilder()
             .expireAfterAccess(Duration.ofSeconds(5))
+            .weakValues() // TODO (marco): This needs to be more robust than a weakly referenced list.
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCallableCacheStatsCounter)
             .build<CallableId, List<FirNamedFunctionSymbol>>()
 
     private val propertyCache =
         Caffeine.newBuilder()
             .expireAfterAccess(Duration.ofSeconds(5))
+            .weakValues()
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCallableCacheStatsCounter)
             .build<CallableId, List<FirPropertySymbol>>()
 

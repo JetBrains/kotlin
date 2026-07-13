@@ -27,3 +27,5 @@ internal const val ENABLE_SOURCE_BASED_SYMBOL_IDS = true
  * not yet weaken any cache references.
  */
 internal const val ENABLE_FIR_FILE_BACK_REFERENCES: Boolean = true
+
+// TODO (marco): Add flag for weak caches.

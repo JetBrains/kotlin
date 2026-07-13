@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKnownCl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.hasPsi
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCacheLimits
 import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -50,6 +51,20 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
             computeSymbolByClassId(classId, context)
         },
         session.firCachesFactory.createCache<E, V, CONTEXT> { declaration, context ->
+            computeSymbolByPsi(declaration, context)
+        },
+    )
+
+    constructor(
+        session: LLFirSession,
+        cacheLimits: FirCacheLimits,
+        computeSymbolByClassId: (ClassId, CONTEXT) -> V,
+        computeSymbolByPsi: (E, CONTEXT) -> V,
+    ) : this(
+        session.firCachesFactory.createCacheWithSuggestedLimits<ClassId, V, CONTEXT>(cacheLimits) { classId, context ->
+            computeSymbolByClassId(classId, context)
+        },
+        session.firCachesFactory.createCacheWithSuggestedLimits<E, V, CONTEXT>(cacheLimits) { declaration, context ->
             computeSymbolByPsi(declaration, context)
         },
     )
