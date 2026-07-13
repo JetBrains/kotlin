@@ -1514,10 +1514,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/Pack
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization$None : org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization$None;
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency : java/io/Serializable {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Companion;
 	public synthetic fun <init> (ILkotlinx/serialization/internal/SerializationConstructorMarker;)V
