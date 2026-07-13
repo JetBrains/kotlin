@@ -67,7 +67,6 @@ abstract class WasmICContextBase : PlatformDependentICContext {
         }
 
         return WasmBackendContext(
-            mainModule.descriptor,
             irBuiltIns,
             symbolTable,
             mainModule,
