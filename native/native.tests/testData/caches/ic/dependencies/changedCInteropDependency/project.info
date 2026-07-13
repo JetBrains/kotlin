@@ -1,0 +1,11 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+MODULES: cinterop, userLib, main
+
+STEP 0:
+    libs: cinterop, userLib, main
+
+STEP 1:
+    libs: cinterop, userLib, main
+
+STEP 2:
+    libs: cinterop, userLib, main

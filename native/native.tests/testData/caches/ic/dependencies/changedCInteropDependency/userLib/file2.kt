@@ -1,0 +1,1 @@
+fun barTwice() = cstubs.answerTwice()
