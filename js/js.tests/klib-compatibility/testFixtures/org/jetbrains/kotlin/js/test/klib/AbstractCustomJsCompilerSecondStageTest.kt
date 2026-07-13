@@ -18,10 +18,9 @@ import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
-import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
+import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
@@ -49,13 +48,8 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithT
         useSourcePreprocessor(::JsExportBoxPreprocessor)
         useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
         defaultDirectives {
-            if (customJsCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
-                // We need to set the custom LV to let `UnsupportedFeaturesTestConfigurator` skip tests with
-                // the language features that are not supported in the given custom LV.
-                setupCustomLanguageVersionForKlibCompatibilityTest(customJsCompilerSettings.defaultLanguageVersion)
+            setupCustomLVForKlibForwardCompatibilityTest(customJsCompilerSettings.defaultLanguageVersion)
 
-                LANGUAGE with "+ExportKlibToOlderAbiVersion"
-            }
             // `js-ir-minimal-for-test` must not be used in this test at all, so need to use `kotlin-test` library via `WITH_STDLIB` directive
             // Note: attempt to use `js-ir-minimal-for-test` on 1st stage will cause unresolved symbol `assertEquals(0:0;0:0){0§<kotlin.Any?>}`
             // on 2nd stage, since this symbol is absent in `kotlin-test` library.
