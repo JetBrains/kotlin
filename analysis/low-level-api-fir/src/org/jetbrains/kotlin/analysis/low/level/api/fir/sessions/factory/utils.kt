@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationR
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.ENABLE_SOURCE_BASED_SYMBOL_IDS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLCheckersFactory
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSetti
 import org.jetbrains.kotlin.fir.scopes.SubstitutionScopeKeyFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.symbols.id.FirSymbolIdFactory
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolIdFactory
 
 @SessionConfiguration
 internal fun LLFirSession.registerIdeComponents(
@@ -50,7 +52,10 @@ internal fun LLFirSession.registerIdeComponents(
     annotationSearchScope: GlobalSearchScope
 ) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
-    register(FirSymbolIdFactory::class, LLSymbolIdFactory(this))
+
+    val symbolIdFactory = if (ENABLE_SOURCE_BASED_SYMBOL_IDS) LLSymbolIdFactory(this) else FirUniqueSymbolIdFactory
+    register(FirSymbolIdFactory::class, symbolIdFactory)
+
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
     register(CodeFragmentScopeProvider::class, CodeFragmentScopeProvider(this))
