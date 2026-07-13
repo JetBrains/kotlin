@@ -336,15 +336,6 @@ private fun KaDiagnosticConverterBuilder.addConversions0() {
             token,
         )
     }
-    add(FirErrors.POSSIBLE_INITIALIZATION_DEADLOCK) { firDiagnostic ->
-        PossibleInitializationDeadlockImpl(
-            firDiagnostic.a.map { firBasedSymbol ->
-                firSymbolBuilder.buildSymbol(firBasedSymbol)
-            },
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJsErrors.JS_NO_RUNTIME_WRONG_TARGET) { firDiagnostic ->
         JsNoRuntimeWrongTargetImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -3783,12 +3774,6 @@ private fun KaDiagnosticConverterBuilder.addConversions84() {
             token,
         )
     }
-    add(FirErrors.POTENTIALLY_UNINITIALIZED_ACCESS) { firDiagnostic ->
-        PotentiallyUninitializedAccessImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions85() {
@@ -4156,15 +4141,6 @@ private fun KaDiagnosticConverterBuilder.addConversions91() {
     add(FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED) { firDiagnostic ->
         NonLocalReturnNotAllowedImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.POTENTIALLY_UNINITIALIZED_PROPERTY) { firDiagnostic ->
-        PotentiallyUninitializedPropertyImpl(
-            firDiagnostic.a.map { firBasedSymbol ->
-                firSymbolBuilder.buildSymbol(firBasedSymbol)
-            },
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
