@@ -1,0 +1,14 @@
+STEP 0:
+    modifications:
+        U : cinterop.def -> cinterop.def
+    added cache: cinterop.def
+
+// KT-87273: the custom declarations in the def file change, so the monolithic cinterop cache must be rebuilt.
+STEP 1:
+    modifications:
+        U : cinterop.1.def -> cinterop.def
+    modified cache: cinterop.def
+
+// Nothing changes: the cache must be reused as is.
+STEP 2:
+    unchanged cache: cinterop.def

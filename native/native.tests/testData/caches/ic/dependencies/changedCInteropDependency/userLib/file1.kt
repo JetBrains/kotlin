@@ -1,0 +1,1 @@
+fun bar() = cstubs.answer()
