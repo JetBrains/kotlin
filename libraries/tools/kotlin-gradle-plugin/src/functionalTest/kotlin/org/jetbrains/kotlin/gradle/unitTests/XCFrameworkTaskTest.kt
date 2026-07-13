@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkConfig
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.util.*
@@ -295,6 +296,30 @@ class XCFrameworkTaskTest {
                 project.tasks.getByName("assembleTestReleaseXCFramework")
             ).singleFrameworkName()
         }
+    }
+
+    @Test
+    fun `KT-86858 - XCFramework declared before the kotlin extension is registered does not crash`() {
+        // AndroidX applies the multiplatform plugin lazily, so XCFramework() runs before the
+        // `kotlin` extension is registered. If the SwiftPM check isn't deferred, configuration
+        // fails with UnknownDomainObjectException.
+        var xcframework: XCFrameworkConfig? = null
+        val project = buildProjectWithMPP(
+            preApplyCode = {
+                xcframework = XCFramework()
+            }
+        ) {
+            kotlin {
+                iosSimulatorArm64().binaries.framework {
+                    baseName = "bar"
+                    xcframework!!.add(this)
+                }
+            }
+        }.evaluate()
+
+        assertIsInstance<XCFrameworkTask>(
+            project.tasks.getByName("assembleTestReleaseXCFramework")
+        )
     }
 
     private fun Project.buildFile(path: String) = layout.buildDirectory.file(path).get().asFile

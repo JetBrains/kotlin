@@ -16,12 +16,14 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ImmediateDiagnosticReporting
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticRenderingOptions
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticImmediately
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.hasDirectOrTransitiveSwiftPMDependencies
@@ -169,6 +171,19 @@ private fun Project.emitSwiftPMDependenciesWithXCFrameworkIfNeeded(
     xcframeworkName: String,
 ) {
     if (kotlinPropertiesProvider.disableSwiftPMImport) return
+    // XCFramework() can be called before the Kotlin plugin registers the `kotlin` extension
+    // (AndroidX applies the multiplatform plugin lazily). Defer the SwiftPM check until the
+    // build script is evaluated and the extension exists. KT-86858.
+    launchInStage(KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript) {
+        project.emitSwiftPMDependenciesWithXCFramework(xcframeworkTask, xcframeworkVariant, xcframeworkName)
+    }
+}
+
+private fun Project.emitSwiftPMDependenciesWithXCFramework(
+    xcframeworkTask: TaskProvider<XCFrameworkTask>,
+    xcframeworkVariant: String,
+    xcframeworkName: String,
+) {
     val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
     val xcframeworkPackageGeneration = registerPackageGeneration(
         suffix = lowerCamelCaseName("forXCFramework", xcframeworkVariant),
