@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
  *
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
+open class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
     override val platform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform
 
