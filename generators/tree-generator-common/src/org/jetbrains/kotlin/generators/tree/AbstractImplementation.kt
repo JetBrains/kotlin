@@ -76,9 +76,22 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     private fun withDefault(field: Field) =
         !field.isFinal && field.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.Required
 
-    val fieldsInConstructor by lazy { allFields.filter { !withDefault(it) } }
+    // TODO (marco): Implementation note: For a field with custom representation, the custom field is in the constructor, while the original
+    //  field is in the body.
 
-    val fieldsInBody by lazy { allFields.filter { withDefault(it) || it.customSetter != null } }
+    val fieldsInConstructor by lazy {
+        allFields.mapNotNull { field ->
+            when {
+                field.customRepresentation != null -> field.customRepresentation?.field
+                !withDefault(field) -> field
+                else -> null
+            }
+        }
+    }
+
+    val fieldsInBody by lazy {
+        allFields.filter { withDefault(it) || it.customSetter != null || it.customRepresentation != null }
+    }
 
     var requiresOptIn = false
 

@@ -99,7 +99,14 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
                                 print(field.name, ": ", field.typeRef.render())
                                 println(",")
                             } else if (!field.isFinal) {
-                                fieldPrinter.printField(field, inImplementation = true, override = true, inConstructor = true)
+                                // TODO (marco): We should probably also take `isInterface`/`isAbstract` into account, since the custom
+                                //  representation should only be generated into instantiable classes. Interfaces and abstract classes
+                                //  should just pass on the surface field with an override.
+                                // If a field is a custom representation of another field, we cannot override the original field. Rather, the custom
+                                // field is a *new* field only declared in the implementation.
+                                val isOverride = !field.isCustomRepresentation
+
+                                fieldPrinter.printField(field, inImplementation = true, override = isOverride, inConstructor = true)
                             }
                         }
                 }

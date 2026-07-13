@@ -102,7 +102,15 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
                         withIndent {
                             for (field in builder.allFields) {
                                 if (field.invisibleField) continue
-                                printFieldReferenceInImplementationConstructorCall(field)
+
+                                val customRepresentation = field.customRepresentation
+                                if (customRepresentation != null) {
+                                    // TODO (marco): This should not skip `printFieldReferenceInImplementationConstructorCall`.
+                                    print(customRepresentation.toRepresentation(field))
+                                } else {
+                                    printFieldReferenceInImplementationConstructorCall(field)
+                                }
+
                                 println(",")
                             }
                         }

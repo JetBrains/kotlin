@@ -45,7 +45,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     var isOverride: Boolean = false
 
     var doPrint = true
-    
+
     /**
      * If `true`, this field is skipped in `build%Element%Copy` functions.
      *
@@ -73,6 +73,75 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     abstract var defaultValueInBuilder: String?
 
     abstract var customSetter: String?
+
+    // TODO (marco): Name? `CustomImplementation`? `CustomImplementingField`? `CustomInternalRepresentation`?
+    open var customRepresentation: CustomRepresentation<Field>? = null
+
+    // TODO (marco): IMPORTANT: Awkward, awkward: Exposing the symbol ID would be good after all, because going
+    //  `fir.referencedSymbol.symbolId` might require a symbol restoration, even if the use site only needs the symbol ID. Accessing
+    //  implementation classes to get this symbol ID is not an option.
+    //  So, back to the drawing board or do we disregard this until someone actual needs a symbol ID this way? Even if we want to expose the
+    //  symbol ID, we would have to implement some custom logic for the builder, as we want people to specify the symbol, not the symbol ID,
+    //  or at least allow specifying either.
+    //
+    // TODO (marco): Document, especially why this is different from the implementation default strategy.
+    //  Also, move the class down?
+    //
+    // TODO (marco): Consider rolling this into `ImplementationDefaultStrategy` and rename the class to `ImplementationStrategy`. The
+    //  lateinit, default, and custom representation strategies are all mutually exclusive, and they all define how the field should be
+    //  implemented. When a custom representation is set, `implementationDefaultStrategy` should be `null`, which is a strong sign that they
+    //  should be rolled into one concept as well.
+    //  ...
+    //  Furthermore, generating a getter for a field is a bit convoluted because both the implementation strategy and the custom
+    //  representation generate getters. Here again, it feels like we are duplicating concerns.
+    //  ...
+    //  That said, we will have to consider the inheritance of the implementation strategy, as noted in `implementationDefaultStrategy`.
+    //  Although we should have the same problems with the custom representation, since only leaf classes should generate the custom
+    //  representation field, but if configured in parent classes, the concept should pass down to child classes. So this might be another
+    //  hint that the concepts should be merged.
+    //
+    // TODO (marco): Another possible alternative would be to use two separate fields, with a default implementation for the symbol, but
+    //  with flags that control whether the field is visible in: the surface, the builder, the implementation. The symbol ID field could be
+    //  implemented as `!surface && !builder && implementation` (we can derive `override = false` from `!surface`). The symbol field could
+    //  be implemented as all three being true, but with a default getter. The only blind spot here would be how to translate the symbol to
+    //  the symbol ID in the builder. (Possible solution: when `!builder && implementation` is specified, the use site has to specify a
+    //  custom builder expression. Or in general, we allow specifying a custom builder expression.)
+    //  With this solution, we add a few orthogonal features that give us the freedom to generate the classes how we want.
+    //  Probably `surface` should rather be `interface`.
+    //
+    // TODO (marco): In any case, document this class.
+    //  From earlier:
+    //  So the custom representation differs from the default value approach: A field with a custom representation should still appear as a
+    //  builder property, while a field with a default/computed value does not require any mention in the builder. The value of the custom
+    //  representation is derived from the public field in the builder, while the computed value is derived from an expression/another field at
+    //  access time.
+    class CustomRepresentation<Field : AbstractField<Field>>(
+        // TODO (marco): Should this be copied or not?
+        val field: Field,
+
+        /**
+         * Generates an expression which converts the *original field* to the *custom representation*.
+         */
+        val toRepresentation: (Field) -> String,
+
+        /**
+         * Generates an expression which converts the *custom representation field* to the *original value*.
+         */
+        val fromRepresentation: (Field) -> String,
+    ) {
+        init {
+            // TODO (marco): Maybe not the best place to configure this?
+            field.isCustomRepresentation = true
+            field.visibility = Visibility.PRIVATE
+        }
+    }
+
+    /**
+     * Whether *this* field is a [CustomRepresentation] of another field, i.e. this field is contained in the [CustomRepresentation] class.
+     *
+     * This property is set automatically when a [CustomRepresentation] is created.
+     */
+    var isCustomRepresentation: Boolean = false
 
     /**
      * @see org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes
@@ -125,6 +194,8 @@ abstract class AbstractField<Field : AbstractField<Field>> {
         copy.useInBaseTransformerDetection = useInBaseTransformerDetection
         copy.overriddenFields += overriddenFields
         copy.implementationDefaultStrategy = implementationDefaultStrategy
+        copy.customRepresentation = customRepresentation
+        copy.isCustomRepresentation = isCustomRepresentation
         copy.doPrint = doPrint
     }
 

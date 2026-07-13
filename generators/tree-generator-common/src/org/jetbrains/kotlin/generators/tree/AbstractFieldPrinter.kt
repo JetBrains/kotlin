@@ -12,10 +12,9 @@ import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.utils.withIndent
 
-abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
+abstract class AbstractFieldPrinter<Field : AbstractField<Field>>(
     private val printer: ImportCollectingPrinter,
 ) {
-
     /**
      * Allows to forcibly make the field a `var` instead of `val`.
      */
@@ -76,6 +75,12 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
             }
 
             if (inImplementation && !inConstructor) {
+                field.customRepresentation?.let { representation ->
+                    withIndent {
+                        println("get() = ", representation.fromRepresentation(representation.field))
+                    }
+                }
+
                 field.customSetter?.let {
                     withIndent {
                         print("set(value)")

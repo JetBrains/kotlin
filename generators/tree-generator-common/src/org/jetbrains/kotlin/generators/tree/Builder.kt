@@ -50,7 +50,15 @@ class LeafBuilder<Field, Element, Implementation>(
     override val typeName: String
         get() = (implementation.name ?: implementation.element.typeName) + "Builder"
 
-    override val allFields: List<Field> by lazy { implementation.fieldsInConstructor }
+    override val allFields: List<Field> by lazy {
+        // TODO (marco): A bit hacky. We add custom representation fields to `fieldsInConstructor`, but have to filter them out here because
+        //  they are not part of the builder surface. Conceptually, this makes sense and is a fine model. But maybe we should add a property
+        //  to `implementation` instead.
+        // `allFields` is used to preserve the order of the fields, as opposed to concatenating two lists of fields.
+        implementation.allFields.filter {
+            !it.isCustomRepresentation && it in implementation.fieldsInConstructor || it.customRepresentation != null
+        }
+    }
 
     override val uselessFields: List<Field> by lazy {
         val fieldsFromParents = parents.flatMap { it.allFields }.map { it.name }.toSet()
