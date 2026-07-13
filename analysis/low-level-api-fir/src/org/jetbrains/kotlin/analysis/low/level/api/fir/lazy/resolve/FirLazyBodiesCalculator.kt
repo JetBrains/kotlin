@@ -13,6 +13,8 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.backReferences.assignFirFileBackReferences
+import org.jetbrains.kotlin.analysis.low.level.api.fir.backReferences.backReferencedFirFile
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.*
@@ -89,6 +91,15 @@ object FirLazyBodiesCalculator {
         val ktAnnotationEntry = annotationCall.psi as KtAnnotationEntry
         builder.context.packageFqName = ktAnnotationEntry.containingKtFile.packageFqName
         val newAnnotationCall = builder.buildAnnotationCall(ktAnnotationEntry, annotationCall.containingDeclarationSymbol)
+
+        // "Back references to FIR" (KT-70517): annotation arguments are a separate raw-FIR-building entry point. They normally contain no
+        // declarations, but erroneous code can swallow declarations into an argument (e.g. an unterminated annotation), so stamp them here
+        // using the file back reference of the annotation's containing declaration.
+        val firFile = annotationCall.containingDeclarationSymbol.fir.backReferencedFirFile
+        if (firFile != null) {
+            assignFirFileBackReferences(newAnnotationCall, firFile)
+        }
+
         return newAnnotationCall.argumentList
     }
 

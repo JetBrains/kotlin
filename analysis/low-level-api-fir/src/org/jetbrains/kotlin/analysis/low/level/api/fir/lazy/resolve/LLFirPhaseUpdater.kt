@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.body
+import org.jetbrains.kotlin.analysis.low.level.api.fir.backReferences.backReferencedFirFile
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -16,21 +17,22 @@ internal object LLFirPhaseUpdater {
         updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
 
         if (newPhase == FirResolvePhase.BODY_RESOLVE) {
-            updateDeclarationSignatureBody(target)
+            val transformer = LocalElementPhaseUpdatingTransformer((target as? FirDeclaration)?.backReferencedFirFile)
+            updateDeclarationSignatureBody(target, transformer)
 
             when (target) {
                 is FirVariable -> {
-                    target.initializer?.accept(LocalElementPhaseUpdatingTransformer)
-                    target.delegate?.accept(LocalElementPhaseUpdatingTransformer)
-                    target.getter?.let(::updateFunctionBody)
-                    target.setter?.let(::updateFunctionBody)
-                    target.backingField?.initializer?.accept(LocalElementPhaseUpdatingTransformer)
+                    target.initializer?.accept(transformer)
+                    target.delegate?.accept(transformer)
+                    target.getter?.let { updateFunctionBody(it, transformer) }
+                    target.setter?.let { updateFunctionBody(it, transformer) }
+                    target.backingField?.initializer?.accept(transformer)
                 }
 
-                is FirFunction -> updateFunctionBody(target)
-                is FirAnonymousInitializer -> target.body?.accept(LocalElementPhaseUpdatingTransformer)
-                is FirCodeFragment -> target.block.accept(LocalElementPhaseUpdatingTransformer)
-                is FirDanglingModifierList -> target.acceptChildren(LocalElementPhaseUpdatingTransformer)
+                is FirFunction -> updateFunctionBody(target, transformer)
+                is FirAnonymousInitializer -> target.body?.accept(transformer)
+                is FirCodeFragment -> target.block.accept(transformer)
+                is FirDanglingModifierList -> target.acceptChildren(transformer)
             }
         }
     }
@@ -39,8 +41,9 @@ internal object LLFirPhaseUpdater {
      * Updates the state of the [target] declaration with a partially analyzed body.
      */
     fun updatePartiallyAnalyzedDeclarationContent(target: FirDeclaration, updateSignatureBody: Boolean, statementRange: IntRange) {
+        val transformer = LocalElementPhaseUpdatingTransformer(target.backReferencedFirFile)
         if (updateSignatureBody) {
-            updateDeclarationSignatureBody(target)
+            updateDeclarationSignatureBody(target, transformer)
         }
 
         if (!statementRange.isEmpty()) {
@@ -48,34 +51,34 @@ internal object LLFirPhaseUpdater {
             require(statements.size > statementRange.last)
 
             val statementsToUpdate = statements.subList(statementRange.first, statementRange.last + 1)
-            statementsToUpdate.forEach { it.accept(LocalElementPhaseUpdatingTransformer) }
+            statementsToUpdate.forEach { it.accept(transformer) }
         }
     }
 
-    private fun updateDeclarationSignatureBody(target: FirElementWithResolveState) {
+    private fun updateDeclarationSignatureBody(target: FirElementWithResolveState, transformer: LocalElementPhaseUpdatingTransformer) {
         when (target) {
             is FirConstructor -> {
-                target.delegatedConstructor?.accept(LocalElementPhaseUpdatingTransformer)
-                updateFunctionSignatureBody(target)
+                target.delegatedConstructor?.accept(transformer)
+                updateFunctionSignatureBody(target, transformer)
             }
 
             is FirFunction -> {
-                updateFunctionSignatureBody(target)
+                updateFunctionSignatureBody(target, transformer)
             }
 
             is FirVariable -> {
-                target.getter?.let(::updateFunctionSignatureBody)
-                target.setter?.let(::updateFunctionSignatureBody)
+                target.getter?.let { updateFunctionSignatureBody(it, transformer) }
+                target.setter?.let { updateFunctionSignatureBody(it, transformer) }
             }
         }
     }
 
-    private fun updateFunctionBody(target: FirFunction) {
-        target.body?.accept(LocalElementPhaseUpdatingTransformer)
+    private fun updateFunctionBody(target: FirFunction, transformer: LocalElementPhaseUpdatingTransformer) {
+        target.body?.accept(transformer)
     }
 
-    private fun updateFunctionSignatureBody(target: FirFunction) {
-        target.valueParameters.forEach { it.defaultValue?.accept(LocalElementPhaseUpdatingTransformer) }
+    private fun updateFunctionSignatureBody(target: FirFunction, transformer: LocalElementPhaseUpdatingTransformer) {
+        target.valueParameters.forEach { it.defaultValue?.accept(transformer) }
     }
 
     private fun updatePhaseForNonLocals(element: FirElementWithResolveState, newPhase: FirResolvePhase, isTargetDeclaration: Boolean) {
@@ -125,11 +128,21 @@ internal object LLFirPhaseUpdater {
     }
 }
 
-private object LocalElementPhaseUpdatingTransformer : FirVisitorVoid() {
+private class LocalElementPhaseUpdatingTransformer(private val firFile: FirFile?) : FirVisitorVoid() {
     override fun visitElement(element: FirElement) {
         if (element is FirElementWithResolveState) {
             @OptIn(ResolveStateAccess::class)
             element.resolveState = FirResolvePhase.BODY_RESOLVE.asResolveState()
+        }
+
+        // "Back references to FIR" (KT-70517): declarations synthesized during resolution (e.g. the implicit `it` parameter of a lambda or
+        // anonymous functions produced by callable references) are not covered by raw FIR building, so we assign their file back reference
+        // as we walk the freshly resolved body.
+        //
+        // CAUTION: This is a quick workaround in response to the problems described above, found in a few failing tests, and might not be
+        // the best solution.
+        if (firFile != null && element is FirDeclaration) {
+            element.backReferencedFirFile = firFile
         }
 
         element.acceptChildren(this)

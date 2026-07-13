@@ -16,6 +16,9 @@ class FirDeclarationRendererWithFilteredAttributes : FirDeclarationRendererWithA
             "SourceElementKey",
             "KlibSourceFile",
             "KlibFileAnnotationsKey",
+            // "Back references to FIR" (KT-70517): the back reference to the containing FIR file is infrastructure and must not appear in
+            // FIR dumps (see `backReferencedFirFile`).
+            "FirFileBackReferenceKey",
         )
     }
 }

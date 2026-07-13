@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.backReferences.assignBackReferencesToDeclarations
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.ThreadSafe
 
 /**
- * Responsble for building [FirFile] by [KtFile]
+ * Responsible for building [FirFile]s from [KtFile]s.
  */
 @ThreadSafe
 internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponents) {
@@ -39,6 +40,10 @@ internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponen
             moduleComponents.session,
             moduleComponents.scopeProvider,
             bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
-        ).buildFirFile(ktFile)
+        ).buildFirFile(ktFile).also { firFile ->
+            // "Back references to FIR" (KT-70517): assign a back reference to the containing file to every non-local declaration. Bodies
+            // are lazy at this point, so local declarations are covered later, when their bodies are built (see RawFirNonLocalDeclarationBuilder).
+            firFile.assignBackReferencesToDeclarations()
+        }
     }
 }
