@@ -36,6 +36,7 @@ class LocalClaudeAgent private constructor(
                 The input contains a code rule and a git diff of files subject to the rule.
                 Your task is to check whether this diff meets this rule, and report any violations.
                 Don't report problems that are pre-existing (i.e. not introduced with this diff).
+                If a change violates a rule but explains in the comment why the violation should be allowed, don't report it.
                 You can also read any files in the repository. It is available at the current working directory
                 and already has the patch applied.
             """.trimIndent()
