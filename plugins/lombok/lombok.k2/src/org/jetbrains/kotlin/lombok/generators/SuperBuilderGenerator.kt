@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -97,7 +97,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         }
     }
 
-    override fun FirJavaClassBuilder.completeBuilder(
+    override fun FirRegularClassBuilder.completeBuilder(
         classSymbol: FirClassSymbol<*>,
         builderSymbol: FirClassSymbol<*>,
         builder: SuperBuilder,

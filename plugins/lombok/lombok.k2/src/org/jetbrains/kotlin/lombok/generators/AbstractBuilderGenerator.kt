@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
@@ -36,9 +37,7 @@ import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeMismatch
@@ -86,12 +85,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     protected class GeneratedCallables(
         val functions: Map<Name, FirNamedFunctionSymbol>,
-        val fields: Map<Name, FirFieldSymbol>,
+        val variables: Map<Name, FirVariableSymbol<*>>,
     )
 
-    // Lombok doesn't add a new function/field if a declaration with the same name already exists disregarding parameters.
-    // It means the multimap with several functions on the same name is unnecessary.
-    // But we have to distinguish between functions and fields because it's allowed to have a function and a field with the same name.
+    // Lombok doesn't add a new function/field/property if a declaration with the same name already exists disregarding parameters.
+    // It means the multimap with several declarations on the same name is unnecessary.
+    // But we have to distinguish between functions and fields/properties because it's allowed to have a function and a field/property with the same name.
     private val callablesCache: FirCache<FirClassSymbol<*>, GeneratedCallables?, MemberGenerationContext?> =
         session.firCachesFactory.createCache(::createCallables)
 
@@ -112,7 +111,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         existingFunctionNames: Set<Name>,
     )
 
-    protected abstract fun FirJavaClassBuilder.completeBuilder(
+    protected abstract fun FirRegularClassBuilder.completeBuilder(
         classSymbol: FirClassSymbol<*>,
         builderSymbol: FirClassSymbol<*>,
         builder: T,
@@ -121,7 +120,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
         return callablesCache.getValue(classSymbol, context)?.let {
-            it.functions.keys + it.fields.keys
+            it.functions.keys + it.variables.keys
         }.orEmpty()
     }
 
@@ -139,9 +138,17 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     @UnsafePluginApi
     override fun generateFields(callableId: CallableId, context: MemberGenerationContext?): List<FirFieldSymbol> {
+        return generateVariables<FirFieldSymbol>(callableId, context)
+    }
+
+    override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
+        return generateVariables<FirPropertySymbol>(callableId, context)
+    }
+
+    private inline fun <reified V : FirVariableSymbol<*>> generateVariables(callableId: CallableId, context: MemberGenerationContext?): List<V> {
         val classSymbol = context?.owner ?: return emptyList()
         return callablesCache.getValue(classSymbol, context)?.let {
-            it.fields[callableId.callableName]?.let { field -> listOf(field) }
+            (it.variables[callableId.callableName] as? V)?.let { variable -> listOf(variable) }
         } ?: emptyList()
     }
 
@@ -160,47 +167,49 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      */
     private fun createCallables(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext?): GeneratedCallables? {
         val existingFunctionNames = mutableSetOf<Name>()
-        val existingFieldNames = mutableSetOf<Name>()
+        val existingVariableNames = mutableSetOf<Name>()
 
         context?.declaredScope?.processAllCallables {
             when (it) {
                 is FirNamedFunctionSymbol -> {
                     existingFunctionNames.add(it.name)
                 }
-                is FirFieldSymbol -> {
-                    existingFieldNames.add(it.name)
+                is FirFieldSymbol,
+                is FirPropertySymbol
+                    -> {
+                    existingVariableNames.add(it.name)
                 }
             }
         }
 
         val generatedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()
-        val generatedFields = mutableMapOf<Name, FirFieldSymbol>()
+        val generatedVariables = mutableMapOf<Name, FirVariableSymbol<*>>()
 
-        context(generatedFunctions, generatedFields) {
-            addBuilderCallables(classSymbol, existingFunctionNames, existingFieldNames)
+        context(generatedFunctions, generatedVariables) {
+            addBuilderCallables(classSymbol, existingFunctionNames, existingVariableNames)
         }
 
         builderWithDeclarationsCache.getValue(classSymbol)?.let { builderWithDeclarations ->
             generatedFunctions.addEntityMethods(builderWithDeclarations, classSymbol, existingFunctionNames, context)
         }
 
-        return runIf(generatedFunctions.isNotEmpty() || generatedFields.isNotEmpty()) {
-            GeneratedCallables(generatedFunctions, generatedFields)
+        return runIf(generatedFunctions.isNotEmpty() || generatedVariables.isNotEmpty()) {
+            GeneratedCallables(generatedFunctions, generatedVariables)
         }
     }
 
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
-    context(generatedFunctions: MutableMap<Name, FirNamedFunctionSymbol>, generatedFields: MutableMap<Name, FirFieldSymbol>)
+    context(generatedFunctions: MutableMap<Name, FirNamedFunctionSymbol>, generatedVariables: MutableMap<Name, FirVariableSymbol<*>>)
     private fun addBuilderCallables(
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
-        existingFieldNames: Set<Name>,
+        existingVariableNames: Set<Name>,
     ) {
         val containingClassSymbol = builderSymbol.getContainingClassSymbol() as? FirClassSymbol<*> ?: return
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(containingClassSymbol) ?: return
-        val className = builderSymbol.classId.shortClassName.asString()
-        val builderFir = builderSymbol.fir as? FirJavaClass
-        val entityJavaClass = containingClassSymbol.fir as FirJavaClass
+        val builderName = builderSymbol.classId.shortClassName.asString()
+        val builderFir = builderSymbol.fir as? FirRegularClass
+        val entityClass = containingClassSymbol.fir as FirRegularClass
 
         val nestedClassifierScope =
             containingClassSymbol.fir.scopeProvider.getNestedClassifierScope(containingClassSymbol.fir, session, ScopeSession())
@@ -212,9 +221,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         for ((builder, declaration) in builderWithDeclarations) {
             val containingClassBuilderName = builder.getBuilderClassShortName(declaration)
             // Make sure the current class is really a builder of the containing parent
-            if (className != containingClassBuilderName) continue
+            if (builderName != containingClassBuilderName) continue
 
-            if (builderSymbolAlreadyExists && builderFir != null) {
+            if (builderSymbolAlreadyExists && builderFir is FirJavaClass) {
                 // For already existing explicit builders, initialize and populate type parameters to link generated functions with them.
                 // Unfortunately, we can't do it on nested classes generation step because scope are being traversed recursively (that would lead to StackOverflow)
                 // For Lombok-generated builders, createEmptyBuilderClass already sets up the correct mapping
@@ -234,18 +243,19 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             val items = when (declaration) {
                 is FirJavaClass -> {
-                    if (entityJavaClass.isRecord) {
-                        entityJavaClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
+                    entityClass as FirJavaClass
+                    if (entityClass.isRecord) {
+                        entityClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
                     } else {
-                        entityJavaClass.declarations.filterIsInstance<FirJavaField>().map { it }
+                        entityClass.declarations.filterIsInstance<FirJavaField>().map { it }
                     }
                 }
-                is FirJavaConstructor -> declaration.valueParameters
-                is FirJavaMethod -> declaration.valueParameters
+                is FirConstructor -> declaration.valueParameters
+                is FirNamedFunction -> declaration.valueParameters
                 else -> emptyList()
             }
             for (item in items) {
-                generatedFields.addIfNonClashing(item.name, existingFieldNames) {
+                generatedVariables.addIfNonClashing(item.name, existingVariableNames) {
                     buildJavaField {
                         isFromSource = true
                         lazyHasConstantInitializer = lazy { false }
@@ -569,7 +579,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         visibility: Visibility,
         builderDeclaration: FirDeclaration,
         builder: T,
-    ): FirJavaClass? {
+    ): FirRegularClass? {
         val containingClass = this.fir as? FirJavaClass ?: return null
         val classId = containingClass.classId.createNestedClassId(name)
         val builderSymbol = FirRegularClassSymbol(classId)
@@ -705,9 +715,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         existingDeclaration: Boolean = false,
     ): Map<JavaTypeParameter, FirTypeParameter> {
         val typeParameters: List<FirTypeParameter> = when (this) {
-            is FirJavaClass -> typeParameters.map { it.symbol.fir }
-            is FirJavaMethod -> typeParameters
-            is FirJavaConstructor -> typeParameters.map { it.symbol.fir }
+            is FirClass -> typeParameters.map { it.symbol.fir }
+            is FirConstructor -> typeParameters.map { it.symbol.fir }
+            is FirNamedFunction -> typeParameters
             else -> emptyList() // Use the fallback just in case, although it's normally unreachable
         }
         return buildMap {
@@ -733,9 +743,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
 
         val builderClassNamePart = when (builderDeclaration) {
-            is FirJavaClass -> builderDeclaration.name.asString()
-            is FirJavaConstructor -> builderDeclaration.nameOrSpecialName.asString()
-            is FirJavaMethod -> {
+            is FirRegularClass -> builderDeclaration.name.asString()
+            is FirConstructor -> builderDeclaration.nameOrSpecialName.asString()
+            is FirNamedFunction -> {
                 // If the builder class name is not specified explicitly, infer the name from the method's return type
                 // according to Lombok rules
                 when (val returnType = (builderDeclaration.returnTypeRef as? FirJavaTypeRef)?.type) {
@@ -776,9 +786,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     protected val FirDeclaration.isStaticDeclaration: Boolean
         get() {
             contract {
-                returns(false) implies (this@isStaticDeclaration is FirJavaMethod)
+                returns(false) implies (this@isStaticDeclaration is FirNamedFunction)
             }
-            return this !is FirJavaMethod || this.isStatic
+            return this !is FirNamedFunction || this.isStatic
         }
 }
 

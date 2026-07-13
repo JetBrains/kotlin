@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -63,9 +63,9 @@ class BuilderGenerator(
                 name,
                 valueParameters = emptyList(),
                 returnTypeRef = when (builderDeclaration) {
-                    is FirJavaClass -> builderDeclaration.defaultType().toFirResolvedTypeRef()
-                    is FirJavaMethod -> builderDeclaration.returnTypeRef
-                    is FirJavaConstructor -> builderDeclaration.returnTypeRef
+                    is FirRegularClass -> builderDeclaration.defaultType().toFirResolvedTypeRef()
+                    is FirNamedFunction -> builderDeclaration.returnTypeRef
+                    is FirConstructor -> builderDeclaration.returnTypeRef
                     else -> FirErrorTypeRefBuilder().apply {
                         source = builderDeclaration.source
                         diagnostic =
@@ -86,7 +86,7 @@ class BuilderGenerator(
         }
     }
 
-    override fun FirJavaClassBuilder.completeBuilder(
+    override fun FirRegularClassBuilder.completeBuilder(
         classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>, builder: Builder,
     ) {
         superTypeRefs += listOf(session.builtinTypes.anyType)
