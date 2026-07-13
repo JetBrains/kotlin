@@ -447,13 +447,6 @@ fun Project.publishProjectJars(
     }
 
     sourcesJar {
-        for (projectPath in projects) {
-            val projectTasks = project(projectPath).tasks
-            if (projectTasks.names.any { it == "compileKotlin" }) {
-                // this is needed in order to declare explicit dependency on code generation tasks
-                dependsOn(projectTasks.named("compileKotlin").map { it.dependsOn })
-            }
-        }
         from {
             projects.map {
                 project(it).mainSourceSet.allSource
