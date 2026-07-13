@@ -23,10 +23,7 @@ dependencies {
     CompilerModules.kotlinJpsPluginMavenDependencies
         .forEach { implementation(project(it)) }
 
-    @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"]
-        .let { it as List<String> }
-        .forEach { implementation(it) { isTransitive = false } }
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     implementation(project(":jps:jps-common"))
     compileOnly(libs.intellij.fastutil)
