@@ -244,7 +244,15 @@ class JavaOverrideChecker internal constructor(
                     it.type.extractTypeParametersTo(result)
                 }
             }
-            else -> {
+            // Non-denotable, so we shouldn't see it in declarations, but just in case we ever support it.
+            is ConeIntersectionType -> this.intersectedTypes.forEach { it.extractTypeParametersTo(result) }
+            // Fully covered but not a `sealed` class.
+            is ConeLookupTagBasedType,
+            is ConeCapturedType,
+            is ConeStubType,
+            is ConeIntegerLiteralType,
+            is ConeTypeVariableType
+                -> {
             }
         }
     }
