@@ -861,17 +861,6 @@ The default value is 1.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xdestroy-runtime-mode"
-        description = "When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.".asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "<mode>".asReleaseDependent()
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xgc"
         description = "GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.".asReleaseDependent()
         valueType = StringType.defaultNull

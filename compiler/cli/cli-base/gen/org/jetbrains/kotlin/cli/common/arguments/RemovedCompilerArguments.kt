@@ -276,6 +276,21 @@ It has no effect when -language-version is 2.0 or higher.""",
         }
 
     @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xdestroy-runtime-mode",
+        valueDescription = "<mode>",
+        description = "When to destroy the runtime.",
+        removedVersion = "2.5.0",
+    )
+    var destroyRuntimeMode: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @all:Deprecated(
         message = "Light debug information is enabled by default for Darwin platforms. For other targets use '-Xadd-light-debug=enable' instead.",
         level = DeprecationLevel.ERROR,
     )

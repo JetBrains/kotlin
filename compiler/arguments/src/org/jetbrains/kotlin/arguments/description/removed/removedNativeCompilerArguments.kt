@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
+import org.jetbrains.kotlin.arguments.dsl.previous
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
@@ -83,6 +84,24 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             introducedVersion = KotlinReleaseVersion.v1_6_0,
             deprecatedVersion = KotlinReleaseVersion.v2_4_20,
             removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xdestroy-runtime-mode"
+        val introducedVersion = KotlinReleaseVersion.v1_5_20
+        val removedVersion = KotlinReleaseVersion.v2_5_0
+        val commonDescriptionPart = "When to destroy the runtime"
+        description = ReleaseDependent(
+            "${commonDescriptionPart}.",
+            introducedVersion..removedVersion.previous!! to "$commonDescriptionPart – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.",
+        )
+        valueType = StringType.defaultNull
+        valueDescription = "<mode>".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = introducedVersion,
+            removedVersion = removedVersion,
         )
     }
 }

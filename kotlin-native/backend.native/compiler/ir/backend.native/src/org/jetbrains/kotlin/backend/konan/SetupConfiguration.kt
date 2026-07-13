@@ -217,18 +217,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
     putIfNotNull(PRE_LINK_CACHES, parsePreLinkCachesValue(this@setupFromArguments, arguments.preLinkCaches))
     putIfNotNull(OVERRIDE_KONAN_PROPERTIES, parseOverrideKonanProperties(arguments, this@setupFromArguments))
-    when (arguments.destroyRuntimeMode) {
-        null -> {}
-        "legacy" -> {
-            report(KONAN_ARGUMENT_ERROR, "New MM is incompatible with 'legacy' destroy runtime mode.")
-        }
-        "on-shutdown" -> {
-            report(KONAN_ARGUMENT_STRONG_WARNING, "-Xdestroy-runtime-mode switch is deprecated and will be removed in a future release.")
-        }
-        else -> {
-            report(KONAN_ARGUMENT_ERROR, "Unsupported destroy runtime mode ${arguments.destroyRuntimeMode}")
-        }
-    }
 
     val gcFromArgument = when (arguments.gc) {
         null -> null

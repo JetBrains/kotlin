@@ -26,7 +26,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.debug = from.debug
     to.debugInfoFormatVersion = from.debugInfoFormatVersion
     to.debugPrefixMap = from.debugPrefixMap.copyOf()
-    to.destroyRuntimeMode = from.destroyRuntimeMode
     to.dumpBuiltCachesTo = from.dumpBuiltCachesTo
     to.emitLazyObjCHeader = from.emitLazyObjCHeader
     to.enableAssertions = from.enableAssertions

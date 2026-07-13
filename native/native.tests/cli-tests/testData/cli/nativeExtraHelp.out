@@ -26,7 +26,6 @@ where advanced options include:
   -Xdebug-info-version       Generate debug info of the given version (1, 2).
   -Xdebug-prefix-map=<old1=new1,old2=new2,...>
                              Remap file source directory paths in debug info.
-  -Xdestroy-runtime-mode=<mode> When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.
   -Xdump-built-caches-to=<path> Path to a file where the list of all cache archives produced by this build should be written.
   -Xdump-tests-to=<path>     Path to a file for dumping the list of all available tests.
   -Xemit-lazy-objc-header

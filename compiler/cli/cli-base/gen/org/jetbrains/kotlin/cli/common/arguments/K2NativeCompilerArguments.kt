@@ -188,17 +188,6 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xdestroy-runtime-mode",
-        valueDescription = "<mode>",
-        description = "When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.",
-    )
-    var destroyRuntimeMode: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xdump-built-caches-to",
         valueDescription = "<path>",
         description = "Path to a file where the list of all cache archives produced by this build should be written.",

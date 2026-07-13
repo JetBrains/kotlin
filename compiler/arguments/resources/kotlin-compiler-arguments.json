@@ -16461,8 +16461,14 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.",
-                                            "valueInVersions": []
+                                            "current": "When to destroy the runtime.",
+                                            "valueInVersions": [
+                                                {
+                                                    "minReleaseVersion": "1.5.20",
+                                                    "maxReleaseVersion": "2.4.20",
+                                                    "value": "When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed."
+                                                }
+                                            ]
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
@@ -16486,7 +16492,7 @@
                                             "introducedVersion": "1.5.20",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
-                                            "removedVersion": null
+                                            "removedVersion": "2.5.0"
                                         },
                                         "argumentType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
