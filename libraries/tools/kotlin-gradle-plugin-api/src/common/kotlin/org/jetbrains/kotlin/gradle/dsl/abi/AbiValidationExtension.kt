@@ -68,7 +68,7 @@ interface AbiValidationExtension {
      * }
      * ```
      *
-     * In order for a declaration (class, field, property or function) to get into the dump, it must pass the inclusion **and** exclusion filters.
+     * In order for a declaration (class, field, property, or function) to get into the dump, it must pass the inclusion **and** exclusion filters.
      *
      * A declaration successfully passes the exclusion filter if it does not match any of the class name (see [AbiFilterSetSpec.byNames]) or annotation (see [AbiFilterSetSpec.annotatedWith]) filter rules.
      *
@@ -91,7 +91,7 @@ interface AbiValidationExtension {
     val referenceDumpDir: DirectoryProperty
 
     /**
-     * A provider for the task that compares actual dumps from the current with dumps from [referenceDumpDir].
+     * A provider for the task that compares actual dumps from the current code with dumps from [referenceDumpDir].
      *
      * This task fails if any differences are found between the files.
      *
@@ -107,38 +107,38 @@ interface AbiValidationExtension {
     val updateTaskProvider: TaskProvider<Task>
 
     /**
-     * Whether to include the declarations for targets which are not supported by the host in the generated dump.
-     * Targets which are not supported by the host in two cases:
-     * - cross-compilation is disabled and some targets can't be compiled on the host machine
-     * - c-interop being used and some targets can't be compiled on the host machine
+     * Determines whether to include the declarations for targets which are not supported by the host in the generated dump.
+     * A target is not supported by the host in two cases:
+     * - Cross-compilation is disabled and some targets can't be compiled on the host machine.
+     * - C-interop is being used, and some targets can't be compiled on the host machine.
      *
      * These declarations are taken from the reference dump, if available.
      *
      * If possible, unsupported targets are supplemented with common declarations that are already present in the supported targets.
      *
      * However, this does not provide a complete guarantee, so it should be used with caution.
-     * This mode is intended to improve the "local" development experience only, and it is crucial to double-check ABI dumps on a host supporting corresponding compilation targets.
+     * This mode is intended to improve the "local" development experience only, and it is crucial to double-check ABI dumps on a host supporting the corresponding compilation targets.
      *
      * If the option is set to `false` and the compiler does not support some of the Kotlin targets used in the current project, the dump generation fails with an error.
      *
      * #### Example
      *
      *  There are two targets in the project `iosX64`, `androidNativeX64` and `linuxX64`.
-     *  Current dump contains class `my.Utils` which present in all targets, `my.IosUtils` only in iosX64.
+     *  The current dump contains the `my.Utils` class which is present in all targets. The `my.IosUtils` class is only present in iosX64.
      *
-     *  Suppose we make such changes:
-     *  - added `my.Utils2` in all targets
-     *  - added `my.LinuxUtils` in linuxX64
-     *  - added `my.NonAppleUtils` in linuxX64 and androidNativeX64
-     *  - added `my.IosUtils2` in iosX64
+     *  Suppose we make these changes:
+     *  - Added `my.Utils2` in all targets
+     *  - Added `my.LinuxUtils` in linuxX64
+     *  - Added `my.NonAppleUtils` in linuxX64 and androidNativeX64
+     *  - Added `my.IosUtils2` in iosX64
      *
-     *  On a host that lacks iosX64 support, and this mode is enabled, there will be such changes in the dump:
-     *  - `my.Utils` will stay present in all targets of the new dump (correct inference)
-     *  - `my.IosUtils` will stay present in iosX64 target of the new dump (correct inference)
-     *  - `my.Utils2` will be present in all targets of the new dump (correct inference)
-     *  - `my.LinuxUtils` will be present in linuxX64 target of the new dump (correct inference)
-     *  - `my.NonAppleUtils` will be present in all targets of the new dump (incorrect inference - because usually if it is added to everything, then there is a high chance that the symbol is added to an unsupported target)
-     *  - `my.IosUtils2` won't be present in iosX64 targets of the new dump (incorrect inference - because we can't compile the target and see what appeared individually in it)
+     *  On a host that lacks iosX64 support, when this mode is enabled, there are these changes in the dump:
+     *  - `my.Utils` stays present in all targets of the new dump (correct inference)
+     *  - `my.IosUtils` stays present in iosX64 target of the new dump (correct inference)
+     *  - `my.Utils2` are present in all targets of the new dump (correct inference)
+     *  - `my.LinuxUtils` are present in linuxX64 target of the new dump (correct inference)
+     *  - `my.NonAppleUtils` are present in all targets of the new dump (incorrect inference - because usually if it is added to everything, then there is a high chance that the symbol is added to an unsupported target)
+     *  - `my.IosUtils2` aren't be present in iosX64 targets of the new dump (incorrect inference - because we can't compile the target and see what appeared individually in it)
      *
      *
      * Default value: `true`
@@ -308,7 +308,7 @@ interface AbiValidationVariantSpec {
 enum class BinariesSource {
     /**
      * The binaries are taken from the Maven publications of the project.
-     * To do this, the `maven-publish` plugin must be applied, the Maven publications must be created and configured correctly.
+     * The `maven-publish` plugin must be applied and the Maven publications must be created and configured correctly.
      *
      * Only publishable artifacts for which no classifier is specified (is null) are taken into account.
      */
@@ -320,7 +320,7 @@ enum class BinariesSource {
     MAIN_COMPILATION,
 
     /**
-     * The binaries are taken from the output of the Kotlin compilation tasks which do not contain the word `test` in the name in any case.
+     * The binaries are taken from the output of the Kotlin compilation tasks whose names do not contain the word `test`, regardless of the case.
      */
     NON_TEST_COMPILATIONS
 }

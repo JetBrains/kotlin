@@ -29,7 +29,7 @@ public interface AbiValidationToolchain : KotlinToolchains.Toolchain {
     /**
      * Prints an ABI dump for JVM from [inputFiles] into the specified [appendable].
      *
-     * @param inputFiles Paths to the files used to extract its ABI. The files can be class-files or jar-files. Directories are not supported.
+     * @param inputFiles Paths to the files used to extract its ABI. The files can be class files or JAR files. Directories are not supported.
      *
      * @since 2.4.0
      */
@@ -52,7 +52,7 @@ public interface AbiValidationToolchain : KotlinToolchains.Toolchain {
     /**
      * Compares two files line-by-line.
      *
-     * If files are equal, nothing is written to [diff].
+     * If the contents of the files are the same, nothing is written to the [diff].
      *
      * @since 2.4.0
      */
@@ -79,9 +79,9 @@ public interface AbiValidationToolchain : KotlinToolchains.Toolchain {
 
 /**
  * Prints an ABI dump for JVM from [inputFiles] into the specified [appendable] with options configured by [builderAction].
- * It is possible to pass class-files or jar files in [inputFiles].
+ * It is possible to pass class files or JAR files in [inputFiles].
  *
- * To control which declarations are passed to the dump, the option [DumpJvmAbiToStringOperation.PATTERN_FILTERS] could be used. By default, no filters will be applied.
+ * To control which declarations are passed to the dump, the option [DumpJvmAbiToStringOperation.PATTERN_FILTERS] can be used. By default, no filters are applied.
  *
  * @since 2.4.0
  */
@@ -99,18 +99,18 @@ public inline fun AbiValidationToolchain.dumpJvmAbiToStringOperation(
 }
 
 /**
- * Prints an ABI dump for klib targets from [klibs] into the specified [appendable]  with options configured by [builderAction].
+ * Prints an ABI dump for klib targets from [klibs] into the specified [appendable] with options configured by [builderAction].
  * Compressed and unpacked klibs are supported.
  *
- * If option [DumpKlibAbiToStringOperation.TARGETS_TO_INFER] is specified and not empty, for the specified targets the ABI will be inferred from the option [DumpKlibAbiToStringOperation.REFERENCE_DUMP_FILE].
+ * If the [DumpKlibAbiToStringOperation.TARGETS_TO_INFER] option is specified and not empty, for the specified targets the ABI is inferred from the [DumpKlibAbiToStringOperation.REFERENCE_DUMP_FILE] option.
  * The inference works as follows:
- * - for each target from [DumpKlibAbiToStringOperation.TARGETS_TO_INFER], the ABI is inferred from the [DumpKlibAbiToStringOperation.REFERENCE_DUMP_FILE], if it exists, not empty, and this target is present in it
- * - all the non-inferred targets that belong to the group that this target belongs to are found. Then all declarations are added that are present in all of them.
+ * - For each target from [DumpKlibAbiToStringOperation.TARGETS_TO_INFER], the ABI is inferred from the [DumpKlibAbiToStringOperation.REFERENCE_DUMP_FILE], if it exists, is not empty, and this target is present in it.
+ * - If all the non-inferred targets that belong to the group that this target belongs to are found, all the declarations are added that are present in all of them.
  *
- * The inference is used in cases where the host compiler cannot compile some targets, but there is a need to build an ABI dump,
- * even if with some inaccuracies.
+ * Inference is used in cases where the host compiler can't compile some targets, but there is a need to build an ABI dump,
+ * even if it has some inaccuracies.
  *
- * To control which declarations are passed to the dump, the option [DumpKlibAbiToStringOperation.PATTERN_FILTERS] could be used. By default, no filters will be applied.
+ * To control which declarations are passed to the dump, the [DumpKlibAbiToStringOperation.PATTERN_FILTERS] option can be used. By default, no filters are applied.
  *
  * @since 2.4.0
  */
@@ -130,7 +130,7 @@ public fun AbiValidationToolchain.dumpKlibAbiToStringOperation(
 /**
  * Compares two files line-by-line.
  *
- * If files are equal, nothing is written to [diff].
+ * If the contents of the files are the same, nothing is written to the [diff].
  *
  * @since 2.4.0
  */
