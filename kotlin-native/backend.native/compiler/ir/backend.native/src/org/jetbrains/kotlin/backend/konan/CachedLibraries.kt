@@ -71,9 +71,20 @@ class CachedLibraries(
             Kind.HEADER -> CompilerOutputKind.HEADER_CACHE
         }
 
+        // Returns null when the metadata file is absent, which is the case for caches produced by compilers older than 2.2.20 (KT-87202).
+        protected fun readMetadataOrNull(directory: File): CacheMetadata? {
+            val metadataFile = directory.child(METADATA_FILE_NAME)
+            if (!metadataFile.exists) return null
+            return metadataFile.bufferedReader().use {
+                CacheMetadataSerializer.deserialize(it)
+            }
+        }
+
         class Monolithic(target: KonanTarget, kind: Kind, path: String)
             : Cache(target, kind, path, File(path).parentFile.parentFile.absolutePath)
         {
+            fun getMetadataOrNull(): CacheMetadata? = readMetadataOrNull(File(rootDirectory))
+
             override fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency> {
                 val directory = File(path).absoluteFile.parentFile
                 val data = directory.child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
@@ -130,14 +141,7 @@ class CachedLibraries(
                         it.absolutePath
                     }
 
-            // Returns null when the metadata file is absent, which is the case for caches produced by compilers older than 2.2.20 (KT-87202).
-            fun getMetadataOrNull(file: String): CacheMetadata? {
-                val metadataFile = File(path).child(file).child(METADATA_FILE_NAME)
-                if (!metadataFile.exists) return null
-                return metadataFile.bufferedReader().use {
-                    CacheMetadataSerializer.deserialize(it)
-                }
-            }
+            fun getMetadataOrNull(file: String): CacheMetadata? = readMetadataOrNull(File(path).child(file))
 
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()
 
