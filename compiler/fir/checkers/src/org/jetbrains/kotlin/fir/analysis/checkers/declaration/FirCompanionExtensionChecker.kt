@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -67,7 +68,7 @@ object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKi
             reporter.reportOn(typeRef.source, FirErrors.COMPANION_EXTENSION_NULLABLE_RECEIVER)
         }
 
-        val symbol = receiverType.unwrapToSimpleTypeUsingLowerBound().toSymbol() ?: return
+        val symbol = receiverType.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType().toSymbol() ?: return
 
         when (symbol) {
             is FirTypeParameterSymbol ->

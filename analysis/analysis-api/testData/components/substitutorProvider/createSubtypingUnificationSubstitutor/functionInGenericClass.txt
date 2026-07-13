@@ -1,0 +1,12 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {B = A}>
+Substituted pairs:
+A <: A (Original: B <: A)
+
+ASSIGN_RIGHT:
+Substitutor: null
+
+ASSIGN_ALL:
+Substitutor: <map substitutor: {A = kotlin/Number, B = kotlin/Number}>
+Substituted pairs:
+kotlin/Number <: kotlin/Number (Original: B <: A)

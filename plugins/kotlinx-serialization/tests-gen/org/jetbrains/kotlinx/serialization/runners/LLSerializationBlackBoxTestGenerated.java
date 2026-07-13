@@ -277,12 +277,6 @@ public class LLSerializationBlackBoxTestGenerated extends AbstractLLSerializatio
     }
 
     @Test
-    @TestMetadata("multiFieldValueClasses.kt")
-    public void testMultiFieldValueClasses() {
-      run("multiFieldValueClasses.kt");
-    }
-
-    @Test
     @TestMetadata("multiFileInheritanceJs.kt")
     public void testMultiFileInheritanceJs() {
       run("multiFileInheritanceJs.kt");

@@ -73,8 +73,16 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     protected val imitateLambdaSuspendModifier: Boolean =
         baseSession.languageVersionSettings.supportsFeature(LanguageFeature.ParseLambdaWithSuspendModifier)
 
-    val nameBasedDestructuringShortForm: Boolean =
+    private val nameBasedDestructuringShortFormEnabled: Boolean =
         baseSession.languageVersionSettings.supportsFeature(LanguageFeature.EnableNameBasedDestructuringShortForm)
+
+    fun destructuringKindOf(hasSquareBrackets: Boolean, isFullForm: Boolean): DestructuringKind {
+        return when {
+            hasSquareBrackets -> DestructuringKind.PositionalWithSquareBrackets
+            isFullForm || nameBasedDestructuringShortFormEnabled -> DestructuringKind.NameBased
+            else -> DestructuringKind.PositionalWithParentheses
+        }
+    }
 
     abstract val T.elementType: IElementType
     abstract val T.asText: String

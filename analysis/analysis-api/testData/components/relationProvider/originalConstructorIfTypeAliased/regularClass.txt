@@ -2,8 +2,8 @@ Resolved constructor:
   KaConstructorSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     containingClassId: test/MyClass
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -26,7 +26,7 @@ Resolved constructor:
     getContainingFileSymbol: KaFileSymbol(regularClass.kt)
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyClass
 
 Original constructor if type aliased:

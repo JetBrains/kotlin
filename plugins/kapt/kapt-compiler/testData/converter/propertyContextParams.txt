@@ -1,0 +1,74 @@
+/**
+ * package {
+ *
+ *   // signature: f(Lerror/NonExistentClass;Lerror/NonExistentClass;)V
+ *   context(t: error/NonExistentClass)
+ *   public final fun f(x: error/NonExistentClass): kotlin/Unit
+ *
+ *   // signature: f1(Lerror/NonExistentClass;Lerror/NonExistentClass;Lerror/NonExistentClass;)V
+ *   context(t: error/NonExistentClass)
+ *   public final fun error/NonExistentClass.f1(x: error/NonExistentClass): kotlin/Unit
+ *
+ *   // field: s:Lerror/NonExistentClass;
+ *   // getter: getS(Lerror/NonExistentClass;Lerror/NonExistentClass;)Lerror/NonExistentClass;
+ *   // setter: setS(Lerror/NonExistentClass;Lerror/NonExistentClass;Lerror/NonExistentClass;)V
+ *   context(t: error/NonExistentClass)
+ *   public final var error/NonExistentClass.s: error/NonExistentClass
+ *     public final (* non-default *) get
+ *     public final set
+ *
+ *   // field: s1:Ljava/lang/String;
+ *   // getter: getS1(Lerror/NonExistentClass;Lerror/NonExistentClass;)Ljava/lang/String;
+ *   // setter: setS1(Lerror/NonExistentClass;Lerror/NonExistentClass;Ljava/lang/String;)V
+ *   context(t: error/NonExistentClass)
+ *   public final var error/NonExistentClass.s1: kotlin/String
+ *     public final (* non-default *) get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class PropertyContextParamsKt {
+    @org.jetbrains.annotations.NotNull()
+    private static U3 s;
+    @org.jetbrains.annotations.NotNull()
+    private static java.lang.String s1;
+
+    public static final void setS(@org.jetbrains.annotations.NotNull()
+    U1 t, @org.jetbrains.annotations.NotNull()
+    U2 $this$s, @org.jetbrains.annotations.NotNull()
+    U3 p2) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final U3 getS(@org.jetbrains.annotations.NotNull()
+    U1 t, @org.jetbrains.annotations.NotNull()
+    U2 $this$s) {
+        return null;
+    }
+
+    public static final void setS1(@org.jetbrains.annotations.NotNull()
+    U1 t, @org.jetbrains.annotations.NotNull()
+    U2 $this$s1, @org.jetbrains.annotations.NotNull()
+    java.lang.String p2) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String getS1(@org.jetbrains.annotations.NotNull()
+    U1 t, @org.jetbrains.annotations.NotNull()
+    U2 $this$s1) {
+        return null;
+    }
+
+    public static final void f(@org.jetbrains.annotations.NotNull()
+    U1 t, @org.jetbrains.annotations.NotNull()
+    U2 x) {
+    }
+
+    public static final void f1(@org.jetbrains.annotations.NotNull()
+    U1 t, @org.jetbrains.annotations.NotNull()
+    U2 $this$f1, @org.jetbrains.annotations.NotNull()
+    U3 x) {
+    }
+}

@@ -137,7 +137,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             if (boxed.isEmpty()) continue
 
             val firstBoxed = boxed.first().descriptor
-            if (isUnsafeToRemoveBoxingForConnectedValues(variableValues, firstBoxed.unboxedTypes)) {
+            if (isUnsafeToRemoveBoxingForConnectedValues(variableValues, firstBoxed.unboxedType)) {
                 for (value in boxed) {
                     val descriptor = value.descriptor
                     if (descriptor.isSafeToRemove) {
@@ -160,13 +160,13 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
         }
     }
 
-    private fun isUnsafeToRemoveBoxingForConnectedValues(usedValues: List<BasicValue>, unboxedTypes: List<Type>): Boolean =
+    private fun isUnsafeToRemoveBoxingForConnectedValues(usedValues: List<BasicValue>, unboxedType: Type): Boolean =
         usedValues.any { input ->
             if (input === StrictBasicValue.UNINITIALIZED_VALUE) return@any false
             if (input !is CleanBoxedValue) return@any true
 
             val descriptor = input.descriptor
-            !descriptor.isSafeToRemove || descriptor.unboxedTypes != unboxedTypes
+            !descriptor.isSafeToRemove || descriptor.unboxedType != unboxedType
         }
 
     private fun adaptLocalSingleVariableTableForBoxedValuesAndPrepareMultiVariables(
@@ -183,21 +183,8 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
 
                 val descriptor = value.descriptor
                 if (!descriptor.isSafeToRemove) continue
-                val unboxedType = descriptor.unboxedTypes.singleOrNull()
-                if (unboxedType == null) {
-                    var offset = 0
-                    localVariablesReplacement[localVariableNode] =
-                        descriptor.multiFieldValueClassUnboxInfo!!.unboxedTypesAndMethodNamesAndFieldNames.map { [type, _, fieldName] ->
-                            val newVarName = "${localVariableNode.name}-$fieldName"
-                            val newStart = localVariableNode.start
-                            val newEnd = localVariableNode.end
-                            val newOffset = offset
-                            offset += type.size
-                            LocalVariableNode(newVarName, type.descriptor, null, newStart, newEnd, newOffset)
-                        }
-                } else {
-                    localVariableNode.desc = unboxedType.descriptor
-                }
+                val unboxedType = descriptor.unboxedType
+                localVariableNode.desc = unboxedType.descriptor
             }
         }
         return localVariablesReplacement
@@ -240,7 +227,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
     private fun buildVariablesRemapping(values: RedundantBoxedValuesCollection, node: MethodNode): IntArray {
         val wideVars2SizeMinusOne = HashMap<Int, Int>()
         for (valueDescriptor in values) {
-            val size = valueDescriptor.getTotalUnboxSize()
+            val size = valueDescriptor.unboxedType.size
             if (size < 2) continue
             for (index in valueDescriptor.getVariablesIndexes()) {
                 wideVars2SizeMinusOne.merge(index, size - 1, ::maxOf)
@@ -278,11 +265,9 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             adaptCastInstruction(node, value, cast)
         }
 
-        var extraSlotsUsed = 0
         for (insn in value.getAssociatedInsns()) {
-            extraSlotsUsed = maxOf(extraSlotsUsed, adaptInstruction(node, insn, value))
+            adaptInstruction(node, insn, value)
         }
-        node.maxLocals += extraSlotsUsed
     }
 
     private fun adaptBoxingInstruction(node: MethodNode, value: BoxedValueDescriptor) {
@@ -314,7 +299,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
         val castInsn = castWithType.getFirst()
         val castInsnsListener = MethodNode(Opcodes.API_VERSION)
         InstructionAdapter(castInsnsListener)
-            .cast(value.getUnboxTypeOrOtherwiseMethodReturnType(castInsn as? MethodInsnNode), castWithType.getSecond())
+            .cast(value.unboxedType, castWithType.getSecond())
 
 
         for (insn in castInsnsListener.instructions.toArray()) {
@@ -326,75 +311,27 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
 
     private fun adaptInstruction(
         node: MethodNode, insn: AbstractInsnNode, value: BoxedValueDescriptor
-    ): Int {
-        var usedExtraSlots = 0
-
+    ) {
         when (insn.opcode) {
             Opcodes.POP -> {
-                val newPops = makePops(value.unboxedTypes)
-                node.instructions.insert(insn, newPops)
+                node.instructions.insert(insn, makePop(value.unboxedType))
                 node.instructions.remove(insn)
             }
 
-            Opcodes.DUP -> when (value.getTotalUnboxSize()) {
+            Opcodes.DUP -> when (value.unboxedType.size) {
                 1 -> Unit
                 2 -> node.instructions.set(insn, InsnNode(Opcodes.DUP2))
-                else -> {
-                    usedExtraSlots = value.getTotalUnboxSize()
-                    var currentSlot = node.maxLocals
-                    val slotIndices = value.unboxedTypes.map { type -> currentSlot.also { currentSlot += type.size } }
-                    for ([type, index] in (value.unboxedTypes zip slotIndices).asReversed()) {
-                        node.instructions.insertBefore(insn, VarInsnNode(type.getOpcode(Opcodes.ISTORE), index))
-                    }
-                    repeat(2) {
-                        for ([type, index] in (value.unboxedTypes zip slotIndices)) {
-                            node.instructions.insertBefore(insn, VarInsnNode(type.getOpcode(Opcodes.ILOAD), index))
-                        }
-                    }
-                    node.instructions.remove(insn)
-                }
             }
 
             Opcodes.ASTORE, Opcodes.ALOAD -> {
                 val isStore = insn.opcode == Opcodes.ASTORE
-                val singleUnboxedType = value.unboxedTypes.singleOrNull()
-                if (singleUnboxedType == null) {
-                    val newInstructions = mutableListOf<VarInsnNode>()
-                    var offset = 0
-                    for (unboxedType in value.unboxedTypes) {
-                        val opcode = unboxedType.getOpcode(if (isStore) Opcodes.ISTORE else Opcodes.ILOAD)
-                        val newIndex = (insn as VarInsnNode).`var` + offset
-                        newInstructions.add(VarInsnNode(opcode, newIndex))
-                        offset += unboxedType.size
-                    }
-                    if (isStore) {
-                        val previousInstructions = generateSequence(insn.previous) { it.previous }
-                            .take(value.unboxedTypes.size).toList().asReversed()
-                        if (value.unboxedTypes.map { it.getOpcode(Opcodes.ILOAD) } == previousInstructions.map { it.opcode }) {
-                            // help optimizer and put each xSTORE after the corresponding xLOAD
-                            for ([load, store] in previousInstructions zip newInstructions) {
-                                newInstructions.remove(store)
-                                node.instructions.insert(load, store)
-                            }
-                        } else {
-                            for (newInstruction in newInstructions.asReversed()) {
-                                node.instructions.insertBefore(insn, newInstruction)
-                            }
-                        }
-                    } else {
-                        for (newInstruction in newInstructions) {
-                            node.instructions.insertBefore(insn, newInstruction)
-                        }
-                    }
-                    node.instructions.remove(insn)
-                } else {
-                    val storeOpcode = singleUnboxedType.getOpcode(if (isStore) Opcodes.ISTORE else Opcodes.ILOAD)
-                    node.instructions.set(insn, VarInsnNode(storeOpcode, (insn as VarInsnNode).`var`))
-                }
+                val singleUnboxedType = value.unboxedType
+                val storeOpcode = singleUnboxedType.getOpcode(if (isStore) Opcodes.ISTORE else Opcodes.ILOAD)
+                node.instructions.set(insn, VarInsnNode(storeOpcode, (insn as VarInsnNode).`var`))
             }
 
             Opcodes.INSTANCEOF -> {
-                node.instructions.insertBefore(insn, makePops(value.unboxedTypes))
+                node.instructions.insertBefore(insn, makePop(value.unboxedType))
                 node.instructions.set(insn, InsnNode(Opcodes.ICONST_1))
             }
 
@@ -420,61 +357,12 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
 
             Opcodes.CHECKCAST -> node.instructions.remove(insn)
             Opcodes.INVOKEVIRTUAL -> {
-                if (value.unboxedTypes.size != 1) {
-                    val unboxMethodCall = insn as MethodInsnNode
-                    val unboxMethodIndex = value.multiFieldValueClassUnboxInfo!!.unboxedMethodNames.indexOf(unboxMethodCall.name)
-                    val unboxedType = value.unboxedTypes[unboxMethodIndex]
-
-                    var canRemoveInsns = true
-                    var savedToVariable = false
-                    for ([i, type] in value.unboxedTypes.withIndex().toList().asReversed()) {
-                        fun canRemoveInsn(includeDup: Boolean): Boolean {
-                            if (!canRemoveInsns) return false
-                            val insnToCheck = if (i < unboxMethodIndex) unboxMethodCall.previous.previous else unboxMethodCall.previous
-                            val result = when (insnToCheck.opcode) {
-                                type.getOpcode(Opcodes.ILOAD) -> true
-                                Opcodes.DUP2 -> includeDup && type.size == 2
-                                Opcodes.DUP -> includeDup && type.size == 1
-                                else -> false
-                            }
-
-                            canRemoveInsns = result
-                            return result
-                        }
-
-                        fun insertPopInstruction() =
-                            node.instructions.insertBefore(unboxMethodCall, InsnNode(if (type.size == 2) Opcodes.POP2 else Opcodes.POP))
-
-                        fun saveToVariableIfNecessary() {
-                            if (savedToVariable) return
-                            if (i > unboxMethodIndex) return
-                            savedToVariable = true
-                            usedExtraSlots = unboxedType.size
-                            node.instructions.insertBefore(insn, VarInsnNode(unboxedType.getOpcode(Opcodes.ISTORE), node.maxLocals))
-                        }
-
-                        if (i == unboxMethodIndex) {
-                            if (unboxMethodIndex > 0 && !canRemoveInsn(includeDup = false)) {
-                                saveToVariableIfNecessary()
-                            }
-                        } else if (canRemoveInsn(includeDup = i > unboxMethodIndex)) {
-                            node.instructions.remove(if (i < unboxMethodIndex) unboxMethodCall.previous.previous else unboxMethodCall.previous)
-                        } else {
-                            saveToVariableIfNecessary()
-                            insertPopInstruction()
-                        }
-                    }
-                    if (savedToVariable) {
-                        node.instructions.insertBefore(insn, VarInsnNode(unboxedType.getOpcode(Opcodes.ILOAD), node.maxLocals))
-                    }
-                }
                 node.instructions.remove(insn)
             }
 
             else ->
                 throwCannotAdaptInstruction(insn)
         }
-        return usedExtraSlots
     }
 
     private fun throwCannotAdaptInstruction(insn: AbstractInsnNode): Nothing =
@@ -485,17 +373,13 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
         insn: AbstractInsnNode,
         value: BoxedValueDescriptor
     ) {
-        val unboxedType = value.unboxedTypes.singleOrNull()
+        val unboxedType = value.unboxedType
 
-        when (unboxedType?.sort) {
-            Type.BOOLEAN, Type.BYTE, Type.SHORT, Type.INT, Type.CHAR ->
-                adaptAreEqualIntrinsicForInt(node, insn)
-            Type.LONG ->
-                adaptAreEqualIntrinsicForLong(node, insn)
-            Type.OBJECT, null -> {
-            }
-            else ->
-                throw AssertionError("Unexpected unboxed type kind: $unboxedType")
+        when (unboxedType.sort) {
+            Type.BOOLEAN, Type.BYTE, Type.SHORT, Type.INT, Type.CHAR -> adaptAreEqualIntrinsicForInt(node, insn)
+            Type.LONG -> adaptAreEqualIntrinsicForLong(node, insn)
+            Type.OBJECT -> {}
+            else -> throw AssertionError("Unexpected unboxed type kind: $unboxedType")
         }
     }
 
@@ -567,7 +451,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
         insn: AbstractInsnNode,
         value: BoxedValueDescriptor
     ) {
-        val unboxedType = value.unboxedTypes.single()
+        val unboxedType = value.unboxedType
 
         when (unboxedType.sort) {
             Type.BOOLEAN, Type.BYTE, Type.SHORT, Type.INT, Type.CHAR ->

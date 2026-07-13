@@ -60,7 +60,7 @@ KtUserType(166,173): 'MyClass'
 
 KtNameReferenceExpression(166,173): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -110,7 +110,7 @@ KtUserType(243,249): 'MyEnum'
 
 KtNameReferenceExpression(243,249): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -145,7 +145,7 @@ KtUserType(282,289): 'MyClass'
 
 KtNameReferenceExpression(282,289): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -177,7 +177,7 @@ KtUserType(317,331): 'OperatorHolder'
 
 KtNameReferenceExpression(317,331): 'OperatorHolder'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /OperatorHolder
@@ -194,7 +194,7 @@ KtBinaryExpression(339,353): 'i + EnumValue1'
 
 KtNameReferenceExpression(339,340): 'i'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       i: OperatorHolder
@@ -202,7 +202,7 @@ KtNameReferenceExpression(339,340): 'i'
 
 KtOperationReferenceExpression(341,342): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
@@ -210,7 +210,7 @@ KtOperationReferenceExpression(341,342): '+'
 
 KtNameReferenceExpression(343,353): 'EnumValue1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
@@ -224,7 +224,7 @@ KtBinaryExpression(358,377): 'i + InheritorObject'
 
 KtNameReferenceExpression(358,359): 'i'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       i: OperatorHolder
@@ -232,7 +232,7 @@ KtNameReferenceExpression(358,359): 'i'
 
 KtOperationReferenceExpression(360,361): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
@@ -240,7 +240,7 @@ KtOperationReferenceExpression(360,361): '+'
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
@@ -253,7 +253,7 @@ KtBinaryExpression(382,401): 'i - InheritorObject'
 
 KtNameReferenceExpression(382,383): 'i'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       i: OperatorHolder
@@ -261,7 +261,7 @@ KtNameReferenceExpression(382,383): 'i'
 
 KtOperationReferenceExpression(384,385): '-'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /OperatorHolder.minus(<dispatch receiver>: OperatorHolder, arg: MyClass): kotlin.Unit
@@ -269,7 +269,7 @@ KtOperationReferenceExpression(384,385): '-'
 
 KtNameReferenceExpression(386,401): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject

@@ -390,7 +390,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 source.kind !is KtFakeSourceElementKind.EnumGeneratedDeclaration &&
                 declaration.origin != FirDeclarationOrigin.Synthetic.DataClassMember &&
                 !declaration.isAnnotationConstructor(platformSession) &&
-                !(declaration.isPrimaryConstructorOfInlineOrValueClass(platformSession) && actualContainingClass.isBasicValueClass) &&
+                !(declaration.isPrimaryConstructorOfInlineOrValueClass(platformSession) && actualContainingClass.isInlineClass) &&
                 !isUnderlyingPropertyOfValueClass(declaration, actualContainingClass, platformSession) &&
                 declaration !is FirEnumEntrySymbol
     }

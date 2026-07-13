@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-Container<kotlin/String> <: Container<*> (Original: Container<kotlin/String> <: Container<*>)
-
-EXISTENTIAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-Container<kotlin/String> <: Container<*> (Original: Container<kotlin/String> <: Container<*>)

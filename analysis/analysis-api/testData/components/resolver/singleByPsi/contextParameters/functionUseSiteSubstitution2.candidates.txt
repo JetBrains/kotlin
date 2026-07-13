@@ -11,7 +11,7 @@ KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -43,6 +43,7 @@ KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
                 type: kotlin/Boolean
             ]
             type: Another<kotlin/Int, kotlin/String, kotlin/Boolean>
+          typeParameters: []
           visibility: PUBLIC
         type = Another<kotlin.Int, kotlin.String, kotlin.Boolean>
       extensionReceiver = KaExplicitReceiverValue:

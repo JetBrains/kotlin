@@ -11,10 +11,9 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.getExpectsForActual
-import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -130,7 +129,9 @@ internal fun KaSession.createMethods(
     suppressStatic: Boolean = false,
     staticsFromCompanion: Boolean = false,
 ) {
-    val [ctorProperties, regularMembers] = declarations.partition { it is KaPropertySymbol && it.isFromPrimaryConstructor }
+    val [ctorProperties, regularMembers] = declarations.partition {
+        it is KaKotlinPropertySymbol && it.primaryConstructorParameter != null
+    }
 
     fun KaSession.handleDeclaration(declaration: KaCallableSymbol) {
         when (declaration) {
@@ -498,7 +499,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
     )
 
     if (property.origin.cannotHasBackingField() || property.isStatic) return false
-    if (property.isLateInit || property.isDelegated || property.isFromPrimaryConstructor) return true
+    if (property.isLateInit || property.isDelegated || property.primaryConstructorParameter != null) return true
     val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
     if (hasBackingFieldByPsi == false) {
         return hasBackingFieldByPsi
@@ -584,12 +585,19 @@ internal fun KaSession.createInheritanceList(
                 if (mappedToNoCollectionAsIs != null &&
                     mappedType.canonicalText != mappedToNoCollectionAsIs.canonicalText
                 ) {
+                    // The Kotlin collection type is mapped to a Java collection (e.g. `kotlin.collections.List` -> `java.util.List`).
+                    // Drop the Kotlin collection supertype and add the Java one instead.
+
                     // Add java supertype
                     listBuilder.addReference(mappedToNoCollectionAsIs)
                     // Add marker interface
                     if (superType is KaClassType) {
                         listBuilder.addMarkerInterfaceIfNeeded(superType.classId)
                     }
+                } else {
+                    // A real `kotlin.collections` class without a dedicated Java mapping (e.g. `kotlin.collections.AbstractMap`).
+                    // Just add it as a supertype.
+                    listBuilder.addReference(mappedType)
                 }
             } else {
                 listBuilder.addReference(mappedType)
@@ -616,7 +624,7 @@ internal fun KaSession.createInnerClasses(
         }
     }
 
-    val languageVersionSettings = classOrObject?.let { getModule(it) as? KaSourceModule }?.languageVersionSettings
+    val languageVersionSettings = classOrObject?.let { it.kaModule as? KaSourceModule }?.languageVersionSettings
         ?: LanguageVersionSettingsImpl.DEFAULT
 
     if (containingClass is SymbolLightClassForInterface &&
@@ -694,7 +702,9 @@ internal fun KaSession.addPropertyBackingFields(
             filter { lightClass.containingClass?.isInterface == true && !it.isJvmField }
         }
 
-    val [ctorProperties, memberProperties] = propertySymbols.partition { it.isFromPrimaryConstructor }
+    val [ctorProperties, memberProperties] = propertySymbols.partition {
+        it is KaKotlinPropertySymbol && it.primaryConstructorParameter != null
+    }
     val containerIsObject = containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject
     fun addPropertyBackingField(propertySymbol: KaPropertySymbol) {
         @OptIn(KaExperimentalApi::class)

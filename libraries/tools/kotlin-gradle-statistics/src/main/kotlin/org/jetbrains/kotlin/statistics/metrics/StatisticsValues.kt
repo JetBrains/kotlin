@@ -11,4 +11,8 @@ interface StatisticsValuesConsumer {
     fun report(metric: NumericalMetrics, value: Long, subprojectName: String? = null, weight: Long? = null): Boolean
 
     fun report(metric: StringMetrics, value: String, subprojectName: String? = null, weight: Long? = null): Boolean
+
+    fun report(metric: StringListMetrics, value: List<String>, subprojectName: String? = null, weight: Long? = null): Boolean
+
+    fun report(metric: StringListMetrics, value: String, subprojectName: String? = null, weight: Long? = null): Boolean = report(metric, listOf(value), subprojectName, weight)
 }

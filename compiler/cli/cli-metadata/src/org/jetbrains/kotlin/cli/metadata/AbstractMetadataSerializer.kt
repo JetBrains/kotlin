@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.metadata
 
 import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -28,7 +29,7 @@ abstract class AbstractMetadataSerializer<T>(
 
     @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun analyzeAndSerialize(): OutputInfo? {
-        val destDir = environment.destDir
+        val destDir = environment.configuration.get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY)
         if (destDir == null) {
             val configuration = environment.configuration
             configuration.report(COMPILER_ARGUMENTS_ERROR, "Specify destination via -d")

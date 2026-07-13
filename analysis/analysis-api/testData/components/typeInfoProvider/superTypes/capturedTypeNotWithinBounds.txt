@@ -1,0 +1,22 @@
+[type]
+CapturedType(in R)
+
+[direct super types]
+kotlin.CharSequence
+kotlin.Number
+
+[approximated direct super types]
+kotlin.CharSequence
+kotlin.Number
+
+[all super types]
+kotlin.CharSequence
+kotlin.Number
+kotlin.Any
+java.io.Serializable
+
+[approximated all super types]
+kotlin.CharSequence
+kotlin.Number
+kotlin.Any
+java.io.Serializable

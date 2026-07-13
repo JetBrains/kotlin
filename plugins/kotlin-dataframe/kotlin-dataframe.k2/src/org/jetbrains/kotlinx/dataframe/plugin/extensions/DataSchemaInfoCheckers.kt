@@ -29,14 +29,20 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaMetadata
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.MATERIALIZED_SCHEMA_INFO
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.SchemaInfoDiagnostics.GENERATED_FROM_SOURCE_SCHEMA
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.toMaterializedSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
@@ -54,6 +60,7 @@ class DataSchemaInfoCheckers(
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
             FunctionCallSchemaReporter,
+            MaterializedSchemaReporter,
         )
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(
             PropertyAccessSchemaReporter,
@@ -74,11 +81,11 @@ class DataSchemaInfoCheckers(
 }
 
 object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
-    val PROPERTY_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val FUNCTION_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
-    val FUNCTION_CALL_SCHEMA by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val PROPERTY_ACCESS_SCHEMA by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val GENERATED_FROM_SOURCE_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val PROPERTY_SCHEMA by info1<String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val FUNCTION_SCHEMA by info1<String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val FUNCTION_CALL_SCHEMA by info1<String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val PROPERTY_ACCESS_SCHEMA by info1<String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val GENERATED_FROM_SOURCE_SCHEMA by info1<String>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = SchemaRenderers
 
@@ -104,6 +111,30 @@ private data object FunctionCallSchemaReporter : FirFunctionCallChecker(mppKind 
         if (expression.calleeReference.name in setOf(Name.identifier("let"), Name.identifier("run"))) return
         val initializer = expression.resolvedType
         reportSchema(reporter, expression.source, SchemaInfoDiagnostics.FUNCTION_CALL_SCHEMA, initializer, context)
+    }
+}
+
+private data object MaterializedSchemaReporter : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
+    val SCHEMA_ID =
+        CallableId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api")), Name.identifier("schema"))
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
+        if (expression.calleeReference.toResolvedCallableSymbol()?.callableId == SCHEMA_ID) {
+            val expressionSchema = expression.dataFrameReceiverSchema()
+            if (expressionSchema != null) {
+                val containingProperty = context.containingDeclarations.lastOrNull() as? FirPropertySymbol
+                val name = containingProperty
+                    ?.let { containingProperty.name.identifierOrNullIfSpecial?.toDataSchemaName() }
+                    ?: expressionSchema.type.renderReadable()
+                reporter.reportOn(
+                    expression.source,
+                    MATERIALIZED_SCHEMA_INFO,
+                    expressionSchema.schema.toMaterializedSchema(name, asDataClass = true),
+                    context
+                )
+            }
+        }
     }
 }
 
@@ -141,7 +172,7 @@ private object ImportedSchemaInfoChecker : FirRegularClassChecker(mppKind = MppC
         val topLevelMetadata: Map<Name, ImportedSchemaMetadata> = context.session.importedSchemasService.topLevelMetadata
         if (declaration.hasAnnotation(Names.DATA_SCHEMA_SOURCE_CLASS_ID, context.session)) {
             val metadata = topLevelMetadata[declaration.classId.shortClassName]
-            val schema: PluginDataFrameSchema = pluginDataFrameSchema(declaration.defaultType())
+            val schema: PluginDataFrameSchema = declaration.defaultType().pluginDataFrameSchema()
             val message = buildString {
                 appendLine()
                 if (metadata != null) {
@@ -173,23 +204,19 @@ context(sessionHolder: SessionHolder)
 private fun schemaIfDataFrameStructuralType(type: ConeKotlinType): String? {
     return when {
         type.isDataFrame() -> {
-            type.typeArguments.getOrNull(0)?.let { schemaArg ->
-                pluginDataFrameSchema(schemaArg)
-            }
+            type.typeArguments.getOrNull(0)?.pluginDataFrameSchema()
         }
 
         type.isDataRow() -> {
-            type.typeArguments.getOrNull(0)?.let { schemaArg ->
-                pluginDataFrameSchema(schemaArg)
-            }
+            type.typeArguments.getOrNull(0)?.pluginDataFrameSchema()
         }
 
         type.isGroupBy() -> {
             val keys = type.typeArguments.getOrNull(0)
             val grouped = type.typeArguments.getOrNull(1)
             if (keys == null || grouped == null) return null
-            val keysSchema = pluginDataFrameSchema(keys)
-            val groupedSchema = pluginDataFrameSchema(grouped)
+            val keysSchema = keys.pluginDataFrameSchema()
+            val groupedSchema = grouped.pluginDataFrameSchema()
             PluginDataFrameSchema(
                 listOf(
                     SimpleColumnGroup("keys", keysSchema.columns()),
@@ -223,7 +250,7 @@ fun StringBuilder.appendComponentSchemaIfApplicable(componentName: String, type:
 }
 
 context(container: KtDiagnosticsContainer)
-internal fun info1(positioningStrategy: AbstractSourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<String> {
+internal fun <A> info1(positioningStrategy: AbstractSourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(
         Severity.INFO,
         positioningStrategy,

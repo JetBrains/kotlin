@@ -104,7 +104,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
             } ?: return null
 
             val baseExpression = expression.baseExpression?.unwrapParenthesesLabelsAndAnnotations() as? KtElement ?: return null
-            val firReceiver = getFir(baseExpression, session, mapping) as? FirExpression ?: return null
+            val firReceiver = firReceiverForUnaryIntLiteral(baseExpression, mapping) ?: return null
             val operatorSymbol = findIntMember(operatorName) ?: return null
             return buildFunctionCall {
                 source = expression.toKtPsiSourceElement()
@@ -120,6 +120,26 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
 
                 coneTypeOrNull = firReceiver.resolvedType
             }
+        }
+
+        /**
+         * Resolves the FIR receiver for [fakeCallForIntLiteralWithUnaryExpression] strictly downwards.
+         *
+         * The operand of a desugared unary integer literal is either the recorded (folded) literal itself,
+         * or another desugared `+`/`-` unary prefix. Resolving it via the general parent-walking [getFir]
+         * would climb back up to the enclosing prefix expression and recurse infinitely (KT-87131), since
+         * the folded prefix has no FIR mapping of its own. Descending into [operand] is guaranteed to
+         * terminate because the PSI tree is finite.
+         */
+        context(session: FirSession)
+        private fun firReceiverForUnaryIntLiteral(
+            operand: KtElement,
+            mapping: Map<KtElement, FirElement>,
+        ): FirExpression? {
+            val fir = mapping[operand]
+                ?: (operand as? KtPrefixExpression)?.let { fakeCallForIntLiteralWithUnaryExpression(it, mapping) }
+
+            return fir as? FirExpression
         }
 
         private fun checkStringLiteralFolderExpression(

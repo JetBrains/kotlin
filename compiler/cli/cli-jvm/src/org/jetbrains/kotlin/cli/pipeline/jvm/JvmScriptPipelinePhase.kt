@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.CliDiagnostics.SCRIPTING_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.SCRIPTING_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -36,6 +37,7 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
         val projectEnvironment by lazy(LazyThreadSafetyMode.NONE) {
             KotlinCoreEnvironment.ProjectEnvironment(
                 rootDisposable,
+                @OptIn(CoreEnvironmentDeprecation::class)
                 KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration),
                 configuration
             ).also {

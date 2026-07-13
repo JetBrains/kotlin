@@ -1,6 +1,9 @@
 import org.gradle.kotlin.dsl.implementation
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
 }
@@ -9,8 +12,6 @@ repositories {
     if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
-    composeGoogleMaven(libs.versions.compose.stable.get())
-    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
 }
 
 fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
@@ -81,6 +82,7 @@ dependencies {
     testImplementationArtifactOnly(composeRuntime())
     testImplementationArtifactOnly(composeRuntimeAnnotations())
     testImplementation(libs.androidx.collections)
+    testRuntimeOnly(project(":kotlin-script-runtime"))
 
     // other compose
     testImplementationArtifactOnly(compose("foundation", "foundation"))

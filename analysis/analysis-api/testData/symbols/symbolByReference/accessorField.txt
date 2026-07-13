@@ -6,7 +6,7 @@ KaBackingFieldSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -26,9 +26,10 @@ KaBackingFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(accessorField.kt)
   getContainingJvmClassName: AccessorFieldKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

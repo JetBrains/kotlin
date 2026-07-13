@@ -133,7 +133,7 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
     if (configureJavaClassFinder != null) {
         configureJavaClassFinder()
     } else {
-        useImpl<JavaClassFinderImpl>()
+        useImpl<K1JavaClassFinderImpl>()
         useImpl<LazyResolveBasedCache>()
         useImpl<JavaSourceElementFactoryImpl>()
     }

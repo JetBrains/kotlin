@@ -103,7 +103,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     ) {
         if (type.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
-
             if (id == DYNAMIC_TYPE_DESERIALIZER_ID) {
                 KotlinPlaceHolderStubImpl<KtDynamicType>(nullableTypeParent(parent, type), KtStubElementTypes.DYNAMIC_TYPE)
                 return

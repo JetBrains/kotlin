@@ -26,14 +26,8 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.JsPlatform
-import org.jetbrains.kotlin.platform.NativePlatform
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.WasmPlatform
-import org.jetbrains.kotlin.platform.has
+import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
-import org.jetbrains.kotlin.platform.subplatformsOfType
-import org.jetbrains.kotlin.platform.toTargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -168,30 +162,25 @@ abstract class AbstractFirMetadataSessionFactory(
             kmpModuleKind,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
-                var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
-                incrementalCompilationContext?.let {
-                    val precompiledBinariesPackagePartProvider = it.precompiledBinariesPackagePartProvider
-                    if (it.precompiledBinariesFileScope != null) {
+                val symbolProviderForBinariesFromIncrementalCompilation = incrementalCompilationContext?.let { (precompiledBinariesPackagePartProvider, precompiledBinariesFileScope) -> // ->
+                        if (precompiledBinariesFileScope == null) return@let null
                         val moduleDataProvider = SingleModuleDataProvider(moduleData)
-                        symbolProviderForBinariesFromIncrementalCompilation =
-                            MetadataSymbolProvider(
-                                session,
-                                moduleDataProvider,
-                                kotlinScopeProvider,
-                                precompiledBinariesPackagePartProvider as PackageAndMetadataPartProvider,
-                                projectEnvironment.getKotlinClassFinder(it.precompiledBinariesFileScope) as KotlinMetadataFinder,
-                                defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
-                            )
+                        MetadataSymbolProvider(
+                            session,
+                            moduleDataProvider,
+                            kotlinScopeProvider,
+                            precompiledBinariesPackagePartProvider as PackageAndMetadataPartProvider,
+                            projectEnvironment.getKotlinClassFinder(precompiledBinariesFileScope) as KotlinMetadataFinder,
+                            defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
+                        )
                     }
-                }
 
                 SourceProviders(
-                    listOfNotNull(
+                    sourceProviders = listOfNotNull(
                         symbolProvider,
-                        *(incrementalCompilationContext?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
-                        symbolProviderForBinariesFromIncrementalCompilation,
                         generatedSymbolsProvider,
-                    )
+                    ),
+                    incrementalProvider = symbolProviderForBinariesFromIncrementalCompilation,
                 )
             }
         )

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kapt.stubs
 
-import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
@@ -68,8 +67,9 @@ internal class OriginCollectingClassBuilderFactory(private val builderMode: Clas
     }
 
     private fun saveOrigin(node: Any, origin: JvmDeclarationOrigin) {
-        if (origin is JvmIrDeclarationOrigin) {
-            origins[node] = KaptIrOrigin(origin)
+        val declaration = origin.declaration
+        if (declaration != null) {
+            origins[node] = KaptIrOrigin(declaration)
         }
     }
 

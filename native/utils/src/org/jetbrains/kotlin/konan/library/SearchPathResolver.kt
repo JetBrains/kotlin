@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.konan.library
 
+import org.jetbrains.kotlin.io.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 import java.nio.file.Paths
+import kotlin.io.path.absolutePathString
 
 interface SearchPathResolverWithTarget<L : KotlinLibrary> : SearchPathResolver<L> {
     val target: KonanTarget
@@ -59,7 +60,7 @@ class KonanLibraryProperResolver(
 
     override fun libraryMatch(candidate: KotlinLibrary, unresolved: UnresolvedLibrary): Boolean {
         val resolverTarget = this.target
-        val candidatePath = candidate.libraryFile.absolutePath
+        val candidatePath = candidate.path.absolutePathString()
 
         val supportedTargets = candidate.supportedTargetList
         if (supportedTargets.isNotEmpty()) {

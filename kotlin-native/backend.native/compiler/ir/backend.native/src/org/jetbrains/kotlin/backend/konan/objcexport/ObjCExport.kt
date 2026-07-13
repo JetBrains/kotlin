@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
@@ -57,6 +58,8 @@ internal fun produceObjCExportInterface(
     } else {
         entryPoints
     }
+
+    @OptIn(K1Deprecation::class)
     val mapper = ObjCExportMapper(
             frontendServices.deprecationResolver,
             unitSuspendFunctionExport = unitSuspendFunctionExport,
@@ -191,6 +194,7 @@ internal class ObjCExport(
 
         if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
+        @OptIn(K1Deprecation::class)
         val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
                 setOf(moduleDescriptor),

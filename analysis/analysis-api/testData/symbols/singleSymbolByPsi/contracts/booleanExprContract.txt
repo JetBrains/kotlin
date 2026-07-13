@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /boolenExprContract
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -24,9 +23,8 @@ KaNamedFunctionSymbol:
                     KaValueParameterSymbol:
                       annotations: []
                       callableId: null
-                      compilerVisibility: Public
+                      contextParameters: []
                       contextReceivers: []
-                      generatedPrimaryConstructorProperty: null
                       hasDeclaredDefaultValue: false
                       hasDefaultValue: false
                       isActual: false
@@ -44,16 +42,18 @@ KaNamedFunctionSymbol:
                       modality: FINAL
                       name: foo
                       origin: SOURCE
+                      primaryConstructorProperty: null
                       receiverParameter: null
                       returnType: KaUsualClassType:
                         annotations: []
                         typeArguments: []
                         type: kotlin/Any?
+                      typeParameters: []
                       visibility: PUBLIC
                       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
                       getContainingJvmClassName: BooleanExprContractKt
                       getContainingModule: KaSourceModule "Sources of main"
-                      deprecationStatus: null
+                      deprecation: null
                       importableFqName: null
               isNegated: false
           right:
@@ -64,9 +64,8 @@ KaNamedFunctionSymbol:
                     KaValueParameterSymbol:
                       annotations: []
                       callableId: null
-                      compilerVisibility: Public
+                      contextParameters: []
                       contextReceivers: []
-                      generatedPrimaryConstructorProperty: null
                       hasDeclaredDefaultValue: false
                       hasDefaultValue: false
                       isActual: false
@@ -84,16 +83,18 @@ KaNamedFunctionSymbol:
                       modality: FINAL
                       name: bar
                       origin: SOURCE
+                      primaryConstructorProperty: null
                       receiverParameter: null
                       returnType: KaUsualClassType:
                         annotations: []
                         typeArguments: []
                         type: kotlin/Any?
+                      typeParameters: []
                       visibility: PUBLIC
                       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
                       getContainingJvmClassName: BooleanExprContractKt
                       getContainingModule: KaSourceModule "Sources of main"
-                      deprecationStatus: null
+                      deprecation: null
                       importableFqName: null
               isNegated: true
           operation: AND
@@ -126,9 +127,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -146,23 +146,24 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: foo
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
       getContainingJvmClassName: BooleanExprContractKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -180,16 +181,18 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: bar
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
       getContainingJvmClassName: BooleanExprContractKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -197,6 +200,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: BooleanExprContractKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: boolenExprContract

@@ -68,7 +68,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                 varargTypeParameter == typeParameter && typeArgument.isTypeVisibilityBroken(checkTypeArguments = false) && isInferred
             ) {
                 reporter.reportOn(
-                    source, FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT, typeParameter, typeArgument, varargParameter
+                    source, FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING, typeParameter, typeArgument, varargParameter
                 )
             }
         }
@@ -89,7 +89,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             .any { it.resolvedType is ConeErrorType || it.resolvedType.isTypeVisibilityBroken(checkTypeArguments = true) }
         if (hasNestedVisibilityErrorsInParameters) return
         if (returnType.isTypeVisibilityBroken(checkTypeArguments = true)) {
-            reporter.reportOn(expression.source, FirErrors.INFERRED_INVISIBLE_RETURN_TYPE, callableSymbol, returnType)
+            reporter.reportOn(expression.source, FirErrors.INFERRED_INVISIBLE_RETURN_TYPE_WARNING, callableSymbol, returnType)
         }
     }
 
@@ -138,7 +138,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         if (fullyExpandedType.isTypeVisibilityBroken(checkTypeArguments = false) && (!isExplicit || isPlaceHolder)) {
             reporter.reportOn(
                 source,
-                FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT,
+                FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING,
                 typeParameter,
                 fullyExpandedType,
             )

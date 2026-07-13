@@ -1,6 +1,20 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
+    namespace kotlin {
+        interface CharSequence {
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.CharSequence": unique symbol;
+            };
+        }
+    }
+    namespace kotlin {
+        interface Comparable<in T> {
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.Comparable": unique symbol;
+            };
+        }
+    }
     namespace foo {
         const forth: foo.Forth;
         interface ExportedInterface {
@@ -129,8 +143,9 @@ declare namespace JS_TESTS {
                 readonly "foo.IA": unique symbol;
             };
         }
-        class Third extends /* foo.Second */ foo.First.$metadata$.constructor {
+        class Third extends foo.First.$metadata$.constructor implements foo.Second {
             constructor();
+            readonly __doNotUseOrImplementIt: foo.Second["__doNotUseOrImplementIt"];
         }
         namespace Third {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -138,9 +153,9 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => Third;
             }
         }
-        class Sixth extends /* foo.Fifth */ foo.Third.$metadata$.constructor implements foo.Forth, foo.IC {
+        class Sixth extends foo.Third.$metadata$.constructor implements foo.Fifth, foo.IC {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.IC["__doNotUseOrImplementIt"] & foo.Forth["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.IC["__doNotUseOrImplementIt"] & foo.Second["__doNotUseOrImplementIt"] & foo.Fifth["__doNotUseOrImplementIt"];
         }
         namespace Sixth {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -197,6 +212,11 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => SealedClass;
             }
         }
+        interface NeverUsedInsideExportedDeclarationsType {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.NeverUsedInsideExportedDeclarationsType": unique symbol;
+            };
+        }
         interface NonExportedParent {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.NonExportedParent": unique symbol;
@@ -236,15 +256,15 @@ declare namespace JS_TESTS {
                 readonly "foo.NonExportedGenericType": unique symbol;
             };
         }
-        interface NotExportedChildClass extends foo.NonExportedInterface, foo.NonExportedType {
+        interface NotExportedChildClass extends foo.NonExportedInterface, foo.NeverUsedInsideExportedDeclarationsType, foo.NonExportedType {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.NotExportedChildClass": unique symbol;
-            } & foo.NonExportedType["__doNotUseOrImplementIt"] & foo.NonExportedInterface["__doNotUseOrImplementIt"];
+            } & foo.NonExportedType["__doNotUseOrImplementIt"] & foo.NeverUsedInsideExportedDeclarationsType["__doNotUseOrImplementIt"] & foo.NonExportedInterface["__doNotUseOrImplementIt"];
         }
-        interface NotExportedChildGenericClass<T> extends foo.NonExportedInterface, foo.NonExportedGenericInterface<T>, foo.NonExportedGenericType<T> {
+        interface NotExportedChildGenericClass<T> extends foo.NonExportedInterface, foo.NeverUsedInsideExportedDeclarationsType, foo.NonExportedGenericInterface<T>, foo.NonExportedGenericType<T> {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.NotExportedChildGenericClass": unique symbol;
-            } & foo.NonExportedGenericType<any>["__doNotUseOrImplementIt"] & foo.NonExportedGenericInterface<any>["__doNotUseOrImplementIt"] & foo.NonExportedInterface["__doNotUseOrImplementIt"];
+            } & foo.NonExportedGenericType<any>["__doNotUseOrImplementIt"] & foo.NonExportedGenericInterface<any>["__doNotUseOrImplementIt"] & foo.NeverUsedInsideExportedDeclarationsType["__doNotUseOrImplementIt"] & foo.NonExportedInterface["__doNotUseOrImplementIt"];
         }
         interface IB extends foo.IA {
             readonly __doNotUseOrImplementIt: {
@@ -259,7 +279,19 @@ declare namespace JS_TESTS {
         interface Forth extends foo.Third, foo.IB, foo.IC {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.Forth": unique symbol;
-            } & foo.IC["__doNotUseOrImplementIt"] & foo.IB["__doNotUseOrImplementIt"];
+            } & foo.IC["__doNotUseOrImplementIt"] & foo.IB["__doNotUseOrImplementIt"] & foo.Second["__doNotUseOrImplementIt"];
+        }
+        interface Fifth extends foo.Forth, foo.Third {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.Fifth": unique symbol;
+            } & foo.Forth["__doNotUseOrImplementIt"];
+        }
+        interface Second extends foo.First {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.Second": unique symbol;
+            };
         }
     }
 }
+
+

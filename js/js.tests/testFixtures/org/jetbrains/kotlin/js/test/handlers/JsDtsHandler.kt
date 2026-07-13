@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -18,29 +16,14 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 
 class JsDtsHandler(testServices: TestServices, private val expectedDtsSuffix: String? = null) : JsBinaryArtifactHandler(testServices) {
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+    override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {}
 
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val globalDirectives = testServices.moduleStructure.allDirectives
         if (JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE in globalDirectives) return
 
         val mainModule = JsEnvironmentConfigurator.getMainModule(testServices)
-
-        val translationModes = when (globalDirectives[JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY].lastOrNull()) {
-            TsCompilationStrategy.MERGED -> listOf(
-                when {
-                    JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in globalDirectives -> TranslationMode.PER_MODULE_DEV
-                    else -> TranslationMode.FULL_DEV
-                }
-            )
-
-            TsCompilationStrategy.EACH_FILE -> JsEnvironmentConfigurator
-                .getTranslationModesForTest(testServices, mainModule)
-                .filter { !it.production }
-
-            TsCompilationStrategy.NONE, null -> return
-        }
-
+        val translationModes = JsEnvironmentConfigurator.getTypeScriptExportTranslationModes(testServices, mainModule)
         val generated = translationModes
             .associateWith { mode ->
                 val outputDir = JsEnvironmentConfigurator
@@ -74,7 +57,7 @@ class JsDtsHandler(testServices: TestServices, private val expectedDtsSuffix: St
             } else {
                 "$suffix.d.ts"
             }
-            val referenceDtsFile = module.files.first().originalFile.withReplacedExtensionOrNull(".kt", extension)
+            val referenceDtsFile = mainModule.files.first().originalFile.withReplacedExtensionOrNull(".kt", extension)
                 ?: error("Can't find reference $extension file")
 
             return@map {

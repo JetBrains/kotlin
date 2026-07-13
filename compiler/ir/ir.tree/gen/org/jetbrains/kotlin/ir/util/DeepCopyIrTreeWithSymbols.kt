@@ -376,10 +376,10 @@ open class DeepCopyIrTreeWithSymbols(
             packageFqName = declaration.packageFqName,
             symbol = symbolRemapper.getDeclaredFile(declaration.symbol),
             fileEntry = declaration.fileEntry,
+            module = transformedModule ?: declaration.module,
         ).apply {
             declarations.assignFrom(declaration.declarations) { it.transform() }
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
-            module = transformedModule ?: declaration.module
             processAttributes(declaration)
         }
 
@@ -428,7 +428,6 @@ open class DeepCopyIrTreeWithSymbols(
             origin = expression.origin,
             source = expression.source,
             constructorTypeArgumentsCount = expression.constructorTypeArgumentsCount,
-            argumentMapping = expression.argumentMapping,
             symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
         ).apply {
             arguments.assignFrom(expression.arguments) { it?.transform() }

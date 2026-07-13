@@ -14,7 +14,7 @@ import a.A
 import a.<!OPERATOR_RENAMED_ON_IMPORT!>plus<!> as minus
 
 fun test(a1: A, a2: A) =
-        a1 - a2
+        a1 <!OPERATOR_MODIFIER_REQUIRED!>-<!> a2
 
 /* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, operator,
 thisExpression */

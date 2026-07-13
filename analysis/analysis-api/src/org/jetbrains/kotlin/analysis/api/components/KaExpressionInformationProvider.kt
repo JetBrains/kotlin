@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
@@ -58,7 +59,7 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      * ```
      */
     @KaIdeApi
-    public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase>
+    public fun KtWhenExpression.computeMissingCases(): List<KaWhenMissingCase>
 
     /**
      * Whether the value of the given [KtExpression] is used. In other words, `true` if the value of the expression is not safe to discard.
@@ -163,9 +164,86 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
 }
 
 /**
+ * Represents a missing case in a `when` expression.
+ *
+ * @see KaExpressionInformationProvider.computeMissingCases
+ */
+@KaIdeApi
+public sealed class KaWhenMissingCase {
+    /**
+     * Represents a missing check for an `expect` declaration.
+     * Because `actual` types may define more cases (e.g., additional enum values), exhaustiveness checks are explicitly disabled for those.
+     * Also see KT-20306.
+     */
+    @KaIdeApi
+    public sealed class ExpectTypeCase : KaWhenMissingCase() {
+        /**
+         * Represents a missing check for an `expect sealed class`.
+         */
+        @KaIdeApi
+        public object ExpectSealedClassCase : ExpectTypeCase()
+
+        /**
+         * Represents a missing check for an `expect sealed interface`.
+         */
+        @KaIdeApi
+        public object ExpectSealedInterfaceCase : ExpectTypeCase()
+
+        /**
+         * Represents a missing check for an `expect enum class`.
+         */
+        @KaIdeApi
+        public object ExpectEnumCase : ExpectTypeCase()
+    }
+
+    /**
+     * Represents a missing `null` check.
+     */
+    @KaIdeApi
+    public object NullCase : KaWhenMissingCase()
+
+    /**
+     * Represents a missing boolean check.
+     *
+     * @property value the boolean value that is missing.
+     */
+    @KaIdeApi
+    public class BooleanCase(public val value: Boolean) : KaWhenMissingCase()
+
+    /**
+     * Represents a missing type check.
+     *
+     * @property classId the class id of the type that is missing.
+     * @property isObject whether the type is an object. For objects, the `is` keyword is redundant.
+     * @property ownTypeParameterCount the number of type parameters of the type that is missing.
+     */
+    @KaIdeApi
+    public class TypeCase(
+        public val classId: ClassId,
+        public val isObject: Boolean,
+        public val ownTypeParameterCount: Int,
+    ) : KaWhenMissingCase()
+
+    /**
+     * Represents a missing enum entry check.
+     *
+     * @property callableId the callable id of the enum entry that is missing.
+     */
+    @KaIdeApi
+    public class EnumEntryCase(
+        public val callableId: CallableId
+    ) : KaWhenMissingCase()
+
+    /**
+     * Represents a missing case other than those mentioned above.
+     */
+    @KaIdeApi
+    public object UnknownCase : KaWhenMissingCase()
+}
+
+/**
  * The [symbol][KaCallableSymbol] of the callable which the given [KtReturnExpression] returns from.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", ReplaceWith("resolveSymbol()"))
 @KaIdeApi
 @KaContextParameterApi
@@ -206,11 +284,9 @@ public val KtReturnExpression.targetSymbol: KaCallableSymbol?
  * }
  * ```
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-@KaContextParameterApi
 context(session: KaSession)
-public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> {
+public fun KtWhenExpression.computeMissingCases(): List<KaWhenMissingCase> {
     return with(session) {
         computeMissingCases()
     }
@@ -236,7 +312,13 @@ public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> {
  *   - `run { x; println(50) }`
  *   - `when (x) { else -> ... }`
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isUsedAsExpression",
+        "org.jetbrains.kotlin.analysis.api.expressions.isUsedAsExpression",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KtExpression.isUsedAsExpression: Boolean
@@ -263,7 +345,13 @@ public val KtExpression.isUsedAsExpression: Boolean
  *   - `{ if (true) { x } else { x } }`
  *   - `fun(x: Int) = x`
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isUsedAsResultOfLambda",
+        "org.jetbrains.kotlin.analysis.api.expressions.isUsedAsResultOfLambda",
+    ),
+)
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
@@ -322,7 +410,13 @@ public val KtExpression.isUsedAsResultOfLambda: Boolean
  * }
  * ```
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isStableForSmartCasting",
+        "org.jetbrains.kotlin.analysis.api.expressions.isStableForSmartCasting",
+    ),
+)
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)

@@ -477,7 +477,7 @@ KtNameReferenceExpression(498,499): 'm'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(500,501): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -551,7 +551,7 @@ KtNameReferenceExpression(508,509): 'm'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(510,511): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

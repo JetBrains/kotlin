@@ -10,6 +10,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.contracts.description.Context
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.types.Variance
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
@@ -86,10 +86,10 @@ public class KaDebugRenderer(
                 renderComputedValue("getContainingModule", printer, currentSymbolStack) { symbol.containingModule }
 
                 if (symbol is KaClassSymbol) {
-                    renderComputedValue("annotationApplicableTargets", printer, currentSymbolStack) { symbol.annotationApplicableTargets }
+                    renderComputedValue("applicableAnnotationTargets", printer, currentSymbolStack) { symbol.applicableAnnotationTargets }
                 }
 
-                renderComputedValue("deprecationStatus", printer, currentSymbolStack) { symbol.deprecationStatus }
+                renderComputedValue("deprecation", printer, currentSymbolStack) { symbol.deprecation }
 
                 if (symbol is KaNamedFunctionSymbol) {
                     renderComputedValue("returnValueStatus", printer, currentSymbolStack) { symbol.returnValueStatus }
@@ -128,13 +128,13 @@ public class KaDebugRenderer(
 
         withIndent {
             appendLine()
-            renderProperty(KaCallableSymbol::callableId, printer, renderSymbolsFully = false, currentSymbolStack, symbol)
+            renderProperty(KaCallableSymbol::callableId, printer, currentSymbolStack, symbol)
             if (symbol is KaNamedSymbol) {
                 appendLine()
-                renderProperty(KaNamedSymbol::name, printer, renderSymbolsFully = false, currentSymbolStack, symbol)
+                renderProperty(KaNamedSymbol::name, printer, currentSymbolStack, symbol)
             }
             appendLine()
-            renderProperty(KaCallableSymbol::origin, printer, renderSymbolsFully = false, currentSymbolStack, symbol)
+            renderProperty(KaCallableSymbol::origin, printer, currentSymbolStack, symbol)
         }
     }
 
@@ -154,30 +154,28 @@ public class KaDebugRenderer(
             return
         }
 
-        renderValue(value, printer, renderSymbolsFully = false, currentSymbolStack)
+        renderValue(value, printer, currentSymbolStack)
     }
 
     private fun KaSession.renderProperty(
         property: KProperty<*>,
         printer: PrettyPrinter,
-        renderSymbolsFully: Boolean,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
         vararg args: Any,
     ) {
         printer.append(property.name).append(": ")
-        renderFunctionCall(property.getter, printer, renderSymbolsFully, currentSymbolStack, args)
+        renderFunctionCall(property.getter, printer, currentSymbolStack, args)
     }
 
     private fun KaSession.renderFunctionCall(
         function: KFunction<*>,
         printer: PrettyPrinter,
-        renderSymbolsFully: Boolean,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
         args: Array<out Any>,
     ) {
         try {
             function.isAccessible = true
-            renderValue(function.call(*args), printer, renderSymbolsFully, currentSymbolStack)
+            renderValue(function.call(*args), printer, currentSymbolStack)
         } catch (e: InvocationTargetException) {
             printer.append("Could not render due to ").appendLine(e.cause.toString())
         }
@@ -193,8 +191,7 @@ public class KaDebugRenderer(
                 .sortedBy { it.name }
             appendLine()
             printCollectionIfNotEmpty(members, separator = "\n") { member ->
-                val renderSymbolsFully = member.name == KaValueParameterSymbol::generatedPrimaryConstructorProperty.name
-                renderProperty(member, printer, renderSymbolsFully, currentSymbolStack, symbol)
+                renderProperty(member, printer, currentSymbolStack, symbol)
             }
         }
     }
@@ -207,7 +204,6 @@ public class KaDebugRenderer(
     private fun KaSession.renderList(
         values: List<*>,
         printer: PrettyPrinter,
-        renderSymbolsFully: Boolean,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
     ) {
         if (values.isEmpty()) {
@@ -216,26 +212,25 @@ public class KaDebugRenderer(
         }
 
         printer.withIndentInSquareBrackets {
-            printCollection(values, separator = "\n") { renderValue(it, printer, renderSymbolsFully, currentSymbolStack) }
+            printCollection(values, separator = "\n") { renderValue(it, printer, currentSymbolStack) }
         }
     }
 
     private fun KaSession.renderSymbolTag(
         symbol: KaSymbol,
         printer: PrettyPrinter,
-        renderSymbolsFully: Boolean,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
     ) {
         fun renderId(id: Any?, symbol: KaSymbol) {
             if (id != null) {
-                renderValue(id, printer, renderSymbolsFully, currentSymbolStack)
+                renderValue(id, printer, currentSymbolStack)
             } else {
                 val outerName = symbol.name ?: SpecialNames.NO_NAME_PROVIDED
                 printer.append("<local>/" + outerName.asString())
             }
         }
 
-        if (symbol !in currentSymbolStack && (renderSymbolsFully || symbol is KaBackingFieldSymbol || symbol is KaPropertyAccessorSymbol || symbol is KaParameterSymbol || symbol is KaTypeParameterSymbol)) {
+        if (symbol !in currentSymbolStack && (symbol is KaBackingFieldSymbol || symbol is KaPropertyAccessorSymbol || symbol is KaParameterSymbol || symbol is KaTypeParameterSymbol)) {
             renderSymbol(symbol, printer, currentSymbolStack)
             return
         }
@@ -246,8 +241,8 @@ public class KaDebugRenderer(
             when (symbol) {
                 is KaClassLikeSymbol -> renderId(symbol.classId, symbol)
                 is KaCallableSymbol -> renderId(symbol.callableId, symbol)
-                is KaNamedSymbol -> renderValue(symbol.name, printer, renderSymbolsFully = false, currentSymbolStack)
-                is KaFileSymbol -> renderValue((symbol.psi as KtFile).name, printer, renderSymbolsFully = false, currentSymbolStack)
+                is KaNamedSymbol -> renderValue(symbol.name, printer, currentSymbolStack)
+                is KaFileSymbol -> renderValue((symbol.psi as KtFile).name, printer, currentSymbolStack)
                 else -> error("Unsupported symbol ${symbol::class}")
             }
             append(")")
@@ -264,7 +259,7 @@ public class KaDebugRenderer(
         currentSymbolStack: LinkedHashSet<KaSymbol>,
     ) {
         printer.append(value.name.render()).append(" = ")
-        renderValue(value.expression, printer, renderSymbolsFully = false, currentSymbolStack)
+        renderValue(value.expression, printer, currentSymbolStack)
     }
 
     private fun KaSession.renderType(type: KaType, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
@@ -285,7 +280,7 @@ public class KaDebugRenderer(
                 if (typeToRender is KaClassType) {
                     appendLine()
                     append("typeArguments: ")
-                    renderList(typeToRender.typeArguments, printer, renderSymbolsFully = false, currentSymbolStack)
+                    renderList(typeToRender.typeArguments, printer, currentSymbolStack)
                 }
 
                 appendLine()
@@ -309,7 +304,7 @@ public class KaDebugRenderer(
             .toList()
 
         printer.printCollectionIfNotEmpty(members, separator = "\n") { member ->
-            renderProperty(member, printer, renderSymbolsFully = false, currentSymbolStack, value)
+            renderProperty(member, printer, currentSymbolStack, value)
         }
     }
 
@@ -319,13 +314,13 @@ public class KaDebugRenderer(
         currentSymbolStack: LinkedHashSet<KaSymbol>,
     ) {
         with(printer) {
-            renderValue(call.classId, printer, renderSymbolsFully = false, currentSymbolStack)
+            renderValue(call.classId, printer, currentSymbolStack)
             append('(')
             call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
                 if (index > 0) {
                     append(", ")
                 }
-                renderValue(value, printer, renderSymbolsFully = false, currentSymbolStack)
+                renderValue(value, printer, currentSymbolStack)
             }
             append(')')
 
@@ -335,17 +330,16 @@ public class KaDebugRenderer(
                     if (call.psi?.containingKtFile?.isCompiled == true) {
                         null
                     } else call.psi
-                renderValue(psi?.javaClass?.simpleName, printer, renderSymbolsFully = false, currentSymbolStack)
+                renderValue(psi?.javaClass?.simpleName, printer, currentSymbolStack)
             }
         }
     }
 
-    private fun renderDeprecationInfo(info: DeprecationInfo, printer: PrettyPrinter) {
+    private fun renderKaDeprecation(deprecation: KaDeprecation, printer: PrettyPrinter) {
         with(printer) {
-            append("DeprecationInfo(")
-            append("deprecationLevel=${info.deprecationLevel}, ")
-            append("propagatesToOverrides=${info.propagatesToOverrides}, ")
-            append("message=${info.message}")
+            append("KaDeprecation(")
+            append("level=${deprecation.level}, ")
+            append("isPropagatedToOverrides=${deprecation.isPropagatedToOverrides}")
             append(")")
         }
     }
@@ -353,12 +347,11 @@ public class KaDebugRenderer(
     private fun KaSession.renderValue(
         value: Any?,
         printer: PrettyPrinter,
-        renderSymbolsFully: Boolean,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
     ) {
         when (value) {
             // Symbol-related values
-            is KaSymbol -> renderSymbolTag(value, printer, renderSymbolsFully, currentSymbolStack)
+            is KaSymbol -> renderSymbolTag(value, printer, currentSymbolStack)
             is KaType -> renderType(value, printer, currentSymbolStack)
             is KaTypeProjection -> renderTypeProjection(value, printer, currentSymbolStack)
             is KaClassTypeQualifier -> renderRegularValue(value, printer, currentSymbolStack)
@@ -375,7 +368,7 @@ public class KaDebugRenderer(
             is Name -> printer.append(value.asString())
             is FqName -> printer.append(value.asString())
             is ClassId -> printer.append(value.asString())
-            is DeprecationInfo -> renderDeprecationInfo(value, printer)
+            is KaDeprecation -> renderKaDeprecation(value, printer)
             is Visibility -> printer.append(value::class.java.simpleName)
             // Unsigned integers
             is UByte -> printer.append(value.toString())
@@ -384,7 +377,7 @@ public class KaDebugRenderer(
             is ULong -> printer.append(value.toString())
             // Java values
             is Enum<*> -> printer.append(value.name)
-            is List<*> -> renderList(value, printer, renderSymbolsFully = false, currentSymbolStack)
+            is List<*> -> renderList(value, printer, currentSymbolStack)
             else -> printer.append(value.toString())
         }
     }
@@ -474,7 +467,7 @@ public class KaDebugRenderer(
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
     ) {
-        renderList(value, printer, renderSymbolsFully = false, currentSymbolStack)
+        renderList(value, printer, currentSymbolStack)
     }
 
     private fun PsiElement.firstLineOfPsi(): String {

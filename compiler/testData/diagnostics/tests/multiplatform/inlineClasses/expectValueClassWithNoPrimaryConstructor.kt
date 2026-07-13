@@ -2,6 +2,7 @@
 // LANGUAGE: +AllowExpectValueClassesWithNoPrimaryConstructor
 // IGNORE_FIR_DIAGNOSTICS
 // WITH_STDLIB
+// LATEST_LV_DIFFERENCE
 // MODULE: common
 
 expect value class CommonSomething {

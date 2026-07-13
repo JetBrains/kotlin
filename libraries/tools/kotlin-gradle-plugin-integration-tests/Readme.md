@@ -10,6 +10,7 @@ To run all tests for all Gradle plugins use `check` task.
 More fine-grained test tasks exist covering different parts of Gradle plugins:
 - `kgpJvmTests` - runs all tests for Kotlin Gradle Plugin/Jvm platform (parallel execution)
 - `kgpJsTests` - runs all tests for Kotlin Gradle Plugin/Js platform (parallel execution)
+- `kgpJsBrowserTests` - runs tests for Kotlin Gradle Plugin/Js platform that require running browser
 - `kgpAndroidTests` - runs all tests for Kotlin Gradle Plugin/Android platform (parallel execution)
 - `kgpMppTests` - run all tests for Kotlin Gradle Multiplatform plugin (parallel execution)
 - `kgpNativeTests` - run all tests for Kotlin Gradle Plugin with K/N (parallel execution)

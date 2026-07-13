@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isString
@@ -167,11 +168,12 @@ class TestProcessor(
         registerFunction: IrFunction,
         functions: Collection<TestFunction>,
         parent: IrDeclarationParent,
+        registerTestCaseReturnType: IrType = registerTestCase.returnType,
     ) {
         functions.forEach {
             if (it.kind == TestProcessorFunctionKind.TEST) {
                 // Call registerTestCase(name: String, testFunction: () -> Unit) method.
-                +irCall(registerTestCase).apply {
+                +irCall(registerTestCase.symbol, registerTestCaseReturnType).apply {
                     dispatchReceiver = irGet(receiver)
                     arguments[1] = irString(it.functionName)
                     arguments[2] = it.function.wrapWithLambdaCall(parent, this@TestProcessor.context)
@@ -500,6 +502,11 @@ class TestProcessor(
                             && it.parameters[2].type.isFunction()  // function: testClassType.() -> Unit
                             && it.parameters[3].type.isBoolean()   // ignored: Boolean
                 }
+                val baseClassSuiteSubstitutor = IrTypeSubstitutor(
+                    baseClassSuite.typeParameters.map { it.symbol },
+                    listOf(testClassType, testCompanionType),
+                )
+                val registerTestCaseReturnType = baseClassSuiteSubstitutor.substitute(registerTestCase.returnType)
                 val registerFunction = baseClassSuite.getFunction("registerFunction") {
                     it.parameters.size == 3
                             && it.parameters[1].type.isTestFunctionKind()  // kind: TestFunctionKind
@@ -521,6 +528,7 @@ class TestProcessor(
                             registerFunction,
                             functions,
                             this@apply,
+                            registerTestCaseReturnType,
                     )
                 }
             }

@@ -1,7 +1,7 @@
 <caret_1>:
   KtNameReferenceExpression(100,109): 'something'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -10,7 +10,7 @@
 <caret_2>:
   KtNameReferenceExpression(118,127): 'something'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -19,7 +19,7 @@
 <caret_3>:
   KtNameReferenceExpression(140,149): 'something'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int

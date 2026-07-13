@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.ByteArrayInputStream
+import java.net.URI
+import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.util.jar.Attributes
 import java.util.jar.JarEntry
@@ -46,6 +48,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         module: TestModule,
         libraryName: String,
         dependencyBinaryRoots: Collection<Path>,
+        resourceFiles: List<TestFile>,
         testServices: TestServices,
     ): Path {
         val allowedLibraryPlatforms = module.directives[Directives.LIBRARY_PLATFORMS].map { it.targetPlatform }
@@ -73,7 +76,18 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         if (library == null || library.notExists()) {
             throw LibraryWasNotCompiledDueToExpectedCompilationError()
         }
+        embedResourceFiles(library, resourceFiles, testServices)
         return library
+    }
+
+    /**
+     * Embeds [resourceFiles] (marked with [TestModuleCompiler.Directives.LIBRARY_RESOURCE]) into the compiled [library]. The default
+     * implementation does not support resource files. Compilers that produce a suitable archive should override this function.
+     */
+    protected open fun embedResourceFiles(library: Path, resourceFiles: List<TestFile>, testServices: TestServices) {
+        require(resourceFiles.isEmpty()) {
+            "${this::class.simpleName} does not support `LIBRARY_RESOURCE` files: ${resourceFiles.map { it.name }}"
+        }
     }
 
     override fun compileSources(files: List<TestFile>, module: TestModule, testServices: TestServices): Path {
@@ -152,6 +166,20 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
 }
 
 object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
+    override fun embedResourceFiles(library: Path, resourceFiles: List<TestFile>, testServices: TestServices) {
+        if (resourceFiles.isEmpty()) return
+
+        // `JarOutputStream` cannot append to an existing archive, so the produced JAR is reopened as a zip file system instead.
+        FileSystems.newFileSystem(URI.create("jar:${library.toUri()}"), emptyMap<String, Any>()).use { jarFileSystem ->
+            for (testFile in resourceFiles) {
+                val content = testServices.sourceFileProvider.getContentOfSourceFile(testFile)
+                val target = jarFileSystem.getPath("/").resolve(testFile.relativePath)
+                target.parent?.createDirectories()
+                target.writeText(content)
+            }
+        }
+    }
+
     override fun libraryOutputPath(inputPath: Path, libraryName: String): Path =
         inputPath / "$libraryName.jar"
 
@@ -237,10 +265,11 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
         module: TestModule,
         libraryName: String,
         dependencyBinaryRoots: Collection<Path>,
+        resourceFiles: List<TestFile>,
         testServices: TestServices
     ): Path {
         check(commonSourcesTempDirectory == null) { "Dependent common sources aren't empty for a common module" }
-        return super.compile(sourcesTempDirectory, null, module, libraryName, dependencyBinaryRoots, testServices)
+        return super.compile(sourcesTempDirectory, null, module, libraryName, dependencyBinaryRoots, resourceFiles, testServices)
     }
 
     override fun buildPlatformCompilerOptions(
@@ -288,6 +317,7 @@ object DispatchingTestModuleCompiler : TestModuleCompiler() {
         module: TestModule,
         libraryName: String,
         dependencyBinaryRoots: Collection<Path>,
+        resourceFiles: List<TestFile>,
         testServices: TestServices
     ): Path {
         return getCompiler(module, testServices).compile(
@@ -296,6 +326,7 @@ object DispatchingTestModuleCompiler : TestModuleCompiler() {
             module,
             libraryName,
             dependencyBinaryRoots,
+            resourceFiles,
             testServices
         )
     }

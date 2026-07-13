@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.library.*
 import java.io.ByteArrayInputStream
+import java.nio.file.Path
 import java.util.jar.Manifest
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.readBytes
 
 /** See KT-68322 for details. */
 abstract class LibrarySpecialCompatibilityChecker {
@@ -67,7 +69,7 @@ abstract class LibrarySpecialCompatibilityChecker {
         // It might happen that the compiler has already got a new major version (N.M+1.0), but there is still the old bootstrap compiler
         // version (N.M,*) used to compile stdlib & kotlin-test libraries. As a result, these libraries still have `abi_version=N.M.0`
         // in their manifest files. And the compatibility check, if it were applied, would fail.
-        val useRelaxedCompatibilityCheckForDevCompilerVersion = isLatestKlibAbiCompatibilityLevel && compilerVersion.isDevVersion
+        val useRelaxedCompatibilityCheckForDevCompilerVersion = true // TODO(KT-87548) revert to after bootstrap isLatestKlibAbiCompatibilityLevel && compilerVersion.isDevVersion
 
         for (library in libraries) {
             val checkedLibrary = library.toCheckedLibrary() ?: continue
@@ -161,14 +163,14 @@ private class JarManifestComponent(
         }
 
     object Kind : KlibComponent.Kind<JarManifestComponent, JarManifestComponentLayout> {
-        override fun createLayout(root: KlibFile) = JarManifestComponentLayout(root)
+        override fun createLayout(root: Path) = JarManifestComponentLayout(root)
 
         override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<JarManifestComponentLayout>) =
-            if (layoutReader.readInPlaceOrFallback(false) { it.jarManifestFile.isFile }) JarManifestComponent(layoutReader) else null
+            if (layoutReader.readInPlaceOrFallback(false) { it.jarManifestFile.isRegularFile() }) JarManifestComponent(layoutReader) else null
     }
 }
 
-private class JarManifestComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
-    val jarManifestFile: KlibFile
-        get() = root.child(KLIB_JAR_MANIFEST_FILE)
+private class JarManifestComponentLayout(root: Path) : KlibComponentLayout(root) {
+    val jarManifestFile: Path
+        get() = root.resolve(KLIB_JAR_MANIFEST_FILE)
 }

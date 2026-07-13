@@ -86,7 +86,7 @@ KtNameReferenceExpression(27,31): 'this'
   null
 
 KtOperationReferenceExpression(32,33): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

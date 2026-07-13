@@ -19,7 +19,7 @@ import org.junit.jupiter.api.assertThrows
 class CompilerPluginsUnsupportedTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("The new compiler plugins argument is unsupported with proper message")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testCompatibilityCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val kotlinToolchain = strategyConfig.first
         assumeTrue(KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) < KotlinToolingVersion(2, 3, 20, "dev-6376"))

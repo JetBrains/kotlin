@@ -24,6 +24,7 @@ internal class KotlinCompileCommonConfig(
             task.moduleName.set(providers.provider { compilationInfo.moduleName })
             task.incrementalModuleInfoProvider.disallowChanges()
             task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinMetadataCompilerViaBuildToolsApi)
+            task.generateCompilerRefIndex.value(false).disallowChanges()
         }
     }
 }

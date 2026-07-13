@@ -1,0 +1,4 @@
+Symbol:
+  KaTypeParameterSymbol
+Default annotation targets:
+  TYPE_PARAMETER

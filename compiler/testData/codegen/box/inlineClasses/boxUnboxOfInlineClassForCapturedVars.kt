@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 // FILE: lib.kt
 inline fun <T> T.myLet(f: (T) -> Unit) = f(this)

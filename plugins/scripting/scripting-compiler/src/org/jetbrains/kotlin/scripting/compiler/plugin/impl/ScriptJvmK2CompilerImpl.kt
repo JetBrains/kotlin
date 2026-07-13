@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -204,6 +203,7 @@ class ScriptJvmK2CompilerImpl(
                 ignoredOptionsReportingState,
                 true
             )
+            state.updateContext(compilerConfiguration)
         }
 
         if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
@@ -247,9 +247,6 @@ class ScriptJvmK2CompilerImpl(
         val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, reportingCtx.diagnosticsCollector) }
 
         if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
-
-        checkKotlinPackageUsageForLightTree(compilerConfiguration, sourcesToFir.values)
-
         if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
 
         val outputs = listOf(resolveAndCheckFir(session, sourcesToFir.values.toList(), reportingCtx.diagnosticsCollector)).also {
@@ -334,7 +331,7 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
         configureLibrarySessionIfNeeded(this, compilerContext.environment.configuration, dependencies)
     }
     return dummySessionForAnnotationResolution ?: (createSourceSession(
-        moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>")),
+        moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
         AbstractProjectFileSearchScope.EMPTY,
         createIncrementalCompilationSymbolProviders = { null },
         extensionRegistrars,

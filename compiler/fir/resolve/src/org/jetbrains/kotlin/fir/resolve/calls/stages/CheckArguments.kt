@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 internal object CheckArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
@@ -240,5 +241,6 @@ private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCa
 context(context: ResolutionContext)
 private fun CheckerSink.markCandidateForCompatibilityResolve() {
     if (disableCompatibilityModeForNewInference()) return
+    @OptIn(OnlyForDefaultLanguageFeatureDisabled::class) // DisableCompatibilityModeForNewInference
     reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
 }

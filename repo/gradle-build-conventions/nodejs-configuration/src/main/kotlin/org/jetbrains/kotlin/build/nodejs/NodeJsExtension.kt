@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.build.nodejs
 
+import kotlinBuildProperties
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
@@ -15,10 +16,9 @@ abstract class NodeJsExtension(
     private val project: Project,
     private val nodeJsEnvSpec: BaseNodeJsEnvSpec,
     private val nodejsPropertyName: String,
-    private val nodejsVersionName: String,
+    nodejsVersionName: String,
 ) {
-    val nodeJsVersion: String
-        get() = project.property(nodejsVersionName) as String
+    val nodeJsVersion: Provider<String> = project.kotlinBuildProperties.versionsProperty(nodejsVersionName)
 
     val nodeJsExecutablePath: Provider<String> = nodeJsEnvSpec.executable.also {
         project.extra[nodejsPropertyName] = it

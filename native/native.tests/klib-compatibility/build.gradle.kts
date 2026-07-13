@@ -5,10 +5,13 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val llvmDevBinaryDataUsage by configurations.creating {
@@ -109,12 +112,6 @@ fun Project.customCompilerTest(
                 .withPathSensitivity(PathSensitivity.NONE)
         }
         useJUnitPlatform { includeTags(tag) }
-        testInputsCheck {
-            isNative.set(true)
-            // Permissions for older compiler, for unnecessarily performed access to root dir, already fixed in 2.2.20, commit dbd8ac94
-            extraPermissions.add("""permission java.io.FilePermission "${projectDir.resolve("stdlib")}", "read";""")
-            extraPermissions.add("""permission java.io.FilePermission "${projectDir.resolve("stdlib.klib")}", "read";""")
-        }
         val rawVersion = version.rawVersion
 
         val unarchiveCustomCompilerFiles: File = unarchiveCustomCompiler.get().outputs.files.singleFile
@@ -181,13 +178,13 @@ customFirstStageTest("2.0.0")
 customFirstStageTest("2.1.0")
 customFirstStageTest("2.2.0")
 customFirstStageTest("2.3.0")
-customFirstStageTest("2.4.0-Beta2")
+customFirstStageTest("2.4.0")
 // TODO: Add a new task for the "custom-first-stage" test here.
 
 /* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
 // TODO: Keep updating two following compiler versions to be the previous and latest ones.
 customSecondStageTest("2.3.0")
-customSecondStageTest("2.4.0-Beta2") // TODO: change for 2.4.0, as soon it's released
+customSecondStageTest("2.4.0")
 // add `customSecondStageTest("2.5.0-Beta1")`, as soon it is released, and remove 2.3.0
 
 // Backward and forward tests must be executed in the different Gradle tasks, depending on one configuration `customCompiler_$version` and task `unarchiveCustomCompiler_$version`

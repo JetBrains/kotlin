@@ -195,7 +195,7 @@ object Aggregates : TemplateGroupBase() {
         else -> "AllEqual${f}Samples.$methodName"
     }
 
-    private fun MemberBuilder.appendAllEqualFloatingPointNote() {
+    private fun MemberBuilder.appendFloatingPointEqualityNote() {
         if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true) {
             doc {
                 doc + """
@@ -214,9 +214,9 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
-    // `allEqualBy` compares selector results of type `K`, independent of the receiver's element type,
+    // The `*By` overloads compare selector results of type `K`, independent of the receiver's element type,
     // so the note applies uniformly to every overload.
-    private fun MemberBuilder.appendAllEqualByFloatingPointNote() {
+    private fun MemberBuilder.appendSelectorFloatingPointEqualityNote() {
         doc {
             doc + """
             For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
@@ -247,7 +247,7 @@ object Aggregates : TemplateGroupBase() {
             every subsequent ${f.element}.
             """
         }
-        appendAllEqualFloatingPointNote()
+        appendFloatingPointEqualityNote()
         sample(allEqualSampleRef("allEqual"))
         body {
             """
@@ -307,33 +307,183 @@ object Aggregates : TemplateGroupBase() {
             value of the first ${f.element} equals the [selector] value of every subsequent ${f.element}.
             """
         }
-        appendAllEqualByFloatingPointNote()
+        appendSelectorFloatingPointEqualityNote()
         sample(allEqualSampleRef("allEqualBy"))
         body {
             """
             val iterator = iterator()
             if (!iterator.hasNext()) return true
-            val first = iterator.next()
+            var element = iterator.next()
             if (!iterator.hasNext()) return true
-            val firstKey = selector(first)
-            do {
-                val key = selector(iterator.next())
-                // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
-                val equal = firstKey?.equals(key) ?: (key == null)
-                if (!equal) return false
-            } while (iterator.hasNext())
+            var firstKey: K? = null
+            var isFirst = true
+            while (true) {
+                val key = selector(element)
+                if (isFirst) {
+                    firstKey = key
+                    isFirst = false
+                } else {
+                    // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+                    val equal = firstKey?.equals(key) ?: (key == null)
+                    if (!equal) return false
+                }
+                if (!iterator.hasNext()) break
+                element = iterator.next()
+            }
             return true
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (size < 2) return true
-            val firstKey = selector(this[0])
-            for (i in 1..lastIndex) {
+            var firstKey: K? = null
+            for (i in indices) {
                 val key = selector(this[i])
-                // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
-                val equal = firstKey?.equals(key) ?: (key == null)
-                if (!equal) return false
+                if (i == 0) {
+                    firstKey = key
+                } else {
+                    // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+                    val equal = firstKey?.equals(key) ?: (key == null)
+                    if (!equal) return false
+                }
+            }
+            return true
+            """
+        }
+    }
+
+    private fun MemberBuilder.allDistinctSampleRef(methodName: String): String = "samples.generated.alldistinct." + when (f) {
+        ArraysOfObjects -> "AllDistinctArraySamples.$methodName"
+        ArraysOfPrimitives, ArraysOfUnsigned -> "AllDistinct${primitive!!.name}ArraySamples.$methodName"
+        else -> "AllDistinct${f}Samples.$methodName"
+    }
+
+    val f_allDistinct = fn("allDistinct()") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        annotation("@ExperimentalStdlibApi")
+        returns("Boolean")
+        doc {
+            val equalityPhrase = if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true)
+                "equality semantics consistent with [${primitive!!.name}.equals]"
+            else
+                "structural equality (`==`)"
+            """
+            Returns `true` if all ${f.element.pluralize()} in the ${f.collection} are distinct from each other,
+            that is, no two ${f.element.pluralize()} are equal.
+
+            Returns `true` for an empty ${f.collection}.
+
+            The ${f.element.pluralize()} are compared using $equalityPhrase.
+            The operation returns `false` as soon as a duplicate ${f.element} is found.
+            """
+        }
+        appendFloatingPointEqualityNote()
+        sample(allDistinctSampleRef("allDistinct"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            val first = iterator.next()
+            if (!iterator.hasNext()) return true
+            val seen = HashSet<T>()
+            seen.add(first)
+            do {
+                if (!seen.add(iterator.next())) return false
+            } while (iterator.hasNext())
+            return true
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            when (primitive) {
+                PrimitiveType.Boolean ->
+                    """
+                    if (size < 2) return true
+                    // more than 2 values force a duplicate
+                    return size == 2 && this[0] != this[1]
+                    """
+                PrimitiveType.Byte, PrimitiveType.UByte -> {
+                    val key = if (primitive == PrimitiveType.Byte) "element.toUByte()" else "element"
+                    """
+                    if (size < 2) return true
+                    // more than ${1 shl Byte.SIZE_BITS} values force a duplicate
+                    if (size > (1 shl ${primitive!!.name}.SIZE_BITS)) return false
+                    val seen = UByteValueSet()
+                    for (element in this) {
+                        if (!seen.add($key)) return false
+                    }
+                    return true
+                    """
+                }
+                PrimitiveType.Short, PrimitiveType.UShort, PrimitiveType.Char ->
+                    """
+                    if (size < 2) return true
+                    // more than ${1 shl Short.SIZE_BITS} values force a duplicate
+                    if (size > (1 shl ${primitive!!.name}.SIZE_BITS)) return false
+                    val seen = HashSet<T>()
+                    for (element in this) {
+                        if (!seen.add(element)) return false
+                    }
+                    return true
+                    """
+                else ->
+                    """
+                    if (size < 2) return true
+                    val seen = HashSet<T>()
+                    for (element in this) {
+                        if (!seen.add(element)) return false
+                    }
+                    return true
+                    """
+            }
+        }
+    }
+
+    val f_allDistinctBy = fn("allDistinctBy(selector: (T) -> K)") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        annotation("@ExperimentalStdlibApi")
+        inline()
+        returns("Boolean")
+        typeParam("K")
+        doc {
+            """
+            Returns `true` if all values produced by applying the given [selector] function to the
+            ${f.element.pluralize()} in the ${f.collection} are distinct from each other.
+
+            Returns `true` for an empty ${f.collection}.
+
+            The [selector] values are compared using structural equality (`==`).
+            The operation returns `false` as soon as a duplicate [selector] value is found.
+            """
+        }
+        appendSelectorFloatingPointEqualityNote()
+        sample(allDistinctSampleRef("allDistinctBy"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            var element = iterator.next()
+            if (!iterator.hasNext()) return true
+            val seen = HashSet<K>()
+            while (true) {
+                if (!seen.add(selector(element))) return false
+                if (!iterator.hasNext()) break
+                element = iterator.next()
+            }
+            return true
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            if (size < 2) return true
+            val seen = HashSet<K>()
+            for (element in this) {
+                if (!seen.add(selector(element))) return false
             }
             return true
             """

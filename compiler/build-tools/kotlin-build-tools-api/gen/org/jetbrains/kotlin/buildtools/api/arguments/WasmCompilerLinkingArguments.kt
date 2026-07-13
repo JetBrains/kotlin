@@ -3,6 +3,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import java.nio.`file`.Path
 import kotlin.Boolean
 import kotlin.String
 import kotlin.jvm.JvmField
@@ -76,6 +77,16 @@ public interface WasmCompilerLinkingArguments : WasmCompilerArguments,
     @ExperimentalCompilerArgument
     public val X_WASM_DEBUG_FRIENDLY: WasmCompilerLinkingArgument<Boolean> =
         WasmCompilerLinkingArgument("X_WASM_DEBUG_FRIENDLY", KotlinReleaseVersion(2, 1, 20))
+
+    /**
+     * Regenerate unchanged modules in multimodule IC.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_WASM_IC_GENERATE_UNCHANGED_MODULES: WasmCompilerLinkingArgument<Boolean> =
+        WasmCompilerLinkingArgument("X_WASM_IC_GENERATE_UNCHANGED_MODULES", KotlinReleaseVersion(2, 4, 20))
 
     /**
      * Compile only a module passed using `-include` option.
@@ -216,7 +227,7 @@ public interface WasmCompilerLinkingArguments : WasmCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmCompilerLinkingArgument<String?> =
+    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmCompilerLinkingArgument<Path?> =
         WasmCompilerLinkingArgument("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE", KotlinReleaseVersion(2, 1, 20))
 
     /**
@@ -226,7 +237,17 @@ public interface WasmCompilerLinkingArguments : WasmCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmCompilerLinkingArgument<String?> =
+    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmCompilerLinkingArgument<Path?> =
         WasmCompilerLinkingArgument("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE", KotlinReleaseVersion(2, 1, 20))
+
+    /**
+     * Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_WASM_USE_STACK_SWITCHING_PROPOSAL: WasmCompilerLinkingArgument<Boolean> =
+        WasmCompilerLinkingArgument("X_WASM_USE_STACK_SWITCHING_PROPOSAL", KotlinReleaseVersion(2, 4, 20))
   }
 }

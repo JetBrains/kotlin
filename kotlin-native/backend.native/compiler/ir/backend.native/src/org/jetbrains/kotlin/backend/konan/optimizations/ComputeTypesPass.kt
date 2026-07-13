@@ -153,8 +153,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
 
     private data class VariableWrite(val variable: IrElement, val value: IrExpression)
 
-    private class ControlFlowMergePointInfo(val variable: IrElement) {
-        val needValues = variable is IrExpression && !variable.type.erasedUpperBound.isFinalClass
+    private class ControlFlowMergePointInfo(val variable: IrElement, val needValues: Boolean) {
         val variablesValues = BitSet()
         val variableWrites = if (needValues) BitSet() else null
     }
@@ -211,6 +210,18 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
             val continuesCFMPInfos = mutableMapOf<IrLoop, ControlFlowMergePointInfo>()
             val getValueVariablesWrites = mutableMapOf<IrGetValue, BitSet>()
             val doWhileLoopForWhileLoops = mutableMapOf<IrWhileLoop, IrDoWhileLoop>()
+
+            // A merge point's `needValues` must be derived from a node's original type. Otherwise,
+            // once a merge point's type becomes a final class, it can never be widened (KT-86949).
+            // (The types may iteratively change while handling loops).
+            val cfmpNeedValues = mutableMapOf<IrExpression, Boolean>()
+
+            // A factory mimicking the constructor.
+            fun ControlFlowMergePointInfo(variable: IrElement) = ControlFlowMergePointInfo(
+                    variable,
+                    needValues = variable is IrExpression
+                            && cfmpNeedValues.getOrPut(variable) { !variable.type.erasedUpperBound.isFinalClass }
+            )
 
             fun controlFlowMergePoint(cfmpInfo: ControlFlowMergePointInfo, value: IrExpression, variablesValues: BitSet): BitSet {
                 val result = if (!cfmpInfo.needValues)

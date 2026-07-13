@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.konan.allParameters
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.metadata.deserialization.hasCompanionExtensionReceiver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isChildOf
@@ -23,6 +25,8 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
@@ -50,6 +54,7 @@ private enum class Direction {
     C_TO_KOTLIN
 }
 
+@OptIn(K1Deprecation::class)
 private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
     if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal || descriptor.isExpect)
         return false
@@ -57,7 +62,22 @@ private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
         return false
     if (descriptor.contextReceiverParameters.any())
         return false
-    return !descriptor.typeParameters.any()
+    if (descriptor.typeParameters.any())
+        return false
+    when (descriptor) {
+        is SimpleFunctionDescriptor -> {
+            val proto = (descriptor as DeserializedSimpleFunctionDescriptor).proto
+            return !proto.hasCompanionExtensionReceiver()
+        }
+        is PropertyAccessorDescriptor -> {
+            val proto = (descriptor.correspondingProperty as DeserializedPropertyDescriptor).proto
+            return !proto.hasCompanionExtensionReceiver()
+        }
+        is ConstructorDescriptor -> return true
+        else -> {
+            error("Unexpected FunctionDescriptor: $descriptor")
+        }
+    }
 }
 
 private fun isExportedClass(descriptor: ClassDescriptor): Boolean {
@@ -180,7 +200,11 @@ internal class ExportedElement(
             else ->
                 SignatureElement(uniqueName(original, shortName), original.returnType!!)
         }
+
+        @OptIn(K1Deprecation::class)
         val uniqueNames = owner.paramsToUniqueNames(original.explicitParameters)
+
+        @OptIn(K1Deprecation::class)
         val params = ArrayList(original.explicitParameters
                 .filter { it.type.includeToSignature() }
                 .map { SignatureElement(uniqueNames[it]!!, it.type) })
@@ -193,10 +217,14 @@ internal class ExportedElement(
         }
         val descriptor = declaration
         val original = descriptor.original as FunctionDescriptor
+
+        @OptIn(K1Deprecation::class)
         val returnedType = when {
             original is ConstructorDescriptor -> typeTranslator.builtIns.unitType
             else -> original.returnType!!
         }
+
+        @OptIn(K1Deprecation::class)
         val params = ArrayList(original.allParameters
                 .filter { it.type.includeToSignature() }
                 .map {
@@ -363,6 +391,7 @@ internal class ExportedElement(
         when (descriptor) {
             is FunctionDescriptor -> {
                 val original = descriptor.original
+                @OptIn(K1Deprecation::class)
                 original.allParameters.forEach { addUsedType(it.type, set) }
                 original.returnType?.let { addUsedType(it, set) }
             }

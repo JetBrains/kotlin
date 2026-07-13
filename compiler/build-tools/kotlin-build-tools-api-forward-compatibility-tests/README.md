@@ -23,3 +23,4 @@ That means, whenever there's a change in the BTA API that can potentially break 
 combination of API+IMPL continues to work.
 
 Tests for backward compatibility ("X-3") are located in the `[kotlin-build-tools-api-tests](../kotlin-build-tools-api-tests)` project.
+

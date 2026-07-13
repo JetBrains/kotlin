@@ -36,7 +36,6 @@ const val GENERATE_SMAP = true
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
 const val INLINE_FUN_VAR_SUFFIX = "\$iv"
 
-internal const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
 const val SPECIAL_TRANSFORMATION_NAME = "\$special"
 const val INLINE_TRANSFORMATION_SUFFIX = "\$inlined"
 const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$$INLINE_TRANSFORMATION_SUFFIX"
@@ -283,9 +282,6 @@ internal fun firstLabelInChain(node: LabelNode): LabelNode {
     return curNode
 }
 
-internal fun areLabelsBeforeSameInsn(first: LabelNode, second: LabelNode): Boolean =
-    firstLabelInChain(first) == firstLabelInChain(second)
-
 val MethodNode?.nodeText: String
     get() {
         if (this == null) {
@@ -335,6 +331,7 @@ fun AbstractInsnNode?.insnText(insnList: InsnList): String {
     }
 }
 
+@Suppress("unused")
 fun MethodNode.dumpBody(): String {
     val sw = StringWriter()
     val pw = PrintWriter(sw)

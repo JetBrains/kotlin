@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
 
+    @Test
     fun `test single supertype from module`() {
         val module = createCirTreeFromSourceCode(
             """
@@ -38,6 +41,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
         kotlin.test.assertFalse(supertype.isMarkedNullable, "Expected supertype to be marked *not* nullable")
     }
 
+    @Test
     fun `test outerType`() {
         val module = createCirTreeFromSourceCode(
             """
@@ -59,6 +63,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
         kotlin.test.assertEquals(CirEntityId.create("Outer"), outerType.classifierId)
     }
 
+    @Test
     fun `test hierarchy supertype from module`() {
         val module = createCirTreeFromSourceCode(
             """
@@ -85,6 +90,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
         }
     }
 
+    @Test
     fun `test single nullable supertype from module`() {
         val module = createCirTreeFromSourceCode(
             """
@@ -103,6 +109,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
         kotlin.test.assertTrue(supertype.isMarkedNullable, "Expected supertype to be marked nullable")
     }
 
+    @Test
     fun `test single supertype from dependencies`() {
         val module = createCirTree {
             dependency { source("""interface A""") }
@@ -132,6 +139,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
         kotlin.test.assertFalse(supertype.isMarkedNullable, "Expected supertype to be marked *not* nullable")
     }
 
+    @Test
     fun `test single supertype from module and dependencies`() {
         val module = createCirTree {
             dependency { source("""interface A""") }

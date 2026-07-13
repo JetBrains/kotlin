@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.mavenCentral
+import org.gradle.kotlin.dsl.repositories
+
 rootProject.name = "native-build-tools"
 
 pluginManagement {
@@ -26,4 +29,13 @@ dependencyResolutionManagement {
             from(files("../../gradle/libs.versions.toml"))
         }
     }
+    repositories {
+        maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
+            name = "kotlin-dependencies"
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
+
 }

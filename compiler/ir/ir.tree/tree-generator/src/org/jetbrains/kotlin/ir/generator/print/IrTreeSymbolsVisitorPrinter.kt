@@ -67,7 +67,7 @@ internal class IrTreeSymbolsVisitorPrinter(
         transformTypes: Boolean,
     ): Unit = with(printer) {
         if (element.implementations.isNotEmpty()) {
-            val fieldsWithSymbol = element.fields.filter {
+            val fieldsWithSymbol = element.allFields.filter {
                 if (element == IrTree.annotation) { // TODO KT-55928 Drop this hack when `symbol` is removed from IrAnnotation
                     return@filter it.symbolClass != null && it.name != "symbol"
                 }
@@ -75,7 +75,6 @@ internal class IrTreeSymbolsVisitorPrinter(
             }
             fieldsWithSymbol.forEach { visitField(element, it) }
         }
-        visitAdditionalFields(element)
         super.printTypeRemappingsOverridable(printer, element, irTypeFields, hasDataParameter, transformTypes)
     }
 
@@ -89,14 +88,6 @@ internal class IrTreeSymbolsVisitorPrinter(
             visitSymbolValue(field, element, element.visitorParameterName, ".", field.name)
         }
         println()
-    }
-
-    private fun ImportCollectingPrinter.visitAdditionalFields(element: Element) {
-        when (element) {
-            functionReference -> println("visitReferencedFunction(expression, expression.symbol)")
-            propertyReference -> println("visitReferencedProperty(expression, expression.symbol)")
-            localDelegatedPropertyReference -> println("visitReferencedLocalDelegatedProperty(expression, expression.symbol)")
-        }
     }
 
     private fun ImportCollectingPrinter.visitSymbolValue(field: Field, element: Element, vararg valueArgs: Any?) {

@@ -22,6 +22,7 @@ class SirStructBuilder {
     val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
+    val protocols: MutableList<SirProtocol> = mutableListOf()
 
     fun build(): SirStruct {
         return SirStructImpl(
@@ -31,6 +32,7 @@ class SirStructBuilder {
             attributes,
             name,
             declarations,
+            protocols,
         )
     }
 

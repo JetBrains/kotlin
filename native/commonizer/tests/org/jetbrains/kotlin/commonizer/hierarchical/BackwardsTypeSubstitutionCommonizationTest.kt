@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class BackwardsTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test sample 0`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -57,6 +59,7 @@ class BackwardsTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommoniz
         )
     }
 
+    @Test
     fun `test sample 1`() {
         val result = commonize {
             outputTarget("(a, b)")

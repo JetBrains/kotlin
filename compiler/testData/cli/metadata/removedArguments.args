@@ -1,0 +1,9 @@
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
+-d
+$TEMP_DIR$
+-Xuse-k2
+-output=path/to/file
+-Xvalue-classes
+-Xg0=true
+-no-endorsed-libs=true
+-library-version=2

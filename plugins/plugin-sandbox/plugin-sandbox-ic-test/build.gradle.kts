@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("nodejs-configuration")
@@ -33,7 +36,10 @@ dependencies {
 
 sourceSets {
     main { none() }
-    test { generatedTestDir() }
+    test {
+        projectDefault()
+        generatedTestDir()
+    }
     testFixtures { projectDefault() }
 }
 

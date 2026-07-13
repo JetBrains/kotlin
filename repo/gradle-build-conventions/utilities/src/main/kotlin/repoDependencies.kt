@@ -10,17 +10,14 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.FileCollection
 import org.gradle.internal.jvm.Jvm
-import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import java.io.File
-import java.net.URI
 
-private val Project.isEAPIntellij get() = rootProject.extra["versions.intellijSdk"].toString().contains("-EAP-")
-private val Project.isNightlyIntellij get() = rootProject.extra["versions.intellijSdk"].toString().endsWith("SNAPSHOT") && !isEAPIntellij
+private val Project.isEAPIntellij get() = kotlinBuildProperties.versionsProperty("intellijSdk").get().contains("-EAP-")
+private val Project.isNightlyIntellij get() = kotlinBuildProperties.versionsProperty("intellijSdk").get().endsWith("SNAPSHOT") && !isEAPIntellij
 
 val Project.intellijRepo
     get() =
@@ -46,11 +43,10 @@ fun Project.commonDependency(group: String, artifact: String, vararg suffixesAnd
 }
 
 fun Project.commonDependencyVersion(group: String, artifact: String): String =
-    when {
-        rootProject.extra.has("versions.$artifact") -> rootProject.extra["versions.$artifact"]
-        rootProject.extra.has("versions.$group") -> rootProject.extra["versions.$group"]
-        else -> throw GradleException("Neither versions.$artifact nor versions.$group is defined in the root project's extra")
-    } as String
+    kotlinBuildProperties.versionsProperty(artifact)
+        .orElse(kotlinBuildProperties.versionsProperty(group))
+        .orElse(provider { throw GradleException("Neither versions.$artifact nor versions.$group is defined in the root project's extra") })
+        .get()
 
 fun kotlinDep(artifactBaseName: String, version: String, classifier: String? = null): String =
     listOfNotNull("org.jetbrains.kotlin:kotlin-$artifactBaseName:$version", classifier).joinToString(":")
@@ -176,17 +172,17 @@ fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepS
     }
 }
 
-val Project.protobufRelocatedVersion: String get() = findProperty("versions.protobuf-relocated") as String
+val Project.protobufRelocatedVersion: String get() = kotlinBuildProperties.versionsProperty("protobuf-relocated").get()
 fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:$protobufRelocatedVersion"
 fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$protobufRelocatedVersion"
 fun Project.kotlinxCollectionsImmutable() =
-    "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${rootProject.extra["versions.kotlinx-collections-immutable"]}"
+    "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${kotlinBuildProperties.versionsProperty("kotlinx-collections-immutable").get()}"
 
 val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
 
-val Project.nodejsVersion: String get() = property("versions.nodejs") as String
-val Project.nodejsLtsVersion: String get() = property("versions.nodejs.lts") as String
-val Project.nodejsVersionForBuildingWasmDebugBrowsers: String get() = property("versions.nodejs.for.building.wasm.debug.browsers") as String
+val Project.nodejsVersion: String get() = kotlinBuildProperties.versionsProperty("nodejs").get()
+val Project.nodejsLtsVersion: String get() = kotlinBuildProperties.versionsProperty("nodejs.lts").get()
+val Project.nodejsVersionForBuildingWasmDebugBrowsers: String get() = kotlinBuildProperties.versionsProperty("nodejs.for.building.wasm.debug.browsers").get()
 
 fun Project.firstFromJavaHomeThatExists(
     vararg paths: String,
@@ -208,57 +204,3 @@ fun Project.toolsJar(): FileCollection = files(
 
 val compilerManifestClassPath
     get() = "annotations-13.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar kotlinx-coroutines-core-jvm.jar"
-
-fun RepositoryHandler.githubTag(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {
-    exclusiveContent {
-        forRepository {
-            ivy {
-                name = "Github Tag: $ghUser/$repo"
-                url = URI("https://github.com/$ghUser/$repo/archive/refs/tags/")
-                patternLayout {
-                    artifact("$revisionPrefix[revision].[ext]")
-                }
-                metadataSources { artifact() }
-            }
-        }
-        filter {
-            includeModule(groupAlias ?: ghUser, repo)
-        }
-    }
-}
-
-fun RepositoryHandler.githubRelease(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {
-    exclusiveContent {
-        forRepository {
-            ivy {
-                name = "Github Release: $ghUser/$repo"
-                url = URI("https://github.com/$ghUser/$repo/releases/download/")
-                patternLayout {
-                    artifact("$revisionPrefix[revision]/[artifact](-$revisionPrefix[revision])(-[classifier]).[ext]")
-                }
-                metadataSources { artifact() }
-            }
-        }
-        filter {
-            includeModule(groupAlias ?: ghUser, repo)
-        }
-    }
-}
-
-fun RepositoryHandler.githubCommit(ghUser: String, repo: String, groupAlias: String? = null) {
-    exclusiveContent {
-        forRepository {
-            ivy {
-                name = "Github Commit: $ghUser/$repo"
-                url = URI("https://github.com/$ghUser/$repo/archive/")
-                patternLayout {
-                    artifact("[revision].[ext]")
-                }
-                metadataSources { artifact() }
-            }
-        }
-        filter {
-            includeModule(groupAlias ?: ghUser, repo)
-        }
-    }
-}

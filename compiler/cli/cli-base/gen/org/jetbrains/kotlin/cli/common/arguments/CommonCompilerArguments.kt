@@ -438,6 +438,19 @@ Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20
         }
 
     @Argument(
+        value = "-Xeager-lambda-analysis",
+        description = "Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.",
+    )
+    @Enables(LanguageFeature.EagerLambdaAnalysis)
+    @Enables(LanguageFeature.InferThrowableTypeParameterToUpperBound)
+    @Enables(LanguageFeature.CallCompletionRefinementsFor25)
+    var eagerLambdaAnalysis: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xenable-additional-ir-checkers",
         valueDescription = "<checker1>,<checker2>",
         description = """A list of IR checkers to enable, specified by a simple name of the checker class.
@@ -454,6 +467,17 @@ It may only be used with specific checkers that are not enabled by default, and 
         description = "Enable incremental compilation.",
     )
     var incrementalCompilation: Boolean? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xescaping-functions",
+        valueDescription = "<+|-><fq.name>",
+        description = "Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.",
+    )
+    var escapingFunctions: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -537,8 +561,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         valueDescription = "<fragment name>:<path>",
         description = """Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.    
 This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
-  dependencies from the platform specific incremental service.
-The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation""",
+  dependencies from the platform specific incremental service.""",
         delimiter = Argument.Delimiters.none,
     )
     var fragmentIncrementalClasspath: Array<String> = emptyArray()
@@ -629,11 +652,12 @@ with bodies.""",
             field = value
         }
 
-    @Deprecated("This flag is deprecated")
+    @all:Deprecated("")
     @Argument(
         value = "-Xintellij-plugin-root",
         valueDescription = "<path>",
         description = "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.",
+        deprecatedVersion = "2.4.20",
     )
     var intellijPluginRoot: String? = null
         set(value) {
@@ -1030,10 +1054,11 @@ Warning: This is temporary solution (see KT-63712) intended to be used only for 
             field = value
         }
 
-    @Deprecated("This flag is deprecated")
+    @all:Deprecated("")
     @Argument(
         value = "-Xuse-fir-experimental-checkers",
         description = "Enable experimental frontend IR checkers that are not yet ready for production.",
+        deprecatedVersion = "2.2.20",
     )
     var useFirExperimentalCheckers: Boolean = false
         set(value) {
@@ -1052,22 +1077,13 @@ Warning: This feature is not yet production-ready.""",
             field = value
         }
 
+    @all:Deprecated("The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.")
     @Argument(
         value = "-Xuse-fir-lt",
         description = "Compile using the LightTree parser with the frontend IR.",
+        deprecatedVersion = "2.4.20",
     )
     var useFirLT: Boolean = true
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xuse-k2",
-        description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.",
-        isObsolete = true,
-    )
-    var useK2: Boolean = false
         set(value) {
             checkFrozen()
             field = value

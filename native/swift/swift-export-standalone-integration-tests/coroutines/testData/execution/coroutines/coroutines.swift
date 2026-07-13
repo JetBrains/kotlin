@@ -3,6 +3,123 @@ import Testing
 import Foundation
 
 @Test
+func testAlreadyCancelledTaskWithSuspensionThrowsCancellationError() async throws {
+    let task = Task<Int32, any Error>.detached {
+        do {
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            Issue.record("Task should get cancelled before invoking Kotlin code")
+        } catch is CancellationError {
+            // Ignore as we want to test an already cancelled task
+        }
+        // Use a 1 second delay to create a Kotlin suspend call
+        return try await callAfter(delay: 1) {
+            Issue.record("Callback shouldn't be invoked")
+            return 1
+        }
+    }
+    task.cancel()
+
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()), "function should fail with cancellation error")
+}
+
+@Test
+func testAlreadyCancelledTaskWithoutSuspensionSucceeds() async throws {
+    let task = Task<Int32, any Error>.detached {
+        do {
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            Issue.record("Task should get cancelled before invoking Kotlin code")
+        } catch is CancellationError {
+            // Ignore as we want to test an already cancelled task
+        }
+        // Use a 0 second delay so we don't have a Kotlin suspend call
+        return try await callAfter(delay: 0) {
+            return 1
+        }
+    }
+    task.cancel()
+
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .success(1), "function should succeed")
+}
+
+@Test
+func testCatchKotlinCancellationContinues() async throws {
+    let task = Task<Int32, any Error>.detached {
+        do {
+            let _ = try await timeout(timeMillis: 10)
+            Issue.record("Kotlin function should timeout")
+        } catch is CancellationError {
+            // Ignoring as we want to continue
+        }
+        #expect(!Task.isCancelled)
+        try await Task.sleep(nanoseconds: 100_000_000)
+        return 5
+    }
+    let result = await task.result
+
+    #expect(!task.isCancelled)
+    #expect(result == .success(5), "task should succeed")
+}
+
+@Test
+func testCancelTaskFromKotlinWithoutSuspensions() async throws {
+    let task = Task<Int32, any Error>.detached {
+        let value = try await cancelSilentlyAfter(delay: 3_000) {
+            return 42
+        }
+        #expect(Task.isCancelled)
+        return value
+    }
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .success(42), "task should succeed")
+}
+
+@Test
+func testCancelTaskFromKotlinWithSwiftSuspension() async throws {
+    let task = Task<Int32, any Error>.detached {
+        try await confirmation("cancelled silently", expectedCount: 1) { confirm in
+            let value = try await cancelSilentlyAfter(delay: 3_000) {
+                return 42
+            }
+            confirm()
+            #expect(Task.isCancelled)
+            try await Task.sleep(nanoseconds: 100_000_000)
+            return value
+        }
+    }
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()), "task should fail with a cancellation error")
+}
+
+@Test
+func testCancelTaskFromKotlinWithKotlinSuspension() async throws {
+    let task = Task<Int64, any Error>.detached {
+        do {
+            return try await cancelAfterAndSuspend(delay: 3_000)
+        } catch let error as CancellationError {
+            #expect(Task.isCancelled)
+            throw error
+        }
+    }
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()), "task should fail with a cancellation error")
+}
+
+// TODO: Test cancellation shields KT-87060
+
+
+@Test
 func testCallingKotlinThatUsesCoroutines() async throws {
     try #expect(await testPrimitive() == 42)
     try #expect(await testAny() as? Foo == Foo.shared)
@@ -195,39 +312,38 @@ func testParentCancellationPropagatesToStructuredChild() async throws {
     #expect(result == .failure(CancellationError()))
 }
 
-// todo: KT-86509 [Swift Export] Probable race in tests
-// @Test
-// func testCancellationRaceLoop() async throws {
-//     let cancelDelayMs: UInt64 = 50
-//
-//     try await withThrowingTaskGroup(of: Void.self) { group in
-//         for i in 1...100 {
-//             group.addTask {
-//                 let task = Task<Int32, any Error>.detached {
-//                     return try await callAfter(delay: Int64(cancelDelayMs)) {
-//                         return 42
-//                     }
-//                 }
-//
-//                 if cancelDelayMs > 0 {
-//                     try await Task.sleep(nanoseconds: cancelDelayMs * 1_000_000)
-//                 }
-//                 task.cancel()
-//
-//                 let result = await task.result
-//
-//                 switch result {
-//                 case .success(let v):
-//                     #expect(v == 42)
-//                 case .failure(let e):
-//                     #expect(e is CancellationError, "Iteration \(i) failed with non-cancellation error: \(e)")
-//                 }
-//             }
-//         }
-//
-//         for try await _ in group {}
-//     }
-// }
+@Test
+func testCancellationRaceLoop() async throws {
+    let cancelDelayMs: UInt64 = 50
+
+    try await withThrowingTaskGroup(of: Void.self) { group in
+        for i in 1...100 {
+            group.addTask {
+                let task = Task<Int32, any Error>.detached {
+                    return try await callAfter(delay: Int64(cancelDelayMs)) {
+                        return 42
+                    }
+                }
+
+                if cancelDelayMs > 0 {
+                    try await Task.sleep(nanoseconds: cancelDelayMs * 1_000_000)
+                }
+                task.cancel()
+
+                let result = await task.result
+
+                switch result {
+                case .success(let v):
+                    #expect(v == 42)
+                case .failure(let e):
+                    #expect(e is CancellationError, "Iteration \(i) failed with non-cancellation error: \(e)")
+                }
+            }
+        }
+
+        for try await _ in group {}
+    }
+}
 
 @Test
 func testFinallyCancelBeforeEnd() async throws {

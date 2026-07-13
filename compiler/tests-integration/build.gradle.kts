@@ -3,19 +3,20 @@ import org.jetbrains.kotlin.testFederation.isSmokeTestMode
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
     //id("test-inputs-check")
 }
 
-val compilerModules: Array<String> by rootProject.extra
-val otherCompilerModules = compilerModules.filter { it != path }
+val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }
 
 val antLauncherJar by configurations.creating
 
 dependencies {
-    testImplementation(intellijCore())
 
     testFixturesApi(project(":kotlin-script-runtime"))
 
@@ -84,14 +85,13 @@ sourceSets {
 
 projectTests {
     testTask(
-        parallel = true,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0,
             JdkMajorVersion.JDK_17_0,
             JdkMajorVersion.JDK_21_0
         ),
-        jUnitMode = JUnitMode.JUnit4,
+        jUnitMode = JUnitMode.JUnit5,
         javaLauncher = JdkMajorVersion.JDK_1_8
     ) {
         dependsOn(":dist")

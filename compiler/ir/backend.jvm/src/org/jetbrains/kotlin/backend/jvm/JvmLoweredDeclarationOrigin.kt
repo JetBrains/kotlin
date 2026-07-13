@@ -24,21 +24,13 @@ object JvmLoweredDeclarationOrigin {
     val ENUM_MAPPINGS_FOR_WHEN by IrDeclarationOriginImpl.Synthetic
     val ENUM_MAPPINGS_FOR_ENTRIES by IrDeclarationOriginImpl.Synthetic
     val SYNTHETIC_INLINE_CLASS_MEMBER by IrDeclarationOriginImpl.Synthetic
-    val SYNTHETIC_MULTI_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Synthetic
     val INLINE_CLASS_GENERATED_IMPL_METHOD by IrDeclarationOriginImpl.Regular
-    val MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD by IrDeclarationOriginImpl.Regular
     val STATIC_INLINE_CLASS_REPLACEMENT by IrDeclarationOriginImpl.Regular
-    val STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT by IrDeclarationOriginImpl.Regular
     val STATIC_INLINE_CLASS_CONSTRUCTOR by IrDeclarationOriginImpl.Regular
-    val STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR by IrDeclarationOriginImpl.Regular
     val INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER by IrDeclarationOriginImpl.Regular
     val NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER by IrDeclarationOriginImpl.Regular
     val EXPOSED_INLINE_CLASS_CONSTRUCTOR by IrDeclarationOriginImpl.Regular
     val GENERATED_ASSERTION_ENABLED_FIELD by IrDeclarationOriginImpl.Synthetic
-    val GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER by IrDeclarationOriginImpl.Regular
-    val TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER by IrDeclarationOriginImpl.Regular
-    val TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE by IrDeclarationOriginImpl.Regular
-    val MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE by IrDeclarationOriginImpl.Regular
     val GENERATED_EXTENDED_MAIN by IrDeclarationOriginImpl.Synthetic
     val SUSPEND_IMPL_STATIC_FUNCTION by IrDeclarationOriginImpl.Synthetic
     val INTERFACE_COMPANION_PRIVATE_INSTANCE by IrDeclarationOriginImpl.Synthetic

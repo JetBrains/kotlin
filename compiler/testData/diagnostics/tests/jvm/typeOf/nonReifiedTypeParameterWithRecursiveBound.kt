@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
+// LANGUAGE: -JvmSupportRecursiveTypeOf
 
 import kotlin.reflect.typeOf
 

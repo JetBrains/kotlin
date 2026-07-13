@@ -28,7 +28,6 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
     arguments.argParser.parse(args)
     val outputFileName = arguments.output
     val noDefaultLibs = arguments.nodefaultlibs || arguments.nodefaultlibsDeprecated
-    val noEndorsedLibs = arguments.noendorsedlibs
     val purgeUserLibs = arguments.purgeUserLibs
     val nopack = arguments.nopack
     val temporaryFilesDir = arguments.tempDir
@@ -69,7 +68,6 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
         cinteropArgsToCompiler +
         libraries.flatMap { listOf("-library", it) } +
         (if (noDefaultLibs) arrayOf("-$NODEFAULTLIBS") else emptyArray()) +
-        (if (noEndorsedLibs) arrayOf("-$NOENDORSEDLIBS") else emptyArray()) +
         (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray()) +
         (if (nopack) arrayOf("-$NOPACK") else emptyArray()) +
         moduleName?.let { arrayOf("-module-name", it) }.orEmpty() +

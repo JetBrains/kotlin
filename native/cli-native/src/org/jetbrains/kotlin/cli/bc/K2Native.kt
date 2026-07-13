@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.bc
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticC
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
@@ -203,7 +205,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             // - intermediate Klib is compiled to binary by K2/Native backend
             if (isOneStageCompilation(arguments)) {
                 val intermediateKlib = createIntermediateKlib()
-                val klibArgs = prepareKlibArgumentsForOneStage(arguments, intermediateKlib.canonicalPath)
+                val klibArgs = prepareKlibArgumentsForOneStage(arguments, intermediateKlib.canonicalPathString())
                 val klibCompilationExitCode = doExecutePhasedKlibCompilation(
                     klibArgs, Services.EMPTY, @OptIn(MessageCollectorAccess::class) configuration.messageCollector,
                     isOneStageCompilation = true
@@ -257,6 +259,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration: CompilerConfiguration,
         rootDisposable: Disposable,
     ): KotlinCoreEnvironment {
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForProduction(
             rootDisposable,
             configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES
@@ -284,6 +287,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     parseCommandLineArguments(emptyList(), spawnedArguments)
                     val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
                     configuration.perfManager = spawnedPerfManager
+                    @OptIn(CoreEnvironmentDeprecation::class)
                     val spawnedEnvironment = KotlinCoreEnvironment.createForProduction(
                         rootDisposable, configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES
                     )

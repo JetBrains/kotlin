@@ -14,9 +14,9 @@ fun acceptList(l: MyList) { }
 fun <T2> acceptGenericList(l: MyGenericList<T2>) { }
 
 fun test() {
-    acceptList(<!UNRESOLVED_REFERENCE!>["1", "2", "3"]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGenericList<!>(<!UNRESOLVED_REFERENCE!>["1", "2", "3"]<!>)
-    acceptGenericList<String>(<!UNRESOLVED_REFERENCE!>["1", "2", "3"]<!>)
+    acceptList(<!UNRESOLVED_COLLECTION_LITERAL!>["1", "2", "3"]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGenericList<!>(<!UNRESOLVED_COLLECTION_LITERAL!>["1", "2", "3"]<!>)
+    acceptGenericList<String>(<!UNRESOLVED_COLLECTION_LITERAL!>["1", "2", "3"]<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, nullableType, objectDeclaration, operator,

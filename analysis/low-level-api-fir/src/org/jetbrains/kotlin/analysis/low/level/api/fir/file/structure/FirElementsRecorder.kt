@@ -212,7 +212,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             ConstantValueKind.Byte -> value.toByte().unaryMinus()
             ConstantValueKind.Double -> value.toDouble().unaryMinus()
             ConstantValueKind.Float -> value.toFloat().unaryMinus()
-            ConstantValueKind.Int -> value.toInt().unaryMinus()
+            ConstantValueKind.Int, ConstantValueKind.IntegerLiteral -> value.toInt().unaryMinus()
             ConstantValueKind.Long -> value.toLong().unaryMinus()
             ConstantValueKind.Short -> value.toShort().unaryMinus()
             else -> null

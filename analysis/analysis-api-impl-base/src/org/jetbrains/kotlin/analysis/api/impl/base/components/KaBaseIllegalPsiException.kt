@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,11 +10,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.getModule
-import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
+import org.jetbrains.kotlin.analysis.api.internals.KaInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.exceptions.buildAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -52,7 +52,7 @@ class KaBaseIllegalPsiException private constructor(
     @KaImplementationDetail
     companion object {
         fun create(session: KaSession, psi: PsiElement): KaBaseIllegalPsiException = with(session) {
-            val psiModule = getModule(psi)
+            val psiModule = psi.kaModule
             KaBaseIllegalPsiException(useSiteModule, psiModule, psi)
         }
 
@@ -84,8 +84,8 @@ private val allowIllegalPsiAccess = ThreadLocal.withInitial { false }
 context(component: KaBaseSessionComponent<S>)
 fun <S : KaSession> PsiElement.checkValidity() {
     val session = component.analysisSession
-    val canBeAnalyzed = if (session is KaBaseSession) {
-        session.canBeAnalysedImpl(this)
+    val canBeAnalyzed = if (session is KaInternals) {
+        session.analysisScopeProvider.canBeAnalysedImpl(this)
     } else {
         // This `else` branch is a temporal workaround for the swift-export which creates its own KaSession implementation
         // It has to be removed after the swift-export dropped this API violation

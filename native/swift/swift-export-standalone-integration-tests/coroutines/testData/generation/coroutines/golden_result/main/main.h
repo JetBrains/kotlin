@@ -3,15 +3,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool FunctionalInterfaceWithSuspendFunction_emit__reverse_swift(void * self, void * continuation, void * exception, void * cancellation);
+
 _Bool FunctionalInterfaceWithSuspendFunction_emit(void * self, _Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
 void * __root___Foo_init_allocate();
 
 _Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-void * __root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Void__(void (^function)(void *, void *, void *));
+void * __root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Void__(_Bool (^function)(void *, void *, void *));
 
-_Bool __root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__(void (^block)(void *, void *, void *));
+_Bool __root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__(_Bool (^block)(void *, void *, void *));
 
 _Bool __root___alwaysFails(_Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
@@ -61,7 +63,7 @@ _Bool main_internal_functional_type_caller_SwiftU2EInt64__TypesOfArguments__Swif
 
 _Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * pointerToBlock, int32_t _1);
 
-_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Error__(void * pointerToBlock, NSError * _1);
+_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(void * pointerToBlock, NSError * _Nullable _1);
 
 _Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock, _Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 

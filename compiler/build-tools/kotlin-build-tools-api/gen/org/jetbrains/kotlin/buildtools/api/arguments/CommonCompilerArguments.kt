@@ -43,7 +43,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
    */
   @Deprecated(
     message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
   )
   public operator fun contains(key: CommonCompilerArgument<*>): Boolean
 
@@ -86,7 +86,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @Deprecated(
       message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-      level = DeprecationLevel.WARNING,
+      level = DeprecationLevel.ERROR,
     )
     public operator fun contains(key: CommonCompilerArgument<*>): Boolean
 
@@ -359,6 +359,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_DUMP_PERF", KotlinReleaseVersion(1, 2, 50))
 
     /**
+     * Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_EAGER_LAMBDA_ANALYSIS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_EAGER_LAMBDA_ANALYSIS", KotlinReleaseVersion(2, 4, 20))
+
+    /**
      * A list of IR checkers to enable, specified by a simple name of the checker class.
      * It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.
      *
@@ -368,6 +378,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_ENABLE_ADDITIONAL_IR_CHECKERS: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_ENABLE_ADDITIONAL_IR_CHECKERS", KotlinReleaseVersion(2, 4, 20))
+
+    /**
+     * Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ESCAPING_FUNCTIONS: CommonCompilerArgument<List<String>> =
+        CommonCompilerArgument("X_ESCAPING_FUNCTIONS", KotlinReleaseVersion(2, 4, 20))
 
     /**
      * 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
@@ -410,19 +430,6 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_EXPLICIT_CONTEXT_ARGUMENTS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_EXPLICIT_CONTEXT_ARGUMENTS", KotlinReleaseVersion(2, 4, 0))
-
-    /**
-     * Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.    
-     * This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
-     *   dependencies from the platform specific incremental service.
-     * The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_FRAGMENT_INCREMENTAL_CLASSPATH: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_FRAGMENT_INCREMENTAL_CLASSPATH", KotlinReleaseVersion(2, 4, 20))
 
     /**
      * Enable header compilation mode.
@@ -804,9 +811,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Compile using the LightTree parser with the frontend IR.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.4.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_USE_FIR_LT: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_LT", KotlinReleaseVersion(1, 7, 0))
 

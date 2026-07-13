@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.klib
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.ApiVersion
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.utils.KotlinNativePaths
 internal class ModuleDescriptorLoader(private val output: KlibToolOutput) {
     private val logger = KlibToolLogger(output)
 
+    @OptIn(K1Deprecation::class)
     fun load(library: KotlinLibrary): ModuleDescriptorImpl? {
         val storageManager = LockBasedStorageManager("klib")
 
@@ -51,6 +53,7 @@ internal class ModuleDescriptorLoader(private val output: KlibToolOutput) {
     companion object {
         val languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
 
+        @OptIn(K1Deprecation::class)
         private val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
     }
 }

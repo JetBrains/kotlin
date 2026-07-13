@@ -19,9 +19,14 @@ import java.io.File
 
 // TODO reduce amount of duplicated code between this class and WasmBoxRunner
 class WasiBoxRunner(
-    testServices: TestServices
+    testServices: TestServices,
+    executeWithNodeJsOnly: Boolean = false, // Klib backward compatibility testsuite needs only one best Wasi runner
 ) : AbstractWasmArtifactsCollector(testServices) {
-    internal val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+    internal val vmsToCheck: List<WasmVM> = if (executeWithNodeJsOnly) {
+        listOf(WasmVM.NodeJs)
+    } else {
+        listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+    }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -83,6 +88,7 @@ class WasiBoxRunner(
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
+                    useStackSwitching = false,
                     entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,
                     workingDirectory = dir

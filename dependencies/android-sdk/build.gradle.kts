@@ -2,30 +2,13 @@ import org.gradle.internal.os.OperatingSystem
 import java.net.URI
 import java.io.File
 
-repositories {
-    ivy {
-        url = URI("https://dl.google.com/android/repository")
-        patternLayout {
-            artifact("[artifact]-[revision].[ext]")
-            artifact("[artifact]_[revision](-[classifier]).[ext]")
-            artifact("[artifact]_[revision](_[classifier]).[ext]")
-        }
-        metadataSources {
-            artifact()
-        }
-    }
-    ivy {
-        url = URI("https://dl.google.com/android/repository/sys-img/android")
-        patternLayout {
-            artifact("[artifact]-[revision](_[classifier]).[ext]")
-        }
-        metadataSources {
-            artifact()
-        }
-    }
+// Repo content: https://dl.google.com/android/repository/repository2-1.xml
+plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
 }
 
-// Repo content: https://dl.google.com/android/repository/repository2-1.xml
 val platformToolsVersion = "r36.0.0"
 val commandLineToolsVersion = "13114758" /*19.0*/
 val emulatorVersion = "14433334" // v36.4.1

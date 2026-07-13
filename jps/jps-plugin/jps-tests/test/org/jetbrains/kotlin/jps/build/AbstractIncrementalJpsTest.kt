@@ -11,8 +11,6 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.ThrowableRunnable
-import junit.framework.TestCase
 import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
@@ -33,6 +31,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestLookupTracker
@@ -52,8 +51,12 @@ import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameLinesWithFile
 import org.jetbrains.kotlin.utils.Printer
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.BeforeEach
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -61,12 +64,13 @@ import java.io.PrintStream
 import java.util.*
 import kotlin.reflect.jvm.javaField
 
+@Suppress("UnstableApiUsage")
 abstract class AbstractIncrementalJpsTest(
     private val allowNoFilesWithSuffixInTestData: Boolean = false,
     private val checkDumpsCaseInsensitively: Boolean = false
 ) : BaseKotlinJpsBuildTestCase() {
     companion object {
-        private val COMPILATION_FAILED = "COMPILATION FAILED"
+        private const val COMPILATION_FAILED = "COMPILATION FAILED"
 
         // change to "/tmp" or anything when default is too long (for easier debugging)
         private val TEMP_DIRECTORY_TO_USE = File(FileUtilRt.getTempDirectory())
@@ -128,6 +132,7 @@ abstract class AbstractIncrementalJpsTest(
 
     private val enableICFixture = EnableICFixture()
 
+    @BeforeEach
     override fun setUp() {
         super.setUp()
 
@@ -141,6 +146,7 @@ abstract class AbstractIncrementalJpsTest(
             .setProperty("kotlin.jps.classPrefixesToLoadByParent", "kotlin.") // for debugging tests with in-process compiler
     }
 
+    @AfterEach
     override fun tearDown() {
         try {
             restoreSystemProperties()
@@ -150,9 +156,9 @@ abstract class AbstractIncrementalJpsTest(
             (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
         } finally {
             RunAll(
-                ThrowableRunnable { lookupsDuringTest.clear() },
-                ThrowableRunnable { enableICFixture.tearDown() },
-                ThrowableRunnable { super.tearDown() }
+                { lookupsDuringTest.clear() },
+                { enableICFixture.tearDown() },
+                { super.tearDown() }
             ).run()
         }
     }
@@ -229,7 +235,7 @@ abstract class AbstractIncrementalJpsTest(
         if (initBuildLogFile.exists()) {
             UsefulTestCase.assertSameLinesWithFile(initBuildLogFile.absolutePath, makeResult.log)
         } else {
-            assertFalse("Initial make failed:\n$makeResult", makeResult.makeFailed)
+            assertFalse(makeResult.makeFailed, "Initial make failed:\n$makeResult")
         }
 
         return makeResult
@@ -257,8 +263,8 @@ abstract class AbstractIncrementalJpsTest(
 
         val rebuildResult = rebuild()
         assertEquals(
+            rebuildResult.makeFailed, makeOverallResult.makeFailed,
             "Rebuild failed: ${rebuildResult.makeFailed}, last make failed: ${makeOverallResult.makeFailed}. Rebuild result: $rebuildResult",
-            rebuildResult.makeFailed, makeOverallResult.makeFailed
         )
 
         if (!outAfterMake.exists()) {
@@ -271,7 +277,7 @@ abstract class AbstractIncrementalJpsTest(
             if (checkDumpsCaseInsensitively && rebuildResult.mappingsDump.equals(makeOverallResult.mappingsDump, ignoreCase = true)) {
                 // do nothing
             } else {
-                TestCase.assertEquals(rebuildResult.mappingsDump, makeOverallResult.mappingsDump)
+                assertEquals(rebuildResult.mappingsDump, makeOverallResult.mappingsDump)
             }
         }
 
@@ -302,7 +308,7 @@ abstract class AbstractIncrementalJpsTest(
         return ModulesTxtBuilder().readFile(actualModulesTxtFile)
     }
 
-    protected open fun createBuildLog(incrementalMakeResults: List<AbstractIncrementalJpsTest.MakeResult>): String =
+    protected open fun createBuildLog(incrementalMakeResults: List<MakeResult>): String =
         buildString {
             incrementalMakeResults.forEachIndexed { i, makeResult ->
                 if (i > 0) append("\n")
@@ -315,8 +321,8 @@ abstract class AbstractIncrementalJpsTest(
             }
         }
 
-    protected open fun doTest(testDataPath: String) {
-        KotlinTestUtils.runTest(this::executeTest, this, testDataPath)
+    protected open fun runTest(testDataPath: String) {
+        executeTest(ForTestCompileRuntime.transformTestDataPath(testDataPath).absolutePath)
     }
 
     private fun executeTest(testDataPath: String) {
@@ -342,7 +348,7 @@ abstract class AbstractIncrementalJpsTest(
             val expected = excludeCompilerErrorMessagesFromLog(buildLog)
             val actual = excludeCompilerErrorMessagesFromLog(logs)
 
-            if(expected.trimEnd() != actual.trimEnd()) {
+            if (expected.trimEnd() != actual.trimEnd()) {
                 assertSameLinesWithFile(it.absolutePath, logs)
             }
             val lastMakeResult = otherMakeResults.last()
@@ -354,7 +360,7 @@ abstract class AbstractIncrementalJpsTest(
         return if (!log.contains("COMPILATION FAILED")) log
         else log.split("COMPILATION FAILED").mapIndexed { index, s ->
             if (index == 0) return@mapIndexed s
-            return@mapIndexed if(s.indexOf("=") > 0) s.substring(s.indexOf("=")) else ""
+            return@mapIndexed if (s.indexOf("=") > 0) s.substring(s.indexOf("=")) else ""
         }.joinToString("COMPILATION FAILED\n\n")
     }
 
@@ -431,7 +437,7 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun configureSingleModuleProject(jdk: JpsSdk<JpsDummyElement>?) {
-        addModule("module", arrayOf(getAbsolutePath("src")), null, null, jdk)
+        addModule("module", srcPaths = arrayOf(getAbsolutePath("src")), outputPath = null, sdk = jdk)
 
         val sourceDestinationDir = File(workDir, "src")
         val sourcesMapping = copyTestSources(testDataDir, File(workDir, "src"), "")
@@ -450,16 +456,15 @@ abstract class AbstractIncrementalJpsTest(
         modulesTxt.modules.forEach { module ->
             module.jpsModule = addModule(
                 module.name,
-                arrayOf(getAbsolutePath("${module.name}/src")),
-                null,
-                null,
+                srcPaths = arrayOf(getAbsolutePath("${module.name}/src")),
+                outputPath = null,
                 jdk
-            )!!
+            )
 
             val kotlinFacetSettings = module.kotlinFacetSettings
             if (kotlinFacetSettings != null) {
                 val compilerArguments = kotlinFacetSettings.compilerArguments
-                if(compilerArguments != null) {
+                if (compilerArguments != null) {
                     updateCommandLineArguments(compilerArguments)
                 }
                 if (compilerArguments is K2MetadataCompilerArguments) {
@@ -700,5 +705,3 @@ private fun createJavaMappingsDump(project: ProjectDescriptor): String {
 
 internal val ProjectDescriptor.allModuleTargets: Collection<ModuleBuildTarget>
     get() = buildTargetIndex.allTargets.filterIsInstance<ModuleBuildTarget>()
-
-private val EXPORTED_SUFFIX = "[exported]"

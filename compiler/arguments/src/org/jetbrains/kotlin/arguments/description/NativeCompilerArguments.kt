@@ -114,24 +114,6 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     }
 
     compilerArgument {
-        name = "library-version"
-        shortName = "lv"
-        description = "The library version.\nNote: This option is deprecated and will be removed in one of the future releases.".asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "<version>".asReleaseDependent()
-
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
-            deprecatedVersion = KotlinReleaseVersion.v2_0_20,
-        )
-    }
-
-    compilerArgument {
         name = "list-targets"
         deprecatedName = "list_targets"
         description = "List available hardware targets.".asReleaseDependent()
@@ -208,23 +190,6 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
-    compilerArgument {
-        name = "no-endorsed-libs"
-        compilerName = "noendorsedlibs"
-        description = "Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
-            deprecatedVersion = KotlinReleaseVersion.v1_9_20,
         )
     }
 
@@ -434,6 +399,19 @@ By default caches will be placed into the kotlin-native system cache directory."
     }
 
     compilerArgument {
+        name = "Xdump-built-caches-to"
+        compilerName = "dumpBuiltCachesTo"
+        description =
+            "Path to a file where the list of all cache archives produced by this build should be written.".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "<path>".asReleaseDependent()
+        delimiter = KotlinCompilerArgument.Delimiter.None
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20
+        )
+    }
+
+    compilerArgument {
         name = "Xcheck-dependencies"
         deprecatedName = "-check_dependencies"
         description = "Check dependencies and download the missing ones.".asReleaseDependent()
@@ -521,23 +499,6 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
-    // TODO: remove after 1.4 release.
-    compilerArgument {
-        name = "Xg0"
-        compilerName = "lightDebugDeprecated"
-        description = "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-            deprecatedVersion = KotlinReleaseVersion.v1_5_20,
         )
     }
 
@@ -922,7 +883,6 @@ The default value is 1.""".asReleaseDependent()
         )
     }
 
-    // TODO: Remove when legacy MM is gone.
     compilerArgument {
         name = "Xworker-exception-handling"
         description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.".asReleaseDependent()
@@ -931,6 +891,10 @@ The default value is 1.""".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
+            // The CLI arguments generation is broken if use a future `removedVersion`.
+            // TODO: uncomment after switching to 2.5 or after fixing of KT-87495
+            // removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 

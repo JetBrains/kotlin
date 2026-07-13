@@ -93,9 +93,26 @@ public:
         return std::move(result);
     }
 
+    /**
+     * A non-destructive check for whether a dequeue is likely to succeed right now.
+     * Used as a predicate re-check before a consumer parks, so it must use the same
+     * acquire-load on the head cell's sequence_ that dequeue() uses.
+     */
+    bool tryPeek() const noexcept {
+        std::size_t pos = dequeuePos_.load(std::memory_order_relaxed);
+        const Cell* cell = &buffer_[pos % kCapacity];
+        std::size_t seq = cell->sequence_.load(std::memory_order_acquire);
+        std::intptr_t dif = static_cast<std::intptr_t>(seq) - static_cast<std::intptr_t>(pos + 1);
+        return dif >= 0;
+    }
+
     /** Returns the number of items ever added to the queue: both present in the queue and already dequeed. */
     size_t cumulativeThroughput() const noexcept {
         return enqueuePos_.load();
+    }
+
+    bool empty() const noexcept {
+        return enqueuePos_.load(std::memory_order_relaxed) == dequeuePos_.load(std::memory_order_relaxed);
     }
 
 private:

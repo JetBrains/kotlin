@@ -13,6 +13,7 @@ import com.intellij.pom.tree.TreeAspect
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.TreeCopyHandler
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -131,6 +132,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
     private fun createPsiFactory(): KtPsiFactory {
         val configuration = CompilerConfiguration.create()
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForProduction(
             projectDisposable = testServices.compilerConfigurationProvider.testRootDisposable,
             configuration = configuration,

@@ -1,0 +1,3 @@
+expression: 4
+expression PSI: KtConstantExpression
+type: kotlin.Byte

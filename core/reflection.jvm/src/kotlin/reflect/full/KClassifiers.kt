@@ -69,7 +69,7 @@ internal fun KClassifier.createTypeImpl(
         this,
         arguments,
         nullable,
-        annotations,
+        lazyOf(annotations),
         abbreviation = null,
         isDefinitelyNotNullType = false,
         isNothingType = false,

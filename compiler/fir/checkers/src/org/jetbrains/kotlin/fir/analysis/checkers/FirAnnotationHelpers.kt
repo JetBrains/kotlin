@@ -98,7 +98,7 @@ fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClass
     if (this !is FirGetClassCall) return null
     return when (val argument = argument) {
         is FirResolvedQualifier ->
-            argument.symbol?.fullyExpandedClass(session)
+            argument.qualifierSymbol?.fullyExpandedClass(session)
         is FirClassReferenceExpression -> {
             val classTypeRef = argument.classTypeRef
             val coneType = classTypeRef.coneType.unwrapToSimpleTypeUsingLowerBound()
@@ -109,15 +109,8 @@ fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClass
 }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun checkRepeatedAnnotation(
-    useSiteTarget: AnnotationUseSiteTarget?,
-    existingTargetsForAnnotation: MutableList<AnnotationUseSiteTarget?>,
-    annotation: FirAnnotation,
-    annotationSource: KtSourceElement?,
-) {
-    val duplicated = useSiteTarget in existingTargetsForAnnotation
-            || existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) }
-    if (duplicated && !annotation.isRepeatable(context.session)) {
+fun checkRepeatedAnnotation(annotation: FirAnnotation, annotationSource: KtSourceElement?) {
+    if (!annotation.isRepeatable(context.session)) {
         reporter.reportOn(annotationSource, FirErrors.REPEATED_ANNOTATION)
     }
 }
@@ -158,26 +151,33 @@ fun FirAnnotationContainer.getImplicitUseSiteTargetList(): List<AnnotationUseSit
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkRepeatedAnnotation(
-    annotationContainer: FirAnnotationContainer?,
     annotations: List<FirAnnotation>,
     annotationSources: Map<FirAnnotation, KtSourceElement?>,
     defaultSource: KtSourceElement?,
 ) {
     if (annotations.size <= 1) return
-
-    val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
+    val annotationsSet = hashSetOf<ConeKotlinType>()
 
     for (annotation in annotations) {
-        // TODO: KT-85288 consider dropping use-site target checks here
-        val useSiteTarget = annotation.useSiteTarget.takeIf {
-            it != AnnotationUseSiteTarget.ALL
-        } ?: annotationContainer?.getDefaultUseSiteTarget(annotation)
         val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType()
-        val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
-
         val source = annotationSources[annotation] ?: defaultSource
-        checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, source)
-        existingTargetsForAnnotation.add(useSiteTarget)
+        if (expandedType in annotationsSet) {
+            checkRepeatedAnnotation(annotation, source)
+        }
+        annotationsSet.add(expandedType)
     }
 }
 
+/**
+ * If [this] is an argument expression provided for a vararg parameter, returns its elements.
+ */
+fun FirExpression.unwrapVarargValue(): List<FirExpression> {
+    return when (this) {
+        is FirVarargArgumentsExpression -> arguments
+
+        // This branch is necessary because of how serialization / deserialization works:
+        // When deserializing an argument for vararg, it is deserialized as `FirCollectionLiteral`, not `FirVarargArgumentsExpression`.
+        is FirCollectionLiteral -> arguments
+        else -> listOf()
+    }
+}

@@ -58,6 +58,10 @@ internal fun <T> Array<out T>?.toListOrEmpty(): List<T> = this?.toList() ?: empt
 
 internal fun <T, R> Array<out T>?.mapOrEmpty(transform: (T) -> R): List<R> = this?.map(transform) ?: emptyList()
 
+internal fun Array<String>.checkNoneContains(other: CharSequence) {
+    asList().checkNoneContains(other)
+}
+
 internal fun List<String>.checkNoneContains(other: CharSequence) {
     val invalidItem = firstOrNull { it.contains(other) }
     if (invalidItem != null) {

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 fun IrFunction.isSimpleFunctionCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
@@ -126,10 +127,10 @@ fun IrFactory.createDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrS
     }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class, K1Deprecation::class)
 private val IrLazyClassBase.classProto: ProtoBuf.Class? get() = (descriptor as? DeserializedClassDescriptor)?.classProto
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class, K1Deprecation::class)
 private val IrLazyClassBase.nameResolver: NameResolver? get() = (descriptor as? DeserializedClassDescriptor)?.c?.nameResolver
 
 internal val IrLazyClassBase.irLazyClassModuleName: String?

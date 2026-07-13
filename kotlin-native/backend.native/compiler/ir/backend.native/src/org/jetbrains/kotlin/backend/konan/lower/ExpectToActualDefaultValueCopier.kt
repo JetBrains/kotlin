@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -45,6 +46,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
         }
     }
 
+    @OptIn(K1Deprecation::class)
     private fun copyDefaultArgumentsFromExpectToActual(declaration: IrDeclaration) {
         declaration.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
@@ -86,6 +88,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
     private fun IrEnumEntry.findActualForExpected(): IrEnumEntry =
             moduleIndex.enumEntries[descriptor.findActualForExpect()]!!
 
+    @OptIn(K1Deprecation::class)
     private inline fun <reified T : MemberDescriptor> T.findActualForExpect(): T {
         if (!this.isExpect) error(this)
         return (findCompatibleActualsForExpected(module).singleOrNull() ?: error(this)) as T

@@ -14,12 +14,21 @@ public struct KotlinError: Error & CustomStringConvertible {
     }
 }
 
+public protocol SealedType {
+    associatedtype T
+    var value: T { get }
+}
+
 public protocol _KotlinBridgeable {
     init(__externalRCRefUnsafe: UnsafeMutableRawPointer!, options: KotlinBaseConstructionOptions)
     func __externalRCRef() -> UnsafeMutableRawPointer!
 }
 
-public class _KotlinExistential<Wrapped>: KotlinBase {
+public class _KotlinExistentialPenBox: KotlinBase {
+
+}
+
+public class _KotlinExistential<Wrapped>: _KotlinExistentialPenBox {
 
 }
 

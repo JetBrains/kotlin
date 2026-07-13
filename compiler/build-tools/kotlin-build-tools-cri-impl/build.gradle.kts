@@ -1,4 +1,6 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
     kotlin("jvm")
     id("project-tests-convention")
     kotlin("plugin.serialization")

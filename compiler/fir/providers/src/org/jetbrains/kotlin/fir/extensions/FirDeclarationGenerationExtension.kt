@@ -54,7 +54,15 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
 
     // Can be called on STATUS stage
     open fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> = emptyList()
+
+    /**
+     * Special function designed for Java interop (to generate Java fields) and not useful for general plugins.
+     */
+    @UnsafePluginApi
+    open fun generateFields(callableId: CallableId, context: MemberGenerationContext?): List<FirFieldSymbol> = emptyList()
+
     open fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> = emptyList()
+
     open fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> = emptyList()
 
     // Can be called on IMPORTS stage

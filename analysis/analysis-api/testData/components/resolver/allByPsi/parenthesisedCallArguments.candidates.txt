@@ -871,7 +871,7 @@ KtPrefixExpression(382,389): '++value'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(382,384): '++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

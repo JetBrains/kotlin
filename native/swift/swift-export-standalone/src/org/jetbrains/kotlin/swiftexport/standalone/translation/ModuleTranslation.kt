@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.builders.KaModules
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSirSession
+import org.jetbrains.kotlin.swiftexport.standalone.builders.reexportedObjCModuleNames
 import org.jetbrains.kotlin.swiftexport.standalone.builders.translateModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
@@ -46,7 +47,7 @@ internal fun translateModulePublicApi(module: InputModule, kaModules: KaModules,
             symbolContainingModule?.let { libraryName ->
                 externalTypeDeclarationReferences
                     .getOrPut(libraryName) { mutableListOf() }
-                    .addIfNotNull(symbol.classId?.asSingleFqName())
+                    .addIfNotNull(symbol.translationRootFqName)
             }
         }
         buildSirSession(module.name, kaModules, config, module.config, externalTypeReferenceHandler).withSessions {
@@ -98,7 +99,7 @@ internal fun translateCrossReferencingModulesTransitively(
         analyze(kaModules.useSiteModule) {
             val libraryName = (symbol.containingModule as? KaLibraryModule)?.libraryName
             translationStates.find { it.kaModule.libraryName == libraryName }?.let {
-                val fqName = symbol.classId?.asSingleFqName()
+                val fqName = symbol.translationRootFqName
                     ?: return@analyze
                 if (fqName !in it.processedReferences && fqName !in it.currentlyProcessing) {
                     it.unprocessedReferences += fqName
@@ -148,6 +149,9 @@ internal fun translateCrossReferencingModulesTransitively(
     }
 }
 
+private val KaClassLikeSymbol.translationRootFqName: FqName?
+    get() = classId?.let { generateSequence(it) { id -> id.outerClassId }.last().asSingleFqName() }
+
 context(sir: SirSession)
 private fun createTranslationResult(
     sirModule: SirModule,
@@ -179,7 +183,7 @@ private fun createTranslationResult(
 
     val knownModuleNames = setOf(KotlinRuntimeModule.name, bridgeModuleName) +
             kaModules.platformLibraries.map { it.libraryName } +
-            kaModules.cinteropReexportLibraries.map { it.libraryName }
+            kaModules.cinteropReexportLibrary?.reexportedObjCModuleNames().orEmpty()
     val referencedSwiftModules = sirModule.imports
         .filter { it.moduleName !in knownModuleNames }
         .map { SwiftExportModule.Reference(it.moduleName) }

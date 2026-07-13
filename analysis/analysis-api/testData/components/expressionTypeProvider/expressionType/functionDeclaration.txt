@@ -1,0 +1,3 @@
+expression: fun x(): Int {}
+expression PSI: KtNamedFunction
+type: kotlin.Unit

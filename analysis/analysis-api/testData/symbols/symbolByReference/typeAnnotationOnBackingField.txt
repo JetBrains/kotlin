@@ -1,7 +1,7 @@
 KaBackingFieldSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -28,9 +28,10 @@ KaBackingFieldSymbol:
     ]
     typeArguments: []
     type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+  typeParameters: []
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(typeAnnotationOnBackingField.kt)
   getContainingJvmClassName: TypeAnnotationOnBackingFieldKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

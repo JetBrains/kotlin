@@ -20,24 +20,10 @@ public data class SwiftModuleConfig(
     val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
     val experimentalFeatures: Map<String, String> = emptyMap(),
     val shouldBeFullyExported: Boolean,
-    /**
-     * When true, the module is a user cinterop klib whose types originate from a pre-existing ObjC module.
-     * Swift Export does not generate a separate Swift module for it; references emit `import <name>`
-     * and qualify types as `<name>.Type`, where `<name>` is the module's [InputModule.name]. The caller
-     * must set [InputModule.name] to the desired Objective-C / Swift module name.
-     * Must be combined with `shouldBeFullyExported = false`.
-     */
-    val moduleProvidedThroughCinterop: Boolean = false,
 ) {
 
     val targetPackageFqName: FqName? = rootPackage?.rootPackageToFqn()
     val unsupportedDeclarationReporter: UnsupportedDeclarationReporter = unsupportedDeclarationReporterKind.toReporter()
-
-    init {
-        require(!moduleProvidedThroughCinterop || !shouldBeFullyExported) {
-            "moduleProvidedThroughCinterop is incompatible with shouldBeFullyExported = true"
-        }
-    }
 
     public companion object {
         public const val ROOT_PACKAGE: String = "packageRoot"

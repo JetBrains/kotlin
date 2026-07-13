@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoComp
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
@@ -26,10 +29,10 @@ import org.junit.jupiter.api.DisplayName
 class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Intra-module IC tracks source changes in consecutive builds")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testConsequentBuilds(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val module1 = trackedModule("jvm-module-1")
+            val module1 = trackedModule("basic-multimodule-project/module-1")
             module1.createPredefinedFile("secret.kt", "new-file")
             module1.compile {
                 assertCompiledSources("secret.kt")
@@ -93,6 +96,62 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
         }
     }
 
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-13204: IC resolves typealias correctly after visibility change (externally tracked)")
+    @TestMetadata("class-visibility-change")
+    fun testClassVisibilityChangeRecompilesDirectUsersExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            module("class-visibility-change").changeClassVisibilityAndAssertDirtySet()
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-13204: IC resolves typealias correctly after visibility change (internally tracked)")
+    @TestMetadata("class-visibility-change")
+    fun testClassVisibilityChangeRecompilesDirectUsersInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            trackedModule("class-visibility-change").changeClassVisibilityAndAssertDirtySet()
+        }
+    }
+
+    private fun ScenarioModule.changeClassVisibilityAndAssertDirtySet() {
+        // KT-13204: flip `Curry` to `internal`; `UseCurry.kt` references it via typealias FN2, `Dummy.kt` does not.
+        replaceFileWithVersion("Curry.kt", "internal")
+
+        compile {
+            // `Dummy.kt` is intentionally absent: only the changed class and its direct user recompile.
+            assertCompiledSources("Curry.kt", "UseCurry.kt")
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-69042: IC recompiles the Kotlin usage when an inlined Java constant changes (externally tracked)")
+    @TestMetadata("kotlin-java-constant")
+    fun testKotlinTracksJavaConstantChangeExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            module("kotlin-java-constant").changeJavaConstantAndAssertUsageRecompiled()
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-69042: IC recompiles the Kotlin usage when an inlined Java constant changes (internally tracked)")
+    @TestMetadata("kotlin-java-constant")
+    fun testKotlinTracksJavaConstantChangeInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            trackedModule("kotlin-java-constant").changeJavaConstantAndAssertUsageRecompiled()
+        }
+    }
+
+    private fun ScenarioModule.changeJavaConstantAndAssertUsageRecompiled() {
+        replaceFileWithVersion("JavaConstants.java", "new-value")
+
+        compile {
+            // Regression test for KT-69042: under K2 a changed Java constant must recompile the Kotlin
+            // file that reads it, otherwise the stale value stays inlined in the usage.
+            assertCompiledSources("usage.kt")
+        }
+    }
+
     @DisplayName("Explicit backing fields don't alter the compilability of a module")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("explicit-backing-fields-incremental-1")
@@ -123,6 +182,62 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(LogLevel.ERROR, ".*Main\\.kt:8:19 This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
                 assertLogContainsPatterns(LogLevel.ERROR, ".*Main\\.kt:14:19 This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-49023: Renaming a file with a case-only change should not cause redeclaration errors")
+    @TestMetadata("ic-scenarios/kt-49023")
+    fun testCaseOnlyFileRenameDoesNotCauseRedeclarationErrors(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val mod = module("ic-scenarios/kt-49023")
+
+            mod.deleteFile("Foo.kt")
+            mod.createPredefinedFile("foo.kt", "different-case")
+
+            mod.compile {
+                assertCompiledSources("foo.kt")
+                assertNoOutputSetChanges()
+            }
+        }
+    }
+
+    @DisplayName("Irrelevant ABI change in dependency does not cause any recompilation")
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @TestMetadata("basic-multimodule-project")
+    fun testUnusedAbiChange(scenario: ScenarioCreator) {
+        scenario {
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
+
+            module1.createPredefinedFile("secret.kt", "new-file")
+            module1.compile {
+                assertCompiledSources("secret.kt")
+            }
+            module2.compile {
+                assertNoCompiledSources()
+                assertNoOutputSetChanges()
+            }
+        }
+    }
+
+    @DisplayName("Mixed source + dependency change recompiles expected files")
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @TestMetadata("basic-multimodule-project")
+    fun testMixedSourceAndDependencyChange(scenario: ScenarioCreator) {
+        scenario {
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
+
+            module1.replaceFileWithVersion("bar.kt", "add-default-argument")
+            module2.replaceFileWithVersion("a.kt", "change-value")
+
+            module1.compile {
+                assertCompiledSources("bar.kt")
+            }
+            module2.compile {
+                assertCompiledSources("a.kt", "b.kt")
             }
         }
     }

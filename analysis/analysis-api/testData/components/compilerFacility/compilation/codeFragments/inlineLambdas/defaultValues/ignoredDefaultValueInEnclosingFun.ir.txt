@@ -5,7 +5,7 @@ MODULE_FRAGMENT
       CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-      FUN name:run visibility:public modality:FINAL returnType:kotlin.Int
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.Int [companion]
         EXPRESSION_BODY
           BLOCK type=kotlin.Int origin=null
             CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Int origin=INVOKE

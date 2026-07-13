@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
@@ -46,7 +47,7 @@ abstract class MemberScopeImpl : MemberScope {
     override fun getVariableNames(): Set<Name> =
         getContributedDescriptors(
             DescriptorKindFilter.VARIABLES, alwaysTrue()
-        ).filterIsInstanceMapTo<SimpleFunctionDescriptor, Name, MutableSet<Name>>(mutableSetOf()) { it.name }
+        ).filterIsInstanceMapTo<VariableDescriptor, Name, MutableSet<Name>>(mutableSetOf()) { it.name }
 
     override fun getClassifierNames(): Set<Name>? = null
 

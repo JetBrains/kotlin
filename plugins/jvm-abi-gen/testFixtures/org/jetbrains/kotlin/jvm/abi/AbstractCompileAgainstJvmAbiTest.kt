@@ -1,11 +1,12 @@
 package org.jetbrains.kotlin.jvm.abi
 
-import java.io.File
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.junit.jupiter.api.Assertions.assertEquals
 import java.net.URLClassLoader
 
 abstract class AbstractCompileAgainstJvmAbiTest : BaseJvmAbiTest() {
-    fun doTest(path: String) {
-        val testDir = File(path)
+    fun runTest(path: String) {
+        val testDir = ForTestCompileRuntime.transformTestDataPath(path)
         val lib = Compilation(testDir, "lib").also { make(it) }
         val app = Compilation(testDir, "app", dependencies = listOf(lib)).also { make(it) }
         runApp(app)

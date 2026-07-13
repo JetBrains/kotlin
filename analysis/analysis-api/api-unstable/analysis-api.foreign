@@ -11,19 +11,11 @@ com/intellij/psi/PsiMember
 com/intellij/psi/PsiType
 com/intellij/psi/search/GlobalSearchScope
 com/intellij/psi/tree/TokenSet
-org/jetbrains/kotlin/analysis/utils/printer/PrettyPrinter
-org/jetbrains/kotlin/builtins/functions/FunctionTypeKind
-org/jetbrains/kotlin/config/CompilerConfiguration
-org/jetbrains/kotlin/config/CompilerConfigurationKey
 org/jetbrains/kotlin/config/LanguageVersionSettings
-org/jetbrains/kotlin/contracts/description/EventOccurrencesRange
-org/jetbrains/kotlin/descriptors/Visibility
 org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget
-org/jetbrains/kotlin/descriptors/annotations/KotlinTarget
 org/jetbrains/kotlin/idea/references/KtReference
 org/jetbrains/kotlin/lexer/KtKeywordToken
 org/jetbrains/kotlin/lexer/KtModifierKeywordToken
-org/jetbrains/kotlin/load/kotlin/TypeMappingMode
 org/jetbrains/kotlin/name/CallableId
 org/jetbrains/kotlin/name/ClassId
 org/jetbrains/kotlin/name/FqName
@@ -81,7 +73,4 @@ org/jetbrains/kotlin/psi/KtTypeReference
 org/jetbrains/kotlin/psi/KtWhenConditionInRange
 org/jetbrains/kotlin/resolution/KtResolvable
 org/jetbrains/kotlin/resolution/KtResolvableCall
-org/jetbrains/kotlin/resolve/deprecation/DeprecationInfo
 org/jetbrains/kotlin/types/Variance
-org/jetbrains/kotlin/util/ImplementationStatus
-org/jetbrains/org/objectweb/asm/Type

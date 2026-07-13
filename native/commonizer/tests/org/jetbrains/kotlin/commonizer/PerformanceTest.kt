@@ -8,10 +8,12 @@
 package org.jetbrains.kotlin.commonizer
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.commonizer.PerformanceTest.DefaultCommonizationParameters.COMMONIZED_TARGETS
+import org.jetbrains.kotlin.commonizer.PerformanceTest.DefaultCommonizationParameters.NATIVE_DISTRIBUTION_PATH
 import org.jetbrains.kotlin.commonizer.utils.CommonizerMemoryTracker
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Ignore
+import org.junit.jupiter.api.*
 import java.io.File
 import org.jetbrains.kotlin.commonizer.cli.main as entryPoint
 
@@ -29,18 +31,21 @@ import org.jetbrains.kotlin.commonizer.cli.main as entryPoint
  *
  * NOTE 2: Don't forget to unmute the test by removing the [Ignore] annotation!
  */
-@Ignore
-class PerformanceTest : KtUsefulTestCase() {
+@Disabled
+class PerformanceTest {
     private lateinit var outputDir: File
 
-    override fun setUp() {
-        outputDir = KtTestUtil.tmpDir(FileUtil.sanitizeFileName(name))
+    @BeforeEach
+    fun setUp(info: TestInfo) {
+        outputDir = KtTestUtil.tmpDir(FileUtil.sanitizeFileName(info.testMethod.get().name))
     }
 
-    override fun tearDown() {
+    @AfterEach
+    fun tearDown() {
         outputDir.deleteRecursively()
     }
 
+    @Test
     fun test_distribution_commonization_memory_usage() {
         CommonizerMemoryTracker.startTracking("memory-usage", 200, forceGC = true)
         try {
@@ -50,6 +55,7 @@ class PerformanceTest : KtUsefulTestCase() {
         }
     }
 
+    @Test
     fun test_distribution_commonization_throughput() {
         doTest("throughput")
     }

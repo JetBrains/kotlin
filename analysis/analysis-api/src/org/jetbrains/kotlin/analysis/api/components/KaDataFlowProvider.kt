@@ -43,31 +43,39 @@ public interface KaDataFlowProvider : KaSessionComponent {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo] instead.**
+ *
  * Represents smart cast information for an expression.
  */
+@KaObsoleteComponentApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaSmartCastInfo : KaLifetimeOwner {
+public interface KaSmartCastInfo : org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo {
+
     /**
      * Whether the smart cast is [stable](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability).
      */
-    public val isStable: Boolean
+    public override val isStable: Boolean
 
     /**
      * The original type of the expression before the smart cast was applied.
      */
     @KaExperimentalApi
-    public val originalType: KaType
+    public override val originalType: KaType
 
     /**
      * The type with the smart cast applied.
      */
-    public val smartCastType: KaType
+    public override val smartCastType: KaType
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCast] instead.**
+ *
  * Represents type information about an implicit receiver which has been smart-cast to a more specific type. An implicit smart cast is
  * applied to an implicit receiver, such as `substring()` called on an implicit `this` given an earlier smart cast `this is String`.
  */
+@KaObsoleteComponentApi
+@KaNonPublicApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
     /**
@@ -82,8 +90,12 @@ public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCastKind] instead.**
+ *
  * Represents the kind of implicit receiver affected by the smart cast.
  */
+@KaObsoleteComponentApi
+@KaNonPublicApi
 public enum class KaImplicitReceiverSmartCastKind {
     /**
      * The cast is applied to the receiver of a member call.
@@ -96,6 +108,10 @@ public enum class KaImplicitReceiverSmartCastKind {
     EXTENSION,
 }
 
+/**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot] instead.**
+ */
+@KaObsoleteComponentApi
 @KaNonPublicApi
 public class KaDataFlowExitPointSnapshot(
     /**
@@ -183,7 +199,13 @@ public class KaDataFlowExitPointSnapshot(
 /**
  * [Smart cast information][KaSmartCastInfo] for the given [KtExpression], or `null` if smart casts are not applied to it.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.dataflow' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.smartCastInfo",
+        "org.jetbrains.kotlin.analysis.api.dataflow.smartCastInfo",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KtExpression.smartCastInfo: KaSmartCastInfo?
@@ -204,14 +226,26 @@ public val KtExpression.smartCastInfo: KaSmartCastInfo?
  * }
  * ```
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.dataflow' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.implicitReceiverSmartCasts",
+        "org.jetbrains.kotlin.analysis.api.dataflow.implicitReceiverSmartCasts",
+    ),
+)
 @KaNonPublicApi
 @KaContextParameterApi
 context(session: KaSession)
 public val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
     get() = with(session) { implicitReceiverSmartCasts }
 
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.dataflow' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "computeExitPointSnapshot(statements)",
+        "org.jetbrains.kotlin.analysis.api.dataflow.computeExitPointSnapshot",
+    ),
+)
 @KaNonPublicApi
 @KaContextParameterApi
 context(session: KaSession)

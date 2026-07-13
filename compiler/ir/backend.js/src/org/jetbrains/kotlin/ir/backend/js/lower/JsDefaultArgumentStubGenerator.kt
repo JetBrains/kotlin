@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.excludeFromJsExport
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
@@ -25,11 +26,17 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+
+/**
+ * Indicates that there is a created bridge for default arguments setting, so the current lowering should use this bridge
+ * instead of the original function on the call sides
+ */
+val IrFunction.hasDefaultArgumentBridge: Boolean
+    get() = defaultArgumentsDispatchFunction.let { it != null && it != this }
 
 class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
     DefaultArgumentStubGenerator<JsIrBackendContext>(
@@ -111,6 +118,8 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
             return listOf(originalFun, defaultFunStub)
         }
 
+        val isOriginalFunctionExported = originalFun.isExported(context)
+
         if (!defaultFunStub.isFakeOverride) {
             with(defaultFunStub) {
                 parameters.forEach {
@@ -120,7 +129,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                     it.defaultValue = null
                 }
 
-                if (originalFun.isExported(context)) {
+                if (isOriginalFunctionExported) {
                     context.additionalExportedDeclarations.add(defaultFunStub)
 
                     if (!originalFun.hasAnnotation(JsAnnotations.jsNameFqn)) {
@@ -133,15 +142,18 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         val [exportAnnotations, irrelevantAnnotations] = originalFun.annotations
             .map { it.deepCopyWithSymbols(originalFun as? IrDeclarationParent) }
             .partition {
-                it.isAnnotation(JsAnnotations.jsExportFqn) ||
-                        (it.isAnnotation(JsAnnotations.jsNameFqn)) ||
-                        (it.isAnnotation(JsAnnotations.jsExportIgnoreFqn))
+                it.isAnnotationWithEqualFqName(JsAnnotations.jsExportFqn) ||
+                        (it.isAnnotationWithEqualFqName(JsAnnotations.jsNameFqn)) ||
+                        (it.isAnnotationWithEqualFqName(JsAnnotations.jsExportIgnoreFqn))
 
             }
 
         originalFun.annotations = irrelevantAnnotations
         defaultFunStub.annotations = exportAnnotations
-        originalFun.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
+
+        if (isOriginalFunctionExported) {
+            originalFun.excludeFromJsExport(context)
+        }
 
         return listOf(originalFun, defaultFunStub)
     }
@@ -221,10 +233,6 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                     arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, name.identifier)
                 }
         }
-    }
-
-    private fun IrConstructorCall.isAnnotation(name: FqName): Boolean {
-        return symbol.owner.parentAsClass.fqNameWhenAvailable == name
     }
 
     private fun IrFunction.hasDefaultArgs(): Boolean =

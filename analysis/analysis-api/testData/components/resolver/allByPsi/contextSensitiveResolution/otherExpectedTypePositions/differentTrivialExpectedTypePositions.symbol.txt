@@ -33,7 +33,7 @@ KtDotQualifiedExpression(118,126): 'MyEnum.Y'
 
 KtNameReferenceExpression(118,124): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -41,7 +41,7 @@ KtNameReferenceExpression(118,124): 'MyEnum'
 
 KtNameReferenceExpression(125,126): 'Y'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.Y
@@ -64,7 +64,7 @@ KtUserType(135,141): 'MyEnum'
 
 KtNameReferenceExpression(135,141): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -72,7 +72,7 @@ KtNameReferenceExpression(135,141): 'MyEnum'
 
 KtNameReferenceExpression(144,145): 'X'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -95,7 +95,7 @@ KtUserType(153,159): 'MyEnum'
 
 KtNameReferenceExpression(153,159): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -103,7 +103,7 @@ KtNameReferenceExpression(153,159): 'MyEnum'
 
 KtNameReferenceExpression(162,163): 'L'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MyEnum
@@ -129,7 +129,7 @@ KtUserType(176,182): 'MyEnum'
 
 KtNameReferenceExpression(176,182): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -137,7 +137,7 @@ KtNameReferenceExpression(176,182): 'MyEnum'
 
 KtNameReferenceExpression(185,186): 'X'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -163,7 +163,7 @@ KtUserType(198,204): 'MyEnum'
 
 KtNameReferenceExpression(198,204): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -171,7 +171,7 @@ KtNameReferenceExpression(198,204): 'MyEnum'
 
 KtNameReferenceExpression(207,208): 'L'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MyEnum
@@ -200,7 +200,7 @@ KtUserType(221,227): 'MyEnum'
 
 KtNameReferenceExpression(221,227): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -208,7 +208,7 @@ KtNameReferenceExpression(221,227): 'MyEnum'
 
 KtNameReferenceExpression(230,231): 'X'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -234,7 +234,7 @@ KtUserType(252,258): 'MyEnum'
 
 KtNameReferenceExpression(252,258): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -248,7 +248,7 @@ KtParameterList(266,268): '()'
 
 KtNameReferenceExpression(271,272): 'X'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -277,7 +277,7 @@ KtUserType(299,305): 'MyEnum'
 
 KtNameReferenceExpression(299,305): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -285,7 +285,7 @@ KtNameReferenceExpression(299,305): 'MyEnum'
 
 KtNameReferenceExpression(308,309): 'X'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -317,7 +317,7 @@ KtUserType(335,341): 'MyEnum'
 
 KtNameReferenceExpression(335,341): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -325,7 +325,7 @@ KtNameReferenceExpression(335,341): 'MyEnum'
 
 KtNameReferenceExpression(344,345): 'X'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -339,7 +339,7 @@ KtBinaryExpression(350,355): 'm = Y'
 
 KtNameReferenceExpression(350,351): 'm'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var m: MyEnum
@@ -347,12 +347,12 @@ KtNameReferenceExpression(350,351): 'm'
 
 KtOperationReferenceExpression(352,353): '='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(354,355): 'Y'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.Y
@@ -366,7 +366,7 @@ KtBinaryExpression(360,365): 'm = L'
 
 KtNameReferenceExpression(360,361): 'm'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var m: MyEnum
@@ -374,12 +374,12 @@ KtNameReferenceExpression(360,361): 'm'
 
 KtOperationReferenceExpression(362,363): '='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(364,365): 'L'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MyEnum
@@ -408,7 +408,7 @@ KtUserType(380,387): 'Boolean'
 
 KtNameReferenceExpression(380,387): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -428,7 +428,7 @@ KtUserType(390,396): 'MyEnum'
 
 KtNameReferenceExpression(390,396): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -445,7 +445,7 @@ KtContainerNode(407,408): 'b'
 
 KtNameReferenceExpression(407,408): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
@@ -462,7 +462,7 @@ KtReturnExpression(410,418): 'return X'
 
 KtNameReferenceExpression(417,418): 'X'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -476,7 +476,7 @@ KtReturnExpression(423,431): 'return L'
 
 KtNameReferenceExpression(430,431): 'L'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MyEnum

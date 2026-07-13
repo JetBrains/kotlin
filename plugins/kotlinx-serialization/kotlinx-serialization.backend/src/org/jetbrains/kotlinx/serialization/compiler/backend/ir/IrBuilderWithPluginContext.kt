@@ -421,8 +421,8 @@ interface IrBuilderWithPluginContext {
         return annotationByFq.values.toList().flatten()
     }
 
-    fun copyAnnotationsFrom(annotations: List<IrConstructorCall>): List<IrExpression> =
-        annotations.filter { it.symbol.owner.parentAsClass.isSerialInfoAnnotation }.map { it.deepCopyWithoutPatchingParents() }
+    fun copyAnnotationsFrom(annotations: List<IrAnnotation>): List<IrExpression> =
+        annotations.filter { it.classSymbol.owner.isSerialInfoAnnotation }.map { it.deepCopyWithoutPatchingParents() }
 
     fun kSerializerType(serializableType: IrType): IrSimpleType {
         val kSerializerClass = compilerContext.kSerializerClass

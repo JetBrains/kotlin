@@ -140,12 +140,14 @@ class ChangesCollector {
                     }
                     is PackagePartProtoData -> {
                         collectSignature(oldData, areSubclassesAffected = true)
+                        newData.collectAll(isRemoved = false, isAdded = true)
                     }
                 }
             }
             is PackagePartProtoData -> {
                 when (newData) {
                     is ClassProtoData -> {
+                        oldData.collectAll(isRemoved = true, isAdded = false)
                         collectSignature(newData, areSubclassesAffected = false)
                     }
                     is PackagePartProtoData -> {

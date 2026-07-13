@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.keepOnlyDefaultProfiles
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import java.nio.file.Path
 
 class Distribution private constructor(private val serialized: Serialized) : java.io.Serializable {
     constructor(
@@ -135,3 +133,15 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 fun buildDistribution(konanHome: String, konanDataDir: String? = null) = Distribution(konanHome,true, null, konanDataDir = konanDataDir)
 
 fun customerDistribution(konanHome: String, konanDataDir: String? = null) = Distribution(konanHome,false, null, konanDataDir = konanDataDir)
+
+private fun Properties.keepOnlyDefaultProfiles() {
+    val DEPENDENCY_PROFILES_KEY = "dependencyProfiles"
+    val dependencyProfiles = this.getProperty(DEPENDENCY_PROFILES_KEY)
+    if (dependencyProfiles != "default alt")
+        error("unexpected $DEPENDENCY_PROFILES_KEY value: expected 'default alt', got '$dependencyProfiles'")
+
+    // Force build to use only 'default' profile:
+    this.setProperty(DEPENDENCY_PROFILES_KEY, "default")
+    // TODO: it actually affects only resolution made in :dependencies,
+    // that's why we assume that 'default' profile comes first (and check this above).
+}

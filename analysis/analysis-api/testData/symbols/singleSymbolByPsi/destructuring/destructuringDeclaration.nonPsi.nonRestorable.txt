@@ -3,7 +3,6 @@ KaDestructuringDeclarationSymbol:
     AAA(value = "y")
       psi: KtAnnotationEntry
   ]
-  compilerVisibility: Local
   entries: [
     KaLocalVariableSymbol(<local>/a)
     KaLocalVariableSymbol(<local>/b)
@@ -17,5 +16,5 @@ KaDestructuringDeclarationSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

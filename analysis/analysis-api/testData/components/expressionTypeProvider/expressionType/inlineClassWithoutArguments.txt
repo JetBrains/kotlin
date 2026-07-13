@@ -1,2 +1,3 @@
 expression: InlineClass()
+expression PSI: KtCallExpression
 type: InlineClass

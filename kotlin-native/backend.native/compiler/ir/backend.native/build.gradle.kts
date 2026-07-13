@@ -1,8 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("test-inputs-check")
+    id("project-tests-convention")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -26,10 +30,8 @@ dependencies {
     implementation(project(":compiler:ir.backend.native"))
     implementation(project(":compiler:ir.inline"))
     implementation(project(":compiler:ir.objcinterop"))
-    implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.serialization.native"))
-    implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:resolution"))
     implementation(project(":native:unsafe-mem"))
     implementation(project(":core:compiler.common.native"))
@@ -47,6 +49,7 @@ dependencies {
     implementation(project(":native:binary-options"))
     implementation(project(":compiler:cli:cli-native-klib"))
     implementation(project(":native:native.config"))
+    implementation(project(":native:cinterop.deserialization"))
     implementation(project(":kotlinx-metadata-klib"))
     compileOnly(project(":kotlin-metadata")) // Only to fix IDE reporting unresolved references (KTI-3323).
 
@@ -67,8 +70,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-
-optInToK1Deprecation()
 
 sourcesJar()
 javadocJar()

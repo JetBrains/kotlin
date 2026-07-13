@@ -12,13 +12,9 @@
 
 /incorrectCollections.kt:12:37: error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
 
-/incorrectCollections.kt:14:34: error: Argument type mismatch: actual type is 'List<uninferred T (of fun <T> listOf)>', but 'Int' was expected.
+/incorrectCollections.kt:14:34: error: Expected type 'Int' for collection literal does not define operator 'of' and is not a supertype of 'List'.
 
-/incorrectCollections.kt:14:34: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
-
-/incorrectCollections.kt:15:24: error: Argument type mismatch: actual type is 'List<uninferred T (of fun <T> listOf)>', but 'Int' was expected.
-
-/incorrectCollections.kt:15:24: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+/incorrectCollections.kt:15:24: error: Expected type 'Int' for collection literal does not define operator 'of' and is not a supertype of 'List'.
 
 /incorrectCollections.kt:16:25: error: Argument type mismatch: actual type is 'Double', but 'Long' was expected.
 

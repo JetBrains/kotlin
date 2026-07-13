@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.generators.test.interpreter
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.interpreter.DESTINATION
 import org.jetbrains.kotlin.generators.interpreter.generateMap
 import org.jetbrains.kotlin.test.TestDataAssertions
+import org.junit.jupiter.api.Test
 
-class GenerateInterpreterMapTest : TestCase() {
+class GenerateInterpreterMapTest {
+    @Test
     fun testGeneratedDataIsUpToDate() {
         val text = generateMap()
         TestDataAssertions.assertEqualsToFile(DESTINATION, text)

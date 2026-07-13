@@ -61,6 +61,8 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -355,7 +357,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 ref.resolvedSymbolOrigin
             }
             is FirResolvedQualifier -> {
-                val symbol = symbol ?: return
+                val symbol = qualifierSymbol ?: return
                 // Skip non-class-contained declarations
                 if (symbol.getContainingClassSymbol() == null) return
 
@@ -685,6 +687,46 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode
     ): FirStatement {
         return checkedSafeCallSubject
+    }
+
+    /**
+     * We only need to check short form destructuring with parentheses of value classes when value classes and NBD is enabled,
+     * but if [LanguageFeature.EnableNameBasedDestructuringShortForm] is also enabled, the syntax is treated as NBD anyway so we can
+     * skip the check.
+     */
+    private val skipComponentCallValueClassCheck: Boolean =
+        LanguageFeature.FullValueClasses.isDisabled() ||
+                LanguageFeature.NameBasedDestructuring.isDisabled() ||
+                LanguageFeature.EnableNameBasedDestructuringShortForm.isEnabled()
+
+    override fun transformComponentCall(componentCall: FirComponentCall, data: ResolutionMode): FirStatement {
+        // Check if it's a short form destructuring with parentheses to a value class.
+        // If yes, convert it to name-based destructuring.
+        if (!componentCall.isShortFormWithParentheses || skipComponentCallValueClassCheck) return super.transformComponentCall(componentCall, data)
+
+        // The type of the initializer is not set because it wasn't resolved yet.
+        // But the callee reference is initialized with a symbol pointing to the tmp variable which is already resolved at this point,
+        // so we can grab the type from it.
+        val initializerType = componentCall.explicitReceiver.toResolvedCallableSymbol(session)?.resolvedReturnType
+            ?: return super.transformComponentCall(componentCall, data)
+
+        // We just use anySuperTypeConstructor to handle flexible types, DNNs, type variables with value bounds, captured types,
+        // and intersections types.
+        val shouldUseNbd = context(session.typeContext) {
+            initializerType.anySuperTypeConstructor { it.asCone().toRegularClassSymbol()?.isFullValueClass == true }
+        }
+
+        if (!shouldUseNbd) return super.transformComponentCall(componentCall, data)
+
+        return transformPropertyAccessExpression(buildPropertyAccessExpression {
+            source = componentCall.source
+            explicitReceiver = componentCall.explicitReceiver
+            calleeReference = buildSimpleNamedReference {
+                this.source = componentCall.calleeReference.source
+                name = componentCall.initializerName
+            }
+            annotations.addAll(componentCall.annotations)
+        }, data)
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement =
@@ -1697,8 +1739,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // see e.g. uselessCastLeadsToRecursiveProblem.kt
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {
-                lhs.replaceResolvedToCompanionObject(newResolvedToCompanionObject = false)
-                val symbol = lhs.symbol
+                lhs.markNotUsedAsExpression()
+                val symbol = lhs.qualifierSymbol
                 val typeArguments: Array<ConeTypeProjection> =
                     if (lhs.typeArguments.isNotEmpty()) {
                         // If type arguments exist, use them to construct the type of the expression.
@@ -1718,6 +1760,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     )
                     type
                 } else {
+                    @OptIn(ResolvedQualifierTypeAccess::class)
                     lhs.resolvedType
                 }
             }
@@ -1838,12 +1881,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             return transformAnnotationCallPreCollectionLiterals(annotationCall)
         }
 
-        dataFlowAnalyzer.enterAnnotation()
+        dataFlowAnalyzer.enterAnnotationCall()
         dataFlowAnalyzer.enterCallArguments(annotationCall, annotationCall.arguments)
         transformCallArguments(annotationCall, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitCallArguments() // annotationCall
         val result = callResolver.resolveAnnotationCall(annotationCall)
-        dataFlowAnalyzer.exitAnnotation(alsoExitCall = true)
 
         callCompleter.completeCall(result, ContextIndependent)
         result.transformSingle(arrayOfCallTransformer, session)
@@ -1851,6 +1893,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             annotationCall.replaceArgumentMapping(it.toAnnotationArgumentMapping())
             evaluateAndReplaceArgumentMapping(annotationCall)
         }
+        dataFlowAnalyzer.exitAnnotationCall()
         annotationCall
     }
 

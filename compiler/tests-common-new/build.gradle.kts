@@ -2,9 +2,12 @@ import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
 }
@@ -29,6 +32,7 @@ dependencies {
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(libs.javaDiffUtils)
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)

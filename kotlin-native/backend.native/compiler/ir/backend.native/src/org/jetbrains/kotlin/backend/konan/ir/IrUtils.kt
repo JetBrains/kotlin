@@ -12,18 +12,14 @@ import org.jetbrains.kotlin.backend.konan.descriptors.arraysWithFixedSizeItems
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrComposite
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstantValue
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
@@ -257,11 +253,11 @@ fun IrFunctionSymbol.isComparisonFunction(map: Map<IrClassifierSymbol, IrSimpleF
         this in map.values
 
 fun IrFunction.externalSymbolOrThrow(): String? {
-    annotations.findAnnotation(RuntimeNames.importedBridge)?.let { return it.getAnnotationStringValue("bridgeName") }
+    annotations.findAnnotation(RuntimeNames.importedBridge)?.let { return it.getConstArgument<String>("bridgeName")!! }
 
-    annotations.findAnnotation(RuntimeNames.symbolNameAnnotation)?.let { return it.getAnnotationStringValue() }
+    annotations.findAnnotation(RuntimeNames.symbolNameAnnotation)?.let { return it.getConstArgument<String>("name") }
 
-    annotations.findAnnotation(KonanFqNames.gcUnsafeCall)?.let { return it.getAnnotationStringValue("callee") }
+    annotations.findAnnotation(KonanFqNames.gcUnsafeCall)?.let { return it.getConstArgument<String>("callee")!! }
 
     if (annotations.hasAnnotation(KonanFqNames.objCMethod)) return null
 

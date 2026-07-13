@@ -15,9 +15,8 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.hasEqualFqName
+import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName
 import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.FqName
@@ -173,7 +172,7 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
 
         private fun collectSuppressAnnotationKeys(element: IrElement): Boolean =
             (element as? IrAnnotationContainer)?.annotations?.filter {
-                it.type.classOrNull?.owner?.hasEqualFqName(SUPPRESS) == true
+                it.isAnnotationWithEqualFqName(SUPPRESS)
             }?.flatMap {
                 buildList {
                     fun addIfStringConst(irConst: IrConst) {
@@ -182,7 +181,7 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
                         }
                     }
 
-                    for (arg in it.arguments) {
+                    for (arg in it.argumentMapping.values) {
                         when (arg) {
                             is IrConst -> addIfStringConst(arg)
                             is IrConstantArray -> arg.elements.filterIsInstance<IrConstantPrimitive>().forEach {

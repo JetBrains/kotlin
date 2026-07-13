@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.toSmartList
 import java.io.File
+import java.nio.file.Path
 
 val KotlinLibrary.moduleName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)
@@ -101,46 +103,36 @@ fun loadIr(
     modulesStructure: ModulesStructure,
     irFactory: IrFactory,
 ): IrModuleInfo {
-    val mainModule = modulesStructure.mainModule
     val configuration = modulesStructure.compilerConfiguration
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
 
-    when (mainModule) {
-        is MainModule.SourceFiles -> error("Main module must be klib")
-        is MainModule.Klib -> {
-            val mainModuleLib = modulesStructure.klibs.included
-                ?: error("No module with ${mainModule.libPath} found")
-            val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
-            val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
+    val mainModuleLib = modulesStructure.klibs.included
+        ?: error("No module with ${modulesStructure.mainModulePath} found")
+    val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
+    val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
 
-            return getIrModuleInfoForKlib(
-                moduleDescriptor = moduleDescriptor,
-                klibs = modulesStructure.klibs,
-                friendModules = friendModules,
-                configuration = configuration,
-                symbolTable = symbolTable,
-            ) { modulesStructure.getModuleDescriptor(it) }
-        }
-    }
+    return getIrModuleInfoForKlib(
+        moduleDescriptor = moduleDescriptor,
+        klibs = modulesStructure.klibs,
+        friendModules = friendModules,
+        configuration = configuration,
+        symbolTable = symbolTable,
+    ) { modulesStructure.getModuleDescriptor(it) }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun loadIrForSingleModule(
     modulesStructure: ModulesStructure,
     irFactory: IrFactory,
 ): IrModuleInfo {
-    val mainModule = modulesStructure.mainModule
     val configuration = modulesStructure.compilerConfiguration
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
 
-    check(mainModule is MainModule.Klib)
-
     val mainModuleLib = modulesStructure.klibs.included
-        ?: error("No module with ${mainModule.libPath} found")
+        ?: error("No module with ${modulesStructure.mainModulePath} found")
     val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         configuration.diagnosticsCollector,
@@ -194,6 +186,23 @@ fun loadIrForSingleModule(
         included = mainFragment,
         fragmentNames = deserializedFragments.getUniqueNameForEachFragment(),
     )
+
+    // Hack (KT-71039, restored after KT-78040) - pre-load functional interfaces in case if IrLoader cut its count
+    // `WasmAddFunctionSupertypeToSuspendFunctionLowering` of Kotlin/Wasm backend
+    // adds `Function<...>` supertypes to `SuspendFunction<...>` interfaces.
+    // Since these supertypes appear only at the lowering stage,
+    // after klib deserialization, the linker / Incremental
+    // Compilation never sees the `FunctionN`/`KFunctionN` builtins as used
+    // and therefore never loads or serializes them.
+    // Referencing `functionN(it)`/`kFunctionN(it)` here forces their definitions
+    // to be materialized up front.
+    if (isStdlibCompilation) {
+        repeat(25) {
+            irBuiltIns.functionN(it)
+            irBuiltIns.kFunctionN(it)
+        }
+    }
+
 
     return IrModuleInfo(
         module = mainFragment,
@@ -252,6 +261,8 @@ private fun getIrModuleInfoForKlib(
 }
 
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}
+
+@OptIn(K1Deprecation::class)
 val JsFactories = KlibMetadataFactories(::createBuiltIns, DynamicTypeDeserializer)
 
 private const val FILE_FINGERPRINTS_SEPARATOR = " "
@@ -269,7 +280,7 @@ fun serializeModuleIntoKlib(
     configuration: CompilerConfiguration,
     diagnosticReporter: IrDiagnosticReporter,
     metadataSerializer: KlibSingleFileMetadataSerializer<*>,
-    klibPath: String,
+    klibPath: Path,
     moduleFragment: IrModuleFragment,
     irBuiltIns: IrBuiltIns,
     cleanFiles: List<KotlinFileSerializedData>,

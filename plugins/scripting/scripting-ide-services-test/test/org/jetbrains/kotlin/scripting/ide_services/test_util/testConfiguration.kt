@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.scripting.ide_services.test_util
 
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.ide_services.compiler.KJvmReplCompilerWithIdeServices
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.fail
 import java.io.Writer
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KProperty
@@ -269,19 +269,19 @@ private suspend fun evaluateInRepl(
 
 private fun <T> checkLists(index: Int, checkName: String, expected: List<T>, actual: List<T>, options: ExpectedOptions<T>) {
     when (options.mode) {
-        ComparisonType.EQUALS -> Assert.assertEquals(
-            "#$index ($checkName): Expected $expected, got $actual",
+        ComparisonType.EQUALS -> Assertions.assertEquals(
             expected,
-            actual
+            actual,
+            "#$index ($checkName): Expected $expected, got $actual"
         )
-        ComparisonType.INCLUDES -> Assert.assertTrue(
-            "#$index ($checkName): Expected $actual to include $expected",
-            actual.containsAll(expected)
+        ComparisonType.INCLUDES -> Assertions.assertTrue(
+            actual.containsAll(expected),
+            "#$index ($checkName): Expected $actual to include $expected"
         )
-        ComparisonType.COMPARE_SIZE -> Assert.assertEquals(
-            "#$index ($checkName): Expected list size to be equal to ${options.size}, but was ${actual.size}",
+        ComparisonType.COMPARE_SIZE -> Assertions.assertEquals(
             options.size,
-            actual.size
+            actual.size,
+            "#$index ($checkName): Expected list size to be equal to ${options.size}, but was ${actual.size}"
         )
         ComparisonType.CUSTOM -> options.checkFunction!!(actual)
         ComparisonType.DONT_CHECK -> {
@@ -297,7 +297,7 @@ private suspend fun checkEvaluateInRepl(
     val expectedIter = expected.iterator()
     evaluateInRepl(compilationConfiguration, snippets, AtomicInteger()).forEachIndexed { index, res ->
         when (res) {
-            is ResultWithDiagnostics.Failure -> Assert.fail("#$index: Expected result, got $res")
+            is ResultWithDiagnostics.Failure -> fail("#$index: Expected result, got $res")
             is ResultWithDiagnostics.Success -> {
                 (val expectedCompletions = completions, val expectedErrors = errors, val expectedResultType = resultType) = expectedIter.next()
                 (val completionsRes = completions, val errorsRes = errors, val resultType) = res.value
@@ -307,7 +307,7 @@ private suspend fun checkEvaluateInRepl(
                     if (it.location != null) it.copy(sourcePath = errorsRes.firstOrNull()?.sourcePath) else it
                 }
                 checkLists(index, "errors", expectedErrorsWithPath, errorsRes, expectedErrors)
-                TestCase.assertEquals("Analysis result types are different", expectedResultType, resultType)
+                Assertions.assertEquals(expectedResultType, resultType, "Analysis result types are different")
             }
         }
     }

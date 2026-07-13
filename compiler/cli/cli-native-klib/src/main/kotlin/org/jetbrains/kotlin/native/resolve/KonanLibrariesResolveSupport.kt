@@ -57,7 +57,6 @@ class KonanLibrariesResolveSupport(
             unresolvedLibraries + additionalLibraryFiles.map { RequiredUnresolvedLibrary(it.absolutePath) },
             noStdLib = configuration.konanNoStdlib,
             noDefaultLibs = configuration.konanNoDefaultLibs,
-            noEndorsedLibs = configuration.konanNoEndorsedLibs,
             duplicatedUniqueNameStrategy = configuration.get(
                 KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
                 DuplicatedUniqueNameStrategy.DENY

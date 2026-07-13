@@ -1,6 +1,6 @@
 KtNameReferenceExpression(48,57): 'Companion'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       dependency/C.Companion

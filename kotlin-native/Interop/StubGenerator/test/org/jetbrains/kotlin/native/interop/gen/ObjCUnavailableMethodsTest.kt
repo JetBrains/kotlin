@@ -368,7 +368,7 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
         override fun tryCreateIntegralStub(type: Type, value: Long): IntegralConstantStub? = unsupported()
         override fun tryCreateDoubleStub(type: Type, value: Double): DoubleConstantStub? = unsupported()
         override fun getKotlinClassForPointed(structDecl: StructDecl): Classifier = unsupported()
-        override fun isOverloading(name: String, types: List<StubType>): Boolean = unsupported()
+        override fun tryRegisterFunction(name: String, types: List<StubType>): Boolean = unsupported()
 
         private fun unsupported(): Nothing = error("Not used by ObjCUnavailableMethodsTest")
     }

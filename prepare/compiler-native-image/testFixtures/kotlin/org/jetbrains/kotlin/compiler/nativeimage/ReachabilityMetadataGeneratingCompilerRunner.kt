@@ -38,9 +38,8 @@ class ReachabilityMetadataGeneratingCompilerRunner(private val javaHome: String)
             add("-agentlib:native-image-agent=config-merge-dir=$reachabilityMetadataPath")
             add("-Djava.home=$javaHome")
             add("-Dkotlin.home=${kotlinHome.absolutePath}")
-            // We simulate how the native image compiler runs, so we set this flag
-            // Otherwise reachability metadata will contain plugins info which is not necessary
-            add("-Dorg.graalvm.nativeimage.runtime=true")
+            // Simulate the native image runtime environment
+            add("-Dorg.graalvm.nativeimage.imagecode=runtime")
             addAll(jvmArgs)
             add("-cp"); add(embeddableClasspath.joinToString(File.pathSeparator) { it.absolutePath })
             add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")

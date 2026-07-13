@@ -75,15 +75,51 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("callableReferenceName.kt")
+  public void testCallableReferenceName() {
+    run("callableReferenceName.kt");
+  }
+
+  @Test
+  @TestMetadata("callableReferenceName_IntrinsicConstEvaluationDisabled.kt")
+  public void testCallableReferenceName_IntrinsicConstEvaluationDisabled() {
+    run("callableReferenceName_IntrinsicConstEvaluationDisabled.kt");
+  }
+
+  @Test
+  @TestMetadata("charFromCode.kt")
+  public void testCharFromCode() {
+    run("charFromCode.kt");
+  }
+
+  @Test
+  @TestMetadata("charFromCode_IntrinsicConstEvaluationDisabled.kt")
+  public void testCharFromCode_IntrinsicConstEvaluationDisabled() {
+    run("charFromCode_IntrinsicConstEvaluationDisabled.kt");
+  }
+
+  @Test
   @TestMetadata("charProperty_code.kt")
   public void testCharProperty_code() {
     run("charProperty_code.kt");
   }
 
   @Test
+  @TestMetadata("charProperty_code_IntrinsicConstEvaluationDisabled.kt")
+  public void testCharProperty_code_IntrinsicConstEvaluationDisabled() {
+    run("charProperty_code_IntrinsicConstEvaluationDisabled.kt");
+  }
+
+  @Test
   @TestMetadata("char_code.kt")
   public void testChar_code() {
     run("char_code.kt");
+  }
+
+  @Test
+  @TestMetadata("char_code_IntrinsicConstEvaluationDisabled.kt")
+  public void testChar_code_IntrinsicConstEvaluationDisabled() {
+    run("char_code_IntrinsicConstEvaluationDisabled.kt");
   }
 
   @Test
@@ -129,6 +165,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("enumName.kt")
+  public void testEnumName() {
+    run("enumName.kt");
+  }
+
+  @Test
+  @TestMetadata("enumName_IntrinsicConstEvaluationDisabled.kt")
+  public void testEnumName_IntrinsicConstEvaluationDisabled() {
+    run("enumName_IntrinsicConstEvaluationDisabled.kt");
+  }
+
+  @Test
   @TestMetadata("enumValue.kt")
   public void testEnumValue() {
     run("enumValue.kt");
@@ -138,6 +186,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   @TestMetadata("equalsFunOnEqualInts.kt")
   public void testEqualsFunOnEqualInts() {
     run("equalsFunOnEqualInts.kt");
+  }
+
+  @Test
+  @TestMetadata("equalsFunOnEqualInts_IntrinsicConstEvaluationDisabled.kt")
+  public void testEqualsFunOnEqualInts_IntrinsicConstEvaluationDisabled() {
+    run("equalsFunOnEqualInts_IntrinsicConstEvaluationDisabled.kt");
   }
 
   @Test
@@ -477,6 +531,24 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("string_trimIndent_IntrinsicConstEvaluationDisabled.kt")
+  public void testString_trimIndent_IntrinsicConstEvaluationDisabled() {
+    run("string_trimIndent_IntrinsicConstEvaluationDisabled.kt");
+  }
+
+  @Test
+  @TestMetadata("string_uppercase.kt")
+  public void testString_uppercase() {
+    run("string_uppercase.kt");
+  }
+
+  @Test
+  @TestMetadata("string_uppercase_IntrinsicConstEvaluationDisabled.kt")
+  public void testString_uppercase_IntrinsicConstEvaluationDisabled() {
+    run("string_uppercase_IntrinsicConstEvaluationDisabled.kt");
+  }
+
+  @Test
   @TestMetadata("thisReference.kt")
   public void testThisReference() {
     run("thisReference.kt");
@@ -492,6 +564,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   @TestMetadata("uIntToUShort.kt")
   public void testUIntToUShort() {
     run("uIntToUShort.kt");
+  }
+
+  @Test
+  @TestMetadata("uIntToUShort_IntrinsicConstEvaluationDisabled.kt")
+  public void testUIntToUShort_IntrinsicConstEvaluationDisabled() {
+    run("uIntToUShort_IntrinsicConstEvaluationDisabled.kt");
   }
 
   @Test
@@ -540,6 +618,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   @TestMetadata("unaryOnComplexLongLiteral4.kt")
   public void testUnaryOnComplexLongLiteral4() {
     run("unaryOnComplexLongLiteral4.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedArithmetic.kt")
+  public void testUnsignedArithmetic() {
+    run("unsignedArithmetic.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedArithmetic_IntrinsicConstEvaluationDisabled.kt")
+  public void testUnsignedArithmetic_IntrinsicConstEvaluationDisabled() {
+    run("unsignedArithmetic_IntrinsicConstEvaluationDisabled.kt");
   }
 
   @Test

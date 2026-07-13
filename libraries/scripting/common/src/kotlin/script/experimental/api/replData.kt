@@ -61,6 +61,57 @@ val ScriptCompilationConfigurationKeys.repl
  */
 val ReplScriptCompilationConfigurationKeys.resultFieldPrefix by PropertiesCollection.key<String>("res")
 
+/**
+ * The callback that produces synthetic snippets to compile and evaluate before the user snippet.
+ * Multiple handlers compose (run in registration order, results concatenated).
+ */
+val ReplScriptCompilationConfigurationKeys.prependSyntheticSnippets by PropertiesCollection.key<List<PrependSyntheticSnippetsData>>(isTransient = true)
+
+
+/**
+ * Register handler that produces synthetic snippets to be compiled and evaluated before the current snippet
+ * @param handler the callback that will be called
+ */
+fun RefineConfigurationBuilder.prependSyntheticSnippets(handler: PrependSyntheticSnippetsHandler) {
+    ScriptCompilationConfiguration.repl.prependSyntheticSnippets.append(PrependSyntheticSnippetsData(handler))
+}
+
+/**
+ * Handler that returns a synthetic snippet to compile + eval before the current snippet. Non-recursive.
+ */
+typealias PrependSyntheticSnippetsHandler =
+            (ScriptConfigurationRefinementContext) -> ResultWithDiagnostics<Pair<ScriptCompilationConfiguration, SourceCode?>>
+
+data class PrependSyntheticSnippetsData(
+    val handler: PrependSyntheticSnippetsHandler
+) : Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
+}
+
+fun ScriptCompilationConfiguration.prependSyntheticSnippets(
+    script: SourceCode,
+    collectedData: ScriptCollectedData? = null
+): ResultWithDiagnostics<Pair< ScriptCompilationConfiguration, List<SourceCode>>> {
+    val handlers = this[ScriptCompilationConfiguration.repl.prependSyntheticSnippets].orEmpty()
+    if (handlers.isEmpty()) return (this to emptyList<SourceCode>()).asSuccess()
+
+    val allSnippets = mutableListOf<SourceCode>()
+    var resultingConfiguration = this
+    val ctx = ScriptConfigurationRefinementContext(script, this, collectedData)
+    for (data in handlers) {
+        when (val res = data.handler.invoke(ctx)) {
+            is ResultWithDiagnostics.Success -> res.value.let { [cfg, snippet] ->
+                resultingConfiguration = cfg
+                if (snippet != null) allSnippets.add(snippet)
+            }
+            is ResultWithDiagnostics.Failure -> return res
+        }
+    }
+    return (resultingConfiguration to allSnippets).asSuccess()
+}
+
 typealias MakeSnippetIdentifier = (ScriptCompilationConfiguration, ReplSnippetId) -> String
 
 /**

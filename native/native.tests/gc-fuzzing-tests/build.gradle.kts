@@ -1,8 +1,12 @@
 import kotlin.random.Random
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -27,9 +31,6 @@ projectTests {
         "test",
         allowParallelExecution = false, // some tests may spawn quite a lot of threads
     ) {
-        // nativeTest sets workingDir to rootDir so here we need to override it
-        workingDir = projectDir
-
         // If set, execute a single test with the given id instead of the fuzzing process.
         project.findProperty("gcfuzzing.single.id")?.let {
             systemProperty("gcfuzzing.single.id", it)

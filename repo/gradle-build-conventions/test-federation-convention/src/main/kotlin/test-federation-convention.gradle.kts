@@ -73,6 +73,17 @@ tasks.withType<Test>().configureEach {
             throw StopExecutionException("The test task is disabled in Smoke Test mode")
         }
 
+        /* Set TeamCity tags */
+        if (testFederationMode.get() == TestFederationMode.Smoke) {
+            println("##teamcity[addBuildTag 'Mode: Smoke']")
+            affectedDomains.get().forEach { domain ->
+                println("##teamcity[addBuildTag 'Affected: $domain']")
+            }
+        } else {
+            println("##teamcity[addBuildTag 'Mode: Full']")
+        }
+
+        /* Configuring junit includes / categories */
         if (testFederationMode.get() == TestFederationMode.Smoke) {
             smokeTestConfig as SmokeTestConfig.Enabled
 
@@ -93,11 +104,6 @@ tasks.withType<Test>().configureEach {
                 if (testFramework is JUnitTestFramework) {
                     testFramework.options.includeCategories("org.jetbrains.kotlin.testFederation.SmokeTest")
                 }
-            }
-
-            println("##teamcity[addBuildTag 'Test Federation Mode: Smoke']")
-            affectedDomains.get().forEach { domain ->
-                println("##teamcity[addBuildTag 'Affected: $domain']")
             }
         }
 

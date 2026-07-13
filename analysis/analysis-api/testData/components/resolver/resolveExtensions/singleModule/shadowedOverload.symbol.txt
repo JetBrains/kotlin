@@ -1,6 +1,6 @@
 KtNameReferenceExpression(79,115): 'generatedOverloadedExtensionFunction'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       generated/generatedOverloadedExtensionFunction(<extension receiver>: kotlin.Any): kotlin.Int

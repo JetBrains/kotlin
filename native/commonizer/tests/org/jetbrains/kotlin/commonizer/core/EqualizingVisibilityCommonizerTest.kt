@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities.Private
 import org.jetbrains.kotlin.descriptors.Visibilities.Protected
 import org.jetbrains.kotlin.descriptors.Visibilities.Public
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class EqualizingVisibilityCommonizerTest : AbstractCommonizerTest<CirHasVisibility, Visibility>() {
 
@@ -34,33 +34,33 @@ class EqualizingVisibilityCommonizerTest : AbstractCommonizerTest<CirHasVisibili
         Internal.toMock(), Internal.toMock(), Internal.toMock()
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun privateOnly() = doTestFailure(
+    @Test
+    fun privateOnly() = doTestFailure<IllegalCommonizerStateException>(
         Private.toMock()
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun publicAndProtected() = doTestFailure(
+    @Test
+    fun publicAndProtected() = doTestFailure<IllegalCommonizerStateException>(
         Protected.toMock(), Protected.toMock(), Public.toMock()
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun publicAndInternal() = doTestFailure(
+    @Test
+    fun publicAndInternal() = doTestFailure<IllegalCommonizerStateException>(
         Internal.toMock(), Internal.toMock(), Public.toMock()
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun protectedAndInternal() = doTestFailure(
+    @Test
+    fun protectedAndInternal() = doTestFailure<IllegalCommonizerStateException>(
         Protected.toMock(), Protected.toMock(), Internal.toMock()
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun publicAndPrivate() = doTestFailure(
+    @Test
+    fun publicAndPrivate() = doTestFailure<IllegalCommonizerStateException>(
         Public.toMock(), Public.toMock(), Private.toMock()
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun somethingUnexpected() = doTestFailure(
+    @Test
+    fun somethingUnexpected() = doTestFailure<IllegalCommonizerStateException>(
         Public.toMock(), Local.toMock()
     )
 

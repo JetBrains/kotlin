@@ -1,12 +1,14 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.backend.common"))
-    api(project(":compiler:ir.inline"))
     api(project(":compiler:backend.jvm"))
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:frontend"))
@@ -26,5 +28,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-
-optInToK1Deprecation()

@@ -19,13 +19,14 @@ import org.jetbrains.kotlin.storage.StorageManager
 /**
  * The default Kotlin/Native factories.
  */
-@K1Deprecation
 class KlibMetadataFactories(
     createBuiltIns: (StorageManager) -> KotlinBuiltIns,
+    @OptIn(K1Deprecation::class)
     val flexibleTypeDeserializer: FlexibleTypeDeserializer,
     val additionalClassPartsProvider: AdditionalClassPartsProvider,
     val fictitiousClassDescriptorFactories: List<ClassDescriptorFactory>,
 ) {
+    @OptIn(K1Deprecation::class)
     constructor(
         createBuiltIns: (StorageManager) -> KotlinBuiltIns,
         flexibleTypeDeserializer: FlexibleTypeDeserializer,
@@ -60,6 +61,7 @@ class KlibMetadataFactories(
         descriptorFactory: KlibModuleDescriptorFactory,
         packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
     ): KlibMetadataModuleDescriptorFactory =
+        @OptIn(K1Deprecation::class)
         KlibMetadataModuleDescriptorFactoryImpl(
             descriptorFactory,
             packageFragmentsFactory,

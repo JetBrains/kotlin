@@ -1,6 +1,16 @@
 public abstract interface annotation class org/jetbrains/kotlin/gradle/ComposeKotlinGradlePluginApi : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/gradle/DelicateKotlinGradlePluginApi : java/lang/annotation/Annotation {
+	public abstract fun kind ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/DelicateKotlinGradlePluginApiKind {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/DelicateKotlinGradlePluginApiKind;
+	public static final field REPLACES_DEFAULTS Ljava/lang/String;
+	public static final field REQUIRES_KNOWLEDGE Ljava/lang/String;
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalJsTestDsl : java/lang/annotation/Annotation {
 }
 

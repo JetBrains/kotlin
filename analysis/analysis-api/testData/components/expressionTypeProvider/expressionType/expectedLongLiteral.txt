@@ -1,0 +1,3 @@
+expression: -2
+expression PSI: KtPrefixExpression
+type: kotlin.Long

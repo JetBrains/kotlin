@@ -1,11 +1,15 @@
+import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -24,6 +28,7 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.native"))
     implementation(project(":compiler:fir:checkers:checkers.wasm"))
     api(project(":compiler:fir:fir-jvm"))
+    implementation(project(":core:compiler.common.native"))
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:cli-base"))
@@ -46,7 +51,6 @@ dependencies {
     implementation(project(":js:js.frontend"))
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
-    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-impl-base"))
     implementation(project(":kotlin-scripting-compiler"))
     implementation(project(":kotlin-scripting-common"))
@@ -95,8 +99,6 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-optInToK1Deprecation()
-
 kotlin {
     compilerOptions {
         optIn.addAll(
@@ -117,10 +119,6 @@ projectTests {
             JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
         )
     ) {
-        testInputsCheck {
-            allowFlightRecorder = true
-        }
-
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             // Ensure golden tests run first since some LL tests are complementary for the surface tests
             mustRunAfter(":analysis:analysis-api-fir:test")
@@ -161,19 +159,17 @@ projectTests {
     }
 }
 
-allprojects {
-    tasks.withType<KotlinJvmCompile>().configureEach {
-        compilerOptions.optIn.addAll(
-            listOf(
-                "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
-                "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
-                "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
-                "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
-                "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
-                "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
-            )
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
+            "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+            "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
         )
-    }
+    )
 }
 
 testsJar()

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.K1JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.MessageCollectorAccess
@@ -171,6 +171,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     snippetKtFile.project,
                     compilationState.analyzerEngine.module,
                     compilerConfiguration,
+                    jvmBackendClassResolver = K1JvmBackendClassResolverForModuleWithDependencies(compilationState.analyzerEngine.module),
                     diagnosticReporter = diagnosticsCollector,
                 )
 
@@ -178,7 +179,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     override fun getPreviousScripts() =
                         state.history.map { compilationState.symbolTable.descriptorExtension.referenceScript(it.item) }
                 }
-                val codegenFactory = JvmIrCodegenFactory(
+                val codegenFactory = K1JvmIrCodegenFactory(
                     compilerConfiguration,
                     compilationState.mangler, compilationState.symbolTable, generatorExtensions
                 )
@@ -190,7 +191,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     return failure(messageCollector, *diagnosticsCollector.scriptDiagnostics(snippet).toTypedArray())
                 }
 
-                codegenFactory.generateModule(generationState, irBackendInput)
+                codegenFactory.normalFactory.generateModule(generationState, irBackendInput)
 
                 if (CheckDiagnosticCollector.checkHasErrors(compilerConfiguration)) {
                     return failure(messageCollector, *diagnosticsCollector.scriptDiagnostics(snippet).toTypedArray())

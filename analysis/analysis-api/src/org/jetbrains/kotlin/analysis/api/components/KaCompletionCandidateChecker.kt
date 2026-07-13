@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -111,9 +114,7 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
  *     with a placeholder identifier inserted. Also see `CompletionUtilCore.DUMMY_IDENTIFIER` in IntelliJ IDEA.
  * @param explicitReceiver A receiver expression, if available (also from the in-memory copy of [originalFile]).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun createExtensionCandidateChecker(
     originalFile: KtFile,

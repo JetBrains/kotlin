@@ -47,7 +47,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
    */
   @Deprecated(
     message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
   )
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 
@@ -90,7 +90,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @Deprecated(
       message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-      level = DeprecationLevel.WARNING,
+      level = DeprecationLevel.ERROR,
     )
     public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 
@@ -180,17 +180,6 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_BACKEND_THREADS: JvmCompilerArgument<Int> =
         JvmCompilerArgument("X_BACKEND_THREADS", KotlinReleaseVersion(1, 6, 20))
-
-    /**
-     * Specifies the destination for common fragments metadata.
-     * This metadata is used solely for incremental compilation and should not be used directly.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_COMMON_FRAGMENTS_METADATA_DESTINATION: JvmCompilerArgument<String?> =
-        JvmCompilerArgument("X_COMMON_FRAGMENTS_METADATA_DESTINATION", KotlinReleaseVersion(2, 4, 20))
 
     /**
      * Enable behaviour needed to compile builtins as part of JVM stdlib
@@ -756,9 +745,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Enable experimental value classes.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.4.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_VALUE_CLASSES", KotlinReleaseVersion(1, 8, 20))
 

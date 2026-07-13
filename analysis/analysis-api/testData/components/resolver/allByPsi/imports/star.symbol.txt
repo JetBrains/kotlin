@@ -6,7 +6,7 @@ KtPackageDirective(15,27): 'package main'
 
 KtNameReferenceExpression(23,27): 'main'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       main
@@ -23,7 +23,7 @@ KtDotQualifiedExpression(54,72): 'kotlin.collections'
 
 KtNameReferenceExpression(54,60): 'kotlin'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
@@ -31,7 +31,7 @@ KtNameReferenceExpression(54,60): 'kotlin'
 
 KtNameReferenceExpression(61,72): 'collections'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.collections
@@ -45,7 +45,7 @@ KtDotQualifiedExpression(82,93): 'kotlin.text'
 
 KtNameReferenceExpression(82,88): 'kotlin'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
@@ -53,7 +53,7 @@ KtNameReferenceExpression(82,88): 'kotlin'
 
 KtNameReferenceExpression(89,93): 'text'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.text
@@ -67,7 +67,7 @@ KtDotQualifiedExpression(120,129): 'java.util'
 
 KtNameReferenceExpression(120,124): 'java'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       java
@@ -75,7 +75,7 @@ KtNameReferenceExpression(120,124): 'java'
 
 KtNameReferenceExpression(125,129): 'util'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       java.util
@@ -92,7 +92,7 @@ KtDotQualifiedExpression(139,148): 'java.lang'
 
 KtNameReferenceExpression(139,143): 'java'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       java
@@ -100,7 +100,7 @@ KtNameReferenceExpression(139,143): 'java'
 
 KtNameReferenceExpression(144,148): 'lang'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       java.lang
@@ -108,7 +108,7 @@ KtNameReferenceExpression(144,148): 'lang'
 
 KtNameReferenceExpression(149,153): 'Math'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       java/lang/Math

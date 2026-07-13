@@ -135,26 +135,26 @@ fun <K> acceptJavaCollectionWithNullable(k: JavaCollection<K?>) { }
 fun <K> acceptCollectionOfNotNulls(k: CollectionOfNotNulls<K>) { }
 
 fun test() {
-    acceptJavaCollection<String>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>) // with 0
-    acceptJavaCollection<String>(<!ARGUMENT_TYPE_MISMATCH!>["42"]<!>) // vararg
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!ARGUMENT_TYPE_MISMATCH!>[42, 42]<!>) // vararg
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>) // unclear
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollectionNullable<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3, 4]<!>) // unclear
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!ARGUMENT_TYPE_MISMATCH!>[null, 2, 3, 4, 5]<!>) // unclear
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3, 4, 5, 6]<!>) // unclear
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollectionWithDNN<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3, 4, 5, 6, 7]<!>) // with 7 args
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3, 4, 5, 6, 7]<!>) // with 7 args
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3, 4, 5, 6, 7, 8]<!>) // with 8 args
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollectionWithNullable<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3, 4, 5, 6, 7, 8]<!>) // with 8 args
+    acceptJavaCollection<String>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>) // with 0
+    acceptJavaCollection<String>(<!UNRESOLVED_COLLECTION_LITERAL!>["42"]<!>) // vararg
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[42, 42]<!>) // vararg
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>) // unclear
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollectionNullable<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4]<!>) // unclear
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[null, 2, 3, 4, 5]<!>) // unclear
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4, 5, 6]<!>) // unclear
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollectionWithDNN<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4, 5, 6, 7]<!>) // with 7 args
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4, 5, 6, 7]<!>) // with 7 args
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollection<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4, 5, 6, 7, 8]<!>) // with 8 args
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptJavaCollectionWithNullable<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4, 5, 6, 7, 8]<!>) // with 8 args
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!ARGUMENT_TYPE_MISMATCH!>[1]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3, 4]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3, 4, 5]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3, 4, 5, 6]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3, 4, 5, 6, 7]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4, 5]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4, 5, 6]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptCollectionOfNotNulls<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4, 5, 6, 7]<!>)
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, dnnType, functionDeclaration, integerLiteral, javaType, nullableType,

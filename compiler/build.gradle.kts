@@ -1,24 +1,25 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
-val compilerModules: Array<String> by rootProject.extra
-val otherCompilerModules = compilerModules.filter { it != path }
+val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }
 
 dependencies {
-    testImplementation(intellijCore()) // Should come before compiler, because of "progarded" stuff needed for tests
-
-    testImplementation(project(":kotlin-script-runtime"))
-
     testImplementation(kotlinStdlib())
 
     testImplementation(kotlinTest())
     testCompileOnly(kotlinTest("junit"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit4)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testFixturesApi(testFixtures(project(":compiler:tests-common")))

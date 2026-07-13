@@ -28,6 +28,7 @@ import kotlin.properties.ReadOnlyProperty
  * @param argumentType the type-safe representation of the argument value type. This is an experimental API that may change in future versions.
  * @param additionalAnnotations additional annotations that should be added for the Kotlin compiler argument representation (e.g. [Deprecated]).
  * @param compilerName alternative property name in the generated Kotlin compiler argument representation
+ * @param deprecatedMessage message to be used for the [Deprecated] annotation if the argument is deprecated
  *
  * Usually compiler arguments should either be defined via compiler argument level builder [KotlinCompilerArgumentsLevelBuilder.compilerArgument]
  * or via special standalone builder DSL - [compilerArgument].
@@ -56,10 +57,8 @@ data class KotlinCompilerArgument(
     @kotlinx.serialization.Transient
     val compilerName: String? = null,
 
-    @kotlinx.serialization.Transient
-    val isObsolete: Boolean = false,
+    val deprecatedMessage: String? = null,
 ) : WithKotlinReleaseVersionsMetadata {
-
     // corresponds to [org.jetbrains.kotlin.cli.common.arguments.Argument.Delimiters]
     enum class Delimiter(val constantName: String) {
         Default("default"),
@@ -132,6 +131,11 @@ internal class KotlinCompilerArgumentBuilder {
     var affectsCompilationOutcome: Boolean = true
 
     /**
+     * @see KotlinCompilerArgument.deprecatedMessage
+     */
+    var deprecatedMessage: String? = null
+
+    /**
      * @see KotlinCompilerArgument.releaseVersionsMetadata
      */
     private lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
@@ -187,7 +191,8 @@ internal class KotlinCompilerArgumentBuilder {
         compilerName = compilerName,
         delimiter = delimiter,
         affectsCompilationOutcome = affectsCompilationOutcome,
-        restrictedToCompilerPhase = restrictedToCompilerPhase
+        restrictedToCompilerPhase = restrictedToCompilerPhase,
+        deprecatedMessage = deprecatedMessage,
     )
 }
 

@@ -2,7 +2,6 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: null
@@ -17,7 +16,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -26,6 +24,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: dynamicPropertyAccess
   origin: JS_DYNAMIC
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaDynamicType:
     annotations: []
@@ -39,7 +38,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getDynamicPropertyAccess
   javaSetterName: setDynamicPropertyAccess
   isInline: false

@@ -3,19 +3,19 @@
 /* FILE package=<root> fileName=Outer.kt */
 
 public class Outer
-    private /* static */ val o: String
-        /* TARGET declaration */ private /* static */ fun <get-o>(): String
-    private /* static */ val k: String
-        /* TARGET declaration */ private /* static */ fun <get-k>(): String
+    private companion val o: String
+        /* TARGET declaration */ private companion fun <get-o>(): String
+    private companion val k: String
+        /* TARGET declaration */ private companion fun <get-k>(): String
     public inner class Inner
         internal inline fun internalInlineMethod(): String
             /* ACCESSOR use-site */ access$<get-o>()
     public class Nested
         internal inline fun internalInlineMethod(): String
             /* ACCESSOR use-site */ access$<get-k>()
-    /* ACCESSOR declaration */ internal /* static */ fun access$<get-o>(): String
+    /* ACCESSOR declaration */ internal companion fun access$<get-o>(): String
         /* TARGET use-site */ <get-o>()
-    /* ACCESSOR declaration */ internal /* static */ fun access$<get-k>(): String
+    /* ACCESSOR declaration */ internal companion fun access$<get-k>(): String
         /* TARGET use-site */ <get-k>()
 
 

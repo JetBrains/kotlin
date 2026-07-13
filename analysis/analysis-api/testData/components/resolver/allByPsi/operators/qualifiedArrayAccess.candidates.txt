@@ -2010,7 +2010,7 @@ KtNameReferenceExpression(820,825): 'child'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(826,828): '!='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

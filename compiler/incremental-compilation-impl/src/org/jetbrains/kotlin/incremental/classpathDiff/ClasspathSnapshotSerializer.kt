@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.intellij.util.containers.Interner
 import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
@@ -181,6 +182,7 @@ internal object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> 
     }
 }
 
+@OptIn(K1Deprecation::class)
 private object ExtraInfoExternalizer : DataExternalizer<KotlinClassInfo.ExtraInfo> {
 
     override fun save(output: DataOutput, info: KotlinClassInfo.ExtraInfo) {

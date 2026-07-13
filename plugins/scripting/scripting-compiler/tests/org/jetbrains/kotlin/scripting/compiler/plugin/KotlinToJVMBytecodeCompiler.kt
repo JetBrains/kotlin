@@ -15,14 +15,13 @@ import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase.getSourceFiles
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase.writeOutputsIfNeeded
-import org.jetbrains.kotlin.codegen.JvmBackendClassResolverForModuleWithDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.K1JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LOOKUP_TRACKER
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K1JvmIrCodegenFactory
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -106,7 +106,7 @@ internal object KotlinToJVMBytecodeCompiler {
 
             val moduleConfiguration = compilerConfiguration.createConfigurationForModule(module, buildFile)
             val backendInput = (if (ktFiles != null) {
-                codegenFactory.getModuleChunkBackendInput(backendInput, ktFiles)
+                codegenFactory.normalFactory.getModuleChunkBackendInput(backendInput, ktFiles)
             } else {
                 val wholeModule = backendInput.irModuleFragment
                 val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
@@ -125,10 +125,10 @@ internal object KotlinToJVMBytecodeCompiler {
                 moduleConfiguration,
                 moduleDescriptor,
                 module,
-                codegenFactory,
+                codegenFactory.normalFactory,
                 backendInput,
                 diagnosticsReporter,
-                JvmBackendClassResolverForModuleWithDependencies(moduleDescriptor),
+                K1JvmBackendClassResolverForModuleWithDependencies(moduleDescriptor),
             )
         }
 
@@ -139,7 +139,7 @@ internal object KotlinToJVMBytecodeCompiler {
             outputs += JvmBackendPipelinePhase.runCodegen(
                 input,
                 input.state,
-                codegenFactory,
+                codegenFactory.normalFactory,
                 diagnosticsReporter,
                 compilerConfiguration,
                 reportDiagnosticsToMessageCollector = true
@@ -186,7 +186,7 @@ internal object KotlinToJVMBytecodeCompiler {
     }
 
     private data class BackendInputForMultiModuleChunk(
-        val codegenFactory: JvmIrCodegenFactory,
+        val codegenFactory: K1JvmIrCodegenFactory,
         val backendInput: JvmIrCodegenFactory.BackendInput,
         val moduleDescriptor: ModuleDescriptor,
         val firJvmBackendExtension: FirJvmBackendExtension? = null,
@@ -222,9 +222,6 @@ internal object KotlinToJVMBytecodeCompiler {
 
             KotlinJavaPsiFacade.getInstance(environment.project).clearPackageCaches()
 
-            val javaClassesTracker = configuration[JAVA_CLASSES_TRACKER]
-            javaClassesTracker?.clear()
-
             val lookupTracker = configuration[LOOKUP_TRACKER]
             lookupTracker?.clear()
 
@@ -243,9 +240,9 @@ internal object KotlinToJVMBytecodeCompiler {
         environment: KotlinCoreEnvironment,
         result: AnalysisResult,
         diagnosticsReporter: DiagnosticReporter,
-    ): Pair<JvmIrCodegenFactory, JvmIrCodegenFactory.BackendInput> {
+    ): Pair<K1JvmIrCodegenFactory, JvmIrCodegenFactory.BackendInput> {
         val configuration = environment.configuration
-        val codegenFactory = JvmIrCodegenFactory(configuration)
+        val codegenFactory = K1JvmIrCodegenFactory(configuration)
         val backendInput = environment.configuration.perfManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             codegenFactory.convertToIr(
                 environment.getSourceFiles(),

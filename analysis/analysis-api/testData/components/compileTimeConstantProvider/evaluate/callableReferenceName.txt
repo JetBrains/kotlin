@@ -1,0 +1,5 @@
+expression: ::referencedFunction.name
+constant: "referencedFunction"
+constantValueKind: StringValue
+constantValueSource: DOT_QUALIFIED_EXPRESSION
+constantValueSourceText: ::referencedFunction.name

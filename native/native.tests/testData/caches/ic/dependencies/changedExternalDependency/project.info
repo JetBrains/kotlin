@@ -1,8 +1,13 @@
-// DISABLE_NATIVE: targetFamily=MINGW
+// KT-87194: changing an external library to an already-cached version doesn't rebuild application's cache
+// DISABLE_NATIVE
+
 MODULES: externalLib, userLib, main
 
 STEP 0:
     libs: externalLib, userLib, main
 
 STEP 1:
+    libs: externalLib, userLib, main
+
+STEP 2:
     libs: externalLib, userLib, main

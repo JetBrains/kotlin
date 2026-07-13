@@ -21,7 +21,17 @@ fun abc1(l: @Composable (String) -> Unit) {
 fun abc2(l: @Composable (String, Int) -> Unit) {
     val hc = l.hashCode()
 }
-fun abc3(
+fun abc9(
+    l: @Composable (Any, Any, Any, Any, Any, Any, Any, Any, Any) -> Any
+) {
+    val hc = l.hashCode()
+}
+fun abc10(
+    l: @Composable (Any, Any, Any, Any, Any, Any, Any, Any, Any, Any) -> Any
+) {
+    val hc = l.hashCode()
+}
+fun abc12(
     l: @Composable (Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any) -> Any
 ) {
     val hc = l.hashCode()
@@ -40,6 +50,12 @@ fun abc1(l: Function3<String, Composer, Int, Unit>) {
 fun abc2(l: Function4<String, Int, Composer, Int, Unit>) {
   val hc = l as Any.hashCode()
 }
-fun abc3(l: Function15<Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Composer, Int, Int, Any>) {
+fun abc9(l: Function11<Any, Any, Any, Any, Any, Any, Any, Any, Any, Composer, Int, Any>) {
+  val hc = l as Any.hashCode()
+}
+fun abc10(l: Function13<Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Composer, Int, Int, Any>) {
+  val hc = l as Any.hashCode()
+}
+fun abc12(l: Function15<Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Composer, Int, Int, Any>) {
   val hc = l as Any.hashCode()
 }

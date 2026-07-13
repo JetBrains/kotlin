@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.test
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ThrowableRunnable
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
@@ -114,6 +115,7 @@ class ScriptCliCompilationTest {
             loadScriptingPlugin(this, testRootDisposable)
         }
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         return compileAndExecuteScript(script.toScriptSource(), environment, args) to collector

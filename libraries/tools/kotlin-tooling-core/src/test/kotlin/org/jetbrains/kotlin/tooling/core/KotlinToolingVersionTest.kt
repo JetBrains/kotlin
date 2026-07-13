@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.tooling.core
 
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion.Maturity.*
-import org.junit.Test
-import kotlin.test.*
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNull
+import org.junit.jupiter.api.assertThrows
 
 class KotlinToolingVersionTest {
 
@@ -308,12 +310,12 @@ class KotlinToolingVersionTest {
     @Suppress("deprecation")
     @Test
     fun illegalVersionString() {
-        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("x") }
-        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("x.") }
-        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.") }
-        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.x") }
-        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("x.1") }
-        assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("") }
+        assertThrows<IllegalArgumentException> { KotlinToolingVersion("x") }
+        assertThrows<IllegalArgumentException> { KotlinToolingVersion("x.") }
+        assertThrows<IllegalArgumentException> { KotlinToolingVersion("1.") }
+        assertThrows<IllegalArgumentException> { KotlinToolingVersion("1.x") }
+        assertThrows<IllegalArgumentException> { KotlinToolingVersion("x.1") }
+        assertThrows<IllegalArgumentException> { KotlinToolingVersion("") }
     }
 
     @Test

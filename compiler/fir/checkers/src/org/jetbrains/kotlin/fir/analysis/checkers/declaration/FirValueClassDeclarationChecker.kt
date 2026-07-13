@@ -210,19 +210,18 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             }
         }
 
-        val isJvmInlineMultiFieldEnabled = LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled()
-        val finalOrBasicValueClassPrefix = when {
+        val finalOrInlineClassPrefix = when {
             !supportsFullValueClasses -> "value"
             isFullValueClass -> "final value"
             else -> "@JvmInline value"
         }
         if (primaryConstructor?.source?.kind is KtRealSourceElementKind) {
-            if (isJvmInlineMultiFieldEnabled || isFullValueClass) {
+            if (isFullValueClass) {
                 if (primaryConstructorParametersByName.isEmpty() && (!isFullValueClass || declaration.isFinal)) {
                     reporter.reportOn(
                         primaryConstructor.source,
                         FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR,
-                        finalOrBasicValueClassPrefix.capitalizeAsciiOnly(),
+                        finalOrInlineClassPrefix.capitalizeAsciiOnly(),
                     )
                     return
                 }
@@ -244,14 +243,14 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         } else if (!isFullValueClass || declaration.isFinal) {
             if (!declaration.isExpect || LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor.isDisabled()) {
                 reporter.reportOn(
-                    declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, finalOrBasicValueClassPrefix
+                    declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, finalOrInlineClassPrefix
                 )
             } else {
                 declaration.constructors(context.session).filter { !it.isPrimary }.forEach { constructor ->
                     reporter.reportOn(
                         constructor.source,
                         FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY,
-                        finalOrBasicValueClassPrefix,
+                        finalOrInlineClassPrefix,
                     )
                 }
             }
@@ -296,17 +295,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     ViaTypeParameters -> reporter.reportOn(
                         parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS,
                     )
-                }
-
-                declaration.symbol.jvmInlineMultiFieldValueClassRepresentation != null -> {
-                    val defaultValue = primaryConstructorParameter.resolvedDefaultValue
-                    if (defaultValue != null) {
-                        // TODO, KT-50113: Fix when inline arguments are supported.
-                        reporter.reportOn(
-                            defaultValue.source,
-                            FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER
-                        )
-                    }
                 }
             }
         }

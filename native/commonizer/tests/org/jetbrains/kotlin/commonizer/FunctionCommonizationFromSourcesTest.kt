@@ -5,18 +5,22 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import kotlin.contracts.ExperimentalContracts
+import org.junit.jupiter.api.Test
 
-@ExperimentalContracts
 class FunctionCommonizationFromSourcesTest : AbstractCommonizationFromSourcesTest() {
 
+    @Test
     fun testValueParameters() = doTestSuccessfulCommonization()
 
+    @Test
     fun testAnnotations() = doTestSuccessfulCommonization()
 
+    @Test
     fun testSpecifics() = doTestSuccessfulCommonization()
 
+    @Test
     fun testSignaturesWithNullableTypealiases() = doTestSuccessfulCommonization()
 
+    @Test
     fun testOverloadingByUpperBounds() = doTestSuccessfulCommonization()
 }

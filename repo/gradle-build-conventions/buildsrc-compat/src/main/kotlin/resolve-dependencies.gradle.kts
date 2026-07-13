@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.spdx.sbom.gradle.SpdxSbomExtension
-import java.net.URI
 
 val resolveDependenciesInAllProjects by tasks.registering {
     description = "Resolves dependencies in all projects (for dependency verification or populating caches)."
@@ -50,15 +49,10 @@ val resolveJsTools by tasks.registering {
     doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
 
     doLast {
-        fun Project.resolveDependencies(
-            vararg dependency: String,
-            repositoryHandler: RepositoryHandler.() -> ArtifactRepository,
-        ) {
-            val repo = repositories.repositoryHandler()
+        fun Project.resolveDependencies(vararg dependency: String) {
             dependency.forEach {
                 configurations.detachedConfiguration(dependencies.create(it)).resolve()
             }
-            repo.run { repositories.remove(this) }
         }
 
         @OptIn(ExperimentalWasmDsl::class)
@@ -70,76 +64,34 @@ val resolveJsTools by tasks.registering {
                     "google.d8:v8:win64-rel-$versionValue@zip",
                     "google.d8:v8:mac-arm64-rel-$versionValue@zip",
                     "google.d8:v8:mac64-rel-$versionValue@zip"
-                ) {
-                    ivy {
-                        name = "D8-ResolveDependencies"
-                        url = requireNotNull(downloadBaseUrl.get()) { "downloadBaseUrl was null for $name repository" }.let(::URI)
-                        patternLayout {
-                            artifact("[artifact]-[revision].[ext]")
-                        }
-                        metadataSources { artifact() }
-                        content { includeModule("google.d8", "v8") }
-                    }
-                }
+                )
             }
 
             extensions.findByType<BinaryenEnvSpec>()?.run {
                 val versionValue = version.get()
-
                 project.resolveDependencies(
                     "com.github.webassembly:binaryen:$versionValue:arm64-macos@tar.gz",
                     "com.github.webassembly:binaryen:$versionValue:x86_64-linux@tar.gz",
                     "com.github.webassembly:binaryen:$versionValue:x86_64-macos@tar.gz",
                     "com.github.webassembly:binaryen:$versionValue:x86_64-windows@tar.gz"
-                ) {
-                    ivy {
-                        name = "Binaryen-ResolveDependencies"
-                        url = requireNotNull(downloadBaseUrl.get()) { "downloadBaseUrl was null for $name repository" }.let(::URI)
-                        patternLayout {
-                            artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
-                        }
-                        metadataSources { artifact() }
-                        content { includeModule("com.github.webassembly", "binaryen") }
-                    }
-                }
+                )
             }
 
             val nodeJsEnvSpecAction: EnvSpec<NodeJsEnv>.() -> Unit = {
                 val versionValue = version.get()
-
                 project.resolveDependencies(
                     "org.nodejs:node:$versionValue:linux-x64@tar.gz",
                     "org.nodejs:node:$versionValue:win-x64@zip",
                     "org.nodejs:node:$versionValue:darwin-x64@tar.gz",
                     "org.nodejs:node:$versionValue:darwin-arm64@tar.gz"
-                ) {
-                    ivy {
-                        name = "NodeJs-ResolveDependencies"
-                        url = requireNotNull(downloadBaseUrl.get()) { "downloadBaseUrl was null for $name repository" }.let(::URI)
-                        patternLayout {
-                            artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-                        }
-                        metadataSources { artifact() }
-                        content { includeModule("org.nodejs", "node") }
-                    }
-                }
+                )
             }
 
             extensions.findByType<NodeJsEnvSpec>()?.run(nodeJsEnvSpecAction)
             extensions.findByType<WasmNodeJsEnvSpec>()?.run(nodeJsEnvSpecAction)
 
             val yarnRootEnvSpecAction: EnvSpec<YarnEnv>.() -> Unit = {
-                project.resolveDependencies("com.yarnpkg:yarn:${version.get()}@tar.gz") {
-                    ivy {
-                        name = "Yarn-ResolveDependencies"
-                        url = requireNotNull(downloadBaseUrl.get()) { "downloadBaseUrl was null for $name repository" }.let(::URI)
-                        patternLayout {
-                            artifact("v[revision]/[artifact](-v[revision]).[ext]")
-                        }
-                        metadataSources { artifact() }
-                        content { includeModule("com.yarnpkg", "yarn") }
-                    }
-                }
+                project.resolveDependencies("com.yarnpkg:yarn:${version.get()}@tar.gz")
             }
 
             extensions.findByType<YarnRootEnvSpec>()?.run(yarnRootEnvSpecAction)

@@ -114,7 +114,7 @@
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -133,6 +133,7 @@
               annotations: []
               typeArguments: []
               type: KotlinClass
+            typeParameters: []
             visibility: PUBLIC
           type = KotlinClass
         extensionReceiver = null

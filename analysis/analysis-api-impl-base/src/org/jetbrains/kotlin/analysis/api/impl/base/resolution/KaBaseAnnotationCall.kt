@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -38,15 +37,15 @@ class KaBaseAnnotationCall(
     override val extensionReceiver: KaReceiverValue?
         get() = withValidityAssertion { backingPartiallyAppliedSymbol.extensionReceiver }
 
-    @KaExperimentalApi
     override val contextArguments: List<KaReceiverValue>
         get() = withValidityAssertion { backingPartiallyAppliedSymbol.contextArguments }
 
-    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { emptyMap() }
+    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>
+        get() = withValidityAssertion { emptyMap() }
+
     override val valueArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
         get() = withValidityAssertion { backingArgumentMapping.toValueArgumentMapping() }
 
-    @KaExperimentalApi
     override val contextArgumentMapping: Map<KtExpression, KaVariableSignature<KaContextParameterSymbol>>
         get() = withValidityAssertion { backingArgumentMapping.toContextArgumentMapping() }
 

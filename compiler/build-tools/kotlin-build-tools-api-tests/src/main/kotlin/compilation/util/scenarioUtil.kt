@@ -26,6 +26,7 @@ fun Scenario<JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompila
         compilationOperationConfig(it)
     },
     icOptionsConfigAction = {
+        @Suppress("DEPRECATION_ERROR")
         it[USE_FIR_RUNNER] = true
     }
 )

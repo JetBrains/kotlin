@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test simple property`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -24,6 +26,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized("(c, d)", "expect val x: Int")
     }
 
+    @Test
     fun `test same typeAliased property`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -50,6 +53,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         )
     }
 
+    @Test
     fun `test differently typeAliased property - expanded type from dependencies`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -75,6 +79,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         )
     }
 
+    @Test
     fun `test differently typeAliased property - expanded type from sources`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -103,6 +108,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         )
     }
 
+    @Test
     fun `test typeAliased property and class typed property`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -130,6 +136,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         )
     }
 
+    @Test
     fun `test class typed property and typeAliased property`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -158,6 +165,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
     }
 
 
+    @Test
     fun `test single typeAliased property and double typeAliased property`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -188,6 +196,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         )
     }
 
+    @Test
     fun `test single typeAliased property and double typeAliased property - with reversed order`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -218,6 +227,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         )
     }
 
+    @Test
     fun `test property with and without setter`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -243,6 +253,7 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         )
     }
 
+    @Test
     fun `test property with annotations`() {
         val result = commonize {
             outputTarget("(a, b)")

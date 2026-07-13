@@ -1,1 +1,7 @@
 @Param @ParameterPropertyAndField @Everything prop: kotlin.Int
+
+@Property
+@PropertyAndField
+@ParameterPropertyAndField
+@Everything
+val prop: kotlin.Int

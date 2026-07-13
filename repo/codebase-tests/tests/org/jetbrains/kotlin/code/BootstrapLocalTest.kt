@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.code
 
 import org.gradle.testkit.runner.GradleRunner
 import org.jetbrains.kotlin.testFederation.NightlyTest
-import org.junit.Ignore
+import org.junit.jupiter.api.Disabled
 import java.io.File
 import kotlin.test.Test
 
+@Disabled
 @NightlyTest
 class BootstrapLocalTest {
 
@@ -19,7 +20,6 @@ class BootstrapLocalTest {
      * - calling 'publish' first
      * - compiling the repository with '-Pbootstrap.local=true'
      */
-    @Ignore
     @Test
     fun `bootstrap local`() {
         val runner = GradleRunner.create()

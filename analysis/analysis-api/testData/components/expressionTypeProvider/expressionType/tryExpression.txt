@@ -1,0 +1,7 @@
+expression: try {
+        1
+    } catch(e: Exception) {
+        1
+    }
+expression PSI: KtTryExpression
+type: kotlin.Int

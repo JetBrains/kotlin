@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_DUMP
-// DIAGNOSTICS: -DEBUG_INFO_MISSING_UNRESOLVED
+// LANGUAGE_FEATURE_TOGGLED: AllowAnnotationsOnArgumentsOfAnnotations
 
 annotation class X(val value: Array<Y>)
 annotation class Y()
@@ -8,11 +7,11 @@ annotation class Y()
 @Retention(AnnotationRetention.SOURCE)
 annotation class Z()
 
-@X(<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Z()<!> [])
+@X(@Z() [])
 fun foo0() {
 }
 
-@X(<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Z()<!> arrayOf())
+@X(@Z() arrayOf())
 fun foo1() {
 }
 

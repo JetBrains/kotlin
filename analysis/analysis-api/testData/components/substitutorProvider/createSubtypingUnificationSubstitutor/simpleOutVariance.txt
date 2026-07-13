@@ -1,0 +1,14 @@
+ASSIGN_LEFT:
+Substitutor: <empty substitutor>
+Substituted pairs:
+SomeClassOut <: GenericFooOut<A> (Original: SomeClassOut <: GenericFooOut<A>)
+
+ASSIGN_RIGHT:
+Substitutor: <empty substitutor>
+Substituted pairs:
+SomeClassOut <: GenericFooOut<A> (Original: SomeClassOut <: GenericFooOut<A>)
+
+ASSIGN_ALL:
+Substitutor: <empty substitutor>
+Substituted pairs:
+SomeClassOut <: GenericFooOut<A> (Original: SomeClassOut <: GenericFooOut<A>)

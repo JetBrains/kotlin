@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.utils.AbstractSimpleClassPredicateMatchingService
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -40,7 +41,13 @@ class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExt
     }
 
     override fun transformStatus(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {
-        return when (status.modality) {
+        @OptIn(SymbolInternals::class)
+        val explicitModality = when (declaration) {
+            is FirPropertyAccessor -> declaration.propertySymbol.fir.status.modality
+            else -> status.modality
+        }
+
+        return when (explicitModality) {
             null -> status.copyWithNewDefaults(modality = Modality.OPEN, defaultModality = Modality.OPEN)
             else -> status.copyWithNewDefaults(defaultModality = Modality.OPEN)
         }

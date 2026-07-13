@@ -1,7 +1,6 @@
 KaTypeAliasSymbol:
   annotations: []
   classId: Outer.MyAlias
-  compilerVisibility: Public
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: [
@@ -39,7 +38,6 @@ KaTypeAliasSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -53,11 +51,10 @@ KaTypeAliasSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(innerTypeAlias.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -71,11 +68,11 @@ KaTypeAliasSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(innerTypeAlias.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(innerTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Outer.MyAlias

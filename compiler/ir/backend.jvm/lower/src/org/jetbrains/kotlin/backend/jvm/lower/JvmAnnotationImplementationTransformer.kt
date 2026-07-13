@@ -53,10 +53,9 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
     override fun chooseConstructor(implClass: IrClass, expression: IrConstructorCall) =
         implClass.constructors.single()
 
-    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val constructedClass = expression.type.classOrNull
-        if (constructedClass?.owner?.isAnnotationClass == true && inInlineFunctionScope) {
-            publicAnnotationImplementationClasses += constructedClass
+    override fun visitAnnotation(expression: IrAnnotation): IrExpression {
+        if (inInlineFunctionScope) {
+            publicAnnotationImplementationClasses += expression.classSymbol
         }
         return super.visitConstructorCall(expression)
     }

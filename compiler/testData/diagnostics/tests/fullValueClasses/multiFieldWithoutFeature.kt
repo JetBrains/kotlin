@@ -3,9 +3,9 @@
 // LANGUAGE: -FullValueClasses
 
 <!UNSUPPORTED_FEATURE!>value<!> class Final constructor(val value1: String, val value2: String)
-<!UNSUPPORTED_FEATURE!>value<!> class Final2 constructor(val value1: String)
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final4 <!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>constructor()<!>
-<!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final6
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final2 constructor(val value1: String)
+value class Final4 <!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>constructor()<!>
+<!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class Final6
 
 @JvmInline
 value class Final8 <!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>constructor(val value1: String, val value2: String)<!>

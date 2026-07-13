@@ -1,0 +1,9 @@
+Before shortening: test.Payload
+with default settings:
+[type] test.Payload
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[type] test.Payload
+with SHORTEN_AND_STAR_IMPORT:
+[type] test.Payload

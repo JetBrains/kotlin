@@ -33,7 +33,7 @@ KtClassLiteralExpression(36,50): 'MyClass::class'
 
 KtNameReferenceExpression(36,43): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -51,7 +51,7 @@ KtCallExpression(55,67): 'MyClass<Int>'
 
 KtNameReferenceExpression(55,62): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -77,7 +77,7 @@ KtUserType(63,66): 'Int'
 
 KtNameReferenceExpression(63,66): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int

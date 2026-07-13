@@ -1,2 +1,3 @@
 expression: val x = 1
+expression PSI: KtProperty
 type: kotlin.Unit

@@ -1,6 +1,7 @@
 Resulting Content Scopes:
 Module LIBRARY:
-    a.class
-    x.class
+    + a.class
+    - b.class
+    + x.class
 Module MAIN:
-    main.kt
+    + main.kt

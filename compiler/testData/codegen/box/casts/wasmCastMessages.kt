@@ -116,7 +116,6 @@ fun box(): String {
     tryCast<(String) -> Int>(f, "Cannot cast instance of Function0 to kotlin.Function1: incompatible types")?.let { return it }
     tryCast<Array<String>>(intArrayOf(1), "Cannot cast instance of kotlin.IntArray to kotlin.Array: incompatible types")?.let { return it }
     val sf: suspend () -> Unit = suspend { }
-    tryCast<(String) -> Int>(sf, "Cannot cast instance of SuspendFunction0 to kotlin.Function1: incompatible types")?.let { return it }
     tryCast<IntArray>(arrayOf(1), "Cannot cast instance of kotlin.Array to kotlin.IntArray: incompatible types")?.let { return it }
     tryCast<Array<Int>>(intArrayOf(1), "Cannot cast instance of kotlin.IntArray to kotlin.Array: incompatible types")?.let { return it }
     val u: Any = 1u

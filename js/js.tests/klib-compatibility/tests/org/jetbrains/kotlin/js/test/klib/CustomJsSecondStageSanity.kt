@@ -1,11 +1,11 @@
 package org.jetbrains.kotlin.js.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.junit.ComparisonFailure
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.opentest4j.AssertionFailedError
 import org.opentest4j.TestAbortedException
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -32,18 +32,18 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
 
     @Test
     fun checkIncorrectBoxResult() {
-        val exception = assertThrows<ComparisonFailure> {
+        val exception = assertThrows<AssertionFailedError> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
-        assertEquals("expected:<[OK]> but was:<[FAIL]>", exception.message)
+        assertEquals("expected: <OK> but was: <FAIL>", exception.message)
     }
 
     @Test
     fun checkNotMutedWithIgnoreRuntimeErrors1stStage() {
-        val exception = assertThrows<ComparisonFailure> {
+        val exception = assertThrows<AssertionFailedError> {
             runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
-        assertEquals("expected:<[OK]> but was:<[FAIL]>", exception.message)
+        assertEquals("expected: <OK> but was: <FAIL>", exception.message)
     }
 
     @Test

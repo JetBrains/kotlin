@@ -1,7 +1,11 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
     id("java-test-fixtures")
+    id("test-inputs-check-v2")
 }
 
 sourceSets {
@@ -58,8 +62,6 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
 }
 
-
-optInToK1Deprecation()
 optInTo("org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi")
 
 projectTests {

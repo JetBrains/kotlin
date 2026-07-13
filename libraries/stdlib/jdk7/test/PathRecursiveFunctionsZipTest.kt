@@ -474,8 +474,10 @@ class PathRecursiveFunctionsZipTest : AbstractPathTest() {
                 testWalkSucceeds(zipRoot.resolve("a"), emptySet())
 
                 val target = root.resolve("UnzipArchive1")
-                // Fails in Windows
-                testCopyMaybeFailsWith<NoSuchFileException>(zipRoot, target, target.resolve("", "b\\", "b\\d", "a\\", "a\\..\\b\\c"))
+                // In zip archive, there's a single filename "a/../b/c",
+                // but in the target filesystem it corresponds to a tree "a"/".."/"b"/"c".
+                // This discrepancy will trigger IllegalFileNameException
+                testCopyMaybeFailsWith<IllegalFileNameException>(zipRoot, target, target.resolve("", "b\\", "b\\d", "a\\", "a\\..\\b\\c"))
 
                 // Deleting a zip root throws NPE
                 testDeleteFailsWith<NullPointerException>(zipRoot)

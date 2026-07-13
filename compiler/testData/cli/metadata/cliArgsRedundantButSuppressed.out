@@ -1,2 +1,2 @@
-warning: the argument '-Xannotation-default-target=first-only-warn' disables a stable language feature for the current language version 2.4. Future support for this mode is not guaranteed.
+warning: the argument '-Xannotation-default-target=first-only-warn' disables a stable language feature for the current language version 2.5. Future support for this mode is not guaranteed.
 OK

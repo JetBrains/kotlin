@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
+import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -295,10 +296,20 @@ internal object VirtualTablesLookup {
     }
 }
 
+/**
+ * True iff a virtual trampoline takes over this function's public symbol name (so its body is emitted at `<name>-impl`).
+ * Overridable methods are dispatched through such a trampoline; bridges are excluded because they are reached only as
+ * vtable/itable entries, and never by their own public symbol (unless the devirtualization took place, and in that case
+ * it's called directly, not virtually), so they keep their plain name and need no trampoline.
+ */
+internal val IrSimpleFunction.needsVirtualTrampoline: Boolean
+    get() = isOverridable && bridgeTarget == null
+
 /*
- * Special trampoline function to call actual virtual implementation. This helps with reducing
- * dependence between klibs/files (if vtable/itable of some class has changed, the call sites
- * would be the same and wouldn't need recompiling).
+ * Special trampoline function that performs the vtable/itable lookup and dispatches to the actual virtual
+ * implementation (which lives at `<name>-impl`). The trampoline occupies the public symbol name,
+ * so virtual call sites emit a plain `call @<name>` and stay decoupled from concrete vtable layouts:
+ * a change to a class's vtable/itable does not invalidate cached callers in other files.
  */
 internal fun CodeGenerator.getVirtualFunctionTrampoline(irFunction: IrSimpleFunction): LlvmCallable {
     /*
@@ -314,12 +325,10 @@ internal fun CodeGenerator.getVirtualFunctionTrampoline(irFunction: IrSimpleFunc
 
 private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleFunction) =
         generationState.virtualFunctionTrampolines.getOrPut(irFunction) {
-            val targetName = if (irFunction.isExported())
-                irFunction.computeSymbolName()
-            else
-                irFunction.computePrivateSymbolName(irFunction.parentAsClass.fqNameForIrSerialization.asString())
+            // Get the public name for callees, not the actual implementation (which has -impl suffix).
+            val targetName = irFunction.computeSymbolName(this.context, forImplementation = false)
             val proto = LlvmFunctionProto(
-                    name = "$targetName-trampoline",
+                    name = targetName,
                     signature = LlvmFunctionSignature(irFunction, this),
                     // A link-time dependency only: recompilation is not needed if only the trampoline's impl has changed.
                     origin = FunctionOrigin.OwnedBy(irFunction.parentAsClass, weak = true),
@@ -359,22 +368,6 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
                 }
             }
         }
-
-/*
- * If a method used to be open but is now final, previously-cached call sites in other files
- * still reference `$name-trampoline`. Emit an LLVM alias pointing at the real implementation
- * so those cached callers keep linking after incremental recompilation.
- */
-internal fun CodeGenerator.emitFinalFunctionTrampolineAlias(irFunction: IrSimpleFunction) {
-    val aliasee = llvmFunctionOrNull(irFunction) ?: return
-    val targetName = if (irFunction.isExported())
-        irFunction.computeSymbolName()
-    else
-        irFunction.computePrivateSymbolName(irFunction.parentAsClass.fqNameForIrSerialization.asString())
-    val aliasName = "$targetName-trampoline"
-    val programAddressSpace = LLVMKotlinGetProgramAddressSpace(llvm.module)
-    LLVMAddAlias2(llvm.module, aliasee.functionType, programAddressSpace, aliasee.asCallback(), aliasName)
-}
 
 /**
  * There're cases when we don't need end position or it is meaningless.

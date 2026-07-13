@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirFunctionModifiers
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifiers, CirFunctionModifiers>() {
 
@@ -26,15 +26,15 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
         mockFunctionModifiers(isSuspend = true)
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun suspendAndNotSuspend() = doTestFailure(
+    @Test
+    fun suspendAndNotSuspend() = doTestFailure<IllegalCommonizerStateException>(
         mockFunctionModifiers(isSuspend = true),
         mockFunctionModifiers(isSuspend = true),
         mockFunctionModifiers()
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun notSuspendAndSuspend() = doTestFailure(
+    @Test
+    fun notSuspendAndSuspend() = doTestFailure<IllegalCommonizerStateException>(
         mockFunctionModifiers(),
         mockFunctionModifiers(),
         mockFunctionModifiers(isSuspend = true)

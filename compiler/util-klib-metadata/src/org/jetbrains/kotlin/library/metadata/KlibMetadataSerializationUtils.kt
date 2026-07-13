@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 
-@K1Deprecation
 fun buildKlibPackageFragment(
     packageProto: ProtoBuf.Package,
     classesProto: List<Pair<ProtoBuf.Class, Int>>,

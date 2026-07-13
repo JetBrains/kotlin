@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -44,11 +46,11 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.dataframe.codeGen.ValidFieldName
 import org.jetbrains.kotlinx.dataframe.impl.toCamelCaseByDelimiters
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.CAST_ERROR
@@ -62,11 +64,10 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_DECLARATION_VISIBILITY
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_LOCAL_DECLARATION
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.MATERIALIZED_SCHEMA_INFO
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.MATERIALIZED_SCHEMA_ON_CAST
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.toMaterializedSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.flatten
 import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.utils.ALLOWED_DECLARATION_VISIBILITY
@@ -75,10 +76,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 class ExpressionAnalysisAdditionalChecker(
     session: FirSession,
     isTest: Boolean,
+    dumpSchemas: Boolean,
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOfNotNull(
-            Checker(isTest),
+            Checker(isTest, dumpSchemas),
             DataFrameFunctionCallTransformationContextChecker,
         )
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(ShadowedExtensionPropertyChecker)
@@ -91,6 +93,7 @@ class ExpressionAnalysisAdditionalChecker(
 
 private class Checker(
     val isTest: Boolean,
+    val dumpSchemas: Boolean,
 ) : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
     companion object {
         val CAST_ID = CallableId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api")), Name.identifier("cast"))
@@ -132,12 +135,24 @@ private class Checker(
             return
         }
         val targetType = expression.getCastTargetType(reporter, context) ?: return
-        val source = expression.dataFrameReceiverSchema() ?: return
+        val source = expression.dataFrameReceiverSchema()?.schema ?: return
         if (source.columns().isEmpty()) return
-        val target = pluginDataFrameSchema(targetType)
+        val target = targetType.pluginDataFrameSchema()
         validateSchemaCompatibility(source, target, reporter, expression, context)
         val asDataClass = targetType.toRegularClassSymbol()?.isInterface == false
-        reportMaterializedSchema(source, target, targetType, asDataClass, expression, reporter, context)
+        if (target.columns().isEmpty()) {
+            expression.source?.let {
+                reportMaterializedSchemaWarning(source, targetType, asDataClass, it, reporter, context)
+            }
+        }
+        if (dumpSchemas) {
+            reporter.reportOn(
+                expression.typeArguments.getOrNull(0)?.source,
+                MATERIALIZED_SCHEMA_INFO,
+                source.toMaterializedSchema(targetType.renderReadable(), asDataClass),
+                context
+            )
+        }
     }
 
     private fun KotlinTypeFacadeImpl.validateSchemaCompatibility(
@@ -192,139 +207,37 @@ private class Checker(
         return targetType
     }
 
-    context(sessionHolder: SessionHolder)
-    private fun FirFunctionCall.dataFrameReceiverSchema(): PluginDataFrameSchema? {
-        val resolvedMarker = explicitReceiver
-            ?.resolvedType
-            ?.fullyExpandedType()?.typeArguments?.getOrNull(0)?.type
-            ?: return null
-
-        return pluginDataFrameSchema(resolvedMarker)
-    }
-
-    private fun reportMaterializedSchema(
+    context(_: SessionHolder)
+    private fun reportMaterializedSchemaWarning(
         source: PluginDataFrameSchema,
-        target: PluginDataFrameSchema,
         targetType: ConeClassLikeType,
         asDataClass: Boolean,
-        expression: FirFunctionCall,
+        expression: KtSourceElement,
         reporter: DiagnosticReporter,
         context: CheckerContext,
     ) {
-        if (target.columns().isEmpty()) {
-            val text = source.renderAsKotlin(targetType.renderReadable(), asDataClass)
-            reporter.reportOn(expression.source, MATERIALIZED_SCHEMA_INFO, text, context)
-        }
-    }
-
-    fun PluginDataFrameSchema.renderAsKotlin(
-        rootName: String,
-        asDataClass: Boolean = true,
-    ): String = buildString {
-        appendLine()
-        renderMarker(rootName, columns(), indent = "", asDataClass)
-    }
-
-    private data class Nested(val markerName: String, val cols: List<SimpleCol>)
-
-    private fun StringBuilder.renderMarker(
-        name: String,
-        cols: List<SimpleCol>,
-        indent: String,
-        asDataClass: Boolean,
-    ) {
-        val inner = "$indent    "
-        val nested = mutableListOf<Nested>()
-        val fieldNames = cols.map {
-            ValidFieldName.of(it.name)
-        }
-        val usedNames = fieldNames.mapTo(mutableSetOf()) {
-            it.unquoted
-        }
-        val fields = cols.map { col ->
-            val valid = ValidFieldName.of(col.name)
-            val fieldName = valid.quotedIfNeeded
-            val columnName = col.name
-
-            val annotation = if (columnName != fieldName) {
-                "$inner@ColumnName(\"${escapeStringLiteral(columnName)}\")\n"
-            } else ""
-
-            val type = when (col) {
-                is SimpleDataColumn -> col.type.coneType.renderReadable()
-                is SimpleColumnGroup -> {
-                    val child = nestedName(col.name, usedNames)
-                    nested += Nested(child, col.columns())
-                    child
-                }
-                is SimpleFrameColumn -> {
-                    val child = nestedName(col.name, usedNames)
-                    nested += Nested(child, col.columns())
-                    "List<$child>"
-                }
-            }
-            annotation to "val $fieldName: $type"
-        }
-
-        append(indent).appendLine("@DataSchema")
-
-        if (asDataClass) {
-            append(indent).append("data class $name(")
-            if (fields.isNotEmpty()) {
-                appendLine()
-                for ([ann, decl] in fields) {
-                    append(ann)
-                    append(inner).append(decl).appendLine(",")
-                }
-                append(indent)
-            }
-            append(")")
-            if (nested.isNotEmpty()) {
-                appendLine(" {")
-                nested.forEachIndexed { i, n ->
-                    renderMarker(n.markerName, n.cols, inner, asDataClass = true)
-                    appendLine()
-                    if (i < nested.size - 1) appendLine()
-                }
-                append(indent).append("}")
-            }
-        } else {
-            append(indent).append("interface $name")
-            if (fields.isEmpty() && nested.isEmpty()) {
-                append(" { }")
-            } else {
-                appendLine(" {")
-                for ([ann, decl] in fields) {
-                    append(ann)
-                    append(inner).appendLine(decl)
-                }
-                if (fields.isNotEmpty() && nested.isNotEmpty()) appendLine()
-                nested.forEachIndexed { i, n ->
-                    renderMarker(n.markerName, n.cols, inner, asDataClass = false)
-                    appendLine()
-                    if (i < nested.size - 1) appendLine()
-                }
-                append(indent).append("}")
-            }
-        }
-    }
-
-    private fun escapeStringLiteral(s: String): String =
-        s.replace("\\", "\\\\")
-            .replace("$", "\\$")
-            .replace("\"", "\\\"")
-            .replace("\n", "\\n")
-            .replace("\r", "\\r")
-
-    private fun nestedName(columnName: String, usedNames: MutableSet<String>): String {
-        fun isReserved(name: String) = usedNames.contains(name)
-        val prefix = columnName.toCamelCaseByDelimiters().replaceFirstChar { it.uppercase() }
-        if (!isReserved(prefix)) return prefix
-        var id = 1
-        while (isReserved("$prefix$id")) id++
-        return "$prefix$id"
+        reporter.reportOn(
+            expression,
+            MATERIALIZED_SCHEMA_ON_CAST,
+            source.toMaterializedSchema(targetType.renderReadable(), asDataClass),
+            context
+        )
     }
 }
+
+context(sessionHolder: SessionHolder)
+fun FirFunctionCall.dataFrameReceiverSchema(): ExpressionDataFrameSchema? {
+    val resolvedMarker = explicitReceiver
+        ?.resolvedType
+        ?.fullyExpandedType()?.typeArguments?.getOrNull(0)?.type
+        ?: return null
+
+    return ExpressionDataFrameSchema(resolvedMarker, resolvedMarker.pluginDataFrameSchema())
+}
+
+data class ExpressionDataFrameSchema(val type: ConeKotlinType, val schema: PluginDataFrameSchema)
+
+fun String.toDataSchemaName(): String = toCamelCaseByDelimiters().replaceFirstChar { it.uppercase() }
 
 internal object DataSchemaDeclarationChecker : FirRegularClassChecker(mppKind = MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -408,14 +321,16 @@ private val FirBasedSymbol<*>.name
 private data object DataFramePropertyChecker : FirPropertyChecker(mppKind = MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
-        val typeArgument =
-            (declaration.symbol.resolvedReturnType.typeArguments.getOrNull(0) as? ConeClassLikeType)?.toRegularClassSymbol() ?: return
-        val origin = typeArgument.origin
+        val typeArgument = declaration.symbol.resolvedReturnType.typeArguments.getOrNull(0) as? ConeClassLikeType ?: return
+        val typeArgumentSymbol = typeArgument.toRegularClassSymbol() ?: return
+        val origin = typeArgumentSymbol.origin
+        val schema = typeArgument.pluginDataFrameSchema()
         if (context.findClosest<FirScriptSymbol>() != null) return
-        if (!declaration.isLocal && typeArgument.isLocal && origin.isDataFrame) {
+        if (!declaration.isLocal && typeArgumentSymbol.isLocal && origin.isDataFrame) {
             reporter.reportOn(
                 declaration.source,
-                DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE
+                DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE,
+                schema.toMaterializedSchema(declaration.name.identifier.toDataSchemaName(), asDataClass = true)
             )
         }
     }

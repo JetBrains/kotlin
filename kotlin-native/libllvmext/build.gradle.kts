@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("kotlin.native.build-tools-conventions")
     id("native")
@@ -32,7 +35,7 @@ plugins {
     id("git-clang-format")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val library = lib("llvmext")
@@ -201,10 +204,6 @@ projectTests {
                 llvmPlugin.fileProvider(tasks.named<ToolExecutionTask>(kotlinLlvmPlugin).map { it.output })
                 llvmDistribution.from(hostLlvmDistribution)
             })
-
-            testInputsCheck {
-                isNative.set(true) // uses ~/.konan
-            }
         }
     }
 }

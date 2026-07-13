@@ -19,15 +19,15 @@ import org.jetbrains.kotlin.incremental.classpathDiff.impl.PlainClassListSnapsho
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.test.compileJavaFiles
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.lang.ProcessBuilder.Redirect
+import java.nio.file.Files
 
 abstract class ClasspathSnapshotTestCommon {
 
-    @get:Rule
-    val tmpDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tmpDir: File
 
     // Use Gson to compare objects
     private val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
@@ -56,8 +56,8 @@ abstract class ClasspathSnapshotTestCommon {
         class JavaSourceFile(baseDir: File, relativePath: String) : SourceFile(baseDir, relativePath)
     }
 
-    /** Same as [SourceFile] but with a [TemporaryFolder] to store the results of operations on the [SourceFile]. */
-    internal open class TestSourceFile(val sourceFile: SourceFile, private val tmpDir: TemporaryFolder) {
+    /** Same as [SourceFile] but with a temp directory ([File]) to store the results of operations on the [SourceFile]. */
+    internal open class TestSourceFile(val sourceFile: SourceFile, private val tmpDir: File) {
 
         fun asFile() = sourceFile.asFile()
 
@@ -72,28 +72,28 @@ abstract class ClasspathSnapshotTestCommon {
 
     internal object CompileUtil {
 
-        fun SourceFile.compile(tmpDir: TemporaryFolder): List<ClassFile> {
+        fun SourceFile.compile(tmpDir: File): List<ClassFile> {
             return if (this is KotlinSourceFile) {
                 preCompiledClassFiles.forEach {
                     compileKotlin(srcDir = baseDir, classesDir = it.classRoot, classpath = emptyList())
                 }
                 preCompiledClassFiles
             } else {
-                val srcDir = tmpDir.newFolder()
+                val srcDir = Files.createTempDirectory(tmpDir.toPath(), null).toFile()
                 asFile().copyTo(File(srcDir, unixStyleRelativePath))
                 compileAll(srcDir, tmpDir)
             }
         }
 
         /** Compiles the source files in the given directory and returns all generated .class files. */
-        fun compileAll(srcDir: File, tmpDir: TemporaryFolder, classpath: List<File> = emptyList()): List<ClassFile> {
+        fun compileAll(srcDir: File, tmpDir: File, classpath: List<File> = emptyList()): List<ClassFile> {
             val classesDir = srcDir.path.let {
                 File(it.substringBeforeLast("src") + "classes" + it.substringAfterLast("src"))
             }
             val kotlinClasses = compileKotlin(srcDir, classesDir, classpath)
 
             val javaClasspath = classpath + listOfNotNull(kotlinClasses.firstOrNull()?.classRoot)
-            val javaClasses = compileJava(srcDir, classesDir = tmpDir.newFolder(), javaClasspath)
+            val javaClasses = compileJava(srcDir, classesDir = Files.createTempDirectory(tmpDir.toPath(), null).toFile(), javaClasspath)
 
             return kotlinClasses + javaClasses
         }
@@ -197,7 +197,7 @@ abstract class ClasspathSnapshotTestCommon {
 
 internal fun snapshotClasspath(
     classpathSourceDir: File,
-    tmpDir: TemporaryFolder,
+    tmpDir: File,
     granularity: ClassSnapshotGranularity? = null
 ): ClasspathSnapshot {
     val classpath = mutableListOf<File>()

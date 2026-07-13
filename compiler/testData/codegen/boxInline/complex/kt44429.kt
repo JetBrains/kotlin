@@ -1,9 +1,9 @@
 // IGNORE_BACKEND: WASM_JS, WASM_WASI
 // FREE_COMPILER_ARGS: -Xbinary=preCodegenInlineThreshold=0
 // IGNORE_NATIVE: optimizationMode=DEBUG
-// IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_ONLY_DIST
-// IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_EVERYWHERE
-// IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_PER_FILE_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
 // https://youtrack.jetbrains.com/issue/KT-44571/Segfault-on-unnecessary-int-unboxing
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:*
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.4

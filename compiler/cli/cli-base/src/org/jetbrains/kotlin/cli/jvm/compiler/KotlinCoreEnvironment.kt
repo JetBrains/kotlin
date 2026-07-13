@@ -39,6 +39,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.JavaClassSupers
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.CliDiagnostics.INITIALIZATION_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
@@ -83,9 +84,9 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
-import org.jetbrains.kotlin.utils.isGraalNativeImageRuntime
 import java.io.File
 
+@OptIn(K1Deprecation::class, CoreEnvironmentDeprecation::class)
 class KotlinCoreEnvironment private constructor(
     val projectEnvironment: ProjectEnvironment,
     val configuration: CompilerConfiguration,
@@ -168,11 +169,8 @@ class KotlinCoreEnvironment private constructor(
 
         fun registerExtensionsFromPlugins(configuration: CompilerConfiguration) {
             if (!extensionRegistered) {
-                if (!isGraalNativeImageRuntime) {
-                    // native image currently does not support dynamic class loading
-                    registerPluginExtensionPoints(project)
-                    registerExtensionsFromPlugins(project, configuration)
-                }
+                registerPluginExtensionPoints(project)
+                registerExtensionsFromPlugins(project, configuration)
                 extensionRegistered = true
             }
         }
@@ -425,7 +423,7 @@ class KotlinCoreEnvironment private constructor(
             synchronized(APPLICATION_LOCK) { action() }
 
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun createForProduction(
             projectDisposable: Disposable,
             configuration: CompilerConfiguration,
@@ -440,7 +438,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun createForProduction(
             projectEnvironment: ProjectEnvironment,
             configuration: CompilerConfiguration,
@@ -451,7 +449,7 @@ class KotlinCoreEnvironment private constructor(
 
         @TestOnly
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun createForTests(
             parentDisposable: Disposable, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
@@ -467,7 +465,7 @@ class KotlinCoreEnvironment private constructor(
 
         @TestOnly
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun createForParallelTests(
             projectDisposable: Disposable,
             initialConfiguration: CompilerConfiguration,
@@ -481,7 +479,7 @@ class KotlinCoreEnvironment private constructor(
 
         @TestOnly
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun createForTests(
             projectEnvironment: ProjectEnvironment, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
@@ -489,7 +487,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         @TestOnly
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun createProjectEnvironmentForTests(projectDisposable: Disposable, configuration: CompilerConfiguration): ProjectEnvironment {
             val appEnv = createApplicationEnvironment(
                 projectDisposable,
@@ -499,10 +497,10 @@ class KotlinCoreEnvironment private constructor(
         }
 
         // used in the daemon for jar cache cleanup
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         val applicationEnvironment: KotlinCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun getOrCreateApplicationEnvironmentForProduction(
             projectDisposable: Disposable,
             configuration: CompilerConfiguration,
@@ -512,7 +510,7 @@ class KotlinCoreEnvironment private constructor(
             KotlinCoreApplicationEnvironmentMode.Production,
         )
 
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun getOrCreateApplicationEnvironmentForTests(
             projectDisposable: Disposable,
             configuration: CompilerConfiguration,
@@ -525,7 +523,7 @@ class KotlinCoreEnvironment private constructor(
         /**
          * Test or Production mode is determined by [CLIConfigurationKeys.TEST_ENVIRONMENT] configuration key
          */
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun getOrCreateApplicationEnvironment(
             projectDisposable: Disposable,
             configuration: CompilerConfiguration,
@@ -537,7 +535,7 @@ class KotlinCoreEnvironment private constructor(
             return getOrCreateApplicationEnvironment(projectDisposable, configuration, mode)
         }
 
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun getOrCreateApplicationEnvironment(
             projectDisposable: Disposable,
             configuration: CompilerConfiguration,
@@ -594,7 +592,7 @@ class KotlinCoreEnvironment private constructor(
          * This method is also used in Gradle after configuration phase finished.
          */
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun disposeApplicationEnvironment() {
             synchronized(APPLICATION_LOCK) {
                 val environment = ourApplicationEnvironment ?: return
@@ -612,7 +610,7 @@ class KotlinCoreEnvironment private constructor(
          * [ApplicationManager.setApplication], which reset the managed application to the previous application.
          */
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun resetApplicationManager(applicationToReset: Application? = null) {
             val currentApplication = ApplicationManager.getApplication() ?: return
             if (applicationToReset != null && applicationToReset != currentApplication) {
@@ -633,7 +631,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun ProjectEnvironment.configureProjectEnvironment(
             configuration: CompilerConfiguration,
             configFiles: EnvironmentConfigFiles
@@ -673,7 +671,7 @@ class KotlinCoreEnvironment private constructor(
         @JvmStatic
         @OptIn(InternalNonStableExtensionPoints::class)
         @Suppress("MemberVisibilityCanPrivate") // made public for CLI Android Lint
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun registerPluginExtensionPoints(project: MockProject) {
             // K1 extensions
             SyntheticResolveExtension.registerExtensionPoint(project)
@@ -723,7 +721,7 @@ class KotlinCoreEnvironment private constructor(
         // made public for Upsource
         @Suppress("MemberVisibilityCanBePrivate")
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
             with(applicationEnvironment) {
                 registerFileType(KotlinFileType.INSTANCE, "kt")
@@ -738,7 +736,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun registerProjectExtensionPoints(area: ExtensionsArea) {
             CoreApplicationEnvironment.registerExtensionPoint(
                 area, PsiTreeChangePreprocessor.EP.name, PsiTreeChangePreprocessor::class.java
@@ -755,7 +753,7 @@ class KotlinCoreEnvironment private constructor(
             ReplaceWith("registerProjectServices(projectEnvironment.project)"),
             level = DeprecationLevel.ERROR,
         )
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun registerProjectServices(
             projectEnvironment: JavaCoreProjectEnvironment,
             @Suppress("UNUSED_PARAMETER") messageCollector: MessageCollector?
@@ -765,7 +763,7 @@ class KotlinCoreEnvironment private constructor(
 
         // made public for Android Lint
         @JvmStatic
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun registerProjectServices(project: MockProject) {
             with(project) {
                 registerService(JavaElementSourceFactory::class.java, JavaFixedElementSourceFactory::class.java)
@@ -777,7 +775,7 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        @K1Deprecation
+        @CoreEnvironmentDeprecation
         fun registerProjectServicesForCLI(@Suppress("UNUSED_PARAMETER") projectEnvironment: JavaCoreProjectEnvironment) {
             /**
              * Note that Kapt may restart code analysis process, and CLI services should be aware of that.

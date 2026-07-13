@@ -56,6 +56,7 @@ private enum class TestProperty(shortName: String) {
     TEAMCITY("teamcity"),
     MINIDUMP_ANALYZER("minidumpAnalyzer"),
     JDK_VERSION("jdkVersion"),
+    DEPEND_ON_PLATFORM_LIBS("dependOnPlatformLibs")
     ;
 
     val fullName = "kotlin.internal.native.test.$shortName"
@@ -281,6 +282,7 @@ private open class NativeArgsProvider @Inject constructor(
             xctestFramework.orNull?.let { "-D${XCTEST_FRAMEWORK.fullName}=$it" },
             "-D${CUSTOM_KLIBS.fullName}=${customKlibs.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { customKlibs.isNotEmpty() },
             if (minidumpAnalyzer.isEmpty) null else "-D${MINIDUMP_ANALYZER.fullName}=${minidumpAnalyzer.singleFile.absolutePath}",
+            "-D${DEPEND_ON_PLATFORM_LIBS.fullName}=${dependOnPlatformLibs.get()}"
         )
     }
 }
@@ -358,7 +360,7 @@ fun ProjectTestsExtension.nativeTestTask(
     group = "verification"
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
-        if (!project.plugins.hasPlugin("test-inputs-check")) {
+        if (!project.plugins.hasPlugin("test-inputs-check") && !project.plugins.hasPlugin("test-inputs-check-v2")) {
             workingDir = project.rootDir
         }
 
@@ -402,10 +404,6 @@ fun ProjectTestsExtension.nativeTestTask(
         // Such tests are successfully compiled in old test infra with the default 1 MB stack just by accident. New test infra requires ~55
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
-
-        // Allow the test to access Kotlin/Native-specific locations.
-        // See `repo/gradle-build-conventions/project-tests-convention/Readme.md` for more details
-        extensions.findByType<TestInputsCheckExtension>()?.isNative?.set(true)
 
         jvmArgumentProviders.add(project.objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
             this.customCompilerDependencies.from(customCompilerDependencies)

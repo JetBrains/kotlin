@@ -132,23 +132,7 @@ KtDotQualifiedExpression(110,120): 'kotlin.Int'
     isInBestCandidates = false
 
 KtNameReferenceExpression(110,116): 'kotlin'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = <constructor>(): kotlin.Int
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(117,120): 'Int'
   KaInapplicableCallCandidate:

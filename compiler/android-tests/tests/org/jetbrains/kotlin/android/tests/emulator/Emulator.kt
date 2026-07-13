@@ -52,6 +52,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
 
             commandLine.withEnvironment("ANDROID_SDK_ROOT", pathManager.androidSdkRoot)
             commandLine.withEnvironment("ANDROID_HOME", pathManager.androidSdkRoot)
+            commandLine.withEnvironment("JAVA_HOME", System.getProperty("java.home"))
 
             return commandLine
         }
@@ -151,7 +152,17 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
         val commandLine = createAdbCommand()
         commandLine.addParameter("start-server")
         println("Start adb server...")
-        runProcessCancellable(commandLine)
+        runProcessCancellable(commandLine, timeout = 120.seconds)
+        // Wait until daemon is actually ready
+        val checkCommand = createAdbCommand().also { it.addParameter("devices") }
+        repeat(10) { attempt ->
+            val result = runProcessCancellable(checkCommand, checkExitCode = false, timeout = 5.seconds)
+            if (result.exitCode == 0) return
+            println("Waiting for adb daemon to be ready (attempt ${attempt + 1})...")
+            delay(10.seconds)
+        }
+
+        error("Failed to start adb server")
     }
 
     suspend fun runEmulator() {

@@ -1,6 +1,6 @@
 KtNameReferenceExpression(202,210): 'IntArray'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       ctrl_click/IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>

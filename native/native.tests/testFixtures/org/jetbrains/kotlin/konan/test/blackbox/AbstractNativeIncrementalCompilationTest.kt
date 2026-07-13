@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.fail
 import java.io.File
 import java.security.MessageDigest
+import kotlin.io.path.Path
 
 @Tag("caches")
 @UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
@@ -100,10 +101,17 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
         private fun runStep(step: ProjectInfo.ProjectBuildStep) {
             applyModifications(step)
             compileLibraries(step)
-            val executable = compileMainExecutable(step.id)
+
+            val dumpBuiltCachesToPath = icCacheDir.resolve("__ic_build_output_${step.id}.txt")
+            val executable = compileMainExecutable(step.id, dumpBuiltCachesToPath)
+
+            val buildOutputEntries = if (dumpBuiltCachesToPath.exists())
+                dumpBuiltCachesToPath.useLines { lines -> lines.filter(String::isNotBlank).toSet() }
+            else
+                emptySet()
 
             val currentSnapshot = takeCacheSnapshot(step.id)
-            verifyCacheExpectations(step.id, previousSnapshot, currentSnapshot)
+            verifyCacheExpectations(step.id, previousSnapshot, currentSnapshot, buildOutputEntries)
             previousSnapshot = currentSnapshot
 
             runExecutableAndVerify(executable.testCase, executable.testExecutable)
@@ -141,7 +149,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
 
         // Compile test, NOT respecting possible `mode=TWO_STAGE_MULTI_MODULE`: don't add intermediate LibraryCompilation(kt->klib).
         // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module
-        private fun compileMainExecutable(stepId: Int): CompiledExecutable {
+        private fun compileMainExecutable(stepId: Int, dumpBuiltCachesToPath: File): CompiledExecutable {
             val mainModule = testStructure.modules.getValue(MAIN_MODULE_NAME)
             val mainStep = mainModule.getStep(stepId) ?: fail("Main module has no module-info entry")
             listOf(externalLibsDir, autoCacheDir, icCacheDir).forEach { it.mkdirs() }
@@ -153,6 +161,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                         "-Xauto-cache-from=${externalLibsDir.absolutePath}",
                         "-Xauto-cache-dir=${autoCacheDir.absolutePath}",
                         "-Xic-cache-dir=${icCacheDir.absolutePath}",
+                        "-Xdump-built-caches-to=${dumpBuiltCachesToPath.absolutePath}",
                         "-Xenable-incremental-compilation",
                         "-verbose",
                     ) + mainStep.cliArguments
@@ -184,15 +193,34 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             }
         }
 
-        private fun verifyCacheExpectations(stepId: Int, previous: Map<CacheKey, CacheEntry>, current: Map<CacheKey, CacheEntry>) {
+        private fun verifyCacheExpectations(
+            stepId: Int,
+            previous: Map<CacheKey, CacheEntry>,
+            current: Map<CacheKey, CacheEntry>,
+            buildOutputEntries: Set<String>
+        ) {
+            val expectedInBuildOutput = mutableSetOf<String>()
             for ([moduleName, module] in testStructure.modules) {
                 val expected = module.getStep(stepId)?.expectedFileStats ?: continue
                 for ([directive, files] in expected) {
                     val cacheExpectation = NativeCacheExpectation.byDirective.getValue(directive)
                     files.forEach { path ->
-                        verifyExpectation(stepId, moduleName, path, cacheExpectation, previous, current)
+                        verifyExpectation(stepId, moduleName, path, cacheExpectation, previous, current, buildOutputEntries)
+                        if (cacheExpectation == NativeCacheExpectation.ADDED_CACHE ||
+                            cacheExpectation == NativeCacheExpectation.MODIFIED_CACHE
+                        ) {
+                            current[CacheKey(moduleName, path)]?.cacheDir?.let { dir ->
+                                expectedInBuildOutput.add(archivePath(dir))
+                            }
+                        }
                     }
                 }
+            }
+
+            val missing = expectedInBuildOutput - buildOutputEntries
+            JUnit5Assertions.assertTrue(missing.isEmpty()) {
+                val unexpected = buildOutputEntries - expectedInBuildOutput
+                "IC build output missing expected entries at step $stepId:\n  missing: $missing, unexpected: $unexpected"
             }
         }
 
@@ -203,6 +231,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             expectation: NativeCacheExpectation,
             previous: Map<CacheKey, CacheEntry>,
             current: Map<CacheKey, CacheEntry>,
+            buildOutputEntries: Set<String>
         ) {
             val location = "${moduleName}/${path} at step $stepId"
             val cacheKey = CacheKey(moduleName, path)
@@ -216,22 +245,34 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                 NativeCacheExpectation.ADDED_CACHE -> {
                     val currentCache = currentCacheEntry.required()
                     assertTrue(currentCache.cacheDir.exists()) { "Expected added cache to exist: ${currentCache.cacheDir}" }
+                    assertTrue(archivePath(currentCache.cacheDir) in buildOutputEntries) {
+                        "Expected $location to appear in IC build output after build, but it did not."
+                    }
                 }
                 NativeCacheExpectation.MODIFIED_CACHE -> {
                     val previousCache = previousCacheEntry.required()
                     val currentCache = currentCacheEntry.required()
                     assertTrue(currentCache.cacheDir.exists()) { "Expected modified cache to exist: ${currentCache.cacheDir}" }
                     assertFalse(previousCache.hasSameContentAs(currentCache)) { "Expected cache to be modified for $location" }
+                    assertTrue(archivePath(currentCache.cacheDir) in buildOutputEntries) {
+                        "Expected modified $location to appear in IC build output, but it did not."
+                    }
                 }
                 NativeCacheExpectation.UNCHANGED_CACHE -> {
                     val previousCache = previousCacheEntry.required()
                     val currentCache = currentCacheEntry.required()
                     assertTrue(currentCache.cacheDir.exists()) { "Expected unchanged cache to exist: ${currentCache.cacheDir}" }
                     assertTrue(previousCache.hasSameContentAs(currentCache)) { "Expected cache to stay unchanged for $location" }
+                    assertFalse(archivePath(currentCache.cacheDir) in buildOutputEntries) {
+                        "Did not expect unchanged $location to appear in IC build output."
+                    }
                 }
                 NativeCacheExpectation.REMOVED_CACHE -> {
                     val previousCache = previousCacheEntry.required()
                     assertFalse(previousCache.cacheDir.exists()) { "Expected cache to be removed: ${previousCache.cacheDir}" }
+                    assertFalse(archivePath(previousCache.cacheDir) in buildOutputEntries) {
+                        "Did not expect removed $location to appear in IC build output."
+                    }
                 }
             }
         }
@@ -248,8 +289,12 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             testRunSettings.get<KotlinNativeTargets>().testTarget,
             "STATIC",
             testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG,
+            testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT,
             checkStateAtExternalCalls = testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED,
         )
+
+    private fun archivePath(cacheDir: File): String =
+        Path(cacheDir.absolutePath, "bin", "lib${cacheDir.name}.a").toString()
 
     private fun libraryFileCache(libName: String, libFileRelativePath: String, fqName: String): File {
         val libCacheDir = icCacheDir.resolve(cacheFlavor).resolve("$libName-per-file-cache")

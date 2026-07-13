@@ -104,13 +104,13 @@ MODULE_FRAGMENT name:<lib2>
                     TYPE_ARG 1: kotlin.Pair<kotlin.String, kotlin.Number>
                     ARG 1: CALL 'kotlin.collections/setOf|setOf(){0§<kotlin.Any?>}[0]' type=kotlin.collections.Set<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
                       TYPE_ARG 1: kotlin.Pair<kotlin.String, kotlin.Number>
-        FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:lib2/SealedInterface.Enum.values|values#static(){}[0] visibility:public modality:FINAL returnType:kotlin.Array<lib2.SealedInterface.Enum>
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:lib2/SealedInterface.Enum.values|values#static(){}[0] visibility:public modality:FINAL returnType:kotlin.Array<lib2.SealedInterface.Enum> [companion]
           SYNTHETIC_BODY kind=ENUM_VALUES
-        FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:lib2/SealedInterface.Enum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL returnType:lib2.SealedInterface.Enum
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:lib2/SealedInterface.Enum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL returnType:lib2.SealedInterface.Enum [companion]
           VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
           SYNTHETIC_BODY kind=ENUM_VALUEOF
         PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:lib2/SealedInterface.Enum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
-          FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:lib2/SealedInterface.Enum.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<lib2.SealedInterface.Enum>
+          FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:lib2/SealedInterface.Enum.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<lib2.SealedInterface.Enum> [companion]
             correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:lib2/SealedInterface.Enum.entries|#static{}entries[0] visibility:public modality:FINAL [val]
             SYNTHETIC_BODY kind=ENUM_ENTRIES
       CLASS OBJECT name:Object signature:lib2/SealedInterface.Object|null[0] modality:FINAL visibility:public [data] superTypes:[lib2.SealedInterface]

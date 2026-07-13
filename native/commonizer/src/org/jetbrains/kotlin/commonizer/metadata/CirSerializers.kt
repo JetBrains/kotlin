@@ -266,6 +266,7 @@ private fun List<CirTypeParameter>.serializeTypeParameters(
     }
 }
 
+
 private fun CirType.serializeType(
     context: CirTreeSerializationContext,
     expansion: TypeAliasExpansion = FOR_TOP_LEVEL_TYPE

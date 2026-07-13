@@ -11,12 +11,17 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.updateWithCompilerOptions
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.fail
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
@@ -24,7 +29,6 @@ import java.io.PrintStream
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
-import kotlin.test.*
 
 const val SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.test.base.compiler.arguments"
 
@@ -171,15 +175,18 @@ fun runWithK2JVMCompiler(
     scriptPath: String,
     expectedOutPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
+    expectedSomeErrPatterns: List<String>? = null,
     classpath: List<File> = emptyList(),
     skipScriptArgument: Boolean = false,
     disableScriptCompilationCache: Boolean = true,
+    additionalArgs: List<String> = emptyList()
 ) {
     val args = arrayListOf(K2JVMCompilerArguments::kotlinHome.cliArgument, ForTestCompileRuntime.distKotlincForTests().path).apply {
         if (classpath.isNotEmpty()) {
             add(K2JVMCompilerArguments::classpath.cliArgument)
             add(classpath.joinToString(File.pathSeparator))
         }
+        addAll(additionalArgs)
         if (!skipScriptArgument) {
             add(K2JVMCompilerArguments::script.cliArgument)
         } else {
@@ -191,7 +198,7 @@ fun runWithK2JVMCompiler(
         }
         add(scriptPath)
     }
-    runWithK2JVMCompiler(args.toTypedArray(), expectedOutPatterns, expectedExitCode)
+    runWithK2JVMCompiler(args.toTypedArray(), expectedOutPatterns, expectedExitCode, expectedSomeErrPatterns = expectedSomeErrPatterns)
 }
 
 fun runWithK2JVMCompiler(

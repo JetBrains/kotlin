@@ -4,6 +4,7 @@
  */
 
 @file:OptIn(ExperimentalAbiValidation::class)
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.abi
 
@@ -67,6 +68,10 @@ class AbiValidationKmpIT : KGPBaseTest() {
 
             build("check") {
                 assertTasksExecuted(":checkKotlinAbi")
+            }
+
+            build("dependencies", "--configuration", "kotlinAbiValidationCompatClasspath") {
+                assertOutputContains("\\--- org.jetbrains.kotlin:kotlin-build-tools-impl:{strictly 2.4.0} -> 2.4.0")
             }
         }
     }
@@ -213,7 +218,6 @@ class AbiValidationKmpIT : KGPBaseTest() {
                     iosSimulatorArm64()
                     tvosArm64()
                     tvosSimulatorArm64()
-                    watchosArm32()
                     watchosArm64()
                     watchosSimulatorArm64()
                     watchosDeviceArm64()
@@ -743,7 +747,7 @@ val EMPTY_DUMP_KLIB = """
 
 private val APPLE_DUMP_KLIB = """
     // Klib ABI Dump
-    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, mingwX64, tvosArm64, tvosSimulatorArm64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64]
+    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, mingwX64, tvosArm64, tvosSimulatorArm64, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64]
     // Rendering settings:
     // - Signature version: 2
     // - Show manifest properties: true

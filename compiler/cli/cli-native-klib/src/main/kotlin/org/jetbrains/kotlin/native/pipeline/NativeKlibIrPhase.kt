@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.native.FirSerializerInput
 import org.jetbrains.kotlin.native.KlibWriterInput
 import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 import org.jetbrains.kotlin.native.firSerializerBase
 import org.jetbrains.kotlin.native.writeKlib
+import kotlin.io.path.Path
 
 /**
  * Serialization phase for native klib compilation.
@@ -42,7 +43,7 @@ object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, 
 
             // Don't overwrite the header klib with the full klib and stop compilation here.
             // By providing the same path for both regular output and header klib we can skip emitting the full klib.
-            if (File(outputKlibPath).canonicalPath == File(headerKlibPath).canonicalPath) {
+            if (Path(outputKlibPath).canonicalPathString() == Path(headerKlibPath).canonicalPathString()) {
                 return null
             }
         }

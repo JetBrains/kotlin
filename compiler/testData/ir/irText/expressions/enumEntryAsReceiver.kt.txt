@@ -27,12 +27,12 @@ abstract enum class X : Enum<X> {
 
   }
 
-  /* static */ fun valueOf(value: String): X /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): X /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<X> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<X> /* Synthetic body for ENUM_VALUES */
 
-  /* static */ val entries: EnumEntries<X>
-    get(): EnumEntries<X> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<X>
+    companion get(): EnumEntries<X> /* Synthetic body for ENUM_ENTRIES */
 
   abstract val value: Function0<String>
     abstract get

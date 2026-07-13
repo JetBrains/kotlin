@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// ALLOW_KOTLIN_PACKAGE
 
 // The test uses 'kotlin' package, which is being renamed in Android tests
 // IGNORE_BACKEND: ANDROID

@@ -61,12 +61,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val FRIEND_PATHS_DISABLED by key<Boolean>()
 
-    val METADATA_ONLY by key<Boolean>()
-
-    val DEVELOPER_MODE by key<Boolean>("Enable additional checkers.")
-
-    val GENERATE_COMMENTS_WITH_FILE_PATH by key<Boolean>("Generate comments with file path at the start of each file block.")
-
     val GENERATE_POLYFILLS by key<Boolean>("Generate polyfills for newest properties, methods and classes from ES6+.")
 
     val DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS by key<String>("Provide platform-specific args as a parameter of the main function.")

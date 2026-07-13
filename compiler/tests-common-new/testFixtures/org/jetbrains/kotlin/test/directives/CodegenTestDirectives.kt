@@ -112,6 +112,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Dumps generated backend IR of preprocessed inline functions (enables ${IrPreprocessedInlineFunctionDumpHandler::class})"
     )
 
+    val DUMP_IR_DIFFERENCE by enumDirective<TargetBackend>(
+        description = "Specifies list of target backends which have different golden data for IR dumps"
+    )
+
     val DUMP_EXTERNAL_CLASS by stringDirective(
         description = "Specifies names of external classes which IR should be dumped"
     )
@@ -232,6 +236,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val DISABLE_IR_VARARG_TYPE_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for vararg type mismatches when validating IR on the target backend"
+    )
+
+    val DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS by enumDirective<TargetBackend>(
+        description = "Don't check for out-of-scope type parameter usages when validating IR on the target backend"
     )
 }
 

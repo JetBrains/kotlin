@@ -1,2 +1,12 @@
 //class RemovedClass
 //enum class RemovedEnum { A, B }
+
+abstract class Base {
+	fun funWithParameter(p: Any) {}
+    fun <T : Any> funWithTypeParameter() {}
+
+    fun funWithAnyParameter(p: Any) {}
+    fun <T : Any> funWithAnyTypeParameter() {}
+}
+
+class Derived : Base()

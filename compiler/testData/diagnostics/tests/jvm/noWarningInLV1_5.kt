@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +JvmInlineValueClasses
+// ALLOW_KOTLIN_PACKAGE
 // WITH_STDLIB
 
 package kotlin.jvm

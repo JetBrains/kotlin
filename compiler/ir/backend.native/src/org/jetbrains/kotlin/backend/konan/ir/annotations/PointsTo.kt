@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.util.allParameters
 import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 /**
@@ -81,5 +82,5 @@ value class PointsTo private constructor(private val elements: IntArray) {
  */
 val IrFunction.pointsTo: PointsTo?
     get() = annotations.findAnnotation(NativeRuntimeNames.Annotations.PointsTo.asSingleFqName())?.run {
-        PointsTo((arguments[0]!! as IrVararg).elements.map { (it as IrConst).value as Int }, allParameters.size + 1)
+        PointsTo((argumentMapping[Name.identifier("onWhom")] as IrVararg).elements.map { (it as IrConst).value as Int }, allParameters.size + 1)
     }

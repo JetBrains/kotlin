@@ -643,7 +643,7 @@ KtNameReferenceExpression(505,508): 'foo'
     fun Test.plusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(509,511): '+='
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -868,7 +868,7 @@ KtNameReferenceExpression(518,521): 'foo'
     fun Test.minusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(522,524): '-='
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1093,7 +1093,7 @@ KtNameReferenceExpression(531,534): 'foo'
     fun Test.divAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(535,537): '/='
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1318,7 +1318,7 @@ KtNameReferenceExpression(544,547): 'foo'
     fun Test.timesAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(548,550): '*='
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1543,7 +1543,7 @@ KtNameReferenceExpression(557,560): 'foo'
     fun Test.remAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(561,563): '%='
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

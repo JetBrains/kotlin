@@ -13,15 +13,17 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 interface ModulesApiHistory {
+    val modulesInfo: IncrementalModuleInfo?
     fun historyFilesForChangedFiles(changedFiles: Set<File>): Either<Set<File>>
 }
 
 object EmptyModulesApiHistory : ModulesApiHistory {
+    override val modulesInfo: IncrementalModuleInfo? get() = null
     override fun historyFilesForChangedFiles(changedFiles: Set<File>): Either<Set<File>> =
         Either.Error("Multi-module IC is not configured")
 }
 
-abstract class ModulesApiHistoryBase(rootProjectDir: File, protected val modulesInfo: IncrementalModuleInfo) : ModulesApiHistory {
+abstract class ModulesApiHistoryBase(rootProjectDir: File, override val modulesInfo: IncrementalModuleInfo) : ModulesApiHistory {
     // All project build dirs should have this dir as their parent. For a default project setup, this will
     // be the same as root project path. Some projects map output outside of the root project dir, typically
     // with <some_dir>/<project_path>/build, and in that case, this path will be <some_dir>.

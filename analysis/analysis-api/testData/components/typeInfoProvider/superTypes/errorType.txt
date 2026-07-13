@@ -1,3 +1,6 @@
+[type]
+ERROR_TYPE(Symbol not found for UnresolvedType)
+
 [direct super types]
 
 [approximated direct super types]

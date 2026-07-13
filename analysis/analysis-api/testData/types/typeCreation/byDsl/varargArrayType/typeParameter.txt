@@ -14,7 +14,6 @@ KaUsualClassType:
           name: T
           symbol: KaTypeParameterSymbol:
             annotations: []
-            compilerVisibility: Local
             isActual: false
             isExpect: false
             isExternal: false
@@ -39,7 +38,6 @@ KaUsualClassType:
       name: T
       symbol: KaTypeParameterSymbol:
         annotations: []
-        compilerVisibility: Local
         isActual: false
         isExpect: false
         isExternal: false

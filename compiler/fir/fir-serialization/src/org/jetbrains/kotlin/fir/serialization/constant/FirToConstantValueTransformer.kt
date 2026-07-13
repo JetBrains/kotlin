@@ -103,15 +103,7 @@ private fun FirElement.toConstantValueImpl(): ConstantValue<*>? {
         is FirGetClassCall -> create(this.argument.resolvedType, c.session)
         is FirEnumEntryDeserializedAccessExpression -> EnumValue(this.enumClassId, this.enumEntryName)
         is FirCollectionLiteral -> ArrayValue(this.argumentList.arguments.mapNotNull { it.toConstantValueImpl() })
-        is FirVarargArgumentsExpression -> {
-            val arguments = this.arguments.let {
-                // Named, spread or array literal arguments for vararg parameters have the form Vararg(Named/Spread?(ArrayLiteral(..))).
-                // We need to extract the ArrayLiteral, otherwise we will get two nested ArrayValue as a result.
-                (it.singleOrNull()?.unwrapArgument() as? FirCollectionLiteral)?.arguments ?: it
-            }
-
-            ArrayValue(arguments.mapNotNull { it.toConstantValueImpl() })
-        }
+        is FirVarargArgumentsExpression -> ArrayValue(arguments.mapNotNull { it.toConstantValueImpl() })
         else -> null
     }
 }
@@ -145,7 +137,7 @@ private fun FirAnnotation.toAnnotationValue(mapping: Map<Name, ConstantValue<*>>
 }
 
 // For serialization, the compiler should insert an empty array in the place where an array was expected, but wasn't provided
-fun Map<Name, ConstantValue<*>>.fillEmptyArray(
+private fun Map<Name, ConstantValue<*>>.fillEmptyArray(
     annotationConstructorSymbol: FirConstructorSymbol?,
     session: FirSession
 ): Map<Name, ConstantValue<*>> {

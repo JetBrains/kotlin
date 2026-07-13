@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class Foo, KotlinArray<T>, KotlinEnum<E>, KotlinEnumCompanion;
+@class Bar, Foo, KotlinArray<T>, KotlinEnum<E>, KotlinEnumCompanion;
 
 @protocol KotlinComparable, KotlinIterator;
 
@@ -36,6 +36,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)description __attribute__((swift_name("description()")));
 @property (readonly) NSString *name __attribute__((swift_name("name")));
 @property (readonly) int32_t ordinal __attribute__((swift_name("ordinal")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+@interface Bar : KotlinEnum<Bar *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (class, readonly) Bar *null __attribute__((swift_name("null")));
+@property (class, readonly) Bar *debug __attribute__((swift_name("debug")));
+@property (class, readonly) Bar *yes __attribute__((swift_name("yes")));
+@property (class, readonly) Bar *no __attribute__((swift_name("no")));
+@property (class, readonly) Bar *something __attribute__((swift_name("something")));
++ (KotlinArray<Bar *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<Bar *> *entries __attribute__((swift_name("entries")));
 @end
 
 __attribute__((objc_subclassing_restricted))

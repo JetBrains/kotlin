@@ -40,7 +40,9 @@ abstract class TestModuleCompiler : TestService {
 
         val filesByBinaryRoot = module.files.groupBy { it.directives[Directives.BINARY_ROOT].singleOrNull() }
         for ([binaryRootName, files] in filesByBinaryRoot) {
-            val sourcesTempDirectory = writeFiles(files) ?: error("No sources found")
+            // Resource files are not compiled. They are embedded into the produced library by `compile`.
+            val [resourceFiles, sourceFiles] = files.partition { Directives.LIBRARY_RESOURCE in it.directives }
+            val sourcesTempDirectory = writeFiles(sourceFiles) ?: error("No sources found")
             val commonSourcesTestDirectory = writeFiles(commonTestFiles)
 
             val libraryName = buildString {
@@ -51,8 +53,18 @@ abstract class TestModuleCompiler : TestService {
                 }
             }
 
-            binary.add(compile(sourcesTempDirectory, commonSourcesTestDirectory, module, libraryName, dependencyBinaryRoots, testServices))
-            sources.add(compileSources(files, module, testServices))
+            binary.add(
+                compile(
+                    sourcesTempDirectory,
+                    commonSourcesTestDirectory,
+                    module,
+                    libraryName,
+                    dependencyBinaryRoots,
+                    resourceFiles,
+                    testServices,
+                )
+            )
+            sources.add(compileSources(sourceFiles, module, testServices))
         }
 
         return CompilationResult(binary, sources)
@@ -103,6 +115,7 @@ abstract class TestModuleCompiler : TestService {
         module: TestModule,
         libraryName: String,
         dependencyBinaryRoots: Collection<Path>,
+        resourceFiles: List<TestFile>,
         testServices: TestServices,
     ): Path
 
@@ -113,5 +126,10 @@ abstract class TestModuleCompiler : TestService {
         val COMPILATION_ERRORS by directive("Is compilation errors expected in the file")
         val LIBRARY_PLATFORMS by enumDirective<TargetPlatformEnum>("Target platforms allowed for library compilation")
         val BINARY_ROOT by stringDirective("A library root to which a file will be compiled", DirectiveApplicability.File)
+
+        val LIBRARY_RESOURCE by directive(
+            "Embeds the file verbatim as a resource in the compiled library, regardless of its extension. Such a file is not compiled.",
+            DirectiveApplicability.File,
+        )
     }
 }

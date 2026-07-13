@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.*
@@ -76,9 +75,7 @@ class IrSourceCompilerForInline(
     }
 
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {
-        generateInlineIntrinsicForIr(callee.toIrBasedDescriptor())?.let {
-            return it
-        }
+        generateInlineIntrinsicForIr(callee)?.let { return it }
         if (jvmSignature.asmMethod.name != callee.name.asString()) {
             val ktFile = codegen.irFunction.fileParent.getKtFile()
             if ((ktFile != null && ktFile.doNotAnalyze == null) || ktFile == null) {

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 

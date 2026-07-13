@@ -9,12 +9,12 @@ enum class TestEnum1 : Enum<TestEnum1> {
 
   }
 
-  /* static */ fun valueOf(value: String): TestEnum1 /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): TestEnum1 /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<TestEnum1> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<TestEnum1> /* Synthetic body for ENUM_VALUES */
 
-  /* static */ val entries: EnumEntries<TestEnum1>
-    get(): EnumEntries<TestEnum1> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<TestEnum1>
+    companion get(): EnumEntries<TestEnum1> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -35,12 +35,12 @@ enum class TestEnum2 : Enum<TestEnum2> {
 
   }
 
-  /* static */ fun valueOf(value: String): TestEnum2 /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): TestEnum2 /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<TestEnum2> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<TestEnum2> /* Synthetic body for ENUM_VALUES */
 
-  /* static */ val entries: EnumEntries<TestEnum2>
-    get(): EnumEntries<TestEnum2> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<TestEnum2>
+    companion get(): EnumEntries<TestEnum2> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -66,14 +66,14 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
 
   }
 
-  /* static */ fun valueOf(value: String): TestEnum3 /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): TestEnum3 /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<TestEnum3> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<TestEnum3> /* Synthetic body for ENUM_VALUES */
 
   abstract fun foo()
 
-  /* static */ val entries: EnumEntries<TestEnum3>
-    get(): EnumEntries<TestEnum3> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<TestEnum3>
+    companion get(): EnumEntries<TestEnum3> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -123,14 +123,14 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
 
   }
 
-  /* static */ fun valueOf(value: String): TestEnum4 /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): TestEnum4 /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<TestEnum4> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<TestEnum4> /* Synthetic body for ENUM_VALUES */
 
   abstract fun foo()
 
-  /* static */ val entries: EnumEntries<TestEnum4>
-    get(): EnumEntries<TestEnum4> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<TestEnum4>
+    companion get(): EnumEntries<TestEnum4> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -151,12 +151,12 @@ enum class TestEnum5 : Enum<TestEnum5> {
 
   }
 
-  /* static */ fun valueOf(value: String): TestEnum5 /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): TestEnum5 /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<TestEnum5> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<TestEnum5> /* Synthetic body for ENUM_VALUES */
 
-  /* static */ val entries: EnumEntries<TestEnum5>
-    get(): EnumEntries<TestEnum5> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<TestEnum5>
+    companion get(): EnumEntries<TestEnum5> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -181,12 +181,12 @@ enum class TestEnum6 : Enum<TestEnum6> {
 
   }
 
-  /* static */ fun valueOf(value: String): TestEnum6 /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): TestEnum6 /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<TestEnum6> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<TestEnum6> /* Synthetic body for ENUM_VALUES */
 
-  /* static */ val entries: EnumEntries<TestEnum6>
-    get(): EnumEntries<TestEnum6> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<TestEnum6>
+    companion get(): EnumEntries<TestEnum6> /* Synthetic body for ENUM_ENTRIES */
 
 }
 

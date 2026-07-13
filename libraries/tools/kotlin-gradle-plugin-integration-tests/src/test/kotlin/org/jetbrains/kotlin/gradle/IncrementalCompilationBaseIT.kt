@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.testFederation.AffectedByCompiler
+import kotlin.io.path.appendText
 
 @AffectedByCompiler
 abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
@@ -26,8 +27,20 @@ abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
         defaultProjectName,
         gradleVersion,
         buildOptions,
-        test = test
+        test = {
+            includeAnotherLibProject()
+            test()
+        }
     )
+
+    fun TestProject.includeAnotherLibProject() {
+        settingsGradle.appendText(
+            """
+
+            include ':another-lib'
+            """.trimIndent()
+        )
+    }
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
@@ -480,13 +479,7 @@ internal class SymbolLightAccessorMethod private constructor(
             accessor: KaPropertyAccessorSymbol,
             result: MutableList<PsiMethod>,
         ) {
-            val accessorCanExist = lightAccessorCanExist(
-                accessorSymbol = accessor,
-                siteTarget = if (accessor is KaPropertyGetterSymbol)
-                    AnnotationUseSiteTarget.PROPERTY_GETTER
-                else
-                    AnnotationUseSiteTarget.PROPERTY_SETTER,
-            )
+            val accessorCanExist = lightAccessorCanExist(accessorSymbol = accessor)
 
             if (!accessorCanExist) return
 
@@ -507,7 +500,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 !context.staticsFromCompanion &&
                         context.destinationLightClass.isValueClass &&
                         // Constructor properties are materialized by default
-                        !property.isFromPrimaryConstructor &&
+                        (property as? KaKotlinPropertySymbol)?.primaryConstructorParameter == null &&
                         // Overrides are materialized by default
                         !property.isOverride
 
@@ -518,7 +511,9 @@ internal class SymbolLightAccessorMethod private constructor(
                 isAffectedByValueClass = hasMangledNameDueValueClassesInSignature || isNonMaterializableValueClassProperty,
                 hasJvmNameAnnotation = hasJvmNameAnnotation,
                 isSuspend = false,
-                isOverridable = accessor.isOverridable()
+                isOverridable = accessor.isOverridable(),
+                // An accessor may be private while its property is not (e.g. `var p: IC; private set(value) {}`)
+                isEffectivelyPrivate = accessor.visibility == KaSymbolVisibility.PRIVATE || isEffectivelyPrivate(property),
             )
 
             if (!generationResult.isAnyMethodRequired) return
@@ -597,13 +592,10 @@ internal class SymbolLightAccessorMethod private constructor(
          * Whether a light class potentially can be generated for the given accessor symbol
          */
         context(context: Context)
-        private fun KaSession.lightAccessorCanExist(
-            accessorSymbol: KaPropertyAccessorSymbol,
-            siteTarget: AnnotationUseSiteTarget,
-        ): Boolean = when {
+        private fun KaSession.lightAccessorCanExist(accessorSymbol: KaPropertyAccessorSymbol): Boolean = when {
             context.staticsFromCompanion && !accessorSymbol.hasJvmStaticAnnotation() && !property.hasJvmStaticAnnotation() -> false
             isHiddenByDeprecation(property) -> false
-            isHiddenOrSynthetic(accessorSymbol, siteTarget) -> false
+            isHiddenOrSynthetic(accessorSymbol) -> false
             !accessorSymbol.isNotDefault && accessorSymbol.visibility == KaSymbolVisibility.PRIVATE -> false
             // Value classes have special logic
             context.destinationLightClass.isValueClass -> when {
@@ -611,7 +603,8 @@ internal class SymbolLightAccessorMethod private constructor(
                 property.isOverride -> true
 
                 // Only public properties from the constructor can be exposed as regular accessors
-                else -> !property.isFromPrimaryConstructor || property.visibility == KaSymbolVisibility.PUBLIC
+                else -> (property as? KaKotlinPropertySymbol)?.primaryConstructorParameter == null ||
+                        property.visibility == KaSymbolVisibility.PUBLIC
             }
 
             else -> true

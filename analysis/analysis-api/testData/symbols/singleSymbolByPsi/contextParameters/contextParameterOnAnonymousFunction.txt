@@ -1,7 +1,7 @@
 KaContextParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -24,9 +24,10 @@ KaContextParameterSymbol:
         type: kotlin/Int
     ]
     type: kotlin/collections/List<kotlin/Int>
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(contextParameterOnAnonymousFunction.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

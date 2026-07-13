@@ -1,0 +1,100 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(27,39): 'package main'
+  null
+
+KtNameReferenceExpression(35,39): 'main'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main
+    ]
+
+KtImportList(41,63): 'import test.expectsFoo'
+  null
+
+KtImportDirective(41,63): 'import test.expectsFoo'
+  null
+
+KtDotQualifiedExpression(48,63): 'test.expectsFoo'
+  null
+
+KtNameReferenceExpression(48,52): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtNameReferenceExpression(53,63): 'expectsFoo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/expectsFoo(foo: test.Foo): kotlin.Unit
+    ]
+
+KtNamedFunction(65,109): 'fun usage() {'
+  null
+
+KtParameterList(74,76): '()'
+  null
+
+KtBlockExpression(77,109): '{'
+  null
+
+KtCallExpression(83,107): 'expectsFoo(test.Foo.BAR)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/expectsFoo(foo: test.Foo): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(83,93): 'expectsFoo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/expectsFoo(foo: test.Foo): kotlin.Unit
+    ]
+
+KtValueArgumentList(93,107): '(test.Foo.BAR)'
+  null
+
+KtValueArgument(94,106): 'test.Foo.BAR'
+  null
+
+KtDotQualifiedExpression(94,106): 'test.Foo.BAR'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo.BAR
+    ]
+
+KtDotQualifiedExpression(94,102): 'test.Foo'
+  null
+
+KtNameReferenceExpression(94,98): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtNameReferenceExpression(99,102): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtNameReferenceExpression(103,106): 'BAR'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo.BAR
+    ]

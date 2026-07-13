@@ -1,4 +1,4 @@
-// Declared signatures: 98
+// Declared signatures: 96
 visibility/InternalClass.<init>|<init>(kotlin.String){}[0]
 visibility/InternalClass.NestedClass.<init>|<init>(){}[0]
 visibility/InternalClass.NestedClass|null[0]
@@ -27,7 +27,6 @@ visibility/InternalPAClassInternalPAMembers.property.<get-property>|<get-propert
 visibility/InternalPAClassInternalPAMembers.property|{}property[0]
 visibility/InternalPAClassInternalPAMembers|null[0]
 visibility/InternalPAClass|null[0]
-visibility/InternalTypeAlias|null[0]
 visibility/PublicAbstractClassProtectedMembers.<init>|<init>(kotlin.String){}[0]
 visibility/PublicAbstractClassProtectedMembers.NestedClass.<init>|<init>(){}[0]
 visibility/PublicAbstractClassProtectedMembers.NestedClass|null[0]
@@ -71,7 +70,6 @@ visibility/PublicOpenClassProtectedMembers.function|function(){}[0]
 visibility/PublicOpenClassProtectedMembers.property.<get-property>|<get-property>(){}[0]
 visibility/PublicOpenClassProtectedMembers.property|{}property[0]
 visibility/PublicOpenClassProtectedMembers|null[0]
-visibility/PublicTypeAlias|null[0]
 visibility/internalFun|internalFun(){}[0]
 visibility/internalPAFun|internalPAFun(){}[0]
 visibility/internalPAVal.<get-internalPAVal>|<get-internalPAVal>(){}[0]

@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.isExportedToJs
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isEffectivelyExternal
-import org.jetbrains.kotlin.fir.analysis.js.checkers.isExportedObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -40,7 +40,7 @@ object FirJsExportedActualMatchExpectChecker : FirBasicDeclarationChecker(MppChe
         val correspondingExpectDeclaration = expectForActualMatchingData[ExpectActualMatchingCompatibility.MatchedSuccessfully]
             ?.singleOrNull() ?: return
 
-        if (!correspondingExpectDeclaration.isExportedObject()) return
+        if (!correspondingExpectDeclaration.isExportedToJs()) return
 
         val correspondingActualDeclaration = when (declaration) {
             is FirTypeAlias -> {
@@ -57,7 +57,7 @@ object FirJsExportedActualMatchExpectChecker : FirBasicDeclarationChecker(MppChe
     context(context: CheckerContext)
     private fun FirBasedSymbol<*>.isReachableOutsideOfKotlin(): Boolean =
         when (this) {
-            is FirClassLikeSymbol -> isExportedObject() || isEffectivelyExternal()
-            else -> isExportedObject()
+            is FirClassLikeSymbol -> isExportedToJs() || isEffectivelyExternal()
+            else -> isExportedToJs()
         }
 }

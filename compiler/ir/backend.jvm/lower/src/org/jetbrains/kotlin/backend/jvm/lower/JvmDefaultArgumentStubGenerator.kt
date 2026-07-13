@@ -39,8 +39,7 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
 
     override fun useConstructorMarker(function: IrFunction): Boolean =
         function is IrConstructor ||
-                function.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR ||
-                function.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
+                function.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
 
     override fun IrBlockBodyBuilder.generateSuperCallHandlerCheckIfNeeded(
         irFunction: IrFunction,

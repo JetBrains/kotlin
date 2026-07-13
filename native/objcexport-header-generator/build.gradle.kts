@@ -1,9 +1,13 @@
 @file:Suppress("HasPlatformType")
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
     id("java-test-fixtures")
+    id("test-inputs-check-v2")
 }
 
 sourceSets {
@@ -62,6 +66,8 @@ tasks.test.configure {
 }
 
 projectTests {
+    testData(isolated, "testData")
+
     objCExportHeaderGeneratorTestTask("testK1", testDisplayNameTag = "K1") {
         classpath += k1TestRuntimeClasspath
         exclude("**/ObjCExportIntegrationTest.class")

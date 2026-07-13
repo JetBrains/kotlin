@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallTypeArgument
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallValueArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -131,8 +132,8 @@ private class Fir2IrPipeline(
     val irModuleFragmentPostCompute: (IrModuleFragment) -> Unit,
 ) {
     private class Fir2IrConversionResult(
-        val mainIrFragment: IrModuleFragmentImpl,
-        val dependentIrFragments: List<IrModuleFragmentImpl>,
+        val mainIrFragment: IrModuleFragment,
+        val dependentIrFragments: List<IrModuleFragment>,
         val componentsStoragePerSourceSession: Map<FirSession, Fir2IrComponentsStorage>,
         val commonMemberStorage: Fir2IrCommonMemberStorage,
         val generatedDataValueClassSyntheticFunctions: Map<IrClass, DataValueClassGeneratedMembersInfo>,
@@ -244,7 +245,7 @@ private class Fir2IrPipeline(
         val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: IrExpectActualMap()
 
         val pluginContext = Fir2IrPluginContext(
-            componentsStorage, irBuiltIns, componentsStorage.moduleDescriptor, symbolTable,
+            componentsStorage, irBuiltIns, symbolTable,
             @OptIn(MessageCollectorAccess::class) // deprecated in IrPluginContext
             fir2IrConfiguration.messageCollector,
             fir2IrConfiguration.diagnosticReporter
@@ -301,7 +302,6 @@ private class Fir2IrPipeline(
                     outputs.last().session,
                     componentsStoragePerSourceSession,
                 ),
-                hmppSchemeEnabled = componentsStorage.session.languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation)
             )
         }
     }
@@ -506,7 +506,7 @@ private class Fir2IrPipeline(
                     IrCallValueArgumentCountChecker,
                     IrCrossFileFieldUsageChecker,
                     IrValueAccessScopeChecker,
-                    //IrTypeParameterScopeChecker // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305),
+                    IrTypeParameterScopeChecker,
                     IrVisibilityChecker.Strict,
                 )
                 .withVarargChecks()

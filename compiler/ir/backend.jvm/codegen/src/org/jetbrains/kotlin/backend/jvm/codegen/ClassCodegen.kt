@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
-import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -79,7 +78,7 @@ class ClassCodegen private constructor(
     }
     private val metadataSerializer: MetadataSerializer by lazy {
         context.backendExtension.createSerializer(
-            context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer
+            context, irClass, type, visitor, parentClassCodegen?.metadataSerializer
         )
     }
 
@@ -118,7 +117,6 @@ class ClassCodegen private constructor(
             throw IllegalStateException("Generating class with invalid name '${type.className}': ${irClass.dump()}")
         }
         defineClass(
-            irClass.psiElement,
             config.classFileVersion,
             irClass.getFlags(config.languageVersionSettings),
             signature.name,
@@ -177,7 +175,7 @@ class ClassCodegen private constructor(
             generateField(field)
         }
         // 4. Generate nested classes at the end, to ensure that when the companion's metadata is serialized
-        //    everything moved to the outer class has already been recorded in `globalSerializationBindings`.
+        //    everything moved to the outer class has already been recorded in the metadata serializer.
         for (declaration in irClass.declarations) {
             if (declaration is IrClass) {
                 getOrCreate(declaration, context, intrinsicExtensions).generate()
@@ -286,7 +284,7 @@ class ClassCodegen private constructor(
                     // normalized to `local` instead of `protected`
                     DescriptorVisibilities.LOCAL
                 } else irClass.visibility.normalize()
-            val visibilityFlagsValue = ProtoEnumFlags.descriptorVisibility(normalizedVisibilityForSyntheticClass).number
+            val visibilityFlagsValue = ProtoEnumFlags.visibility(normalizedVisibilityForSyntheticClass.delegate).number
             val maxVisibilityBits =
                 1 + JvmAnnotationNames.METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_LAST - JvmAnnotationNames.METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_FIRST
             assert(visibilityFlagsValue in 0 until (1 shl maxVisibilityBits)) { "Visibility flag value is out of range: $visibilityFlagsValue" }

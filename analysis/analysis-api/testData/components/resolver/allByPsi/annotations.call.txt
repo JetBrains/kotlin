@@ -2079,7 +2079,7 @@ KtNameReferenceExpression(800,814): 'stringConstant'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(815,816): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

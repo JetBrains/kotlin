@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 @InternalKotlinNativeApi
 class ObjCExportMapper(
+    @OptIn(K1Deprecation::class)
     internal val deprecationResolver: DeprecationResolver? = null,
     private val local: Boolean = false,
     internal val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport,
@@ -154,6 +156,7 @@ internal fun ClassDescriptor.isHiddenFromObjC(): Boolean = when {
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
     shouldBeVisible(descriptor) && !isSpecialMapped(descriptor) && !descriptor.defaultType.isObjCObjectType()
 
+@OptIn(K1Deprecation::class)
 private fun ObjCExportMapper.isHiddenByDeprecation(descriptor: CallableMemberDescriptor): Boolean {
     // Note: ObjCExport generally expect overrides of exposed methods to be exposed.
     // So don't hide a "deprecated hidden" method which overrides non-hidden one:
@@ -173,6 +176,7 @@ private fun ObjCExportMapper.isHiddenByDeprecation(descriptor: CallableMemberDes
     return false
 }
 
+@OptIn(K1Deprecation::class)
 internal fun ObjCExportMapper.getDeprecation(descriptor: DeclarationDescriptor): DeprecationInfo? {
     deprecationResolver?.getDeprecations(descriptor).orEmpty().maxByOrNull {
         when (it.deprecationLevel) {
@@ -192,6 +196,7 @@ internal fun ObjCExportMapper.getDeprecation(descriptor: DeclarationDescriptor):
     return null
 }
 
+@OptIn(K1Deprecation::class)
 private fun ObjCExportMapper.isHiddenByDeprecation(descriptor: ClassDescriptor): Boolean {
     if (deprecationResolver == null) return false
     if (deprecationResolver.isDeprecatedHidden(descriptor)) return true
@@ -421,6 +426,7 @@ private fun ObjCExportMapper.bridgeMethodImpl(descriptor: FunctionDescriptor): M
 
     val convertExceptionsToErrors = doesThrow(descriptor)
 
+    @OptIn(K1Deprecation::class)
     val kotlinParameters = descriptor.allParameters.iterator()
 
     val isTopLevel = isTopLevel(descriptor)

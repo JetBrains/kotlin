@@ -414,7 +414,7 @@ KtNameReferenceExpression(479,486): 'oldItem'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(487,489): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -737,7 +737,7 @@ KtNameReferenceExpression(706,713): 'oldItem'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(714,716): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1012,7 +1012,7 @@ KtNameReferenceExpression(875,882): 'oldItem'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(883,885): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1155,7 +1155,7 @@ KtNameReferenceExpression(956,957): 'i'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(958,960): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1265,7 +1265,7 @@ KtNameReferenceExpression(967,968): 'i'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(969,971): '!='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1375,7 +1375,7 @@ KtNameReferenceExpression(979,980): 'm'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(981,983): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1485,7 +1485,7 @@ KtNameReferenceExpression(990,991): 'm'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(992,994): '!='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

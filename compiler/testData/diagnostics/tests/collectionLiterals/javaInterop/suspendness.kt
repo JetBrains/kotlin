@@ -17,8 +17,8 @@ public interface MainIsNotSuspend {
 // FILE: test.kt
 
 suspend fun test() {
-    val y: MainIsNotSuspend = <!UNRESOLVED_REFERENCE!>[]<!>
-    val t: MainIsNotSuspend = <!UNRESOLVED_REFERENCE!>[42]<!>
+    val y: MainIsNotSuspend = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+    val t: MainIsNotSuspend = <!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, collectionLiteral,

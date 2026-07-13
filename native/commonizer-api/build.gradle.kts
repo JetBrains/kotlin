@@ -1,11 +1,14 @@
 import org.jetbrains.kotlin.nativeDistribution.useProvidedNativeBootstrapDistribution
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-published-compiler-dependency-configuration")
     id("project-tests-convention")
     id("native-bootstrap-distribution-provisioner")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 kotlin {
@@ -30,19 +33,13 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask(jUnitMode = JUnitMode.JUnit5, javaLauncher = JdkMajorVersion.JDK_21_0) {
         useProvidedNativeBootstrapDistribution { distribution ->
             addClasspathProperty("konan.home") {
                 from(distribution.map { it.root })
             }
         }
-
-        javaLauncher = getToolchainLauncherFor(JdkMajorVersion.JDK_21_0)
-        jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
         testData(project.isolated, "testData")
-        testInputsCheck {
-            extraPermissions.add("""permission java.util.PropertyPermission "*", "read,write";""")
-        }
     }
 }
 

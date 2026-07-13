@@ -1,0 +1,8 @@
+KaPackageSymbol:
+  fqName: one.two
+  location: TOP_LEVEL
+  origin: SOURCE
+  getContainingFileSymbol: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null

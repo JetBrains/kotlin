@@ -1,6 +1,6 @@
 KtNameReferenceExpression(54,56): 'CC'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       foo/CC

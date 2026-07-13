@@ -4,7 +4,6 @@ CLASS:
   classId: IntPredicate
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -38,15 +37,14 @@ CLASS:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typealias.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: IntPredicate
 
 FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
   annotations: []
   callableId: /IntPredicate.accept
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -89,9 +87,8 @@ FUNCTIONAL INTERFACE FUNCTION:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -109,6 +106,7 @@ FUNCTIONAL INTERFACE FUNCTION:
       modality: FINAL
       name: i
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         abbreviation: null
@@ -125,11 +123,12 @@ FUNCTIONAL INTERFACE FUNCTION:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(typealias.kt)
       getContainingJvmClassName: IntPredicate
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -152,6 +151,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   getContainingJvmClassName: IntPredicate
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

@@ -467,12 +467,6 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("SuperTypeWithBoundKotlinCollection.kt")
-  public void testSuperTypeWithBoundKotlinCollection() {
-    run("SuperTypeWithBoundKotlinCollection.kt");
-  }
-
-  @Test
   @TestMetadata("SuspendFunctionTypeAsAnnotationArgument.kt")
   public void testSuspendFunctionTypeAsAnnotationArgument() {
     run("SuspendFunctionTypeAsAnnotationArgument.kt");
@@ -862,6 +856,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("JvmOverloadsActualOverrideWithInheritedDefaults.kt")
+    public void testJvmOverloadsActualOverrideWithInheritedDefaults() {
+      run("JvmOverloadsActualOverrideWithInheritedDefaults.kt");
+    }
+
+    @Test
     @TestMetadata("JvmOverloadsActualWithInheritedDefaults.kt")
     public void testJvmOverloadsActualWithInheritedDefaults() {
       run("JvmOverloadsActualWithInheritedDefaults.kt");
@@ -943,12 +943,6 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
     @TestMetadata("TraitClassObjectField.kt")
     public void testTraitClassObjectField() {
       run("TraitClassObjectField.kt");
-    }
-
-    @Test
-    @TestMetadata("TwoOverrides.kt")
-    public void testTwoOverrides() {
-      run("TwoOverrides.kt");
     }
 
     @Test
@@ -1135,18 +1129,6 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
     @TestMetadata("ImplementingCharSequenceAndNumber.kt")
     public void testImplementingCharSequenceAndNumber() {
       run("ImplementingCharSequenceAndNumber.kt");
-    }
-
-    @Test
-    @TestMetadata("ImplementingMap.kt")
-    public void testImplementingMap() {
-      run("ImplementingMap.kt");
-    }
-
-    @Test
-    @TestMetadata("ImplementingMutableSet.kt")
-    public void testImplementingMutableSet() {
-      run("ImplementingMutableSet.kt");
     }
 
     @Test

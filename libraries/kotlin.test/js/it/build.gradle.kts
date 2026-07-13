@@ -3,10 +3,12 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import java.io.FileOutputStream
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     alias(libs.plugins.gradle.node)
     idea
-    id("nodejs-cache-redirector-configuration")
     id("nodejs-configuration")
 }
 
@@ -15,6 +17,7 @@ description = "Kotlin-test integration tests for JS"
 node {
     version.set(nodejsLtsVersion)
     download.set(true)
+    distBaseUrl.set(null as String?)
 }
 
 idea {

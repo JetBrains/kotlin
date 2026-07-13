@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -38,5 +41,3 @@ kotlin {
         optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
     }
 }
-
-optInToK1Deprecation()

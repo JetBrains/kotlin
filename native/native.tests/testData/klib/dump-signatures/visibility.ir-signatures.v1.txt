@@ -1,4 +1,4 @@
-// Declared signatures: 98
+// Declared signatures: 96
 visibility/InternalClass.<init>|1280618353163213788[0]
 visibility/InternalClass.NestedClass.<init>|-5645683436151566731[0]
 visibility/InternalClass.NestedClass|null[0]
@@ -27,7 +27,6 @@ visibility/InternalPAClassInternalPAMembers.property.<get-property>|483883148714
 visibility/InternalPAClassInternalPAMembers.property|4634558160746314112[0]
 visibility/InternalPAClassInternalPAMembers|null[0]
 visibility/InternalPAClass|null[0]
-visibility/InternalTypeAlias|null[0]
 visibility/PublicAbstractClassProtectedMembers.<init>|1280618353163213788[0]
 visibility/PublicAbstractClassProtectedMembers.NestedClass.<init>|-5645683436151566731[0]
 visibility/PublicAbstractClassProtectedMembers.NestedClass|null[0]
@@ -71,7 +70,6 @@ visibility/PublicOpenClassProtectedMembers.function|-3322893411126713785[0]
 visibility/PublicOpenClassProtectedMembers.property.<get-property>|4838831487146901942[0]
 visibility/PublicOpenClassProtectedMembers.property|4634558160746314112[0]
 visibility/PublicOpenClassProtectedMembers|null[0]
-visibility/PublicTypeAlias|null[0]
 visibility/internalFun|1659039888467355008[0]
 visibility/internalPAFun|6209200454159161588[0]
 visibility/internalPAVal.<get-internalPAVal>|-2220884681594955448[0]

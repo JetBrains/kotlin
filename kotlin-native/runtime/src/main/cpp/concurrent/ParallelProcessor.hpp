@@ -200,9 +200,34 @@ public:
 
             std::unique_lock lock(this->dispatcher_.waitMutex_);
 
-            auto nowWaiting = this->dispatcher_.waitingWorkers_.fetch_add(1, std::memory_order_relaxed) + 1;
+            // seq_cst (not relaxed): consumer side of the SC pivot point with releaseBatch.
+            // This SC pivot puts these two operations (this fetch_add and the load in releaseBranch) into a single total order.
+            // We have two cases here:
+            //  - fetch_add is first, load is second. Then releaseBatch will read > 0 and therefore will call notify_one();
+            //  - load is first, fetch_add is second. Then the below call to tryPeek() will likely (memory coherence) return true
+            //    and this thread won't park. (also see the explanation below why the case when tryPeek() returns false is OK as well).
+            // In both cases we would have some progress made - no situation when all threads are parked while there is some pending work.
+            //
+            // One note: all decrements of waitingWorkers_ below are relaxed as
+            // the SC pivot described above is enough for correct synchronization.
+            auto nowWaiting = this->dispatcher_.waitingWorkers_.fetch_add(1, std::memory_order_seq_cst) + 1;
             RuntimeLogDebug({ kTagBalancing }, "Worker goes to sleep (now sleeping %zu of %zu)",
                             nowWaiting, this->dispatcher_.registeredWorkers_.load(std::memory_order_relaxed));
+
+            // Predicate re-check under the lock, AFTER registering as a waiter.
+            // If a batch was published (and, via the SC pivot, our registration is visible to its producer),
+            // either the producer will notify us, or we observe the batch right here and don't park.
+            // There is one rare case when this call returns false even though load has read 0 and the queue is not empty.
+            // But in such a case the current thread can never be the last one: if the queue is not empty, there is a batch B
+            // enqueued by some thread T1. The last thread T2 must have its fetch_add read-from T1's increment of waitingWorkers_
+            // (it's an RMW operation). Since the increments are acq_rel (as seq_cst supersedes it), that read-from forms
+            // a SW edge between the two increments. Combined with program order - T1.enqueue is sequenced before T1.increment,
+            // and T2.fetch_add is sequenced before T2.tryPeek() - this gives a HB edge T1.enqueue -> T2.tryPeek.
+            // Hence, T2 must observe B and will not go to the waitingWorkers_ == registeredWorkers_ branch.
+            if (this->dispatcher_.sharedBatches_.tryPeek()) {
+                this->dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
+                return true; // tryPop will retry acquireBatch
+            }
 
             if (this->dispatcher_.allDone_) {
                 this->dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
@@ -233,6 +258,9 @@ public:
     ParallelProcessor() = default;
 
     ~ParallelProcessor() {
+        // The shared mark queue must be fully drained before we tear it down. A non-empty queue here
+        // means a batch of live objects was stranded and would be swept while still reachable.
+        RuntimeAssert(sharedBatches_.empty(), "Shared mark queue stranded at end of mark epoch");
         RuntimeAssert(waitingWorkers_.load() == 0, "All the workers must terminate before dispatcher destruction");
     }
 
@@ -252,13 +280,17 @@ public:
         return sharedBatches_.cumulativeThroughput();
     }
 
+    bool sharedBatchesEmpty() const noexcept { return sharedBatches_.empty(); }
+
 private:
     bool releaseBatch(Batch&& batch) {
         RuntimeAssert(!batch.empty(), "A batch to release into shared pool must be non-empty");
         RuntimeLogDebug({ kTagBalancing }, "Releasing batch of %zu elements", batch.elementsCount());
         bool shared = sharedBatches_.enqueue(std::move(batch));
         if (shared) {
-            if (waitingWorkers_.load(std::memory_order_relaxed) > 0) {
+            // seq_cst (not relaxed): second part of the SC pivot point (pairs with the seq_cst fetch_add in waitForMoreWork).
+            // Guarantees a producer that publishes a batch cannot also miss a worker that has already registered itself as waiting.
+            if (waitingWorkers_.load(std::memory_order_seq_cst) > 0) {
                 waitCV_.notify_one();
             }
         }

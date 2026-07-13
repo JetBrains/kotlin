@@ -23,10 +23,12 @@ import plugins.publishing.copyAttributes
 import kotlin.io.path.copyTo
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     `maven-publish`
     id("signing-convention")
-    id("nodejs-cache-redirector-configuration")
     id("d8-configuration")
     id("binaryen-configuration")
     id("nodejs-configuration")
@@ -381,7 +383,7 @@ kotlin {
         }
         commonTest {
             dependencies {
-                api(kotlinTest())
+                implementation(kotlinTest())
             }
             kotlin {
                 srcDir("common/test")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -150,3 +150,11 @@ internal annotation class KaSpi
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @RequiresOptIn("An API designed for implementation only. Direct usage has no compatibility guarantees.")
 public annotation class KaSpiExtensionPoint
+
+/**
+ * Marks a component-based API as obsolete. Such APIs are already migrated to the new context-parameter-based API but preserved for comparability.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.session.analyze
+ */
+@Target(AnnotationTarget.CLASS)
+internal annotation class KaObsoleteComponentApi

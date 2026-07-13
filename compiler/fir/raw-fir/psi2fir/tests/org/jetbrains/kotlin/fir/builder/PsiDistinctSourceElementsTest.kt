@@ -10,17 +10,15 @@ import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.fir.builder.test.COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY
 import org.jetbrains.kotlin.fir.builder.test.toStrippedCompilerDiagnosticsTestDataFiles
-import org.jetbrains.kotlin.test.frontend.fir.checkDistinctSourceElements
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.kotlin.test.frontend.fir.checkDistinctSourceElements
 import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithTestData
 import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithoutTestData
 import org.jetbrains.kotlin.test.utils.isCustomTestData
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
 import java.io.File
 
 @TestDataPath($$"$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners::class)
 class PsiDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
     /**
      * Walks all Kotlin source files in the repository (excluding test data) and checks that the source elements of FIR declarations are
@@ -28,6 +26,7 @@ class PsiDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
      *
      * Test data is excluded due to diagnostic markup in these files. Test data is instead covered by [testDiagnosticsTestData].
      */
+    @Test
     fun testTotalKotlin() {
         val root = File(testDataPath)
 

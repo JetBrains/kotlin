@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.kdocPr
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.components.findKDoc
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
+import org.jetbrains.kotlin.analysis.api.kdoc.findKDoc
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
@@ -61,7 +61,7 @@ abstract class AbstractKDocProviderTest : AbstractAnalysisApiBasedTest() {
                             val symbol = declaration.symbol
                             appendLine(symbol.renderKDoc())
                             if (symbol is KaValueParameterSymbol) {
-                                symbol.generatedPrimaryConstructorProperty?.let { property ->
+                                symbol.primaryConstructorProperty?.let { property ->
                                     property.getter?.let { appendLine(it.renderKDoc()) }
                                     property.setter?.let { appendLine(it.renderKDoc()) }
                                 }

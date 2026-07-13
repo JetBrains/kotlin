@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.configuration
 
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_RETURN_TYPES_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MODE
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.TESTED_LANGUAGE_FEATURE_DISABLED
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.*
@@ -310,6 +313,13 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
         }
     }
 
+    forTestsMatching("compiler/testData/diagnostics/tests/strictEquals/enabled/*") {
+        defaultDirectives {
+            LANGUAGE + "+StrictEquals"
+            API_VERSION with ApiVersion.KOTLIN_2_5
+        }
+    }
+
     forTestsMatching("compiler/testData/diagnostics/tests/headerMode/*") {
         defaultDirectives {
             +HEADER_MODE
@@ -326,6 +336,7 @@ fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
         LANGUAGE_VERSION with LanguageVersion.entries.last()
         +ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
         +USE_LATEST_LANGUAGE_VERSION
+        TestDumpDirectives.DUMP_CLASSIFIER with "latestLV"
         LANGUAGE with LanguageFeature.entries.mapNotNull { feature ->
             runIf(feature.enabledInLatestLVTests) { "+${feature.name}" }
         }
@@ -343,6 +354,7 @@ fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
 fun TestConfigurationBuilder.configurationForTestWithLanguageFeatureDisabled() {
     defaultDirectives {
         +TESTED_LANGUAGE_FEATURE_DISABLED
+        TestDumpDirectives.DUMP_CLASSIFIER with "disabled"
     }
     useMetaTestConfigurators(::LanguageFeatureDisabledMetaConfigurator)
     useAfterAnalysisCheckers(

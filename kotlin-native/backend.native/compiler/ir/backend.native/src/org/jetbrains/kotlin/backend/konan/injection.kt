@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerService
 import org.jetbrains.kotlin.resolve.lazy.BasicAbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 
+@OptIn(K1Deprecation::class)
 fun createTopDownAnalyzerProviderForKonan(
         moduleContext: ModuleContext,
         bindingTrace: BindingTrace,

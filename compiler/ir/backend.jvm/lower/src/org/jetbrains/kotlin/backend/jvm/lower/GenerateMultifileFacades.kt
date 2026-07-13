@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -150,8 +150,8 @@ private fun generateMultifileFacades(
                 if (member.isExternal) continue
 
                 val correspondingProperty = member.correspondingPropertySymbol?.owner
-                if (member.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) ||
-                    correspondingProperty?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true
+                if (member.hasAnnotation(StandardClassIds.Annotations.InlineOnly) ||
+                    correspondingProperty?.hasAnnotation(StandardClassIds.Annotations.InlineOnly) == true
                 ) continue
 
                 val newMember =

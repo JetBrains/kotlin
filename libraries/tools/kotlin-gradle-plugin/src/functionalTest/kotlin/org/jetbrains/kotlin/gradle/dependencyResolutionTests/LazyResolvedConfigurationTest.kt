@@ -43,10 +43,8 @@ class LazyResolvedConfigurationTest {
     fun `test - okio - getArtifacts`() {
         val project = buildProject {
             enableDependencyVerification(false)
-            repositories.mavenLocal { repo ->
-                repo.mavenContent { it.includeGroupByRegex(".*jetbrains.*") }
-            }
-            repositories.mavenCentral()
+            repositories.kotlinBuildDeps()
+            repositories.mavenCentralCacheRedirector()
             applyMultiplatformPlugin()
         }
 

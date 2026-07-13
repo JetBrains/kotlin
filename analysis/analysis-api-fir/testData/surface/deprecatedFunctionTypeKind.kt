@@ -1,0 +1,1 @@
+fun test(f: (Int) -> String) {}

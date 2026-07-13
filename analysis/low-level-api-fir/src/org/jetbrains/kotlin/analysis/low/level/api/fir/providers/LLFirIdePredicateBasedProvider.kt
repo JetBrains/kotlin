@@ -232,7 +232,7 @@ private inline fun FirFile.forEachElementWithContainers(
 
             element.acceptChildren(
                 visitor = this,
-                data = if (element is FirDeclaration) data.add(element.symbol) else data
+                data = if (element is FirDeclaration) data.adding(element.symbol) else data
             )
         }
     }

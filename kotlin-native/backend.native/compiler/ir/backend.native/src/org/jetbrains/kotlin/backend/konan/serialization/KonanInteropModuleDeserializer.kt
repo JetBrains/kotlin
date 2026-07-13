@@ -5,41 +5,26 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import kotlinx.metadata.klib.*
+import kotlinx.metadata.klib.KlibMetadataVersion
+import kotlinx.metadata.klib.KlibModuleMetadata
+import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer.TopLevelSymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.backend.konan.InteropFqNames
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrLazilyBoundAnnotationImpl
-import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -49,19 +34,20 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadataVersion
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
+import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
-import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlin.utils.putToMultiMap
 import java.lang.ref.SoftReference
-import kotlin.metadata.*
-import kotlin.metadata.ClassKind as KmClassKind
-import kotlin.metadata.Modality as KmModality
-import kotlin.metadata.Visibility as KmVisibility
+import kotlin.metadata.ClassName
+import kotlin.metadata.KmClass
+import kotlin.metadata.KmClassifier
+import kotlin.metadata.KmFunction
+import kotlin.metadata.KmProperty
 
 /**
  * IR deserializer for C-interop Klibs.
@@ -88,55 +74,36 @@ internal class KonanInteropModuleDeserializer(
     }
 
     private val symbolTable = linker.symbolTable
-    private val signatureComputer = PublicIdSignatureComputer(KonanManglerIr, markAllAsCInterop = true)
     private val metadataReader = KlibMetadataReader(klib)
     private val moduleHeaderProto: KlibMetadataProtoBuf.Header by lazy { parseModuleHeader(klib.metadata.moduleHeaderData) }
 
     // Interop Klibs may declare only one package, and its FQ name is declared in the manifest.
     private val definedPackageFqName: FqName = klib.manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)?.let(::FqName)
-            ?: error("Interop klib ${klib.location} does not contain an expected manifest property: $KLIB_PROPERTY_PACKAGE")
+            ?: error("Interop klib ${klib.path} does not contain an expected manifest property: $KLIB_PROPERTY_PACKAGE")
     override fun getDefinedPackageNames(): Set<FqName> = setOf(definedPackageFqName)
 
     override val kind get() = IrModuleDeserializerKind.DESERIALIZED
     override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
-    private val deserializedDeclarations = hashMapOf<IdSignature, IrDeclaration>()
     private var externalIrPackageFragment: IrExternalPackageFragment? = null
     private var typeDefinitionsIrFile: IrFile? = null
 
-    private val anyClass = symbolTable.referenceClass(StandardClassIds.Any.toIdSignature())
-    private val anyType = anyClass.defaultTypeWithoutArguments
-    private val unitClass = symbolTable.referenceClass(StandardClassIds.Unit.toIdSignature())
-    private val unitType = unitClass.defaultTypeWithoutArguments
-    private val booleanClass = symbolTable.referenceClass(StandardClassIds.Boolean.toIdSignature())
-    private val booleanType = booleanClass.defaultTypeWithoutArguments
-    private val charClass = symbolTable.referenceClass(StandardClassIds.Char.toIdSignature())
-    private val charType = charClass.defaultTypeWithoutArguments
-    private val byteClass = symbolTable.referenceClass(StandardClassIds.Byte.toIdSignature())
-    private val byteType = byteClass.defaultTypeWithoutArguments
-    private val shortClass = symbolTable.referenceClass(StandardClassIds.Short.toIdSignature())
-    private val shortType = shortClass.defaultTypeWithoutArguments
-    private val intClass = symbolTable.referenceClass(StandardClassIds.Int.toIdSignature())
-    private val intType = intClass.defaultTypeWithoutArguments
-    private val longClass = symbolTable.referenceClass(StandardClassIds.Long.toIdSignature())
-    private val longType = longClass.defaultTypeWithoutArguments
-    private val ubyteClass = symbolTable.referenceClass(StandardClassIds.UByte.toIdSignature())
-    private val ubyteType = ubyteClass.defaultTypeWithoutArguments
-    private val ushortClass = symbolTable.referenceClass(StandardClassIds.UShort.toIdSignature())
-    private val ushortType = ushortClass.defaultTypeWithoutArguments
-    private val uintClass = symbolTable.referenceClass(StandardClassIds.UInt.toIdSignature())
-    private val uintType = uintClass.defaultTypeWithoutArguments
-    private val ulongClass = symbolTable.referenceClass(StandardClassIds.ULong.toIdSignature())
-    private val ulongType = ulongClass.defaultTypeWithoutArguments
-    private val floatClass = symbolTable.referenceClass(StandardClassIds.Float.toIdSignature())
-    private val floatType = floatClass.defaultTypeWithoutArguments
-    private val doubleClass = symbolTable.referenceClass(StandardClassIds.Double.toIdSignature())
-    private val doubleType = doubleClass.defaultTypeWithoutArguments
-    private val stringClass = symbolTable.referenceClass(StandardClassIds.String.toIdSignature())
-    private val stringType = stringClass.defaultTypeWithoutArguments
-    private val arrayClass = symbolTable.referenceClass(StandardClassIds.Array.toIdSignature())
-    private val kClassClass = symbolTable.referenceClass(StandardClassIds.KClass.toIdSignature())
-    private val enumEntriesInterfaceClass = symbolTable.referenceClass(ClassId(FqName("kotlin.enums"), Name.identifier("EnumEntries")).toIdSignature())
+    /** The cache of the declarations deserialized by the current deserializer. */
+    private val declarationTracker = object : CInteropKlibMetadata2IRTransformer.DeclarationTracker() {
+        override fun onNewClass(clazz: IrClass) {
+            super.onNewClass(clazz)
+            linker.fakeOverrideBuilder.enqueueClass(clazz, clazz.symbol.signature!!, CompatibilityMode.CURRENT)
+        }
+    }
 
+    private val transformer = CInteropKlibMetadata2IRTransformer(
+            symbolTable,
+            symbols = CInteropKlibMetadata2IRTransformer.ExternalSymbols(symbolTable),
+            declarationTracker = declarationTracker,
+            getNestedKmClass = { classId -> metadataReader.retrieveDeclarationsById(classId.toDeclarationId(), removeMetadataRepresentation = true)?.first() as KmClass? },
+            getOrCreateContainingPackageFragment = ::getOrCreateContainingPackageFragment,
+            getReferencedDeclarationSymbol = { signature, kind -> linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(signature, kind, this) },
+            irProviderForLazyAnnotations = linker,
+    )
 
     private fun IdSignature.isInteropSignature() = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
 
@@ -178,7 +145,7 @@ internal class KonanInteropModuleDeserializer(
     }
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-        deserializedDeclarations[idSig]?.let {
+        declarationTracker.deserializedDeclarations[idSig]?.let {
             // The signature may have been already deserialized, just return it.
             return it.symbol
         }
@@ -215,21 +182,18 @@ internal class KonanInteropModuleDeserializer(
             val kmDeclarations = metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = true)
             if (kmDeclarations != null) {
                 for (kmDeclaration in kmDeclarations) {
-                    val irPackage = getOrCreateContainingPackageFragment(kmDeclaration)
-                    val irDeclaration = when (kmDeclaration) {
-                        is KmClass -> deserializeClass(kmDeclaration, irPackage)
-                        is KmFunction -> deserializeFunction(kmDeclaration, irPackage)
-                        is KmProperty -> deserializeProperty(kmDeclaration, irPackage)
+                    when (kmDeclaration) {
+                        is KmClass -> transformer.transformTopLevelClass(kmDeclaration)
+                        is KmFunction -> transformer.transformTopLevelFunction(kmDeclaration)
+                        is KmProperty -> transformer.transformTopLevelProperty(kmDeclaration)
                         else -> error(kmDeclaration.javaClass.name)
                     }
-                    irPackage.addChild(irDeclaration)
-                    computeSignatureAndRegisterInSymbolTable(irDeclaration)
                 }
             }
         }
 
         // If the deserialization process above found a declaration with the requested signature, it should store it in this map.
-        deserializedDeclarations[idSig]?.let {
+        declarationTracker.deserializedDeclarations[idSig]?.let {
             return it.symbol
         }
 
@@ -248,40 +212,6 @@ internal class KonanInteropModuleDeserializer(
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No C-Interop symbol found for $idSig")
 
-    private fun computeSignatureAndRegisterInSymbolTable(declaration: IrDeclarationWithName) {
-        if (declaration is IrClass || declaration is IrEnumEntry) {
-            // Classes and enum entries have simple signatures, which may be computed right upon their creation.
-            // Having the signature, they are also declared in a symbol table right away. So nothing to do here.
-            return
-        }
-
-        val signature = signatureComputer.computeSignature(declaration)
-        deserializedDeclarations[signature] = declaration
-        when (declaration) {
-            is IrFunctionWithLateBinding -> symbolTable.declareSimpleFunction(
-                    signature = signature,
-                    symbolFactory = { IrSimpleFunctionSymbolImpl(signature = signature) },
-                    functionFactory = { declaration.acquireSymbol(it) }
-            )
-            is IrConstructorWithLateBinding -> symbolTable.declareConstructor(
-                    signature = signature,
-                    symbolFactory = { IrConstructorSymbolImpl(signature = signature) },
-                    constructorFactory = { declaration.acquireSymbol(it) }
-            )
-            is IrPropertyWithLateBinding -> {
-                symbolTable.declareProperty(
-                        signature = signature,
-                        symbolFactory = { IrPropertySymbolImpl(signature = signature) },
-                        propertyFactory = { declaration.acquireSymbol(it) }
-                )
-
-                declaration.getter?.let(::computeSignatureAndRegisterInSymbolTable)
-                declaration.setter?.let(::computeSignatureAndRegisterInSymbolTable)
-            }
-            else -> error("Unexpected declaration kind: ${declaration::class.simpleName}")
-        }
-    }
-
     fun deserializeAllCStructsAndEnums() {
         for (id in metadataReader.getDeclaredDeclarationIds()) {
             if (id.kind != TopLevelSymbolKind.CLASS_SYMBOL) continue
@@ -298,10 +228,7 @@ internal class KonanInteropModuleDeserializer(
                 // If it is, pass removeMetadataRepresentation = true, because we are going to actually deserialize it. This helps to ensure
                 // we only deserialize a given class once.
                 metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = true)
-
-                val irPackage = getOrCreateContainingPackageFragment(kmClass)
-                val irClass = deserializeClass(kmClass, irPackage)
-                irPackage.addChild(irClass)
+                transformer.transformTopLevelClass(kmClass)
             }
         }
     }
@@ -310,7 +237,6 @@ internal class KonanInteropModuleDeserializer(
         val classFqName = (it.classifier as? KmClassifier.Class)?.name ?: return@any false
         classFqName == "kotlinx/cinterop/CStructVar" || classFqName == "kotlinx/cinterop/CEnum"
     }
-
 
     private fun getOrCreateContainingPackageFragment(forKmDeclaration: Any): IrPackageFragment {
         val containerSource = KlibDeserializedContainerSource(klib, moduleHeaderProto, deserializationConfiguration, definedPackageFqName, null)
@@ -334,555 +260,6 @@ internal class KonanInteropModuleDeserializer(
             }
         }
     }
-
-    private fun deserializeClass(kmClass: KmClass, parent: IrDeclarationParent): IrClass {
-        require(kmClass.typeParameters.isEmpty()) { "Classes inside C-interop Klibs are not expected to have type parameters." }
-        require(!kmClass.name.isLocalClassName()) { "Local/anonymous classes are not supported: ${kmClass.name}." }
-
-        val packageFqName = kmClass.name.packageFqName
-        val classFqName = kmClass.name.declarationFqName
-        val signatureMask = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.encode(true)
-        val signature = IdSignature.CommonSignature(packageFqName.asString(), classFqName.asString(), null, signatureMask, null)
-
-        val clazz = symbolTable.declareClass(signature, { IrClassSymbolImpl(signature = signature) }) { symbol ->
-            IrFactoryImpl.createClass(
-                    startOffset = UNDEFINED_OFFSET,
-                    endOffset = UNDEFINED_OFFSET,
-                    symbol = symbol,
-                    origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    name = classFqName.shortName(),
-                    visibility = kmClass.visibility.toDescriptorVisibility(),
-                    modality = kmClass.modality.toDescriptorModality(),
-                    kind = kmClass.kind.toDescriptorClassKind(),
-                    isCompanion = kmClass.kind == KmClassKind.COMPANION_OBJECT,
-                    isInner = kmClass.isInner,
-                    isExpect = kmClass.isExpect,
-                    isExternal = kmClass.isExternal,
-                    isValue = kmClass.isValue,
-                    isData = kmClass.isData,
-                    isFun = kmClass.isFunInterface,
-                    hasEnumEntries = kmClass.hasEnumEntries,
-            )
-        }
-        deserializedDeclarations[signature] = clazz
-
-        clazz.annotations = kmClass.annotations.map { deserializeAnnotation(it) }
-        clazz.superTypes = if (kmClass.supertypes.isNotEmpty()) {
-            kmClass.supertypes.map { it.toIrType() }
-        } else {
-            listOf(anyType)
-        }
-        clazz.createThisReceiverParameter()
-        clazz.parent = parent
-
-        for (kmConstructor in kmClass.constructors) {
-            clazz.declarations += deserializeConstructor(kmConstructor, clazz)
-        }
-        for (kmProperty in kmClass.properties) {
-            clazz.declarations += deserializeProperty(kmProperty, clazz)
-        }
-        for (kmFunction in kmClass.functions) {
-            clazz.declarations += deserializeFunction(kmFunction, clazz)
-        }
-        for (enumEntry in kmClass.kmEnumEntries) {
-            clazz.declarations += deserializeEnumEntry(enumEntry, clazz, signature)
-        }
-        for (nestedClassName in kmClass.nestedClasses) {
-            val nestedClassFqName = classFqName.child(Name.identifier(nestedClassName))
-            val nestedClassId = MetadataDeclarationId(TopLevelSymbolKind.CLASS_SYMBOL, packageFqName, nestedClassFqName)
-            val nestedKmClass = metadataReader.retrieveDeclarationsById(nestedClassId, removeMetadataRepresentation = true)
-                    ?.first() as KmClass? ?: continue
-            clazz.declarations += deserializeClass(nestedKmClass, clazz)
-        }
-
-        if (clazz.inheritsFromCEnum()) {
-            val members = generateSpecialEnumMembers(clazz)
-            clazz.declarations += members
-            for (member in members) {
-                member.patchDeclarationParents(clazz)
-            }
-        }
-
-        // Computing a signature sometimes depends on sibling members in the class, so it has to be done after all the members are created.
-        for (member in clazz.declarations) {
-            computeSignatureAndRegisterInSymbolTable(member as IrDeclarationWithName)
-        }
-
-        linker.fakeOverrideBuilder.enqueueClass(clazz, signature, CompatibilityMode.CURRENT)
-        return clazz
-    }
-
-    private fun deserializeEnumEntry(kmEnumEntry: KmEnumEntry, parent: IrClass, parentSignature: IdSignature.CommonSignature): IrEnumEntry {
-        val signature = IdSignature.CommonSignature(
-                parentSignature.packageFqName,
-                parentSignature.declarationFqName + "." + kmEnumEntry.name,
-                null, parentSignature.mask, null
-        )
-        val enumEntry = symbolTable.declareEnumEntry(signature, { IrEnumEntrySymbolImpl(signature = signature) }) { symbol ->
-            IrFactoryImpl.createEnumEntry(
-                    startOffset = UNDEFINED_OFFSET,
-                    endOffset = UNDEFINED_OFFSET,
-                    origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    name = Name.identifier(kmEnumEntry.name),
-                    symbol = symbol,
-            )
-        }
-        deserializedDeclarations[signature] = enumEntry
-
-        enumEntry.annotations = kmEnumEntry.annotations.map { deserializeAnnotation(it) }
-
-        enumEntry.parent = parent
-        return enumEntry
-    }
-
-    private fun generateSpecialEnumMembers(enumClass: IrClass): List<IrDeclarationWithName> = buildList {
-        this += IrFactoryImpl.createFunctionWithLateBinding(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                name = StandardNames.ENUM_VALUES,
-                visibility = DescriptorVisibilities.PUBLIC,
-                modality = Modality.FINAL,
-                returnType = arrayClass.typeWith(enumClass.defaultType),
-                isExpect = false,
-                isInfix = false,
-                isExternal = false,
-                isInline = false,
-                isTailrec = false,
-                isSuspend = false,
-                isOperator = false,
-        ).apply {
-            body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_VALUES)
-        }
-
-        this += IrFactoryImpl.createFunctionWithLateBinding(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                name = StandardNames.ENUM_VALUE_OF,
-                visibility = DescriptorVisibilities.PUBLIC,
-                modality = Modality.FINAL,
-                returnType = enumClass.defaultType,
-                isExpect = false,
-                isInfix = false,
-                isExternal = false,
-                isInline = false,
-                isTailrec = false,
-                isSuspend = false,
-                isOperator = false,
-        ).apply {
-            addValueParameter {
-                name = Name.identifier("value")
-                type = stringType
-            }
-            body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_VALUEOF)
-        }
-
-        this += IrFactoryImpl.createPropertyWithLateBinding(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                name = StandardNames.ENUM_ENTRIES,
-                visibility = DescriptorVisibilities.PUBLIC,
-                modality = Modality.FINAL,
-                isExpect = false,
-                isExternal = false,
-                isConst = false,
-                isLateinit = false,
-                isVar = false,
-                isDelegated = false,
-        ).also { property ->
-            property.getter = IrFactoryImpl.createFunctionWithLateBinding(
-                    startOffset = UNDEFINED_OFFSET,
-                    endOffset = UNDEFINED_OFFSET,
-                    origin = IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                    name = Name.special("<get-${StandardNames.ENUM_ENTRIES}>"),
-                    visibility = DescriptorVisibilities.PUBLIC,
-                    modality = Modality.FINAL,
-                    returnType = enumEntriesInterfaceClass.typeWith(enumClass.defaultType),
-                    isExpect = false,
-                    isInfix = false,
-                    isExternal = false,
-                    isInline = false,
-                    isTailrec = false,
-                    isSuspend = false,
-                    isOperator = false,
-            ).apply {
-                body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_ENTRIES)
-            }
-        }
-    }
-
-    private fun deserializeFunction(kmFunction: KmFunction, parent: IrDeclarationParent): IrSimpleFunction {
-        val typeParametersById = deserializeTypeParameters(kmFunction.typeParameters)
-        val function = IrFactoryImpl.createFunctionWithLateBinding(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                name = Name.identifier(kmFunction.name),
-                visibility = kmFunction.visibility.toDescriptorVisibility(),
-                modality = kmFunction.modality.toDescriptorModality(),
-                returnType = kmFunction.returnType.toIrType(typeParametersById),
-                isExpect = kmFunction.isExpect,
-                isInfix = kmFunction.isInfix,
-                isExternal = kmFunction.isExternal,
-                isInline = kmFunction.isInline,
-                isTailrec = kmFunction.isTailrec,
-                isSuspend = kmFunction.isSuspend,
-                isOperator = kmFunction.isOperator,
-        )
-        function.parameters = buildList {
-            if (parent is IrClass) {
-                addIfNotNull(parent.thisReceiver?.copyTo(function))
-            }
-            kmFunction.receiverParameterType?.let {
-                add(createExtensionReceiverParameter(
-                        it.toIrType(typeParametersById), kmFunction.extensionReceiverParameterAnnotations, function
-                ))
-            }
-            kmFunction.valueParameters.mapTo(this) { deserializeRegularParameter(it, function, typeParametersById) }
-
-            @OptIn(ExperimentalContextParameters::class)
-            require(kmFunction.contextParameters.isEmpty()) { "Context parameters are not expected" }
-        }
-        function.parameters.forEach { it.parent = function }
-
-        function.typeParameters = typeParametersById.values.sortedBy { it.index }
-        function.typeParameters.forEach { it.parent = function }
-
-        function.annotations = kmFunction.annotations.map { deserializeAnnotation(it) }
-
-        function.parent = parent
-        return function
-    }
-
-    private fun deserializeConstructor(kmConstructor: KmConstructor, parent: IrClass): IrConstructor {
-        val constructor = IrFactoryImpl.createConstructorWithLateBinding(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                name = SpecialNames.INIT,
-                visibility = kmConstructor.visibility.toDescriptorVisibility(),
-                returnType = parent.defaultType,
-                isExpect = false,
-                isExternal = false,
-                isInline = false,
-                isPrimary = !kmConstructor.isSecondary,
-        )
-        constructor.parameters = kmConstructor.valueParameters.map { deserializeRegularParameter(it, constructor, emptyMap()) }
-        constructor.parameters.forEach { it.parent = constructor }
-
-        constructor.annotations = kmConstructor.annotations.map { deserializeAnnotation(it) }
-
-        constructor.parent = parent
-        return constructor
-    }
-
-    private fun deserializeProperty(kmProperty: KmProperty, parent: IrDeclarationParent): IrProperty {
-        require(kmProperty.typeParameters.isEmpty()) { "Properties inside C-interop Klibs are not expected to have type parameters." }
-        val property = IrFactoryImpl.createPropertyWithLateBinding(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                name = Name.identifier(kmProperty.name),
-                visibility = kmProperty.visibility.toDescriptorVisibility(),
-                modality = kmProperty.modality.toDescriptorModality(),
-                isExpect = kmProperty.isExpect,
-                isExternal = kmProperty.isExternal,
-                isVar = kmProperty.isVar,
-                isConst = kmProperty.isConst,
-                isLateinit = kmProperty.isLateinit,
-                isDelegated = kmProperty.isDelegated,
-        )
-        property.getter = deserializeAccessor(kmProperty.getter, false, kmProperty, parent)
-        property.getter?.parent = parent
-        property.setter = kmProperty.setter?.let { deserializeAccessor(it, true, kmProperty, parent) }
-        property.setter?.parent = parent
-
-        kmProperty.compileTimeValue?.let { kmValue ->
-            property.getter?.let { getter ->
-                val irValue = deserializeAnnotationArgument(kmValue)
-                getter.body = IrFactoryImpl.createExpressionBody(irValue)
-            }
-        }
-
-        property.annotations = kmProperty.annotations.map { deserializeAnnotation(it) }
-
-        property.parent = parent
-        return property
-    }
-
-    private fun deserializeAccessor(kmAccessor: KmPropertyAccessorAttributes, isSetter: Boolean, kmProperty: KmProperty, parent: IrDeclarationParent): IrSimpleFunction {
-        val propertyType = kmProperty.returnType.toIrType()
-        val accessor = IrFactoryImpl.createFunctionWithLateBinding(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                name = if (isSetter) Name.special("<set-${kmProperty.name}>") else Name.special("<get-${kmProperty.name}>"),
-                visibility = kmAccessor.visibility.toDescriptorVisibility(),
-                modality = kmAccessor.modality.toDescriptorModality(),
-                returnType = if (isSetter) unitType else propertyType,
-                isExpect = kmProperty.isExpect,
-                isInfix = false,
-                isExternal = kmAccessor.isExternal,
-                isInline = kmAccessor.isInline,
-                isTailrec = false,
-                isSuspend = false,
-                isOperator = false,
-        )
-        accessor.parameters = buildList {
-            if (parent is IrClass) {
-                addIfNotNull(parent.thisReceiver?.copyTo(accessor))
-            }
-            kmProperty.receiverParameterType?.let {
-                add(createExtensionReceiverParameter(it.toIrType(),
-                        kmProperty.extensionReceiverParameterAnnotations, accessor))
-            }
-            if (isSetter) {
-                add(
-                        IrFactoryImpl.createValueParameter(
-                                startOffset = UNDEFINED_OFFSET,
-                                endOffset = UNDEFINED_OFFSET,
-                                origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                                symbol = IrValueParameterSymbolImpl(),
-                                name = Name.identifier("value"),
-                                kind = IrParameterKind.Regular,
-                                type = propertyType,
-                                varargElementType = null,
-                                isAssignable = false,
-                                isCrossinline = false,
-                                isNoinline = false,
-                                isHidden = false,
-                        )
-                )
-            }
-        }
-        accessor.parameters.forEach { it.parent = accessor }
-
-        accessor.annotations = kmAccessor.annotations.map { deserializeAnnotation(it) }
-
-        accessor.parent = parent
-        return accessor
-    }
-
-    private fun deserializeRegularParameter(kmParameter: KmValueParameter, parent: IrFunction, typeParametersInScope: Map<Int, IrTypeParameter>): IrValueParameter {
-        val parameter = IrFactoryImpl.createValueParameter(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                symbol = IrValueParameterSymbolImpl(),
-                name = Name.identifier(kmParameter.name),
-                kind = IrParameterKind.Regular,
-                type = kmParameter.type.toIrType(typeParametersInScope),
-                varargElementType = kmParameter.varargElementType?.toIrType(typeParametersInScope),
-                isAssignable = false,
-                isCrossinline = kmParameter.isCrossinline,
-                isNoinline = kmParameter.isNoinline,
-                isHidden = false,
-        )
-        if (kmParameter.declaresDefaultValue) {
-            parameter.defaultValue = parameter.createStubDefaultValue()
-        }
-        parameter.annotations = kmParameter.annotations.map { deserializeAnnotation(it) }
-
-        parameter.parent = parent
-        return parameter
-    }
-
-    private fun createExtensionReceiverParameter(type: IrType, kmAnnotations: List<KmAnnotation>, parent: IrFunction): IrValueParameter {
-        val parameter = IrFactoryImpl.createValueParameter(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                name = SpecialNames.RECEIVER,
-                kind = IrParameterKind.ExtensionReceiver,
-                type = type,
-                symbol = IrValueParameterSymbolImpl(),
-                isAssignable = false,
-                varargElementType = null,
-                isCrossinline = false,
-                isNoinline = false,
-                isHidden = false,
-        )
-        parameter.annotations = kmAnnotations.map { deserializeAnnotation(it) }
-
-        parameter.parent = parent
-        return parameter
-    }
-
-    private fun deserializeTypeParameters(kmParameters: List<KmTypeParameter>): Map<Int, IrTypeParameter> {
-        val kmToIrParam = kmParameters.withIndex().associate { [index, kmParameter] ->
-            kmParameter to IrFactoryImpl.createTypeParameter(
-                    startOffset = UNDEFINED_OFFSET,
-                    endOffset = UNDEFINED_OFFSET,
-                    origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    symbol = IrTypeParameterSymbolImpl(),
-                    name = Name.identifier(kmParameter.name),
-                    isReified = kmParameter.isReified,
-                    variance = kmParameter.variance.toIrVariance(),
-                    index = index,
-            )
-        }
-
-        val typeParamsById = kmToIrParam.mapKeys { it.key.id }
-        for ([kmParameter, irParameter] in kmToIrParam) {
-            irParameter.superTypes = kmParameter.upperBounds.map { it.toIrType(typeParamsById) }
-        }
-
-        return typeParamsById
-    }
-
-    private fun KmVisibility.toDescriptorVisibility(): DescriptorVisibility = when (this) {
-        KmVisibility.PUBLIC -> DescriptorVisibilities.PUBLIC
-        KmVisibility.INTERNAL -> DescriptorVisibilities.INTERNAL
-        KmVisibility.PROTECTED -> DescriptorVisibilities.PROTECTED
-        KmVisibility.PRIVATE -> DescriptorVisibilities.PRIVATE
-        KmVisibility.PRIVATE_TO_THIS -> DescriptorVisibilities.PRIVATE_TO_THIS
-        KmVisibility.LOCAL -> DescriptorVisibilities.LOCAL
-    }
-
-    private fun KmModality.toDescriptorModality(): Modality = when (this) {
-        KmModality.FINAL -> Modality.FINAL
-        KmModality.OPEN -> Modality.OPEN
-        KmModality.ABSTRACT -> Modality.ABSTRACT
-        KmModality.SEALED -> Modality.SEALED
-    }
-
-    private fun KmClassKind.toDescriptorClassKind(): ClassKind = when (this) {
-        KmClassKind.CLASS -> ClassKind.CLASS
-        KmClassKind.INTERFACE -> ClassKind.INTERFACE
-        KmClassKind.ANNOTATION_CLASS -> ClassKind.ANNOTATION_CLASS
-        KmClassKind.ENUM_CLASS -> ClassKind.ENUM_CLASS
-        KmClassKind.ENUM_ENTRY -> ClassKind.ENUM_ENTRY
-        KmClassKind.OBJECT -> ClassKind.OBJECT
-        KmClassKind.COMPANION_OBJECT -> ClassKind.OBJECT
-    }
-
-
-    private fun deserializeAnnotation(kmAnnotation: KmAnnotation): IrAnnotation {
-        val annotationClassSymbol = findReferencedClass(kmAnnotation.className)
-        val irArguments = kmAnnotation.arguments.entries.associate {
-            Name.identifier(it.key) to deserializeAnnotationArgument(it.value)
-        }
-        // Note: Stdlib does not define any annotation class with type parameters, so type arguments may be left empty.
-        return IrLazilyBoundAnnotationImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                origin = null,
-                source = SourceElement.NO_SOURCE,
-                type = annotationClassSymbol.defaultTypeWithoutArguments,
-                constructorTypeArgumentsCount = 0,
-                classSymbol = annotationClassSymbol,
-                argumentMapping = irArguments,
-                linker = linker,
-        )
-    }
-
-    private fun deserializeAnnotationArgument(kmArgument: KmAnnotationArgument): IrExpression {
-        return when (kmArgument) {
-            is KmAnnotationArgument.ByteValue -> IrConstImpl.byte(UNDEFINED_OFFSET, UNDEFINED_OFFSET, byteType, kmArgument.value)
-            is KmAnnotationArgument.ShortValue -> IrConstImpl.short(UNDEFINED_OFFSET, UNDEFINED_OFFSET, shortType, kmArgument.value)
-            is KmAnnotationArgument.IntValue -> IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, intType, kmArgument.value)
-            is KmAnnotationArgument.LongValue -> IrConstImpl.long(UNDEFINED_OFFSET, UNDEFINED_OFFSET, longType, kmArgument.value)
-            is KmAnnotationArgument.UByteValue -> IrConstImpl.byte(UNDEFINED_OFFSET, UNDEFINED_OFFSET, ubyteType, kmArgument.value.toByte())
-            is KmAnnotationArgument.UShortValue -> IrConstImpl.short(UNDEFINED_OFFSET, UNDEFINED_OFFSET, ushortType, kmArgument.value.toShort())
-            is KmAnnotationArgument.UIntValue -> IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, uintType, kmArgument.value.toInt())
-            is KmAnnotationArgument.ULongValue -> IrConstImpl.long(UNDEFINED_OFFSET, UNDEFINED_OFFSET, ulongType, kmArgument.value.toLong())
-            is KmAnnotationArgument.FloatValue -> IrConstImpl.float(UNDEFINED_OFFSET, UNDEFINED_OFFSET, floatType, kmArgument.value)
-            is KmAnnotationArgument.DoubleValue -> IrConstImpl.double(UNDEFINED_OFFSET, UNDEFINED_OFFSET, doubleType, kmArgument.value)
-            is KmAnnotationArgument.CharValue -> IrConstImpl.char(UNDEFINED_OFFSET, UNDEFINED_OFFSET, charType, kmArgument.value)
-            is KmAnnotationArgument.BooleanValue -> IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, booleanType, kmArgument.value)
-            is KmAnnotationArgument.StringValue -> IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, stringType, kmArgument.value)
-            is KmAnnotationArgument.AnnotationValue -> deserializeAnnotation(kmArgument.annotation)
-            is KmAnnotationArgument.KClassValue -> {
-                val classSymbol = findReferencedClass(kmArgument.className)
-                IrClassReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, kClassClass.starProjectedType, classSymbol, classSymbol.defaultTypeWithoutArguments)
-            }
-            is KmAnnotationArgument.ArrayKClassValue -> TODO("Unsupported annotation argument kind used inside C-interop Klib: Array class reference")
-            is KmAnnotationArgument.EnumValue -> {
-                val pkgFqName = kmArgument.enumClassName.packageFqName
-                val enumEntryFqName = kmArgument.enumClassName.declarationFqName.child(Name.identifier(kmArgument.enumEntryName))
-                val enumEntrySig = IdSignature.CommonSignature(pkgFqName.asString(), enumEntryFqName.asString(), null, 0, null)
-                val enumEntrySymbol = linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
-                        enumEntrySig, BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL, this) as IrEnumEntrySymbol
-                val enumClassSymbol = findReferencedClass(kmArgument.enumClassName)
-                val irType = enumClassSymbol.defaultTypeWithoutArguments
-                IrGetEnumValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irType, enumEntrySymbol)
-            }
-            is KmAnnotationArgument.ArrayValue -> {
-                val elements = kmArgument.elements.map { deserializeAnnotationArgument(it) }
-                val varargElementType = elements.mapToSetOrEmpty { it.type }.singleOrNull() ?: anyType
-                val arrayType = if (varargElementType.isPrimitiveType()) {
-                    val classId = ClassId.topLevel(varargElementType.classifierOrFail.fqNameWhenAvailable!!)
-                    val arrayClassId = StandardClassIds.primitiveArrayTypeByElementType[classId]!!
-                    symbolTable.referenceClass(arrayClassId.toIdSignature()).defaultTypeWithoutArguments
-                } else arrayClass.typeWith(varargElementType)
-                IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, varargElementType, elements)
-            }
-        }
-    }
-
-
-    private fun KmType.toIrType(typeParametersInScope: Map<Int, IrTypeParameter> = emptyMap()): IrType {
-        require(flexibleTypeUpperBound == null) { "Flexible types are not supported in K/Native." }
-
-        val classifier = findReferencedClassifier(classifier, typeParametersInScope)
-        return IrSimpleTypeImpl(
-                classifier = classifier,
-                nullability = if (isNullable) SimpleTypeNullability.MARKED_NULLABLE else SimpleTypeNullability.DEFINITELY_NOT_NULL,
-                arguments = arguments.map { it.toIrTypeArgument(typeParametersInScope) },
-                annotations = annotations.map { deserializeAnnotation(it) },
-        )
-    }
-
-    private fun KmTypeProjection.toIrTypeArgument(typeParametersInScope: Map<Int, IrTypeParameter>): IrTypeArgument = when (this) {
-        KmTypeProjection.STAR -> IrStarProjectionImpl
-        else -> makeTypeProjection(type!!.toIrType(typeParametersInScope), variance!!.toIrVariance())
-    }
-
-    private fun KmVariance.toIrVariance(): Variance = when (this) {
-        KmVariance.INVARIANT -> Variance.INVARIANT
-        KmVariance.IN -> Variance.INVARIANT
-        KmVariance.OUT -> Variance.OUT_VARIANCE
-    }
-
-    private fun findReferencedClassifier(classifier: KmClassifier, typeParametersInScope: Map<Int, IrTypeParameter> = emptyMap()): IrClassifierSymbol {
-        return when (classifier) {
-            is KmClassifier.TypeParameter -> typeParametersInScope[classifier.id]?.symbol
-                    ?: error("No type parameter with id ${classifier.id} found in the current scope.")
-            is KmClassifier.Class -> findReferencedClass(classifier.name)
-            is KmClassifier.TypeAlias -> error("Unexpected type alias reference.\n" +
-                    "All types in metadata are expected to be expanded, except in KmType.abbreviatedType, " +
-                    "however, it should be ignored, as IR does not use type abbreviations.")
-        }
-    }
-
-    private fun findReferencedClass(className: ClassName): IrClassSymbol {
-        require(!className.isLocalClassName()) { "Local/anonymous classes are not supported: $className" }
-        val pkgFqName = className.packageFqName
-        val classFqName = className.declarationFqName
-
-        // A C-interop Klib may only reference classes from the Kotlin stdlib, itself, or other C-interop Klibs.
-        // Additionally, interop Klibs may reference special "forward declared" classes, which are not physically present in
-        // any Klib. We also know that:
-        // - The classes from Stdlib that could be referenced are in `kotlin` and `kotlinx.cinterop` packages.
-        // - Forward declared classes are designated by one of the predefined packages (`cnames` and `objcnames`).
-        // - Other Klibs are not expected to define any of those packages (see also KT-85765, KT-86193).
-        // We can use all of that to infer whether a referenced class comes from Kolin code (the Stdlib), forward declarations,
-        // or otherwise, from C-interop Klib. This information is necessary to construct a proper IdSignature.
-        val isInteropClass = !pkgFqName.isDefinedInStdlib() && !pkgFqName.isPackageOfForwardDeclaration()
-        val cinteropFlag = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.encode(isInteropClass)
-        val classSignature = IdSignature.CommonSignature(pkgFqName.asString(), classFqName.asString(), null, cinteropFlag, null)
-
-        return linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(classSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL,
-                this@KonanInteropModuleDeserializer) as IrClassSymbol
-    }
-
-    private fun FqName.isDefinedInStdlib(): Boolean =
-            isSubpackageOf(StandardNames.BUILT_INS_PACKAGE_FQ_NAME) || isSubpackageOf(InteropFqNames.packageName)
-
-    private fun FqName.isPackageOfForwardDeclaration(): Boolean = this in NativeForwardDeclarationKind.packageFqNameToKind
-
 
     private class KlibMetadataReader(
             private val klib: KotlinLibrary,
@@ -914,7 +291,7 @@ internal class KonanInteropModuleDeserializer(
             val provider = object : KlibModuleMetadata.MetadataLibraryProvider {
                 override val moduleHeaderData get() = metadataComponent.moduleHeaderData
                 override val metadataVersion = KlibMetadataVersion((klib.metadataVersion?.toArray()
-                        ?: error("No metadata version specified in ${klib.location}")))
+                        ?: error("No metadata version specified in ${klib.path}")))
 
                 override fun packageMetadata(fqName: String, partName: String) = metadataComponent.getPackageFragment(fqName, partName)
                 override fun packageMetadataParts(fqName: String) = metadataComponent.getPackageFragmentNames(fqName)
@@ -942,7 +319,27 @@ internal class KonanInteropModuleDeserializer(
             }
 
             for ([id, declarations] in deserializedDeclarations) {
-                if (allMetadataDeclarations[id]?.get() == null) {
+                val existingRef = allMetadataDeclarations[id]
+                val storeInCache = if (existingRef == null) {
+                    if (id !in allMetadataDeclarations) {
+                        // There is no entry, this is the first deserialization. Cache the results.
+                        true
+                    } else {
+                        // There is a `null` entry. It means that the declaration with a given ID was already converted to IR.
+                        // Don't store the metadata for this declaration again to avoid creating IR for the same declaration twice.
+                        false
+                    }
+                } else {
+                    if (existingRef.get() == null) {
+                        // There is a SoftReference entry, but the referenced value has been GC'ed. Cache it again.
+                        true
+                    } else {
+                        // There is a SoftReference entry and it still holds a value. It will be the same as the freshly deserialized
+                        // declaration, so just keep the old one.
+                        false
+                    }
+                }
+                if (storeInCache) {
                     allMetadataDeclarations[id] = SoftReference(declarations)
                 }
             }
@@ -980,9 +377,16 @@ internal class KonanInteropModuleDeserializer(
             val packageFqName: FqName,
             val relativeDeclarationName: FqName,
     )
+
+    companion object {
+        private fun ClassId.toDeclarationId() = MetadataDeclarationId(
+                kind = TopLevelSymbolKind.CLASS_SYMBOL,
+                packageFqName = packageFqName,
+                relativeDeclarationName = relativeClassName
+        )
+    }
 }
 
-private val ClassName.packageFqName get() = FqName(substringBeforeLast('/').replace("/", "."))
 private val ClassName.declarationFqName get() = FqName(substringAfterLast('/'))
 
 class DeserializedSecondStageInteropPackageDescriptor(

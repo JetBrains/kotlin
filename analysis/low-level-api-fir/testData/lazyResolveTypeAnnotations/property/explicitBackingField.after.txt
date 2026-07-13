@@ -9,7 +9,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingField.kt
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any|
-            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|@R|Ann|()  kotlin/Int| = LAZY_EXPRESSION
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] backing field field: R|@R|Ann|()  kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }

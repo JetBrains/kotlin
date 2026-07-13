@@ -134,15 +134,11 @@ sealed class CommonJsAndWasmCompilerArguments : CommonKlibBasedCompilerArguments
             field = value
         }
 
-    @Deprecated("Use '-nopack' instead to determine if a packed klib file will be produced.")
+    @all:Deprecated("Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.")
     @Argument(
         value = "-Xir-produce-klib-dir",
-        description = """Generate an unpacked klib into the directory specified by '-ir-output-dir'.
-
-This argument is deprecated.
- 
-The '-nopack' argument should be used to determine if a packed klib file will be produced.
-Setting this argument to something other than `null` overrides the value from '-nopack'.""",
+        description = "Generate an unpacked klib into the parent directory of the output JS file.",
+        deprecatedVersion = "2.4.20",
     )
     var irProduceKlibDir: Boolean? = null
         set(value) {
@@ -150,15 +146,11 @@ Setting this argument to something other than `null` overrides the value from '-
             field = value
         }
 
-    @Deprecated("Producing a packed klib is now the default behavior. The '-nopack' argument can be used instead to determine if a packed klib file will be produced.")
+    @all:Deprecated("Producing a packed klib is now the default behavior. The '-nopack' argument can be used instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.")
     @Argument(
         value = "-Xir-produce-klib-file",
-        description = """Generate a packed klib into the directory specified by '-ir-output-dir'.
-
-This argument is deprecated. Producing a packed klib is now the default behavior. 
-
-The '-nopack' argument can be used instead to determine if a packed klib file will be produced.
-Setting this argument to something other than `null` overrides the value from '-nopack'.""",
+        description = "Generate a packed klib into the directory specified by '-ir-output-dir'.",
+        deprecatedVersion = "2.4.20",
     )
     var irProduceKlibFile: Boolean? = null
         set(value) {

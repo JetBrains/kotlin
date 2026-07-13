@@ -70,6 +70,7 @@ abstract class D8Exec internal constructor() : AbstractExecTask<D8Exec>(D8Exec::
                     it.dependsOn(project.d8SetupTaskProvider)
                 }
                 it.dependsOn(compilation.compileTaskProvider)
+                it.d8Args.convention(listOf("--experimental-wasm-wasmfx"))
                 it.configuration()
             }
         }

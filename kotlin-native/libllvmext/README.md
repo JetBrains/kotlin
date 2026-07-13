@@ -33,3 +33,10 @@ Custom LLVM passes live in the [Passes](src/main/cpp/Passes) directory:
 - `PrepareThreadSanitizerPass` (`kotlin-tsan`): function pass, that applies `sanitize_thread` attribute
   to all defined functions; can't simply be done in the code generator, because we want this applied to
   the runtime as well, which is shipped as LLVM bitcode.
+- `PrepareStackProtectorPass` (`kotlin-ssp`): function pass, that applies `ssp` attribute to all defined
+  functions; can be configured as `kotlin-ssp<strong>` or `kotlin-ssp<req>` to apply `sspstrong` or `sspreq`
+  respectively; can't simply be done in the code generator, because we want this applied to the runtime
+  as well, which is shipped as LLVM bitcode.
+- `RemoveRedundantSafepointsPass` (`kotlin-remove-sp`): function pass, that removes unnecessary prologue
+  safepoints from functions; useful, when run after LLVM inlining; can be configured as
+  `kotlin-remove-sp<inline>` to additionally inline the remaining safepoints.

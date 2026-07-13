@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.tree.merge
 
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import kotlin.test.assertEquals
+import org.junit.jupiter.api.Test
 
 class MergeCirTreeTypeAliasTest : AbstractMergeCirTreeTest() {
 
+    @Test
     fun `test simple type alias`() {
         val aTree = createCirTreeFromSourceCode("typealias a = Int")
         val bTree = createCirTreeFromSourceCode("typealias a = Int")
@@ -18,6 +20,7 @@ class MergeCirTreeTypeAliasTest : AbstractMergeCirTreeTest() {
         typeAlias.assertNoMissingTargetDeclaration()
     }
 
+    @Test
     fun `test missing target declarations`() {
         val aTree = createCirTreeFromSourceCode("typealias a = Int")
         val bTree = createCirTreeFromSourceCode("typealias b = Int")

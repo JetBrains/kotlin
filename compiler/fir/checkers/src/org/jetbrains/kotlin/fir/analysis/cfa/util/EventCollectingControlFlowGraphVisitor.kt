@@ -85,7 +85,7 @@ fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.addRange(
     range: EventOccurrencesRangeAtNode,
 ): PathAwareEventOccurrencesRangeInfo<K> =
     if (!range.range.canBeVisited() && !range.mustBeLateinit) this else transformValues {
-        val oldRange = it[key] ?: return@transformValues it.put(key, range)
+        val oldRange = it[key] ?: return@transformValues it.putting(key, range)
         val combinedRange = when {
             !range.range.canBeVisited() -> oldRange.range
             // Can discard the old location since the sum can only be `ExactlyOnce` or `AtMostOnce`
@@ -93,7 +93,7 @@ fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.addRange(
             else -> (oldRange.range.withoutMarker + range.range.withoutMarker).at(range.range.location)
         }
         val combinedMustBeLateinit = oldRange.mustBeLateinit || range.mustBeLateinit
-        it.put(key, EventOccurrencesRangeAtNode(combinedRange, mustBeLateinit = combinedMustBeLateinit))
+        it.putting(key, EventOccurrencesRangeAtNode(combinedRange, mustBeLateinit = combinedMustBeLateinit))
     }
 
 fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.addRangeIfEmpty(
@@ -103,7 +103,7 @@ fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.addRangeIfEmpty(
     if (!range.range.canBeVisited() && !range.mustBeLateinit) this else transformValues {
         when {
             key in it -> it
-            else -> it.put(key, range)
+            else -> it.putting(key, range)
         }
     }
 
@@ -111,7 +111,7 @@ fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.overwriteRange(
     key: K,
     range: EventOccurrencesRangeAtNode,
 ): PathAwareEventOccurrencesRangeInfo<K> =
-    transformValues { it.put(key, range) }
+    transformValues { it.putting(key, range) }
 
 fun <K : Any> PathAwareEventOccurrencesRangeInfo<K>.removeRange(key: K): PathAwareEventOccurrencesRangeInfo<K> =
-    transformValues { it.remove(key) }
+    transformValues { it.removing(key) }

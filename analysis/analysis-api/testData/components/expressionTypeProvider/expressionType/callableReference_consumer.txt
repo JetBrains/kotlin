@@ -1,2 +1,3 @@
 expression: consumer::accept
+expression PSI: KtCallableReferenceExpression
 type: kotlin.reflect.KFunction1<CapturedType(in T), kotlin.Unit>

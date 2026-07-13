@@ -6,9 +6,8 @@
 package kotlinx.metadata.klib
 
 import kotlinx.metadata.klib.impl.*
-import kotlinx.metadata.klib.impl.readHeader
-import kotlinx.metadata.klib.impl.writeHeader
 import kotlinx.metadata.klib.impl.KlibMetadataVersionWriteExtension
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.*
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -122,9 +121,8 @@ class KlibModuleMetadata(
         ): KlibModuleMetadata {
             checkMetadataVersionForRead(library.metadataVersion, lenient)
 
-            val moduleHeaderProto = parseModuleHeader(library.moduleHeaderData)
-            val moduleHeader = moduleHeaderProto.readHeader()
-            val moduleFragments = moduleHeader.packageFragmentName.flatMap { packageFqName ->
+            val moduleHeader = parseModuleHeader(library.moduleHeaderData)
+            val moduleFragments = moduleHeader.packageFragmentNameList.flatMap { packageFqName ->
                 library.packageMetadataParts(packageFqName).map { part ->
                     val packageFragment = parsePackageFragment(library.packageMetadata(packageFqName, part))
                     val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
@@ -163,11 +161,8 @@ class KlibModuleMetadata(
             .groupBy(KmModuleFragment::fqNameOrFail)
             .mapValues { writeStrategy.processPackageParts(it.value) }
 
-        val header = KlibHeader(
-            name,
-            groupedFragments.map { it.key },
-            groupedFragments.filter { it.value.all(KmModuleFragment::isEmpty) }.map { it.key },
-        )
+        val packageFragmentNames: List<String> = groupedFragments.map { it.key }
+        val emptyPackageFragmentNames: List<String> = groupedFragments.filter { it.value.all(KmModuleFragment::isEmpty) }.map { it.key }
         val versionExt = KlibMetadataVersionWriteExtension(metadataVersion)
         val groupedProtos = groupedFragments.mapValues { [_, fragments] ->
             fragments.map { mf ->
@@ -176,11 +171,14 @@ class KlibModuleMetadata(
             }
         }
         // This context and string table is only required for module-level annotations.
-        val c = WriteContext(ApproximatingStringTable())
         return SerializedKlibMetadata(
-            header.writeHeader(c).build().toByteArray(),
+            KlibMetadataProtoBuf.Header.newBuilder().also { proto ->
+                proto.moduleName = wrapModuleName(name)
+                proto.addAllPackageFragmentName(packageFragmentNames)
+                proto.addAllEmptyPackage(emptyPackageFragmentNames)
+            }.build().toByteArray(),
             groupedProtos.map { it.value.map(ProtoBuf.PackageFragment::toByteArray) },
-            header.packageFragmentName,
+            packageFragmentNames,
             metadataVersion,
         )
     }
@@ -191,3 +189,8 @@ private fun KmModuleFragment.fqNameOrFail(): String =
 
 private fun KmModuleFragment.isEmpty(): Boolean =
     classes.isEmpty() && (pkg?.let { it.functions.isEmpty() && it.properties.isEmpty() && it.typeAliases.isEmpty() } ?: true)
+
+private fun wrapModuleName(moduleName: String): String =
+    moduleName
+        .let { if (it.startsWith("<")) it else "<$it" }
+        .let { if (it.endsWith(">")) it else "$it>" }

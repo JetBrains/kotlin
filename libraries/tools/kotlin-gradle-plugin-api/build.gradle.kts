@@ -2,6 +2,9 @@ import gradle.GradlePluginVariant
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("gradle-plugin-dependency-configuration")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("gradle-plugin-api-reference")

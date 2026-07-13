@@ -6,7 +6,7 @@ KtPackageDirective(26,37): 'package use'
 
 KtNameReferenceExpression(34,37): 'use'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       use
@@ -23,7 +23,7 @@ KtDotQualifiedExpression(46,52): 'decl.C'
 
 KtNameReferenceExpression(46,50): 'decl'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       decl
@@ -31,7 +31,7 @@ KtNameReferenceExpression(46,50): 'decl'
 
 KtNameReferenceExpression(51,52): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       decl/C
@@ -45,7 +45,7 @@ KtDotQualifiedExpression(60,68): 'decl.foo'
 
 KtNameReferenceExpression(60,64): 'decl'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       decl
@@ -53,7 +53,7 @@ KtNameReferenceExpression(60,64): 'decl'
 
 KtNameReferenceExpression(65,68): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       decl/foo(<extension receiver>: decl.C): kotlin.Unit
@@ -67,7 +67,7 @@ KtDotQualifiedExpression(76,85): 'decl.prop'
 
 KtNameReferenceExpression(76,80): 'decl'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       decl
@@ -75,7 +75,7 @@ KtNameReferenceExpression(76,80): 'decl'
 
 KtNameReferenceExpression(81,85): 'prop'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int
@@ -98,7 +98,7 @@ KtDotQualifiedExpression(105,112): 'C.foo()'
 
 KtNameReferenceExpression(105,106): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       decl/C
@@ -112,7 +112,7 @@ KtCallExpression(107,112): 'foo()'
 
 KtNameReferenceExpression(107,110): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       decl/foo(<extension receiver>: decl.C): kotlin.Unit
@@ -129,7 +129,7 @@ KtDotQualifiedExpression(117,123): 'C.prop'
 
 KtNameReferenceExpression(117,118): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       decl/C
@@ -137,7 +137,7 @@ KtNameReferenceExpression(117,118): 'C'
 
 KtNameReferenceExpression(119,123): 'prop'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int

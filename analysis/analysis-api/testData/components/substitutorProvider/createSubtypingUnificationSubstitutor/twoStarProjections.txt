@@ -1,0 +1,14 @@
+ASSIGN_LEFT:
+Substitutor: <empty substitutor>
+Substituted pairs:
+Container<*> <: Container<*> (Original: Container<*> <: Container<*>)
+
+ASSIGN_RIGHT:
+Substitutor: <empty substitutor>
+Substituted pairs:
+Container<*> <: Container<*> (Original: Container<*> <: Container<*>)
+
+ASSIGN_ALL:
+Substitutor: <empty substitutor>
+Substituted pairs:
+Container<*> <: Container<*> (Original: Container<*> <: Container<*>)

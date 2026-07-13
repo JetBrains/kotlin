@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
+import org.jetbrains.kotlin.backend.konan.mangleIfStdMacro
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 
 
@@ -15,7 +16,7 @@ fun ObjCExportContext.getObjCPropertyName(symbol: KaVariableSymbol): ObjCExportP
     val propertyName = stringName.mangleIfReservedObjCName()
 
     return ObjCExportPropertyName(
-        objCName = resolveObjCNameAnnotation?.objCName ?: propertyName,
+        objCName = (resolveObjCNameAnnotation?.objCName ?: propertyName).mangleIfStdMacro(),
         swiftName = resolveObjCNameAnnotation?.swiftName ?: resolveObjCNameAnnotation?.objCName ?: propertyName
     )
 }

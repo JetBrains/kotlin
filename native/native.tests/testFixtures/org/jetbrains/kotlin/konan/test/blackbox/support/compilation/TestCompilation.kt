@@ -9,12 +9,8 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
-import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
-import org.jetbrains.kotlin.konan.target.AppleConfigurables
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.isMacabi
-import org.jetbrains.kotlin.konan.target.withOSVersion
+import org.jetbrains.kotlin.io.resolvablePropertyList
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOnDependencies
@@ -55,6 +51,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
     private val gcType: GCType,
     private val gcScheduler: GCScheduler,
     private val allocator: Allocator,
+    private val platformLibs: PlatformLibs,
     private val binaryOptions: ExplicitBinaryOptions,
     protected val freeCompilerArgs: TestCompilerArgs,
     protected val compilerPlugins: CompilerPlugins,
@@ -94,12 +91,14 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             add("-enable-assertions")
 
         add(irValidationCompilerOptions)
+        add("-Xallow-kotlin-package")
 
         threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         allocator.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        platformLibs.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
 
         // We use dev distribution for tests as it provides a full set of testing utilities,
         // which might not be available in user distribution.
@@ -291,6 +290,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     gcScheduler: GCScheduler,
     allocator: Allocator,
     cacheMode: CacheMode,
+    platformLibs: PlatformLibs,
     binaryOptions: ExplicitBinaryOptions,
     freeCompilerArgs: TestCompilerArgs,
     compilerPlugins: CompilerPlugins,
@@ -303,6 +303,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     classLoader = classLoader,
     optimizationMode = optimizationMode,
     compilerOutputInterceptor = compilerOutputInterceptor,
+    platformLibs = platformLibs,
     binaryOptions = binaryOptions,
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = compilerPlugins,
@@ -358,6 +359,7 @@ class LibraryCompilation(
     gcScheduler = settings.get(),
     allocator = settings.get(),
     cacheMode = settings.get(),
+    platformLibs = settings.get(),
     binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
@@ -408,6 +410,7 @@ class ObjCFrameworkCompilation(
     gcScheduler = settings.get(),
     allocator = settings.get(),
     cacheMode = settings.get(),
+    platformLibs = settings.get(),
     binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
@@ -453,6 +456,7 @@ class BinaryLibraryCompilation(
     gcScheduler = settings.get(),
     allocator = settings.get(),
     cacheMode = settings.get(),
+    platformLibs = settings.get(),
     binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
@@ -497,7 +501,8 @@ class CInteropCompilation(
     defFile: File,
     sources: List<File> = emptyList(),
     dependencies: Iterable<CompiledDependency<KLIB>>,
-    expectedArtifact: KLIB
+    expectedArtifact: KLIB,
+    noDefaultLibs: Boolean = true,
 ) : TestCompilation<KLIB>() {
     private val targets: KotlinNativeTargets = settings.get()
     private val classLoader: KotlinNativeClassLoader = settings.get()
@@ -531,7 +536,9 @@ class CInteropCompilation(
             add(targets.testTarget.name)
             add("-o")
             add(expectedArtifact.klibFile.canonicalPath)
-            add("-no-default-libs")
+            if (noDefaultLibs) {
+                add("-no-default-libs")
+            }
             dependencies.forEach {
                 add("-l")
                 add(it.artifact.path)
@@ -701,6 +708,7 @@ abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
     gcScheduler = settings.get(),
     allocator = settings.get(),
     cacheMode = cacheMode,
+    platformLibs = settings.get(),
     binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
@@ -818,6 +826,7 @@ class StaticCacheCompilation(
     classLoader = settings.get(),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
+    platformLibs = settings.get(),
     binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
@@ -855,7 +864,7 @@ class StaticCacheCompilation(
         }
 
         // The following line adds "-Xembed-bitcode-marker" for certain iOS device targets:
-        add(home.properties.resolvablePropertyList("additionalCacheFlags", targets.testTarget.visibleName))
+        add(home.properties.resolvablePropertyList("additionalCacheFlags", suffix = targets.testTarget.visibleName))
         add(
             "-Xadd-cache=${dependencies.libraryToCache.path}",
             "-Xcache-directory=${expectedArtifact.cacheDir.path}",

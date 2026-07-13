@@ -215,6 +215,9 @@ open class Fifth<B>: Forth<B>(), IG<B> {
 class Sixth: Fifth<Int>(), IC
 
 @JsExport
+abstract class Seventh: Fifth<Int>(), IC
+
+@JsExport
 open class First
 
 @JsExport.Ignore
@@ -234,3 +237,6 @@ open class MyRootException : RuntimeException()
 
 @JsExport
 open class MySpecificException : MyRootException()
+
+@JsExport
+class Delegated(val ig: IG<Int>, val ib: IB): IG<Int> by ig, IB by ib

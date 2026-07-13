@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.inline.SourceMapper;
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.*;
 
@@ -64,12 +62,6 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
 
     @NotNull
     @Override
-    public JvmSerializationBindings getSerializationBindings() {
-        return getDelegate().getSerializationBindings();
-    }
-
-    @NotNull
-    @Override
     public AnnotationVisitor newAnnotation(@NotNull String desc, boolean visible) {
         return getDelegate().newAnnotation(desc, visible);
     }
@@ -87,7 +79,6 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
 
     @Override
     public void defineClass(
-            @Nullable PsiElement origin,
             int version,
             int access,
             @NotNull String name,
@@ -95,7 +86,7 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
             @NotNull String superName,
             @NotNull String[] interfaces
     ) {
-        getDelegate().defineClass(origin, version, access, name, signature, superName, interfaces);
+        getDelegate().defineClass(version, access, name, signature, superName, interfaces);
     }
 
     @Override

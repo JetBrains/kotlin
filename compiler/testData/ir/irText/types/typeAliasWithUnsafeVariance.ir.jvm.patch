@@ -1,0 +1,10 @@
+--- a/typeAliasWithUnsafeVariance.ir.txt
++++ b/typeAliasWithUnsafeVariance.ir.jvm_ir.txt
+@@ -98,7 +98,7 @@
+   FUN name:getTag visibility:public modality:FINAL returnType:<root>.Tag<*>
+     BLOCK_BODY
+       THROW type=kotlin.Nothing
+-        CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Exception' type=kotlin.Exception origin=null
++        CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.Exception' type=java.lang.Exception origin=null
+   TYPEALIAS name:Action visibility:public expandedType:kotlin.Function1<RenderingT of <root>.Action, kotlin.Unit>
+     TYPE_PARAMETER name:RenderingT index:0 variance: superTypes:[kotlin.Any?] reified:false

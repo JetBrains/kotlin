@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeCreatorProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaFunctionTypeBuilde
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeBuilder
 
 @KaImplementationDetail
-abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaTypeCreatorProvider {
+abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaInternalsTypeCreatorProvider {
     @KaExperimentalApi
-    override fun <T : KaClassType> T.copy(init: KaClassTypeBuilder.() -> Unit): KaClassType = with(analysisSession) {
-        val sourceSymbol = this@copy.symbol
-        val sourceIsMarkedNullable = this@copy.isMarkedNullable
-        val sourceAnnotationClassIds = this@copy.annotations.classIds.toList()
-        val sourceTypeArguments = this@copy.typeArguments
+    override fun <T : KaClassType> copy(type: T, init: KaClassTypeBuilder.() -> Unit): KaClassType = with(analysisSession) {
+        val sourceSymbol = type.symbol
+        val sourceIsMarkedNullable = type.isMarkedNullable
+        val sourceAnnotationClassIds = type.annotations.classIds.toList()
+        val sourceTypeArguments = type.typeArguments
 
         typeCreator.classType(sourceSymbol) {
             isMarkedNullable = sourceIsMarkedNullable
@@ -36,21 +36,21 @@ abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent
     }
 
     @KaExperimentalApi
-    override fun KaUsualClassType.copy(init: KaClassTypeBuilder.() -> Unit): KaUsualClassType = withValidityAssertion {
-        (this@copy as KaClassType).copy(init) as KaUsualClassType
+    override fun copy(type: KaUsualClassType, init: KaClassTypeBuilder.() -> Unit): KaUsualClassType = withValidityAssertion {
+        copy(type as KaClassType, init) as KaUsualClassType
     }
 
     @KaExperimentalApi
-    override fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaFunctionType = withValidityAssertion {
+    override fun copy(type: KaFunctionType, init: KaFunctionTypeBuilder.() -> Unit): KaFunctionType = withValidityAssertion {
         with(analysisSession) {
-            val sourceIsMarkedNullable = this@copy.isMarkedNullable
-            val sourceIsSuspend = this@copy.isSuspend
-            val sourceIsReflectType = this@copy.isReflectType
-            val sourceContextReceivers = this@copy.contextReceivers
-            val sourceReceiverType = this@copy.receiverType
-            val sourceParameters = this@copy.parameters
-            val sourceReturnType = this@copy.returnType
-            val sourceAnnotationClassIds = this@copy.annotations.classIds.toList()
+            val sourceIsMarkedNullable = type.isMarkedNullable
+            val sourceIsSuspend = type.isSuspend
+            val sourceIsReflectType = type.isReflectType
+            val sourceContextReceivers = type.contextReceivers
+            val sourceReceiverType = type.receiverType
+            val sourceParameters = type.parameters
+            val sourceReturnType = type.returnType
+            val sourceAnnotationClassIds = type.annotations.classIds.toList()
 
             typeCreator.functionType {
                 isMarkedNullable = sourceIsMarkedNullable
@@ -71,11 +71,11 @@ abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent
     }
 
     @KaExperimentalApi
-    override fun KaTypeParameterType.copy(init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType = withValidityAssertion {
+    override fun copy(type: KaTypeParameterType, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType = withValidityAssertion {
         with(analysisSession) {
-            val sourceSymbol = this@copy.symbol
-            val sourceIsMarkedNullable = this@copy.isMarkedNullable
-            val sourceAnnotationClassIds = this@copy.annotations.classIds.toList()
+            val sourceSymbol = type.symbol
+            val sourceIsMarkedNullable = type.isMarkedNullable
+            val sourceAnnotationClassIds = type.annotations.classIds.toList()
 
             typeCreator.typeParameterType(sourceSymbol) {
                 isMarkedNullable = sourceIsMarkedNullable

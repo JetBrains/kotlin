@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import java.io.Serializable
 
 
@@ -235,6 +236,7 @@ class MetricContainer : Serializable {
     private val numericalMetrics = HashMap<NumericalMetrics, Long>()
     private val booleanMetrics = HashMap<BooleanMetrics, Boolean>()
     private val stringMetrics = HashMap<StringMetrics, String>()
+    private val stringListMetrics = HashMap<StringListMetrics, List<String>>()
 
     fun addToConsumer(metricsConsumer: StatisticsValuesConsumer) {
         for ((key, value) in numericalMetrics) {
@@ -246,11 +248,16 @@ class MetricContainer : Serializable {
         for ((key, value) in stringMetrics) {
             metricsConsumer.report(key, value)
         }
+        for ((key, value) in stringListMetrics) {
+            metricsConsumer.report(key, value)
+        }
     }
 
     fun put(metric: StringMetrics, value: String) = stringMetrics.put(metric, value)
     fun put(metric: BooleanMetrics, value: Boolean) = booleanMetrics.put(metric, value)
     fun put(metric: NumericalMetrics, value: Long) = numericalMetrics.put(metric, value)
+    fun put(metric: StringListMetrics, value: List<String>) = stringListMetrics.put(metric, value)
+    fun put(metric: StringListMetrics, value: String) = put(metric, listOf(value))
 }
 
 internal val Project.buildServiceShouldBeCreated

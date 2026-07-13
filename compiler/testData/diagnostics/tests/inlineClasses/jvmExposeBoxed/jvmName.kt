@@ -23,5 +23,17 @@ fun bar2(ic: IC): IC = TODO()
 @JvmName("foo")
 fun barIC2(): IC = TODO()
 
+@JvmExposeBoxed(<!ILLEGAL_JVM_NAME!>"with/slash"<!>)
+fun bar3(ic: IC): IC = TODO()
+
+@JvmExposeBoxed(<!ILLEGAL_JVM_NAME!>"with;semicolon"<!>)
+fun bar4(ic: IC): IC = TODO()
+
+@JvmExposeBoxed(<!ILLEGAL_JVM_NAME!>"with[open square"<!>)
+fun bar5(ic: IC): IC = TODO()
+
+@JvmExposeBoxed(<!ILLEGAL_JVM_NAME!>"with/slash"<!>)
+fun bar6(ic: IC): IC = TODO()
+
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
 primaryConstructor, propertyDeclaration, stringLiteral, value */

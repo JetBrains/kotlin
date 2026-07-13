@@ -1,21 +1,22 @@
 description = "Kotlin AllOpen Compiler Plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
     embedded(project(":kotlin-allopen-compiler-plugin.common")) { isTransitive = false }
     embedded(project(":kotlin-allopen-compiler-plugin.cli")) { isTransitive = false }
-    embedded(project(":kotlin-allopen-compiler-plugin.k1")) { isTransitive = false }
     embedded(project(":kotlin-allopen-compiler-plugin.k2")) { isTransitive = false }
 
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.common"))
-    testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k1"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k2"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.cli"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
@@ -36,8 +37,6 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-optInToK1Deprecation()
-
 publish()
 
 runtimeJar()
@@ -46,7 +45,7 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0))
 
     testGenerator("org.jetbrains.kotlin.allopen.TestGeneratorKt", generateTestsInBuildDirectory = true)
 

@@ -1,10 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -13,6 +16,7 @@ dependencies {
     api(project(":analysis:analysis-api-platform-interface"))
     api(project(":compiler:resolution.common.jvm"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
+    implementation(project(":compiler:config.jvm"))
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
@@ -23,7 +27,6 @@ dependencies {
     implementation(project(":compiler:backend.jvm"))
     implementation(kotlinxCollectionsImmutable())
     api(intellijCore())
-    implementation(project(":analysis:analysis-internal-utils"))
     implementation(libs.caffeine)
 
     testFixturesApi(platform(libs.junit.bom))
@@ -36,6 +39,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesImplementation(testFixtures(project(":plugins:plugin-sandbox")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-native"))
@@ -53,8 +57,6 @@ sourceSets {
     "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
-
-optInToK1Deprecation()
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.optIn.addAll(

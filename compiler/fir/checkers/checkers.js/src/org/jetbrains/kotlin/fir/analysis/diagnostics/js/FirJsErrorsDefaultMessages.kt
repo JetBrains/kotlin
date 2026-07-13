@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.DATA_CLASS_COPY_JS_EXPORTABILITY_WILL_BE_CHANGED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.DELEGATION_BY_DYNAMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXPOSED_NOT_EXPORTED_SUPER_INTERFACE
@@ -58,6 +59,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_SETTER_WRONG_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_CONSUMABLE_EXPORTED_IDENTIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXPORTABLE_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_FUNCTION_WITH_EXPOSED_COPY_VISIBILITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_WITHOUT_CONSISTENT_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE
@@ -243,6 +246,60 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
             "@JsNoRuntime annotations from expect must either be present with on actual as well, or the actual interface must be external.",
+        )
+
+        map.put(
+            DATA_CLASS_COPY_JS_EXPORTABILITY_WILL_BE_CHANGED,
+            """
+                Non-exported primary constructor is exposed to JS via the generated 'copy()' method of this 'data' class.
+
+                In a future release, the generated 'copy()' will inherit '@JsExport.Ignore' by default,
+                matching the exportability of the primary constructor.
+
+                To resolve this diagnostic, choose one of the following options:
+
+                  - Annotate the data class with '@ConsistentCopyVisibility':
+                    'copy()' will inherit '@JsExport.Ignore' and will NOT be exported to JavaScript/TypeScript.
+
+                  - Annotate the data class with '@ExposedCopyVisibility':
+                    'copy()' will NOT inherit '@JsExport.Ignore' and WILL be exported to JavaScript/TypeScript.
+
+                  - Pass the '-Xconsistent-data-class-copy-visibility' compiler flag:
+                    Applies '@ConsistentCopyVisibility' behavior to all data classes globally,
+                    so 'copy()' will inherit '@JsExport.Ignore' and will NOT be exported to JavaScript/TypeScript.
+
+                For more information, see the documentation for '@ConsistentCopyVisibility' and '@ExposedCopyVisibility'.                
+                
+            """.trimIndent() // Two empty lines at the end to append "This will become an error in" message
+        )
+
+        map.put(
+            NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_FUNCTION_WITH_EXPOSED_COPY_VISIBILITY,
+            """
+                Parameter of type ''{0}'' is not exportable, but is used in the exposed ''copy()'' method of this ''data'' class.
+
+                To resolve this diagnostic, remove the ''@ExposedCopyVisibility'' annotation from the data class,
+                so the ''copy()'' method will NOT be exported to JavaScript/TypeScript.
+                """.trimIndent(),
+            FirDiagnosticRenderers.RENDER_TYPE,
+        )
+
+
+        map.put(
+            NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_WITHOUT_CONSISTENT_VISIBILITY,
+            """
+                Parameter of type ''{0}'' is not exportable, but is used in the exposed ''copy()'' method of this ''data'' class.
+
+                To resolve this diagnostic, choose one of the following options:
+                
+                  - Annotate the data class with ''@ConsistentCopyVisibility'':
+                    ''copy()'' will inherit the constructor exportability, so will NOT be exported to JavaScript/TypeScript.
+                    
+                  - Pass the ''-Xconsistent-data-class-copy-visibility'' compiler flag:
+                    Applies ''@ConsistentCopyVisibility'' behavior to all data classes globally,
+                    so ''copy()'' will inherit ''@JsExport.Ignore'' and will NOT be exported to JavaScript/TypeScript.
+                """.trimIndent(),
+            FirDiagnosticRenderers.RENDER_TYPE,
         )
     }
 }

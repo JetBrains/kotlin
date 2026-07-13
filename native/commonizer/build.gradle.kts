@@ -1,6 +1,9 @@
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
     id("test-inputs-check-v2")
@@ -45,7 +48,8 @@ dependencies {
 
     api(kotlinStdlib())
 
-    testImplementation(libs.junit4)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
     testImplementation(project(":kotlin-metadata")) { isTransitive = false }
@@ -54,7 +58,7 @@ dependencies {
     testImplementation(project(":native:native.config"))
     testImplementation(intellijCore())
 
-    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
@@ -67,8 +71,6 @@ sourceSets {
     main { projectDefault() }
     test { projectDefault() }
 }
-
-optInToK1Deprecation()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {

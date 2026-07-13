@@ -45,13 +45,11 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         description = "Normalize absolute paths in klibs.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
             deprecatedVersion = KotlinReleaseVersion.v2_4_20,
-            // TODO(KT-85591): Uncomment when 2.4.20 becomes the latest stable
+            // The CLI arguments generation is broken if use a future `removedVersion`.
+            // TODO: uncomment after switching to 2.5 or after fixing of KT-87495
             // removedVersion = KotlinReleaseVersion.v2_5_0,
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
@@ -74,24 +72,24 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         name = "Xpartial-linkage"
         compilerName = "partialLinkageMode"
         description = ReleaseDependent(
-            current = """
-                This option is deprecated and will be deleted in future versions.
-                The partial linkage engine is always turned on.
-                If you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
-            """.trimIndent(),
+            current = "Enables partial linkage mode.",
             valueInVersions = mapOf(
-                KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_3_20 to "Use partial linkage mode."
+                KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_3_20 to "Use partial linkage mode.",
+                KotlinReleaseVersion.v2_4_0..KotlinReleaseVersion.v2_4_0 to """
+                    This option is deprecated and will be deleted in future versions.
+                    The partial linkage engine is always turned on.
+                    If you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
+                """.trimIndent(),
             )
-
         )
 
         valueType = StringType.defaultNull
 
         valueDescription = "{enable|disable}".asReleaseDependent()
         argumentType = PartialLinkageModeType()
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
+
+        deprecatedMessage = "The partial linkage engine is always turned on. " +
+                "If you want to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,

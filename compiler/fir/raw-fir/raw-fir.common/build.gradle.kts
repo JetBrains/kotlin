@@ -4,6 +4,9 @@
  */
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("generated-sources")
@@ -13,7 +16,6 @@ plugins {
 dependencies {
     api(project(":compiler:fir:tree"))
 
-    implementation(kotlinxCollectionsImmutable())
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:psi:parser"))
@@ -28,6 +30,16 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
     "testFixtures" { projectDefault() }
+}
+
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.types.model.K2Only",
+        )
+    )
 }
 
 generatedDiagnosticContainersAndCheckerComponents()

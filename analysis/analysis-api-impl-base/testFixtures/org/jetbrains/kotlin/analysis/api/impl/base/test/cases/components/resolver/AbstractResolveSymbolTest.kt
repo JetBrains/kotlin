@@ -60,7 +60,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
         prettyPrint {
             if (mainElement is KtSimpleNameExpression) {
                 appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
-                appendLine("usesContextSensitiveResolution: ${mainElement.usesContextSensitiveResolution}")
+                appendLine("contextSensitiveResolutionStatus: ${mainElement.contextSensitiveResolutionStatus}")
             }
 
             val representation = stringRepresentation(symbolAttempt)

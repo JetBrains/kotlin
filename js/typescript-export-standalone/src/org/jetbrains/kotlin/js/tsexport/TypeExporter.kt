@@ -10,7 +10,9 @@ package org.jetbrains.kotlin.js.tsexport
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
+import org.jetbrains.kotlin.analysis.api.components.isClassType
+import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedParameter
@@ -23,11 +25,13 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
+import org.jetbrains.kotlin.utils.addToStdlib.foldMap
 
 internal class TypeExporter(
     private val config: TypeScriptExportConfig,
     private val scope: TypeParameterScope,
     private val transitivelyExportedClasses: MutableSet<KaClassLikeSymbol>?,
+    private val superTypeApproximator: SuperTypeApproximator?,
 ) {
     /**
      * Memoize already processed types during recursive traversal of a type to avoid stack overflow on self-referential types,
@@ -149,11 +153,11 @@ internal class TypeExporter(
         if (isJsImplicitExport) {
             transitivelyExportedClasses?.add(symbol)
         }
-        val isExported = isJsImplicitExport || shouldDeclarationBeExported(symbol)
+        val isExported = isJsImplicitExport || symbol.isEffectivelyExported(config)
         return when (symbol) {
             is KaNamedClassSymbol -> {
                 if (inlineClassesShouldBeUnboxed && symbol.isInline) {
-                    val underlyingType = symbol.singleFieldValueClassUnderlyingType
+                    val underlyingType = symbol.inlineClassUnderlyingType
 
                     if (underlyingType != null) {
                         val substitutedType = buildSubstitutor {
@@ -173,8 +177,16 @@ internal class TypeExporter(
                 val name = symbol
                     .getExportedFqName(shouldIncludePackage = !isNonExportedExternal && config.generateNamespacesForPackages, config)
 
-                // TODO(KT-82340): Approximate to actual supertype
-                val exportedSupertype = Primitive.Any
+                val exportedSupertype = if (isImplicitlyExported && superTypeApproximator != null) {
+                    val transitiveExportedTypes = superTypeApproximator.collectSuperTypesTransitiveHierarchyFor(type)
+                    if (transitiveExportedTypes.isEmpty()) {
+                        Primitive.Any
+                    } else {
+                        transitiveExportedTypes.foldMap({ exportType(it) }, ExportedType::IntersectionType)
+                    }
+                } else {
+                    Primitive.Any
+                }
 
                 val classType = ClassType(
                     name = name,

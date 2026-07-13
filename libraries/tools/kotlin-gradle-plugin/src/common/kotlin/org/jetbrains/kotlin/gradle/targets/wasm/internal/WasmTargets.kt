@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.internal
 
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+
 /**
  * Specifies whether this Wasm target supports per-module compilation mode.
  */

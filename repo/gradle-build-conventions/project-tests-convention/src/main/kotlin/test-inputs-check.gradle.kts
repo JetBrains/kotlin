@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    testImplementation(project(":compiler:test-security-manager"))
+    testRuntimeOnly(project(":compiler:test-security-manager"))
 }
 
 val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumentation.disable.inputs.check").orNull?.toBoolean() == true

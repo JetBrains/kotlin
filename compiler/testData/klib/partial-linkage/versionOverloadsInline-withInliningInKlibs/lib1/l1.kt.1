@@ -1,0 +1,7 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+inline fun inlineFun(
+    block1: () -> Int,
+    @IntroducedAt("1") block2: () -> Int = { 123 },
+    @IntroducedAt("2") sum: Int = block1() + block2(),
+): Int = sum

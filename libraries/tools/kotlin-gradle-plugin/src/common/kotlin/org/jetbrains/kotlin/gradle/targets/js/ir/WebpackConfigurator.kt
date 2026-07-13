@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Sync
@@ -61,12 +60,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
         val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
 
-        val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
-            subTarget.target.webTargetVariant(
-                { compilation.npmProject.dir.map { it.asFile } },
-                { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
-            )
-        )
+        val npmToolingDir: Provider<Directory> = compilation.npmToolingDir()
 
         compilation.binaries
             .withType<Executable>()
@@ -141,12 +135,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         val target = compilation.target
         val project = target.project
 
-        val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
-            subTarget.target.webTargetVariant(
-                { compilation.npmProject.dir.map { it.asFile } },
-                { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
-            )
-        )
+        val npmToolingDir: Provider<Directory> = compilation.npmToolingDir()
 
         compilation.binaries
             .withType<Executable>()
@@ -237,7 +226,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         entryModuleName: Provider<String>,
         configurationActions: DomainObjectSet<Action<KotlinWebpack>>,
         defaultArchivesName: Property<String>,
-        npmToolingDir: DirectoryProperty,
+        npmToolingDir: Provider<Directory>,
     ) {
         val target = binary.target
 

@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.commonizer.utils.createCirTree
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.junit.jupiter.api.Test
 
 class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase() {
 
+    @Test
     fun `test inlining typealias to common dependencies`() {
 
         fun InlineSourceBuilder.ModuleBuilder.withDependencies() = dependency {
@@ -107,6 +109,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
     }
 
 
+    @Test
     fun `test inlining typealias to target dependencies`() {
 
         fun InlineSourceBuilder.ModuleBuilder.withDependencies() = dependency {

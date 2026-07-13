@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.symbols
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
@@ -45,6 +44,18 @@ public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOw
      * The [receiver parameter][KaReceiverParameterSymbol] of the callable, or `null` if the callable is not an extension.
      */
     public abstract val receiverParameter: KaReceiverParameterSymbol?
+
+    /**
+     * A list of [KaContextParameterSymbol]s directly declared in the symbol.
+     */
+    public abstract val contextParameters: List<KaContextParameterSymbol>
+
+    /**
+     * The declaration's type parameters.
+     *
+     * See [Generics](https://kotlinlang.org/docs/generics.html)
+     */
+    public abstract val typeParameters: List<KaTypeParameterSymbol>
 
     /**
      * Whether the callable is an [extension function or property](https://kotlinlang.org/docs/extensions.html).
@@ -125,6 +136,10 @@ public val KaCallableSymbol.receiverType: KaType?
  * A list of [KaContextParameterSymbol]s directly declared in the symbol.
  */
 @KaExperimentalApi
+@Deprecated(
+    message = "'KaCallableSymbol' now has 'contextParameters' as a member property",
+    level = DeprecationLevel.HIDDEN,
+)
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public val KaCallableSymbol.contextParameters: List<KaContextParameterSymbol>
-    @OptIn(KaImplementationDetail::class)
-    get() = (this as? KaContextParameterOwnerSymbol)?.contextParameters.orEmpty()
+    get() = contextParameters

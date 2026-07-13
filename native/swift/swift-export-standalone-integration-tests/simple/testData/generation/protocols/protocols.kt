@@ -190,3 +190,24 @@ interface Foo {
 interface Bar: Foo {
     class Conflict
 }
+
+// FILE: special_names.kt
+
+interface Baz {
+    fun foo(result: Any)
+}
+
+
+// FILE: inherited_impl_marker.kt
+
+interface InterfaceA {
+    fun foo()
+}
+
+interface InterfaceB : InterfaceA {
+    fun bar()
+}
+
+abstract class ClassC : InterfaceB {
+    fun baz() = Unit
+}

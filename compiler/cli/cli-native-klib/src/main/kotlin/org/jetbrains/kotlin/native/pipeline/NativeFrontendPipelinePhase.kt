@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.native.pipeline
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.pipeline.*
-import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 import org.jetbrains.kotlin.native.createFirstStageCompilationConfig
+import kotlin.io.path.absolutePathString
 
 object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, NativeFrontendArtifact>(
     name = "NativeFrontendPhase",
@@ -38,6 +39,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         val config = createFirstStageCompilationConfig(configuration)
         val phaseContext = NativeFirstStagePhaseContext(config)
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForProduction(
             rootDisposable,
             configuration,
@@ -52,7 +54,6 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         )
     }
 
-    @OptIn(SessionConfiguration::class, ExperimentalCompilerApi::class)
     private inline fun <F> NativeFirstStagePhaseContext.firFrontend(
         configuration: CompilerConfiguration,
         files: List<F>,
@@ -69,7 +70,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         val dependencyList = DependencyListForCliModule.build {
             val [interopLibs, regularLibs] = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
             defaultDependenciesSet(mainModuleName) {
-                dependencies(regularLibs.map { it.libraryFile.absolutePath })
+                dependencies(regularLibs.map { it.path.absolutePathString() })
                 friendDependencies(config.friendModuleFiles.map { it.absolutePath })
                 dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePath })
             }
@@ -79,7 +80,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
                         Name.special("<regular interop dependencies of $mainModuleName>"),
                         FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
                     )
-                dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
+                dependencies(interopModuleData, interopLibs.map { it.path.absolutePathString() })
             }
             // TODO: !!! dependencies module data?
         }
@@ -119,7 +120,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
             configuration,
             ktFiles,
             checkSyntaxErrors = {
-                AnalyzerWithCompilerReport.reportSyntaxErrors(it, configuration.diagnosticsCollector).isHasErrors
+                SyntaxErrorReporter.reportSyntaxErrors(it, configuration.diagnosticsCollector).isHasErrors
             },
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,

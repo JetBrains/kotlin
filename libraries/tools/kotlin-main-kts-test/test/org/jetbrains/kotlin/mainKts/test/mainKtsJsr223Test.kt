@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.mainKts.test
 
-import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import javax.script.ScriptEngineManager
 
 /*
@@ -12,17 +12,13 @@ import javax.script.ScriptEngineManager
 
 class MainKtsJsr223Test {
 
-    init {
-        setIdeaIoUseFallback()
-    }
-
     @Test
     fun testSimpleEval() {
         val engine = ScriptEngineManager().getEngineByExtension("main.kts")!!
         val res1 = engine.eval("val x = 3")
-        Assert.assertNull(res1)
+        Assertions.assertNull(res1)
         val res2 = engine.eval("x + 2")
-        Assert.assertEquals(5, res2)
+        Assertions.assertEquals(5, res2)
     }
 
     @Test
@@ -30,12 +26,18 @@ class MainKtsJsr223Test {
         val engine = ScriptEngineManager().getEngineByExtension("main.kts")!!
         engine.put("z", 6)
         val res1 = engine.eval("val x = 7")
-        Assert.assertNull(res1)
+        Assertions.assertNull(res1)
         val res2 = engine.eval("z * x")
-        Assert.assertEquals(42, res2)
+        Assertions.assertEquals(42, res2)
     }
 
     @Test
+    @Disabled(
+        """ BLOCKED-COMPILER-KT-77583/KT-83498: light-tree REPL-snippet support is unimplemented (LightTreeRawFirDeclarationBuilder.convertReplSnippet TODO). 
+            K2ReplCompiler's own isReplSnippetSource predicate is session-wide/argument-independent 'true', so the light-tree-converted 
+            @file:Import(...) scripts get misclassified as REPL snippets and hit the TODO instead of the working convertScript path. 
+            """
+    )
     fun testWithImport() {
         val engine = ScriptEngineManager().getEngineByExtension("main.kts")!!
         val out = captureOut {
@@ -45,9 +47,8 @@ class MainKtsJsr223Test {
                 sharedVar = sharedVar + 1
                 println(sharedVar)
             """.trimIndent())
-            Assert.assertNull(res1)
+            Assertions.assertNull(res1)
         }.lines()
-        Assert.assertEquals(listOf("Hi from common", "Hi from middle", "5"), out)
+        Assertions.assertEquals(listOf("Hi from common", "Hi from middle", "5"), out)
     }
 }
-

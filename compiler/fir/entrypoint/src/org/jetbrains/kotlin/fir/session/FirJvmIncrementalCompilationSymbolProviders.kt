@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 data class FirJvmIncrementalCompilationSymbolProviders(
     val symbolProviderForBinariesFromIncrementalCompilation: FirSymbolProvider?,
-    val previousFirSessionsSymbolProviders: Collection<FirSymbolProvider>,
     val optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider?,
 )
 
@@ -56,7 +55,6 @@ fun IncrementalCompilationContext.createSymbolProviders(
     }
     return FirJvmIncrementalCompilationSymbolProviders(
         symbolProviderForBinariesFromIncrementalCompilation,
-        previousFirSessionsSymbolProviders,
         optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation
     )
 }
@@ -75,11 +73,11 @@ fun createIncrementalProvidersForNonLeafMppModules(
         session,
         moduleDataProvider = SingleModuleDataProvider(moduleData),
         kotlinScopeProvider = session.kotlinScopeProvider,
-        resolvedLibraries
+        resolvedLibraries,
+        defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled,
     )
     return FirJvmIncrementalCompilationSymbolProviders(
         symbolProviderForBinariesFromIncrementalCompilation = provider,
-        previousFirSessionsSymbolProviders = emptyList(),
         optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation = null,
     )
 }

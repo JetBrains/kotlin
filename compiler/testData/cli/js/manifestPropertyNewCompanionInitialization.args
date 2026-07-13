@@ -1,0 +1,10 @@
+$TESTDATA_DIR$/manifestPropertyNewCompanionInitialization.kt
+-Xir-produce-klib-dir
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-libraries
+$STDLIB_JS$
+
+-Xcompanion-blocks-and-extensions

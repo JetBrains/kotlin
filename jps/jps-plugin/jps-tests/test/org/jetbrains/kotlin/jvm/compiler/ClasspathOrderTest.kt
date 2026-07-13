@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**
@@ -27,10 +28,12 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
             get() = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "/classpathOrder").absoluteFile
     }
 
+    @Test
     fun testClasspathOrderForCLI() {
         MockLibraryUtil.compileKotlinSources(sourceDir.path, tmpdir)
     }
 
+    @Test
     fun testClasspathOrderForModuleScriptBuild() {
         val xmlContent = KotlinModuleXmlBuilder().addModule(
             "name",

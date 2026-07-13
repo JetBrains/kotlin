@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-published-compiler-dependency-configuration")
 }
@@ -25,8 +28,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
-
-optInToK1Deprecation()
 
 publish()
 

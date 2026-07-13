@@ -1,0 +1,3 @@
+expression: MyClass() == MyClass()
+expression PSI: KtBinaryExpression
+type: kotlin.Boolean

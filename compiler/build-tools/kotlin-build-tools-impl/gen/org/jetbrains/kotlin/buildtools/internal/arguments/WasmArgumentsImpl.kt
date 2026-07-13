@@ -19,6 +19,7 @@ import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.io.path.Path
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Co
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_DWARF
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_WAT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_IC_GENERATE_UNCHANGED_MODULES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_INCLUDED_MODULE_ONLY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_KCLASS_FQN
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Co
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_TARGET
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_NEW_EXCEPTION_PROPOSAL
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -89,7 +92,7 @@ internal class WasmArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerArguments.WasmCompilerArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
@@ -104,7 +107,7 @@ internal class WasmArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
@@ -119,7 +122,7 @@ internal class WasmArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
@@ -137,9 +140,10 @@ internal class WasmArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)}
-    if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)}
+    if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)?.absolutePathStringOrThrow()}
+    if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)?.absolutePathStringOrThrow()}
     if (X_WASM in this) { arguments.wasm = get(X_WASM)}
+    if (X_WASM_IC_GENERATE_UNCHANGED_MODULES in this) { arguments.regenerateUnchangedModules = get(X_WASM_IC_GENERATE_UNCHANGED_MODULES)}
     if (X_WASM_DEBUG_FRIENDLY in this) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY)}
     if (X_WASM_DEBUG_INFO in this) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)}
     if (X_WASM_DEBUGGER_CUSTOM_FORMATTERS in this) { arguments.debuggerCustomFormatters = get(X_WASM_DEBUGGER_CUSTOM_FORMATTERS)}
@@ -156,6 +160,7 @@ internal class WasmArgumentsImpl(
     if (X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES in this) { arguments.includeUnavailableSourcesIntoSourceMap = get(X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES)}
     if (X_WASM_TARGET in this) { arguments.wasmTarget = get(X_WASM_TARGET)?.stringValue}
     if (X_WASM_USE_NEW_EXCEPTION_PROPOSAL in this) { arguments.wasmUseNewExceptionProposal = get(X_WASM_USE_NEW_EXCEPTION_PROPOSAL)}
+    if (X_WASM_USE_STACK_SWITCHING_PROPOSAL in this) { arguments.wasmUseStackSwitchingProposal = get(X_WASM_USE_STACK_SWITCHING_PROPOSAL)}
     if (X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS in this) { arguments.wasmUseTrapsInsteadOfExceptions = get(X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)}
     arguments.internalArguments = parseCommandLineArguments<KotlinWasmCompilerArguments>(internalArguments.toList()).internalArguments
     populateExplicitArguments(arguments)
@@ -165,9 +170,10 @@ internal class WasmArgumentsImpl(
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: KotlinWasmCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = arguments.irDceDumpReachabilityInfoToFile } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = arguments.irDceDumpDeclarationIrSizesToFile } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = arguments.irDceDumpReachabilityInfoToFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = arguments.irDceDumpDeclarationIrSizesToFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM] = arguments.wasm } catch (_: NoSuchMethodError) {  }
+    try { this[X_WASM_IC_GENERATE_UNCHANGED_MODULES] = arguments.regenerateUnchangedModules } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_DEBUG_FRIENDLY] = arguments.forceDebugFriendlyCompilation } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_DEBUG_INFO] = arguments.wasmDebug } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_DEBUGGER_CUSTOM_FORMATTERS] = arguments.debuggerCustomFormatters } catch (_: NoSuchMethodError) {  }
@@ -184,6 +190,7 @@ internal class WasmArgumentsImpl(
     try { this[X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES] = arguments.includeUnavailableSourcesIntoSourceMap } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_TARGET] = arguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_USE_NEW_EXCEPTION_PROPOSAL] = arguments.wasmUseNewExceptionProposal } catch (_: NoSuchMethodError) {  }
+    try { this[X_WASM_USE_STACK_SWITCHING_PROPOSAL] = arguments.wasmUseStackSwitchingProposal } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS] = arguments.wasmUseTrapsInsteadOfExceptions } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
@@ -191,9 +198,10 @@ internal class WasmArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: KotlinWasmCompilerArguments = KotlinWasmCompilerArguments()): KotlinWasmCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
-    if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)}
-    if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)}
+    if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)?.absolutePathStringOrThrow()}
+    if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)?.absolutePathStringOrThrow()}
     if (X_WASM in this) { arguments.wasm = get(X_WASM)}
+    if (X_WASM_IC_GENERATE_UNCHANGED_MODULES in this) { arguments.regenerateUnchangedModules = get(X_WASM_IC_GENERATE_UNCHANGED_MODULES)}
     if (X_WASM_DEBUG_FRIENDLY in this) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY)}
     if (X_WASM_DEBUG_INFO in this) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)}
     if (X_WASM_DEBUGGER_CUSTOM_FORMATTERS in this) { arguments.debuggerCustomFormatters = get(X_WASM_DEBUGGER_CUSTOM_FORMATTERS)}
@@ -210,6 +218,7 @@ internal class WasmArgumentsImpl(
     if (X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES in this) { arguments.includeUnavailableSourcesIntoSourceMap = get(X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES)}
     if (X_WASM_TARGET in this) { arguments.wasmTarget = get(X_WASM_TARGET)?.stringValue}
     if (X_WASM_USE_NEW_EXCEPTION_PROPOSAL in this) { arguments.wasmUseNewExceptionProposal = get(X_WASM_USE_NEW_EXCEPTION_PROPOSAL)}
+    if (X_WASM_USE_STACK_SWITCHING_PROPOSAL in this) { arguments.wasmUseStackSwitchingProposal = get(X_WASM_USE_STACK_SWITCHING_PROPOSAL)}
     if (X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS in this) { arguments.wasmUseTrapsInsteadOfExceptions = get(X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)}
     return arguments
   }
@@ -245,13 +254,16 @@ internal class WasmArgumentsImpl(
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
 
-    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmArgument<String?> =
+    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmArgument<java.nio.`file`.Path?> =
         WasmArgument("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE")
 
-    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmArgument<String?> =
+    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmArgument<java.nio.`file`.Path?> =
         WasmArgument("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE")
 
     public val X_WASM: WasmArgument<Boolean> = WasmArgument("X_WASM")
+
+    public val X_WASM_IC_GENERATE_UNCHANGED_MODULES: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_IC_GENERATE_UNCHANGED_MODULES")
 
     public val X_WASM_DEBUG_FRIENDLY: WasmArgument<Boolean> = WasmArgument("X_WASM_DEBUG_FRIENDLY")
 
@@ -292,6 +304,9 @@ internal class WasmArgumentsImpl(
 
     public val X_WASM_USE_NEW_EXCEPTION_PROPOSAL: WasmArgument<Boolean?> =
         WasmArgument("X_WASM_USE_NEW_EXCEPTION_PROPOSAL")
+
+    public val X_WASM_USE_STACK_SWITCHING_PROPOSAL: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_USE_STACK_SWITCHING_PROPOSAL")
 
     public val X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS: WasmArgument<Boolean> =
         WasmArgument("X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS")

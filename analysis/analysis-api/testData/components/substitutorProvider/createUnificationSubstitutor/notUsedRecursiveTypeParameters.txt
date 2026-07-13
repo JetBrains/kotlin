@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-Child <: Base (Original: Child <: Base)
-
-EXISTENTIAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-Child <: Base (Original: Child <: Base)

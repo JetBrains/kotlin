@@ -1,0 +1,4 @@
+Symbol:
+  KaTypeAliasSymbol
+Default annotation targets:
+  TYPEALIAS

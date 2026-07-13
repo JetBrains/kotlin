@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.konan.target.Xcode
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -1565,27 +1566,37 @@ private fun assertXcodeBuildDependencyChain(iosAppPath: Path) {
     val pifFileTargets = dumpXcodebuildPIF(iosAppPath).filter { it.type == "target" }
     val iosAppTarget = pifFileTargets.single { it.contents.name == "iosApp" }
 
+    val magicPackageProductGuid = if (Xcode.findCurrent().version.major < 27)
+        "PACKAGE-PRODUCT:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME"
+    else
+        "PACKAGE-PRODUCT:${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME.lowercase()}_${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}"
+
+    val localPackageDependencyProductGuid = if (Xcode.findCurrent().version.major < 27)
+        "PACKAGE-PRODUCT:LocalSwiftPackage"
+    else
+        "PACKAGE-PRODUCT:localswiftpackage_LocalSwiftPackage.LocalSwiftPackage"
+
     assertEquals(
-        listOf("PACKAGE-PRODUCT:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME"),
+        listOf(magicPackageProductGuid),
         iosAppTarget.contents.dependencies.map { it.guid },
         message = "iosApp target should depend on synthetic package product"
     )
 
-    val syntheticPackageProduct = pifFileTargets.single { it.contents.guid == "PACKAGE-PRODUCT:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME" }
+    val syntheticPackageProduct = pifFileTargets.single { it.contents.guid == magicPackageProductGuid }
     assertEquals(
-        listOf("PACKAGE-TARGET:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME", "PACKAGE-PRODUCT:LocalSwiftPackage"),
+        listOf("PACKAGE-TARGET:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME", localPackageDependencyProductGuid),
         syntheticPackageProduct.contents.dependencies.map { it.guid },
         message = "Synthetic package product should depend on synthetic package target and LocalSwiftPackage product"
     )
 
     val syntheticPackageTarget = pifFileTargets.single { it.contents.guid == "PACKAGE-TARGET:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME" }
     assertEquals(
-        listOf("PACKAGE-PRODUCT:LocalSwiftPackage"),
+        listOf(localPackageDependencyProductGuid),
         syntheticPackageTarget.contents.dependencies.map { it.guid },
         message = "Synthetic package target should depend on LocalSwiftPackage product"
     )
 
-    val localSwiftPackageProduct = pifFileTargets.single { it.contents.guid == "PACKAGE-PRODUCT:LocalSwiftPackage" }
+    val localSwiftPackageProduct = pifFileTargets.single { it.contents.guid == localPackageDependencyProductGuid }
     assertEquals(
         listOf("PACKAGE-TARGET:LocalSwiftPackage"),
         localSwiftPackageProduct.contents.dependencies.map { it.guid },

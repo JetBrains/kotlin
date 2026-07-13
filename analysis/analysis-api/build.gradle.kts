@@ -2,10 +2,13 @@ import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 kotlin {
@@ -22,7 +25,7 @@ dependencies {
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(project(":core:compiler.common.js"))
-    implementation(project(":analysis:analysis-internal-utils"))
+    implementation(kotlinxCollectionsImmutable())
 
     api(intellijCore())
     api(libs.intellij.asm)
@@ -35,6 +38,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(project(":analysis:analysis-internal-utils"))
 }
 
 private val unstableNonPublicMarkers = listOf(

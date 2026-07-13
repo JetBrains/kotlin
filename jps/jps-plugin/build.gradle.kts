@@ -3,24 +3,24 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
+    id("kotlin-build-helpers")
 }
-
-val compilerModules: Array<String> by rootProject.extra
 
 dependencies {
     compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(testFixtures(project(":generators:test-generator")))
 
     @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
-        .let { it as List<String> }
+    CompilerModules.kotlinJpsPluginEmbeddedDependencies
         .forEach { implementation(project(it)) }
 
     @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginMavenDependencies"]
-        .let { it as List<String> }
+    CompilerModules.kotlinJpsPluginMavenDependencies
         .forEach { implementation(project(it)) }
 
     @Suppress("UNCHECKED_CAST")
@@ -72,11 +72,17 @@ dependencies {
     testImplementation(jpsBuild())
     testImplementation(jpsBuildJavacRt())
 
-    compilerModules.forEach {
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
+    CompilerModules.compilerModules.forEach {
         testRuntimeOnly(project(it))
     }
 
-    testImplementation("org.projectlombok:lombok:${rootProject.extra["versions.lombok"]}")
+    testImplementation("org.projectlombok:lombok:${project.kotlinBuildProperties.versionsProperty("lombok").get()}")
     testImplementation(libs.kotlinx.serialization.json)
 }
 
@@ -117,8 +123,7 @@ tasks.compileKotlin {
 
 projectTests {
     testTask(
-        parallel = true,
-        jUnitMode = JUnitMode.JUnit4,
+        jUnitMode = JUnitMode.JUnit5,
         javaLauncher = JdkMajorVersion.JDK_17_0,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {

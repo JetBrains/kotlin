@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
@@ -38,11 +39,11 @@ object FirDiagnosticsCompilerResultsReporter {
         return reportByFile(diagnosticsCollector) { diagnostic, location ->
             reportDiagnosticToMessageCollector(diagnostic, location, messageCollector, renderDiagnosticName)
         }.also {
-            AnalyzerWithCompilerReport.reportSpecialErrors(
+            SyntaxErrorReporter.reportSpecialErrors(
                 diagnosticsCollector.diagnostics.any { it.factory == FirErrors.INCOMPATIBLE_CLASS },
                 diagnosticsCollector.diagnostics.any { it.factory == FirErrors.PRE_RELEASE_CLASS },
                 diagnosticsCollector.diagnostics.any { it.factory == FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS },
-                messageCollector,
+                messageCollector
             )
         }
     }

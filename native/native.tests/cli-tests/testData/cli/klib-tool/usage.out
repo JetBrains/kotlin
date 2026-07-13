@@ -1,0 +1,50 @@
+Usage: klib <command> <library path> [<options>]
+
+where the commands are:
+    info
+        Print general information about the library.
+
+    dump-abi
+        Dump the ABI snapshot of the library. Each line in the snapshot corresponds exactly to one
+        declaration. Whenever an ABI-incompatible change happens to a declaration, this should
+        be visible in the corresponding line of the snapshot.
+
+    dump-ir
+        Dump the intermediate representation (IR) of declarations in the library.
+        The output of this command is intended to be used for debugging purposes only.
+
+    dump-ir-signatures
+        Dump IR signatures of all non-private declarations in the library and all non-private
+        declarations consumed by this library (as two separate lists). This command relies
+        purely on the data in IR.
+
+    dump-ir-inlinable-functions
+        Dump the intermediate representation (IR) of inlinable functions in the library.
+        The output of this command is intended to be used for debugging purposes only.
+
+    dump-metadata
+        Dump the metadata of all declarations in the library.
+        The output of this command intended to be used for debugging purposes only.
+
+    dump-metadata-signatures
+        Dump IR signatures of all non-private declarations in the library. Note, that this command
+        renders the signatures based on the library metadata. This is different from
+        "dump-ir-signatures", which renders signatures based on the IR. On practice,
+        in most cases there is no difference between output of these two commands. However,
+        if IR transforming compiler plugins (such as Compose) were used during compilation
+        of the library, there would be different signatures for patched declarations.
+
+and the options are:
+    -signature-version {1|2}
+        Render IR signatures of a specific version. By default, the most up-to-date signature version
+        that is supported in the library is used.
+        Supported in commands: dump-abi, dump-ir-signatures, dump-metadata-signatures
+
+    -only-top-level-signatures {true|false}
+        Dump IR signatures of only top-level declarations.
+        Supported in commands: dump-ir-signatures
+
+    -relative-path-base
+        A file path prefix to be removed from all paths to render them as relative paths.
+        Note: By repeating this option multiple times it's possible to specify multiple prefixes.
+        Supported in commands: dump-ir

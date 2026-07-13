@@ -6,7 +6,6 @@ KaNamedClassSymbol:
   classId: test/WithGeneratedCompanion
   classKind: CLASS
   companionObject: KaNamedClassSymbol(test/WithGeneratedCompanion.Companion)
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -29,6 +28,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(companionObjectCompilerPlugin.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.WithGeneratedCompanion

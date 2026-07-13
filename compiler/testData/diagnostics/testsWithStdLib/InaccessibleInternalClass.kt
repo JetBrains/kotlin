@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// ALLOW_KOTLIN_PACKAGE
 // FILE: a.kt
 package p
 

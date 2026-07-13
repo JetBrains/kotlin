@@ -6,7 +6,7 @@ KtPackageDirective(43,55): 'package test'
 
 KtNameReferenceExpression(51,55): 'test'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -38,7 +38,7 @@ KtUserType(89,90): 'C'
 
 KtNameReferenceExpression(89,90): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -64,7 +64,7 @@ KtUserType(99,102): 'Int'
 
 KtNameReferenceExpression(99,102): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -84,7 +84,7 @@ KtUserType(105,106): 'C'
 
 KtNameReferenceExpression(105,106): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -98,7 +98,7 @@ KtCallExpression(109,112): 'C()'
 
 KtNameReferenceExpression(109,110): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -124,7 +124,7 @@ KtDotQualifiedExpression(132,141): 'C.plus(1)'
 
 KtNameReferenceExpression(132,133): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -138,7 +138,7 @@ KtCallExpression(134,141): 'plus(1)'
 
 KtNameReferenceExpression(134,138): 'plus'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C

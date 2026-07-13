@@ -1,8 +1,6 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR, WASM_JS
-
-// KT-61141: In testLrmFoo1 and testLrmFoo2, `print (message: kotlin.Any?)` instead of `print (message: kotlin.Int)`
-// IGNORE_BACKEND: NATIVE
+// DUMP_IR_DIFFERENCE: JVM
+//  JVM invokes `print (message: kotlin.Int)` instead of `print (message: kotlin.Any?)`
 
 fun test0() {
     run {

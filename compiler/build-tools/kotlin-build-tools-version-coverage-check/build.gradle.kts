@@ -1,8 +1,9 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
     kotlin("jvm")
-    application
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -10,10 +11,6 @@ dependencies {
     implementation(project(":kotlin-tooling-core"))
     testImplementation(kotlinTest("junit5"))
     testImplementation(platform(libs.junit.bom))
-}
-
-application {
-    mainClass.set("org.jetbrains.kotlin.buildtools.versioncoverage.MainKt")
 }
 
 sourceSets {

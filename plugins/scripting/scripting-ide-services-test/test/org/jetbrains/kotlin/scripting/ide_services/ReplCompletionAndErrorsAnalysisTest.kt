@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.scripting.ide_services
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.scripting.ide_services.compiler.completion
 import org.jetbrains.kotlin.scripting.ide_services.compiler.filterOutShadowedDescriptors
 import org.jetbrains.kotlin.scripting.ide_services.compiler.nameFilter
 import org.jetbrains.kotlin.scripting.ide_services.test_util.*
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicits
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicitsExceptInnermost
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.io.Writer
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.jvm
@@ -22,7 +22,7 @@ import kotlin.script.experimental.jvm.util.classpathFromClass
 
 typealias TestRunConfigurator = (TestConf.Run).() -> Unit
 
-class ReplCompletionAndErrorsAnalysisTest : TestCase() {
+class ReplCompletionAndErrorsAnalysisTest {
     @Test
     fun testTrivial() = test {
         run {
@@ -475,7 +475,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         }
     }
 
-    @Ignore("Should be fixed by KT-39314")
+    @Disabled("Should be fixed by KT-39314")
     @Test
     fun ignore_testDefaultImportsNotFirst() = test {
         run {
@@ -522,7 +522,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
 }
 
 // Artificial split into several testsuites, to speed up parallel testing
-class IdeServicesLongRunningTest1 : TestCase() {
+class IdeServicesLongRunningTest1 {
     @Test
     fun testLongRunningCompletion() = test {
         // This test normally completes in about 15-25s
@@ -539,7 +539,7 @@ class IdeServicesLongRunningTest1 : TestCase() {
 }
 
 // Artificial split into several testsuites, to speed up parallel testing
-class IdeServicesLongRunningTest2 : TestCase() {
+class IdeServicesLongRunningTest2 {
     @Test
     fun testLongRunningCompilation() = test {
         // This test normally completes in about 10-20s
@@ -594,7 +594,7 @@ private fun longCompletionRun(writer: Writer, i: Int, conf: ScriptCompilationCon
     }
 }
 
-class ReplCompletionAndErrorsAnalysisLongRunningTest1 : TestCase() {
+class ReplCompletionAndErrorsAnalysisLongRunningTest1 {
 
     @Test
     fun testLongRunningCompilationWithReceiver() = test {

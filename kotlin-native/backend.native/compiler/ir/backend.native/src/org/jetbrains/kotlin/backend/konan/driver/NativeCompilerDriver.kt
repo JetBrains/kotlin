@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
+import org.jetbrains.kotlin.K1Deprecation
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.usingJvmCInteropCallbacks
 import llvm.*
@@ -158,6 +159,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
+    @OptIn(K1Deprecation::class)
     private fun createBackendContext(
             config: NativeSecondStageCompilationConfig,
             frontendOutput: FrontendPhaseOutput.Full,

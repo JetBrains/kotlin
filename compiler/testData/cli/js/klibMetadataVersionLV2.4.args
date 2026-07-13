@@ -1,0 +1,11 @@
+$TESTDATA_DIR$/klibMetadataVersionSource.kt
+-nopack
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-libraries
+$STDLIB_JS$
+
+-language-version
+2.4

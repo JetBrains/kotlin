@@ -1009,7 +1009,8 @@ object FirStub : FirExpression() {
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) { assert(newConeTypeOrNull?.isNothing == true) }
 }
 
-class FakeExpressionEnterNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, level), GraphEnterNodeMarker, GraphExitNodeMarker {
+// common node to denote both enter and exit nodes for fake expressions
+class FakeExpressionTerminalNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, level), GraphEnterNodeMarker, GraphExitNodeMarker {
     init { isDead = true }
 
     override val fir: FirStub get() = FirStub

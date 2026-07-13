@@ -1,6 +1,9 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
     id("project-tests-convention")
 }
 
@@ -9,13 +12,10 @@ projectTests {
 }
 
 dependencies {
-    implementation(project(":compiler:ir.psi2ir"))
-    api(project(":compiler:fir:fir2ir"))
+
     api(project(":compiler:ir.serialization.common"))
-    implementation(project(":js:js.frontend"))
 
     implementation(project(":compiler:ir.backend.common"))
-    implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
@@ -43,6 +43,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-
-optInToK1Deprecation()
-

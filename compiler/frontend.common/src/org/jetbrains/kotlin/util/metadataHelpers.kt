@@ -30,9 +30,10 @@ private val LANGUAGE_TO_METADATA_VERSION = EnumMap<LanguageVersion, MetadataVers
     this[LanguageVersion.KOTLIN_2_1] = MetadataVersion(2, 1, 0)
     this[LanguageVersion.KOTLIN_2_2] = MetadataVersion(2, 2, 0)
     this[LanguageVersion.KOTLIN_2_3] = MetadataVersion(2, 3, 0)
-    this[LanguageVersion.KOTLIN_2_4] = MetadataVersion.INSTANCE
-    this[LanguageVersion.KOTLIN_2_5] = MetadataVersion(2, 5, 0)
+    this[LanguageVersion.KOTLIN_2_4] = MetadataVersion(2, 4, 0)
+    this[LanguageVersion.KOTLIN_2_5] = MetadataVersion.INSTANCE
     this[LanguageVersion.KOTLIN_2_6] = MetadataVersion(2, 6, 0)
+    this[LanguageVersion.KOTLIN_2_7] = MetadataVersion(2, 7, 0)
 
     check(size == LanguageVersion.entries.size) {
         "Please add mappings from the missing LanguageVersion instances to the corresponding MetadataVersion " +

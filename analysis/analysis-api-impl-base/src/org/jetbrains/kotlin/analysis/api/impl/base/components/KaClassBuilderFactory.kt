@@ -1,14 +1,12 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.components.KaCompiledClassHandler
-import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
+import org.jetbrains.kotlin.analysis.api.compilation.KaCompiledClassHandler
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
@@ -39,12 +37,11 @@ class KaClassBuilderFactory private constructor(
             override fun getDelegate(): ClassBuilder = delegateClassBuilder
 
             override fun defineClass(
-                psi: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String,
-                interfaces: Array<out String?>,
+                version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String?>,
             ) {
-                val element = (origin as? JvmIrDeclarationOrigin)?.declaration?.let(PsiSourceManager::findPsiElement)
+                val element = origin.declaration?.let(PsiSourceManager::findPsiElement)
                 compiledClassHandler.handleClassDefinition(element?.containingFile, name)
-                super.defineClass(psi, version, access, name, signature, superName, interfaces)
+                super.defineClass(version, access, name, signature, superName, interfaces)
             }
         }
     }

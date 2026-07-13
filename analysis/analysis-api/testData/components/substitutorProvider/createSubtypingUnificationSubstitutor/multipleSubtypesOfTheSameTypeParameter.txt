@@ -1,0 +1,17 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {B = it(kotlin/Number & A), C = it(kotlin/String & A)}>
+Substituted pairs:
+it(kotlin/Number & A) <: A (Original: B <: A)
+it(kotlin/String & A) <: A (Original: C <: A)
+
+ASSIGN_RIGHT:
+Substitutor: <map substitutor: {A = java/io/Serializable}>
+Substituted pairs:
+B <: java/io/Serializable (Original: B <: A)
+C <: java/io/Serializable (Original: C <: A)
+
+ASSIGN_ALL:
+Substitutor: <map substitutor: {A = kotlin/Any, B = kotlin/Number, C = kotlin/String}>
+Substituted pairs:
+kotlin/Number <: kotlin/Any (Original: B <: A)
+kotlin/String <: kotlin/Any (Original: C <: A)

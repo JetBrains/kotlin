@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
-import org.jetbrains.kotlin.gradle.targets.js.ir.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_MODULE_NAME
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.WASM_TARGET
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.moduleName
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
@@ -60,6 +62,8 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                 KotlinPlatformType.wasm -> task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinWasmCompilerViaBuildToolsApi)
                 else -> task.runViaBuildToolsApi.value(false).disallowChanges()
             }
+            task.generateCompilerRefIndex.value(false).disallowChanges()
+            task.getIsWasmPlatform.value(compilation.platformType == KotlinPlatformType.wasm).disallowChanges()
         }
     }
 
@@ -90,10 +94,22 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
         }
 
         if (compilation.platformType == KotlinPlatformType.wasm) {
-            add(WASM_BACKEND)
-            val wasmTargetType = (compilation.origin as KotlinJsIrCompilation).target.wasmTargetType!!
-            val targetValue = if (wasmTargetType == KotlinWasmTargetType.WASI) "wasm-wasi" else "wasm-js"
-            add("$WASM_TARGET=$targetValue")
+            addAdditionalCompilerFlags(compilation)
         }
+    }
+
+    protected fun MutableList<String>.addAdditionalCompilerFlags(compilation: KotlinCompilationInfo) {
+        /**
+         * Ignore already contained arguments because duplicated `-Xwarning-level` for the same diagnostic causes a compilation error and for refinement.
+         */
+        fun addIfDoesntContain(arg: String) {
+            if (!contains(arg)) {
+                add(arg)
+            }
+        }
+
+        val wasmTargetType = (compilation.origin as KotlinJsIrCompilation).target.wasmTargetType!!
+        val targetValue = if (wasmTargetType == KotlinWasmTargetType.WASI) "wasm-wasi" else "wasm-js"
+        addIfDoesntContain("$WASM_TARGET=$targetValue")
     }
 }

@@ -863,7 +863,7 @@ private fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recu
     data: PersistentList<FirDeclaration>,
 ): E {
     if (element is FirFile || element is FirScript || element is FirRegularClass || element is FirReplSnippet) {
-        val newList = data.add(element as FirDeclaration)
+        val newList = data.adding(element as FirDeclaration)
         element.transformChildren(this, newList)
     }
 

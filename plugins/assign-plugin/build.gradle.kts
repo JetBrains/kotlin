@@ -1,15 +1,17 @@
 description = "Kotlin Assignment Compiler Plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
     embedded(project(":kotlin-assignment-compiler-plugin.common")) { isTransitive = false }
-    embedded(project(":kotlin-assignment-compiler-plugin.k1")) { isTransitive = false }
     embedded(project(":kotlin-assignment-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-assignment-compiler-plugin.cli")) { isTransitive = false }
 
@@ -31,8 +33,6 @@ sourceSets {
     "testFixtures" { projectDefault() }
     "test" { projectDefault() }
 }
-
-optInToK1Deprecation()
 
 publish()
 

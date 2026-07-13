@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("share-kotlin-wasm-custom-formatters")
 }
@@ -6,19 +9,14 @@ plugins {
 dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:cli"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:resolution"))
+    implementation(project(":compiler:psi:psi-api"))
     implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization"))
-    implementation(project(":core:compiler.common.js"))
-    api(project(":compiler:fir:fir-serialization"))
+    runtimeOnly(project(":core:deserialization"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.serialization.js"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:backend.js"))
     api(project(":compiler:backend.wasm"))
-    api(project(":js:js.sourcemap"))
-    implementation(project(":js:js.frontend"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":wasm:wasm.frontend"))
     api(project(":wasm:wasm.config"))
@@ -39,5 +37,3 @@ sourceSets {
         resources.srcDir(updateWasmResources)
     }
 }
-
-optInToK1Deprecation()

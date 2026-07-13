@@ -198,6 +198,8 @@ object StandardClassIds {
         val DslMarker = "DslMarker".baseId()
         val IntroducedAt = "IntroducedAt".baseId()
 
+        val LowPriorityInOverloadResolution = "LowPriorityInOverloadResolution".internalId()
+
         val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
         val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()
 
@@ -235,6 +237,8 @@ object StandardClassIds {
         val MustUseReturnValues = "MustUseReturnValues".baseId()
         val IgnorableReturnValue = "IgnorableReturnValue".baseId()
 
+        val EqualityBound = "EqualityBound".baseId()
+
         val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()
 
         val OptionalExpectation = "OptionalExpectation".baseId()
@@ -246,6 +250,7 @@ object StandardClassIds {
         val Transient = "Transient".jvmId()
 
         val jsExport = "JsExport".jsId()
+        val jsImplicitExport = "JsImplicitExport".jsId()
         val jsExportIgnore = jsExport.createNestedClassId(Name.identifier("Ignore"))
         val jsExportDefault = jsExport.createNestedClassId(Name.identifier("Default"))
         val jsNoDispatchReceiver = "JsNoDispatchReceiver".jsId()

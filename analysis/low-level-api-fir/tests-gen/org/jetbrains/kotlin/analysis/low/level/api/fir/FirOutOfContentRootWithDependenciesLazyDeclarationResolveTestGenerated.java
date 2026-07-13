@@ -701,6 +701,12 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
   }
 
   @Test
+  @TestMetadata("stubBasedNonLocalDestructuring.kt")
+  public void testStubBasedNonLocalDestructuring() {
+    run("stubBasedNonLocalDestructuring.kt");
+  }
+
+  @Test
   @TestMetadata("superQualifierTypeArgsInDelegatedConstructorInnerClass.kt")
   public void testSuperQualifierTypeArgsInDelegatedConstructorInnerClass() {
     run("superQualifierTypeArgsInDelegatedConstructorInnerClass.kt");
@@ -1136,18 +1142,6 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
-    @TestMetadata("multiFieldValueClass.kt")
-    public void testMultiFieldValueClass() {
-      run("multiFieldValueClass.kt");
-    }
-
-    @Test
-    @TestMetadata("multiFieldValueClassWithTypeAlias.kt")
-    public void testMultiFieldValueClassWithTypeAlias() {
-      run("multiFieldValueClassWithTypeAlias.kt");
-    }
-
-    @Test
     @TestMetadata("multiLevelClasspathSubstitution.kt")
     public void testMultiLevelClasspathSubstitution() {
       run("multiLevelClasspathSubstitution.kt");
@@ -1256,21 +1250,9 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
-    @TestMetadata("valueClassWithMultiFieldValueClass.kt")
-    public void testValueClassWithMultiFieldValueClass() {
-      run("valueClassWithMultiFieldValueClass.kt");
-    }
-
-    @Test
     @TestMetadata("valueClassWithNestedClass.kt")
     public void testValueClassWithNestedClass() {
       run("valueClassWithNestedClass.kt");
-    }
-
-    @Test
-    @TestMetadata("valueClassWithNullableMultiFieldValueClass.kt")
-    public void testValueClassWithNullableMultiFieldValueClass() {
-      run("valueClassWithNullableMultiFieldValueClass.kt");
     }
 
     @Test

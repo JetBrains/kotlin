@@ -31,14 +31,17 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDepe
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.prettyName
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import java.io.File
 import java.net.URI
+import java.nio.file.Path
 import java.security.MessageDigest
 import kotlin.KotlinVersion as StdlibKotlinVersion
 
@@ -2311,6 +2314,108 @@ internal object KotlinToolingDiagnostics {
                 .description { "A SwiftPM package has been generated alongside the XCFramework to describe its SwiftPM dependencies" }
                 .solution { "Please publish the XCFramework with the generated SwiftPM package" }
                 .documentationLink(URI("https://kotl.in/xcframework-with-swiftpm-dependencies"))
+        }
+    }
+
+    internal object KotlinCompilationInDaemonHasFailed : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Compiler.Warning
+    ) {
+        operator fun invoke(
+            trace: Throwable?,
+            withFallback: Boolean,
+            daemonLogPath: Path? = null,
+        ): ToolingDiagnostic {
+            val (severity, group) = if (withFallback) {
+                WARNING to DiagnosticGroup.Compiler.Warning
+            } else {
+                ERROR to DiagnosticGroup.Compiler.Error
+            }
+
+            return build(severity = severity, group = group, throwable = trace) {
+                val failDetailsFallback = if (daemonLogPath != null) {
+                    "- check the build logs or the following daemon logs ${daemonLogPath.toAbsolutePath()}/kotlin-daemon.*.log."
+                } else {
+                    "check the build logs for the exact reason."
+                }
+                val failDetails = trace?.message?.removeSuffixIfPresent("\n")?.let { ": $it" }
+                    ?: failDetailsFallback
+
+                title { "Compilation in Kotlin daemon has failed" }
+                    .description {
+                        val base = "Failed to compile with Kotlin daemon $failDetails\n"
+                        val fallback = if (withFallback) {
+                            "Using fallback strategy (kotlin.daemon.useFallbackStrategy=true): Compile without Kotlin daemon."
+                        } else {
+                            "Fallback strategy (kotlin.daemon.useFallbackStrategy=false, compiling without Kotlin daemon) is turned off."
+                        }
+                        base + fallback
+                    }
+                    .solution {
+                        "Check the Kotlin daemon or compiler error message for details about the failure and possible ways to fix it. " +
+                                "If the problem persists, run './gradlew --stop' and try again. " +
+                                "If the problem does not seem to be caused by your build configuration, please report it at https://kotl.in/issue and attach the logs." +
+                                if (!withFallback) {
+                                    " You can also remove 'kotlin.daemon.useFallbackStrategy=false' from 'gradle.properties' to enable fallback compilation."
+                                } else ""
+                    }
+            }
+        }
+    }
+
+    internal object DuplicateJsBrowserTestFrameworkConfiguration : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke() = build {
+            title { "Duplicate JS browser test framework configuration" }
+                .description {
+                    "JS browser test framework has been configured using both the new test {} DSL and the old testTask {} " +
+                            "DSL. The behavior in this scenario is undefined."
+                }
+                .solution { "Please use either the old DSL or the new one, but not both" }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
+    internal object NewJsTestDslNotSupportedForWasmError : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke() = build {
+            title { "The new test {} DSL is currently not supported for wasmJs targets" }
+                .description {
+                    "At the moment the new test {} DSL is not supported for wasmJs targets, support will be added in a future release."
+                }
+                .solution { "For now, please use the old DSL with wasmJs targets" }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
+    internal object SwiftPMLinkagePackageNotIntegratedInXcodeProject : ToolingDiagnosticFactory(
+        FATAL,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(integrationName: String, command: String) = build {
+            title { "SwiftPM linkage package not integrated into Xcode project" }
+                .description { "You have SwiftPM dependencies with $integrationName integration." }
+                .solution { "Please integrate with synthetic import linkage project by running the following command: $command" }
+        }
+    }
+
+    internal object WasmCompilationModeInvalidValue : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(value: String, propertyName: String, validValues: List<String>) = build {
+            title { "Invalid value '$value' for the '$propertyName' property" }
+                .description {
+                    "The value '$value' is invalid for the '$propertyName' property. " +
+                            "Falling back to the default value: ${WasmCompilationMode.MONOLITH}."
+                }
+                .solution {
+                    "Please use one of the valid values: ${validValues.joinToString(", ")}."
+                }
         }
     }
 }

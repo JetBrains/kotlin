@@ -24,7 +24,7 @@ KtPrefixExpression(24,26): '+1'
 
 KtOperationReferenceExpression(24,25): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -41,7 +41,7 @@ KtPrefixExpression(31,33): '-2'
 
 KtOperationReferenceExpression(31,32): '-'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -58,7 +58,7 @@ KtPrefixExpression(38,41): '+3L'
 
 KtOperationReferenceExpression(38,39): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
@@ -75,7 +75,7 @@ KtPrefixExpression(46,49): '-4L'
 
 KtOperationReferenceExpression(46,47): '-'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
@@ -100,7 +100,7 @@ KtPrefixExpression(72,76): '+"5"'
 
 KtOperationReferenceExpression(72,73): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
@@ -118,7 +118,7 @@ KtPrefixExpression(81,85): '-"6"'
 
 KtOperationReferenceExpression(81,82): '-'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>

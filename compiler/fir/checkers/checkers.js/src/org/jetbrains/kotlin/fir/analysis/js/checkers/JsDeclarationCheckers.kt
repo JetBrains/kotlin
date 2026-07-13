@@ -33,8 +33,12 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsBuiltinNameClashChecker,
             FirJsNameCharsChecker,
             FirJsStaticChecker,
-            FirJsNoRuntimeDeclarationChecker
+            FirJsNoRuntimeDeclarationChecker,
         )
+
+    override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
+        FirDataClassNonExportableConstructorChecker
+    )
 
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(

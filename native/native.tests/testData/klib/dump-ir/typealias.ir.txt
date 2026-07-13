@@ -6,6 +6,3 @@ MODULE_FRAGMENT name:<typealias.kt>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'kotlin/Any.<init>|<init>(){}[0]'
           INSTANCE_INITIALIZER_CALL classDescriptor='test/ClassName|null[0]' type=kotlin.Unit
-    TYPEALIAS name:PublicTypeAlias signature:test/PublicTypeAlias|null[0] visibility:public expandedType:test.ClassName
-    TYPEALIAS name:InternalTypeAlias signature:test/InternalTypeAlias|null[0] visibility:internal expandedType:test.ClassName
-    TYPEALIAS name:PrivateTypeAlias signature:[ File 'typealias.kt' <- test/PrivateTypeAlias|null[0] ] visibility:private expandedType:test.ClassName

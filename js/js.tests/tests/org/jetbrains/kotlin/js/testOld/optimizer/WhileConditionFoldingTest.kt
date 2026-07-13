@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.testOld.optimizer
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class WhileConditionFoldingTest : BasicOptimizerTest("while-condition-folding") {
     @Test fun simpleWhile() = box()

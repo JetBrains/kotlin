@@ -72,17 +72,8 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
     ): IrSimpleFunction {
         val superQualifierSymbol = if (callee == superFunction) superFunction.parentAsClass.symbol else null
         val offset = irFunction.parentAsClass.startOffset
-        val backendContext = context
         context.createIrBuilder(irFunction.symbol, offset, offset).apply {
             irFunction.body = irExprBody(irBlock {
-                val parameter2arguments = backendContext.multiFieldValueClassReplacements
-                    .mapFunctionMfvcStructures(this, callee, irFunction) { sourceParameter, _ ->
-                        irGet(sourceParameter).let {
-                            if (sourceParameter != irFunction.dispatchReceiverParameter || superQualifierSymbol != null) it
-                            else it.reinterpretAsDispatchReceiverOfType(superFunction.parentAsClass.defaultType)
-                        }
-                    }
-
                 +irCall(callee.symbol, irFunction.returnType).apply {
                     if (superQualifierSymbol == null) {
                         for (index in superFunction.parentAsClass.typeParameters.indices) {
@@ -94,8 +85,12 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
                         passTypeArgumentsFrom(irFunction)
                     }
 
-                    for ([parameter, argument] in parameter2arguments) {
-                        arguments[parameter] = argument
+                    for ([targetParameter, sourceParameter] in callee.parameters zip irFunction.parameters) {
+                        val argument = irGet(sourceParameter).let {
+                            if (sourceParameter != irFunction.dispatchReceiverParameter || superQualifierSymbol != null) it
+                            else it.reinterpretAsDispatchReceiverOfType(superFunction.parentAsClass.defaultType)
+                        }
+                        arguments[targetParameter] = argument
                     }
                 }
             })

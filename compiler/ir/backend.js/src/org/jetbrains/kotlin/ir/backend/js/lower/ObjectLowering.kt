@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.objectInstanceField
@@ -38,56 +37,23 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
  * Creates lazy object instance generator functions.
- *
- * @param initializeParentCompanions When true, companion objects will initialize their enclosing
- * class's superclass companion first, so the initialization order matches the JVM (parent companion
- * before child companion). JS leaves this false to preserve existing behavior.
- * But see KT-40768 and KT-86422.
- *
- * @param initializeObjectEnumParent When true, a reference to a
- * nested object inside an enum class will cause that enum class's init
- * block to execute.
  */
-@PhasePrerequisites(EnumClassCreateInitializerLowering::class)
-class ObjectDeclarationLowering(
-    val context: JsCommonBackendContext,
-    private val initializeParentCompanions: Boolean = false,
-    private val initializeObjectEnumParent: Boolean = true,
-) : DeclarationTransformer {
+class ObjectDeclarationLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass || declaration.kind != ClassKind.OBJECT || declaration.isEffectivelyExternal())
             return null
 
         val getInstanceFun = getOrCreateGetInstanceFunction(declaration)
-
-        val instanceField = context.irFactory.buildField {
-            name = Name.identifier(declaration.name.asString() + "_instance")
-            type = declaration.defaultType.makeNullable()
-            isStatic = true
-            origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
-        }.apply {
-            parent = declaration.parent
-            initializer = null  // Initialized with 'undefined'
-        }
-
-        declaration.objectInstanceField = instanceField
+        val instanceField = getOrCreateInstanceField(declaration)
 
         val primaryConstructor = declaration.primaryConstructor ?: declaration.syntheticPrimaryConstructor!!
 
-        // When initializeObjectEnumParent is disabled, any reference to a nested (non-companion)
-        // object should not execute the init block of its parent enum class.
-        val initEntryInstancesFun = if (initializeObjectEnumParent || declaration.isCompanion) {
-            declaration.parent.safeAs<IrClass>()?.initEntryInstancesFun
-        } else {
-            null
-        }
-
-        // When initializeParentCompanions is enabled, a companion object's getInstance() will first
-        // ensure the enclosing class's superclass companion is initialized. This matches the JVM
-        // class-initialization protocol where a superclass is always initialized before its subclass.
+        // A companion object's getInstance() will first ensure the enclosing class's superclass
+        // companion is initialized. This matches the JVM class-initialization protocol where a superclass
+        // is always initialized before its subclass.
         // We walk up the superclass chain to find the nearest ancestor that has a companion, because
         // intermediate classes without companions must not block the chain.
-        val parentCompanionGetInstanceFun = if (initializeParentCompanions && declaration.isCompanion) {
+        val parentCompanionGetInstanceFun = if (declaration.isCompanion) {
             var superClass = declaration.parent.safeAs<IrClass>()?.superClass
             var result: IrSimpleFunction? = null
             while (superClass != null && result == null) {
@@ -104,8 +70,6 @@ class ObjectDeclarationLowering(
 
         getInstanceFun.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += context.createIrBuilder(getInstanceFun.symbol).irBlockBody(getInstanceFun) {
-                if (initEntryInstancesFun != null)
-                    +irCall(initEntryInstancesFun)
                 val thenPart: IrExpression = if (parentCompanionGetInstanceFun != null) {
                     irBlock {
                         +irCall(parentCompanionGetInstanceFun.symbol)
@@ -189,8 +153,25 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
     }
 }
 
+private fun getOrCreateInstanceField(obj: IrClass): IrField =
+    obj::objectInstanceField.getOrSetIfNull {
+        obj.factory.buildField {
+            name = Name.identifier(obj.name.asString() + "_instance")
+            type = obj.defaultType.makeNullable()
+            isStatic = true
+            origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
+        }.apply {
+            parent = obj.parent
+            initializer = null  // Initialized with 'undefined'
+        }
+    }
+
+
 private fun getOrCreateGetInstanceFunction(obj: IrClass): IrSimpleFunction =
     obj::objectGetInstanceFunction.getOrSetIfNull {
+        // There is need to initialize _instance field together with _getInstance, so the outer restrictTo call would properly assign
+        // signature and tags for JS namer. It prevents name clashes during the JS namer phase.
+        getOrCreateInstanceField(obj)
         obj.factory.buildFun {
             name = Name.identifier(obj.name.asString() + "_getInstance")
             returnType = obj.defaultType

@@ -43,7 +43,6 @@ class KT69330StableFriendPathsArchiveTaskDependencyTest {
         val project = buildProject()
         project.plugins.apply("java-library")
         project.applyKotlinJvmPlugin()
-        project.repositories.mavenLocal()
         project.repositories.mavenCentralCacheRedirector()
         return project
     }

@@ -17,11 +17,6 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
 @K1Deprecation
-interface DescriptorWithContainerSource : MemberDescriptor {
-    val containerSource: DeserializedContainerSource?
-}
-
-@K1Deprecation
 interface DeserializedMemberDescriptor : DeserializedDescriptor, MemberDescriptor, DescriptorWithContainerSource {
     val proto: MessageLite
 

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.js.testOld.optimizer
 
-import org.jetbrains.kotlin.js.parser.CodePosition
-import org.jetbrains.kotlin.js.parser.ErrorReporter
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
@@ -14,41 +12,41 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.engine.ScriptEngine
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
+import org.jetbrains.kotlin.js.parser.CodePosition
+import org.jetbrains.kotlin.js.parser.ErrorReporter
 import org.jetbrains.kotlin.js.parser.JsParser
 import org.jetbrains.kotlin.js.testOld.TEST_DATA_DIR_PATH
 import org.jetbrains.kotlin.js.testOld.createScriptEngine
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.util.TextOutputImpl
-import org.junit.AfterClass
-import org.junit.Assert
-import org.junit.BeforeClass
-import org.junit.Rule
-import org.junit.rules.TestName
-import java.io.File
+import org.junit.jupiter.api.*
 
 abstract class BasicOptimizerTest(private var basePath: String) {
     companion object {
         lateinit var engine: ScriptEngine
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun create() {
             engine = createScriptEngine()
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun release() {
             engine.release()
         }
     }
 
-    @Rule
-    @JvmField
-    var testName = TestName()
+    private lateinit var testMethodName: String
+
+    @BeforeEach
+    fun captureTestName(testInfo: TestInfo) {
+        testMethodName = testInfo.testMethod.get().name
+    }
 
     protected fun box() {
-        val methodName = testName.methodName
+        val methodName = testMethodName
         val baseName = "${TEST_DATA_DIR_PATH}/js-optimizer/$basePath"
         val unoptimizedName = ForTestCompileRuntime.transformTestDataPath("$baseName/$methodName.original.js")
         val optimizedName = ForTestCompileRuntime.transformTestDataPath("$baseName/$methodName.optimized.js")
@@ -72,7 +70,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
         }
 
         val optimizedAst = JsParser.parse(optimizedCode, errorReporter, parserScope, "<unknown file>")
-        Assert.assertEquals(astToString(optimizedAst), astToString(unoptimizedAst))
+        Assertions.assertEquals(astToString(optimizedAst), astToString(unoptimizedAst))
     }
 
     protected open fun process(statement: JsStatement) {
@@ -139,14 +137,14 @@ abstract class BasicOptimizerTest(private var basePath: String) {
         engine.eval(code)
         val result = engine.eval("box()")
 
-        Assert.assertEquals("$fileName: box() function must return 'OK'", "OK", result)
+        Assertions.assertEquals("OK", result, "$fileName: box() function must return 'OK'")
     }
 
     private val errorReporter = object : ErrorReporter {
         override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) { }
 
         override fun error(message: String, startPosition: CodePosition, endPosition: CodePosition) {
-            Assert.fail("Error parsing JS file: $message at $startPosition")
+            Assertions.fail<Nothing>("Error parsing JS file: $message at $startPosition")
         }
     }
 }

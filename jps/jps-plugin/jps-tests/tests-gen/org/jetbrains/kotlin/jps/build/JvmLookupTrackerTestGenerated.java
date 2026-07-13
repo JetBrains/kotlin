@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.jps.build;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,86 +17,101 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("jps/jps-plugin/testData/incremental/lookupTracker/jvm")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class JvmLookupTrackerTestGenerated extends AbstractJvmLookupTrackerTest {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  private void run(String fileName) {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/" + fileName);
   }
 
+  @Test
   public void testAllFilesPresentInJvmAbstractJvmLookupTrackerTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lookupTracker/jvm"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
+  @Test
   @TestMetadata("classifierMembers")
   public void testClassifierMembers() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/classifierMembers/");
   }
 
+  @Test
   @TestMetadata("companion")
   public void testCompanion() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/companion/");
   }
 
+  @Test
   @TestMetadata("conventions")
   public void testConventions() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/conventions/");
   }
 
+  @Test
   @TestMetadata("expressionType")
   public void testExpressionType() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/expressionType/");
   }
 
+  @Test
   @TestMetadata("java")
   public void testJava() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/java/");
   }
 
+  @Test
   @TestMetadata("javaStatics")
   public void testJavaStatics() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/javaStatics/");
   }
 
+  @Test
   @TestMetadata("jvmNameChanged")
   public void testJvmNameChanged() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/jvmNameChanged/");
   }
 
+  @Test
   @TestMetadata("localDeclarations")
   public void testLocalDeclarations() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/localDeclarations/");
   }
 
+  @Test
   @TestMetadata("namedCompanion")
   public void testNamedCompanion() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/namedCompanion/");
   }
 
+  @Test
   @TestMetadata("nested")
   public void testNested() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/nested/");
   }
 
+  @Test
   @TestMetadata("packageDeclarations")
   public void testPackageDeclarations() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/packageDeclarations/");
   }
 
+  @Test
   @TestMetadata("SAM")
   public void testSAM() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/SAM/");
   }
 
+  @Test
   @TestMetadata("simple")
   public void testSimple() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/simple/");
   }
 
+  @Test
   @TestMetadata("syntheticProperties")
   public void testSyntheticProperties() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/syntheticProperties/");
   }
 
+  @Test
   @TestMetadata("typeAliasAndUsage")
   public void testTypeAliasAndUsage() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/typeAliasAndUsage/");

@@ -1,4 +1,0 @@
-public interface A <T, V> {
-}
-public final class B implements A<java.lang.Integer, java.lang.String> {
-}

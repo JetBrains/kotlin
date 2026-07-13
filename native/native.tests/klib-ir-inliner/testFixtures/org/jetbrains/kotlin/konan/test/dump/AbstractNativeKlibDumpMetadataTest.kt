@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.dump
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileToLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.muteTestIfNecessary
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeCla
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
-import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -44,30 +42,19 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
         val klib: KLIB = testCompilationResult.assertSuccess().resultingArtifact
 
-        val versions = KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS + null
         JUnit5Assertions.assertAll(
-            versions.map { signatureVersion: KotlinIrSignatureVersion? ->
+            supportedDumpModes.map { dumpMode ->
                 {
-                    val metadataDump = klib.dumpMetadata(
-                        kotlinNativeClassLoader.classLoader,
-                        printSignatures = signatureVersion != null,
-                        signatureVersion
-                    )
+                    val metadataDump = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, metadataTestMode = dumpMode)
 
-                    val testDataFile = testDataFile(testPathFull, signatureVersion)
+                    val testDataFile = testPathFull.withSuffixAndExtension(
+                        suffix = dumpMode?.let { ".$it" }.orEmpty(),
+                        extension = "txt"
+                    )
 
                     assertEqualsToFile(testDataFile, metadataDump)
                 }
             }
-        )
-    }
-
-    private fun testDataFile(testPathFull: File, signatureVersion: KotlinIrSignatureVersion?): File {
-        val versionSpecificSuffix = signatureVersion?.let { ".v${it.number}" }.orEmpty()
-
-        return testPathFull.withSuffixAndExtension(
-            suffix = versionSpecificSuffix,
-            extension = "txt"
         )
     }
 
@@ -105,10 +92,7 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         }
     }
 
-    private fun equalDumps(testDataFileK1: File, testDataFileK2: File): Boolean {
-        if (!testDataFileK1.exists() || !testDataFileK2.exists()) return true
-        val originalText = testDataFileK1.readText().trimEnd()
-        val firText = testDataFileK2.readText().trimEnd()
-        return originalText == firText
+    companion object {
+        private val supportedDumpModes = listOf(null, "compact-with-stable-order", "ultracompact-with-stable-order")
     }
 }

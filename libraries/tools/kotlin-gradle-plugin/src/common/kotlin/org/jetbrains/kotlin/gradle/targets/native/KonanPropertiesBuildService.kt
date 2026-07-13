@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
-import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
+import org.jetbrains.kotlin.io.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -47,13 +47,13 @@ abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildSe
 
     private val cacheableTargets: List<KonanTarget> by lazy {
         properties
-            .resolvablePropertyList("cacheableTargets", HostManager.hostName)
+            .resolvablePropertyList("cacheableTargets", suffix = HostManager.hostName)
             .map { KonanTarget.predefinedTargets.getValue(it) }
     }
 
     private val targetsWithOptInStaticCaches: List<KonanTarget> by lazy {
         properties
-            .resolvablePropertyList("optInCacheableTargets", HostManager.hostName)
+            .resolvablePropertyList("optInCacheableTargets", suffix = HostManager.hostName)
             .map { KonanTarget.predefinedTargets.getValue(it) }
     }
 
@@ -68,7 +68,7 @@ abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildSe
         target in cacheableTargets
 
     internal fun additionalCacheFlags(target: KonanTarget): List<String> =
-        properties.resolvablePropertyList("additionalCacheFlags", target.visibleName)
+        properties.resolvablePropertyList("additionalCacheFlags", suffix = target.visibleName)
 
     internal val environmentBlacklist: Set<String> by lazy {
         val envBlacklistFile = parameters.konanHome.get().asFile.resolve("tools/env_blacklist")

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.extensions
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
@@ -132,9 +131,6 @@ interface IrPluginContext : IrGeneratorContext {
 
     @ObsoleteDescriptorBasedAPI
     val symbolTable: ReferenceSymbolTable
-
-    @ObsoleteDescriptorBasedAPI
-    val moduleDescriptor: ModuleDescriptor
 
 }
 

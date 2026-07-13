@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.Path
+import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
 import kotlin.io.path.walk
 
@@ -132,4 +135,16 @@ fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>, doNotFailOnEx
         }
         errors.joinToString(separator = "\n")
     }
+}
+
+context(module: ModuleContext)
+fun assertOutputFileContains(fileName: String, expectedContent: String) {
+    val file = module.outputDirectory.resolve(fileName)
+    assert(file.exists()) {
+        "File $file does not exist.\nOther files in the directory:\n${
+            module.outputDirectory.listDirectoryEntries().joinToString("\n")
+        }"
+    }
+    val fileContents = file.readText()
+    assert(expectedContent in fileContents) { "File $file does not contain expected content.\n\nFile contents:\n$fileContents" }
 }

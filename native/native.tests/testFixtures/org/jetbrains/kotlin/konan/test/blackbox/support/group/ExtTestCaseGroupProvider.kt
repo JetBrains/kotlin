@@ -13,6 +13,7 @@ import com.intellij.pom.PomModel
 import com.intellij.pom.core.impl.PomModelImpl
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.psi.impl.source.tree.TreeCopyHandler
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
@@ -57,18 +58,10 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.model.*
-import org.jetbrains.kotlin.test.services.BatchingPackageInserter
-import org.jetbrains.kotlin.test.services.IrCheckersDisabledByTestDirectives
-import org.jetbrains.kotlin.test.services.IrCheckersEnabledByTestDirectives
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.test.services.addAnnotations
-import org.jetbrains.kotlin.test.services.child
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
-import org.jetbrains.kotlin.test.services.packageFqNameForKLib
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 
 internal open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(parentDisposable = null) {
@@ -517,6 +510,12 @@ private class ExtTestDataFile(
         private val INCOMPATIBLE_LANGUAGE_VERSIONS = setOf(LanguageVersion.KOTLIN_1_3, LanguageVersion.KOTLIN_1_4)
 
         private val OPT_INS_PURELY_FOR_COMPILER = setOf(
+            /*
+             * `SymbolNameIsInternal` is internal, so it can't be simply mentioned in the source code in `@file:OptIn`
+             * (which is the default way of handling the OPT_IN directive in this test infrastructure).
+             * Adding it here makes the test infra pass it via the `-opt-in` compiler argument instead.
+             */
+            "kotlin.native.SymbolNameIsInternal",
             OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString()
         )
 
@@ -540,6 +539,7 @@ private class ExtTestDataFileSettings(
 private typealias SharedModuleGenerator = (sharedModulesDir: File) -> TestModule.Shared?
 private typealias SharedModuleCache = (moduleName: String, generator: SharedModuleGenerator) -> TestModule.Shared?
 
+@OptIn(ObsoleteTestInfrastructure::class)
 private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : TestDisposable(parentDisposable) {
     private val psiFactory = createPsiFactory(parentDisposable = this)
 
@@ -589,7 +589,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             filesAndModules.parsedFiles.forEach { [extTestFile, psiFile] -> extTestFile.text = psiFile.text }
 
             // Transform internal model into Kotlin/Native test infrastructure test model.
-            fun transformDependency(extTestModule: KotlinBaseTest.TestModule): String =
+            fun transformDependency(extTestModule: LegacyTestModule): String =
                 if (extTestModule is ExtTestModule && extTestModule.isSupport && supportModule != null) {
                     // Is support module is met across dependencies, then return new (unique) name for it.
                     supportModule.name
@@ -677,7 +677,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         dependencies: List<String>,
         friends: List<String>,
         dependsOn: List<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
-    ) : KotlinBaseTest.TestModule(name, dependencies, friends, dependsOn) {
+    ) : LegacyTestModule(name, dependencies, friends, dependsOn) {
         val files = mutableListOf<ExtTestFile>()
         val directivesBuilder = RegisteredDirectivesParser(DirectivesContainer.Empty, JUnit5Assertions)
 
@@ -829,6 +829,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             val configuration: CompilerConfiguration = KotlinTestUtils.newConfiguration()
             configuration.put(CommonConfigurationKeys.MODULE_NAME, "native-blackbox-test-patching-module")
 
+            @OptIn(CoreEnvironmentDeprecation::class)
             val environment = KotlinCoreEnvironment.createForProduction(
                 projectDisposable = parentDisposable,
                 configuration = configuration,

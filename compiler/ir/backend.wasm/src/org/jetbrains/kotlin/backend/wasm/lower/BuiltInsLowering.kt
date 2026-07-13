@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.ir.util.isSubtypeOf
 
 class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val irBuiltins = context.irBuiltIns
@@ -165,8 +166,39 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             }
             in symbols.startCoroutineUninterceptedOrReturnIntrinsics -> {
                 val arity = symbols.startCoroutineUninterceptedOrReturnIntrinsics.indexOf(symbol)
-                val newSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
-                return irCall(call, newSymbol)
+                if (context.wasmUseStackSwitching) {
+                    val suspendFunctionToWasmCont = symbols.coroutinesStackSwitchingIntrinsics!!.suspendFunctionToContrefImpl[arity]
+                    val wasmCont = builder.irCall(suspendFunctionToWasmCont).apply {
+                        for (i in 0 until call.typeArguments.size) typeArguments[i] = call.typeArguments[i]
+                        for (i in 0 until call.arguments.size) arguments[i] = call.arguments[i]
+                    }
+                    val functionSymbol = symbols.coroutinesStackSwitchingIntrinsics.resumeWithImpl
+                    return builder.irCall(functionSymbol).apply {
+                        arguments[0] = wasmCont
+                    }
+                } else {
+                    val createSymbol = symbols.coroutinesStateMachineIntrinsics!!.createSimpleCoroutineFromSuspendFunction
+                    val createdCoroutine = builder.irCall(createSymbol).apply {
+                        typeArguments[0] = call.typeArguments.last()  // T
+                        arguments[0] = call.arguments.last()!!        // completion
+                    }
+
+                    val fType = call.arguments[0]!!.type
+                    val coroutineImplClass = symbols.coroutineImpl.owner  // CoroutineImplStateMachine
+                    val wrappedCompletion =
+                        if (fType.isSubtypeOf(coroutineImplClass.defaultType.type, context.typeSystem)) {
+                            call.arguments.last()!!  // f is already a CoroutineImpl — pass completion directly
+                        } else {
+                            createdCoroutine
+                        }
+
+                    val functionSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
+                    return irCall(call, functionSymbol).apply {
+                        for (i in 0 until call.typeArguments.size) typeArguments[i] = call.typeArguments[i]
+                        for (i in 0 until call.arguments.size - 1) arguments[i] = call.arguments[i]
+                        arguments[call.arguments.size - 1] = wrappedCompletion
+                    }
+                }
             }
             context.reflectionSymbols.getKClass -> {
                 val type = call.typeArguments[0]!!

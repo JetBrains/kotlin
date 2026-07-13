@@ -144,7 +144,10 @@ private fun RepositoryHandler.addBootstrapRepo(
         forRepositories(
             *(listOf(bootstrapRepo) + additionalBootstrapRepos)
                 .map {
-                    maven { url = uri(it) }
+                    maven {
+                        name = "Kotlin Bootstrap Repository"
+                        url = uri(it)
+                    }
                 }
                 .toTypedArray()
         )
@@ -189,12 +192,11 @@ private fun Settings.applyBootstrapConfiguration(
         }
     }
 
-    val additionalRepos = getAdditionalBootstrapRepos(bootstrapRepo)
+    val additionalRepos: List<String> = getAdditionalBootstrapRepos(bootstrapRepo)
+    dependencyResolutionManagement.repositories.addBootstrapRepo(bootstrapRepo, bootstrapVersion, additionalRepos)
     gradle.beforeProject {
         bootstrapKotlinVersion = bootstrapVersion
         bootstrapKotlinRepo = bootstrapRepo
-
-        repositories.addBootstrapRepo(bootstrapRepo, bootstrapVersion, additionalRepos)
 
         fun Configuration.substituteProjectsWithBootstrap(substituteReason: String) {
             if (path == ":kotlin-stdlib") {

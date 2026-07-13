@@ -16,21 +16,24 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.createKotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportMetadata
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.condition.OS
 import kotlin.String
 import kotlin.io.path.createDirectories
 import kotlin.io.path.pathString
+import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -59,7 +62,7 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                 project.tasks.register<GenerateSyntheticLinkageImportProject>("packageGeneration") {
                     configureWithExtension(extension)
                     konanTargets.set(setOf(KonanTarget.IOS_ARM64))
-                    dependencyIdentifierToImportedSwiftPMDependencies.set(TransitiveSwiftPMDependencies(emptyMap()))
+                    transitiveSwiftPMMetadata.set(TransitiveSwiftPMMetadata(emptyMap()))
                     syntheticProductType.set(SyntheticProductType.INFERRED)
                 }
             }
@@ -136,8 +139,8 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                 project.tasks.register<GenerateSyntheticLinkageImportProject>("packageGeneration") {
                     configureWithExtension(extension)
                     konanTargets.set(setOf(KonanTarget.IOS_ARM64))
-                    dependencyIdentifierToImportedSwiftPMDependencies.set(
-                        TransitiveSwiftPMDependencies(
+                    transitiveSwiftPMMetadata.set(
+                        TransitiveSwiftPMMetadata(
                             mapOf(
                                 SwiftPMDependencyIdentifier("dep", true) to SwiftPMImportMetadata(
                                     konanTargets = setOf("ios_arm64"),
@@ -265,6 +268,161 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                 ).prettyPrinted,
                 generatedSubpackage.prettyPrinted,
             )
+        }
+    }
+
+    @GradleTest
+    fun `generate task generates same package given the same synthetic package fingerprint`(version: GradleVersion) {
+        val subProjectName = "subProject"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val swiftPmPackage = repoRef("Maps").also { createRepo(it.name, listOf("1.0.0")) }
+
+                initSwiftPmProject(cacheDirFile) {
+                    sourceSets.appleMain.dependencies {
+                        api(project(":$subProjectName"))
+                    }
+                }
+
+                val subProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(swiftPmPackage.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product(swiftPmPackage.name))
+                            )
+                        }
+                    }
+                }
+                include(subProject, subProjectName)
+
+                val generatePackageTask = GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName
+
+
+                build(
+                    ":$generatePackageTask",
+                    ":$subProjectName:$generatePackageTask",
+                ) {
+
+                    assertTasksExecuted(
+                        ":$generatePackageTask",
+                        ":$subProjectName:$generatePackageTask",
+                    )
+
+                    val subProjectGeneratePackageHash = subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+                        .readText()
+                        .trim()
+                        .split("\n")[1]
+
+                    val rootProjectGeneratePackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+                        .readText()
+                        .trim()
+                        .split("\n")[1]
+
+                    assertEquals(
+                        subProjectGeneratePackageHash,
+                        rootProjectGeneratePackageHash,
+                        "Projects with same flattened dependency graphs and same build settings should have same fingerprint"
+                    )
+
+                    assertFileExists(
+                        projectPath.resolve("build/kotlin/swiftSyntheticPackages/$rootProjectGeneratePackageHash/Package.swift")
+                    )
+
+                    assertFileExists(
+                        projectPath.resolve("build/kotlin/swiftImport/Package.swift")
+                    )
+
+                    assertFileExists(
+                        subProject.projectPath.resolve("build/kotlin/swiftImport/Package.swift")
+                    )
+                }
+            }
+        }
+    }
+
+
+    @GradleTest
+    fun `generate task generates different packages given the different target fingerprint hash`(version: GradleVersion) {
+        val subProjectName = "subProject"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val mapsPackage = repoRef("Maps").also { createRepo(it.name, listOf("1.0.0")) }
+                val crpytoPackage = repoRef("Crypto").also { createRepo(it.name, listOf("1.0.0")) }
+
+
+                initSwiftPmProject(cacheDirFile) {
+
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url(crpytoPackage.url),
+                            version = exact("1.0.0"),
+                            products = listOf(product(crpytoPackage.name))
+                        )
+                    }
+                    sourceSets.appleMain.dependencies {
+                        api(project(":$subProjectName"))
+                    }
+                }
+
+                val subProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(mapsPackage.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product(mapsPackage.name))
+                            )
+                        }
+                    }
+                }
+                include(subProject, subProjectName)
+
+                val generatePackageTask = GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName
+
+
+                build(
+                    ":$generatePackageTask",
+                    ":$subProjectName:$generatePackageTask",
+                ) {
+
+                    assertTasksExecuted(
+                        ":$generatePackageTask",
+                        ":$subProjectName:$generatePackageTask",
+                    )
+
+                    val subProjectGeneratePackageHash = subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+                        .readText()
+                        .trim()
+                        .split("\n")[1]
+
+                    val rootProjectGeneratePackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+                        .readText()
+                        .trim()
+                        .split("\n")[1]
+
+                    assertNotEquals(
+                        subProjectGeneratePackageHash,
+                        rootProjectGeneratePackageHash,
+                        "Projects with different flattened dependency graphs should have different fingerprint"
+                    )
+
+                    assertFileExists(
+                        projectPath.resolve("build/kotlin/swiftSyntheticPackages/$rootProjectGeneratePackageHash/Package.swift")
+                    )
+
+                    assertFileExists(
+                        projectPath.resolve("build/kotlin/swiftImport/Package.swift")
+                    )
+
+                    assertFileExists(
+                        subProject.projectPath.resolve("build/kotlin/swiftImport/Package.swift")
+                    )
+                }
+            }
         }
     }
 

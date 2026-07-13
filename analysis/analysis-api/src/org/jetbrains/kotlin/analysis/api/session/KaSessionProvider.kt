@@ -1,27 +1,35 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+@file:OptIn(ExperimentalContracts::class)
 
 package org.jetbrains.kotlin.analysis.api.session
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.psi.KtElement
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
- * Provides [KaSession]s by use-site [KtElement]s or [KaModule]s.
+ * Provides [KaSession]s by use-site [PsiElement]s or [KaModule]s.
  *
  * This provider should not be used directly.
- * Please use [analyze][org.jetbrains.kotlin.analysis.api.analyze] or [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
+ * Please use [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] or [analyzeCopy][org.jetbrains.kotlin.analysis.api.session.analyzeCopy] instead.
  */
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaSessionProvider(public val project: Project) : Disposable {
-    public abstract fun getAnalysisSession(useSiteElement: KtElement): KaSession
+    public abstract fun getAnalysisSession(useSiteElement: PsiElement): KaSession
+
+    public fun getAnalysisSession(useSiteElement: KtElement): KaSession = getAnalysisSession(useSiteElement as PsiElement)
 
     public abstract fun getAnalysisSession(useSiteModule: KaModule): KaSession
 
@@ -32,7 +40,13 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     public inline fun <R> analyze(
         useSiteElement: KtElement,
         action: KaSession.() -> R,
+    ): R = analyze(useSiteElement as PsiElement, action)
+
+    public inline fun <R> analyze(
+        useSiteElement: PsiElement,
+        action: context(KaSession) () -> R,
     ): R {
+        contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
         val analysisSession = getAnalysisSession(useSiteElement)
 
         beforeEnteringAnalysis(analysisSession, useSiteElement)
@@ -41,7 +55,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
             synchronized(lock) {
                 // A 'synchronized' block here prevents non-local suspend calls from being inlined.
                 // There will be a compilation error if a suspend function is called from the inside.
-                analysisSession.action()
+                action(analysisSession)
             }
         } catch (throwable: Throwable) {
             handleAnalysisException(throwable, analysisSession, useSiteElement)
@@ -52,8 +66,9 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
 
     public inline fun <R> analyze(
         useSiteModule: KaModule,
-        action: KaSession.() -> R,
+        action: context(KaSession) () -> R,
     ): R {
+        contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
         val analysisSession = getAnalysisSession(useSiteModule)
 
         beforeEnteringAnalysis(analysisSession, useSiteModule)
@@ -62,7 +77,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
             synchronized(lock) {
                 // A 'synchronized' block here prevents non-local suspend calls from being inlined.
                 // There will be a compilation error if a suspend function is called from the inside.
-                analysisSession.action()
+                action(analysisSession)
             }
         } catch (throwable: Throwable) {
             handleAnalysisException(throwable, analysisSession, useSiteModule)
@@ -77,10 +92,18 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
      * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
     @KaImplementationDetail
-    public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement)
+    public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteElement: PsiElement)
 
     /**
-     * This function has the same contracts as [beforeEnteringAnalysis] for [KtElement]s.
+     * This function has the same contracts as [beforeEnteringAnalysis] for [PsiElement]s.
+     */
+    @KaImplementationDetail
+    public fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
+        beforeEnteringAnalysis(session, useSiteElement as PsiElement)
+    }
+
+    /**
+     * This function has the same contracts as [beforeEnteringAnalysis] for [PsiElement]s.
      */
     @KaImplementationDetail
     public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KaModule)
@@ -94,10 +117,18 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
      * The signature of [handleAnalysisException] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
     @KaImplementationDetail
-    public abstract fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: KtElement): Nothing
+    public abstract fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: PsiElement): Nothing
 
     /**
-     * This function has the same contracts as [handleAnalysisException] for [KtElement]s.
+     * This function has the same contracts as [handleAnalysisException] for [PsiElement]s.
+     */
+    @KaImplementationDetail
+    public fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: KtElement): Nothing {
+        handleAnalysisException(throwable, session, useSiteElement as PsiElement)
+    }
+
+    /**
+     * This function has the same contracts as [handleAnalysisException] for [PsiElement]s.
      */
     @KaImplementationDetail
     public abstract fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteModule: KaModule): Nothing
@@ -108,10 +139,18 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
      * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
     @KaImplementationDetail
-    public abstract fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement)
+    public abstract fun afterLeavingAnalysis(session: KaSession, useSiteElement: PsiElement)
 
     /**
-     * This function has the same contracts as [afterLeavingAnalysis] for [KtElement]s.
+     * This function has the same contracts as [afterLeavingAnalysis] for [PsiElement]s.
+     */
+    @KaImplementationDetail
+    public fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement) {
+        afterLeavingAnalysis(session, useSiteElement as PsiElement)
+    }
+
+    /**
+     * This function has the same contracts as [afterLeavingAnalysis] for [PsiElement]s.
      */
     @KaImplementationDetail
     public abstract fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule)

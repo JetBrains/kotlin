@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     application
 }
@@ -8,7 +11,6 @@ dependencies {
     implementation(project(":compiler:fir:tree"))
     implementation(project(":generators:tree-generator-common"))
     implementation(project(":compiler:fir:tree:tree-generator"))
-    implementation(project(":compiler:resolution.common"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     /*

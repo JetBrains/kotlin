@@ -48,6 +48,10 @@ fun produce_opt_closure(arg: Unit): (()->String)? = TODO()
 fun consume_producing_opt_closure(arg: (()->(()->Unit)?)?): Unit = TODO()
 fun consume_consuming_opt_closure(arg: (((()->String)?)->Unit)?): Unit = TODO()
 
+interface MyInterface {
+    fun foo(arg: (() -> Unit)?)
+}
+
 // MODULE: functional_types
 // EXPORT_TO_SWIFT
 // FILE: functional_types.kt

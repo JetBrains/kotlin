@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 import java.nio.`file`.Path
 import kotlin.Boolean
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
@@ -139,7 +140,7 @@ public interface CommonJsAndWasmCompilerLinkingArguments : CommonJsAndWasmArgume
      * Base directories for calculating relative paths to source files in the source map.
      */
     @JvmField
-    public val SOURCE_MAP_BASE_DIRS: CommonJsAndWasmCompilerLinkingArgument<String?> =
+    public val SOURCE_MAP_BASE_DIRS: CommonJsAndWasmCompilerLinkingArgument<List<Path>?> =
         CommonJsAndWasmCompilerLinkingArgument("SOURCE_MAP_BASE_DIRS", KotlinReleaseVersion(1, 1, 60))
 
     /**

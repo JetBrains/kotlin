@@ -8,19 +8,11 @@ package org.jetbrains.kotlin.assignment.plugin
 import org.jetbrains.kotlin.assignment.plugin.AssignmentConfigurationKeys.ASSIGNMENT_ANNOTATION
 import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginNames.ANNOTATION_OPTION_NAME
 import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginNames.PLUGIN_ID
-import org.jetbrains.kotlin.assignment.plugin.diagnostics.AssignmentPluginDeclarationChecker
 import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionRegistrar
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.container.StorageComponentContainer
-import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 
 object AssignmentConfigurationKeys {
     val ASSIGNMENT_ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("ASSIGNMENT_ANNOTATION")
@@ -44,12 +36,9 @@ class AssignmentCommandLineProcessor : CommandLineProcessor {
 }
 
 class AssignmentComponentRegistrar : CompilerPluginRegistrar() {
-    @OptIn(InternalNonStableExtensionPoints::class)
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val annotations = configuration.getList(ASSIGNMENT_ANNOTATION)
         if (annotations.isNotEmpty()) {
-            AssignResolutionAltererExtension.Companion.registerExtension(CliAssignPluginResolutionAltererExtension(annotations))
-            StorageComponentContainerContributor.registerExtension(AssignmentComponentContainerContributor(annotations))
             FirExtensionRegistrar.registerExtension(FirAssignmentPluginExtensionRegistrar(annotations))
         }
     }
@@ -58,14 +47,4 @@ class AssignmentComponentRegistrar : CompilerPluginRegistrar() {
 
     override val supportsK2: Boolean
         get() = true
-}
-
-class AssignmentComponentContainerContributor(private val annotations: List<String>) : StorageComponentContainerContributor {
-    override fun registerModuleComponents(
-        container: StorageComponentContainer,
-        platform: TargetPlatform,
-        moduleDescriptor: ModuleDescriptor,
-    ) {
-        container.useInstance(AssignmentPluginDeclarationChecker(annotations))
-    }
 }

@@ -213,6 +213,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 StructuredProviders::class,
                 StructuredProviders(
                     sourceProviders = emptyList(),
+                    incrementalProvider = null,
                     dependencyProviders = providers,
                     sharedProvider = when {
                         createSeparateSharedProviders -> FirEmptySymbolProvider(this)
@@ -299,7 +300,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             )
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)
 
-            val (sourceProviders, additionalOptionalAnnotationsProvider) = createProviders(
+            val (sourceProviders, incrementalProvider, additionalOptionalAnnotationsProvider) = createProviders(
                 this,
                 kotlinScopeProvider,
                 firProvider.symbolProvider,
@@ -317,8 +318,16 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 addIfNotNull(additionalOptionalAnnotationsProvider)
             }
 
+            val incrementalProviderCommonsMapping = computeIncrementalSymbolProvider(
+                session = this,
+                moduleData,
+                incrementalProviderOfCurrentModule = incrementalProvider,
+                properKmpIcIsEnabled = configuration.languageVersionSettings.getFlag(AnalysisFlags.kmpJvmIncrementalCompilationEnabled),
+            )
+
             val structuredProvidersForModule = StructuredProviders(
                 sourceProviders = sourceProviders,
+                incrementalProvider = incrementalProviderCommonsMapping,
                 dependencyProviders = allLibrariesProviders,
                 sharedProvider = structuredDependencyProvidersWithoutSource.sharedProvider,
             ).also {
@@ -330,7 +339,11 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 addAll(structuredProvidersForModule.sharedProvider.flattenAndFilterOwnProviders())
             }.distinct()
 
-            val providersList = structuredProvidersForModule.sourceProviders + providersListWithoutSources
+            val providersList = buildList {
+                addAll(structuredProvidersForModule.sourceProviders)
+                addIfNotNull(incrementalProviderCommonsMapping)
+                addAll(providersListWithoutSources)
+            }
 
             register(
                 FirSymbolProvider::class,
@@ -350,6 +363,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
 
     protected data class SourceProviders(
         val sourceProviders: List<FirSymbolProvider>,
+        val incrementalProvider: FirSymbolProvider?,
         val additionalOptionalAnnotationsProvider: FirSymbolProvider? = null,
     )
 
@@ -462,9 +476,36 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
 
         return StructuredProviders(
             sourceProviders = emptyList(),
+            incrementalProvider = null,
             dependencyProviders,
             sharedProvider
         )
+    }
+
+    private fun computeIncrementalSymbolProvider(
+        session: FirSession,
+        moduleData: FirModuleData,
+        incrementalProviderOfCurrentModule: FirSymbolProvider?,
+        properKmpIcIsEnabled: Boolean,
+    ): FirSymbolProvider? {
+        return when {
+            incrementalProviderOfCurrentModule == null -> null
+            properKmpIcIsEnabled -> {
+                val structuredProvidersFromDependsOnFragments = moduleData.dependsOnDependencies
+                    .filter { it.session.kind == FirSession.Kind.Source }
+                    .mapNotNull { it.session.structuredProviders.incrementalProvider }
+                when {
+                    structuredProvidersFromDependsOnFragments.isEmpty() -> incrementalProviderOfCurrentModule
+                    else -> FirCommonDeclarationsMappingSymbolProvider(
+                        session,
+                        commonSymbolProvider = createCachingCompositeProviderIfNeeded(session, structuredProvidersFromDependsOnFragments.distinct()),
+                        platformSymbolProvider = incrementalProviderOfCurrentModule
+                    )
+                }
+            }
+            else -> incrementalProviderOfCurrentModule
+        }
+
     }
 
     /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.

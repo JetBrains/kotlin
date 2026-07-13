@@ -26,13 +26,13 @@ internal class JavaKNamedFunction(
     overriddenStorage: KCallableOverriddenStorage,
 ) : JavaKFunction(container, method, rawBoundReceiver, overriddenStorage) {
     val originalParameters: List<KParameter> by lazy(PUBLICATION) {
-        computeParameters(typeParameters)
+        computeParameters()
     }
 
     val originalReturnType: AbstractKType by lazy(PUBLICATION) {
         val unsubstitutedReturnType =
             if (overriddenStorage.isFakeOverride && overriddenStorage.overridden.size == 1) {
-                overriddenStorage.overridden.single().returnType as AbstractKType
+                overriddenStorage.overridden.single().returnType
             } else {
                 jMethod.genericReturnType.toKType(
                     javaTypeParameters.zip(typeParameters).toMap(),
@@ -41,8 +41,7 @@ internal class JavaKNamedFunction(
                     isForAnnotationParameter = member.isEnumValuesValueOfMethod(),
                 )
             }
-        overriddenStorage.getTypeSubstitutor(typeParameters, name).substitute(unsubstitutedReturnType).type
-                as? AbstractKType ?: starProjectionInTopLevelTypeIsNotPossible(containerNameForDebug = name)
+        substituteType(unsubstitutedReturnType) as AbstractKType
     }
 
     private val enhancedSignature: EnhancedSignature? by lazy(PUBLICATION) {

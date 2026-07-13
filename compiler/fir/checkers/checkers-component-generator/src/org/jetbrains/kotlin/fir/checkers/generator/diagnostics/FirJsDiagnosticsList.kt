@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -113,6 +113,12 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<String>("kind")
             parameter<ConeKotlinType>("type")
         }
+        val NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_FUNCTION_WITH_EXPOSED_COPY_VISIBILITY by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("type")
+        }
+        val NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_WITHOUT_CONSISTENT_VISIBILITY by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("type")
+        }
         val NON_CONSUMABLE_EXPORTED_IDENTIFIER by warning<KtElement>(PositioningStrategy.DEFAULT) {
             parameter<String>("name")
         }
@@ -141,6 +147,13 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_STATIC_ON_NON_PUBLIC_MEMBER by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JS_STATIC_ON_CONST by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
     }
+
+    val CONSTRUCTOR_PROBLEMS by object : DiagnosticGroup("Constructor problems") {
+        val DATA_CLASS_COPY_JS_EXPORTABILITY_WILL_BE_CHANGED by deprecationError<KtElement>(
+            LanguageFeature.ErrorAboutDataClassCopyVisibilityChange,
+        )
+    }
+
 
     val NO_RUNTIME by object : DiagnosticGroup("NoRuntime") {
         val JS_NO_RUNTIME_WRONG_TARGET by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)

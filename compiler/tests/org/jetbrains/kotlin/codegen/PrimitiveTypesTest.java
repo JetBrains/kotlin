@@ -19,26 +19,26 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.FirParser;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
-public class PrimitiveTypesTest extends CodegenTestCase {
-    @Override
-    public boolean getUseFir() {
-        return true;
-    }
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+public class PrimitiveTypesTest extends CodegenTestCase {
     @Override
     public @NotNull FirParser getFirParser() {
         return FirParser.LightTree;
     }
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    @Test
     public void testPlus() throws Exception {
         loadText("fun f(a: Int, b: Int): Int { return a + b }");
         Method main = generateFunction();
@@ -46,6 +46,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertEquals(42, returnValue);
     }
 
+    @Test
     public void testGt() throws Exception {
         loadText("fun foo(f: Int): Boolean { if (f > 0) return true; return false; }");
 
@@ -54,14 +55,17 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertEquals(false, main.invoke(null, 0));
     }
 
+    @Test
     public void testDiv() throws Exception {
         binOpTest("fun foo(a: Int, b: Int): Int = a / b", 12, 3, 4);
     }
 
+    @Test
     public void testMod() throws Exception {
         binOpTest("fun foo(a: Int, b: Int): Int = a % b", 14, 3, 2);
     }
 
+    @Test
     public void testNE() throws Exception {
         loadText("fun foo(a: Int, b: Int): Int = if (a != b) 1 else 0");
         Method main = generateFunction();
@@ -69,6 +73,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertEquals(1, main.invoke(null, 5, 3));
     }
 
+    @Test
     public void testGE() throws Exception {
         loadText("fun foo(a: Int, b: Int): Int = if (a >= b) 1 else 0");
         Method main = generateFunction();
@@ -76,6 +81,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertEquals(0, main.invoke(null, 3, 5));
     }
 
+    @Test
     public void testReturnCmp() throws Exception {
         loadText("fun foo(a: Int, b: Int): Boolean = a == b");
         Method main = generateFunction();
@@ -83,6 +89,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertEquals(false, main.invoke(null, 1, 2));
     }
 
+    @Test
     public void testLong() throws Exception {
         loadText("fun foo(a: Long, b: Long): Long = a + b");
         Method main = generateFunction();
@@ -91,6 +98,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertEquals(expected, main.invoke(null, arg, arg));
     }
 
+    @Test
     public void testLongCmp() throws Exception {
         loadText("fun foo(a: Long, b: Long): Long = if (a == b) 0xffffffff else 0xfffffffe");
         Method main = generateFunction();
@@ -98,76 +106,91 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertEquals(0xfffffffeL, main.invoke(null, 1, 0));
     }
 
+    @Test
     public void testShort() throws Exception {
         binOpTest("fun foo(a: Short, b: Short): Int = a + b",
                   Short.valueOf((short) 32767), Short.valueOf((short) 32767), 65534);
     }
 
+    @Test
     public void testShortCmp() throws Exception {
         binOpTest("fun foo(a: Short, b: Short): Boolean = a == b",
                   Short.valueOf((short) 32767), Short.valueOf((short) 32767), true);
     }
 
+    @Test
     public void testByte() throws Exception {
         binOpTest("fun foo(a: Byte, b: Byte): Int = a + b",
                   Byte.valueOf((byte) 127), Byte.valueOf((byte) 127), 254);
     }
 
+    @Test
     public void testByteCmp() throws Exception {
         binOpTest("fun foo(a: Byte, b: Byte): Int = if (a == b) 1 else 0",
                   Byte.valueOf((byte) 127), Byte.valueOf((byte) 127), 1);
     }
 
+    @Test
     public void testByteLess() throws Exception {
         binOpTest("fun foo(a: Byte, b: Byte): Boolean = a < b",
                   Byte.valueOf((byte) 126), Byte.valueOf((byte) 127), true);
     }
 
+    @Test
     public void testBooleanConstant() throws Exception {
         loadText("fun foo(): Boolean = true");
         Method main = generateFunction();
         assertEquals(true, main.invoke(null));
     }
 
+    @Test
     public void testChar() throws Exception {
         // '+' is not available for Chars
         binOpTest("fun foo(a: Char, b: Char): Int = a - b", 'D', (char) 3, (int) 'A');
     }
 
+    @Test
     public void testFloat() throws Exception {
         binOpTest("fun foo(a: Float, b: Float): Float = a + b", 1.0f, 2.0f, 3.0f);
     }
 
+    @Test
     public void testFloatCmp() throws Exception {
         binOpTest("fun foo(a: Float, b: Float): Boolean = a == b", 1.0f, 1.0f, true);
     }
 
+    @Test
     public void testDouble() throws Exception {
         binOpTest("fun foo(a: Double, b: Double): Double = a + b", 1.0, 2.0, 3.0);
     }
 
+    @Test
     public void testDoubleCmp() throws Exception {
         binOpTest("fun foo(a: Double, b: Double): Boolean = a == b", 1.0, 2.0, false);
     }
 
+    @Test
     public void testDoubleToJava() throws Exception {
         loadText("import java.lang.Double as jlDouble; fun foo(d: Double): String? = jlDouble.toString(d)");
         Method main = generateFunction();
         assertEquals("1.0", main.invoke(null, 1.0));
     }
 
+    @Test
     public void testDoubleToInt() throws Exception {
         loadText("fun foo(a: Double): Int = a.toInt()");
         Method main = generateFunction();
         assertEquals(1, main.invoke(null, 1.0));
     }
 
+    @Test
     public void testCastConstant() throws Exception {
         loadText("fun foo(): Double = 1.toDouble()");
         Method main = generateFunction();
         assertEquals(1.0, main.invoke(null));
     }
 
+    @Test
     public void testCastOnStack() throws Exception {
         loadText("fun foo(l: Long): Double = l.toDouble()");
         Class<?> mainClass = generateFacadeClass();
@@ -176,94 +199,112 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertTrue(Math.abs(42L - result) <= 1e-9);
     }
 
+    @Test
     public void testNeg() throws Exception {
         loadText("fun foo(a: Int): Int = -a");
         Method main = generateFunction();
         assertEquals(-10, main.invoke(null, 10));
     }
 
+    @Test
     public void testPreIncrement() throws Exception {
         loadText("fun foo(a: Int): Int { var x = a; ++x; return x;}");
         Method main = generateFunction();
         assertEquals(11, main.invoke(null, 10));
     }
 
+    @Test
     public void testPreIncrementValue() throws Exception {
         loadText("fun foo(a: Int): Int { var x = a; return ++x;}");
         Method main = generateFunction();
         assertEquals(11, main.invoke(null, 10));
     }
 
+    @Test
     public void testPreDecrement() throws Exception {
         loadText("fun foo(a0: Int): Int { var a = a0; return --a;}");
         Method main = generateFunction();
         assertEquals(9, main.invoke(null, 10));
     }
 
+    @Test
     public void testPreIncrementLong() throws Exception {
         loadText("fun foo(a0: Long): Long { var a = a0; return ++a}");
         Method main = generateFunction();
         assertEquals(11L, main.invoke(null, 10L));
     }
 
+    @Test
     public void testPreIncrementFloat() throws Exception {
         loadText("fun foo(a0: Float): Float { var a = a0; return ++a }");
         Method main = generateFunction();
         assertEquals(2.0f, main.invoke(null, 1.0f));
     }
 
+    @Test
     public void testPreIncrementDouble() throws Exception {
         loadText("fun foo(a0: Double): Double {var a = a0; return ++a }");
         Method main = generateFunction();
         assertEquals(2.0, main.invoke(null, 1.0));
     }
 
+    @Test
     public void testShl() throws Exception {
         binOpTest("fun foo(a: Int, b: Int): Int = a shl b", 1, 3, 8);
     }
 
+    @Test
     public void testShr() throws Exception {
         binOpTest("fun foo(a: Int, b: Int): Int = a shr b", 8, 3, 1);
     }
 
+    @Test
     public void testBitAnd() throws Exception {
         binOpTest("fun foo(a: Int, b: Int): Int = a and b", 0x77, 0x1f, 0x17);
     }
 
+    @Test
     public void testBitOr() throws Exception {
         binOpTest("fun foo(a: Int, b: Int): Int = a or b", 0x77, 0x1f, 0x7f);
     }
 
+    @Test
     public void testBitXor() throws Exception {
         binOpTest("fun foo(a: Int, b: Int): Int = a xor b", 0x70, 0x1f, 0x6f);
     }
 
+    @Test
     public void testBitInv() throws Exception {
         loadText("fun foo(a: Int): Int = a.inv()");
         Method main = generateFunction();
         assertEquals(0xffff0000, main.invoke(null, 0x0000ffff));
     }
 
+    @Test
     public void testMixedTypes() throws Exception {
         binOpTest("fun foo(a: Int, b: Long): Long = a + b", 1, 2L, 3L);
     }
 
+    @Test
     public void testMixedTypes2() throws Exception {
         binOpTest("fun foo(a: Double, b: Int): Double = a + b", 1.0, 2, 3.0);
     }
 
+    @Test
     public void testPostIncrementTypeInferenceFail() throws Exception {
         loadText("fun foo(a: Int): Int { var x = a; var y = x++; if (y+1 != x) return -1; return x; }");
         Method main = generateFunction();
         assertEquals(6, main.invoke(null, 5));
     }
 
+    @Test
     public void testPostIncrement() throws Exception {
         loadText("fun foo(a: Int): Int { var x = a; var y = x++; return x*y; }");
         Method main = generateFunction();
         assertEquals(6, main.invoke(null, 2));
     }
 
+    @Test
     public void testPostIncrementLong() throws Exception {
         loadText("fun foo(a: Long): Long { var x = a; var y = x++; return x*y; }");
         Method main = generateFunction();

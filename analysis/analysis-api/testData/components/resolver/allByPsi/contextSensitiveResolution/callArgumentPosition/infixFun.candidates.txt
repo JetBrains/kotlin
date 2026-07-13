@@ -222,7 +222,7 @@ KtConstantExpression(310,311): '1'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -323,7 +323,7 @@ KtConstantExpression(354,355): '1'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -406,7 +406,7 @@ KtConstantExpression(403,404): '1'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(405,418): 'infixConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

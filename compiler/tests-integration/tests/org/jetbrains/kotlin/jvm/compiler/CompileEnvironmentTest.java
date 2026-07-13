@@ -17,21 +17,22 @@
 package org.jetbrains.kotlin.jvm.compiler;
 
 import com.intellij.openapi.util.io.FileUtil;
-import junit.framework.TestCase;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import static org.jetbrains.kotlin.test.testFramework.TestApplicationUtilKt.resetApplicationToNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CompileEnvironmentTest extends TestCase {
+public class CompileEnvironmentTest {
 
+    @Test
     public void testSmokeWithCompilerOutput() throws IOException {
         File tempDir = FileUtil.createTempDirectory("compilerTest", "compilerTest");
         try {
@@ -44,7 +45,7 @@ public class CompileEnvironmentTest extends TestCase {
                     "-no-stdlib",
                     "-classpath", stdlib.getAbsolutePath()
             );
-            Assert.assertEquals(ExitCode.OK, exitCode);
+            assertEquals(ExitCode.OK, exitCode);
             File[] files = out.listFiles();
             Arrays.sort(files);
             assertEquals(2, files.length);
@@ -56,9 +57,8 @@ public class CompileEnvironmentTest extends TestCase {
         }
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @AfterEach
+    void tearDown() {
         resetApplicationToNull();
     }
 }

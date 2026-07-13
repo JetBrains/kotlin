@@ -42,7 +42,7 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
                         // From the FIR point of view, the real containing declaration of enum entry functions
                         // is not the enum entry itself, but its `KaFirEnumEntryInitializerSymbol`.
                         // However, it is not a `KtDeclaration` from the PSI point of view.
-                        if (symbol is KaEnumEntrySymbol) symbol.enumEntryInitializer else symbol
+                        if (symbol is KaEnumEntrySymbol) symbol.initializer else symbol
                     }
                     val actualParentDeclarationSymbol = currentDeclarationSymbol.containingDeclaration
 

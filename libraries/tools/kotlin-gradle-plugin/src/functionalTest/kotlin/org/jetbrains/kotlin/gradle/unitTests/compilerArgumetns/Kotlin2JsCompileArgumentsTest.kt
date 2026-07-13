@@ -24,8 +24,6 @@ class Kotlin2JsCompileArgumentsTest {
     @Test
     fun `test - simple project - old CompilerArgumentsAware and new CompilerArgumentsProducer - return same arguments`() {
         val project = buildProjectWithMPP()
-        project.repositories.mavenLocal()
-
         val kotlin = project.multiplatformExtension
         val jsTarget = kotlin.js()
         val jsMainCompilation = jsTarget.compilations.main

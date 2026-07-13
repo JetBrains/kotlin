@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
@@ -80,7 +80,7 @@ fun createIsolatedCompilationContext(
             parentDisposable,
         )
     kotlinCompilerConfiguration.configureCompiler()
-    @OptIn(K1Deprecation::class)
+    @OptIn(CoreEnvironmentDeprecation::class)
     val environment =
         KotlinCoreEnvironment.createForProduction(
             parentDisposable, kotlinCompilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -232,7 +232,9 @@ fun makeScriptCompilerArguments(compilerOptions: List<String>): K2JVMCompilerArg
 }
 
 private fun ScriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(kotlinCompilerConfiguration: CompilerConfiguration) =
-    withUpdatedClasspath(kotlinCompilerConfiguration.jvmClasspathRoots + kotlinCompilerConfiguration.jvmModularRoots)
+    // the `prepend = true` ensures that the standard libs are added before other dependencies: otherwise runtime classloaders structure
+    // may fail to load some classes. See comments to KT-87041 for possible failures.
+    withUpdatedClasspath(kotlinCompilerConfiguration.jvmClasspathRoots + kotlinCompilerConfiguration.jvmModularRoots, prepend = true)
 
 private fun createInitialCompilerConfiguration(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,

@@ -1,6 +1,6 @@
 KtNameReferenceExpression(87,100): 'mutableListOf'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/mutableListOf(): kotlin.collections.MutableList<T>

@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
@@ -29,15 +32,6 @@ open class StubGeneratorExtensions {
     // as the old backend assumes for external declarations. Hence, we need to
     // intercept and supply "fake" deserialized sources.
     open fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? = null
-
-    // Extension point for the JVM Debugger IDEA plug-in: to replace accesses
-    // to private properties _without_ accessor implementations, the fragment
-    // compiler needs to predict the compilation output for properties.
-    // To do this, we need to know whether the property accessors have explicit
-    // bodies, information that is _not_ present in the IR structure, but _is_
-    // available in the corresponding PSI. See `CodeFragmentCompiler` in the
-    // plug-in for the implementation.
-    open fun isAccessorWithExplicitImplementation(accessor: IrSimpleFunction): Boolean = false
 
     open fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean = false
 

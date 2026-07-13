@@ -7,6 +7,7 @@ internal object InternalObject
 internal enum class InternalEnum
 
 internal fun internalFun() = Unit
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun internalInlineFun() = Unit
 
 internal val internalVal = 42

@@ -1,6 +1,6 @@
 KtNameReferenceExpression(105,126): 'generatedClassMember2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       generated/GeneratedClass2.generatedClassMember2(<dispatch receiver>: generated.GeneratedClass2): generated.GeneratedClass1

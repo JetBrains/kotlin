@@ -1,6 +1,6 @@
 KtNameReferenceExpression(76,79): 'sub'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val sub: JavaSubClass!

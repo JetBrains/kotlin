@@ -1,0 +1,47 @@
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Enum.clone
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: clone
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Any
+  typeParameters: []
+  valueParameters: []
+  visibility: PROTECTED
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: E
+    ]
+    type: kotlin/Enum<E>
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.Enum
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib-jvm-minimal-for-test"
+  deprecation: null
+  returnValueStatus: MustUse
+  importableFqName: null

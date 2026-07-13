@@ -1,6 +1,6 @@
 KtNameReferenceExpression(146,151): 'check'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       dependency2/MyInterface.check(<dispatch receiver>: dependency2.MyInterface, string: {dependency1.MyString=} kotlin.String): kotlin.Unit

@@ -22,6 +22,8 @@ import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -200,6 +202,33 @@ class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
                 )
             ) {
                 assertOutputContains("Please specify path to gradle project in GRADLE_PROJECT_PATH environment variable")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `integrateEmbedAndSign disables ENABLE_USER_SCRIPT_SANDBOXING in all build configurations`(version: GradleVersion) {
+        project("emptyxcode-no-embedandsign", version) {
+            initDefaultKmpWithLocalSPM()
+
+            val pbxFile = projectPath.resolve("iosApp/iosApp.xcodeproj/project.pbxproj")
+
+            // Simulate a project that starts out with sandboxing enabled so the test exercises the mutation.
+            pbxFile.toFile().writeText(
+                pbxFile.readText().replace("ENABLE_USER_SCRIPT_SANDBOXING = NO", "ENABLE_USER_SCRIPT_SANDBOXING = YES")
+            )
+
+            build(
+                "integrateEmbedAndSign",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "GRADLEW_PATH" to projectPath.resolve("gradlew").absolutePathString(),
+                    "GRADLE_PROJECT_PATH" to ":",
+                )
+            ) {
+                val pbxContents = pbxFile.readText()
+                assertTrue(pbxContents.contains("ENABLE_USER_SCRIPT_SANDBOXING = NO"), "Every configuration should explicitly set sandboxing to NO")
+                assertFalse(pbxContents.contains("ENABLE_USER_SCRIPT_SANDBOXING = YES"), "No configuration should keep sandboxing enabled")
             }
         }
     }

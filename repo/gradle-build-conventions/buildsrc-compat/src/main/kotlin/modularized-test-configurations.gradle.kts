@@ -1,11 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-
-val distDir: String by extra
-val ideaSandboxDir: File by extra
-val ideaSdkPath: String
-    get() = rootProject.ideaHomePathForTests().get().asFile.absolutePath
-
 fun MutableList<String>.addModularizedTestArgs(prefix: String, path: String, additionalParameters: Map<String, String>, benchFilter: String?) {
     add("-${prefix}fir.bench.prefix=$path")
     add("-${prefix}fir.bench.jps.dir=$path/test-project-model-dump")
@@ -19,61 +13,10 @@ fun MutableList<String>.addModularizedTestArgs(prefix: String, path: String, add
     }
 }
 
-fun generateVmParametersForJpsConfiguration(path: String, additionalParameters: Map<String, String>, benchFilter: String?): String {
-    val vmParameters = mutableListOf(
-        "-ea",
-        "-XX:+HeapDumpOnOutOfMemoryError",
-        "-Xmx3600m",
-        "-XX:+UseCodeCacheFlushing",
-        "-XX:ReservedCodeCacheSize=128m",
-        "-Djna.nosys=true",
-        "-Didea.platform.prefix=Idea",
-        "-Didea.is.unit.test=true",
-        "-Didea.ignore.disabled.plugins=true",
-        "-Didea.home.path=$ideaSdkPath",
-        "-Didea.use.native.fs.for.win=false",
-        "-Djps.kotlin.home=${File(distDir).absolutePath}/kotlinc",
-        "-Duse.jps=true",
-        "-Djava.awt.headless=true"
-    )
-    vmParameters.addModularizedTestArgs(prefix = "D", path = path, additionalParameters = additionalParameters, benchFilter = benchFilter)
-    return vmParameters.joinToString(" ")
-}
-
 fun generateArgsForGradleConfiguration(path: String, additionalParameters: Map<String, String>, benchFilter: String?): String {
     val args = mutableListOf<String>()
     args.addModularizedTestArgs(prefix = "P", path = path, additionalParameters = additionalParameters, benchFilter = benchFilter)
     return args.joinToString(" ")
-}
-
-fun generateXmlContentForJpsConfiguration(name: String, testClassName: String, vmParameters: String): String {
-    return """
-        <component name="ProjectRunConfigurationManager">
-          <configuration default="false" name="$name" type="JUnit" factoryName="JUnit" folderName="Modularized tests">
-            <module name="kotlin.compiler.fir.modularized-tests.test" />
-            <extension name="coverage">
-              <pattern>
-                <option name="PATTERN" value="org.jetbrains.kotlin.fir.*" />
-                <option name="ENABLED" value="true" />
-              </pattern>
-            </extension>
-            <option name="PACKAGE_NAME" value="org.jetbrains.kotlin.fir" />
-            <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.fir.$testClassName" />
-            <option name="METHOD_NAME" value="" />
-            <option name="TEST_OBJECT" value="class" />
-            <option name="VM_PARAMETERS" value="$vmParameters" />
-            <option name="PARAMETERS" value="" />
-            <option name="WORKING_DIRECTORY" value="${'$'}PROJECT_DIR${'$'}" />
-            <envs>
-              <env name="NO_FS_ROOTS_ACCESS_CHECK" value="true" />
-              <env name="PROJECT_CLASSES_DIRS" value="out/test/org.jetbrains.kotlin.compiler.test" />
-            </envs>
-            <method v="2">
-              <option name="Make" enabled="true" />
-            </method>
-          </configuration>
-        </component>
-    """.trimIndent()
 }
 
 fun generateXmlContentForGradleConfiguration(name: String, testClassName: String, vmParameters: String): String {
@@ -105,16 +48,6 @@ fun generateXmlContentForGradleConfiguration(name: String, testClassName: String
 fun String.convertNameToRunConfigurationFile(prefix: String = ""): File {
     val fileName = prefix + replace("""[ -.\[\]]""".toRegex(), "_") + ".xml"
     return rootDir.resolve(".idea/runConfigurations/${fileName}")
-}
-
-fun generateJpsConfiguration(name: String, testClassName: String, path: String, additionalParameters: Map<String, String>, benchFilter: String?) {
-    val vmParameters = generateVmParametersForJpsConfiguration(path, additionalParameters, benchFilter)
-    val content = generateXmlContentForJpsConfiguration(
-        name = name,
-        testClassName = testClassName,
-        vmParameters = vmParameters
-    )
-    name.convertNameToRunConfigurationFile("JPS").writeText(content)
 }
 
 fun generateGradleConfiguration(name: String, testClassName: String, path: String, additionalParameters: Map<String, String>, benchFilter: String?) {

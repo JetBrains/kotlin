@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
@@ -162,10 +163,10 @@ private fun IrFunction.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
 
     val methodInfo = this.annotations.findAnnotation(objCMethodFqName)?.let {
         ObjCMethodInfo(
-                selector = it.getAnnotationStringValue("selector"),
-                encoding = it.getAnnotationStringValue("encoding"),
-                isStret = it.getAnnotationValueOrNull<Boolean>("isStret") ?: false,
-                directSymbol = this.annotations.findAnnotation(objCDirectFqName)?.getAnnotationStringValue("symbol"),
+            selector = it.getConstArgument<String>("selector")!!,
+            encoding = it.getConstArgument<String>("encoding")!!,
+            isStret = it.getConstArgument("isStret") ?: false,
+            directSymbol = annotations.findAnnotation(objCDirectFqName)?.let { it.getConstArgument<String>("symbol")!! },
         )
     }
 
@@ -176,10 +177,10 @@ fun IrDeclaration.isObjCUnavailable(): Boolean =
     annotations.hasAnnotation(objCUnavailableFqName)
 
 private fun objCMethodInfo(annotation: IrAnnotation) = ObjCMethodInfo(
-        selector = annotation.getAnnotationStringValue("selector"),
-        encoding = annotation.getAnnotationStringValue("encoding"),
-        isStret = annotation.getAnnotationValueOrNull<Boolean>("isStret") ?: false,
-        directSymbol = null,
+    selector = annotation.getConstArgument<String>("selector")!!,
+    encoding = annotation.getConstArgument<String>("encoding")!!,
+    isStret = annotation.getConstArgument("isStret") ?: false,
+    directSymbol = null,
 )
 
 /**
@@ -247,7 +248,7 @@ val ConstructorDescriptor.isObjCConstructor get() = this.annotations.hasAnnotati
 // TODO-DCE-OBJC-INIT: Selector should be preserved by DCE.
 fun IrConstructor.getObjCInitMethod(): IrSimpleFunction? {
     return this.annotations.findAnnotation(objCConstructorFqName)?.let {
-        val initSelector = it.getAnnotationStringValue("initSelector")
+        val initSelector = it.getConstArgument<String>("initSelector")!!
         this.constructedClass.declarations.asSequence()
                 .filterIsInstance<IrSimpleFunction>()
                 .single { it.getExternalObjCMethodInfo()?.selector == initSelector }
@@ -307,4 +308,4 @@ fun IrClass.getExternalObjCProtocolBinaryName(): String? =
     this.getExplicitExternalObjCClassBinaryName()
 
 private fun IrClass.getExplicitExternalObjCClassBinaryName() =
-        this.annotations.findAnnotation(externalObjCClassFqName)!!.getAnnotationValueOrNull<String>("binaryName")
+    annotations.findAnnotation(externalObjCClassFqName)!!.getConstArgument<String>("binaryName")

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.testUtils
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
@@ -27,6 +28,7 @@ internal fun createObjCExportNamerConfiguration(
     }
 }
 
+@OptIn(K1Deprecation::class)
 internal fun createObjCExportMapper(
     deprecationResolver: DeprecationResolver? = null,
     local: Boolean = false,
@@ -35,6 +37,7 @@ internal fun createObjCExportMapper(
     return ObjCExportMapper(deprecationResolver, local, unitSuspendFunctionObjCExport)
 }
 
+@OptIn(K1Deprecation::class)
 internal fun createObjCExportNamer(
     configuration: ObjCExportNamer.Configuration = createObjCExportNamerConfiguration(),
     builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,

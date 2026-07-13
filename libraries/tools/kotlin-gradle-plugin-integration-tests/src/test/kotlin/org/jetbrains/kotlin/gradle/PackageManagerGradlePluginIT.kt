@@ -159,6 +159,36 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
     override val setProperty: (String) -> String = { " = $it" }
 
     override val mismatchReportMessage: String = YarnPlugin.yarnLockMismatchMessage(upgradeTaskName)
+
+    @DisplayName("js composite build works with lock file persistence")
+    @GradleTest
+    @JsGradlePluginTests
+    fun yarnStoreLockAlwaysTriggersNpmInstall(gradleVersion: GradleVersion) {
+        project(
+            "js-composite-build",
+            gradleVersion,
+            // `:compileKotlinJs` task is not compatible with CC on Gradle 7
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
+        ) {
+            // 1st run
+            build(upgradeTaskName) {
+                assertTasksExecuted(":kotlinNpmInstall")
+            }
+
+            // 1st run, npmInstall should be up to date
+            // --force flag is not set because upgradeTaskName is not requested
+            // all input/outputs didn't change since last run
+            build(storeTaskName) {
+                assertTasksUpToDate(":kotlinNpmInstall")
+            }
+
+            // 3rd run, npmInstall must re-run
+            // upgradeTaskName is requested, so --force flag is set
+            build(upgradeTaskName) {
+                assertTasksExecuted(":kotlinNpmInstall")
+            }
+        }
+    }
 }
 
 abstract class PackageManagerGradlePluginIT : KGPBaseTest() {

@@ -20,8 +20,8 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     fun myTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
             // this is not the scenario DSL, so the modules are not built at this moment
 
@@ -68,7 +68,7 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     fun failedCompilationTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
 
             module1.sourcesDirectory.resolve("bar.kt").writeText("aaaa")
 

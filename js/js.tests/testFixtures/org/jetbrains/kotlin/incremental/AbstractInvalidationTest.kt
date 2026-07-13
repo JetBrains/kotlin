@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
+import org.jetbrains.kotlin.io.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
@@ -38,19 +39,19 @@ import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
-import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
 import java.io.ByteArrayOutputStream
-import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
@@ -250,7 +251,7 @@ abstract class AbstractInvalidationTest(
             val expectedDTS: ExpectedFile?,
         )
 
-        protected inner class ExpectedFile(val name: String, val content: String)
+        protected inner class ExpectedFile(val name: String, val file: File)
 
         protected fun setupTestStep(projStep: ProjectInfo.ProjectBuildStep, module: String): TestStepInfo {
             val projStepId = projStep.id
@@ -295,7 +296,7 @@ abstract class AbstractInvalidationTest(
                 outputKlibFile.canonicalPath,
                 friends.map { it.canonicalPath },
                 moduleStep.expectedFileStats,
-                dtsFile?.let { ExpectedFile(moduleStep.expectedDTS.single(), it.readText()) }
+                dtsFile?.let { ExpectedFile(moduleStep.expectedDTS.single(), it) }
             )
         }
 
@@ -368,6 +369,7 @@ abstract class AbstractInvalidationTest(
             val isCommon = sourceFile.parentFile.name == "common"
             addKotlinSourceRoot(sourceFile.absolutePath, isCommon)
             val ktFile = environment.createPsiFile(sourceFile)
+            @OptIn(KtImplementationDetail::class)
             ktFile.isCommonSource = isCommon
             ktSources.add(ktFile)
         }

@@ -1,0 +1,166 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(27,39): 'package main'
+  null
+
+KtNameReferenceExpression(35,39): 'main'
+  null
+
+KtImportList(41,76): 'import test.Base'
+  null
+
+KtImportDirective(41,57): 'import test.Base'
+  null
+
+KtDotQualifiedExpression(48,57): 'test.Base'
+  null
+
+KtNameReferenceExpression(48,52): 'test'
+  null
+
+KtNameReferenceExpression(53,57): 'Base'
+  null
+
+KtImportDirective(58,76): 'import test.Base.*'
+  null
+
+KtDotQualifiedExpression(65,74): 'test.Base'
+  null
+
+KtNameReferenceExpression(65,69): 'test'
+  null
+
+KtNameReferenceExpression(70,74): 'Base'
+  null
+
+KtNamedFunction(78,150): 'fun usage(b: Base) {'
+  null
+
+KtParameterList(87,96): '(b: Base)'
+  null
+
+KtParameter(88,95): 'b: Base'
+  null
+
+KtTypeReference(91,95): 'Base'
+  null
+
+KtUserType(91,95): 'Base'
+  null
+
+KtNameReferenceExpression(91,95): 'Base'
+  null
+
+KtBlockExpression(97,150): '{'
+  null
+
+KtIfExpression(103,148): 'if (b is Child) {'
+  null
+
+KtContainerNode(107,117): 'b is Child'
+  null
+
+KtIsExpression(107,117): 'b is Child'
+  null
+
+KtNameReferenceExpression(107,108): 'b'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = test.Base
+        symbol = b: test.Base
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(109,111): 'is'
+  null
+
+KtTypeReference(112,117): 'Child'
+  null
+
+KtUserType(112,117): 'Child'
+  null
+
+KtNameReferenceExpression(112,117): 'Child'
+  null
+
+KtContainerNodeForControlStructureBody(119,148): '{'
+  null
+
+KtBlockExpression(119,148): '{'
+  null
+
+KtDotQualifiedExpression(129,142): '"".hashCode()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtStringTemplateExpression(129,131): '""'
+  null
+
+KtCallExpression(132,142): 'hashCode()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(132,140): 'hashCode'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(140,142): '()'
+  null

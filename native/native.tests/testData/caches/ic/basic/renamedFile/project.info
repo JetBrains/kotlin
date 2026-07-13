@@ -6,3 +6,9 @@ STEP 0:
 
 STEP 1:
     libs: lib, main
+
+STEP 2:
+    libs: lib, main
+
+STEP 3:
+    libs: lib, main

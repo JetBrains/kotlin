@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -165,7 +166,7 @@ internal class IrImplementationGeneratorForCStructsAndEnums(
             // [kotlinx.cinterop.internal.ConstantValue.*] annotations that holds internal constant value of the
             // corresponding entry.
             val value = cEnumEntryValueTypes.firstNotNullOfOrNull {
-                enumEntry.getAnnotation(cEnumEntryValueAnnotationName.child(Name.identifier(it)))?.getValueArgument(Name.identifier("value"))
+                enumEntry.getAnnotation(cEnumEntryValueAnnotationName.child(Name.identifier(it)))?.argumentMapping[Name.identifier("value")]
             } ?: error("Enum entry ${enumEntry.fqNameWhenAvailable} has no appropriate @$cEnumEntryValueAnnotationName annotation!")
 
             enumEntry.initializerExpression = IrFactoryImpl.createExpressionBody(
@@ -295,6 +296,3 @@ internal class IrImplementationGeneratorForCStructsAndEnums(
 
 private fun IrBuilder.irInstanceInitializer(classSymbol: IrClassSymbol): IrExpression =
         IrInstanceInitializerCallImpl(startOffset, endOffset, classSymbol, context.irBuiltIns.unitType)
-
-fun IrClass.inheritsFromCStruct() = superClasses.any { it.hasEqualFqName(InteropFqNames.cStructVar) }
-fun IrClass.inheritsFromCEnum() = superClasses.any { it.hasEqualFqName(InteropFqNames.cEnum) }

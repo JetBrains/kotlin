@@ -265,9 +265,8 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
             currentDeclaration.symbol, startOffset = expression.startOffset, endOffset = expression.endOffset
         ).irBlock {
             val newCall = builder(symbol).apply {
-                val offset = if (needsTypeArgumentOffset(declaration)) declaration.parentAsClass.typeParameters.size else 0
                 for (i in typeArguments.indices) {
-                    typeArguments[i] = expression.typeArguments[i + offset]
+                    typeArguments[i] = expression.typeArguments[i]
                 }
                 val parameter2arguments = argumentsForCall(expression, stubFunction)
 
@@ -282,9 +281,6 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
             +irCastIfNeeded(newCall, expression.type)
         }.unwrapBlock()
     }
-
-    private fun needsTypeArgumentOffset(declaration: IrFunction) =
-        isStatic(declaration) && declaration.parentAsClass.isJvmInlineMultiFieldValueClass && declaration is IrSimpleFunction
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
         expression.transformChildrenVoid()
@@ -327,13 +323,11 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
-        val declaration = expression.symbol.owner
-        val typeParametersToRemove = if (needsTypeArgumentOffset(declaration)) declaration.parentAsClass.typeParameters.size else 0
         with(expression) {
             return visitFunctionAccessExpression(expression) {
                 IrCallImpl(
                     startOffset, endOffset, (it as IrSimpleFunctionSymbol).owner.returnType, it,
-                    typeArgumentsCount = typeArguments.size - typeParametersToRemove,
+                    typeArgumentsCount = typeArguments.size,
                     origin = IrStatementOrigin.DEFAULT_DISPATCH_CALL,
                     superQualifierSymbol = superQualifierSymbol
                 )
@@ -512,9 +506,6 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, c
                 IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION
             )
         }
-        context.remapMultiFieldValueClassStructure(
-            original, this, parametersMappingOrNull = original.parameters.zip(parameters).toMap()
-        )
     }
 }
 

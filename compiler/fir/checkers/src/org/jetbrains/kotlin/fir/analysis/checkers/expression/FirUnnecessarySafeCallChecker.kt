@@ -26,7 +26,7 @@ abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChec
         receiverType: ConeKotlinType,
         source: KtSourceElement?,
     ) {
-        if (!receiverType.canBeNull(context.session)) {
+        if (!receiverType.canBeNull()) {
             if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
                 reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType)
             }

@@ -1,0 +1,82 @@
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: null
+  callableId: /MyKotlinEnum.entries
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: MyKotlinEnum
+      ]
+      type: kotlin/enums/EnumEntries<MyKotlinEnum>
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: MyKotlinEnum
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecation: null
+    importableFqName: null
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isCompanion: true
+  isConst: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isLateInit: false
+  isOverride: false
+  isStatic: true
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: entries
+  origin: LIBRARY
+  primaryConstructorParameter: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: MyKotlinEnum
+    ]
+    type: kotlin/enums/EnumEntries<MyKotlinEnum>
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: MyKotlinEnum
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecation: null
+  javaGetterName: getEntries
+  javaSetterName: null
+  isInline: false
+  importableFqName: MyKotlinEnum.entries

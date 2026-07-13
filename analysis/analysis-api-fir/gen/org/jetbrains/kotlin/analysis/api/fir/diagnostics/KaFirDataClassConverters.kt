@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.analysis.api.fir.components.toKaWhenMissingCase
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
@@ -254,6 +255,7 @@ internal val KT_DIAGNOSTIC_CONVERTER: KaDiagnosticConverter = KaDiagnosticConver
     addConversions178()
     addConversions179()
     addConversions180()
+    addConversions181()
     addConversions182()
     addConversions183()
     addConversions184()
@@ -1124,6 +1126,12 @@ private fun KaDiagnosticConverterBuilder.addConversions20() {
             token,
         )
     }
+    add(FirJvmErrors.JAVA_CLASS_PROPERTY_REFERENCE.warningFactory) { firDiagnostic ->
+        JavaClassPropertyReferenceWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirWebCommonErrors.NESTED_JS_EXPORT) { firDiagnostic ->
         NestedJsExportImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -1365,7 +1373,7 @@ private fun KaDiagnosticConverterBuilder.addConversions25() {
     add(FirErrors.NO_ELSE_IN_WHEN) { firDiagnostic ->
         NoElseInWhenImpl(
             firDiagnostic.a.map { whenMissingCase ->
-                whenMissingCase
+                whenMissingCase.toKaWhenMissingCase()
             },
             firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
@@ -1446,6 +1454,12 @@ private fun KaDiagnosticConverterBuilder.addConversions27() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions28() {
+    add(FirErrors.KOTLIN_PACKAGE_USAGE) { firDiagnostic ->
+        KotlinPackageUsageImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION.warningFactory) { firDiagnostic ->
         UnsupportedArrayLiteralOutsideOfAnnotationWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -1518,12 +1532,6 @@ private fun KaDiagnosticConverterBuilder.addConversions30() {
             token,
         )
     }
-    add(FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE) { firDiagnostic ->
-        UnnamedPropertyWithImplicitUnitTypeImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER) { firDiagnostic ->
         JvmStaticOnNonPublicMemberImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -1542,6 +1550,12 @@ private fun KaDiagnosticConverterBuilder.addConversions31() {
     add(FirErrors.NEW_INFERENCE_ERROR) { firDiagnostic ->
         NewInferenceErrorImpl(
             firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.DATA_CLASS_COPY_JS_EXPORTABILITY_WILL_BE_CHANGED.warningFactory) { firDiagnostic ->
+        DataClassCopyJsExportabilityWillBeChangedWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -1600,7 +1614,7 @@ private fun KaDiagnosticConverterBuilder.addConversions32() {
             token,
         )
     }
-    add(FirErrors.INFERRED_INVISIBLE_RETURN_TYPE.warningFactory) { firDiagnostic ->
+    add(FirErrors.INFERRED_INVISIBLE_RETURN_TYPE_WARNING) { firDiagnostic ->
         InferredInvisibleReturnTypeWarningImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
@@ -3264,12 +3278,6 @@ private fun KaDiagnosticConverterBuilder.addConversions72() {
             token,
         )
     }
-    add(FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER) { firDiagnostic ->
-        MultiFieldValueClassPrimaryConstructorDefaultParameterImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS) { firDiagnostic ->
         ReservedMemberFromInterfaceInsideValueClassImpl(
             firDiagnostic.a,
@@ -3846,7 +3854,7 @@ private fun KaDiagnosticConverterBuilder.addConversions86() {
     add(FirErrors.MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS) { firDiagnostic ->
         MissingBranchForNonAbstractSealedClassImpl(
             firDiagnostic.a.map { whenMissingCase ->
-                whenMissingCase
+                whenMissingCase.toKaWhenMissingCase()
             },
             firDiagnostic as KtPsiDiagnostic,
             token,
@@ -3898,8 +3906,22 @@ private fun KaDiagnosticConverterBuilder.addConversions87() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions88() {
+    add(FirErrors.ESCAPING_CAPTURED_VARIABLE) { firDiagnostic ->
+        EscapingCapturedVariableImpl(
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.PARENTHESIZED_PACKAGE_QUALIFIER.errorFactory) { firDiagnostic ->
         ParenthesizedPackageQualifierErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UNRESOLVED_COLLECTION_LITERAL) { firDiagnostic ->
+        UnresolvedCollectionLiteralImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4067,7 +4089,7 @@ private fun KaDiagnosticConverterBuilder.addConversions90() {
             token,
         )
     }
-    add(FirErrors.INFERRED_INVISIBLE_WHEN_TYPE.warningFactory) { firDiagnostic ->
+    add(FirErrors.INFERRED_INVISIBLE_WHEN_TYPE_WARNING) { firDiagnostic ->
         InferredInvisibleWhenTypeWarningImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic.b,
@@ -4176,6 +4198,13 @@ private fun KaDiagnosticConverterBuilder.addConversions92() {
             token,
         )
     }
+    add(FirJsErrors.NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_WITHOUT_CONSISTENT_VISIBILITY) { firDiagnostic ->
+        NonExportableTypeInSyntheticCopyWithoutConsistentVisibilityImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions93() {
@@ -4241,14 +4270,6 @@ private fun KaDiagnosticConverterBuilder.addConversions94() {
             token,
         )
     }
-    add(FirErrors.INFERRED_INVISIBLE_WHEN_TYPE.errorFactory) { firDiagnostic ->
-        InferredInvisibleWhenTypeErrorImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firDiagnostic.b,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.NO_SET_METHOD) { firDiagnostic ->
         NoSetMethodImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4284,15 +4305,6 @@ private fun KaDiagnosticConverterBuilder.addConversions96() {
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic.c,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT.errorFactory) { firDiagnostic ->
-        InferredInvisibleVarargTypeArgumentErrorImpl(
-            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firSymbolBuilder.buildSymbol(firDiagnostic.c),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4427,14 +4439,6 @@ private fun KaDiagnosticConverterBuilder.addConversions99() {
     }
     add(FirErrors.EXPANSIVE_INHERITANCE) { firDiagnostic ->
         ExpansiveInheritanceImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT.errorFactory) { firDiagnostic ->
-        InferredInvisibleReifiedTypeArgumentErrorImpl(
-            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4949,6 +4953,12 @@ private fun KaDiagnosticConverterBuilder.addConversions109() {
             token,
         )
     }
+    add(FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING) { firDiagnostic ->
+        SubclassCantCallCompanionProtectedNonStaticWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE) { firDiagnostic ->
         JavaSamInterfaceConstructorReferenceImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4967,16 +4977,6 @@ private fun KaDiagnosticConverterBuilder.addConversions109() {
 private fun KaDiagnosticConverterBuilder.addConversions110() {
     add(FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE) { firDiagnostic ->
         AnnotationsOnBlockLevelExpressionOnTheSameLineImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING) { firDiagnostic ->
-        ExposedPackagePrivateTypeFromInternalWarningImpl(
-            firDiagnostic.a,
-            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -5033,7 +5033,7 @@ private fun KaDiagnosticConverterBuilder.addConversions110() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions111() {
-    add(FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT.warningFactory) { firDiagnostic ->
+    add(FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING) { firDiagnostic ->
         InferredInvisibleReifiedTypeArgumentWarningImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
@@ -5198,6 +5198,12 @@ private fun KaDiagnosticConverterBuilder.addConversions115() {
             token,
         )
     }
+    add(FirErrors.INTERFACE_COMPANION_BLOCK_VAR) { firDiagnostic ->
+        InterfaceCompanionBlockVarImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions116() {
@@ -5222,7 +5228,7 @@ private fun KaDiagnosticConverterBuilder.addConversions116() {
             token,
         )
     }
-    add(FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT.warningFactory) { firDiagnostic ->
+    add(FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING) { firDiagnostic ->
         InferredInvisibleVarargTypeArgumentWarningImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
@@ -5500,6 +5506,13 @@ private fun KaDiagnosticConverterBuilder.addConversions121() {
     }
     add(FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS) { firDiagnostic ->
         UnsupportedClassLiteralsWithEmptyLhsImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE) { firDiagnostic ->
+        UnnamedPropertyWithImplicitIgnorableTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -6090,13 +6103,6 @@ private fun KaDiagnosticConverterBuilder.addConversions132() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions133() {
-    add(FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET) { firDiagnostic ->
-        AnnotationOnIllegalMultiFieldValueClassTypedTargetImpl(
-            firDiagnostic.a,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.TYPE_INTERSECTION_AS_REIFIED_DEPRECATION_WARNING) { firDiagnostic ->
         TypeIntersectionAsReifiedDeprecationWarningImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
@@ -6592,6 +6598,12 @@ private fun KaDiagnosticConverterBuilder.addConversions144() {
             token,
         )
     }
+    add(FirJvmErrors.JAVA_CLASS_PROPERTY_REFERENCE.errorFactory) { firDiagnostic ->
+        JavaClassPropertyReferenceErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions145() {
@@ -6681,6 +6693,12 @@ private fun KaDiagnosticConverterBuilder.addConversions146() {
     }
     add(FirErrors.ITERATOR_ON_NULLABLE) { firDiagnostic ->
         IteratorOnNullableImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD) { firDiagnostic ->
+        InterfaceCompanionBlockPropertyPrivateFieldImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -7176,6 +7194,13 @@ private fun KaDiagnosticConverterBuilder.addConversions161() {
     add(FirErrors.ILLEGAL_COMPANION_BLOCK_MEMBER) { firDiagnostic ->
         IllegalCompanionBlockMemberImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_FUNCTION_WITH_EXPOSED_COPY_VISIBILITY) { firDiagnostic ->
+        NonExportableTypeInSyntheticCopyFunctionWithExposedCopyVisibilityImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -8028,6 +8053,15 @@ private fun KaDiagnosticConverterBuilder.addConversions180() {
     }
 }
 
+private fun KaDiagnosticConverterBuilder.addConversions181() {
+    add(FirJsErrors.DATA_CLASS_COPY_JS_EXPORTABILITY_WILL_BE_CHANGED.errorFactory) { firDiagnostic ->
+        DataClassCopyJsExportabilityWillBeChangedErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+}
+
 private fun KaDiagnosticConverterBuilder.addConversions182() {
     add(FirErrors.INVISIBLE_REFERENCE_WARNING) { firDiagnostic ->
         InvisibleReferenceWarningImpl(
@@ -8072,6 +8106,12 @@ private fun KaDiagnosticConverterBuilder.addConversions183() {
     add(FirErrors.NOT_YET_SUPPORTED_IN_INLINE) { firDiagnostic ->
         NotYetSupportedInInlineImpl(
             firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE) { firDiagnostic ->
+        JvmExposeBoxedCannotExposePrivateImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -8663,14 +8703,6 @@ private fun KaDiagnosticConverterBuilder.addConversions196() {
     add(FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) { firDiagnostic ->
         PlatformClassMappedToKotlinImpl(
             firDiagnostic.a,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.INFERRED_INVISIBLE_RETURN_TYPE.errorFactory) { firDiagnostic ->
-        InferredInvisibleReturnTypeErrorImpl(
-            firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

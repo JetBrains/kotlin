@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirComponentCallImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -34,6 +35,8 @@ class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, F
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var explicitReceiver: FirExpression
     var componentIndex: Int by kotlin.properties.Delegates.notNull<Int>()
+    lateinit var initializerName: Name
+    var isShortFormWithParentheses: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirComponentCall {
         return FirComponentCallImpl(
@@ -48,6 +51,8 @@ class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, F
             argumentList,
             explicitReceiver,
             componentIndex,
+            initializerName,
+            isShortFormWithParentheses,
         )
     }
 

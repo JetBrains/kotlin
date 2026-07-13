@@ -1,0 +1,187 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(25,37): 'package main'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(33,37): 'main'
+  NO_CANDIDATES
+
+KtImportList(39,72): 'import test.Foo'
+  NO_CANDIDATES
+
+KtImportDirective(39,54): 'import test.Foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(46,54): 'test.Foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(46,50): 'test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(51,54): 'Foo'
+  NO_CANDIDATES
+
+KtImportDirective(55,72): 'import test.Foo.*'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(62,70): 'test.Foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(62,66): 'test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(67,70): 'Foo'
+  NO_CANDIDATES
+
+KtNamedFunction(74,101): 'fun expectsFoo(foo: Foo) {}'
+  NO_CANDIDATES
+
+KtParameterList(88,98): '(foo: Foo)'
+  NO_CANDIDATES
+
+KtParameter(89,97): 'foo: Foo'
+  NO_CANDIDATES
+
+KtTypeReference(94,97): 'Foo'
+  NO_CANDIDATES
+
+KtUserType(94,97): 'Foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(94,97): 'Foo'
+  NO_CANDIDATES
+
+KtBlockExpression(99,101): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(103,158): 'fun usage(): Foo {'
+  NO_CANDIDATES
+
+KtParameterList(112,114): '()'
+  NO_CANDIDATES
+
+KtTypeReference(116,119): 'Foo'
+  NO_CANDIDATES
+
+KtUserType(116,119): 'Foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(116,119): 'Foo'
+  NO_CANDIDATES
+
+KtBlockExpression(120,158): '{'
+  NO_CANDIDATES
+
+KtCallExpression(126,141): 'expectsFoo(BAR)'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = main/expectsFoo(foo: test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = test.Foo
+            symbol = foo: test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = main/expectsFoo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        BAR -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = test.Foo
+          symbol = foo: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(126,136): 'expectsFoo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = main/expectsFoo(foo: test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = test.Foo
+            symbol = foo: test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = main/expectsFoo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        BAR -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = test.Foo
+          symbol = foo: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(136,141): '(BAR)'
+  NO_CANDIDATES
+
+KtValueArgument(137,140): 'BAR'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(137,140): 'BAR'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtReturnExpression(146,156): 'return BAR'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(153,156): 'BAR'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

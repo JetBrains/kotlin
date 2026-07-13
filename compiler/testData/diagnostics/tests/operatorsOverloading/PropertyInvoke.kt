@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +NameBasedDestructuring
 class I { }
 
 operator fun I.invoke(): E = E()
@@ -106,7 +107,7 @@ fun useDelegate() {
 val E.component1: I get() = I()
 val E.component2: I get() = I()
 fun useComponentN() {
-    val (<!NOT_FUNCTION_AS_OPERATOR!>x<!>, <!NOT_FUNCTION_AS_OPERATOR!>y<!>) = e
+    val [<!NOT_FUNCTION_AS_OPERATOR!>x<!>, <!NOT_FUNCTION_AS_OPERATOR!>y<!>] = e
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, destructuringDeclaration, forLoop,

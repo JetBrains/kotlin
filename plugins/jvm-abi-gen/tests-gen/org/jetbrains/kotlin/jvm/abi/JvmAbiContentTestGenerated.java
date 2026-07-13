@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.jvm.abi;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,91 +17,107 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/jvm-abi-gen/testData/content")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  private void run(String fileName) {
+    runTest("plugins/jvm-abi-gen/testData/content/" + fileName);
   }
 
+  @Test
   public void testAllFilesPresentInContent() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
+  @Test
   @TestMetadata("annotation")
   public void testAnnotation() {
     runTest("plugins/jvm-abi-gen/testData/content/annotation/");
   }
 
+  @Test
   @TestMetadata("annotationInstantiation")
   public void testAnnotationInstantiation() {
     runTest("plugins/jvm-abi-gen/testData/content/annotationInstantiation/");
   }
 
+  @Test
   @TestMetadata("anonymousAnnotationInstantiation")
   public void testAnonymousAnnotationInstantiation() {
     runTest("plugins/jvm-abi-gen/testData/content/anonymousAnnotationInstantiation/");
   }
 
+  @Test
   @TestMetadata("anonymousObjectAbiExposed")
   public void testAnonymousObjectAbiExposed() {
     runTest("plugins/jvm-abi-gen/testData/content/anonymousObjectAbiExposed/");
   }
 
+  @Test
   @TestMetadata("anonymousObjectNonAbi")
   public void testAnonymousObjectNonAbi() {
     runTest("plugins/jvm-abi-gen/testData/content/anonymousObjectNonAbi/");
   }
 
+  @Test
   @TestMetadata("anonymousWhenMapping")
   public void testAnonymousWhenMapping() {
     runTest("plugins/jvm-abi-gen/testData/content/anonymousWhenMapping/");
   }
 
+  @Test
   @TestMetadata("class")
   public void testClass() {
     runTest("plugins/jvm-abi-gen/testData/content/class/");
   }
 
+  @Test
   @TestMetadata("dataClassNonPublicConstructorConsistentCopy")
   public void testDataClassNonPublicConstructorConsistentCopy() {
     runTest("plugins/jvm-abi-gen/testData/content/dataClassNonPublicConstructorConsistentCopy/");
   }
 
+  @Test
   @TestMetadata("dataClassNonPublicConstructorExposedCopy")
   public void testDataClassNonPublicConstructorExposedCopy() {
     runTest("plugins/jvm-abi-gen/testData/content/dataClassNonPublicConstructorExposedCopy/");
   }
 
+  @Test
   @TestMetadata("effectivelyPrivateAnnotation")
   public void testEffectivelyPrivateAnnotation() {
     runTest("plugins/jvm-abi-gen/testData/content/effectivelyPrivateAnnotation/");
   }
 
+  @Test
   @TestMetadata("innerClasses")
   public void testInnerClasses() {
     runTest("plugins/jvm-abi-gen/testData/content/innerClasses/");
   }
 
+  @Test
   @TestMetadata("internalClassAndCopyMethod")
   public void testInternalClassAndCopyMethod() {
     runTest("plugins/jvm-abi-gen/testData/content/internalClassAndCopyMethod/");
   }
 
+  @Test
   @TestMetadata("internalClassAndCopyMethodStrict")
   public void testInternalClassAndCopyMethodStrict() {
     runTest("plugins/jvm-abi-gen/testData/content/internalClassAndCopyMethodStrict/");
   }
 
+  @Test
   @TestMetadata("kt50005")
   public void testKt50005() {
     runTest("plugins/jvm-abi-gen/testData/content/kt50005/");
   }
 
+  @Test
   @TestMetadata("preserveDeclarationOrderKeepsClassIntact")
   public void testPreserveDeclarationOrderKeepsClassIntact() {
     runTest("plugins/jvm-abi-gen/testData/content/preserveDeclarationOrderKeepsClassIntact/");
   }
 
+  @Test
   @TestMetadata("whenMapping")
   public void testWhenMapping() {
     runTest("plugins/jvm-abi-gen/testData/content/whenMapping/");

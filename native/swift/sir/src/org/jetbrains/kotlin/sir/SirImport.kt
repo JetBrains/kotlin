@@ -9,6 +9,7 @@ class SirImport(
     val moduleName: String,
     val mode: Mode = Mode.Default,
     val spi: List<SirAttribute.SPI> = emptyList(),
+    val conditionallyAvailable: Boolean = false,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -17,6 +18,7 @@ class SirImport(
         if (moduleName != other.moduleName) return false
         if (mode != other.mode) return false
         if (spi != other.spi) return false
+        if (conditionallyAvailable != other.conditionallyAvailable) return false
 
         return true
     }
@@ -25,6 +27,7 @@ class SirImport(
         var result = moduleName.hashCode()
         result = 31 * result + mode.hashCode()
         result = 31 * result + spi.hashCode()
+        result = 31 * result + conditionallyAvailable.hashCode()
         return result
     }
 

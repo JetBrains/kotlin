@@ -9,20 +9,31 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFrameDiagnosticsRenderers.TO_DATA_SCHEMA_DECLARATION
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.MaterializedSchema
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 object FirDataFrameErrors : KtDiagnosticsContainer() {
     val CAST_ERROR by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val CAST_TARGET_WARNING by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val MATERIALIZED_SCHEMA_INFO by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val MATERIALIZED_SCHEMA_INFO by info1<MaterializedSchema>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val MATERIALIZED_SCHEMA_ON_CAST by warning1<KtElement, MaterializedSchema>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE by warning0<KtElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC by warning0<KtElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATA_SCHEMA_DECLARATION_VISIBILITY by error1<KtElement, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR by error0<KtElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
+
+    // It could've been an error. Even though dataframe schema is inferred for property return type, scope with extensions is not injected after
+    // property access, only after function call. So, trying to use this property can cause confusion.
+    // At the same time simply enabling plugin in the project can turn AnyFrame or DataFrame<Schema> types into
+    // local DF types and as a result into red code =>
+    // Better to keep it as WARNING and not introduce unnecessary adoption barriers
+    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE by warning1<KtElement, MaterializedSchema>(
+        SourceElementPositioningStrategies.DECLARATION_NAME
+    )
     val DATAFRAME_EXTENSION_PROPERTY_SHADOWED by warning0<KtElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DATA_SCHEMA_LOCAL_DECLARATION by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val DATAFRAME_PLUGIN_IS_DISABLED by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val DATAFRAME_PLUGIN_IS_DISABLED by info1<String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = DataFrameDiagnosticMessages
 
@@ -30,7 +41,8 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
         override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DataFrameDiagnosticMessages") { map ->
             map.put(CAST_ERROR, "Cast cannot succeed \n {0}", TO_STRING)
             map.put(CAST_TARGET_WARNING, "Annotate {0} with @DataSchema to use generated properties.", TO_STRING)
-            map.put(MATERIALIZED_SCHEMA_INFO, "{0}", TO_STRING)
+            map.put(MATERIALIZED_SCHEMA_INFO, "{0}", TO_DATA_SCHEMA_DECLARATION)
+            map.put(MATERIALIZED_SCHEMA_ON_CAST, "{0}", TO_DATA_SCHEMA_DECLARATION)
             map.put(
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE,
                 "The DataFrame compiler plugin is not yet supported in inline functions. " +
@@ -54,7 +66,8 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
             map.put(
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE,
                 "Local types produced by the DataFrame compiler plugin are not yet supported in property return types. " +
-                        "Convert this property to a function or cast it to a DataSchema type."
+                        "Convert this property to a function or cast it to a DataSchema type: \n {0}",
+                TO_DATA_SCHEMA_DECLARATION
             )
             map.put(
                 DATAFRAME_EXTENSION_PROPERTY_SHADOWED,

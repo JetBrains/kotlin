@@ -194,6 +194,10 @@ public abstract class org/jetbrains/kotlin/buildtools/api/KotlinBuildToolsExcept
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/KotlinCompilationProcessFailedException : org/jetbrains/kotlin/buildtools/api/KotlinBuildToolsException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinLogger {
 	public abstract fun debug (Ljava/lang/String;)V
 	public abstract fun error (Ljava/lang/String;Ljava/lang/Throwable;)V
@@ -484,12 +488,13 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field X_DUMP_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_DUMP_FQNAME Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_DUMP_PERF Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_EAGER_LAMBDA_ANALYSIS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_ENABLE_ADDITIONAL_IR_CHECKERS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_ESCAPING_FUNCTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_EXPECT_ACTUAL_CLASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_EXPLICIT_API Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_EXPLICIT_BACKING_FIELDS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_EXPLICIT_CONTEXT_ARGUMENTS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
-	public static final field X_FRAGMENT_INCREMENTAL_CLASSPATH Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_HEADER_MODE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_HEADER_MODE_TYPE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_IGNORE_CONST_OPTIMIZATION_ERRORS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
@@ -907,7 +912,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Jv
 	public static final field X_ANNOTATIONS_IN_METADATA Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_ASSERTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_BACKEND_THREADS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
-	public static final field X_COMMON_FRAGMENTS_METADATA_DESTINATION Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_COMPILE_BUILTINS_AS_PART_OF_STDLIB Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_DEBUG Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_DEFAULT_SCRIPT_EXTENSION Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
@@ -1113,11 +1117,13 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Wa
 	public static final field X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_GENERATE_DWARF Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_GENERATE_WAT Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
+	public static final field X_WASM_IC_GENERATE_UNCHANGED_MODULES Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_INCLUDED_MODULE_ONLY Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_NO_JSTAG Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_USE_NEW_EXCEPTION_PROPOSAL Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
+	public static final field X_WASM_USE_STACK_SWITCHING_PROPOSAL Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;)Ljava/lang/Object;
 }
@@ -1173,6 +1179,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/Compatqua
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy : java/lang/Enum {
+	public static final field ALLOW_ALL Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
 	public static final field ALLOW_ALL_WITH_WARNING Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
 	public static final field ALLOW_FIRST_WITH_WARNING Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
 	public static final field DENY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
@@ -1335,6 +1342,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVer
 	public static final field V2_4 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion;
 	public static final field V2_5 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion;
 	public static final field V2_6 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion;
+	public static final field V2_7 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion;
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion;
@@ -1973,6 +1981,7 @@ public final class org/jetbrains/kotlin/buildtools/api/wasm/WasmHistoryBasedIncr
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/wasm/WasmHistoryBasedIncrementalCompilationConfiguration$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/wasm/WasmIncrementalCompilationConfiguration {
@@ -2020,6 +2029,7 @@ public final class org/jetbrains/kotlin/buildtools/api/wasm/operations/WasmKlibC
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/wasm/operations/WasmKlibCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/wasm/operations/WasmKlibCompilationOperationKt {
@@ -2045,5 +2055,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/wasm/operati
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/wasm/operations/WasmLinkingOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 

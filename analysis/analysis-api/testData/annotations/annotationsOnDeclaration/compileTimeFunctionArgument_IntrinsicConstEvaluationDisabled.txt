@@ -1,0 +1,5 @@
+KtDeclaration: KtNamedFunction foo
+annotations: [
+  Anno(number = 3600, value = error("non-annotation value"))
+    psi: KtAnnotationEntry
+]

@@ -148,7 +148,9 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
                     it.dependsOn(project.binaryenSetupTaskProvider)
                 }
                 it.dependsOn(compilation.compileTaskProvider)
-                if (project.kotlinPropertiesProvider.wasmPerModule && compilation.wasmTarget.supportsPerKlibCompilation()) {
+                val isOpenWorld = project.kotlinPropertiesProvider.wasmCompilationMode.isOpenWorld()
+                val supportsPerKlibCompilation = compilation.wasmTarget.supportsPerKlibCompilation()
+                if (isOpenWorld && supportsPerKlibCompilation) {
                     it.binaryenArguments.set(BinaryenConfig.binaryenMultimoduleArgs)
                 }
                 it.configuration()

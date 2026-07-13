@@ -17,9 +17,13 @@
 package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.core.CoreJavaFileManager
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.search.GlobalSearchScope
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -32,14 +36,28 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
+import org.junit.jupiter.api.assertNull
 import java.io.File
 
-class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
-    private lateinit var javaFilesDir: File
+class KotlinCliJavaFileManagerTest {
+    private val testRootDisposable: Disposable = Disposer.newDisposable()
+    private var javaFilesDir: File = KtTestUtil.tmpDir("java-file-manager-test")
+    private val project: Project = createProject()
 
+    @AfterEach
+    fun tearDown() {
+        javaFilesDir.deleteRecursively()
+        disposeRootDisposable(testRootDisposable)
+    }
+
+    @Test
     fun testCommon() {
         val manager = configureManager(
             """
@@ -63,6 +81,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         assertCannotFind(manager, "foo", "TopLevel.Inner.Inner.Inner")
     }
 
+    @Test
     fun testInnerClassesWithDollars() {
         val manager = configureManager(
             "package foo;\n\n" +
@@ -121,6 +140,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         assertCannotFind(manager, "foo", "TopLevel.In.ner\$\$.\$\$\$\$\$")
     }
 
+    @Test
     fun testTopLevelClassesWithDollars() {
         val inTheMiddle = configureManager("package foo;\n\n public class Top\$Level {}", "Top\$Level")
         assertCanFind(inTheMiddle, "foo", "Top\$Level")
@@ -136,6 +156,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         assertCanFind(twoBucks, "foo", "\$\$")
     }
 
+    @Test
     fun testTopLevelClassWithDollarsAndInners() {
         val manager = configureManager(
             "package foo;\n\n" + "public class Top\$Level\$\$ {\n" +
@@ -159,6 +180,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         assertCannotFind(manager, "foo", "Top.Level\$\$.I\$nner.\$\$\$\$\$")
     }
 
+    @Test
     fun testDoNotThrowOnMalformedInput() {
         val fileWithEmptyName = configureManager("package foo;\n\n public class Top\$Level {}", "")
         val allScope = GlobalSearchScope.allScope(project)
@@ -168,6 +190,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         fileWithEmptyName.findClass(".foo", allScope)
     }
 
+    @Test
     fun testSeveralClassesInOneFile() {
         val manager = configureManager("package foo;\n\n" + "public class One {}\n" + "class Two {}\n" + "class Three {}", "One")
 
@@ -178,21 +201,26 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         assertCannotFind(manager, "foo", "Three")
     }
 
+    @Test
     fun testScopeCheck() {
         val manager = configureManager("package foo;\n\n" + "public class Test {}\n", "Test")
 
-        assertNotNull("Should find class in all scope", manager.findClass("foo.Test", GlobalSearchScope.allScope(project)))
-        assertNull("Should not find class in empty scope", manager.findClass("foo.Test", GlobalSearchScope.EMPTY_SCOPE))
+        assertNotNull(manager.findClass("foo.Test", GlobalSearchScope.allScope(project))) { "Should find class in all scope" }
+        assertNull(manager.findClass("foo.Test", GlobalSearchScope.EMPTY_SCOPE)) { "Should not find class in empty scope" }
     }
 
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        javaFilesDir = KtTestUtil.tmpDir("java-file-manager-test")
-
+    private fun createProject(): Project {
         val configuration = KotlinTestUtils.newConfiguration(
             ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir)
         )
 
-        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        @OptIn(CoreEnvironmentDeprecation::class)
+        val environment =  KotlinCoreEnvironment.createForParallelTests(
+            testRootDisposable,
+            configuration,
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
+        return environment.project
     }
 
     private fun configureManager(@Language("JAVA") text: String, className: String): KotlinCliJavaFileManagerImpl {
@@ -227,19 +255,21 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         val foundByClassId = (manager.findClass(classId, allScope) as JavaClassImpl).psi
         val foundByString = manager.findClass(stringRequest, allScope)
 
-        assertNotNull("Could not find: $classId", foundByClassId)
-        assertNotNull("Could not find: $stringRequest", foundByString)
+        assertNotNull(foundByClassId) { "Could not find: $classId" }
+        assertNotNull(foundByString) { "Could not find: $stringRequest" }
 
         assertEquals(foundByClassId, foundByString)
         assertEquals(
-            "Found ${foundByClassId.qualifiedName} instead of $packageFQName", packageFQName + "." + classFqName,
+            "$packageFQName.$classFqName",
             foundByClassId.qualifiedName
-        )
+        ) {
+            "Found ${foundByClassId.qualifiedName} instead of $packageFQName"
+        }
     }
 
     private fun assertCannotFind(manager: KotlinCliJavaFileManagerImpl, packageFQName: String, classFqName: String) {
         val classId = ClassId(FqName(packageFQName), FqName(classFqName), isLocal = false)
         val foundClass = manager.findClass(classId, GlobalSearchScope.allScope(project))
-        assertNull("Found, but shouldn't have: $classId", foundClass)
+        assertNull(foundClass) { "Found, but shouldn't have: $classId" }
     }
 }

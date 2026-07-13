@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java.lazy.types
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
@@ -140,7 +141,26 @@ class JavaTypeResolver(
     }
 
     private fun computeTypeConstructor(javaType: JavaClassifierType, attr: JavaTypeAttributes): TypeConstructor? {
-        val classifier = javaType.classifier ?: return createNotFoundClass(javaType)
+        val classifier = javaType.classifier
+        if (classifier == null) {
+            val fqName = FqName(javaType.classifierQualifiedName)
+            if (!fqName.isRoot) {
+                var pkgFqn = fqName.parent()
+                var classFqn = FqName.topLevel(fqName.shortName())
+
+                while (true) {
+                    val candidateClassId = ClassId(pkgFqn, classFqn, isLocal = false)
+                    val classDescriptor = c.module.findClassAcrossModuleDependencies(candidateClassId)
+                    if (classDescriptor != null) {
+                        return classDescriptor.typeConstructor
+                    }
+                    if (pkgFqn.isRoot) break
+                    classFqn = FqName(pkgFqn.shortName().asString() + "." + classFqn.asString())
+                    pkgFqn = pkgFqn.parent()
+                }
+            }
+            return createNotFoundClass(javaType)
+        }
         return when (classifier) {
             is JavaClass -> {
                 val fqName = classifier.fqName.sure { "Class type should have a FQ name: $classifier" }

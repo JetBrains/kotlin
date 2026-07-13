@@ -149,7 +149,7 @@ object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecke
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCallableReferenceAccess) {
         val lhs = expression.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
-        val correspondingDeclaration = lhs.symbol ?: return
+        val correspondingDeclaration = lhs.qualifierSymbol ?: return
         for (argument in lhs.typeArguments) {
             val errorTypeRef = (argument as? FirTypeProjectionWithVariance)?.typeRef as? FirErrorTypeRef ?: continue
 

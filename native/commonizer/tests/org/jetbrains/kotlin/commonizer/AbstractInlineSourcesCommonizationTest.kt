@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.De
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.Parameters
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.fail
 

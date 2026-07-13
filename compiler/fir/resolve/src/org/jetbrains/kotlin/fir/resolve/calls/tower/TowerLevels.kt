@@ -112,7 +112,7 @@ class DispatchReceiverMemberScopeTowerLevel(
                 // with two exceptions:
                 // - When the smart-casted type is always null, we want to return it and report UNSAFE_CALL.
                 // - When the original type can be null, in this case the smart-case either makes it not-null or the call is red anyway.
-                if (existing == null || dispatchReceiverValue.type.isNullableNothing || receiverTypeWithoutSmartCast.canBeNull(session)) {
+                if (existing == null || dispatchReceiverValue.type.isNullableNothing || receiverTypeWithoutSmartCast.canBeNull()) {
                     map[memberFromSmartcast] = MemberFromSmartcastScope(
                         MemberWithBaseScope(memberFromSmartcast, scope),
                         DispatchReceiverToUse.SmartcastWithoutUnwrapping

@@ -3,7 +3,6 @@ KtThisExpression(65,69): 'this'
     symbols = [
       KaScriptSymbol:
         annotations: []
-        compilerVisibility: Local
         isActual: false
         isExpect: false
         isExternal: false

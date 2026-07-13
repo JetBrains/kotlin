@@ -1,0 +1,7 @@
+KtNameReferenceExpression(492,506): 'TypeAliasOwner'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TypeAliasOwner
+    ]

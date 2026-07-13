@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.storage.StorageManager
 import java.lang.ref.SoftReference
 
-@K1Deprecation
 open class KlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     private val library: KotlinLibrary,
@@ -58,7 +57,6 @@ open class KlibMetadataDeserializedPackageFragment(
         }
 }
 
-@K1Deprecation
 class BuiltInKlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     library: KotlinLibrary,
@@ -83,7 +81,6 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
         get() = false
 }
 
-@K1Deprecation
 class KlibMetadataCachedPackageFragment(
     byteArray: ByteArray,
     storageManager: StorageManager,
@@ -92,7 +89,7 @@ class KlibMetadataCachedPackageFragment(
     fqName: FqName = FqName(protoForNames.getExtension(KlibMetadataProtoBuf.fqName))
 ) : KlibMetadataPackageFragment(fqName, storageManager, module, containerSource = null)
 
-@K1Deprecation
+@OptIn(K1Deprecation::class)
 abstract class KlibMetadataPackageFragment(
     fqName: FqName,
     storageManager: StorageManager,
@@ -113,17 +110,17 @@ abstract class KlibMetadataPackageFragment(
     open val proto: ProtoBuf.PackageFragment
         get() = protoForNames
 
-    private val nameResolver by lazy {
+    private val nameResolver: NameResolverImpl by lazy {
         NameResolverImpl(protoForNames.strings, protoForNames.qualifiedNames)
     }
 
-    override val classDataFinder by lazy {
+    override val classDataFinder: KlibMetadataClassDataFinder by lazy {
         KlibMetadataClassDataFinder(protoForNames, nameResolver, containerSource)
     }
 
     override fun getSource(): SourceElement = containerSource ?: super.source
 
-    private val _memberScope by lazy {
+    private val _memberScope: DeserializedPackageMemberScope by lazy {
         DeserializedPackageMemberScope(
             this,
             proto.getPackage(),

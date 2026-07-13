@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExternalSourceTransformersProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformer
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WORKS_WHEN_VALUE_CLASS
 import org.jetbrains.kotlin.test.preprocessors.JvmInlineSourceTransformer
+import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -18,13 +18,16 @@ import java.io.File
 abstract class AbstractNativeCodegenBoxTest : AbstractNativeBlackBoxTest() {
     override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? {
         val needTransform = "// $WORKS_WHEN_VALUE_CLASS" in testDataFile.readText()
-        val transformer = object : ExternalSourceTransformer {
+        val jvmInlineTransformer = object : ExternalSourceTransformer {
             override fun invoke(content: String): String {
                 if (!needTransform) return content
                 val contentModifier = JvmInlineSourceTransformer.computeModifier(TargetBackend.NATIVE)
                 return contentModifier.invoke(content)
             }
         }
-        return listOf(transformer)
+        return listOf(
+            jvmInlineTransformer,
+            ReplacingSourceTransformer("BACKEND_UNDER_TEST", "\"NATIVE\""),
+        )
     }
 }

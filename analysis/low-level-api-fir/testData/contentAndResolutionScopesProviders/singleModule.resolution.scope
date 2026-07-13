@@ -1,4 +1,6 @@
 Resulting Resolution Scope:
 Module MAIN:
-    c.kt
-    d.kt
+    - a.kt
+    - b.kt
+    + c.kt
+    + d.kt

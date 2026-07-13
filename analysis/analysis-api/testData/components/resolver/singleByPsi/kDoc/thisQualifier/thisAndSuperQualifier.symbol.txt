@@ -33,7 +33,7 @@
         KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -52,6 +52,7 @@
             annotations: []
             typeArguments: []
             type: kotlin/Long
+          typeParameters: []
           visibility: PUBLIC
       ]
 
@@ -62,7 +63,7 @@
         KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -81,5 +82,6 @@
             annotations: []
             typeArguments: []
             type: kotlin/Long
+          typeParameters: []
           visibility: PUBLIC
       ]

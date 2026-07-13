@@ -91,5 +91,5 @@ private fun IrModuleFragment.addFile(fileEntry: IrFileEntry, packageFqName: FqNa
         override fun getMemberScope(): MemberScope = MemberScope.Empty
     }
 
-    return IrFileImpl(fileEntry, packageFragmentDescriptor).also(this::addFile)
+    return IrFileImpl(fileEntry, packageFragmentDescriptor, this).also(this::addFile)
 }

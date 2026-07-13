@@ -4,6 +4,9 @@ import org.gradle.internal.jvm.Jvm
 description = "Kotlin \"main\" script definition"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -47,7 +50,10 @@ dependencies {
     proguardLibraryJars(project(":kotlin-compiler"))
 
     testImplementation(project(":kotlin-scripting-dependencies"))
-    testImplementation(libs.junit4)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
@@ -56,8 +62,6 @@ sourceSets {
 }
 
 publish()
-
-noDefaultJar()
 
 val embeddedConfiguration = configurations.named("embedded")
 val relocatedJar by task<ShadowJar> {
@@ -123,3 +127,7 @@ val resultJar by task<Jar> {
 setPublishableArtifact(resultJar)
 sourcesJar()
 javadocJar()
+
+tasks.test {
+    useJUnitPlatform()
+}

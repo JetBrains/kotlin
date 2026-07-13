@@ -165,7 +165,7 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         val klibFile = info.outputFile
 
-        metadataDumper[module] += klibFile.dumpMetadata(kotlinNativeClassLoader, printSignatures = false, signatureVersion = null)
+        metadataDumper[module] += klibFile.dumpMetadata(kotlinNativeClassLoader)
         irDumper[module] += klibFile.dumpIrAndSanitizePathsInFileEntries(
             kotlinNativeClassLoader,
             module.independentSourceDirectoryPathsTransitive(testServices)

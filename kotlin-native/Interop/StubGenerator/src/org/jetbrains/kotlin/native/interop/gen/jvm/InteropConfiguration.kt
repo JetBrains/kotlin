@@ -36,6 +36,7 @@ class InteropConfiguration(
         val disableExperimentalAnnotation: Boolean,
         val target: KonanTarget,
         val cCallMode: CCallMode,
+        val headerMode: Boolean = false,
 )
 
 enum class KotlinPlatform {

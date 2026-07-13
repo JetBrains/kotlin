@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
-import org.jetbrains.kotlin.ir.util.getValueArgument
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isAnnotation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeRuntimeNames
@@ -30,8 +29,8 @@ private val IrAnnotation.bindClassToObjCName: BindClassToObjCName?
         if (!isAnnotation(NativeRuntimeNames.Annotations.BindClassToObjCName.asSingleFqName())) {
             return null
         }
-        val kotlinClass = (getValueArgument(Name.identifier("kotlinClass")) as IrClassReference).classType.getClass()!!
-        val objCName = getAnnotationStringValue("objCName")
+        val kotlinClass = (argumentMapping[Name.identifier("kotlinClass")] as IrClassReference).classType.getClass()!!
+        val objCName = getConstArgument<String>("objCName")!!
         return BindClassToObjCName(this, kotlinClass, objCName)
     }
 

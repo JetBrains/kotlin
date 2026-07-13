@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
 import org.jetbrains.kotlin.backend.konan.cexport.*
@@ -20,6 +21,8 @@ internal val BuildCExports = createSimpleNamedCompilerPhase<LinkKlibsContext, Fr
         outputIfNotEnabled = { _, _, _, _ -> error("") }
 ) { context, input ->
     val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
+
+    @OptIn(K1Deprecation::class)
     val typeTranslator = CAdapterTypeTranslator(prefix, context.builtIns)
     CAdapterGenerator(context, input.environment.configuration, typeTranslator).buildExports(input.moduleDescriptor)
 }

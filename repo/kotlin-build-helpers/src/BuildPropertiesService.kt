@@ -25,11 +25,13 @@ internal abstract class BuildPropertiesBuildService @Inject constructor(
 
     interface Params : BuildServiceParameters {
         val localProperties: MapProperty<String, String>
+        val versionProperties: MapProperty<String, String>
     }
 
     private val propertiesPerProject = ConcurrentHashMap<String, Provider<String>>()
 
     private val localProperties by lazy { parameters.localProperties.get() }
+    private val versionProperties by lazy { parameters.versionProperties.get() }
 
     internal fun property(
         propertyName: String
@@ -65,6 +67,17 @@ internal abstract class BuildPropertiesBuildService @Inject constructor(
         }
     }
 
+    internal fun versionsProperty(
+        propertyName: String
+    ): Provider<String> {
+        return propertiesPerProject.computeIfAbsent("versionsProp/$propertyName") {
+            val valueFromVersionProperties = MemoizedCallable {
+                versionProperties[propertyName]
+            }
+            providerFactory.provider { valueFromVersionProperties.call() }
+        }
+    }
+
     companion object {
 
         fun registerIfAbsent(
@@ -77,7 +90,10 @@ internal abstract class BuildPropertiesBuildService @Inject constructor(
                 BuildPropertiesBuildService::class.java
             ) {
                 it.parameters.localProperties.set(
-                    providerFactory.localProperties(rootDir)
+                    providerFactory.propertiesFromFile(rootDir.resolve("local.properties"))
+                )
+                it.parameters.versionProperties.set(
+                    providerFactory.propertiesFromFile(rootDir.resolve("gradle/versions.properties"))
                 )
             }
     }

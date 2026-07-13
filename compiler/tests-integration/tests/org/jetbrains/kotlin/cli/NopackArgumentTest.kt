@@ -15,24 +15,29 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 
 private const val EMPTY_MAIN_FUN = "fun main() {}"
 
 class NopackArgumentTest : TestCaseWithTmpdir() {
 
+    @Test
     fun testDefault() {
         nopackTest(
             expectedProduceKlibFile = true, expectedProduceKlibDir = false
         )
     }
 
+    @Test
     fun testNopackTrue() {
         nopackTest(
             nopackArgument = true, expectedProduceKlibFile = false, expectedProduceKlibDir = true
         )
     }
 
+    @Test
     fun testLegacyOverridesNopackDefault() {
         nopackTest(
             produceKlibDirArgument = true,
@@ -44,6 +49,7 @@ class NopackArgumentTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testLegacyOverridesExplicitNopack() {
         nopackTest(
             nopackArgument = true,
@@ -61,7 +67,7 @@ class NopackArgumentTest : TestCaseWithTmpdir() {
         val args = makeCompilerArgs(sourceFiles, tmpdir) + additionalArgs
         val diagnostics = mutableListOf<Diagnostic>()
         val result = CompilerTestUtil.executeCompiler(K2JSCompiler(), args, LoggingMessageRenderer(diagnostics)).second
-        assertEquals("Compilation failed with exit code $result", ExitCode.OK, result)
+        assertEquals(ExitCode.OK, result) { "Compilation failed with exit code $result" }
         return diagnostics
     }
 
@@ -121,8 +127,8 @@ class NopackArgumentTest : TestCaseWithTmpdir() {
         val diagnostics = compileAndGetDiagnostics(listOf(mainKt), additionalArgs)
         val produceKlibFile = diagnostics.extractBooleanConfiguration("PRODUCE_KLIB_FILE")
         val produceKlibDir = diagnostics.extractBooleanConfiguration("PRODUCE_KLIB_DIR")
-        assertEquals("PRODUCE_KLIB_FILE", expectedProduceKlibFile, produceKlibFile)
-        assertEquals("PRODUCE_KLIB_DIR", expectedProduceKlibDir, produceKlibDir)
+        assertEquals(expectedProduceKlibFile, produceKlibFile, "PRODUCE_KLIB_FILE")
+        assertEquals(expectedProduceKlibDir, produceKlibDir, "PRODUCE_KLIB_DIR")
     }
 
     private fun List<Diagnostic>.extractBooleanConfiguration(key: String): Boolean? =

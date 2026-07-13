@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblem
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporterG811
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG811
+import org.jetbrains.kotlin.gradle.plugin.internal.*
 
 private const val PLUGIN_VARIANT_NAME = "gradle811"
 
@@ -66,4 +67,5 @@ private fun Project.registerVariantImplementations() {
         ProblemsReporterG811.Factory()
     factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
         CompilerDiagnosticsProblemsReporterG811.Factory()
+    factories[BuildNeededDependentTasksWiringProvider.Factory::class] = BuildNeededDependentTaskWiringProviderG95.Factory()
 }

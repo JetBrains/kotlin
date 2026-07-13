@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -1059,13 +1060,12 @@ class BodyResolveContext(
         }
 
         return withTowerDataCleanup {
-            val receiverTypeRef = property.receiverParameter?.typeRef
             addLocalScope(FirLocalScope(holder.session))
             for (parameter in property.contextParameters) {
                 storeValueParameterIfNeeded(parameter, holder.session)
             }
 
-            if (!forContracts && receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
+            if (!forContracts && !property.isInstanceExtension && property.returnTypeRef !is FirImplicitTypeRef &&
                 property.symbol is FirRegularPropertySymbol && property.delegate == null &&
                 property.contextParameters.isEmpty()
             ) {
@@ -1073,7 +1073,7 @@ class BodyResolveContext(
             }
 
             withContainer(accessor) {
-                val type = receiverTypeRef?.coneType
+                val type = property.receiverParameter?.typeRef?.coneType
 
                 withPublicApiInlineFunctionIfApplicable(accessor) {
                     withLabelAndReceiverType(property.name, property, type, holder, f)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.test.framework.services.AnalysisApiTestOutputSanitizer
 import org.jetbrains.kotlin.analysis.test.framework.services.KmpSymbolTestOutputSanitizer
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -48,7 +49,7 @@ abstract class AbstractSingleSymbolByPsiTest : AbstractSymbolTest() {
             else -> error("Selected element type should be a declaration or a file")
         }
 
-        return SymbolsData(listOf(symbol))
+        return SymbolsData(listOfNotNull(symbol, (symbol as? KaValueParameterSymbol)?.primaryConstructorProperty))
     }
 }
 

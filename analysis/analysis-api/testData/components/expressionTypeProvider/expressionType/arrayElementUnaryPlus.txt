@@ -1,2 +1,3 @@
 expression: +x[0]
+expression PSI: KtPrefixExpression
 type: kotlin.Int

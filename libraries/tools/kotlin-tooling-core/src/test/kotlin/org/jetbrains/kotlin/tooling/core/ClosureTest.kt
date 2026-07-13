@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.tooling.core
 
-import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class ClosureTest {
 
@@ -807,5 +806,17 @@ class ClosureTest {
             ),
             listOf(nodeA, nodeB, nodeC).withClosureGroupingByDistance { it.children }.map { it.map { it.value } },
         )
+    }
+
+    private fun <T> assertSame(expected: T, actual: T, message: String) {
+        Assertions.assertSame(expected, actual, message)
+    }
+
+    private fun <T> assertEquals(expected: T, actual: T) {
+        Assertions.assertEquals(expected, actual)
+    }
+
+    private fun <T> assertEquals(expected: T, actual: T, message: String) {
+        Assertions.assertEquals(expected, actual, message)
     }
 }

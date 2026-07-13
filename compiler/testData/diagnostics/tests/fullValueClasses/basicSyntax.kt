@@ -1,4 +1,4 @@
-// LANGUAGE: +FullValueClasses, -EnableNameBasedDestructuringShortForm
+// LANGUAGE: +FullValueClasses +NameBasedDestructuring -EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
@@ -44,10 +44,10 @@ value class UnitWrapper(val x: Unit)
 
 
 @JvmInline
-value class BasicSingleFieldValueClass(val x: Int)
+value class JvmInlineInlineClass(val x: Int)
 
 @JvmInline
-value class BasicMultiFieldValueClass<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: Int)<!>
+value class JvmInlineMultiFieldValueClass<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: Int)<!>
 
 value class Delegation(val x: Int) : Comparable<Int> by x
 value class Delegation1(val x: Int) : <!VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION!>Comparable<Int><!> by (x.let { 2 + 2 })
@@ -63,7 +63,7 @@ value class OverridingOld(val x: Int) : <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>C<!
 
 fun main() {
     A(2).<!UNRESOLVED_REFERENCE!>copy<!>()
-    val (x) = <!COMPONENT_FUNCTION_MISSING!>A(2)<!>
+    val (x) = A(2)
 }
 
 

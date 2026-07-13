@@ -24,19 +24,14 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.junit.jupiter.api.Test
 
 class FirLightTreeLinkageModeTest : JvmIrLinkageModeTest() {
-    override val useFir: Boolean
-        get() = true
-
     override val firParser: FirParser
         get() = FirParser.LightTree
 }
 
 class FirPsiLinkageModeTest : JvmIrLinkageModeTest() {
-    override val useFir: Boolean
-        get() = true
-
     override val firParser: FirParser
         get() = FirParser.Psi
 }
@@ -60,18 +55,20 @@ abstract class JvmIrLinkageModeTest : CodegenTestCase() {
         var property: S? = "OK"
     """.trimIndent()
 
+    @Test
     fun testLinkageViaDescriptors() {
         enableLinkageViaSignatures = false
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.NO_KOTLIN_REFLECT)
         loadText(source)
-        generateAndCreateClassLoader(true)
+        generateAndCreateClassLoader()
     }
 
+    @Test
     fun testLinkageViaSignatures() {
         enableLinkageViaSignatures = true
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.NO_KOTLIN_REFLECT)
         loadText(source)
-        generateAndCreateClassLoader(true)
+        generateAndCreateClassLoader()
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
@@ -82,16 +79,15 @@ abstract class JvmIrLinkageModeTest : CodegenTestCase() {
     }
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        val idSignatureShouldBePresent = !useFir && environment.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
         val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
         with(extensionStorage) {
-            IrGenerationExtension.registerExtension(LinkageTestIrExtension(idSignatureShouldBePresent))
+            IrGenerationExtension.registerExtension(LinkageTestIrExtension())
         }
         extensionStorage.registerInProject(environment.project)
         super.setupEnvironment(environment)
     }
 
-    private class LinkageTestIrExtension(val idSignatureShouldBePresent: Boolean) : IrGenerationExtension {
+    private class LinkageTestIrExtension : IrGenerationExtension {
         override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
             val file = moduleFragment.files.single()
             val signatures = mutableListOf<IdSignature>()
@@ -106,20 +102,7 @@ abstract class JvmIrLinkageModeTest : CodegenTestCase() {
                 }
             })
             val allSignatures = signatures.map { it.render().substringBefore("|") }.toSet()
-            if (idSignatureShouldBePresent) {
-                val message = allSignatures.sorted().joinToString("\n")
-                assertTrue(message, "test/Class" in allSignatures)
-                assertTrue(message, "test/Interface" in allSignatures)
-                assertTrue(message, "test/Sealed" in allSignatures)
-                assertTrue(message, "test/E" in allSignatures)
-                assertTrue(message, "test/function" in allSignatures)
-                assertTrue(message, "test/S" in allSignatures)
-                assertTrue(message, "test/property" in allSignatures)
-                assertTrue(message, "test/property.<get-property>" in allSignatures)
-                assertTrue(message, "test/property.<set-property>" in allSignatures)
-            } else {
-                assertEmpty(allSignatures)
-            }
+            assert(allSignatures.isEmpty())
         }
     }
 }

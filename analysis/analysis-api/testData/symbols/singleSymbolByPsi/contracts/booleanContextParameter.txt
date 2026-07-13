@@ -4,12 +4,11 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /validate
-  compilerVisibility: Public
   contextParameters: [
     KaContextParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -27,11 +26,12 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(booleanContextParameter.kt)
       getContainingJvmClassName: BooleanContextParameterKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -54,7 +54,7 @@ KaNamedFunctionSymbol:
                 KaContextParameterSymbol:
                   annotations: []
                   callableId: null
-                  compilerVisibility: Public
+                  contextParameters: []
                   contextReceivers: []
                   isActual: false
                   isCompanion: false
@@ -72,11 +72,12 @@ KaNamedFunctionSymbol:
                     annotations: []
                     typeArguments: []
                     type: kotlin/String?
+                  typeParameters: []
                   visibility: PUBLIC
                   getContainingFileSymbol: KaFileSymbol(booleanContextParameter.kt)
                   getContainingJvmClassName: BooleanContextParameterKt
                   getContainingModule: KaSourceModule "Sources of main"
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: null
           isNegated: true
   ]
@@ -108,9 +109,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -128,16 +128,18 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: param
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(booleanContextParameter.kt)
       getContainingJvmClassName: BooleanContextParameterKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -145,6 +147,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: BooleanContextParameterKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: validate

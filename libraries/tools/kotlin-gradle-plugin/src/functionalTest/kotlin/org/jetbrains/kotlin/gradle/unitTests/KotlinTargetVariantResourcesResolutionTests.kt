@@ -332,7 +332,6 @@ class KotlinTargetVariantResourcesResolutionTests {
         preApplyCode = preApplyCode,
     ) {
         enableDefaultStdlibDependency(true)
-        repositories.mavenLocal()
         repositories.mavenCentralCacheRedirector()
         code()
     }

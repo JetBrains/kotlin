@@ -57,7 +57,8 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
             Bad("2.2-Beta1"),
             Good("2.3"),
             Good("2.4"),
-            Bad("2.5"),
+            Good("2.5"),
+            Bad("2.6"),
         ).forEach { testData ->
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
@@ -158,11 +159,11 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
                     val library = loadedKlibs.librariesStdlibFirst.first()
 
                     assertEquals(testData.expectedAbiVersion, library.versions.abiVersion?.toString()) {
-                        "Unexpected ABI version for ${library.location}: ${library.versions.abiVersion} instead of ${testData.expectedAbiVersion}"
+                        "Unexpected ABI version for ${library.path}: ${library.versions.abiVersion} instead of ${testData.expectedAbiVersion}"
                     }
 
                     assertEquals(testData.expectedMetadataVersion, library.versions.metadataVersion?.toString()) {
-                        "Unexpected metadata version for ${library.location}: ${library.versions.metadataVersion} instead of ${testData.expectedMetadataVersion}"
+                        "Unexpected metadata version for ${library.path}: ${library.versions.metadataVersion} instead of ${testData.expectedMetadataVersion}"
                     }
                 }
 

@@ -56,7 +56,7 @@ fun ClassLoweringPass.runOnFileInOrder(irFile: IrFile) {
 }
 
 
-class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugin: SerializationDescriptorSerializerPlugin?) :
+class SerializationPluginContext(baseContext: IrPluginContext) :
     IrPluginContext by baseContext, SerializationBaseContext {
 
     internal val copiedStaticWriteSelf: MutableMap<IrSimpleFunction, IrSimpleFunction> = ConcurrentHashMap()
@@ -146,10 +146,9 @@ private inline fun IrClass.runPluginSafe(block: () -> Unit) {
 
 private class SerializerClassLowering(
     baseContext: IrPluginContext,
-    metadataPlugin: SerializationDescriptorSerializerPlugin?,
     moduleFragment: IrModuleFragment
 ) : IrElementTransformerVoid(), ClassLoweringPass {
-    val context: SerializationPluginContext = SerializationPluginContext(baseContext, metadataPlugin)
+    val context: SerializationPluginContext = SerializationPluginContext(baseContext)
 
     // Lazy to avoid creating generator in non-JVM backends
     private val serialInfoJvmGenerator by lazy(LazyThreadSafetyMode.NONE) { SerialInfoImplJvmIrGenerator(context, moduleFragment) }
@@ -157,7 +156,7 @@ private class SerializerClassLowering(
     override fun lower(irClass: IrClass) {
         irClass.runPluginSafe {
             SerializableIrGenerator.generate(irClass, context)
-            SerializerIrGenerator.generate(irClass, context, context.metadataPlugin)
+            SerializerIrGenerator.generate(irClass, context)
             SerializableCompanionIrGenerator.generate(irClass, context)
 
             if (context.platform.isJvm() && irClass.isSerialInfoAnnotation) {
@@ -170,7 +169,7 @@ private class SerializerClassLowering(
 private class SerializerClassPreLowering(
     baseContext: IrPluginContext
 ) : IrElementTransformerVoid(), ClassLoweringPass {
-    val context: SerializationPluginContext = SerializationPluginContext(baseContext, null)
+    val context: SerializationPluginContext = SerializationPluginContext(baseContext)
 
     override fun lower(irClass: IrClass) {
         irClass.runPluginSafe {
@@ -186,23 +185,15 @@ enum class SerializationIntrinsicsState {
 }
 
 open class SerializationLoweringExtension @JvmOverloads constructor(
-    private val metadataPlugin: SerializationDescriptorSerializerPlugin? = null
+    private val intrinsicsState: SerializationIntrinsicsState = SerializationIntrinsicsState.NORMAL
 ) : IrGenerationExtension {
-
-    private var intrinsicsState = SerializationIntrinsicsState.NORMAL
-
-    constructor(metadataPlugin: SerializationDescriptorSerializerPlugin, intrinsicsState: SerializationIntrinsicsState) : this(
-        metadataPlugin
-    ) {
-        this.intrinsicsState = intrinsicsState
-    }
 
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
     ) {
         val pass1 = SerializerClassPreLowering(pluginContext)
-        val pass2 = SerializerClassLowering(pluginContext, metadataPlugin, moduleFragment)
+        val pass2 = SerializerClassLowering(pluginContext, moduleFragment)
         moduleFragment.files.forEach(pass1::runOnFileInOrder)
         moduleFragment.files.forEach(pass2::runOnFileInOrder)
     }

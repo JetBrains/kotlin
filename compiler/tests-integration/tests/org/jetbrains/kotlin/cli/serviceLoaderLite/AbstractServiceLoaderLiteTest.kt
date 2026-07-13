@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.serviceLoaderLite
 
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.junit.jupiter.api.fail
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream

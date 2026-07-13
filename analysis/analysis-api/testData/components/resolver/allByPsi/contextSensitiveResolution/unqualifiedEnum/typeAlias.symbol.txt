@@ -39,7 +39,7 @@ KtUserType(120,124): 'Some'
 
 KtNameReferenceExpression(120,124): 'Some'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Some
@@ -68,7 +68,7 @@ KtUserType(137,142): 'Other'
 
 KtNameReferenceExpression(137,142): 'Other'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Other
@@ -79,7 +79,7 @@ KtWhenExpression(146,189): 'when (o) {'
 
 KtNameReferenceExpression(152,153): 'o'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       o: {Other=} Some
@@ -93,7 +93,7 @@ KtWhenConditionWithExpression(161,166): 'FIRST'
 
 KtNameReferenceExpression(161,166): 'FIRST'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /Some.FIRST
@@ -110,7 +110,7 @@ KtWhenConditionWithExpression(176,182): 'SECOND'
 
 KtNameReferenceExpression(176,182): 'SECOND'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /Some.SECOND

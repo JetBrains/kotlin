@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -32,10 +33,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.junit.ComparisonFailure
-import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 abstract class JsAbstractInvalidationTest(
@@ -69,6 +70,7 @@ abstract class JsAbstractInvalidationTest(
         TestDisposable("${JsAbstractInvalidationTest::class.simpleName}.rootDisposable")
 
     override val environment: KotlinCoreEnvironment =
+        @OptIn(CoreEnvironmentDeprecation::class)
         KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration.create(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
     override fun testConfiguration(buildDir: File): KlibCompilerInvocationTestUtils.TestConfiguration =
@@ -242,7 +244,7 @@ abstract class JsAbstractInvalidationTest(
                 }
 
                 val gotDTS = dtsFile.readText()
-                JUnit4Assertions.assertEquals(expectedDTS.content, gotDTS) {
+                JUnit4Assertions.assertEqualsToFile(expectedDTS.file, gotDTS, { it }) {
                     "Mismatched $$dtsFileExtension for module ${info.moduleName} at step $stepId"
                 }
             }

@@ -4,11 +4,40 @@ library {
   library fragment {
     // package name: test
 
+    // class name: test/Weapon
+    // class name: test/JustEnum
+    // class name: test/EnumArray
     // class name: test/C1
     // class name: test/C2
-    // class name: test/EnumArray
-    // class name: test/JustEnum
-    // class name: test/Weapon
+
+    public final enum class test/Weapon : kotlin/Enum<test/Weapon> {
+
+      private constructor()
+
+      ROCK,
+
+      PAPER,
+
+      SCISSORS,
+
+      // has Enum.entries
+    }
+
+    public final annotation class test/JustEnum : kotlin/Annotation {
+
+      public constructor(weapon: test/Weapon)
+
+      public final val weapon: test/Weapon
+        public final get
+    }
+
+    public final annotation class test/EnumArray : kotlin/Annotation {
+
+      public constructor(enumArray: kotlin/Array<test/Weapon>)
+
+      public final val enumArray: kotlin/Array<test/Weapon>
+        public final get
+    }
 
     @test/JustEnum(weapon = test/Weapon.SCISSORS)
     @test/EnumArray(enumArray = [])
@@ -23,33 +52,7 @@ library {
       public constructor()
     }
 
-    public final annotation class test/EnumArray : kotlin/Annotation {
-
-      public constructor(enumArray: kotlin/Array<test/Weapon>)
-
-      public final val enumArray: kotlin/Array<test/Weapon>
-        public final get
-    }
-
-    public final annotation class test/JustEnum : kotlin/Annotation {
-
-      public constructor(weapon: test/Weapon)
-
-      public final val weapon: test/Weapon
-        public final get
-    }
-
-    public final enum class test/Weapon : kotlin/Enum<test/Weapon> {
-
-      private constructor()
-
-      ROCK,
-
-      PAPER,
-
-      SCISSORS,
-
-      // has Enum.entries
+    package {
     }
   }
 }

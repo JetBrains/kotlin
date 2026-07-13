@@ -37,11 +37,11 @@ fun test() {
         x = x
     }
     buildBox {
-        @Anno(a = [], b = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>[]<!>)
+        @Anno(a = [], b = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
         x = 42
     }
     buildBox {
-        @Anno(a = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>["!"]<!>]<!>, b = "")
+        @Anno(a = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>["!"]<!>]<!>, b = "")
         x = 42
     }
     buildBox {
@@ -53,7 +53,7 @@ fun test() {
         noop()
     }
     <!CANNOT_INFER_PARAMETER_TYPE!>buildBox<!> {
-        @Anno(a = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>[x]<!>]<!>, b = "")
+        @Anno(a = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[x]<!>]<!>, b = "")
         noop()
     }
     <!CANNOT_INFER_PARAMETER_TYPE!>buildBox<!> {

@@ -3,18 +3,19 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 repositories {
     if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
-    composeGoogleMaven(libs.versions.compose.stable.get())
-    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
 }
 
 fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
@@ -58,8 +59,6 @@ dependencies {
 
     testCompileOnly(project(":compiler:ir.tree"))
     testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit4)
-    testRuntimeOnly(libs.junit.vintage.engine)
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testImplementation(testFixtures(project(":analysis:analysis-api-standalone")))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
@@ -153,9 +152,6 @@ projectTests {
         addClasspathProperty(testJsRuntime, "compose.compiler.test.js.classpath")
         useJsIrBoxTests(buildDir = layout.buildDirectory)
 
-        testInputsCheck {
-            allowFlightRecorder.set(true)
-        }
     }
 
     testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)

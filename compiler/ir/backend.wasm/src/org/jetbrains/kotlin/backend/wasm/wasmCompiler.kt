@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelToTsDeclarations
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
@@ -82,11 +81,7 @@ data class LoweredIrWithExtraArtifacts(
     val moduleDependencies: (IrModuleFragment) -> Set<IrModuleFragment>,
 )
 
-fun linkIr(
-    irModuleInfo: IrModuleInfo,
-    configuration: CompilerConfiguration,
-    mainModule: MainModule,
-): Pair<List<IrModuleFragment>, WasmBackendContext> {
+fun linkIr(irModuleInfo: IrModuleInfo, configuration: CompilerConfiguration): Pair<List<IrModuleFragment>, WasmBackendContext> {
     (val moduleFragment = module, val moduleDependencies = dependencies, val irBuiltIns = bultins, val symbolTable, val irLinker = deserializer) = irModuleInfo
 
     val context = WasmBackendContext(
@@ -103,10 +98,7 @@ fun linkIr(
     // Sort dependencies after IR linkage.
     val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
 
-    val allModules = when (mainModule) {
-        is MainModule.SourceFiles -> error("Main module must be klib")
-        is MainModule.Klib -> sortedModuleDependencies.all
-    }
+    val allModules = sortedModuleDependencies.all
     allModules.forEach { it.patchDeclarationParents() }
 
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
@@ -236,10 +228,14 @@ fun linkWasmIr(moduleConfiguration: WasmIrModuleConfiguration): WasmModule {
 
     val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
 
+    val useStackSwitching = configuration.wasmUseStackSwitchingProposal
+
     return wasmCompiledModuleFragment.linkWasmCompiledFragments(
         multimoduleOptions = multimoduleParameters,
         exceptionTagType = exceptionTagType,
         wasmCommandModuleInitialization = wasmCommandModuleInitialization,
+        useStackSwitching = useStackSwitching,
+        importWasmMemoryInsteadOfExport = isWasmJsTarget,
     )
 }
 
@@ -358,7 +354,8 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
             isStdlibModule = isStdlibModule,
             wholeProgramMode = wholeProgramMode,
             wasmStartFunctionDefined = wasmStartFunctionDefined,
-            wasmInitializeFunctionDefined = wasmInitializeFunctionDefined
+            wasmInitializeFunctionDefined = wasmInitializeFunctionDefined,
+            stdlibModule = stdlibModule,
         )
 
     } else {
@@ -418,7 +415,7 @@ const wasmInstance = new WebAssembly.Instance(wasmModule, wasi.getImportObject()
 $mainFunctionCall
 
 const exports = wasmInstance.exports
-${generateExports(exports, wholeProgramMode = false, isStdlibModule = false)}
+${generateExports(exports, wholeProgramMode = false, isStdlibModule = false, wasmExportsName = "exports")}
 """
 }
 
@@ -494,7 +491,7 @@ fun generateImportObject(
         else
             ""
 
-    val importObject = generateImportObjectBody(jsModuleImports, dependencyModules)
+    val importObject = generateImportObjectBody(stdlibModuleOrWholeProgramMode, jsModuleImports, dependencyModules)
 
     return """
 $imports
@@ -608,6 +605,7 @@ ${if (!stdlibModuleOrWholeProgramMode) "import { __TAG as wasmTag, getCachedJsOb
 }
 
 fun generateImportObjectBody(
+    stdlibModuleOrWholeProgramMode: Boolean,
     jsModuleImports: Set<String>,
     dependencyModules: Set<WasmModuleDependencyImport>,
 ): String {
@@ -636,6 +634,7 @@ fun generateImportObjectBody(
 export const importObject = {
     js_code,
     intrinsics: {
+        ${if (stdlibModuleOrWholeProgramMode) "memory: new WebAssembly.Memory({ initial: 0 })," else ""}
         tag: wasmTag
     },
     "$importedStringConstants": StringConstantsProxy,
@@ -652,21 +651,46 @@ fun generateWebAssemblyJsInstanceInitializer(
     isStdlibModule: Boolean,
     wholeProgramMode: Boolean,
     wasmStartFunctionDefined: Boolean,
-    wasmInitializeFunctionDefined: Boolean
+    wasmInitializeFunctionDefined: Boolean,
+    stdlibModule: WasmModuleDependencyImport?
 ): String {
 
     val commonStdlibExports = if (isStdlibModule) ", getCachedJsObject, __TAG as wasmTag" else ""
 
+    val stdlibExports = if (isStdlibModule || wholeProgramMode) """
+let memoryFirstTimeAccess = true;
+const memoryProxy = new Proxy(importObject.intrinsics.memory, {
+    get(target, prop, receiver) {
+        if (memoryFirstTimeAccess) {
+            memoryFirstTimeAccess = false;
+            console.error('Accessing `memory` via `wasmExports` is deprecated. Use `kotlin.wasm.unsafe.wasmMemory` or update dependencies. Read more: https://kotl.in/vr3szr');
+        }
+        return Reflect.get(target, prop);
+    }
+});
+const wasmExports = new Proxy(memoryProxy, {
+    get(target, prop, receiver) {
+        if (prop == 'memory') {
+            return target;
+        } else {
+            throw new Error('Accessing exports via `wasmExports` is no longer supported. Remove usages or update dependencies. Read more: https://kotl.in/vr3szr');
+        }
+    }
+});
+""" else ""
     val mainFunctionCall = if (wasmStartFunctionDefined)
         "exports.$wasmStartExportName();"
     else if (wasmInitializeFunctionDefined)
         "exports.$wasmInitializeExportName();"
-    else
-        ""
+    else ""
+
+
+    val wasmExportsIfNeeded = stdlibModule?.fileName?.let { "import { wasmExports } from './$it.mjs'" } ?: ""
 
     val staticImports = """
 ${if (useDebuggerCustomFormatters) "import \"./custom-formatters.js\"" else ""}
 import { importObject, setWasmExports$commonStdlibExports } from './${baseFileName}.import-object.mjs'
+$wasmExportsIfNeeded
     """.trimIndent()
 
     val builtinsList = jsModuleImports.filter { it.startsWith(jsBuiltinsModulePrefix) }.map { it.removePrefix(jsBuiltinsModulePrefix) }
@@ -725,10 +749,14 @@ For more information, see https://kotl.in/wasm-help
 }
 
 const exports = wasmInstance.exports
-setWasmExports(exports);
-$mainFunctionCall
 
-${generateExports(exports, wholeProgramMode, isStdlibModule)}
+
+$stdlibExports
+${generateExports(exports, wholeProgramMode, isStdlibModule, wasmExportsName = "wasmExports")}
+
+setWasmExports(wasmExports);
+
+$mainFunctionCall
 """
 }
 
@@ -775,12 +803,14 @@ fun writeCompilationResult(
 
 private val WasmExport<*>.isWasmInternalUsageExport
     get() = name.startsWith(JsInteropFunctionsLowering.CALL_FUNCTION) ||
+            name == "memory" ||
             WasmServiceImportExportKind.entries.any { name.startsWith(it.prefix) }
 
 fun generateExports(
     exports: List<WasmExport<*>>,
     wholeProgramMode: Boolean,
     isStdlibModule: Boolean,
+    wasmExportsName: String,
 ): String {
     // TODO: necessary to move export check onto common place
     val exportNames = exports
@@ -820,9 +850,9 @@ fun generateExports(
             """
             |    wasmTag as __TAG,
             |    getCachedJsObject,
+            |    $wasmExportsName,
             """.trimMargin()
-        else
-            ""
+        else ""
 
     val exportsStructureSingleModule = """
         |export {
@@ -834,6 +864,9 @@ fun generateExports(
     /*language=js */
     return """
 ${if (!wholeProgramMode) exportsStructureSingleModule else ""}
+
+const wasmMemory = $wasmExportsName.memory;
+export { wasmMemory as memory }
 
 $regularlyExportedVariables
 $escapedExportedVariables

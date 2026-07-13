@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 import lombok.NoArgsConstructor
 
 open class C {
@@ -76,6 +78,11 @@ class K()
 
 @NoArgsConstructor(staticName = "!@#$%^&*()") // TODO: KT-86816
 class L()
+
+@NoArgsConstructor(
+    onConstructor = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
+)
+class UnsupportedArguments()
 
 fun test() {
     <!NO_VALUE_FOR_PARAMETER!>B<!>() // Don't generate no-args constructor because delegated no-args constructor is missing.

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmProject
 
-private class JvmScenarioDsl(
+class JvmScenarioDsl(
     override val project: JvmProject,
     override val strategyConfig: ExecutionPolicy,
     override val kotlinToolchains: KotlinToolchains,

@@ -18,6 +18,7 @@ object TestCompilePaths {
     const val KOTLIN_ANNOTATIONS_PATH: String = "kotlin.annotations.path"
     const val KOTLIN_WEB_STDLIB_KLIB_PATH: String = "kotlin.web.stdlib.path"
     const val KOTLIN_JS_STDLIB_KLIB_PATH: String = "kotlin.js.stdlib.klib.path"
+    const val KOTLIN_JKLIB_STDLIB_PATH: String = "kotlin.stdlib.jklib.for.test"
     const val KOTLIN_WASM_STDLIB_KLIB_PATH: String = "kotlin.wasm-js.stdlib.path"
     const val KOTLIN_JS_REDUCED_STDLIB_PATH: String = "kotlin.js.reduced.stdlib.path"
     const val KOTLIN_JS_KOTLIN_TEST_KLIB_PATH: String = "kotlin.js.kotlin.test.klib.path"
@@ -26,6 +27,7 @@ object TestCompilePaths {
     const val KOTLIN_DIST_PATH = "kotlin.dist.path"
     const val KOTLIN_NATIVE_IMAGE_DIST_PATH = "kotlin.native-image.dist.path"
     const val KOTLIN_NATIVE_IMAGE_RESOURCES_PATH = "kotlin.native-image.resources.path"
+    const val KOTLIN_NATIVE_IMAGE_PLUGINS_RUNTIME = "kotlin.native-image.plugins-runtime.classpath"
     const val KOTLIN_COMPILER_EMBEDDABLE_CLASSPATH = "kotlin.compiler-embeddable.classpath"
     const val KOTLIN_MOCKJDK_RUNTIME_PATH = "kotlin.mockJDK.runtime.path"
     const val KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH = "kotlin.mockJDKModified.runtime.path"
@@ -44,4 +46,5 @@ object TestCompilePaths {
     const val NOARG_COMPILER_PLUGIN_JAR_PATH: String = "noarg.compiler.plugin.jar.path"
     const val MAIN_KTS_JAR_PATH: String = "main-kts.jar.path"
     const val KOTLIN_REFLECT_SHADOW_JAR_PATH: String = "kotlin.reflect.shadow.jar.path"
+    const val PARCELIZE_COMPILER_PLUGIN_CLASSPATH: String = "parcelizeRuntime.classpath"
 }

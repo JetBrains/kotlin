@@ -9,7 +9,8 @@ public fun __root___foo_flow_with_callback__TypesOfArguments__U2840escapingU2028
     val __callback = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Int>(callback);
         { arg0: Function0<Int> ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             _result
         }
     }
@@ -22,7 +23,9 @@ public fun __root___typealias_demo__TypesOfArguments__U28Swift_Int32_U20Swift_In
     val __input = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Int, Int)->Boolean>(input);
         { arg0: Int, arg1: Int ->
-            val _result = kotlinFun(arg0, arg1)
+            val _arg0 = arg0
+            val _arg1 = arg1
+            val _result = kotlinFun(_arg0, _arg1)
             run<Unit> { _result }
         }
     }

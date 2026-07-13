@@ -11,16 +11,6 @@ plugins {
 
 description = "Foreign Class Usage Checker – track dependency usage in libraries"
 
-repositories {
-    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
-    gradlePluginPortal()
-    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
-        content {
-            includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
-        }
-    }
-}
-
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation

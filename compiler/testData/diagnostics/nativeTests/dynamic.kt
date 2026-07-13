@@ -1,3 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// IGNORE_FIR_DIAGNOSTICS
 
 fun test(a: <!UNSUPPORTED!>dynamic<!>) = a

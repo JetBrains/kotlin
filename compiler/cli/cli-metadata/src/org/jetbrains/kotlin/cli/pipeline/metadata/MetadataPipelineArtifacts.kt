@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
+import org.jetbrains.kotlin.library.SerializedFirMetadata
 import org.jetbrains.kotlin.library.SerializedMetadata
 
 data class MetadataFrontendPipelineArtifact(
@@ -29,9 +30,17 @@ data class MetadataFrontendPipelineArtifact(
 }
 
 data class MetadataInMemorySerializationArtifact(
-    val metadata: SerializedMetadata,
+    val firMetadata: SerializedFirMetadata,
     override val configuration: CompilerConfiguration,
 ) : PipelineArtifact() {
+
+    val metadata = SerializedMetadata(
+        firMetadata.module,
+        firMetadata.fragments.map { fragment -> fragment.map { it.content } },
+        firMetadata.fragmentNames,
+        firMetadata.metadataVersion
+    )
+
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataInMemorySerializationArtifact {
         return copy(configuration = newConfiguration)

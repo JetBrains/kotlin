@@ -27,7 +27,7 @@ KtConstantExpression(18,19): '1'
 
 KtOperationReferenceExpression(20,21): '>'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -59,7 +59,7 @@ KtCallExpression(30,42): 'compareTo(2)'
 
 KtNameReferenceExpression(30,39): 'compareTo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -76,7 +76,7 @@ KtConstantExpression(40,41): '2'
 
 KtOperationReferenceExpression(43,44): '>'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -99,7 +99,7 @@ KtLiteralStringTemplateEntry(53,54): '3'
 
 KtOperationReferenceExpression(56,57): '<'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
@@ -128,7 +128,7 @@ KtCallExpression(99,108): 'MyClass()'
 
 KtNameReferenceExpression(99,106): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -145,7 +145,7 @@ KtBinaryExpression(113,130): 'myClass >= number'
 
 KtNameReferenceExpression(113,120): 'myClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val myClass: MyClass
@@ -153,7 +153,7 @@ KtNameReferenceExpression(113,120): 'myClass'
 
 KtOperationReferenceExpression(121,123): '>='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
@@ -161,7 +161,7 @@ KtOperationReferenceExpression(121,123): '>='
 
 KtNameReferenceExpression(124,130): 'number'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val number: kotlin.Int
@@ -175,7 +175,7 @@ KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
 
 KtNameReferenceExpression(135,142): 'myClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val myClass: MyClass
@@ -189,7 +189,7 @@ KtCallExpression(143,160): 'compareTo(number)'
 
 KtNameReferenceExpression(143,152): 'compareTo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
@@ -203,7 +203,7 @@ KtValueArgument(153,159): 'number'
 
 KtNameReferenceExpression(153,159): 'number'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val number: kotlin.Int
@@ -241,7 +241,7 @@ KtUserType(210,213): 'Int'
 
 KtNameReferenceExpression(210,213): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -261,7 +261,7 @@ KtUserType(216,219): 'Int'
 
 KtNameReferenceExpression(216,219): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -269,7 +269,7 @@ KtNameReferenceExpression(216,219): 'Int'
 
 KtNameReferenceExpression(222,223): 'i'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       i: kotlin.Int

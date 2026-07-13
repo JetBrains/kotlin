@@ -36,7 +36,19 @@ class AnalysisApiVersionStrippingTest {
     fun noVersionInFileName() = test("kotlin-stdlib.jar", "kotlin-stdlib.jar")
 
     @Test
-    fun versionMismatch() = test("kotlin-stdlib-2.3.1.jar", "kotlin-stdlib-2.3.1.jar")
+    fun patchVersionMismatch() = test("kotlin-stdlib-2.3.20.jar", "kotlin-stdlib.jar")
+
+    @Test
+    fun versionMismatch() = test("kotlin-stdlib-3.4.20.jar", "kotlin-stdlib-3.4.20.jar")
+
+    @Test
+    fun majorVersionMismatch() = test("kotlin-stdlib-3.3.0.jar", "kotlin-stdlib-3.3.0.jar")
+
+    @Test
+    fun nextMinorVersion() = test("kotlin-stdlib-2.4.0.jar", "kotlin-stdlib.jar")
+
+    @Test
+    fun previousMinorVersion() = test("kotlin-stdlib-2.2.0.jar", "kotlin-stdlib-2.2.0.jar")
 
     @Test
     fun jarEntryPath() = test(

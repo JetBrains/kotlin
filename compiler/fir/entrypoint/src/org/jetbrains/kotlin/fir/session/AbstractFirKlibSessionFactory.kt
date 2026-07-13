@@ -124,7 +124,7 @@ abstract class AbstractFirKlibSessionFactory<CONTEXT> : FirAbstractSessionFactor
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
                 SourceProviders(
-                    listOfNotNull(
+                    sourceProviders = listOfNotNull(
                         symbolProvider,
                         generatedSymbolsProvider,
                         icData?.let {
@@ -136,7 +136,8 @@ abstract class AbstractFirKlibSessionFactory<CONTEXT> : FirAbstractSessionFactor
                                 flexibleTypeFactory = createFlexibleTypeFactory(session),
                             )
                         },
-                    )
+                    ),
+                    incrementalProvider = null,
                 )
             }
         )

@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: JVM, WASM, WASM_JS, WASM_WASI, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JVM
 
 var initOrder = ""
 

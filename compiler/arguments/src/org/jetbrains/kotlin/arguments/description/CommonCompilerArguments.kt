@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.dsl.base.*
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
 import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
@@ -113,6 +112,20 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
             stabilizedVersion = KotlinReleaseVersion.v1_6_0,
+        )
+    }
+
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        name = "Xescaping-functions"
+        description = ("Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. " +
+                "Callables are specified by their fully qualified name.").asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<+|-><fq.name>".asReleaseDependent()
+        argumentType = StringListType.defaultEmpty
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
@@ -261,10 +274,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.".asReleaseDependent()
         valueDescription = "<path>".asReleaseDependent()
         valueType = StringType.defaultNull
-
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_3,
@@ -599,10 +608,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Enable experimental frontend IR checkers that are not yet ready for production.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
             deprecatedVersion = KotlinReleaseVersion.v2_2_20,
@@ -627,9 +632,12 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         compilerName = "useFirLT"
         description = "Compile using the LightTree parser with the frontend IR.".asReleaseDependent()
         valueType = BooleanType.defaultTrue
+        deprecatedMessage =
+            "The light tree mode is enabled by default, and it will become the only available mode in one of the future releases."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
@@ -849,6 +857,24 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
+        name = "Xeager-lambda-analysis"
+        description =
+            "Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.EagerLambdaAnalysis),
+            Enables(LanguageFeature.InferThrowableTypeParameterToUpperBound),
+            Enables(LanguageFeature.CallCompletionRefinementsFor25),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+    }
+
+
+    compilerArgument {
         name = "Xdata-flow-based-exhaustiveness"
         description = "Enable `when` exhaustiveness improvements that rely on data-flow analysis.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -1052,7 +1078,6 @@ The argument should be used only if the new compilation scheme is enabled with -
             Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.    
             This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
               dependencies from the platform specific incremental service.
-            The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
         """.trimIndent().asReleaseDependent()
         valueType = StringArrayType.defaultNull
         delimiter = KotlinCompilerArgument.Delimiter.None

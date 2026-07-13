@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
@@ -47,6 +48,8 @@ private fun classesFqNames(kotlinFiles: Collection<File>, disposable: Disposable
     config.messageCollector = MessageCollector.NONE
     config.configureJdkClasspathRoots()
     val configFiles = EnvironmentConfigFiles.JVM_CONFIG_FILES
+
+    @OptIn(CoreEnvironmentDeprecation::class)
     val environment = KotlinCoreEnvironment.createForProduction(disposable, config, configFiles)
     val psiManager = PsiManager.getInstance(environment.project)
     val fileManager = VirtualFileManager.getInstance()

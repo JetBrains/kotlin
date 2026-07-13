@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.getMutableCollectionKClass
 import kotlin.reflect.jvm.internal.useK1Implementation
 
 internal fun createPlatformKType(
@@ -53,7 +54,7 @@ internal fun createMutableCollectionKType(type: KType): KType {
         type.classifier,
         type.arguments,
         type.isMarkedNullable,
-        type.annotations,
+        type.lazyAnnotations,
         type.abbreviation,
         type.isDefinitelyNotNullType,
         type.isNothingType,
@@ -83,7 +84,7 @@ internal fun createNothingType(type: KType): KType {
         type.classifier,
         type.arguments,
         type.isMarkedNullable,
-        type.annotations,
+        type.lazyAnnotations,
         type.abbreviation,
         type.isDefinitelyNotNullType,
         isNothingType = true,

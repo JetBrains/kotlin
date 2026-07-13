@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -8,7 +7,6 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.storage.StorageManager
 
-@K1Deprecation
 interface KlibResolvedModuleDescriptorsFactory {
 
     val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
@@ -38,7 +36,6 @@ interface KlibResolvedModuleDescriptorsFactory {
     ): KotlinResolvedModuleDescriptors
 }
 
-@K1Deprecation
 class KotlinResolvedModuleDescriptors(
     /**
      * The list of modules each representing an individual Kotlin/Native library. All modules

@@ -104,7 +104,10 @@ public interface WasmKlibCompilationOperation : BaseCompilationOperation, Cancel
     /**
      * An option for configuring a [WasmKlibCompilationOperation].
      */
-    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
+    public class Option<V> internal constructor(
+        id: String,
+        public val availableSinceVersion: KotlinReleaseVersion,
+    ) : BaseOption<V>(id)
 
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -116,7 +119,8 @@ public interface WasmKlibCompilationOperation : BaseCompilationOperation, Cancel
 
     public companion object {
         @JvmField
-        public val INCREMENTAL_COMPILATION: Option<WasmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION")
+        public val INCREMENTAL_COMPILATION: Option<WasmIncrementalCompilationConfiguration?> =
+            Option("INCREMENTAL_COMPILATION", availableSinceVersion = KotlinReleaseVersion(2, 4, 20))
     }
 }
 

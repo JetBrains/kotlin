@@ -734,9 +734,7 @@ class NewConstraintSystemImpl(
         // Remove existing errors from the resolution stage because a completion stage error is always more precise
         storage.errors.removeIf { it is InferredEmptyIntersection }
 
-        val isInferredEmptyIntersectionForbidden =
-            languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
-        val errorFactory = if (emptyIntersectionTypeInfo.kind.isDefinitelyEmpty && isInferredEmptyIntersectionForbidden)
+        val errorFactory = if (emptyIntersectionTypeInfo.kind.isError(languageVersionSettings))
             ::InferredEmptyIntersectionError
         else ::InferredEmptyIntersectionWarning
 

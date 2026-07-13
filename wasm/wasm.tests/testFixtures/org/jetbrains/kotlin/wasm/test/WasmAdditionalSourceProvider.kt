@@ -21,7 +21,7 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         val fileWithBoxFun = module.files.singleOrNull {
-            it.isKtFile && it.originalContent.contains(Regex("(^|\\n)\\bfun\\s+box\\(\\)\\s*(?::\\s*String|=)"))
+            it.isKtFile && it.originalContent.contains(Regex("(^|\\n)(?:\\w+\\s+)*\\bfun\\s+box\\(\\)\\s*(?::\\s*String|=)"))
         }
 
         // no box function

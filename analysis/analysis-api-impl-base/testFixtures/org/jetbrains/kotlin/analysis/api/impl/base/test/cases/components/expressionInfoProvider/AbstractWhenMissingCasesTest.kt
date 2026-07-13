@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider
 
+import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -22,12 +23,27 @@ abstract class AbstractWhenMissingCasesTest : AbstractAnalysisApiBasedTest() {
             copyAwareAnalyzeForTest(whenExpression) { contextWhenExpression ->
                 buildString {
                     for (missingCase in contextWhenExpression.computeMissingCases()) {
-                        appendLine(missingCase::class.simpleName + " - " + missingCase.branchConditionText)
+                        append(missingCase::class.simpleName)
+                        missingCase.render()?.let { append("($it)") }
+                        appendLine()
                     }
                 }
             }
         }
 
         testServices.assertions.assertEqualsToTestOutputFile(actual)
+    }
+
+    private fun KaWhenMissingCase.render(): String? = when (this) {
+        is KaWhenMissingCase.BooleanCase -> value.toString()
+        is KaWhenMissingCase.EnumEntryCase -> callableId.toString()
+        is KaWhenMissingCase.TypeCase -> buildString {
+            if (isObject) append("object ")
+            append(classId)
+            if (ownTypeParameterCount > 0) {
+                (0..<ownTypeParameterCount).joinTo(this, prefix = "<", postfix = ">") { "*" }
+            }
+        }
+        else -> null
     }
 }

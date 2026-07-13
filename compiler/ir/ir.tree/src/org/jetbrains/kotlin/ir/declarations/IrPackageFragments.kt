@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
 
 @ObsoleteDescriptorBasedAPI
@@ -23,7 +23,7 @@ val IrPackageFragment.packageFragmentDescriptor: PackageFragmentDescriptor
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrExternalPackageFragment.containerSource: DeserializedContainerSource?
-    get() = (symbol.descriptor as? DeserializedMemberDescriptor)?.containerSource
+    get() = (symbol.descriptor as? DescriptorWithContainerSource)?.containerSource
 
 /**
  * This should be a link to [IrModuleFragment] instead.
@@ -39,7 +39,8 @@ val IrPackageFragment.moduleDescriptor: ModuleDescriptor
         packageFragmentDescriptor.containingDeclaration
     }
 
-fun createEmptyExternalPackageFragment(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment =
+
+fun createEmptyExternalPackageFragment(module: IrModuleFragment, fqName: FqName): IrExternalPackageFragment =
     IrExternalPackageFragmentImpl(
-        IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(module, fqName)), fqName
+        IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(module.descriptor, fqName)), fqName
     )

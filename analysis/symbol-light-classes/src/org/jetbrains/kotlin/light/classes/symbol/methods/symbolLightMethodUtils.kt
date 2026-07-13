@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,14 +9,8 @@ import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmExposeBoxedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -75,6 +69,21 @@ internal class MethodGenerationResult(val isRegularMethodRequired: Boolean, val 
 }
 
 /**
+ * Whether [symbol] is effectively private: either it is `private` itself, or it is a member
+ * (transitively) of a `private` class.
+ *
+ * Mirrors `org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate` used by the JVM backend so that
+ * light classes do not autogenerate `@JvmExposeBoxed` boxed variants for declarations that cannot be
+ * accessed from Java anyway.
+ */
+context(_: KaSession)
+internal fun isEffectivelyPrivate(symbol: KaDeclarationSymbol): Boolean {
+    if (symbol.visibility == KaSymbolVisibility.PRIVATE) return true
+    val containingClass = symbol.containingDeclaration as? KaClassSymbol ?: return false
+    return isEffectivelyPrivate(containingClass)
+}
+
+/**
  * Analyzes the requirement for regular and boxed method generation based on given parameters.
  *
  * @param exposeBoxedMode The [JvmExposeBoxedMode] for the method.
@@ -83,6 +92,7 @@ internal class MethodGenerationResult(val isRegularMethodRequired: Boolean, val 
  * @param isAffectedByValueClass Whether the method's name is mangled due to value classes, or the method is declared inside a value class and not materialized.
  * @param hasJvmNameAnnotation Whether the method has a [JvmName] annotation.
  * @param isOverridable Whether the method can be overridden.
+ * @param isEffectivelyPrivate Whether the method is effectively private and therefore must not be exposed. @see isEffectivelyPrivate
  */
 internal fun methodGeneration(
     exposeBoxedMode: JvmExposeBoxedMode,
@@ -92,12 +102,16 @@ internal fun methodGeneration(
     hasJvmNameAnnotation: Boolean,
     isSuspend: Boolean,
     isOverridable: Boolean,
+    isEffectivelyPrivate: Boolean,
 ): MethodGenerationResult {
     var isBoxedAccessorRequired = false
     var isRegularAccessorRequired = false
 
     // Explicit mode -> a boxed method is requested (even if it is a JVM name clash)
-    if (exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT && (hasValueClassInParameterType || hasValueClassInReturnType || isAffectedByValueClass)) {
+    if (exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
+        !isEffectivelyPrivate &&
+        (hasValueClassInParameterType || hasValueClassInReturnType || isAffectedByValueClass)
+    ) {
         isBoxedAccessorRequired = true
     }
 
@@ -108,6 +122,9 @@ internal fun methodGeneration(
         isBoxedAccessorRequired = when {
             // The check already performed by the explicit mode
             isBoxedAccessorRequired -> true
+
+            // Private declarations are inaccessible from Java -> no boxed methods can be auto-generated
+            isEffectivelyPrivate -> false
 
             // No implicit feature -> no boxed methods can be auto-generated
             exposeBoxedMode != JvmExposeBoxedMode.IMPLICIT -> false

@@ -1,2 +1,3 @@
 expression: return 1
+expression PSI: KtReturnExpression
 type: kotlin.Nothing

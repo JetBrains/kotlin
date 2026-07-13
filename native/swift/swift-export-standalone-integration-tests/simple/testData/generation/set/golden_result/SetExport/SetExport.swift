@@ -2,10 +2,12 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public protocol Foo: KotlinRuntime.KotlinBase {
+public protocol Foo: KotlinRuntime.KotlinBase, SetExport._Foo {
 }
 @objc(_Foo)
-package protocol _Foo {
+public protocol _Foo {
+}
+public protocol __Foo: KotlinRuntimeSupport._KotlinBridgeable {
 }
 @available(*, unavailable, message: "Declaration uses unsupported types")
 public var testSetFoo: Swift.Never {
@@ -84,9 +86,11 @@ public func testSetString(
 ) -> Swift.Set<Swift.String> {
     return __root___testSetString__TypesOfArguments__Swift_Set_Swift_String___(s) as! Swift.Set<Swift.String>
 }
-extension SetExport.Foo where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension SetExport.Foo where Self : SetExport.__Foo {
 }
 extension SetExport.Foo {
 }
-extension KotlinRuntimeSupport._KotlinExistential: SetExport.Foo where Wrapped : SetExport._Foo {
+extension KotlinRuntimeSupport._KotlinExistential: SetExport.Foo, SetExport.__Foo where Wrapped : SetExport._Foo {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: SetExport._Foo {
 }

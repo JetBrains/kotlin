@@ -7,7 +7,7 @@ KtCallExpression(205,216): 'funMember()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -26,6 +26,7 @@ KtCallExpression(205,216): 'funMember()'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -33,7 +34,7 @@ KtCallExpression(205,216): 'funMember()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -52,6 +53,7 @@ KtCallExpression(205,216): 'funMember()'
             annotations: []
             typeArguments: []
             type: Base
+          typeParameters: []
           visibility: PUBLIC
         type = Base
       extensionReceiver = null

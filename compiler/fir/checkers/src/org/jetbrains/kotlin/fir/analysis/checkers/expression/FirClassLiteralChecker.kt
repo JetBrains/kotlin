@@ -87,7 +87,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
             LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isDisabled() &&
             resolvedFullyExpandedType.toTypeParameterSymbol()?.isReified == true &&
             !resolvedFullyExpandedType.isMarkedNullable &&
-            resolvedFullyExpandedType.canBeNull(context.session)
+            resolvedFullyExpandedType.canBeNull()
         ) {
             reporter.reportOn(
                 argument.source,
@@ -111,7 +111,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         if (this !is ConeTypeParameterType) return false
         val typeParameter = lookupTag.typeParameterSymbol
         // E.g., fun <T> f2(t: T): Any = t::class
-        return canBeNull(context.session) &&
+        return canBeNull() &&
                 (!typeParameter.isReified || isExpression && LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isEnabled())
     }
 
@@ -154,7 +154,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
             }
             reporter.reportOn(argumentList, diagnostic, "for type parameters")
         } else if (argument is FirResolvedQualifier) {
-            val symbol = argument.symbol ?: return
+            val symbol = argument.qualifierSymbol ?: return
             if (argument.typeArguments.isNotEmpty()) {
                 val isAllowedGenericArray = fullyExpandedType.isAllowedGenericArrayTypeInClassLiteral()
                 val isTypeAliasToAllowedArray = symbol is FirTypeAliasSymbol && isAllowedGenericArray
@@ -183,7 +183,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         qualifier: FirResolvedQualifier?,
         deprecationCase: Boolean,
     ): Boolean {
-        val symbol = qualifier?.symbol ?: return false
+        val symbol = qualifier?.qualifierSymbol ?: return false
         if (symbol.ownTypeParameterSymbols.size != qualifier.ownTypeArguments.size) {
             val diagnostic = if (deprecationCase && !areUselessTypeArgumentsForbidden) {
                 FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING

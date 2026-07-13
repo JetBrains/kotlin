@@ -42,6 +42,9 @@ class RunConfigurationsTest {
             addAll(config.taskNames)
             addAll(config.scriptParameters.split("\\s+".toRegex()))
             add("--no-configuration-cache")
+            add("-Dkotlin.daemon.options=\"autoshutdownIdleSeconds=10\"")
+            add("-Porg.gradle.daemon.idletimeout=1000")
+            add("-Porg.gradle.jvmargs=-Xmx512m")
             add("--dry-run")
         }.filter { it.isNotBlank() }
 

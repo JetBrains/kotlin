@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.testUtils
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
@@ -25,6 +26,7 @@ class Fe10BaseDeclarationsGeneratorExtension : ParameterResolver {
 
 private object Fe10BaseDeclarationsGenerator : BaseDeclarationsGenerator {
     override fun invoke(topLevelPrefix: String): List<ObjCTopLevel> {
+        @OptIn(K1Deprecation::class)
         val translator = ObjCExportTranslatorImpl(
             generator = null,
             mapper = createObjCExportMapper(),

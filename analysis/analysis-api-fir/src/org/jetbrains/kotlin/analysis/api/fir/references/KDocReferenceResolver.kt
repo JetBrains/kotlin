@@ -10,7 +10,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
+import org.jetbrains.kotlin.analysis.api.components.KaUnificationSubstitutorPolicy
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getContextElementOrSelf
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getLongestExistingPackageScope
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getNestedScopePossiblyContainingShortName
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.ge
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
+import org.jetbrains.kotlin.analysis.api.types.defaultType
+import org.jetbrains.kotlin.analysis.api.types.isSubtypeOf
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
@@ -28,10 +31,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -67,11 +67,11 @@ internal object KDocReferenceResolver {
 
     context(_: KaSession)
     private fun <T : KaSymbol> Iterable<T>.getNonHiddenDeclarations(): List<T> =
-        this.filter { it.deprecationStatus?.deprecationLevel != DeprecationLevelValue.HIDDEN }
+        this.filter { it.deprecation?.level != KaDeprecationLevel.HIDDEN }
 
     context(_: KaSession)
     private fun <T : KaSymbol> Sequence<T>.getNonHiddenDeclarations(): Sequence<T> =
-        this.filter { it.deprecationStatus?.deprecationLevel != DeprecationLevelValue.HIDDEN }
+        this.filter { it.deprecation?.level != KaDeprecationLevel.HIDDEN }
 
     /**
      * Resolves the [selectedFqName] of KDoc
@@ -383,16 +383,12 @@ internal object KDocReferenceResolver {
 
                     when (declaration) {
                         is KtPrimaryConstructor -> {
-                            if (valueParameter.isPropertyParameter() &&
-                                contextDeclarationHandlingMode == ContextDeclarationHandlingMode.PropertySymbolsForPropertyParameters
-                            ) {
-                                val classParameterProperty =
-                                    declaration.containingClass()?.classSymbol?.declaredMemberScope?.callables?.firstOrNull { callable ->
-                                        callable is KaPropertySymbol && callable.isFromPrimaryConstructor && callable.name == name
-                                    }
-                                addIfNotNull(classParameterProperty)
+                            val valueParameterSymbol = valueParameter.symbol as? KaValueParameterSymbol
+                            val generatedProperty = valueParameterSymbol?.primaryConstructorProperty
+                            if (generatedProperty != null && contextDeclarationHandlingMode == ContextDeclarationHandlingMode.PropertySymbolsForPropertyParameters) {
+                                add(generatedProperty)
                             } else {
-                                add(valueParameter.symbol)
+                                addIfNotNull(valueParameterSymbol)
                             }
                         }
                         else -> add(valueParameter.symbol)
@@ -744,10 +740,10 @@ internal object KDocReferenceResolver {
                             actualReceiverSymbol == expectedReceiverTypeSymbol
                         }
                         else -> {
-                            createUnificationSubstitutor(
+                            createSubtypingUnificationSubstitutor(
                                 actualReceiverType,
                                 expectedReceiverType,
-                                KaUnificationSubstitutorPolicy.EXISTENTIAL
+                                KaUnificationSubstitutorPolicy.ASSIGN_ALL
                             ) != null
                         }
                     }

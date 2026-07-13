@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 internal class KaFirSignatureSubstitutor(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseSignatureSubstitutor<KaFirSession>(), KaFirSessionComponent {
-    override fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S> = withValidityAssertion {
-        val firSymbol = (this as KaFirSymbol<*>).firSymbol as FirFunctionSymbol<*>
+    override fun <S : KaFunctionSymbol> asSignature(symbol: S): KaFunctionSignature<S> = symbol.withValidityAssertion {
+        val firSymbol = (symbol as KaFirSymbol<*>).firSymbol as FirFunctionSymbol<*>
         return KaFirFunctionDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }
 
-    override fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S> = withValidityAssertion {
-        val firSymbol = (this as KaFirSymbol<*>).firSymbol as FirVariableSymbol<*>
+    override fun <S : KaVariableSymbol> asSignature(symbol: S): KaVariableSignature<S> = symbol.withValidityAssertion {
+        val firSymbol = (symbol as KaFirSymbol<*>).firSymbol as FirVariableSymbol<*>
         return KaFirVariableDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }
 }

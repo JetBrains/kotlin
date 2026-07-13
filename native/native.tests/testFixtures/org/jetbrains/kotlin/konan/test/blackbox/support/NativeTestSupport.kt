@@ -254,9 +254,9 @@ object NativeTestSupport {
         output += computeCInterfaceMode(enforcedProperties)
         output += computeXCTestRunner(enforcedProperties, nativeTargets)
         output += computeKlibIrInlinerMode(tags)
-
         // Compute tests timeouts with regard to already calculated properties that may affect execution time
         output += computeTimeouts(enforcedProperties, output)
+        output += computePlatformLibs(enforcedProperties)
 
         return nativeTargets
     }
@@ -362,7 +362,6 @@ object NativeTestSupport {
         return if (defaultCache == CacheMode.Alias.NO)
             CacheMode.WithoutCache
         else CacheMode.WithStaticCache(
-            optimizationMode,
             useStaticCacheForUserLibraries,
             makePerFileCaches,
             useHeaders,
@@ -440,6 +439,18 @@ object NativeTestSupport {
         ),
         nativeTargets
     )
+
+    private fun computePlatformLibs(enforcedProperties: EnforcedProperties): PlatformLibs {
+        val dependOnPlatformLibs = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS.readValue(
+            enforcedProperties,
+            String::toBooleanStrictOrNull,
+            default = false
+        )
+        return when (dependOnPlatformLibs) {
+            true -> PlatformLibs.DEFAULT
+            false -> PlatformLibs.NO_DEFAULT_LIBS
+        }
+    }
 
     /*************** Test class settings (for black box tests only) ***************/
 

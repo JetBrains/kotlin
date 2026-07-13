@@ -3,7 +3,6 @@ KaClassInitializerSymbol:
     low/Anno(position = "init annotation: 0")
       psi: KtAnnotationEntry
   ]
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -13,5 +12,5 @@ KaClassInitializerSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(initWithAnnotations.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

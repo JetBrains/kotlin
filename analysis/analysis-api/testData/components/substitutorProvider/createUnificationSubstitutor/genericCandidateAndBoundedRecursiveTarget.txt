@@ -1,7 +1,0 @@
-UNIVERSAL:
-Substitutor: null
-
-EXISTENTIAL:
-Substitutor: <map substitutor: {A = kotlin/Any, B = kotlin/Any}>
-Substituted pairs:
-kotlin/collections/List<kotlin/Any> <: kotlin/collections/List<kotlin/Any> (Original: kotlin/collections/List<A> <: kotlin/collections/List<B>)

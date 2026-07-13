@@ -3,20 +3,25 @@ plugins {
 }
 
 kotlin {
-    watchosArm32()
     watchosArm64()
+    watchosDeviceArm64()
     watchosX64()
+    watchosSimulatorArm64()
 
     // Check that we can reenter the configuration method.
-    watchosArm32 {
-        binaries.framework(listOf(DEBUG))
-    }
-
     watchosArm64 {
         binaries.framework(listOf(DEBUG))
     }
 
+    watchosDeviceArm64 {
+        binaries.framework(listOf(DEBUG))
+    }
+
     watchosX64 {
+        binaries.framework(listOf(DEBUG))
+    }
+
+    watchosSimulatorArm64 {
         binaries.framework(listOf(DEBUG))
     }
 
@@ -25,21 +30,25 @@ kotlin {
         val watchosDeviceMain by creating
         val watchosTest by creating
 
-        val watchosArm32Main by getting
+        val watchosSimulatorArm64Main by getting
+        val watchosDeviceArm64Main by getting
         val watchosArm64Main by getting
         val watchosX64Main by getting
 
-        val watchosArm32Test by getting
+        val watchosSimulatorArm64Test by getting
+        val watchosDeviceArm64Test by getting
         val watchosArm64Test by getting
         val watchosX64Test by getting
 
         watchosDeviceMain.dependsOn(watchosMain)
         watchosX64Main.dependsOn(watchosMain)
+        watchosSimulatorArm64Main.dependsOn(watchosMain)
 
-        watchosArm32Main.dependsOn(watchosDeviceMain)
+        watchosDeviceArm64Main.dependsOn(watchosDeviceMain)
         watchosArm64Main.dependsOn(watchosDeviceMain)
 
-        watchosArm32Test.dependsOn(watchosTest)
+        watchosSimulatorArm64Test.dependsOn(watchosTest)
+        watchosDeviceArm64Test.dependsOn(watchosTest)
         watchosArm64Test.dependsOn(watchosTest)
         watchosX64Test.dependsOn(watchosTest)
 

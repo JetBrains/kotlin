@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.createCirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.utils.createCirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.createCirTreeRootFromSourceCode
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTest() {
 
@@ -23,6 +25,7 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
 
     Expected:     X
      */
+    @Test
     fun `test sample 0`() {
         val resolver = createCommonClassifierIdResolver(
             createCirTreeRootFromSourceCode(
@@ -50,6 +53,7 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
 
     Expected:    C
      */
+    @Test
     fun `test sample 1`() {
         val resolver = createCommonClassifierIdResolver(
             createCirTreeRootFromSourceCode(
@@ -81,6 +85,7 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
 
     Expected: A, B, C
      */
+    @Test
     fun `test sample 2`() {
         val resolver = createCommonClassifierIdResolver(
             createCirTreeRootFromSourceCode(
@@ -106,6 +111,7 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
         assertEquals(setOf("A", "B", "C"), resolver.resolveAssociatedIds("X"))
     }
 
+    @Test
     fun `test sample 3`() {
         val resolver = createCommonClassifierIdResolver(
             createCirTreeRootFromSourceCode("class A"),
@@ -124,6 +130,7 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
 
     Expected:    A, B
      */
+    @Test
     fun `test sample 4`() {
         val resolver = createCommonClassifierIdResolver(
             createCirTreeRootFromSourceCode(
@@ -161,6 +168,7 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
 
     Expected:    B, C, D
      */
+    @Test
     fun `test sample 5`() {
         val rootA = createCirTreeRootFromSourceCode(
             """
@@ -195,6 +203,7 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
 
     Expected: A, B, C, X, Y, Z
      */
+    @Test
     fun `test sample 6`() {
         val resolver = createCommonClassifierIdResolver(
             createCirTreeRootFromSourceCode(
@@ -229,6 +238,7 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
         assertEquals(setOf("A", "B", "C", "X", "Y", "Z"), resolver.resolveAssociatedIds("Z"))
     }
 
+    @Test
     fun `test sample 7 - with dependencies`() {
         val dependenciesModule = createModule {
             source(
@@ -277,6 +287,7 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
 
     Expected: A
     */
+    @Test
     fun `test sample 8`() {
         val resolver = createCommonClassifierIdResolver(
             createCirTreeRootFromSourceCode(
@@ -313,6 +324,7 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
 
     Expected:  A, C
     */
+    @Test
     fun `test sample 9`() {
         val resolver = createCommonClassifierIdResolver(
             createCirTreeRootFromSourceCode(

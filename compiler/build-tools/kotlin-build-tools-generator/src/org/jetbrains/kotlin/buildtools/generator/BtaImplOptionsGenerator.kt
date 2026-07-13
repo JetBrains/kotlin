@@ -437,7 +437,7 @@ internal class BtaImplOptionsGenerator(
         applyCompilerArgumentsFun.addSafeMethodAccessStatement(
             compilerToBtaStatement,
             catches = buildList {
-                if (!generateCompatLayer && type.isGeneratedEnum) {
+                if (!generateCompatLayer && (type.isGeneratedEnum || type.isGeneratedEnumList())) {
                     add(catchCompilerArgumentsParseException())
                 }
                 add(catchNoSuchMethodError())
@@ -475,11 +475,11 @@ internal class BtaImplOptionsGenerator(
                 )
             }
             argument.valueType.origin is StringArrayType -> {
-                maybeAddValidation(argument)
+                maybeAddDelimiterValidation(argument)
                 add(" ?: emptyArray()")
             }
             argument.valueType.origin is StringListType -> {
-                maybeAddValidation(argument)
+                maybeAddDelimiterValidation(argument)
                 add(
                     maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
@@ -491,7 +491,7 @@ internal class BtaImplOptionsGenerator(
                     MemberName(KOTLIN_COLLECTIONS, "map"),
                     MemberName(targetPackage, "absolutePathStringOrThrow", true),
                 )
-                maybeAddValidation(argument)
+                maybeAddDelimiterValidation(argument)
                 add(
                     maybeGetNullabilitySign(argument) + ".%M(%T.pathSeparator)",
                     MemberName(KOTLIN_COLLECTIONS, "joinToString"),
@@ -504,7 +504,7 @@ internal class BtaImplOptionsGenerator(
                     MemberName(KOTLIN_COLLECTIONS, "map"),
                     MemberName(targetPackage, "absolutePathStringOrThrow", true),
                 )
-                maybeAddValidation(argument)
+                maybeAddDelimiterValidation(argument)
                 add(
                     maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
@@ -858,15 +858,17 @@ internal class BtaImplOptionsGenerator(
         )
     }
 
-    private fun CodeBlock.Builder.maybeAddValidation(argument: BtaCompilerArgument<*>) {
+    private fun CodeBlock.Builder.maybeAddDelimiterValidation(argument: BtaCompilerArgument<*>) {
         if (argument.delimiter == null) {
             return
         }
 
         add(
-            maybeGetNullabilitySign(argument) + ".also { list -> list.%M(\"${argument.delimiter}\") }",
+            maybeGetNullabilitySign(argument) + ".also { list -> list.%M(",
             MemberName(targetPackage, "checkNoneContains", isExtension = true)
         )
+        add(argument.delimiter)
+        add(") }")
     }
 
     private fun TypeSpec.Builder.maybeAddToArgumentsStringFun(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?) {

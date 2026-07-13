@@ -86,6 +86,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpectedExpressionTypeTestGe
   }
 
   @Test
+  @TestMetadata("arrayOfInAnnotationArrayType.kt")
+  public void testArrayOfInAnnotationArrayType() {
+    run("arrayOfInAnnotationArrayType.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayOfInAnnotationJavaArray.kt")
+  public void testArrayOfInAnnotationJavaArray() {
+    run("arrayOfInAnnotationJavaArray.kt");
+  }
+
+  @Test
   @TestMetadata("callableReference_consumer.kt")
   public void testCallableReference_consumer() {
     run("callableReference_consumer.kt");
@@ -287,6 +299,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpectedExpressionTypeTestGe
   @TestMetadata("infixFunctionTypeParameter.kt")
   public void testInfixFunctionTypeParameter() {
     run("infixFunctionTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("intArrayOfInAnnotation.kt")
+  public void testIntArrayOfInAnnotation() {
+    run("intArrayOfInAnnotation.kt");
   }
 
   @Test

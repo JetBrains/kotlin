@@ -52,13 +52,13 @@ MODULE_FRAGMENT
                           ARG sourceInformation: CONST String type=kotlin.String value="C58@304L28,59@341L54:main.kt#1wrmn"
                         COMPOSITE type=kotlin.Unit origin=null
                           VAR name:dominantColorState type:util.DominantColorState [val]
-                            CALL 'public final fun rememberDominantColorState (defaultColor: compose.ui.Color?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): util.DominantColorState declared in util.DominantColorStateKt' type=util.DominantColorState origin=null
+                            CALL 'public final fun rememberDominantColorState (defaultColor: compose.ui.Color?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): util.DominantColorState [companion] declared in util.DominantColorStateKt' type=util.DominantColorState origin=null
                               ARG defaultColor: COMPOSITE type=kotlin.Nothing? origin=DEFAULT_VALUE
                                 CONST Null type=kotlin.Nothing? value=null
                               ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
                               ARG $changed: CONST Int type=kotlin.Int value=0
                               ARG $default: CONST Int type=kotlin.Int value=1
-                          CALL 'public final fun DynamicThemePrimaryColorsFromImage (dominantColorState: util.DominantColorState?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.Unit declared in util.DominantColorStateKt' type=kotlin.Unit origin=null
+                          CALL 'public final fun DynamicThemePrimaryColorsFromImage (dominantColorState: util.DominantColorState?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.Unit [companion] declared in util.DominantColorStateKt' type=kotlin.Unit origin=null
                             ARG dominantColorState: GET_VAR 'val dominantColorState: util.DominantColorState [val] declared in home.Home.<anonymous>' type=util.DominantColorState origin=null
                             ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
                             ARG $changed: CONST Int type=kotlin.Int value=0

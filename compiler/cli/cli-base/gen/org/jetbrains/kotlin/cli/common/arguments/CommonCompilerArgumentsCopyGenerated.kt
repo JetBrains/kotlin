@@ -43,7 +43,9 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.dumpDirectory = from.dumpDirectory
     to.dumpOnlyFqName = from.dumpOnlyFqName
     to.dumpPerf = from.dumpPerf
+    to.eagerLambdaAnalysis = from.eagerLambdaAnalysis
     to.enableAdditionalIrCheckers = from.enableAdditionalIrCheckers.copyOf()
+    to.escapingFunctions = from.escapingFunctions.copyOf()
     to.expectActualClasses = from.expectActualClasses
     to.explicitApi = from.explicitApi
     to.explicitBackingFields = from.explicitBackingFields
@@ -111,8 +113,8 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     @Suppress("DEPRECATION")
     to.useFirExperimentalCheckers = from.useFirExperimentalCheckers
     to.useFirIC = from.useFirIC
+    @Suppress("DEPRECATION")
     to.useFirLT = from.useFirLT
-    to.useK2 = from.useK2
     to.verbosePhases = from.verbosePhases.copyOf()
     to.verifyIr = from.verifyIr
     to.warningLevels = from.warningLevels.copyOf()

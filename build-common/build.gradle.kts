@@ -1,6 +1,9 @@
 description = "Kotlin Build Common"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("java-test-fixtures")
@@ -22,7 +25,6 @@ dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.config"))
     compileOnly(project(":kotlin-util-klib-metadata"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
@@ -38,7 +40,6 @@ dependencies {
     testFixturesCompileOnly(project(":js:js.parser"))
     testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(libs.junit.jupiter.params)
-    testFixturesImplementation(libs.junit4)
     testFixturesImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesImplementation("org.reflections:reflections:0.10.2")
@@ -48,7 +49,6 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
-    testImplementation(libs.junit4)
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
@@ -67,6 +67,5 @@ optInToK1Deprecation()
 testsJarToBeUsedAlongWithFixtures()
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4)
-    testTask("testJUnit5", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false)
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }

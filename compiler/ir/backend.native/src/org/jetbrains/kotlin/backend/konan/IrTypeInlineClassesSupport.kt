@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.inlineClassRepresentation
-import org.jetbrains.kotlin.backend.konan.ir.isSingleFieldValueClass
+import org.jetbrains.kotlin.backend.konan.ir.isInlineClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -71,7 +71,7 @@ internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrTyp
         is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
     }
 
-    override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.isSingleFieldValueClass
+    override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.isInlineClass
 
     override fun getNativePointedSuperclass(clazz: IrClass): IrClass? {
         var superClass: IrClass? = clazz

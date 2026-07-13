@@ -1,9 +1,10 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 abstract class A
 
 fun foo(i: Int) {}
 
-<!UNSUPPORTED_FEATURE("The feature \"full value classes\" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-XXLanguage:+FullValueClasses', but note that no stability guarantees are provided.")!>value<!> class B(val i: Int) : @Suppress(<!ERROR_SUPPRESSION!>"VALUE_CLASS_CANNOT_EXTEND_CLASSES"<!>) A() {
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class B(val i: Int) : @Suppress(<!ERROR_SUPPRESSION!>"VALUE_CLASS_CANNOT_EXTEND_CLASSES"<!>) A() {
     @Suppress(<!ERROR_SUPPRESSION!>"SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS"<!>)
     constructor() : this(42) {
         foo(i)

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
+import org.jetbrains.kotlin.cli.jklib.config.jklibCompileIr
 import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -41,8 +42,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrMangler
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibModuleSerializer
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -60,7 +61,10 @@ import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-
+import kotlin.io.path.Path
+import kotlin.io.path.absolute
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.pathString
 
 object JKlibConfigurationPhase : AbstractConfigurationPhase<K2JKlibCompilerArguments>(
     name = "JKlibConfigurationPhase",
@@ -102,10 +106,9 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                 configureJdkHomeFromSystemProperty()
             }
             configureJdkClasspathRoots()
-            val paths = PathUtil.kotlinPathsForCompiler
             if (!arguments.noStdlib) {
                 getLibraryFromHome(
-                    paths,
+                    kotlinPaths,
                     KotlinPaths::stdlibPath,
                     PathUtil.KOTLIN_JAVA_STDLIB_JAR,
                     configuration,
@@ -115,7 +118,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                     add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.stdlib")
                 }
                 getLibraryFromHome(
-                    paths,
+                    kotlinPaths,
                     KotlinPaths::scriptRuntimePath,
                     PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
                     configuration,
@@ -127,7 +130,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
             }
             if (!arguments.noReflect && !arguments.noStdlib) {
                 getLibraryFromHome(
-                    paths,
+                    kotlinPaths,
                     KotlinPaths::reflectPath,
                     PathUtil.KOTLIN_JAVA_REFLECT_JAR,
                     configuration,
@@ -168,7 +171,15 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
         configuration.renderDiagnosticInternalName = arguments.renderInternalDiagnosticNames
 
         arguments.destination?.let { configuration.jklibOutputDestination = it }
+        configuration.jklibCompileIr = arguments.compileIr
         arguments.friendModules?.let { configuration.friendPaths = it.split(File.pathSeparator).filterNot(String::isEmpty) }
+
+        // TODO(KT-87172): call configuration.setupCommonKlibArguments() instead of manual setup.
+        configuration.zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
+            zipFileAccessorCacheLimitArgument = K2JKlibCompilerArguments::klibZipFileAccessorCacheLimit,
+            configuration = configuration,
+            rootDisposable = input.rootDisposable,
+        )
     }
 }
 
@@ -195,7 +206,11 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
 
         val klibFiles = configuration.klibPaths
 
-        val klibLoadingResult = KlibLoader { libraryPaths(klibFiles) }.load()
+        val klibLoadingResult =
+            KlibLoader {
+                libraryPaths(klibFiles)
+                configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
+            }.load()
         klibLoadingResult.reportLoadingProblemsIfAny { _, message ->
             configuration.report(CLASSPATH_RESOLUTION_ERROR, message)
         }
@@ -209,7 +224,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
         val libraryList = DependencyListForCliModule.build(Name.identifier(moduleName)) {
             dependencies(configuration.jvmClasspathRoots.map { it.absolutePath })
             dependencies(configuration.jvmModularRoots.map { it.absolutePath })
-            dependencies(resolvedLibraries.map { it.libraryFile.absolutePath })
+            dependencies(resolvedLibraries.map { it.path.absolutePathString() })
             friendDependencies(configuration.friendPaths)
         }
 
@@ -242,9 +257,6 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
 
         outputs.runPlatformCheckers(diagnosticsReporter)
 
-        val firFiles = outputs.flatMap { it.fir }
-        checkKotlinPackageUsageForLightTree(configuration, firFiles)
-
         return JKlibFrontendPipelineArtifact(
             AllModulesFrontendOutput(outputs), configuration, projectEnvironment,
             rootDisposable,
@@ -260,7 +272,7 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
         val configuration = input.configuration
         val firResult = input.frontendOutput
         val diagnosticsReporter = configuration.diagnosticsCollector
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration)
+        val fir2IrExtensions = JvmFir2IrExtensions()
         val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)
 
         val fir2IrResult = firResult.convertToIrAndActualize(
@@ -292,8 +304,7 @@ private fun AllModulesFrontendOutput.convertToIrAndActualize(
         fir2IrExtensions,
         fir2IrConfiguration,
         irGeneratorExtensions,
-        // TODO(KT-86203): Check if JKlibIrMangler should not be used here.
-        JvmIrMangler,
+        JKlibIrMangler(),
         FirJvmVisibilityConverter,
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
@@ -314,7 +325,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
         val fir2IrResult = input.result
         val configuration = input.configuration
         val diagnosticsReporter = configuration.diagnosticsCollector
-        val destination = File(configuration.jklibOutputDestination ?: "result.klib")
+        val destination = Path(configuration.jklibOutputDestination ?: "result.klib").absolute()
 
         val serializerOutput = serializeModuleIntoKlib(
             moduleName = fir2IrResult.irModuleFragment.name.asString(),
@@ -345,7 +356,9 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
         )
 
         KlibWriter {
-            format(KlibFormat.ZipArchive)
+            // Skip ZIP archive creation and write directly to a directory for better performance when the generated Klib is immediately
+            // deserialized.
+            format(if (configuration.jklibCompileIr) KlibFormat.Directory else KlibFormat.ZipArchive)
             manifest {
                 moduleName(configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
                 versions(versions)
@@ -353,11 +366,11 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
             }
             includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
             includeIr(serializerOutput.serializedIr)
-        }.writeTo(destination.absolutePath)
+        }.writeTo(destination)
 
 
         return JKlibSerializationArtifact(
-            destination.absolutePath,
+            destination.pathString,
             configuration,
             input.projectEnvironment,
             input.rootDisposable,

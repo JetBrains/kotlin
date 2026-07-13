@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClassFinder
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.name.ClassId
@@ -15,6 +16,9 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.common.KotlinCommonMetadata
+import kotlin.reflect.KClass
+import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
+import kotlin.reflect.jvm.internal.types.MutableCollectionKClassImpl
 
 internal fun createFunctionKmClass(arity: Int): KmClass = KmClass().apply {
     name = "kotlin/Function$arity"
@@ -80,6 +84,15 @@ internal fun readBuiltinClassMetadata(classId: ClassId): KmClass? {
         ?: throw KotlinReflectionInternalError("Builtin class metadata not found for $classId.")
 }
 
-internal fun cleanBuiltinClassCaches() {
+private val mutableCollectionKClassCache = ConcurrentHashMap<ClassId, MutableCollectionKClass<*>>()
+
+internal fun getMutableCollectionKClass(readonlyClass: KClass<*>): MutableCollectionKClass<*>? {
+    val readOnlyClassId = (readonlyClass as? KClassImpl<*>)?.classId ?: return null
+    val mutableClassId = JavaToKotlinClassMap.readOnlyToMutable(readOnlyClassId) ?: return null
+    return mutableCollectionKClassCache.getOrPut(mutableClassId) { MutableCollectionKClassImpl(readonlyClass, mutableClassId) }
+}
+
+internal fun clearBuiltinClassCaches() {
     builtinClassCaches.clear()
+    mutableCollectionKClassCache.clear()
 }

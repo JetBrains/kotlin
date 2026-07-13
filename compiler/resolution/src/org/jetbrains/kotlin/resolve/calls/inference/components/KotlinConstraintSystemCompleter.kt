@@ -119,7 +119,6 @@ class KotlinConstraintSystemCompleter(
             if (completionMode == ConstraintSystemCompletionMode.FULL) {
                 // Stage 3: fix variables for parameter types of all postponed arguments
                 for (argument in postponedArguments) {
-                    @OptIn(K1Deprecation::class)
                     val variableWasFixed = postponedArgumentsInputTypesResolver.fixNextReadyVariableForParameterTypeIfNeeded(
                         argument,
                         postponedArguments,
@@ -145,7 +144,6 @@ class KotlinConstraintSystemCompleter(
             }
 
             // Stage 5: analyze the next ready postponed argument
-            @OptIn(K1Deprecation::class)
             if (analyzeNextReadyPostponedArgument(postponedArguments, completionMode, analyze))
                 continue
 

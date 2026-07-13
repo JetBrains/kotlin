@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
@@ -39,7 +40,8 @@ internal class GradleBuildToolsApiCompilerRunner(
 
     override fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,
-        taskOutputsBackup: TaskOutputsBackup?
+        taskOutputsBackup: TaskOutputsBackup?,
+        diagnostics: UsesKotlinToolingDiagnosticsParameters,
     ): WorkQueue {
         buildMetrics.addTimeMetric(CALL_WORKER)
         val workQueue = workerExecutor.noIsolation()
@@ -56,6 +58,8 @@ internal class GradleBuildToolsApiCompilerRunner(
                 params.snapshotsDir.set(taskOutputsBackup.snapshotsDir)
                 params.metricsReporter.set(buildMetrics)
             }
+            params.toolingDiagnosticsCollector.set(diagnostics.toolingDiagnosticsCollector)
+            params.toolingDiagnosticsContext.set(diagnostics.toolingDiagnosticsContext)
         }
         return workQueue
     }

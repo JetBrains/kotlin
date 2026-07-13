@@ -19,6 +19,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 import java.lang.reflect.Constructor
@@ -28,8 +29,6 @@ import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
-import kotlin.reflect.KClass
-import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 import kotlin.reflect.jvm.internal.calls.*
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.CALL_BY_NAME
@@ -107,7 +106,7 @@ internal class DescriptorKFunction private constructor(
         val preventUnboxingForIndices = mutableListOf<Int>()
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinFunction -> run {
-                getFunctionWithDefaultParametersForValueClassOverride(this)?.let { defaultImplsFunction ->
+                getFunctionWithDefaultParametersForValueClassOverride()?.let { defaultImplsFunction ->
                     val defaultImplsFunctionName = defaultImplsFunction.signature.substringBefore('(')
                     val defaultImplsFunctionDesc = defaultImplsFunction.signature.substring(defaultImplsFunctionName.length)
                     val patchingResult =
@@ -176,20 +175,6 @@ internal class DescriptorKFunction private constructor(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): DescriptorKFunction =
         DescriptorKFunction(container, descriptor, overriddenStorage)
 
-    private fun getFunctionWithDefaultParametersForValueClassOverride(function: ReflectKFunction): ReflectKFunction? {
-        if (
-            function.valueParameters.none { (it as? ReflectKParameter)?.declaresDefaultValue == true } &&
-            (function.container as? KClass<*>)?.isValue == true &&
-            Modifier.isStatic(caller.member!!.modifiers)
-        ) {
-            // firstOrNull is used to mimic the wrong behaviour of regular class reflection as KT-40327 is not fixed.
-            // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt. 
-            return function.overridden
-                .firstOrNull { function -> function.valueParameters.any { (it as? ReflectKParameter)?.declaresDefaultValue == true } }
-        }
-        return null
-    }
-
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,
     // the member belongs to the interface/DefaultImpls, so the receiver should not be unboxed.
@@ -214,9 +199,12 @@ internal class DescriptorKFunction private constructor(
     ): CallerImpl<Constructor<*>> {
         return if (!isDefault && shouldHideConstructorDueToValueClassTypeValueParameters(descriptor)) {
             if (isBound)
-                CallerImpl.AccessorForHiddenBoundConstructor(member, boundReceiver)
+                CallerImpl.AccessorForHiddenBoundConstructor(
+                    member, boundReceiver,
+                    isNonExposedConstructorOfOrdinaryClassWithInlineClassParameter(member)
+                )
             else
-                CallerImpl.AccessorForHiddenConstructor(member)
+                CallerImpl.AccessorForHiddenConstructor(member, isNonExposedConstructorOfOrdinaryClassWithInlineClassParameter(member))
         } else {
             if (isBound)
                 CallerImpl.BoundConstructor(member, boundReceiver)
@@ -261,3 +249,8 @@ internal class DescriptorKFunction private constructor(
     override fun toString(): String =
         ReflectionObjectRenderer.renderFunction(this)
 }
+
+internal fun isNonExposedConstructorOfOrdinaryClassWithInlineClassParameter(member: Constructor<*>): Boolean =
+    member.parameterTypes.any {
+        it.name == JvmStandardClassIds.JVM_EXPOSE_BOXED_NON_EXPOSED_CONSTRUCTOR_MARKER_FQ_NAME.asString()
+    }

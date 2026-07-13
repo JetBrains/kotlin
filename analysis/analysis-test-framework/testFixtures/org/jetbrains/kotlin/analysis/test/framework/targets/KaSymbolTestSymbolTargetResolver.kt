@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.analysis.test.framework.targets
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -97,7 +95,7 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
             }
             ?: error("Cannot find a symbol for the enum entry `$enumEntryId`.")
 
-        val initializerSymbol = enumEntrySymbol.enumEntryInitializer ?: error("`${enumEntryId.callableName}` must have an initializer.")
+        val initializerSymbol = enumEntrySymbol.initializer ?: error("`${enumEntryId.callableName}` must have an initializer.")
         listOf(initializerSymbol)
     }
 
@@ -108,7 +106,7 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
     }
 
     override fun resolveTypeParameterTarget(target: TypeParameterTarget, owner: KaSymbol): KaSymbol? {
-        requireSpecificOwner<KaTypeParameterOwnerSymbol>(target, owner)
+        requireSpecificOwner<KaDeclarationSymbol>(target, owner)
         return owner.typeParameters.find { it.name == target.name }
     }
 
@@ -118,7 +116,7 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
     }
 
     override fun resolveContextParameterTarget(target: ContextParameterTarget, owner: KaSymbol): KaSymbol? {
-        requireSpecificOwner<KaContextParameterOwnerSymbol>(target, owner)
+        requireSpecificOwner<KaCallableSymbol>(target, owner)
         return owner.contextParameters.find { it.name == target.name }
     }
 

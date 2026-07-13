@@ -1,0 +1,38 @@
+--- a/ArrayMap.ir.txt
++++ b/ArrayMap.ir.jvm_ir.txt
+@@ -716,7 +716,7 @@
+                       if: CONST Boolean type=kotlin.Boolean value=true
+                       then: BLOCK type=kotlin.Nothing origin=null
+                         THROW type=kotlin.Nothing
+-                          CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.NoSuchElementException' type=kotlin.NoSuchElementException origin=null
++                          CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.NoSuchElementException' type=java.util.NoSuchElementException origin=null
+             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=OBJECT_LITERAL
+     FUN name:set visibility:public modality:OPEN returnType:kotlin.Unit [operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>
+@@ -726,7 +726,7 @@
+         public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit declared in <root>.ArrayMap
+       BLOCK_BODY
+         THROW type=kotlin.Nothing
+-          CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.IllegalStateException' type=kotlin.IllegalStateException origin=null
++          CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+     PROPERTY name:size visibility:public modality:OPEN [val]
+       overridden:
+         public abstract size: kotlin.Int declared in <root>.ArrayMap
+@@ -812,7 +812,7 @@
+                   public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator
+                 BLOCK_BODY
+                   THROW type=kotlin.Nothing
+-                    CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.NoSuchElementException' type=kotlin.NoSuchElementException origin=null
++                    CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.NoSuchElementException' type=java.util.NoSuchElementException origin=null
+             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.EmptyArrayMap.iterator.<no name provided>' type=<root>.EmptyArrayMap.iterator.<no name provided> origin=OBJECT_LITERAL
+     FUN name:set visibility:public modality:OPEN returnType:kotlin.Unit [operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.EmptyArrayMap
+@@ -822,7 +822,7 @@
+         public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit declared in <root>.ArrayMap
+       BLOCK_BODY
+         THROW type=kotlin.Nothing
+-          CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.IllegalStateException' type=kotlin.IllegalStateException origin=null
++          CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+     PROPERTY name:size visibility:public modality:OPEN [val]
+       overridden:
+         public abstract size: kotlin.Int declared in <root>.ArrayMap

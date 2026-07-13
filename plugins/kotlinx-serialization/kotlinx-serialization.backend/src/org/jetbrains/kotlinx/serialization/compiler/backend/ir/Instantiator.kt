@@ -373,7 +373,8 @@ internal class Instantiator(
                                 }
                             }
                         }!!
-                        generator.wrapWithNullableSerializerIfNeeded(type, expr, nullableSerClass)
+                        expr.type = expr.getSubstitutedType(type, kType, path ?: emptyList())
+                        generator.wrapWithNullableSerializerIfNeeded(expr.type, expr, nullableSerClass)
                     }
                 )
             )
@@ -382,6 +383,14 @@ internal class Instantiator(
 
         val ctor = findConstructorWithoutTypeParameters(serializerClass, needToCopyAnnotations).owner
         return callConstructor(ctor, typeArgs, newArgs)
+    }
+
+    private fun IrExpression.getSubstitutedType(subclassType: IrSimpleType, kType: IrSimpleType, path: List<IrSimpleType>): IrType {
+        val subclass = subclassType.getClass() ?: return type
+        val substitutions = kType.argumentTypesOrUpperBounds()
+        return type.substitute(subclass.typeParameters, subclass.typeParameters.map {
+            mapTypeParameterIndex(it.index, path)?.let(substitutions::getOrNull) ?: it.representativeUpperBound
+        })
     }
 
     context(irBuilder: IrBuilderWithScope)

@@ -16,9 +16,9 @@
 
 package androidx.compose.compiler.plugins.kotlin.inference
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class TestInferApplier {
     private val resolutions = resolve(data)
@@ -220,14 +220,14 @@ class TestInferApplier {
         }
 
         assertTrue(
-            "Expected Circle in e1 to be in error",
-            findNode("e1", "Circle") in errors
+            findNode("e1", "Circle") in errors,
+            "Expected Circle in e1 to be in error"
         )
         assertTrue(
-            "Expected Circle in e2 to be in error",
-            findNode("e2", "Provider", "Circle") in errors
+            findNode("e2", "Provider", "Circle") in errors,
+            "Expected Circle in e2 to be in error"
         )
-        assertEquals("Unexpected errors reported", 2, errors.size)
+        assertEquals(2, errors.size, "Unexpected errors reported")
     }
 
     @Test

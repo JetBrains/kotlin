@@ -1,5 +1,8 @@
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
 }
@@ -57,7 +60,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(libs.junit4) // for ComparisonFailure
     testFixturesApi(commonDependency("com.android.tools:r8"))
-    testFixturesApi(project(":analysis:analysis-internal-utils"))
     testFixturesApi(project(":compiler:tests-mutes:mutes-junit4"))
     testFixturesCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesCompileOnly(toolsJarApi())

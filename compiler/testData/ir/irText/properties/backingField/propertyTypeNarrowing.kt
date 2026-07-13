@@ -1,6 +1,3 @@
-
-// IGNORE_BACKEND_KLIB: JS_IR
-
 class A {
     val it: Number
         field = 4

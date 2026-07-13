@@ -275,10 +275,10 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         // result.rhs.resolvedType.
         // Also, we don't want to turn type variables into DNNs because it can lead to contradictions in the constraint system.
         // compiler/testData/diagnostics/tests/controlStructures/lambdasInExclExclAndElvis.kt breaks otherwise.
-        if (result.resolvedType.let { it !is ConeTypeVariableType && it.canBeNull(session) }) {
+        if (result.resolvedType.let { it !is ConeTypeVariableType && it.canBeNull() }) {
             val rhsResolvedType = result.rhs.resolvedType.refinedTypeForDataFlowOrSelf
             // This part of the code is a kind of workaround, and it probably will be resolved by KT-55692
-            if (!rhsResolvedType.canBeNull(session)) {
+            if (!rhsResolvedType.canBeNull()) {
                 // It's definitely not a flexible with nullable bound
                 // Sometimes return type for special call for elvis operator might be nullable,
                 // but result is not nullable if the right type is not nullable
@@ -293,7 +293,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     }
 
     private fun ConeKotlinType.isFlexibleWithNotNullable(): Boolean =
-        this is ConeFlexibleType && !this.lowerBound.canBeNull(session)
+        this is ConeFlexibleType && !this.lowerBound.canBeNull()
 
     private fun computeResolutionModeForElvisLhs(
         data: ResolutionMode,
@@ -330,7 +330,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             is ConeDefinitelyNotNullType ->
                 error("It can't happen because of the previous `isNullableType` check")
             is ConeFlexibleType -> {
-                if (!lowerBound.canBeNull(session)) {
+                if (!lowerBound.canBeNull()) {
                     this
                 } else {
                     ConeFlexibleType(

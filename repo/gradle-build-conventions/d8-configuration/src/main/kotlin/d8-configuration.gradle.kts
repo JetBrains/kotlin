@@ -7,7 +7,9 @@ import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 
 project.plugins.apply(D8Plugin::class.java)
 rootProject.plugins.apply(D8Plugin::class.java)
-val d8EnvSpec = project.the<D8EnvSpec>()
+val d8EnvSpec = project.the<D8EnvSpec>().apply {
+    downloadBaseUrl.set(null as String?)
+}
 val d8RootEnvSpec = rootProject.the<D8EnvSpec>()
 
 val d8KotlinBuild = extensions.create<D8Extension>(

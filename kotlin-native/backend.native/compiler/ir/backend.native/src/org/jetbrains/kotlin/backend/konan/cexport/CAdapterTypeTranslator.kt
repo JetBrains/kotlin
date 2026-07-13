@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.K1Deprecation
 
 internal class CAdapterTypeTranslator(
         val prefix: String,
+        @OptIn(K1Deprecation::class)
         val builtIns: KonanBuiltIns,
 ) {
     private fun translateTypeFull(type: KotlinType): Pair<String, String> =
@@ -31,6 +33,7 @@ internal class CAdapterTypeTranslator(
                     type.binaryTypeIsReference()
 
     fun isMappedToString(binaryType: BinaryType<ClassDescriptor>): Boolean =
+            @OptIn(K1Deprecation::class)
             when (binaryType) {
                 is BinaryType.Primitive -> false
                 is BinaryType.Reference -> binaryType.types.first() == builtIns.string
@@ -66,6 +69,7 @@ internal class CAdapterTypeTranslator(
             },
             ifReference = {
                 val clazz = (it.computeBinaryType() as BinaryType.Reference).types.first()
+                @OptIn(K1Deprecation::class)
                 if (clazz == builtIns.string) {
                     "const char*" to "KObjHeader*"
                 } else {

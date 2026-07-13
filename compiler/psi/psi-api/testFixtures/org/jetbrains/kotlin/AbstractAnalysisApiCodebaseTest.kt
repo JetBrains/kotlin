@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,12 +15,9 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
@@ -121,6 +118,8 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDi
         annotation.shortName.toString() == annotationName
     }
 
+    protected fun KtAnnotated.hasDeprecatedAnnotation(): Boolean = hasAnnotation(Deprecated::class.simpleName!!)
+
     sealed class SourceDirectory(val sourcePaths: List<String>) {
         class ForValidation(sourcePaths: List<String>) : SourceDirectory(sourcePaths)
         class ForDumpFileComparison(sourcePaths: List<String>, val outputFilePath: String) : SourceDirectory(sourcePaths)
@@ -182,6 +181,49 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDi
         return text.substring(lineStart, i)
     }
 }
+
+/**
+ * Iterates over all non-local declarations in the given container recursively.
+ */
+@OptIn(KtExperimentalApi::class)
+fun KtDeclarationContainer.forEachNonLocalDeclaration(action: (KtDeclaration) -> Unit) {
+    for (declaration in declarations) {
+        action(declaration)
+        if (declaration is KtDeclarationContainer) {
+            declaration.forEachNonLocalDeclaration(action)
+        }
+    }
+
+    if (this is KtClassOrObject) {
+        companionBlocks.forEach {
+            it.forEachNonLocalDeclaration(action)
+        }
+    }
+}
+
+/**
+ * Iterates over all non-local public declarations in the given container recursively.
+ */
+@OptIn(KtExperimentalApi::class)
+fun KtDeclarationContainer.forEachNonLocalPublicDeclaration(action: (KtDeclaration) -> Unit) {
+    for (declaration in declarations) {
+        if (!declaration.isPubliclyVisible) continue
+
+        action(declaration)
+        if (declaration is KtDeclarationContainer) {
+            declaration.forEachNonLocalPublicDeclaration(action)
+        }
+    }
+
+    if (this is KtClassOrObject) {
+        companionBlocks.forEach {
+            it.forEachNonLocalPublicDeclaration(action)
+        }
+    }
+}
+
+val KtModifierListOwner.isPubliclyVisible: Boolean
+    get() = !hasModifier(KtTokens.PRIVATE_KEYWORD) && !hasModifier(KtTokens.INTERNAL_KEYWORD)
 
 /**
  * Test for checking the code base against the master file.

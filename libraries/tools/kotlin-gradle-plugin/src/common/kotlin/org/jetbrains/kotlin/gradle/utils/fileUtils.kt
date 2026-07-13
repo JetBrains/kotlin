@@ -15,8 +15,11 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.attribute.PosixFilePermission
 import java.util.*
 import java.util.function.Consumer
+import kotlin.io.path.getPosixFilePermissions
+import kotlin.io.path.setPosixFilePermissions
 
 /**
  * Create all possible case-sensitive permutations for given [String].
@@ -263,3 +266,10 @@ internal val Path.invariantSeparatorsPathString: String
         val separator = fileSystem.separator
         return if (separator != "/") toString().replace(separator, "/") else toString()
     }
+
+// replacement for File.setExecutable
+internal fun Path.setExecutable() {
+    setPosixFilePermissions(
+        getPosixFilePermissions() + PosixFilePermission.OWNER_EXECUTE
+    )
+}

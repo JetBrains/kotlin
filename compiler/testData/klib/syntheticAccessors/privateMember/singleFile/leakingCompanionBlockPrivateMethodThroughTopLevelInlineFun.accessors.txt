@@ -3,8 +3,8 @@
 /* FILE package=<root> fileName=leakingCompanionBlockPrivateMethodThroughTopLevelInlineFun.kt */
 
 public class A
-    /* TARGET declaration */ private /* static */ fun privateMethod(): String
-    /* ACCESSOR declaration */ internal /* static */ fun access$privateMethod(): String
+    /* TARGET declaration */ private companion fun privateMethod(): String
+    /* ACCESSOR declaration */ internal companion fun access$privateMethod(): String
         /* TARGET use-site */ privateMethod()
 internal inline fun internalInlineMethod(): String
     /* ACCESSOR use-site */ access$privateMethod()

@@ -26,17 +26,20 @@ public interface KaResolver : KaSessionComponent {
      *
      * In contract to [tryResolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
      *
-     * In most cases, a not-null result of [tryResolveCall] will represent the same symbol. The only exception is
-     * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+     * In most cases, a not-null result of [tryResolveCall] will represent the same symbol. The only exceptions are:
+     * - [KtNameReferenceExpression]
+     * - [KtOperationReferenceExpression]
+     * - [KtEnumEntrySuperclassReferenceExpression]
+     *
+     * For which the behavior could be different depending on the context.
      *
      * The main idea is that [tryResolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
-     * and not the parent call. For more details, see [KtNameReferenceExpression].
+     * and not the parent call. For more details, see the mentioned elements.
      *
      * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
      *
      * @see KaSymbolResolutionSuccess
      * @see KaSymbolResolutionError
-     * @see KtNameReferenceExpression
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -50,16 +53,19 @@ public interface KaResolver : KaSessionComponent {
      *
      * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
      *
-     * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
-     * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+     * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exceptions are:
+     * - [KtNameReferenceExpression]
+     * - [KtOperationReferenceExpression]
+     * - [KtEnumEntrySuperclassReferenceExpression]
+     *
+     * For which the behavior could be different depending on the context.
      *
      * The main idea is that [resolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
-     * and not the parent call. For more details, see [KtNameReferenceExpression].
+     * and not the parent call. For more details, see the mentioned elements.
      *
      * @see tryResolveSymbols
      * @see resolveSymbol
      * @see KaSymbolResolutionSuccess
-     * @see KtNameReferenceExpression
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -72,16 +78,19 @@ public interface KaResolver : KaSessionComponent {
      *
      * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
      *
-     * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
-     * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+     * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exceptions are:
+     * - [KtNameReferenceExpression]
+     * - [KtOperationReferenceExpression]
+     * - [KtEnumEntrySuperclassReferenceExpression]
+     *
+     * For which the behavior could be different depending on the context.
      *
      * The main idea is that [resolveSymbol] could represent more cases, so it prefers exactly the referenced symbol
-     * and not the parent call. For more details, see [KtNameReferenceExpression].
+     * and not the parent call. For more details, see the mentioned elements.
      *
      * @see tryResolveSymbols
      * @see resolveSymbols
      * @see KaSymbolResolutionSuccess
-     * @see KtNameReferenceExpression
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -1286,8 +1295,37 @@ public interface KaResolver : KaSessionComponent {
      * }
      * ```
      */
+    @Deprecated(
+        message = "Use `contextSensitiveResolutionStatus` instead",
+        replaceWith = ReplaceWith(
+            "this.contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used",
+            "org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus",
+        ),
+    )
     @KaExperimentalApi
     public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
+
+    /**
+     * The [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) status of the [KtSimpleNameExpression]:
+     * whether the name is already resolved through context-sensitive resolution, and whether a redundant explicit
+     * qualifier or import could be removed in favor of it.
+     *
+     * The information is available even when the `-Xcontext-sensitive-resolution` feature is not enabled.
+     *
+     * #### Example
+     *
+     * ```
+     * enum class Foo { BAR }
+     *
+     * fun usage(): Foo {
+     *     return Foo.BAR // the 'Foo.' qualifier can be removed -> KaContextSensitiveResolutionStatus.QualifierCanBeRemoved
+     * }
+     * ```
+     *
+     * @see KaContextSensitiveResolutionStatus
+     */
+    @KaExperimentalApi
+    public val KtSimpleNameExpression.contextSensitiveResolutionStatus: KaContextSensitiveResolutionStatus
 
     /**
      * Resolves the given [KtElement] to a [KaCallInfo] object. [KaCallInfo] either contains a successfully resolved call or an error with
@@ -1323,21 +1361,27 @@ public interface KaResolver : KaSessionComponent {
  *
  * In contract to [tryResolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
  *
- * In most cases, a not-null result of [tryResolveCall] will represent the same symbol. The only exception is
- * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+ * In most cases, a not-null result of [tryResolveCall] will represent the same symbol. The only exceptions are:
+ * - [KtNameReferenceExpression]
+ * - [KtOperationReferenceExpression]
+ * - [KtEnumEntrySuperclassReferenceExpression]
+ *
+ * For which the behavior could be different depending on the context.
  *
  * The main idea is that [tryResolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
- * and not the parent call. For more details, see [KtNameReferenceExpression].
+ * and not the parent call. For more details, see the mentioned elements.
  *
  * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
  *
  * @see KaSymbolResolutionSuccess
  * @see KaSymbolResolutionError
- * @see KtNameReferenceExpression
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
+@Deprecated(
+    message = "Use the 'tryResolveSymbols' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.tryResolveSymbols()", "org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
@@ -1354,20 +1398,26 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
  *
  * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
  *
- * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
- * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+ * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exceptions are:
+ * - [KtNameReferenceExpression]
+ * - [KtOperationReferenceExpression]
+ * - [KtEnumEntrySuperclassReferenceExpression]
+ *
+ * For which the behavior could be different depending on the context.
  *
  * The main idea is that [resolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
- * and not the parent call. For more details, see [KtNameReferenceExpression].
+ * and not the parent call. For more details, see the mentioned elements.
  *
  * @see tryResolveSymbols
  * @see resolveSymbol
  * @see KaSymbolResolutionSuccess
- * @see KtNameReferenceExpression
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
+@Deprecated(
+    message = "Use the 'resolveSymbols' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbols()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbols"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
@@ -1383,20 +1433,26 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
  *
  * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
  *
- * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
- * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+ * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exceptions are:
+ * - [KtNameReferenceExpression]
+ * - [KtOperationReferenceExpression]
+ * - [KtEnumEntrySuperclassReferenceExpression]
+ *
+ * For which the behavior could be different depending on the context.
  *
  * The main idea is that [resolveSymbol] could represent more cases, so it prefers exactly the referenced symbol
- * and not the parent call. For more details, see [KtNameReferenceExpression].
+ * and not the parent call. For more details, see the mentioned elements.
  *
  * @see tryResolveSymbols
  * @see resolveSymbols
  * @see KaSymbolResolutionSuccess
- * @see KtNameReferenceExpression
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtResolvable.resolveSymbol(): KaSymbol? {
@@ -1425,8 +1481,11 @@ public fun KtResolvable.resolveSymbol(): KaSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? {
@@ -1455,8 +1514,11 @@ public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol? {
@@ -1491,8 +1553,11 @@ public fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? {
@@ -1527,8 +1592,11 @@ public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstructorSymbol? {
@@ -1559,8 +1627,11 @@ public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstru
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtCallElement.resolveSymbol(): KaFunctionSymbol? {
@@ -1589,8 +1660,11 @@ public fun KtCallElement.resolveSymbol(): KaFunctionSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? {
@@ -1635,8 +1709,11 @@ public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol? {
@@ -1667,8 +1744,11 @@ public fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol? {
@@ -1700,8 +1780,11 @@ public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol?
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaNamedClassSymbol? {
@@ -1736,8 +1819,11 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaNamedClas
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol? {
@@ -1774,8 +1860,11 @@ public fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? {
@@ -1810,8 +1899,11 @@ public fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? {
@@ -1844,8 +1936,11 @@ public fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? {
@@ -1872,8 +1967,11 @@ public fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? {
@@ -1902,8 +2000,11 @@ public fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? {
@@ -1947,8 +2048,11 @@ public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol? {
@@ -1979,8 +2083,11 @@ public fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtNullableType.resolveSymbol(): KaClassifierSymbol? {
@@ -2010,8 +2117,11 @@ public fun KtNullableType.resolveSymbol(): KaClassifierSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtFunctionType.resolveSymbol(): KaClassSymbol? {
@@ -2049,8 +2159,11 @@ public fun KtFunctionType.resolveSymbol(): KaClassSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtTypeReference.resolveSymbol(): KaClassifierSymbol? {
@@ -2081,8 +2194,11 @@ public fun KtTypeReference.resolveSymbol(): KaClassifierSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtClassLiteralExpression.resolveSymbol(): KaClassifierSymbol? {
@@ -2112,8 +2228,11 @@ public fun KtClassLiteralExpression.resolveSymbol(): KaClassifierSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
@@ -2141,8 +2260,11 @@ public fun KtSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveSymbol' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtDelegatedSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
@@ -2169,9 +2291,12 @@ public fun KtDelegatedSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
  *
  * @see resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
+@Deprecated(
+    message = "Use the 'tryResolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.tryResolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.tryResolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt? {
@@ -2189,8 +2314,11 @@ public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt? {
  * @see KtForExpression.resolveCall
  * @see KtResolvableCall.tryResolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'tryResolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.tryResolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.tryResolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtForExpression.tryResolveCall(): KaForLoopCallResolutionAttempt? {
@@ -2208,8 +2336,11 @@ public fun KtForExpression.tryResolveCall(): KaForLoopCallResolutionAttempt? {
  * @see KtPropertyDelegate.resolveCall
  * @see KtResolvableCall.tryResolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'tryResolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.tryResolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.tryResolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutionAttempt? {
@@ -2235,9 +2366,12 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
  * @see tryResolveCall
  * @see collectCallCandidates
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtResolvableCall.resolveCall(): KaSingleOrMultiCall? {
@@ -2266,8 +2400,11 @@ public fun KtResolvableCall.resolveCall(): KaSingleOrMultiCall? {
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? {
@@ -2296,8 +2433,11 @@ public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? {
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>? {
@@ -2331,8 +2471,11 @@ public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbo
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? {
@@ -2366,8 +2509,11 @@ public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall? {
@@ -2398,8 +2544,11 @@ public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegated
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtCallElement.resolveCall(): KaFunctionCall<*>? {
@@ -2428,8 +2577,11 @@ public fun KtCallElement.resolveCall(): KaFunctionCall<*>? {
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<*, *>? {
@@ -2474,8 +2626,11 @@ public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
@@ -2506,8 +2661,11 @@ public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunction
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
@@ -2536,8 +2694,11 @@ public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFu
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? {
@@ -2573,8 +2734,11 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedCo
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
@@ -2607,8 +2771,11 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? {
@@ -2635,8 +2802,11 @@ public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? {
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtQualifiedExpression.resolveCall(): KaSingleCall<*, *>? {
@@ -2670,8 +2840,11 @@ public fun KtQualifiedExpression.resolveCall(): KaSingleCall<*, *>? {
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtForExpression.resolveCall(): KaForLoopCall? {
@@ -2704,8 +2877,11 @@ public fun KtForExpression.resolveCall(): KaForLoopCall? {
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? {
@@ -2734,8 +2910,11 @@ public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? {
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstructorSymbol>? {
@@ -2764,8 +2943,11 @@ public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstru
  * @see tryResolveCall
  * @see KtResolvableCall.resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'resolveCall' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtNameReferenceExpression.resolveCall(): KaSingleCall<*, *>? {
@@ -2783,9 +2965,12 @@ public fun KtNameReferenceExpression.resolveCall(): KaSingleCall<*, *>? {
  *
  * @see resolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @OptIn(KtExperimentalApi::class)
+@Deprecated(
+    message = "Use the 'collectCallCandidates' resolution endpoint instead",
+    replaceWith = ReplaceWith("this.collectCallCandidates()", "org.jetbrains.kotlin.analysis.api.resolution.collectCallCandidates"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> {
@@ -2804,8 +2989,6 @@ public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> {
  * @see KtResolvable.tryResolveSymbols
  * @see KtResolvableCall.tryResolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtReference.resolveToSymbols(): Collection<KaSymbol> {
     return with(session) {
@@ -2823,8 +3006,6 @@ public fun KtReference.resolveToSymbols(): Collection<KaSymbol> {
  * @see KtResolvable.tryResolveSymbols
  * @see KtResolvableCall.tryResolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtReference.resolveToSymbol(): KaSymbol? {
     return with(session) {
@@ -2851,12 +3032,10 @@ public fun KtReference.resolveToSymbol(): KaSymbol? {
  *
  * @see KtSimpleNameExpression.isImplicitReferenceToCompanion
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use `KtSimpleNameExpression` instead",
     replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true"),
 )
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
     @Suppress("DEPRECATION")
@@ -2880,7 +3059,13 @@ public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
  *
  * Given a call `A.foo()`, `A` is an implicit reference to the companion object, so `isImplicitReferenceToCompanion` returns `true`.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'isImplicitReferenceToCompanion' expression-information endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.isImplicitReferenceToCompanion",
+        "org.jetbrains.kotlin.analysis.api.expressions.isImplicitReferenceToCompanion",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KtSimpleNameExpression.isImplicitReferenceToCompanion: Boolean
@@ -2907,13 +3092,11 @@ public val KtSimpleNameExpression.isImplicitReferenceToCompanion: Boolean
  *
  * @see KtSimpleNameExpression.usesContextSensitiveResolution
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use `KtSimpleNameExpression` instead",
     replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true"),
 )
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public val KtReference.usesContextSensitiveResolution: Boolean
     @Suppress("DEPRECATION")
@@ -2936,12 +3119,50 @@ public val KtReference.usesContextSensitiveResolution: Boolean
  * }
  * ```
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use `contextSensitiveResolutionStatus` instead",
+    replaceWith = ReplaceWith(
+        "this.contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used",
+        "org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus",
+    ),
+)
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
+    @Suppress("DEPRECATION")
     get() = with(session) { usesContextSensitiveResolution }
+
+/**
+ * The [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) status of the [KtSimpleNameExpression]:
+ * whether the name is already resolved through context-sensitive resolution, and whether a redundant explicit
+ * qualifier or import could be removed in favor of it.
+ *
+ * The information is available even when the `-Xcontext-sensitive-resolution` feature is not enabled.
+ *
+ * #### Example
+ *
+ * ```
+ * enum class Foo { BAR }
+ *
+ * fun usage(): Foo {
+ *     return Foo.BAR // the 'Foo.' qualifier can be removed -> KaContextSensitiveResolutionStatus.QualifierCanBeRemoved
+ * }
+ * ```
+ *
+ * @see KaContextSensitiveResolutionStatus
+ */
+@KaExperimentalApi
+@Deprecated(
+    message = "Use the 'contextSensitiveResolutionStatus' expression-information endpoint instead",
+    replaceWith = ReplaceWith(
+        "this.contextSensitiveResolutionStatus",
+        "org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus",
+    ),
+)
+@KaContextParameterApi
+context(session: KaSession)
+public val KtSimpleNameExpression.contextSensitiveResolutionStatus: KaContextSensitiveResolutionStatus
+    get() = with(session) { contextSensitiveResolutionStatus }
 
 /**
  * Resolves the given [KtElement] to a [KaCallInfo] object. [KaCallInfo] either contains a successfully resolved call or an error with
@@ -2953,8 +3174,6 @@ public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
  *
  * @see KtResolvableCall.tryResolveCall
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtElement.resolveToCall(): KaCallInfo? {
     return with(session) {
@@ -2973,8 +3192,6 @@ public fun KtElement.resolveToCall(): KaCallInfo? {
  *
  * @see KtResolvableCall.collectCallCandidates
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> {
     return with(session) {

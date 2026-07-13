@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /static1
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -26,7 +25,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -45,11 +44,12 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: Foo
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(companionMethod.kt)
     getContainingJvmClassName: CompanionMethodKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -62,6 +62,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: CompanionMethodKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: static1

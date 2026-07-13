@@ -316,10 +316,10 @@ private open class LLFirSupertypeComputationSession(
     inline fun withDeclarationSession(declaration: FirClassLikeDeclaration, action: () -> Unit) {
         val newSession = declaration.llFirSession.takeUnless { it == useSiteSessions.lastOrNull() }
         try {
-            newSession?.let { useSiteSessions = useSiteSessions.add(it) }
+            newSession?.let { useSiteSessions = useSiteSessions.adding(it) }
             action()
         } finally {
-            newSession?.let { useSiteSessions = useSiteSessions.removeAt(useSiteSessions.lastIndex) }
+            newSession?.let { useSiteSessions = useSiteSessions.removingAt(useSiteSessions.lastIndex) }
         }
     }
 

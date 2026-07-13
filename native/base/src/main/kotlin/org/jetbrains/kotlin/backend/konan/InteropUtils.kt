@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -100,6 +101,7 @@ object InteropFqNames {
 private fun FqName.child(nameIdent: String) = child(Name.identifier(nameIdent))
 
 @InternalKotlinNativeApi
+@OptIn(K1Deprecation::class)
 class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     private val packageScope = builtIns.builtInsModule.getPackage(InteropFqNames.packageName).memberScope
@@ -117,4 +119,3 @@ internal fun MemberScope.getContributedClass(name: String): ClassDescriptor =
 
 private fun MemberScope.getContributedFunctions(name: String) =
     this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
-

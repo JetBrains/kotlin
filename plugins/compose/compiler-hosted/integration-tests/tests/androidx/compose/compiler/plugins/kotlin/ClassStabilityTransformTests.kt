@@ -1808,7 +1808,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         })
         val irClass = (irModule.files.last().declarations.last() as IrClass).apply(transform)
         val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
-        val stabilityInferencer = StabilityInferencer(isTargetJvm = true, irModule.descriptor, externalTypeMatchers)
+        val stabilityInferencer = StabilityInferencer(isTargetJvm = true, externalTypeMatchers)
         val classStability = stabilityInferencer.stabilityOf(irClass.defaultType as IrType, irClass.file)
 
         assertEquals(
@@ -1840,7 +1840,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         val irClass = irModule.files.last().declarations.last() as IrClass
         val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
         val classStability =
-            StabilityInferencer(isTargetJvm = true, irModule.descriptor, externalTypeMatchers)
+            StabilityInferencer(isTargetJvm = true, externalTypeMatchers)
                 .stabilityOf(irClass.defaultType as IrType, irClass.file)
 
         assertEquals(
@@ -1980,7 +1980,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
 
         val files = listOf(SourceFile("Test.kt", testFileSource))
         val irModule = compileToIr(files, additionalPaths)
-        val stabilityInferencer = StabilityInferencer(isTargetJvm = true, irModule.descriptor, setOf())
+        val stabilityInferencer = StabilityInferencer(isTargetJvm = true, setOf())
 
         val testIrFile = irModule.files.last()
         val [aClass, bClass, cClass, dClass] = testIrFile.declarations.filterIsInstance<IrClass>()
@@ -2050,7 +2050,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         }
         val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
         val exprStability =
-            StabilityInferencer(isTargetJvm = true, irModule.descriptor, externalTypeMatchers).stabilityOf(irExpr, irTestFn.file)
+            StabilityInferencer(isTargetJvm = true, externalTypeMatchers).stabilityOf(irExpr, irTestFn.file)
 
         assertEquals(
             stability,

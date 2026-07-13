@@ -24,20 +24,24 @@ abstract class AbstractAnalysisApiGetSuperTypesTest : AbstractAnalysisApiBasedTe
 
         val actual = executeOnPooledThreadInReadAction {
             copyAwareAnalyzeForTest(expression) { expression ->
-                val expectedType = expression.expressionType ?: error("expect to get type of expression '${expression.text}'")
-                val directSuperTypes = expectedType.directSupertypes.toList()
-                val approximatedDirectSuperTypes = expectedType.directSupertypes(shouldApproximate = true).toList()
-                val allSuperTypes = expectedType.allSupertypes.toList()
-                val approximatedAllSuperTypes = expectedType.allSupertypes(shouldApproximate = true).toList()
+                val expressionType = expression.expressionType ?: error("expect to get type of expression '${expression.text}'")
+                val directSuperTypes = expressionType.directSupertypes.toList()
+                val approximatedDirectSuperTypes = expressionType.directSupertypes(shouldApproximate = true).toList()
+                val allSuperTypes = expressionType.allSupertypes.toList()
+                val approximatedAllSuperTypes = expressionType.allSupertypes(shouldApproximate = true).toList()
+                val renderer = KaTypeRendererForDebug.WITH_QUALIFIED_NAMES
 
                 buildString {
                     fun List<KaType>.print(name: String) {
                         appendLine(name)
                         for (type in this) {
-                            appendLine(type.render(KaTypeRendererForDebug.WITH_QUALIFIED_NAMES, position = Variance.INVARIANT))
+                            appendLine(type.render(renderer, position = Variance.INVARIANT))
                         }
                         appendLine()
                     }
+                    appendLine("[type]")
+                    appendLine(expressionType.render(renderer, position = Variance.INVARIANT))
+                    appendLine()
                     directSuperTypes.print("[direct super types]")
                     approximatedDirectSuperTypes.print("[approximated direct super types]")
                     allSuperTypes.print("[all super types]")

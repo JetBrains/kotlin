@@ -103,10 +103,22 @@ internal class YarnPluginApplier(
             }
         }
 
+        val upgradeLockTaskName = platformDisambiguate.extensionName(UPGRADE_YARN_LOCK_BASE_NAME)
+
         val kotlinNpmInstall = project.tasks.named(platformDisambiguate.extensionName(KotlinNpmInstallTask.BASE_NAME))
-        kotlinNpmInstall.configure {
-            it.dependsOn(setupTask)
-            it.inputs.property("yarnIgnoreScripts", yarnRootExtension.ignoreScriptsProperty)
+        kotlinNpmInstall.configure { task ->
+            task.dependsOn(setupTask)
+            task.inputs.property("yarnIgnoreScripts", yarnRootExtension.ignoreScriptsProperty)
+
+            if (task is KotlinNpmInstallTask) {
+                // This works around the problem when yarn upgrade changes lock file format, but not the content.
+                // And the same yarn version, package.json and package.lock files can produce different results:
+                // 1. old lock file + provisioned node_modules + yarn install -> lock remained untouched
+                // 2. old lock file + empty node_modules + yarn install -> lock file format changed
+                // So when `kotlinUpgradeYarnLock` is requested we should yarn install with --force to have a consistent lock file
+                // FIXME: This property should be removed during KT-84782 (Improve KGP JS UX)
+                task.withForce.set(project.provider { project.gradle.taskGraph.hasTask(":$upgradeLockTaskName") })
+            }
         }
 
         yarnRootExtension.nodeJsEnvironment.value(
@@ -128,7 +140,7 @@ internal class YarnPluginApplier(
 
         val upgradeYarnLock =
             project.tasks.register(
-                platformDisambiguate.extensionName(UPGRADE_YARN_LOCK_BASE_NAME),
+                upgradeLockTaskName,
                 YarnLockUpgradeTask::class.java
             ) { task ->
                 task.dependsOn(kotlinNpmInstall)

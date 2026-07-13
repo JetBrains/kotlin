@@ -34,7 +34,6 @@ class KT62877ProjectMutationAfterEvaluation {
         }
 
         project.enableCInteropCommonization()
-        project.repositories.mavenLocal()
         project.repositories.mavenCentralCacheRedirector()
 
         project.evaluate()

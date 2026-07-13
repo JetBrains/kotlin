@@ -25,10 +25,10 @@ import kotlin.random.Random
 class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample scenario DSL IC test with a single module")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario1(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
             // at this moment, the module is already initially built and ready for further incremental compilations
 
             val randomString = UUID.randomUUID().toString()
@@ -61,12 +61,12 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
     @DisplayName("Another sample scenario DSL IC test with a single module and custom IC options")
     @DefaultStrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario2(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             // compilation options may be modified
             val module1 = module(
-                "jvm-module-1",
+                "basic-multimodule-project/module-1",
                 icOptionsConfigAction = {
                     it[BaseIncrementalCompilationConfiguration.KEEP_IC_CACHES_IN_MEMORY] = false
                 },
@@ -98,11 +98,11 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
     @DisplayName("Sample scenario DSL IC test with two modules")
     @DefaultStrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario3(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
             val randomInt = Random.nextInt()
             // Use this overload to modify file dynamically
@@ -129,10 +129,10 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample scenario DSL IC test with versioned source file modification")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario4(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
 
             // replaces bar.kt with bar.kt.1
             module1.replaceFileWithVersion("bar.kt", "add-default-argument")
@@ -146,10 +146,10 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample scenario DSL IC test with versioned source file creation")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario5(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
 
             // creates secret.kt from secret.kt.1
             module1.createPredefinedFile("secret.kt", "new-file")

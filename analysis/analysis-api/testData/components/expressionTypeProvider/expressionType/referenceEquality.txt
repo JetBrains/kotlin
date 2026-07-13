@@ -1,0 +1,3 @@
+expression: 1 === 2
+expression PSI: KtBinaryExpression
+type: kotlin.Boolean

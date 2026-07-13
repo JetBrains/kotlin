@@ -175,11 +175,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractSourcePartialRawFirBuilderTestCase> {
-                model("partialRawBuilder", testMethod = "doRawFirTest")
+                model("partialRawBuilder")
             }
 
             testClass<AbstractOutOfContentRootPartialRawFirBuilderTestCase> {
-                model("partialRawBuilder", testMethod = "doRawFirTest")
+                model("partialRawBuilder")
             }
 
             testClass<AbstractSourceLikeGetOrBuildFirTest> {

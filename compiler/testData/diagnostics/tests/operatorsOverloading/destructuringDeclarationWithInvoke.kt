@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // ISSUE: KT-59715
 
 class FunctionComponent {
@@ -14,13 +15,13 @@ class InvokeComponent {
 }
 
 fun test_1(c: FunctionComponent) {
-    val (<!NOT_FUNCTION_AS_OPERATOR!>x<!>) = FunctionComponent()
-    val (<!NOT_FUNCTION_AS_OPERATOR!>y<!>) = c
+    val [<!NOT_FUNCTION_AS_OPERATOR!>x<!>] = FunctionComponent()
+    val [<!NOT_FUNCTION_AS_OPERATOR!>y<!>] = c
 }
 
 fun test_2(c: InvokeComponent) {
-    val (<!NOT_FUNCTION_AS_OPERATOR!>x<!>) = FunctionComponent()
-    val (<!NOT_FUNCTION_AS_OPERATOR!>y<!>) = c
+    val [<!NOT_FUNCTION_AS_OPERATOR!>x<!>] = FunctionComponent()
+    val [<!NOT_FUNCTION_AS_OPERATOR!>y<!>] = c
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, functionalType, lambdaLiteral,

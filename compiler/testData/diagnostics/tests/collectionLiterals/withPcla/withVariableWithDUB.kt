@@ -23,11 +23,11 @@ fun test() {
     }
 
     <!CANNOT_INFER_PARAMETER_TYPE!>buildBox2<!> {
-        x = <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
+        x = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
     }
 
     <!CANNOT_INFER_PARAMETER_TYPE!>buildBox2<!> {
-        x = [42]
+        x = <!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>
     }
 
     buildBox2 {

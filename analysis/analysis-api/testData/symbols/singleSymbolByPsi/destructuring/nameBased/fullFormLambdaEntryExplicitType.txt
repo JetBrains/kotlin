@@ -1,7 +1,7 @@
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -20,9 +20,10 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(fullFormLambdaEntryExplicitType.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

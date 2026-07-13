@@ -168,7 +168,7 @@ fun <T> KotlinTypeFacade.interpret(
 
                 fun schemaArg(i: Int): PluginDataFrameSchema =
                     resolvedType.typeArguments.getOrNull(i)
-                        ?.let { pluginDataFrameSchema(it) }
+                        ?.pluginDataFrameSchema()
                         ?: PluginDataFrameSchema.EMPTY
 
                 val [keys, groups] = when (resolvedType.classId) {
@@ -322,19 +322,14 @@ interface InterpretationErrorReporter {
 }
 
 context(sessionHolder: SessionHolder)
-fun pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): PluginDataFrameSchema {
-    val schema = if (schemaTypeArg.isStarProjection) {
-        PluginDataFrameSchema.EMPTY
-    } else {
-        val coneClassLikeType = schemaTypeArg.type as? ConeClassLikeType ?: return PluginDataFrameSchema.EMPTY
-        pluginDataFrameSchema(coneClassLikeType)
-    }
-    return schema
+fun ConeTypeProjection.pluginDataFrameSchema(): PluginDataFrameSchema = when (val t = type) {
+    is ConeClassLikeType -> t.pluginDataFrameSchema()
+    else -> PluginDataFrameSchema.EMPTY
 }
 
 context(sessionHolder: SessionHolder)
-fun pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
-    val symbol = coneClassLikeType.toRegularClassSymbol() ?: return PluginDataFrameSchema.EMPTY
+fun ConeClassLikeType.pluginDataFrameSchema(): PluginDataFrameSchema {
+    val symbol = toRegularClassSymbol() ?: return PluginDataFrameSchema.EMPTY
     val callShapeData = symbol.callShapeData
     val declarationSymbols = if (callShapeData is CallShapeData.RefinedType) {
         val rootSchemaSymbol = callShapeData.schemaSymbol
@@ -347,7 +342,7 @@ fun pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrame
     }
 
     val mapping = symbol.typeParameterSymbols
-        .mapIndexed { i, symbol -> symbol to coneClassLikeType.typeArguments[i] }
+        .mapIndexed { i, symbol -> symbol to typeArguments[i] }
         .toMap()
 
     val propertySymbols = declarationSymbols
@@ -391,7 +386,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(propertyAccess: FirPro
             Names.COLUM_GROUP_CLASS_ID -> {
                 val arg = it.typeArguments.single()
                 val name = propertyAccess.columnName()
-                SimpleColumnGroup(name, pluginDataFrameSchema(arg).columns())
+                SimpleColumnGroup(name, arg.pluginDataFrameSchema().columns())
             }
             else -> null
         }
@@ -559,7 +554,6 @@ context(sessionHolder: SessionHolder)
 internal fun ObjectWithSchema.getSchema(): PluginDataFrameSchema {
     val arg = schemaArg
     val schemaTypeArg = (annotatedType as ConeClassLikeType).typeArguments[arg]
-    val schema = pluginDataFrameSchema(schemaTypeArg)
+    val schema = schemaTypeArg.pluginDataFrameSchema()
     return schema
 }
-

@@ -25,13 +25,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.SCOPE_DUMP
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
+import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
@@ -40,7 +42,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     private val dumper = MultiModuleInfoDumper()
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = listOf(TestDumpDirectives, FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {
@@ -163,12 +165,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val expectedFile = testServices.moduleStructure.originalTestDataFiles.first().withExtension(".overrides.txt")
-        val actualDump = dumper.generateResultingDump()
-        if (dumper.isEmpty()) {
-            assertions.assertFileDoesntExist(expectedFile, SCOPE_DUMP)
-        } else {
-            assertions.assertEqualsToFile(expectedFile, actualDump)
-        }
+        val actualDump = if (dumper.isEmpty()) null else dumper.generateResultingDump()
+        assertEqualsToDump(".overrides.txt", actualDump)
     }
 }

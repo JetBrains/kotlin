@@ -3,11 +3,14 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("project-tests-convention")
     `jvm-test-suite`
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 description = "Contains a unified representation of Kotlin compiler arguments for current and old Kotlin releases."
@@ -44,8 +47,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 
-    testImplementation(project(":compiler:util"))
-    testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(project(":compiler:cli-base"))
     testImplementation(libs.junit.jupiter.params)
 }

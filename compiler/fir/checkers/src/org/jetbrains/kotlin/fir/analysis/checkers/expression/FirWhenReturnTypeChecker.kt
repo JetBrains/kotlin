@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_INVISIBLE_WHEN_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_INVISIBLE_WHEN_TYPE_WARNING
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.types.resolvedType
 
@@ -19,7 +19,7 @@ object FirWhenReturnTypeChecker : FirWhenExpressionChecker(MppCheckerKind.Common
     override fun check(expression: FirWhenExpression) {
         val returnType = expression.resolvedType
         if (returnType.isTypeVisibilityBroken(checkTypeArguments = true)) {
-            reporter.reportOn(expression.source, INFERRED_INVISIBLE_WHEN_TYPE, returnType, if (expression.isIfExpression) "if" else "when")
+            reporter.reportOn(expression.source, INFERRED_INVISIBLE_WHEN_TYPE_WARNING, returnType, if (expression.isIfExpression) "if" else "when")
         }
     }
 

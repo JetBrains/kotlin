@@ -3,11 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.unitTests
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.Opaque
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCLocalSwiftPackageReference
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxNativeTarget
@@ -17,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.serializeXcodePr
 import org.jetbrains.kotlin.gradle.testing.XcodeProjectSerializationFixtures
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCBuildConfiguration
 import java.io.ByteArrayOutputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -265,5 +271,42 @@ class XcodeProjectSerializationTests {
 
         val project = deserializeXcodeProject(stringShellScript.toByteArray())
         assertEquals("one\ntwo", (project.objects["1"] as PbxShellScriptBuildPhase).shellScript?.stringValue)
+    }
+
+    @Test
+    fun `mutating XCBuildConfiguration preserves sandboxing override`() {
+        val inputProject = """
+            {
+              "rootObject": "1",
+              "objects": {
+                "1": {
+                  "isa": "XCBuildConfiguration",
+                  "name": "Debug",
+                  "unknownProp": "preserved",
+                  "buildSettings": {
+                    "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+                    "OTHER_SETTING": "value"
+                  }
+                }
+              }
+            }
+            """.trimIndent()
+
+        val project = deserializeXcodeProject(inputProject.toByteArray())
+        val config = project.objects["1"] as XCBuildConfiguration
+        if (config.buildSettings == null) config.buildSettings = mutableMapOf()
+        config.buildSettings?.put("ENABLE_USER_SCRIPT_SANDBOXING", JsonPrimitive("NO"))
+
+        val reserializedJson = Json.decodeFromString<JsonElement>(
+            ByteArrayOutputStream().use {
+                project.serializeXcodeProject(it)
+                it.toString()
+            }
+        )
+
+        val obj = reserializedJson.jsonObject["objects"]!!.jsonObject["1"]!!.jsonObject
+        assertEquals("NO", obj["buildSettings"]!!.jsonObject["ENABLE_USER_SCRIPT_SANDBOXING"]!!.jsonPrimitive.content)
+        assertEquals("value", obj["buildSettings"]!!.jsonObject["OTHER_SETTING"]!!.jsonPrimitive.content)
+        assertEquals("preserved", obj["unknownProp"]!!.jsonPrimitive.content)
     }
 }

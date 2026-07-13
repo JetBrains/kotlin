@@ -1,2 +1,3 @@
 expression: while(true) {}
+expression PSI: KtWhileExpression
 type: kotlin.Unit

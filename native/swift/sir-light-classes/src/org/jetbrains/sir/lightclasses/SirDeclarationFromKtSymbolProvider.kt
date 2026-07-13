@@ -46,9 +46,12 @@ public class SirDeclarationFromKtSymbolProvider(
                             declaration = protocol,
                             bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(protocol),
                             markerDeclaration = protocol.existentialMarker,
+                            implementationMarkerDeclaration = protocol.implementationMarker,
+                            penBoxMarkerConformance = protocol.penBoxMarkerConformance,
                             existentialExtension = protocol.existentialExtension,
                             auxExtension = protocol.auxExtension,
                             samConverter = protocol.samConverter,
+                            sealedType = protocol.sealedType,
                         )
                     }
                     KaClassKind.ENUM_CLASS -> {
@@ -58,7 +61,12 @@ public class SirDeclarationFromKtSymbolProvider(
                         createSirClassFromKtSymbol(
                             ktSymbol = ktSymbol,
                             sirSession = sirSession,
-                        ).let(SirTranslationResult::RegularClass)
+                        ).let {
+                            SirTranslationResult.RegularClass(
+                                declaration = it,
+                                sealedType = it.sealedType
+                            )
+                        }
                     }
                 }
             }

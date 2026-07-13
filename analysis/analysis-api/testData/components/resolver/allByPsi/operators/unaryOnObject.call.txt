@@ -160,7 +160,7 @@ KtPrefixExpression(215,217): '+A'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(215,216): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -203,7 +203,7 @@ KtPrefixExpression(222,224): '-A'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(222,223): '-'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -246,7 +246,7 @@ KtPrefixExpression(229,231): '!A'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(229,230): '!'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -289,7 +289,7 @@ KtPrefixExpression(236,239): '++A'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(236,238): '++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -332,7 +332,7 @@ KtPrefixExpression(244,247): '--A'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(244,246): '--'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -378,7 +378,7 @@ KtNameReferenceExpression(252,253): 'A'
   null
 
 KtOperationReferenceExpression(253,255): '++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -421,7 +421,7 @@ KtNameReferenceExpression(260,261): 'A'
   null
 
 KtOperationReferenceExpression(261,263): '--'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

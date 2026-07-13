@@ -1,13 +1,4 @@
 public abstract interface MyInterface /* MyInterface*/ {
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
-  private abstract java.lang.String getMangledVariable(StringWrapper);//  getMangledVariable(StringWrapper)
-
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
-  private abstract void mangledMethod(StringWrapper);//  mangledMethod(StringWrapper)
-
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
-  private abstract void setMangledVariable(StringWrapper, java.lang.String);//  setMangledVariable(StringWrapper, java.lang.String)
-
   @org.jetbrains.annotations.NotNull()
   public abstract java.lang.String getPublicMangledVariable-JELJCFg(@org.jetbrains.annotations.NotNull() java.lang.String);//  getPublicMangledVariable-JELJCFg(java.lang.String)
 

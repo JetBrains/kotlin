@@ -6,7 +6,7 @@ KtPackageDirective(22,34): 'package main'
 
 KtNameReferenceExpression(30,34): 'main'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       main
@@ -26,7 +26,7 @@ KtDotQualifiedExpression(43,50): 'one.two'
 
 KtNameReferenceExpression(43,46): 'one'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -34,7 +34,7 @@ KtNameReferenceExpression(43,46): 'one'
 
 KtNameReferenceExpression(47,50): 'two'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -42,7 +42,7 @@ KtNameReferenceExpression(47,50): 'two'
 
 KtNameReferenceExpression(51,56): 'Color'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/Color
@@ -62,7 +62,7 @@ KtDotQualifiedExpression(64,71): 'one.two'
 
 KtNameReferenceExpression(64,67): 'one'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -70,7 +70,7 @@ KtNameReferenceExpression(64,67): 'one'
 
 KtNameReferenceExpression(68,71): 'two'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -78,7 +78,7 @@ KtNameReferenceExpression(68,71): 'two'
 
 KtNameReferenceExpression(72,77): 'Color'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/Color
@@ -86,7 +86,7 @@ KtNameReferenceExpression(72,77): 'Color'
 
 KtNameReferenceExpression(78,83): 'Black'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/Color.Black
@@ -106,7 +106,7 @@ KtDotQualifiedExpression(91,98): 'one.two'
 
 KtNameReferenceExpression(91,94): 'one'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -114,7 +114,7 @@ KtNameReferenceExpression(91,94): 'one'
 
 KtNameReferenceExpression(95,98): 'two'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -122,7 +122,7 @@ KtNameReferenceExpression(95,98): 'two'
 
 KtNameReferenceExpression(99,104): 'Color'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/Color
@@ -130,7 +130,7 @@ KtNameReferenceExpression(99,104): 'Color'
 
 KtNameReferenceExpression(105,110): 'Green'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/Color.Green
@@ -147,7 +147,7 @@ KtDotQualifiedExpression(118,125): 'one.two'
 
 KtNameReferenceExpression(118,121): 'one'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -155,7 +155,7 @@ KtNameReferenceExpression(118,121): 'one'
 
 KtNameReferenceExpression(122,125): 'two'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -163,7 +163,7 @@ KtNameReferenceExpression(122,125): 'two'
 
 KtNameReferenceExpression(126,131): 'Color'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/Color

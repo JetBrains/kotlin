@@ -2,13 +2,12 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /$$result
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -27,12 +26,13 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(scriptResult.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script scriptResult.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -45,7 +45,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -54,6 +53,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: $$result
   origin: PLUGIN
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -65,7 +65,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(scriptResult.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script scriptResult.kts"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: get$$result
   javaSetterName: null
   isInline: false

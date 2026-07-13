@@ -16,12 +16,6 @@ buildscript {
     }
 }
 
-repositories {
-    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-    mavenCentral()
-    gradlePluginPortal()
-}
-
 plugins {
     id("org.jetbrains.kotlin.jvm") apply false
     `kotlin-dsl`

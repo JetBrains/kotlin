@@ -165,7 +165,7 @@ public interface KaType : KaLifetimeOwner, KaAnnotated {
      * Creates a type pointer.
      *
      * Unlike [KaType], a [KaTypePointer] may be safely stored and passed around outside the
-     * (analyze)[org.jetbrains.kotlin.analysis.api.analyze] block. Use the [KaSession.restore] function to get the type instance back.
+     * (analyze)[org.jetbrains.kotlin.analysis.api.session.analyze] block. Use the [KaSession.restore] function to get the type instance back.
      * Note that depending on the use-site session (analysisScope)[KaSession.analysisScope], a type might not be restored.
      */
     @KaExperimentalApi

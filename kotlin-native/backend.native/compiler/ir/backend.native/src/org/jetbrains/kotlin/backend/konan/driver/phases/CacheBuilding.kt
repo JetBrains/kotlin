@@ -26,6 +26,7 @@ internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nati
 ) { context, module ->
     // TODO: Use explicit parameter
     val parent = context.context
+
     val moduleDeserializer = parent.moduleDeserializerProvider.getDeserializerOrNull(module.descriptor.kotlinLibrary)
     if (moduleDeserializer == null) {
         require(module.descriptor.isFromCInteropLibrary()) { "No module deserializer for ${module.descriptor}" }

@@ -320,7 +320,7 @@ class FirCallCompleter(
             expectedType.isUnitOrAnyWithArbitraryNullability() ||
             // We don't want to add an equality constraint to a nullable type to a !! call.
             // See compiler/testData/diagnostics/tests/inference/checkNotNullWithNullableExpectedType.kt
-            (symbol.callableId == SyntheticCallableId.CHECK_NOT_NULL && expectedType.canBeNull(session))
+            (symbol.callableId == SyntheticCallableId.CHECK_NOT_NULL && expectedType.canBeNull())
         ) {
             return false
         }

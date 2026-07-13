@@ -162,6 +162,7 @@ internal class JsIrLinkerLoader(
             val isBuiltIns = current.isJsStdlib || current.isWasmStdlib
 
             val lookupTracker = LookupTracker.DO_NOTHING
+
             val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                 current,
                 compilerConfiguration.languageVersionSettings,

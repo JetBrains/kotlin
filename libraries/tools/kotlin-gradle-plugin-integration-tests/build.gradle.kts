@@ -6,6 +6,9 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")
@@ -239,6 +242,7 @@ enum class JunitTag {
     JvmKGP,
     DaemonsKGP,
     JsKGP,
+    JsBrowserKGP,
     NativeKGP,
     MppKGP,
     AndroidKGP,
@@ -320,6 +324,11 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.JsKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",
             "kgpJsTests",
+        )
+
+        JunitTag.JsBrowserKGP -> junitTag.taskConfiguration(
+            "Run tests for Kotlin/JS part of Gradle plugin",
+            "kgpJsBrowserTests",
         )
         JunitTag.NativeKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/Native part of Gradle plugin",
@@ -429,7 +438,7 @@ tasks.withType<Test>().configureEach {
         dependsOn(it)
     }
 
-    systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    systemProperty("kotlinVersion", kotlinBuildProperties.kotlinVersion.get())
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
     systemProperty("composeVersion", composeRuntimeSnapshot.versions.runtime.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())

@@ -20,11 +20,11 @@ import org.junit.jupiter.api.assertThrows
 class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("Non-incremental compilation produces only expected outputs in multi-module setup")
     @DefaultStrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun multiModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
             module1.compile {
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
@@ -54,10 +54,10 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class, RemovedCompilerArgument::class)
     @DisplayName("Using removed argument throws on unsupported compiler versions")
     @DefaultStrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun removedArgument(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1") {
+            val module1 = module("basic-multimodule-project/module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_USE_K2_KAPT] = true
             }
             val compilerVersion = kotlinToolchain.getCompilerVersion()
@@ -92,10 +92,10 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class)
     @DisplayName("Using recently added argument throws on unsupported compiler versions")
     @DefaultStrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun addedArgument(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1") {
+            val module1 = module("basic-multimodule-project/module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_ANNOTATIONS_IN_METADATA] = true
             }
             if (kotlinToolchain.getCompilerVersion().startsWith("2.0") || kotlinToolchain.getCompilerVersion().startsWith("2.1")) {

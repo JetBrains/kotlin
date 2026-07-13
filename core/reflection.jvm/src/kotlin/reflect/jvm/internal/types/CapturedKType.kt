@@ -20,7 +20,7 @@ internal class CapturedKType(
 
     override val arguments: List<KTypeProjection> get() = emptyList()
 
-    override val annotations: List<Annotation> get() = emptyList()
+    override val lazyAnnotations: Lazy<List<Annotation>> = lazyOf(emptyList())
 
     override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType =
         if (nullable == isMarkedNullable) this else CapturedKType(lowerType, typeConstructor, nullable)
@@ -55,7 +55,7 @@ internal class CapturedKTypeConstructor(val projection: KTypeProjection) : Captu
     override fun toString(): String = "CapturedType($projection)"
 }
 
-internal fun captureKTypeFromArguments(type: KType): KType? {
+internal fun captureKTypeFromArguments(type: AbstractKType): AbstractKType? {
     val klass = type.classifier as? KClass<*> ?: return null
 
     val arguments = type.arguments
@@ -76,9 +76,7 @@ internal fun captureKTypeFromArguments(type: KType): KType? {
         val oldProjection = arguments[index]
         if (oldProjection.variance == KVariance.INVARIANT) continue
 
-        val capturedTypeSupertypes = parameters[index].upperBounds.mapTo(mutableListOf()) {
-            substitutor.substitute(it).type!!
-        }
+        val capturedTypeSupertypes = parameters[index].upperBounds.mapTo(mutableListOf(), substitutor::substituteTopLevelType)
 
         if (oldProjection.variance == KVariance.OUT) {
             capturedTypeSupertypes += oldProjection.type!!
@@ -92,12 +90,12 @@ internal fun captureKTypeFromArguments(type: KType): KType? {
         klass,
         capturedArguments,
         type.isMarkedNullable,
-        type.annotations,
-        (type as? AbstractKType)?.abbreviation,
+        type.lazyAnnotations,
+        type.abbreviation,
         isDefinitelyNotNullType = false,
         isNothingType = false,
         isSuspendFunctionType = false,
-        (type as? AbstractKType)?.mutableCollectionClass,
+        type.mutableCollectionClass,
     )
 }
 

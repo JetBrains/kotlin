@@ -2787,6 +2787,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
+    @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class EqualityBound : R|kotlin/Annotation|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EqualityBound] constructor([ResolvedTo(BODY_RESOLVE)] bound: R|kotlin/reflect/KClass<*>|): R|kotlin/EqualityBound| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val bound: R|kotlin/reflect/KClass<*>|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EqualityBound] get(): R|kotlin/reflect/KClass<*>|
+
+    }
     @R|kotlin/RequiresOptIn|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/MustBeDocumented|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class ExperimentalStdlibApi : R|kotlin/Annotation|, R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ExperimentalStdlibApi] constructor(): R|kotlin/ExperimentalStdlibApi| {
             super<R|kotlin/Any|>()

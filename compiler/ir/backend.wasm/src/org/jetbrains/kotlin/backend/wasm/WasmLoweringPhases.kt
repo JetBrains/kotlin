@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -20,8 +19,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.*
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.*
@@ -98,13 +95,6 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
     return AutoboxingTransformer(context)
 }
 
-private fun createObjectDeclarationLoweringPhase(context: JsCommonBackendContext): ObjectDeclarationLowering {
-    return ObjectDeclarationLowering(context,
-                                     initializeParentCompanions = true,
-                                     initializeObjectEnumParent = false,
-    )
-}
-
 //@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
 private fun createConstEvaluationPhase(context: CommonBackendContext): ConstEvaluationLowering {
     val configuration = IrInterpreterConfiguration(
@@ -135,6 +125,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::createSharedVariablesLoweringPhase,
     ::LocalClassesInInlineLambdasLowering,
     ::ArrayConstructorLowering,
+    ::WasmCoroutinesSymbolsResolver,
     ::WasmPrivateFunctionInlining,
     ::OuterThisInInlineFunctionsSpecialAccessorLowering,
     ::createSyntheticAccessorGenerationPhase,
@@ -167,7 +158,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::EnumClassConstructorBodyTransformer,
     ::EnumEntryInstancesLowering,
     ::EnumEntryInstancesBodyLowering,
-    ::EnumClassCreateInitializerLowering,
     ::EnumEntryCreateGetInstancesFunsLowering,
     ::EnumSyntheticFunctionsAndPropertiesLowering,
 
@@ -196,15 +186,20 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::JsInteropFunctionsLowering,
 
+    ::ObjectDeclarationLowering, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
+    ::WebStaticInitializersDeclarationLowering,
+    ::WasmStaticInitializersUsageLowering,
+
     ::EnumUsageLowering,
     ::EnumClassRemoveEntriesLowering,
 
-    ::JsSuspendFunctionsLowering,
+    ::WasmSuspendFunctionsLowering,
     ::WasmInitializersLowering,
     ::WasmInitializersCleanupLowering,
 
-    ::AddContinuationToNonLocalSuspendFunctionsLowering,
+    ::WasmAddContinuationToNonLocalSuspendFunctionsLowering,
     ::WasmAddContinuationToFunctionCallsLowering,
+    ::WasmAddFunctionSupertypeToSuspendFunctionLowering,
     ::GenerateMainFunctionWrappers,
 
     // We need to generate nothing value exceptions after suspend
@@ -245,7 +240,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::EraseVirtualDispatchReceiverParametersTypes,
     ::WasmBridgesConstruction,
 
-    ::createObjectDeclarationLoweringPhase, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
     ::GenericReturnTypeLowering,
     ::UnitToVoidLowering,
 

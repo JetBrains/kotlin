@@ -1,0 +1,27 @@
+public abstract class test/A : kotlin/Any
+public constructor test/A.<init>()
+public abstract val test/A.a: kotlin/Int
+public abstract /* getter */ test/A.a.<get-a>
+public abstract var test/A.b: kotlin/Int
+public abstract /* getter */ test/A.b.<get-b>
+protected abstract /* non-default */ /* setter */ test/A.b.<set-b>(value: kotlin/Int)
+public final val test/A.c: kotlin/Int
+public final /* getter */ test/A.c.<get-c>
+public final val test/A.d: kotlin/Int
+public final /* non-default */ /* getter */ test/A.d.<get-d>
+public final var test/A.e: kotlin/Int
+public final /* non-default */ /* getter */ test/A.e.<get-e>
+public final /* non-default */ /* setter */ test/A.e.<set-e>(value: kotlin/Int)
+public final var test/A.f: kotlin/Int
+public final /* getter */ test/A.f.<get-f>
+private final /* non-default */ /* setter */ test/A.f.<set-f>(value: kotlin/Int)
+public open val test/A.g: kotlin/Int
+public open /* getter */ test/A.g.<get-g>
+public open val test/A.h: kotlin/Int
+public open /* non-default */ /* getter */ test/A.h.<get-h>
+public open var test/A.k: kotlin/Int
+public open /* non-default */ /* getter */ test/A.k.<get-k>
+public open /* non-default */ /* setter */ test/A.k.<set-k>(value: kotlin/Int)
+public open var test/A.l: kotlin/Int
+public open /* getter */ test/A.l.<get-l>
+protected open /* non-default */ /* setter */ test/A.l.<set-l>(value: kotlin/Int)

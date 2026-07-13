@@ -35,6 +35,10 @@ class KotlinBuildProperties internal constructor(
         it.property(name).map { it.trim().toIntOrNull() }
     }
 
+    fun versionsProperty(name: String): Provider<String> = propertiesBuildService.flatMap {
+        it.versionsProperty("versions.$name")
+    }
+
     val isInIdeaSync: Provider<Boolean> = propertiesBuildService.flatMap {
         it.systemProperty("idea.sync.active").toBoolean()
     }
@@ -82,6 +86,11 @@ class KotlinBuildProperties internal constructor(
      * Nullable
      */
     val defaultSnapshotVersion: Provider<String> = stringProperty("defaultSnapshotVersion")
+
+    val buildNumber: Provider<String> = stringProperty("build.number").orElse(defaultSnapshotVersion)
+    val kotlinVersion: Provider<String> = stringProperty("deployVersion").map { deploySnapshotStr ->
+        if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion.get()
+    }.orElse(buildNumber)
 
     /**
      * Nullable

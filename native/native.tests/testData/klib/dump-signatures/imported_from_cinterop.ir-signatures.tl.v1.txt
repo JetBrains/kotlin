@@ -1,0 +1,13 @@
+// Declared signatures: 1
+imported_from_cinterop.main/Derived|null[0]
+
+// Imported signatures: 9
+imported_from_cinterop.lib/Base|null[100]
+kotlin.reflect/KClass|null[0]
+kotlin/Annotation|null[0]
+kotlin/Array|null[0]
+kotlin/Int|null[0]
+kotlin/Nothing|null[0]
+kotlin/OptIn|null[0]
+kotlin/Unit|null[0]
+kotlinx.cinterop/ExperimentalForeignApi|null[0]

@@ -1,2 +1,2 @@
-warning: '-Xuse-fir-experimental-checkers' is deprecated and will be removed in a future release
+warning: the argument '-Xuse-fir-experimental-checkers' is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases.
 OK

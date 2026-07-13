@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_ERROR
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
@@ -57,9 +58,10 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.hmppModuleName
+import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
@@ -141,7 +143,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
             configuration,
             environment,
-            previousStepsSymbolProviders = emptyList(),
             incrementalExcludesScope = sourceScope
         )
 
@@ -179,15 +180,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)
         }
         outputs.runPlatformCheckers(diagnosticsCollector)
-
-        val kotlinPackageUsageIsFine = when (configuration.useLightTree) {
-            true -> outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
-            false -> sessionsWithSources.all { (val _ = session, val sources = files) ->
-                checkKotlinPackageUsageForPsi(configuration, sources.asKtFilesList())
-            }
-        }
-
-        if (!kotlinPackageUsageIsFine) return null
 
         val frontendOutput = AllModulesFrontendOutput(outputs)
         return JvmFrontendPipelineArtifact(frontendOutput, configuration, environment, allSources)
@@ -229,7 +221,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
                 val sources = {
                     val ktFiles = kotlinCoreEnvironment.getSourceFiles()
-                    ktFiles.forEach { AnalyzerWithCompilerReport.reportSyntaxErrors(it, diagnosticReporter) }
+                    ktFiles.forEach { SyntaxErrorReporter.reportSyntaxErrors(it, diagnosticReporter) }
                     groupKtFiles(ktFiles)
                 }
 
@@ -245,6 +237,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         for (ktFile in ktFiles) {
             val sourceFile = KtPsiSourceFile(ktFile)
+            @OptIn(KtImplementationDetail::class)
             when (val moduleName = ktFile.hmppModuleName) {
                 null -> when {
                     ktFile.isCommonSource == true -> commonSources.add(sourceFile)
@@ -290,6 +283,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
     private fun checkIfScriptsInCommonSources(configuration: CompilerConfiguration, ktFiles: List<KtFile>): Boolean {
         val lastHmppModule = configuration.hmppModuleStructure?.modules?.lastOrNull()
+
+        @OptIn(KtImplementationDetail::class)
         val commonScripts = ktFiles.filter { it.isScript() && (it.isCommonSource == true || it.hmppModuleName != lastHmppModule?.name) }
         if (commonScripts.isNotEmpty()) {
             val cwd = File(".").absoluteFile
@@ -350,12 +345,22 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
 
+        /*
+         * TODO(OSIP-75): This code is needed to preserve the legacy implementation of IC in KMP scenario, which was generally incorrect,
+         *   but worked to some extent in some scenarios while the proper implementation is in development. It should be removed
+         *   together with `if()` in the lambda below once we will get the full support of IC for KMP.
+         */
+        val isKmpCompilationWithLegacyIC = configuration.hmppModuleStructure?.incrementalDependencies?.isEmpty() == true
+        var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
+        var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
+
         val javaDirectFacade =
 //            if (configuration.languageVersionSettings.getFlag(JvmAnalysisFlags.useJavaDirect)) {
                 createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment, librariesScope)
 //            } else AbstractProjectEnvironment::getFirJavaFacade
         val javaDirectBinaryClassFinderInputs =
             createJavaDirectBinaryClassFinderInputsBuilder(projectEnvironment)
+
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
@@ -394,7 +399,18 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
                     javaSourcesScope,
-                    createIncrementalCompilationSymbolProviders = { session ->
+                    createIncrementalCompilationSymbolProviders = ic@{ session ->
+                        // TODO(OSIP-75): should be removed, see the comment above
+                        if (isKmpCompilationWithLegacyIC) {
+                            return@ic if (firJvmIncrementalCompilationSymbolProvidersIsInitialized) firJvmIncrementalCompilationSymbolProviders
+                            else {
+                                firJvmIncrementalCompilationSymbolProvidersIsInitialized = true
+                                incrementalCompilationContext?.createSymbolProviders(session, moduleData, projectEnvironment)?.also {
+                                    firJvmIncrementalCompilationSymbolProviders = it
+                                }
+                            }
+                        }
+
                         when (kmpModuleKind) {
                             KmpModuleKind.SingleModule,
                             KmpModuleKind.LeafRegularModule,
@@ -544,13 +560,16 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     fun createProjectEnvironment(
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
-        configFiles: EnvironmentConfigFiles
+        configFiles: EnvironmentConfigFiles,
     ): VfsBasedProjectEnvironment {
         setupIdeaStandaloneExecution()
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         val appEnv = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(parentDisposable, configuration)
         // TODO: get rid of projEnv too - seems that all needed components could be easily extracted
         val projectEnvironment = KotlinCoreEnvironment.ProjectEnvironment(parentDisposable, appEnv, configuration)
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         projectEnvironment.configureProjectEnvironment(configuration, configFiles)
 
         val project = projectEnvironment.project
@@ -617,7 +636,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             project,
             listOfNotNull(projectEnvironment.jarFileSystem, projectEnvironment.environment.jrtFileSystem, localFileSystem),
             { JvmPackagePartProvider(configuration.languageVersionSettings, it) },
-            initialRoots, configuration
+            initialRoots, configuration,
+            projectEnvironment,
+            classpathRootsResolver,
+            rootsIndex
         ).also {
             javaFileManager.initialize(
                 rootsIndex,
@@ -633,19 +655,44 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         project: Project,
         knownFileSystems: List<VirtualFileSystem>,
         getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
-        val initialRoots: List<JavaRoot>,
-        val configuration: CompilerConfiguration
+        initialRoots: List<JavaRoot>,
+        val configuration: CompilerConfiguration,
+        val projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
+        val classpathRootsResolver: ClasspathRootsResolver,
+        val rootsIndex: JvmDependenciesDynamicCompoundIndex
     ) : VfsBasedProjectEnvironment(project, knownFileSystems, getPackagePartProviderFn) {
+
+        private val currentRoots = initialRoots.toMutableList()
 
         val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
 
         override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider {
             return super.getPackagePartProvider(fileSearchScope).also {
                 (it as? JvmPackagePartProvider)?.run {
-                    addRoots(initialRoots, configuration)
+                    addRoots(currentRoots, configuration)
                     packagePartProviders += this
                 }
             }
+        }
+
+        override fun updateClasspath(classpath: List<File>) {
+            val contentRoots = classpath.map { JvmClasspathRoot(it) }
+            val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots - currentRoots
+            val unindexedRoots = rootsIndex.getUnindexedRoots(newRoots)
+            if (unindexedRoots.isEmpty()) return
+
+            val newIndex = JvmDependenciesIndexImpl(unindexedRoots)
+            rootsIndex.addIndex(newIndex)
+            newIndex.indexedRoots.forEach {
+                projectEnvironment.addSourcesToClasspath(it.file)
+            }
+
+            currentRoots.addAll(newRoots)
+            for (packagePartProvider in packagePartProviders) {
+                packagePartProvider.addRoots(newRoots, configuration)
+            }
+
+            configuration.addAll(CLIConfigurationKeys.CONTENT_ROOTS, contentRoots - configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
         }
     }
 
@@ -694,13 +741,14 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     private fun createCoreEnvironment(
         rootDisposable: Disposable,
         configuration: CompilerConfiguration,
-        targetDescription: String
+        targetDescription: String,
     ): KotlinCoreEnvironment? {
         val perfManager = configuration.perfManager
         perfManager?.targetDescription = targetDescription
 
         if (CheckDiagnosticCollector.checkHasErrors(configuration)) return null
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForProduction(
             rootDisposable,
             configuration,

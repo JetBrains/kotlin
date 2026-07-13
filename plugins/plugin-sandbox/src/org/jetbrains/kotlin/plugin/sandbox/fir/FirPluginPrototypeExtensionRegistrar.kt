@@ -42,6 +42,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::ExternalClassGenerator
         +::AdditionalMembersGenerator
         +::MemberFunctionWithAnnotatedParametersGenerator
+        +::SamInterfaceFunctionGenerator
         +::CompanionGenerator
         +::MembersOfSerializerGenerator
         +::DataFrameLikeTypeMembersGenerator

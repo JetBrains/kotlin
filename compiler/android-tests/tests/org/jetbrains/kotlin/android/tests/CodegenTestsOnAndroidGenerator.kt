@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.utils.TransformersFunctions.Android
-import org.junit.Assert
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
@@ -209,6 +209,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         fun writeFilesOnDisk() {
             val disposable = Disposer.newDisposable("Disposable for ${FilesWriter::class.qualifiedName}.writeFilesOnDisk")
+
+            @OptIn(CoreEnvironmentDeprecation::class)
             val environment = KotlinCoreEnvironment.createForTests(
                 disposable,
                 configuration.copy().apply {
@@ -254,7 +256,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             if (!outputDir.exists()) {
                 outputDir.mkdirs()
             }
-            Assert.assertTrue("Cannot create directory for compiled files", outputDir.exists())
+            assertTrue(outputDir.exists(), "Cannot create directory for compiled files")
             val unitTestFileWriter = pendingUnitTestGenerators.getOrPut(flavorName) {
                 UnitTestFileWriter(
                     getFlavorUnitTestFolder(flavorName),

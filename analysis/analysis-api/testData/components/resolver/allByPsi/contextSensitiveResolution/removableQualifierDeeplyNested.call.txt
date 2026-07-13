@@ -1,0 +1,99 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(27,39): 'package main'
+  null
+
+KtNameReferenceExpression(35,39): 'main'
+  null
+
+KtImportList(39,39): ''
+  null
+
+KtNamedFunction(41,307): 'fun usage(): test.Top.Foo {'
+  null
+
+KtParameterList(50,52): '()'
+  null
+
+KtTypeReference(54,66): 'test.Top.Foo'
+  null
+
+KtUserType(54,66): 'test.Top.Foo'
+  null
+
+KtUserType(54,62): 'test.Top'
+  null
+
+KtUserType(54,58): 'test'
+  null
+
+KtNameReferenceExpression(54,58): 'test'
+  null
+
+KtNameReferenceExpression(59,62): 'Top'
+  null
+
+KtNameReferenceExpression(63,66): 'Foo'
+  null
+
+KtBlockExpression(67,307): '{'
+  null
+
+KtReturnExpression(282,305): 'return test.Top.Foo.BAR'
+  null
+
+KtDotQualifiedExpression(289,305): 'test.Top.Foo.BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = test.Top.Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Top.Foo
+        symbol = test/Top.Foo.BAR
+        contextParameters = []
+        callableId = test/Top.Foo.BAR
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(289,301): 'test.Top.Foo'
+  null
+
+KtDotQualifiedExpression(289,297): 'test.Top'
+  null
+
+KtNameReferenceExpression(289,293): 'test'
+  null
+
+KtNameReferenceExpression(294,297): 'Top'
+  null
+
+KtNameReferenceExpression(298,301): 'Foo'
+  null
+
+KtNameReferenceExpression(302,305): 'BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = test.Top.Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Top.Foo
+        symbol = test/Top.Foo.BAR
+        contextParameters = []
+        callableId = test/Top.Foo.BAR
+      typeArgumentsMapping = {}

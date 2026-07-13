@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.KaSyntheticJavaPropertyAccessorKind
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
@@ -239,6 +240,13 @@ internal class KaFirNamedFunctionSymbol private constructor(
             psiBasedModality ?: firSymbol.kaSymbolModality
         }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion {
+            val compilerVisibility = backingPsi?.psiBasedVisibility(::isOverride) ?: firSymbol.visibility
+            compilerVisibility.asKaSymbolVisibility
+        }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion {
             backingPsi?.psiBasedVisibility(::isOverride) ?: firSymbol.visibility

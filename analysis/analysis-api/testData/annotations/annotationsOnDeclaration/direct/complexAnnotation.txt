@@ -1,0 +1,5 @@
+KtDeclaration: KtClass CA
+annotations: [
+  AnnotationArray(value = [/Annotation(strings = ["[sar]1", "[sar]2"], )])
+    psi: KtAnnotationEntry
+]

@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.klib
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
-import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
-import org.jetbrains.kotlin.backend.common.serialization.deserializeFileEntryName
-import org.jetbrains.kotlin.backend.common.serialization.fileEntry
+import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.incremental.md5
@@ -20,15 +16,17 @@ import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.Directives
-import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
+import org.jetbrains.kotlin.test.LegacyTestFile
 import org.jetbrains.kotlin.test.TestFiles
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Path
 
 @OptIn(ObsoleteTestInfrastructure::class)
-class FilePathsInKlibTest : KtUsefulTestCase() {
+class FilePathsInKlibTest {
     companion object {
         private const val MODULE_NAME = "M"
         private const val TEST_DATA_FILE = "compiler/testData/ir/klibLayout/multiFiles.kt"
@@ -64,22 +62,22 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         return result
     }
 
-    private fun createTestFiles(): List<TestFile> {
+    private fun createTestFiles(): List<LegacyTestFile> {
         val file = File(TEST_DATA_FILE)
 
         return TestFiles.createTestFiles(
             file.getName(),
             KtTestUtil.doLoadFile(file),
-            object : TestFiles.TestFileFactoryNoModules<TestFile>() {
-                override fun create(fileName: String, text: String, directives: Directives): TestFile =
-                    TestFile(fileName, text, directives)
+            object : TestFiles.TestFileFactoryNoModules<LegacyTestFile>() {
+                override fun create(fileName: String, text: String, directives: Directives): LegacyTestFile =
+                    LegacyTestFile(fileName, text, directives)
             },
             false,
             false,
         )
     }
 
-    private fun compileJsKlib(testFiles: List<TestFile>, extraArgs: List<String>, workingDir: File): File {
+    private fun compileJsKlib(testFiles: List<LegacyTestFile>, extraArgs: List<String>, workingDir: File): File {
         for (testFile in testFiles) {
             val file = File(workingDir, testFile.name).also { it.parentFile.let { p -> if (!p.exists()) p.mkdirs() } }
             file.writeText(testFile.content)
@@ -100,6 +98,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         return artifact
     }
 
+    @Test
     fun testStableCompilation() {
         withTempDir { dirA ->
             withTempDir { dirB ->
@@ -114,6 +113,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         }
     }
 
+    @Test
     fun testRelativePaths() {
         withTempDir { testTempDir ->
             val testFiles = createTestFiles()
@@ -127,6 +127,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         }
     }
 
+    @Test
     fun testAbsoluteNormalizedPath() {
         withTempDir { testTempDir ->
             val testFiles = createTestFiles()
@@ -141,6 +142,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
 
     private fun String.normalizePath(): String = replace(File.separator, "/")
 
+    @Test
     fun testUnrelatedBase() {
         withTempDir { testTempDir ->
             val testFiles = createTestFiles()
@@ -172,5 +174,9 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         } finally {
             workingDirFile.deleteRecursively()
         }
+    }
+
+    private fun <T> assertSameElements(actual: Collection<T>, expected: Collection<T>) {
+        assertEquals(expected.toSet(), actual.toSet())
     }
 }

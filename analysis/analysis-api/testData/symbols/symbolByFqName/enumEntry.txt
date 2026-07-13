@@ -1,9 +1,9 @@
 KaEnumEntrySymbol:
   annotations: []
   callableId: kotlin/LazyThreadSafetyMode.SYNCHRONIZED
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
-  enumEntryInitializer: null
+  initializer: null
   isActual: false
   isCompanion: true
   isDelegated: false
@@ -20,9 +20,10 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: kotlin/LazyThreadSafetyMode
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.LazyThreadSafetyMode
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: kotlin.LazyThreadSafetyMode.SYNCHRONIZED

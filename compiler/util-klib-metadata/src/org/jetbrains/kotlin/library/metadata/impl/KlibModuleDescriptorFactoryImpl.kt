@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.metadata.impl
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -24,12 +25,13 @@ internal class KlibModuleDescriptorFactoryImpl(val createBuiltIns: (StorageManag
         builtIns: KotlinBuiltIns,
         origin: KlibModuleOrigin,
         customCapabilities: Map<ModuleCapability<*>, Any?>
-    ) = ModuleDescriptorImpl(
+    ): ModuleDescriptorImpl = ModuleDescriptorImpl(
         name,
         storageManager,
         builtIns,
         capabilities = customCapabilities + mapOf(
             KlibModuleOrigin.CAPABILITY to origin,
+            @OptIn(K1Deprecation::class)
             ImplicitIntegerCoercion.MODULE_CAPABILITY to origin.isCInteropLibrary()
         ),
         // TODO: don't use hardcoded platform; it should be supplied as a parameter

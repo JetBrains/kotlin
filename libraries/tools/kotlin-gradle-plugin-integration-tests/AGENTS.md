@@ -8,6 +8,7 @@ Integration tests for the Kotlin Gradle Plugin using Gradle TestKit.
 # Platform-specific tests (parallel execution)
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpJvmTests
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpJsTests
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpJsBrowserTests
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpMppTests
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpNativeTests
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpSwiftPMImportTests
@@ -31,6 +32,7 @@ Integration tests for the Kotlin Gradle Plugin using Gradle TestKit.
 Extend `KGPBaseTest` and annotate with appropriate tag:
 - `@JvmGradlePluginTests` - Kotlin/JVM tests
 - `@JsGradlePluginTests` - Kotlin/JS tests
+- `@JsBrowserGradlePluginTests` - Kotlin/JS tests that require running browser
 - `@MppGradlePluginTests` - Multiplatform tests
 - `@NativeGradlePluginTests` - Kotlin/Native tests
 - `@SwiftPMImportGradlePluginTests` - SwiftPM import tests

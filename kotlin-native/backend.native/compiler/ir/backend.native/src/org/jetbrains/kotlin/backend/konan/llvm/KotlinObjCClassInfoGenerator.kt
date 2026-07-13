@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.LLVMLinkage
 import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.objcinterop.*
+import org.jetbrains.kotlin.ir.util.getConstArgument
 
 internal class KotlinObjCClassInfoGenerator(override val generationState: NativeGenerationState) : ContextUtils {
     fun generate(irClass: IrClass) {
@@ -122,8 +122,8 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                                 return@mapNotNull null
 
                 ObjCMethodDesc(
-                        annotation.getAnnotationStringValue("selector"),
-                        annotation.getAnnotationStringValue("encoding"),
+                        annotation.getConstArgument<String>("selector")!!,
+                        annotation.getConstArgument<String>("encoding")!!,
                         it.llvmFunction.toConstPointer()
                 )
             }

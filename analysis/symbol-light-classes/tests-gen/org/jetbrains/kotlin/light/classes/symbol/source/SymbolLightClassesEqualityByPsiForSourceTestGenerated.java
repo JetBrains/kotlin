@@ -89,6 +89,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("complexAnnotation.kt")
+  public void testComplexAnnotation() {
+    run("complexAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("constructors.kt")
   public void testConstructors() {
     run("constructors.kt");
@@ -212,12 +218,6 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
   @TestMetadata("generics.kt")
   public void testGenerics() {
     run("generics.kt");
-  }
-
-  @Test
-  @TestMetadata("implementingKotlinCollections.kt")
-  public void testImplementingKotlinCollections() {
-    run("implementingKotlinCollections.kt");
   }
 
   @Test
@@ -504,6 +504,30 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     }
 
     @Test
+    @TestMetadata("implementingKotlinAbstractMap.kt")
+    public void testImplementingKotlinAbstractMap() {
+      run("implementingKotlinAbstractMap.kt");
+    }
+
+    @Test
+    @TestMetadata("implementingKotlinCollections.kt")
+    public void testImplementingKotlinCollections() {
+      run("implementingKotlinCollections.kt");
+    }
+
+    @Test
+    @TestMetadata("ImplementingMap.kt")
+    public void testImplementingMap() {
+      run("ImplementingMap.kt");
+    }
+
+    @Test
+    @TestMetadata("ImplementingMutableSet.kt")
+    public void testImplementingMutableSet() {
+      run("ImplementingMutableSet.kt");
+    }
+
+    @Test
     @TestMetadata("indirectInheritanceStubs.kt")
     public void testIndirectInheritanceStubs() {
       run("indirectInheritanceStubs.kt");
@@ -513,6 +537,18 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     @TestMetadata("multipleCollectionSupertypes.kt")
     public void testMultipleCollectionSupertypes() {
       run("multipleCollectionSupertypes.kt");
+    }
+
+    @Test
+    @TestMetadata("SuperTypeWithBoundKotlinCollection.kt")
+    public void testSuperTypeWithBoundKotlinCollection() {
+      run("SuperTypeWithBoundKotlinCollection.kt");
+    }
+
+    @Test
+    @TestMetadata("TwoOverridesOfIteratorMethod.kt")
+    public void testTwoOverridesOfIteratorMethod() {
+      run("TwoOverridesOfIteratorMethod.kt");
     }
 
     @Nested
@@ -1786,6 +1822,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
       @TestMetadata("openClass.kt")
       public void testOpenClass() {
         run("openClass.kt");
+      }
+
+      @Test
+      @TestMetadata("private.kt")
+      public void testPrivate() {
+        run("private.kt");
       }
 
       @Test

@@ -74,7 +74,7 @@ private fun checkDispatchReceiver(
     if (actualDispatchReceiverType == null || expectedDispatchReceiverType == null) return
 
     val substitutor = enhancedForWarningSubstitutor()
-    val enhancedDispatchReceiverType = substitutor.substituteOrNull(actualDispatchReceiverType) ?: return
+    val enhancedDispatchReceiverType = substitutor.substituteOrSelf(actualDispatchReceiverType)
 
     if (!actualDispatchReceiverType.canLowerBoundBeNull() && enhancedDispatchReceiverType.canLowerBoundBeNull()) {
 
@@ -149,7 +149,7 @@ private fun checkDispatchReceiver(
 
 context(context: CheckerContext)
 private fun ConeKotlinType.canLowerBoundBeNull(): Boolean {
-    return lowerBoundIfFlexible().canBeNull(context.session)
+    return lowerBoundIfFlexible().canBeNull()
 }
 
 /**

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFailureSuppressorBySingleDirective
@@ -57,6 +58,9 @@ abstract class AbstractLLPartialDiagnosticsTest : AbstractLLCompilerBasedTest() 
         useFailureSuppressors(::LLFirPartialBodyTestSuppressor)
         useAfterAnalysisCheckers(::ControlFlowGraphConsistencyChecker)
         useMetaTestConfigurators({ testServices -> CustomOutputDiagnosticsConfigurator(".partialBody.", testServices) })
+        defaultDirectives {
+            TestDumpDirectives.DUMP_CLASSIFIER with "partialBody"
+        }
     }
 }
 

@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-B <: A<in kotlin/Nothing> (Original: B <: A<in kotlin/Nothing>)
-
-EXISTENTIAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-B <: A<in kotlin/Nothing> (Original: B <: A<in kotlin/Nothing>)

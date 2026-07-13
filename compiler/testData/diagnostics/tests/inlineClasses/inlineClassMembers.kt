@@ -1,7 +1,8 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CustomEqualsInValueClasses, +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +CustomEqualsInValueClasses
 
-<!UNSUPPORTED_FEATURE!>value<!> class BackingFields(val x: Int) {
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class BackingFields(val x: Int) {
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>val y<!> = 0
     var z: String
         get() = ""
@@ -23,14 +24,6 @@ class Val {
     override fun hashCode() = 1
 }
 
-<!INLINE_CLASS_DEPRECATED!>inline<!> class ReservedMembersMfvc(val x: Int, val y: Int) {
-    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
-    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
-
-    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS!>equals<!>(other: Any?) = true
-    override fun hashCode() = 1
-}
-
 <!INLINE_CLASS_DEPRECATED!>inline<!> class SecondaryConstructors(val x: Int) {
     constructor(y: String) : this(5)
     constructor(x: Int, y: String) : this(x) {
@@ -38,7 +31,7 @@ class Val {
     }
 }
 
-<!UNSUPPORTED_FEATURE("The feature \"full value classes\" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-XXLanguage:+FullValueClasses', but note that no stability guarantees are provided.")!>value<!> class WithInner(val x: String) {
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class WithInner(val x: String) {
     <!INNER_CLASS_INSIDE_VALUE_CLASS!>inner<!> class Inner
 }
 

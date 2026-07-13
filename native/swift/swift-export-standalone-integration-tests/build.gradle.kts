@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
 }
@@ -20,4 +23,6 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-optInToK1Deprecation()
+tasks.named("check") {
+    dependsOn(subprojects.map { it.tasks.named("check") })
+}

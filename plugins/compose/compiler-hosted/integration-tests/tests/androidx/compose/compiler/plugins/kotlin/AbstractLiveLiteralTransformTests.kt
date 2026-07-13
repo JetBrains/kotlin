@@ -56,7 +56,6 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
                                 val keyVisitor = DurableKeyVisitor(builtKeys)
                                 val stabilityInferencer = StabilityInferencer(
                                     pluginContext.platform.isJvm(),
-                                    pluginContext.moduleDescriptor,
                                     emptySet()
                                 )
                                 val featureFlags = FeatureFlags()
@@ -65,6 +64,7 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
                                     liveLiteralsV2Enabled,
                                     keyVisitor,
                                     pluginContext,
+                                    moduleFragment,
                                     ModuleMetricsImpl("temp", featureFlags) { type, fileContainingDependent ->
                                         stabilityInferencer.stabilityOf(
                                             type,
@@ -72,7 +72,7 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
                                         )
                                     },
                                     stabilityInferencer,
-                                    featureFlags
+                                    featureFlags,
                                 ) {
                                     override fun makeKeySet(): MutableSet<String> {
                                         return super.makeKeySet().also { builtKeys = it }

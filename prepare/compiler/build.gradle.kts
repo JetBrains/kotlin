@@ -8,6 +8,9 @@ import java.util.regex.Pattern.quote
 description = "Kotlin Compiler"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     // HACK: java plugin makes idea import dependencies on this project as source (with empty sources however),
     // this prevents reindexing of kotlin-compiler.jar after build on every change in compiler modules
     `java-library`
@@ -75,8 +78,6 @@ val distStdlibMinimalForTests by configurations.creating
 val buildNumber by configurations.creating
 
 val compilerBaseName = name
-
-val compilerModules: Array<String> by rootProject.extra
 
 val distLibraryProjects = listOfNotNull(
     ":kotlin-annotation-processing-cli",
@@ -148,7 +149,7 @@ dependencies {
 
     compilerVersion(project(":compiler:compiler.version"))
     proguardLibraries(project(":compiler:compiler.version"))
-    compilerModules
+    CompilerModules.compilerModules
         .filter { it != ":compiler:compiler.version" } // Version will be added directly to the final jar excluding proguard and relocation
         .forEach {
             fatJarContents(project(it)) { isTransitive = false }
@@ -380,7 +381,7 @@ val jar = runtimeJar {
 
 sourcesJar {
     from {
-        compilerModules.map {
+        CompilerModules.compilerModules.map {
             project(it).mainSourceSet.allSource
         }
     }

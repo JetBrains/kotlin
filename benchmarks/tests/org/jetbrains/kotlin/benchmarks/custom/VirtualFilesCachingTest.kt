@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import org.jetbrains.kotlin.stats.ModulesReportsData
 import org.jetbrains.kotlin.stats.StatsCalculator
 import org.jetbrains.kotlin.util.UnitStats
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
@@ -27,6 +29,7 @@ import kotlin.time.measureTime
 class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String get() = tmpdir.absolutePath
 
+    @Test
     fun test() {
         val modulesCount = 2000
 
@@ -65,7 +68,7 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                             expectedFileName = null,
                             compiler = compiler,
                         )
-                        assertEmpty(output)
+                        assert(output.isEmpty())
                         assertEquals(ExitCode.OK, exitCode)
                     }
 
@@ -82,7 +85,7 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                             additionalSources = kotlinFiles.drop(1).map { it.name },
                             compiler = compiler,
                         )
-                        assertEmpty(output)
+                        assert(output.isEmpty())
                         assertEquals(ExitCode.OK, exitCode)
                     }
 
@@ -100,7 +103,7 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                                 expectedFileName = null,
                                 compiler = compiler,
                             )
-                            assertEmpty(output)
+                            assert(output.isEmpty())
                             assertEquals(ExitCode.OK, exitCode)
                             aggregatedStats[kotlinFile.name] = compiler.defaultPerformanceManager.unitStats
                         }

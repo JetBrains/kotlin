@@ -1,0 +1,6 @@
+expression: while(x < 10) {
+        println()
+        x++
+    }
+expression PSI: KtWhileExpression
+type: kotlin.Unit

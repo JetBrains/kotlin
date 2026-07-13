@@ -283,6 +283,17 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
             data[this] = newValues
         }
 
+        @JvmName("prependToList")
+        fun <V> Key<in List<V>>.prepend(values: Iterable<V>) {
+            val newValues = get(this)?.let { values + it } ?: values.toList()
+            data[this] = newValues
+        }
+
+        fun <V> Key<in List<V>>.prepend(vararg values: V) {
+            val newValues = get(this)?.let { values.toList() + it } ?: values.toList()
+            data[this] = newValues
+        }
+
         fun <V> Key<in List<V>>.transform(action: (V) -> V) {
             val newValues = get(this)?.map(action) ?: emptyList()
             data[this] = newValues

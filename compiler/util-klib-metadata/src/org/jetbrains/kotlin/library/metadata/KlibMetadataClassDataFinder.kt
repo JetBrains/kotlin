@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.library.metadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment
@@ -16,13 +15,12 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
-@K1Deprecation
 class KlibMetadataClassDataFinder(
     private val fragment: PackageFragment,
     private val nameResolver: NameResolver,
     private val containerSource: KlibDeserializedContainerSource? = null
 ) : ClassDataFinder {
-    val nameList = fragment.getExtension(KlibMetadataProtoBuf.className).orEmpty()
+    val nameList: List<Int> = fragment.getExtension(KlibMetadataProtoBuf.className).orEmpty()
 
     val classIdToIndex: Map<ClassId, Int> = buildMap {
         nameList.forEachIndexed { index, value -> this[nameResolver.getClassId(value)] = index }

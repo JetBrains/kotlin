@@ -36,6 +36,7 @@ internal class JvmIncrementalConfigurationStrategy(
                 setupBaseIncrementalConfiguration(icEnv, outputDirs.toSet())
                 this[FORCE_RECOMPILATION] = classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
                 this[PRECISE_JAVA_TRACKING] = icEnv.icFeatures.usePreciseJavaTracking
+                @Suppress("DEPRECATION_ERROR")
                 this[USE_FIR_RUNNER] = icEnv.useJvmFirRunner
 
                 when (classpathChanges) {

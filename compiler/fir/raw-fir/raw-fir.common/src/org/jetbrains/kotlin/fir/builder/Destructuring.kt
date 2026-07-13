@@ -51,7 +51,7 @@ fun <T> AbstractRawFirBuilder<*>.addDestructuringVariables(
     moduleData: FirModuleData,
     container: FirVariable,
     entries: List<T>,
-    isNameBased: Boolean,
+    kind: DestructuringKind,
     isTmpVariable: Boolean,
     forceLocal: Boolean,
     configure: (FirVariable) -> Unit = {}
@@ -64,7 +64,7 @@ fun <T> AbstractRawFirBuilder<*>.addDestructuringVariables(
             moduleData,
             container,
             entry,
-            isNameBased,
+            kind,
             forceLocal,
             index,
             configure,
@@ -72,12 +72,18 @@ fun <T> AbstractRawFirBuilder<*>.addDestructuringVariables(
     }
 }
 
+enum class DestructuringKind {
+    NameBased,
+    PositionalWithSquareBrackets,
+    PositionalWithParentheses,
+}
+
 context(c: DestructuringContext<T>)
 fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
     moduleData: FirModuleData,
     container: FirVariable,
     entry: T,
-    isNameBased: Boolean,
+    kind: DestructuringKind,
     forceLocal: Boolean,
     index: Int,
     configure: (FirVariable) -> Unit = {}
@@ -94,7 +100,7 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             returnTypeRef = entry.returnTypeRef
             name = entry.name
             initializer = interceptExpressionBuilding(entry.source) {
-                if (isNameBased) {
+                if (kind == DestructuringKind.NameBased) {
                     val entryFakeSource = entry.source.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring)
                     val initializerFakeSource = entry.initializerSource?.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring) ?: entryFakeSource
 
@@ -117,7 +123,12 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
                         }
                     }
                 } else {
-                    container.toComponentCall(entry.source, index)
+                    container.toComponentCall(
+                        entrySource = entry.source,
+                        index = index,
+                        initializerName = entry.initializerName ?: entry.name,
+                        isShortFormWithParentheses = kind == DestructuringKind.PositionalWithParentheses
+                    )
                 }
             }
             this.isVar = entry.isVar

@@ -171,5 +171,6 @@ private class NativePropertiesLoader(private val project: Project) : NativePrope
             name = "$PROPERTIES_PREFIX.toolchain.enabled",
             defaultValue = true
         )
+
     }
 }

@@ -301,8 +301,27 @@ fun TestServices.compiledTestOutputDirectory(
     require(suffixPathSequence.size < fullPathSequence.size) {
         "Folder $stopFile (which is set by PATH_TO_TEST_DIR directive) must contain $parentAbsoluteFile"
     }
-    return suffixPathSequence
+    val pathParts = suffixPathSequence
         .map { it.name }
         .toList().asReversed()
-        .fold(testGroupOutputDir, ::File)
+
+    return maybeShortenWindowsPath(pathParts).fold(testGroupOutputDir, ::File)
+}
+
+// --- Shared Windows path shortener -------------------------------------------------------------
+
+/**
+ * Shorten very long output directory paths on Windows by hashing the deep test subpath to avoid MAX_PATH (~260) limitation
+ * in runners that write deeply nested `box/...` directories. No effect on non-Windows.
+ *
+ * Example: path construction without shortening:
+ *   ...\build\out\WasmJsCodegenBoxTestGenerated2.4\box\inference\pcla\...\oneTypeInfoOriginSourceSinkFeedContexts
+ * with shortening becomes:
+ *   ...\build\out\WasmJsCodegenBoxTestGenerated2.4\3f2a9d1c\SourceSinkFeedContexts
+ */
+private fun maybeShortenWindowsPath(pathParts: List<String>): List<String> {
+    val osName = System.getProperty("os.name") ?: ""
+    if (!osName.startsWith("Windows", ignoreCase = true)) return pathParts
+    if (pathParts.size <= 2) return pathParts
+    return listOf(pathParts.joinToString().hashCode().toHexString(), pathParts.last())
 }

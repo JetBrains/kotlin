@@ -71,7 +71,7 @@ internal fun KaSession.enumClassModality(symbol: KaClassSymbol): String? {
 }
 
 private fun KaSession.requiresSubClass(symbol: KaEnumEntrySymbol): Boolean {
-    val initializer = symbol.enumEntryInitializer ?: return false
+    val initializer = symbol.initializer ?: return false
     return initializer.combinedDeclaredMemberScope.declarations.any { it !is KaConstructorSymbol }
 }
 

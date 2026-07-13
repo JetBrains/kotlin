@@ -855,7 +855,7 @@ KtPrefixExpression(382,389): '++value'
         typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(382,384): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

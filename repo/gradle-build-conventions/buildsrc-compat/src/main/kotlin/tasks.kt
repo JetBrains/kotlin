@@ -107,6 +107,23 @@ fun Task.dependsOnKotlinGradlePluginInstall() {
     }
 }
 
+/**
+ * Wires this task to `publishAllPublicationsToMavenRepository` for every module in
+ * [kotlinGradlePluginAndItsRequired] that has such a task. Unlike [dependsOnKotlinGradlePluginInstall],
+ * this writes to `<rootProject>/build/repo` (via `KotlinBuildPublishingPlugin`'s `"Maven"` repository)
+ * rather than `~/.m2`, so nothing touches `maven.repo.local`.
+ *
+ * Modules without `KotlinBuildPublishingPlugin` (e.g. `:examples:annotation-processor-example`)
+ * have no `publishAllPublicationsToMavenRepository` task and are skipped silently.
+ */
+fun Task.dependsOnKotlinGradlePluginPublishToBuildRepo() {
+    kotlinGradlePluginAndItsRequired.forEach { dependency ->
+        project.rootProject.tasks.findByPath("${dependency}:publishAllPublicationsToMavenRepository")?.let { task ->
+            dependsOn(task)
+        }
+    }
+}
+
 fun Task.dependsOnKotlinGradlePluginPublish() {
     kotlinGradlePluginAndItsRequired
         .filter {

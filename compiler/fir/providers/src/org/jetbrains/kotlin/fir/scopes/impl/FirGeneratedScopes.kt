@@ -194,7 +194,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         val functionCache: FirCache<Name, List<FirNamedFunctionSymbol>, Nothing?> =
             cachesFactory.createCache { name -> generateMemberFunctions(name) }
 
-        val propertyCache: FirCache<Name, List<FirPropertySymbol>, Nothing?> =
+        val propertyCache: FirCache<Name, List<FirVariableSymbol<*>>, Nothing?> =
             cachesFactory.createCache { name -> generateMemberProperties(name) }
 
         val constructorCache: FirLazyValue<List<FirConstructorSymbol>> =
@@ -213,11 +213,17 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                 .onEach { it.fir.validate() }
         }
 
-        private fun generateMemberProperties(name: Name): List<FirPropertySymbol> {
+        private fun generateMemberProperties(name: Name): List<FirVariableSymbol<*>> {
             if (name == SpecialNames.INIT) return emptyList()
-            return extensionsByCallableName[name].orEmpty()
-                .flatMap { it.generateProperties(CallableId(classSymbol.classId, name), generationContext) }
-                .onEach { it.fir.validate() }
+            val extensions = extensionsByCallableName[name] ?: return emptyList()
+            return buildList {
+                extensions.forEach { extension ->
+                    val callableId = CallableId(classSymbol.classId, name)
+                    @OptIn(UnsafePluginApi::class)
+                    addAll(extension.generateFields(callableId, generationContext))
+                    addAll(extension.generateProperties(callableId, generationContext))
+                }
+            }.onEach { it.fir.validate() }
         }
 
         private fun generateConstructors(): List<FirConstructorSymbol> {

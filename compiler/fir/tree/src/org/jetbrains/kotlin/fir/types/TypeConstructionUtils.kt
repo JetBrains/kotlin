@@ -63,7 +63,7 @@ fun FirClassLikeSymbol<*>.constructType(
     return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isMarkedNullable, attributes)
 }
 
-fun FirClassSymbol<*>.constructStarProjectedType(
+fun FirClassLikeSymbol<*>.constructStarProjectedType(
     typeParameterNumber: Int = typeParameterSymbols.size,
     isMarkedNullable: Boolean = false
 ): ConeClassLikeType {

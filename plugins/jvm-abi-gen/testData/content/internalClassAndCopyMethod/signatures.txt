@@ -1,4 +1,5 @@
 @kotlin.Metadata
+@kotlin.ExposedCopyVisibility
 public final class test/Test$ConstructorToBeRemoved {
     // source: 'test.kt'
     public final inner class test/Test$ConstructorToBeRemoved

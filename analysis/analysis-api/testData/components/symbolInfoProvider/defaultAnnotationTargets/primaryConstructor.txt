@@ -1,0 +1,4 @@
+Symbol:
+  KaConstructorSymbol
+Default annotation targets:
+  CONSTRUCTOR

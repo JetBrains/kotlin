@@ -124,7 +124,7 @@ abstract class VariableInitializationCheckProcessor {
             path: EdgeLabel,
             visited: PersistentSet<CFGNode<*>>,
         ) {
-            val newVisited = visited.add(this)
+            val newVisited = visited.adding(this)
             require(newVisited !== visited) { buildRecursionErrorMessage(this, symbol) }
 
             for (previousNode in previousCfgNodes) {

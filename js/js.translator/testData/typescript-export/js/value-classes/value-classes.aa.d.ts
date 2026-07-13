@@ -1,6 +1,44 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
+    namespace kotlin.collections {
+        interface KtList<out E> /* extends kotlin.collections.Collection<E> */ {
+            asJsReadonlyArrayView(): ReadonlyArray<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtList": unique symbol;
+            };
+        }
+        namespace KtList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+        }
+        interface KtSet<out E> /* extends kotlin.collections.Collection<E> */ {
+            asJsReadonlySetView(): ReadonlySet<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtSet": unique symbol;
+            };
+        }
+        namespace KtSet {
+            function fromJsSet<E>(set: ReadonlySet<E>): kotlin.collections.KtSet<E>;
+        }
+        interface KtMap<K, out V> {
+            asJsReadonlyMapView(): ReadonlyMap<K, V>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtMap": unique symbol;
+            };
+        }
+        namespace KtMap {
+            function fromJsMap<K, V>(map: ReadonlyMap<K, V>): kotlin.collections.KtMap<K, V>;
+        }
+        interface KtMutableList<E> extends kotlin.collections.KtList<E>/*, kotlin.collections.MutableCollection<E> */ {
+            asJsArrayView(): Array<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtMutableList": unique symbol;
+            } & kotlin.collections.KtList<any>["__doNotUseOrImplementIt"];
+        }
+        namespace KtMutableList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
+        }
+    }
     namespace kotlin {
         class Pair<out A, out B> /* implements kotlin.io.Serializable */ {
             constructor(first: A, second: B);
@@ -43,16 +81,16 @@ declare namespace JS_TESTS {
         function acceptNullableValueClass(v: Nullable<foo.IntValueClass>): Nullable<number>;
         function echoNullableValueClass(v: Nullable<foo.IntValueClass>): Nullable<foo.IntValueClass>;
         function compareValueClasses(a: foo.IntValueClass, b: foo.IntValueClass): boolean;
-        function createValueClassList(): any/* kotlin.collections.List<foo.IntValueClass> */;
-        function createValueClassSet(): any/* kotlin.collections.Set<foo.StringValueClass> */;
-        function createValueClassMap(): any/* kotlin.collections.Map<foo.IntValueClass, foo.StringValueClass> */;
-        function acceptValueClassList(list: any/* kotlin.collections.List<foo.IntValueClass> */): number;
+        function createValueClassList(): kotlin.collections.KtList<foo.IntValueClass>;
+        function createValueClassSet(): kotlin.collections.KtSet<foo.StringValueClass>;
+        function createValueClassMap(): kotlin.collections.KtMap<foo.IntValueClass, foo.StringValueClass>;
+        function acceptValueClassList(list: kotlin.collections.KtList<foo.IntValueClass>): number;
         function acceptValueClassArray(arr: Array<foo.IntValueClass>): number;
-        function mixedCollection(): any/* kotlin.collections.List<any> */;
-        function nestedValueClassCollection(): any/* kotlin.collections.List<kotlin.collections.List<foo.IntValueClass>> */;
+        function mixedCollection(): kotlin.collections.KtList<any>;
+        function nestedValueClassCollection(): kotlin.collections.KtList<kotlin.collections.KtList<foo.IntValueClass>>;
         function createValueClassWithCollection(): foo.ValueClassWithCollection;
-        function useValueClassAsMapKey(map: any/* kotlin.collections.Map<foo.IntValueClass, string> */): Nullable<string>;
-        function useValueClassAsMapValue(map: any/* kotlin.collections.Map<string, foo.IntValueClass> */): Nullable<number>;
+        function useValueClassAsMapKey(map: kotlin.collections.KtMap<foo.IntValueClass, string>): Nullable<string>;
+        function useValueClassAsMapValue(map: kotlin.collections.KtMap<string, foo.IntValueClass>): Nullable<number>;
         function createPairWithValueClass(): kotlin.Pair<foo.IntValueClass, foo.StringValueClass>;
         function createTripleWithValueClass(): kotlin.Triple<foo.IntValueClass, foo.StringValueClass, foo.BooleanValueClass>;
         function acceptPairWithValueClass(pair: kotlin.Pair<foo.IntValueClass, foo.IntValueClass>): number;
@@ -247,10 +285,10 @@ declare namespace JS_TESTS {
             constructor();
             addToList(v: foo.IntValueClass): void;
             getListSize(): number;
-            get list(): any/* kotlin.collections.List<foo.IntValueClass> */;
+            get list(): kotlin.collections.KtList<foo.IntValueClass>;
             get array(): Array<foo.StringValueClass>;
-            get mutableList(): any/* kotlin.collections.MutableList<foo.IntValueClass> */;
-            set mutableList(value: any/* kotlin.collections.MutableList<foo.IntValueClass> */);
+            get mutableList(): kotlin.collections.KtMutableList<foo.IntValueClass>;
+            set mutableList(value: kotlin.collections.KtMutableList<foo.IntValueClass>);
         }
         namespace ClassWithValueCollections {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -259,11 +297,11 @@ declare namespace JS_TESTS {
             }
         }
         class ValueClassWithCollection {
-            constructor(items: any/* kotlin.collections.List<number> */);
+            constructor(items: kotlin.collections.KtList<number>);
             equals(other: Nullable<any>): boolean;
             hashCode(): number;
             toString(): string;
-            get items(): any/* kotlin.collections.List<number> */;
+            get items(): kotlin.collections.KtList<number>;
         }
         namespace ValueClassWithCollection {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

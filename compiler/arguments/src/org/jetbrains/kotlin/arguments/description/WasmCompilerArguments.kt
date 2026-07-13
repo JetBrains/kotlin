@@ -18,9 +18,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm"
         description = "Use the WebAssembly compiler backend.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
-        additionalAnnotations(
-            Deprecated("This flag is deprecated. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.")
-        )
+        deprecatedMessage = "Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly."
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
             deprecatedVersion = KotlinReleaseVersion.v2_4_0,
@@ -67,6 +65,18 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
+    }
+
+    compilerArgument {
+        name = "Xwasm-IC-generate-unchanged-modules"
+        compilerName = "regenerateUnchangedModules"
+        description = "Regenerate unchanged modules in multimodule IC.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
@@ -120,7 +130,13 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm-enable-array-range-checks"
         description = "Turn on range checks for array access functions.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        valueType = BooleanType(
+            isNullable = false.asReleaseDependent(),
+            defaultValue = ReleaseDependent(
+                true,
+                KotlinReleaseVersion.v2_1_20..KotlinReleaseVersion.v2_4_0 to false,
+            )
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -247,6 +263,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xir-dce-dump-reachability-info-to-file"
         description = ("Dump reachability information collected about declarations while performing DCE to a file. " +
@@ -255,6 +272,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
                 "and plain text for all other file types.").asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -262,6 +280,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xir-dump-declaration-ir-sizes-to-file"
         compilerName = "irDceDumpDeclarationIrSizesToFile"
@@ -271,9 +290,21 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
                 "and plain text for all other file types.").asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
+    }
+
+    compilerArgument {
+        name = "Xwasm-use-stack-switching-proposal"
+        description = "Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }

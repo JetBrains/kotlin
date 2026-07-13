@@ -55,9 +55,9 @@
     NO_CANDIDATES
 
 <caret_15>:
-  KDocName(1014,1065): 'ChildGenericAliasWithAnotherNothingAlias.extNothing'
+  KDocName(1047,1098): 'ChildGenericAliasWithAnotherNothingAlias.extNothing'
     NO_CANDIDATES
 
 <caret_16>:
-  KDocName(1071,1119): 'ChildGenericAliasWithAnotherNothingAlias.extStar'
+  KDocName(1104,1152): 'ChildGenericAliasWithAnotherNothingAlias.extStar'
     NO_CANDIDATES

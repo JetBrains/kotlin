@@ -12,3 +12,13 @@ public fun collectionToArray(collection: Collection<*>): Array<Any?> {
 public fun <T> collectionToArray(collection: Collection<*>, array: Array<T>): Array<T> {
     TODO("stub")
 }
+
+@Target(AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.BINARY)
+public annotation class EnhancedNullability
+
+public fun collectionToArray(collection: kotlin.collections.Collection<*>, array: Array<Any?>?): Array<Any?> {
+    TODO("stub")
+}
+
+

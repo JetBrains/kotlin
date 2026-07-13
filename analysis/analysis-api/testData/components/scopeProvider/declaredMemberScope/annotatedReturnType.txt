@@ -6,7 +6,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -29,6 +29,7 @@ KaKotlinPropertySymbol:
       ]
       typeArguments: []
       type: @R|test/TypeAnno|()  kotlin/String
+    typeParameters: []
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
@@ -37,16 +38,15 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(annotatedReturnType.kt)
     getContainingJvmClassName: test.MyInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: test/MyInterface.property
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -68,6 +68,7 @@ KaKotlinPropertySymbol:
       ]
       typeArguments: []
       type: @R|test/TypeAnno|()  kotlin/String
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -77,7 +78,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(annotatedReturnType.kt)
     getContainingJvmClassName: test.MyInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -90,7 +91,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -99,6 +99,7 @@ KaKotlinPropertySymbol:
   modality: ABSTRACT
   name: property
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
@@ -117,7 +118,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(annotatedReturnType.kt)
   getContainingJvmClassName: test.MyInterface
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getProperty
   javaSetterName: null
   isInline: false
@@ -129,7 +130,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: test/MyInterface.function
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -167,9 +167,8 @@ KaNamedFunctionSymbol:
           psi: KtAnnotationEntry
       ]
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -187,6 +186,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: argument
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: [
@@ -195,11 +195,12 @@ KaNamedFunctionSymbol:
         ]
         typeArguments: []
         type: @R|test/TypeAnno|()  kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(annotatedReturnType.kt)
       getContainingJvmClassName: test.MyInterface
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -211,6 +212,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: test.MyInterface
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

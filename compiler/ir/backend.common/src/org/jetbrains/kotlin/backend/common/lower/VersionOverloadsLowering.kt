@@ -66,7 +66,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
                     parameter.defaultValue == null -> null
                     else -> {
                         val annotation = parameter.getAnnotation(StandardNames.FqNames.introducedAt)
-                        (annotation?.arguments?.first() as? IrConst)?.value as? String
+                        annotation?.getConstArgument<String>("version")
                     }
                 }
                 getOrPut(version) { mutableListOf() }.add(index)

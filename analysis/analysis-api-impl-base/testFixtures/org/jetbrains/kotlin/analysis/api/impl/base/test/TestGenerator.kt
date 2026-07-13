@@ -32,12 +32,14 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inherit
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractExpressionTypeAsPsiTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractJavaGetterSetterNameTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractMapToJvmTypeDescriptorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractPsiTypeAsKaTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.kdocProvider.AbstractKDocProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractGetExpectsForActualByCoordinatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractHasConflictingSignatureWithTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractImplementationStateTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractOriginalConstructorIfTypeAliasedTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractGetExpectsForActualByMarkerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
@@ -48,7 +50,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatu
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolAsSignatureTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolSubstitutionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider.AbstractCreateInheritanceTypeSubstitutorTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider.AbstractCreateUnificationSubstitutorTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider.AbstractCreateSubtypingUnificationSubstitutorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substututorFactory.AbstractSubstitutorBuilderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
@@ -56,6 +58,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolD
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractSymbolRenderingByReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractAnnotationApplicableTargetsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractCanBeOperatorTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractDefaultAnnotationTargetsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractFunctionalInterfaceBySamConstructorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractFunctionalInterfaceFunctionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractBuildArrayTypeTest
@@ -110,6 +113,9 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
                         // For some platforms, `Cloneable` is unresolved and the test cannot be compiled to a library. We could place these
                         // tests under `withErrors`, but it'd split the test data, which is undesirable.
                         add("cloneable")
+
+                        // Companion blocks aren't supported yet
+                        add("companionExtensionAndBlock")
                     }
 
                     else -> {}
@@ -497,6 +503,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
         test<AbstractJavaGetterSetterNameTest> {
             model(it, "javaGetterSetterName")
         }
+
+        test<AbstractMapToJvmTypeDescriptorTest> {
+            model(it, "mapToJvmTypeDescriptor")
+        }
     }
 
     component("resolveExtensionInfoProvider") {
@@ -544,6 +554,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
 
         test<AbstractContainingFileAnnotationProviderTest> {
             model(it, "containingFileAnnotations")
+        }
+
+        test<AbstractDefaultAnnotationTargetsTest> {
+            model(it, "defaultAnnotationTargets")
         }
     }
 
@@ -629,8 +643,8 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
             model(it, "createInheritanceTypeSubstitutor")
         }
 
-        test<AbstractCreateUnificationSubstitutorTest> {
-            model(it, "createUnificationSubstitutor")
+        test<AbstractCreateSubtypingUnificationSubstitutorTest> {
+            model(it, "createSubtypingUnificationSubstitutor")
         }
     }
 
@@ -683,6 +697,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
 
         test<AbstractHasConflictingSignatureWithTest> {
             model(it, "hasConflictingSignatureWith")
+        }
+
+        test<AbstractImplementationStateTest> {
+            model(it, "implementationState")
         }
     }
 

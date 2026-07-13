@@ -1,0 +1,3 @@
+expression: 4.0
+expression PSI: KtConstantExpression
+type: kotlin.Double

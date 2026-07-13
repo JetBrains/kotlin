@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.jvm.abi
 
 import com.intellij.openapi.util.io.FileUtil
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -15,20 +14,22 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.compileJavaFiles
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
-abstract class BaseJvmAbiTest : TestCase() {
+abstract class BaseJvmAbiTest {
     protected lateinit var workingDir: File
 
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun setUp() {
         workingDir = createTempDirectory(javaClass.simpleName).toFile().apply { deleteOnExit() }
     }
 
-    override fun tearDown() {
+    @AfterEach
+    fun tearDown() {
         workingDir.deleteRecursively()
-        super.tearDown()
     }
 
     private val abiPluginJar = ForTestCompileRuntime.getFileFromProperty("kotlin.jvm.abi.jar.path")

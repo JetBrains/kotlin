@@ -1,0 +1,26 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE_FEATURE_TOGGLED: FixedUninitializedEnumCompanionCheck
+
+enum class E(val higherPriority: E?) {
+    Foo(null),
+    Bar(Foo),
+    Baz(<!UNINITIALIZED_ENUM_COMPANION!>E<!>.Foo),
+    Qux(<!UNINITIALIZED_ENUM_COMPANION!>companionProp<!>),
+    Quux(<!UNINITIALIZED_ENUM_COMPANION!>E<!>.companionProp) {
+        init {
+            values()
+            valueOf("Foo")
+            entries
+        }
+    },
+    QuuxTa(<!UNINITIALIZED_ENUM_COMPANION!>TA<!>.companionProp)
+    ;
+
+    companion object {
+        val companionProp: E? = null
+    }
+}
+
+typealias TA = E
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, nullableType, primaryConstructor, propertyDeclaration */

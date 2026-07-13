@@ -81,7 +81,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitial
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference as ProtoLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrMissingExpression as ProtoMissingExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation as ProtoIrMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0 as ProtoOperationPre_2_4_0
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
@@ -100,7 +99,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBodyKi
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow as ProtoThrow
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTry as ProtoTry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias as ProtoTypeAlias
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp as ProtoTypeOp
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOperator as ProtoTypeOperator
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter as ProtoTypeParameter
@@ -398,10 +396,10 @@ open class IrFileSerializer(
     // Serializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
     private fun serializeAnnotations(annotations: List<IrAnnotation>, parent: IrElement?) =
         annotations.map {
-            for (param in it.arguments) {
-                if (param != null) {
-                    require(param.isValidConstantAnnotationArgument()) {
-                        "This is a compiler bug, please report it to https://kotl.in/issue : parameter value of an annotation constructor must be a const:\nCALL: ${it.render()}\nPARAM: ${param.render()}"
+            for (argument in it.argumentMapping.values) {
+                if (argument != null) {
+                    require(argument.isValidConstantAnnotationArgument()) {
+                        "This is a compiler bug, please report it to https://kotl.in/issue : parameter value of an annotation constructor must be a const:\nCALL: ${it.render()}\nPARAM: ${argument.render()}"
                     }
                 }
             }
@@ -480,8 +478,8 @@ open class IrFileSerializer(
      *   bound IR produced by Fir2Ir and unbound IR obtained through deserialization of inline function
      *   body, there can be two symbols (one bound without a signature and another unbound but with a signature)
      *   both pointing effectively to the same declaration.
-     * - [IrTypeDeduplicationKey.annotations] is just a list of [IrConstructorCall]s that cannot be
-     *   fully compared: The [IrConstructorCallImpl.equals] function resolves to [Any.equals], which
+     * - [IrTypeDeduplicationKey.annotations] is just a list of [IrAnnotation]s that cannot be
+     *   fully compared: The [IrAnnotationCallImpl.equals] function resolves to [Any.equals], which
      *   compares only object references.
      *
      * However, [IrTypeDeduplicationKey] can be used as a good approximation to store lesser number of records
@@ -492,7 +490,7 @@ open class IrFileSerializer(
         val classifier: IrClassifierSymbol?,
         val nullability: SimpleTypeNullability?,
         val arguments: List<IrTypeArgumentDeduplicationKey>?,
-        val annotations: List<IrConstructorCall>,
+        val annotations: List<IrAnnotation>,
     )
 
     private data class IrTypeArgumentDeduplicationKey(
@@ -512,7 +510,7 @@ open class IrFileSerializer(
                 },
                 classifier = type.classifierOrNull,
                 nullability = (type as? IrSimpleType)?.nullability,
-                arguments = (type as? IrSimpleType)?.arguments?.map { it.toIrTypeArgumentDeduplicationKey },
+                arguments = type.arguments?.map { it.toIrTypeArgumentDeduplicationKey },
                 annotations = type.annotations,
             )
         }
@@ -1489,8 +1487,6 @@ open class IrFileSerializer(
 
 
         when (val representation = clazz.valueClassRepresentation) {
-            is JvmInlineMultiFieldValueClassRepresentation ->
-                proto.multiFieldValueClassRepresentation = serializeJvmInlineMultiFieldValueClassRepresentation(representation)
             is InlineClassRepresentation -> proto.inlineClassRepresentation = serializeInlineClassRepresentation(representation)
             is FullValueClassRepresentation, null -> Unit
         }
@@ -1522,25 +1518,6 @@ open class IrFileSerializer(
             // TODO: consider not writing type if the property is public, similarly to metadata
             underlyingPropertyType = serializeIrType(representation.underlyingType)
         }.build()
-
-    private fun serializeJvmInlineMultiFieldValueClassRepresentation(representation: JvmInlineMultiFieldValueClassRepresentation<IrSimpleType>): ProtoIrMultiFieldValueClassRepresentation =
-        ProtoIrMultiFieldValueClassRepresentation.newBuilder().apply {
-            addAllUnderlyingPropertyName(representation.underlyingPropertyNamesToTypes.map { [name, _] -> serializeName(name) })
-            addAllUnderlyingPropertyType(representation.underlyingPropertyNamesToTypes.map { [_, irType] -> serializeIrType(irType) })
-        }.build()
-
-    private fun serializeIrTypeAlias(typeAlias: IrTypeAlias, parent: IrElement?): ProtoTypeAlias {
-        val proto = ProtoTypeAlias.newBuilder()
-
-        proto.setBase(serializeIrDeclarationBase(typeAlias, parent, TypeAliasFlags.encode(typeAlias))).nameType =
-            serializeNameAndType(typeAlias.name, typeAlias.expandedType)
-
-        typeAlias.typeParameters.forEach {
-            proto.addTypeParameter(serializeIrTypeParameter(it, typeAlias))
-        }
-
-        return proto.build()
-    }
 
     private fun serializeIrEnumEntry(enumEntry: IrEnumEntry, parent: IrElement?): ProtoEnumEntry {
         val proto = ProtoEnumEntry.newBuilder()
@@ -1582,10 +1559,8 @@ open class IrFileSerializer(
                 proto.irProperty = serializeIrProperty(declaration, parent)
             is IrLocalDelegatedProperty ->
                 proto.irLocalDelegatedProperty = serializeIrLocalDelegatedProperty(declaration, parent)
-            is IrTypeAlias ->
-                proto.irTypeAlias = serializeIrTypeAlias(declaration, parent)
             else ->
-                TODO("Declaration serialization not supported yet: $declaration")
+                error("Serialization of ${declaration::class.java} is not supported: $declaration")
         }
 
         return proto.build()
@@ -1663,12 +1638,13 @@ open class IrFileSerializer(
         settings.publicAbiOnly
                 && !isInsideInline
                 && (declaration as? IrDeclarationWithVisibility)?.let { !it.visibility.isPublicAPI && it.visibility != INTERNAL } == true
-                // Always keep private interfaces and type aliases as they can be part of public type hierarchies.
-                && (declaration as? IrClass)?.isInterface != true && declaration !is IrTypeAlias
+                // Always keep private interfaces as they can be part of public type hierarchies.
+                && (declaration as? IrClass)?.isInterface != true
 
     open fun memberNeedsSerialization(member: IrDeclaration): Boolean {
         val parent = member.parent
         require(parent is IrClass)
+        if (member is IrTypeAlias) return false
         if (backendSpecificSerializeAllMembers(parent)) return true
         if (settings.bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != DescriptorVisibilities.LOCAL)
             return false
@@ -1683,6 +1659,7 @@ open class IrFileSerializer(
 
         if (backendSpecificExplicitRoot(file)) {
             for (declaration in file.declarations) {
+                if (declaration is IrTypeAlias) continue
                 if (backendSpecificExplicitRootExclusion(declaration)) continue
                 proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
             }
@@ -1736,6 +1713,10 @@ open class IrFileSerializer(
             .addAllAnnotation(serializeAnnotations(file.annotations, file))
 
         file.declarations.forEach {
+            if (it is IrTypeAlias) {
+                // KT-86632: Type aliases are not serialized into klibs.
+                return@forEach
+            }
             if (skipIfPrivate(it)) {
                 // Skip the declaration if producing header klib and the declaration is not public.
                 return@forEach

@@ -10,9 +10,9 @@ library {
     // class name: A.B.D
     // class name: A.E
     // class name: F
-    // class name: FinalImpl
     // class name: Interface
     // class name: OpenImpl
+    // class name: FinalImpl
 
     public final class A : kotlin/Any {
 
@@ -96,6 +96,8 @@ library {
 
       public constructor(fVal: kotlin/Int, fVar: kotlin/String)
 
+      public final fun fFun(): kotlin/Unit
+
       public final /* synthesized */ operator fun component1(): kotlin/Int
 
       public final /* synthesized */ operator fun component2(): kotlin/String
@@ -104,8 +106,6 @@ library {
 
       // must-use return value
       public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
-
-      public final fun fFun(): kotlin/Unit
 
       // must-use return value
       public open /* synthesized */ fun hashCode(): kotlin/Int
@@ -119,20 +119,6 @@ library {
       public final var fVar: kotlin/String
         public final get
         public final set
-    }
-
-    public final class FinalImpl : OpenImpl {
-
-      public constructor()
-
-      public open fun iFun(): kotlin/Unit
-
-      public open val iVal: kotlin/Int /* = ... */
-        public open get
-
-      public open var iVar: kotlin/String
-        public open get
-        public open set
     }
 
     public abstract interface Interface : kotlin/Any {
@@ -159,6 +145,23 @@ library {
       public open var iVar: kotlin/String
         public open get
         public open set
+    }
+
+    public final class FinalImpl : OpenImpl {
+
+      public constructor()
+
+      public open fun iFun(): kotlin/Unit
+
+      public open val iVal: kotlin/Int /* = ... */
+        public open get
+
+      public open var iVar: kotlin/String
+        public open get
+        public open set
+    }
+
+    package {
     }
   }
 }

@@ -11,6 +11,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
@@ -70,6 +72,7 @@ private class PreciseJavaInteropCoordinator(
 
     override fun hasChangedUntrackedJavaClasses(): Boolean = changedUntrackedJavaClasses.isNotEmpty()
 
+    @OptIn(K1Deprecation::class)
     override fun makeJavaClassesTracker(platformCache: IncrementalJvmCache): JavaClassesTracker? {
         val changesTracker = JavaClassesTrackerImpl(
             platformCache, changedUntrackedJavaClasses.toSet(),
@@ -146,6 +149,7 @@ internal sealed class JavaInteropCoordinator(
         }
     }
 
+    @OptIn(CoreEnvironmentDeprecation::class)
     private val psiFileFactory: PsiFileFactory by lazy {
         val rootDisposable =
             Disposer.newDisposable("Disposable for PSI file factory of ${IncrementalJvmCompilerRunner::class.simpleName}")
@@ -169,6 +173,7 @@ internal sealed class JavaInteropCoordinator(
 
     open fun getAdditionalDirtyLookupSymbols(): Iterable<LookupSymbol> = emptyList()
 
+    @OptIn(K1Deprecation::class)
     open fun makeJavaClassesTracker(platformCache: IncrementalJvmCache): JavaClassesTracker? = null
 
     abstract fun analyzeChangesInJavaSources(

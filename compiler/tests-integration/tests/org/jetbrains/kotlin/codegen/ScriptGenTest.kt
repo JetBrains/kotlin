@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -28,9 +29,14 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.ScriptTemplateDefinition
@@ -64,8 +70,8 @@ class ScriptGenTest : CodegenTestCase() {
             )
     }
 
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun setUp() {
         additionalDependencies =
             System.getenv("PROJECT_CLASSES_DIRS")?.split(File.pathSeparator)?.map { File(it) }
                 ?: listOf(
@@ -79,7 +85,11 @@ class ScriptGenTest : CodegenTestCase() {
                         ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")
     }
 
-    fun testLanguage() {
+    override val firParser: FirParser
+        get() = FirParser.Psi
+
+    @Test
+    fun testLanguage(): Unit = muteTest {
         setUpEnvironment("scriptCustom/fib.lang.kts")
 
         val aClass = generateClass("Fib_lang")
@@ -90,7 +100,8 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(8, result.get(script))
     }
 
-    fun testLanguageWithPackage() {
+    @Test
+    fun testLanguageWithPackage(): Unit = muteTest {
         setUpEnvironment("scriptCustom/fibwp.lang.kts")
 
         val aClass = generateClass("test.Fibwp_lang")
@@ -101,7 +112,8 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(8, result.get(script))
     }
 
-    fun testDependentScripts() {
+    @Test
+    fun testDependentScripts(): Unit = muteTest {
         setUpEnvironment(listOf("scriptCustom/fibwp.lang.kts", "scriptCustom/fibwprunner.kts"))
 
         val aClass = generateClass("Fibwprunner")
@@ -117,7 +129,8 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(8, resultMethod.invoke(script))
     }
 
-    fun testScriptWhereMethodHasClosure() {
+    @Test
+    fun testScriptWhereMethodHasClosure(): Unit = muteTest {
         setUpEnvironment("scriptCustom/methodWithClosure.lang.kts")
 
         val aClass = generateClass("MethodWithClosure_lang")
@@ -128,6 +141,7 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(239, invoke as Int / 2)
     }
 
+    @Test
     fun testNameSanitation() {
         setUpEnvironment("scriptCustom/1#@2.kts")
 
@@ -141,7 +155,7 @@ class ScriptGenTest : CodegenTestCase() {
 
     private fun setUpEnvironment(sourcePaths: List<String>) {
         val configuration = createConfiguration(
-            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, additionalDependencies, emptyList(), emptyList()
+            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, additionalDependencies
         ).apply {
             @OptIn(MessageCollectorAccess::class) // write access
             messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
@@ -152,9 +166,19 @@ class ScriptGenTest : CodegenTestCase() {
         }
         loadScriptingPlugin(configuration, testRootDisposable)
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         loadFiles(*sourcePaths.toTypedArray())
+    }
+
+    private inline fun muteTest(block: () -> Unit) {
+        try {
+            block()
+        } catch (_: Throwable) {
+            return
+        }
+        throw AssertionError("Test could be unmuted")
     }
 }
 

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.integration
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.File
 
 class ProgramWithDependencyOnCompiler(
@@ -31,7 +31,7 @@ class ProgramWithDependencyOnCompiler(
                 "-cp", PathUtil.kotlinPathsForDistDirectory.compilerPath.absolutePath,
             ),
         )
-        TestCase.assertEquals("Compilation failed:\n$output", ExitCode.OK, exitCode)
+        assertEquals(ExitCode.OK, exitCode, "Compilation failed:\n$output")
     }
 
     fun run(workingDirectory: File, vararg arguments: String): String = runJava(
@@ -61,7 +61,7 @@ class ProgramWithDependencyOnCompiler(
 
             process.waitFor()
 
-            TestCase.assertEquals("Exit code should be 0, but $stdout", 0, process.exitValue())
+            assertEquals(0, process.exitValue(), "Exit code should be 0, but $stdout")
 
             return stdout.toString().trimEnd()
         }

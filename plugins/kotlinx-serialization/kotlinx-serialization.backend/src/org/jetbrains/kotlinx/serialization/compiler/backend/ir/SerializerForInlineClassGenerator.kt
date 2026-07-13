@@ -23,7 +23,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 class SerializerForInlineClassGenerator(
     irClass: IrClass,
     compilerContext: SerializationPluginContext,
-) : SerializerIrGenerator(irClass, compilerContext, null) {
+) : SerializerIrGenerator(irClass, compilerContext) {
     override fun generateSave(function: IrSimpleFunction) = addFunctionBody(function) { saveFunc ->
         fun irThis(): IrExpression =
             IrGetValueImpl(startOffset, endOffset, saveFunc.dispatchReceiverParameter!!.symbol)
@@ -38,7 +38,7 @@ class SerializerForInlineClassGenerator(
         val inlineEncoder = irTemporary(encodeInlineCall, nameHint = "inlineEncoder")
 
         val property = serializableProperties.first()
-        val value = getProperty(irGet(saveFunc.parameters[2]), property.ir, property.type)
+        val value = getProperty(irGet(saveFunc.parameters[2]), property.ir, property.getTypeInScope())
 
         // inlineEncoder.encodeInt/String/SerializableValue
         val elementCall = formEncodeDecodePropertyCall(irGet(inlineEncoder), saveFunc.dispatchReceiverParameter!!, property, {innerSerial, sti ->
@@ -72,7 +72,7 @@ class SerializerForInlineClassGenerator(
         val inlineDecoder: IrExpression = irInvoke(decodeInline, irGet(loadFunc.parameters[1]), serialDescGetter)
 
         val property = serializableProperties.first()
-        val inlinedType = property.type
+        val inlinedType = property.getTypeInScope()
         val actualCall = formEncodeDecodePropertyCall(inlineDecoder, loadFunc.dispatchReceiverParameter!!, property, { innerSerial, sti ->
             decoderClass.functionByName( "${CallingConventions.decode}${sti.elementMethodPrefix}SerializableValue") to listOf(innerSerial)
         }, {
@@ -100,6 +100,7 @@ class SerializerForInlineClassGenerator(
             serializableIrClass.constructors.single { it.isPrimary }.symbol,
             listOf(expression),
             (inlineClassBoxType as IrSimpleType).arguments.map { it.typeOrNull },
+            returnTypeHint = inlineClassBoxType,
         )
 
 }

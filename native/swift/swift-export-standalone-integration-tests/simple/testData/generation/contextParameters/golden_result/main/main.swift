@@ -170,7 +170,14 @@ public func contextBlockA(
 ) -> Swift.Void {
     return { __root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_ContextBU29_U20Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__({
         let originalBlock: ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void = block
-        return { (ctx0: Swift.UnsafeMutableRawPointer, ctx1: Swift.UnsafeMutableRawPointer, arg0: Swift.Int32, arg1: Swift.String) in return { originalBlock((main.ContextA.__createClassWrapper(externalRCRef: ctx0),main.ContextB.__createClassWrapper(externalRCRef: ctx1)), arg0, arg1); return true }() }
+        return { (ctx0: Swift.UnsafeMutableRawPointer, ctx1: Swift.UnsafeMutableRawPointer, arg0: Swift.Int32, arg1: Swift.String) in
+            let _ctx0: main.ContextA = main.ContextA.__createClassWrapper(externalRCRef: ctx0)
+            let _ctx1: main.ContextB = main.ContextB.__createClassWrapper(externalRCRef: ctx1)
+            let _arg0: Swift.Int32 = arg0
+            let _arg1: Swift.String = arg1
+            let _result = originalBlock((_ctx0,_ctx1), _arg0, _arg1)
+            return { _result; return true }()
+        }
     }()); return () }()
 }
 public func contextBlockB() -> ((main.ContextB, main.ContextA), Swift.String, Swift.Int32) -> Swift.Void {
@@ -184,7 +191,12 @@ public func contextBlockC(
 ) -> Swift.Void {
     return { __root___contextBlockC__TypesOfArguments__U28main_Context_U20Swift_StringU29202D_U20Swift_Void__({
         let originalBlock: (main.Context, Swift.String) -> Swift.Void = block
-        return { (ctx0: Swift.UnsafeMutableRawPointer, arg0: Swift.String) in return { originalBlock((main.Context.__createClassWrapper(externalRCRef: ctx0)), arg0); return true }() }
+        return { (ctx0: Swift.UnsafeMutableRawPointer, arg0: Swift.String) in
+            let _ctx0: main.Context = main.Context.__createClassWrapper(externalRCRef: ctx0)
+            let _arg0: Swift.String = arg0
+            let _result = originalBlock((_ctx0), _arg0)
+            return { _result; return true }()
+        }
     }()); return () }()
 }
 public func contextBlockD() -> (main.Context, Swift.Int32) -> Swift.Void {

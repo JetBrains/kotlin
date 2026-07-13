@@ -43,8 +43,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.kotlinHome?.let { put(KONAN_HOME, it) }
 
     konanNoDefaultLibs = arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty()
-    @Suppress("DEPRECATION")
-    konanNoEndorsedLibs = arguments.noendorsedlibs || !arguments.libraryToAddToCache.isNullOrEmpty()
     konanNoStdlib = arguments.nostdlib || !arguments.libraryToAddToCache.isNullOrEmpty()
     konanDontCompressKlib = arguments.nopack
     put(NOMAIN, arguments.nomain)
@@ -84,13 +82,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(LIST_TARGETS, arguments.listTargets)
     put(OPTIMIZATION, arguments.optimization)
     put(DEBUG, arguments.debug)
-    // TODO: remove after 1.4 release.
-    @Suppress("DEPRECATION")
-    if (arguments.lightDebugDeprecated) {
-        report(KONAN_ARGUMENT_WARNING,
-                "-Xg0 is now deprecated and skipped by compiler. Light debug information is enabled by default for Darwin platforms." +
-                        " For other targets, please, use `-Xadd-light-debug=enable` instead.")
-    }
     putIfNotNull(LIGHT_DEBUG, when (val it = arguments.lightDebugString) {
         "enable" -> true
         "disable" -> false
@@ -203,6 +194,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         report(KONAN_ARGUMENT_ERROR, "For incremental compilation both flags should be supplied: " +
                 "-Xenable-incremental-compilation and ${K2NativeCompilerArguments::incrementalCacheDir.cliArgument}")
     incrementalCacheDir?.let { put(INCREMENTAL_CACHE_DIR, it) }
+    arguments.dumpBuiltCachesTo?.let { put(DUMP_BUILT_CACHES_TO, it) }
     put(FILES_TO_CACHE, arguments.filesToCache.toList())
     put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
     val nThreadsRaw = parseBackendThreads(arguments.backendThreads)
@@ -293,18 +285,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             AllocationMode.CUSTOM
         }
     })
-    when (arguments.workerExceptionHandling) {
-        null -> {}
-        "legacy" -> {
-            report(KONAN_ARGUMENT_ERROR, "Legacy exception handling in workers is deprecated")
-        }
-        "use-hook" -> {
-            report(KONAN_ARGUMENT_STRONG_WARNING, "-Xworker-exception-handling is deprecated")
-        }
-        else -> {
-            report(KONAN_ARGUMENT_ERROR, "Unsupported worker exception handling mode ${arguments.workerExceptionHandling}")
-        }
-    }
 
     arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
     putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {
@@ -357,6 +337,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     put(BinaryOptions.gc, config.gc)
     put(BinaryOptions.gcSchedulerType, config.gcSchedulerType)
     put(BinaryOptions.runtimeAssertionsMode, config.runtimeAssertsMode)
+    put(BinaryOptions.swiftExport, config.swiftExport)
     put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, config.threadsCount)
     putIfNotNull(KONAN_DATA_DIR, config.distribution.localKonanDir.absolutePath)
     putIfNotNull(BinaryOptions.minidumpLocation, config.minidumpLocation)

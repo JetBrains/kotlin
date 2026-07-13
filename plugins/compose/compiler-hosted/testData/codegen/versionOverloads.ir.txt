@@ -12,10 +12,10 @@ MODULE_FRAGMENT
             JvmField
           EXPRESSION_BODY
             CONST Int type=kotlin.Int value=0
-        FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:example_C$stableprop_getter visibility:public modality:FINAL returnType:kotlin.Int
+        FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:example_C$stableprop_getter visibility:public modality:FINAL returnType:kotlin.Int [companion]
           correspondingProperty: PROPERTY name:$stable visibility:public modality:FINAL [val]
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun example_C$stableprop_getter (): kotlin.Int declared in example.C'
+            RETURN type=kotlin.Nothing from='public final fun example_C$stableprop_getter (): kotlin.Int [companion] declared in example.C'
               GET_FIELD 'FIELD name:$stable type:kotlin.Int visibility:public [final,static] declared in example.C' type=kotlin.Int origin=null
       CONSTRUCTOR visibility:public returnType:example.C [primary]
         BLOCK_BODY

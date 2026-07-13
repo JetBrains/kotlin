@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_ST
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
-import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_MANUALLY_ALTERED_LANGUAGE_FEATURES
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.*
 import kotlin.test.assertContains
@@ -34,6 +35,7 @@ class JsManifestWritingTest : TestCaseWithTmpdir() {
     private val outKlibDir: String
         get() = tmpdir.resolve("out").absolutePath
 
+    @Test
     fun testEnableAndDisableLanguageFeatures() {
         jsStdlib?.let { lib ->
             val poisoningFeature =

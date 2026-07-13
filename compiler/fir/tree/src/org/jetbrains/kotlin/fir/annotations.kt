@@ -39,15 +39,6 @@ annotation class PrivateSessionConstructor
 annotation class SessionConfiguration
 
 /**
- * Declarations that are only being used in case some default language features are disabled: mostly likely due to using not the latest
- * language version.
- *
- * Let's try to have a convention to use a relevant language feature name as a side comment.
- */
-@RequiresOptIn
-annotation class OnlyForDefaultLanguageFeatureDisabled(val languageFeature: LanguageFeature)
-
-/**
  * Declaration is only relevant for old (pre-CL) resolution of array literals for annotations.
  */
 @RequiresOptIn

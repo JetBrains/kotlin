@@ -291,7 +291,7 @@ KtCallExpression(295,303): 'yield(m)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -315,6 +315,7 @@ KtCallExpression(295,303): 'yield(m)'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -353,7 +354,7 @@ KtNameReferenceExpression(295,300): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -377,6 +378,7 @@ KtNameReferenceExpression(295,300): 'yield'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -438,7 +440,7 @@ KtCallExpression(312,320): 'yield(X)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -462,6 +464,7 @@ KtCallExpression(312,320): 'yield(X)'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -500,7 +503,7 @@ KtNameReferenceExpression(312,317): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -524,6 +527,7 @@ KtNameReferenceExpression(312,317): 'yield'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -676,7 +680,7 @@ KtCallExpression(351,359): 'yield(X)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -700,6 +704,7 @@ KtCallExpression(351,359): 'yield(X)'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -738,7 +743,7 @@ KtNameReferenceExpression(351,356): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -762,6 +767,7 @@ KtNameReferenceExpression(351,356): 'yield'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -826,7 +832,7 @@ KtCallExpression(368,376): 'yield(m)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -850,6 +856,7 @@ KtCallExpression(368,376): 'yield(m)'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -888,7 +895,7 @@ KtNameReferenceExpression(368,373): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -912,6 +919,7 @@ KtNameReferenceExpression(368,373): 'yield'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -1071,7 +1079,7 @@ KtCallExpression(423,431): 'yield(X)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1095,6 +1103,7 @@ KtCallExpression(423,431): 'yield(X)'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -1133,7 +1142,7 @@ KtNameReferenceExpression(423,428): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1157,6 +1166,7 @@ KtNameReferenceExpression(423,428): 'yield'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -1313,7 +1323,7 @@ KtCallExpression(462,470): 'yield(X)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1336,6 +1346,7 @@ KtCallExpression(462,470): 'yield(X)'
                 type: ERROR_TYPE
             ]
             type: Controller<ERROR CLASS: Cannot infer argument for type parameter S>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<ERROR CLASS: Cannot infer argument for type parameter S>
       extensionReceiver = null
@@ -1374,7 +1385,7 @@ KtNameReferenceExpression(462,467): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1397,6 +1408,7 @@ KtNameReferenceExpression(462,467): 'yield'
                 type: ERROR_TYPE
             ]
             type: Controller<ERROR CLASS: Cannot infer argument for type parameter S>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<ERROR CLASS: Cannot infer argument for type parameter S>
       extensionReceiver = null

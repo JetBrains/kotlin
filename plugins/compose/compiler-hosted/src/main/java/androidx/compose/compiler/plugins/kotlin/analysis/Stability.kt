@@ -180,7 +180,7 @@ fun Stability.forEach(callback: (Stability) -> Unit) {
 fun IrAnnotationContainer.hasStableMarker(): Boolean =
     annotations.any { it.isStableMarker() }
 
-private fun IrConstructorCall.isStableMarker(): Boolean {
+private fun IrAnnotation.isStableMarker(): Boolean {
     val owner = annotationClass?.owner ?: return false
     return owner.hasAnnotation(ComposeFqNames.StableMarker) || owner.classId in KnownStableConstructs.stableMarkers
 }
@@ -193,8 +193,7 @@ private fun IrClass.hasStableMarkedDescendant(): Boolean {
 }
 
 private fun IrAnnotationContainer.stabilityParamBitmask(): Int? =
-    (annotations.findAnnotation(ComposeFqNames.StabilityInferred)?.arguments[0] as? IrConst)
-        ?.value as? Int
+    annotations.findAnnotation(ComposeFqNames.StabilityInferred)?.getConstArgument("parameters")
 
 @VisibleForTesting
 data class SymbolForAnalysis(
@@ -214,7 +213,6 @@ data class SymbolForAnalysis(
 
 class StabilityInferencer(
     private val isTargetJvm: Boolean,
-    private val currentModule: ModuleDescriptor,
     externalStableTypeMatchers: Set<FqNameMatcher>,
 ) {
     private val externalTypeMatcherCollection = FqNameMatcherCollection(externalStableTypeMatchers)
@@ -414,10 +412,6 @@ class StabilityInferencer(
         return stability
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun IrDeclaration.isInCurrentModule() =
-        module == currentModule
-
     private fun IrClass.isProtobufType(): Boolean {
         // Quick exit as all protos are final
         if (!isFinalClass) return false
@@ -537,7 +531,7 @@ class StabilityInferencer(
                     Stability.Stable
                 } else {
                     stabilityOf(
-                        type = getInlineClassUnderlyingType(inlineClassDeclaration, treatFullValueClassesWithOneFieldAsBasic = false),
+                        type = getInlineClassUnderlyingType(inlineClassDeclaration, treatCompatibleFullValueClassesAsInline = false),
                         substitutions = substitutions,
                         currentlyAnalyzing = currentlyAnalyzing,
                         analysisEntryFile

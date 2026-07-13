@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.wasm.config.wasmTarget
+import java.nio.file.Path
+import kotlin.io.path.absolute
+import kotlin.io.path.pathString
 
 object WebKlibSerializationPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifact, WebSerializedKlibPipelineArtifact>(
     name = "WebKlibSerializationPipelinePhase",
@@ -56,21 +58,18 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifa
             performanceManager = configuration.perfManager,
         )
 
-        loadSizeInfo(File(outputKlibPath))?.flatten()?.let { stats ->
+        loadSizeInfo(outputKlibPath)?.flatten()?.let { stats ->
             configuration.perfManager?.registerKlibElementStats(stats)
         }
 
         return WebSerializedKlibPipelineArtifact(
-            outputKlibPath,
+            outputKlibPath.pathString,
             configuration
         )
     }
 }
 
-fun CompilerConfiguration.computeOutputKlibPath(): String {
-    return if (produceKlibFile) {
-        outputDir!!.resolve("${outputName!!}.klib").normalize().absolutePath
-    } else {
-        outputDir!!.absolutePath
-    }
+fun CompilerConfiguration.computeOutputKlibPath(): Path {
+    val basePath = if (produceKlibFile) outputDir!!.resolve("${outputName!!}.klib").normalize() else outputDir!!
+    return basePath.toPath().absolute()
 }

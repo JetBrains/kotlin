@@ -202,8 +202,6 @@ public interface KaArrayTypeBuilder : KaTypeBuilder {
  * }
  * ```
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType {
     return with(session) {
@@ -226,8 +224,6 @@ public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit 
  * buildClassType(builtinTypes.string)
  * ```
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit = {}): KaType {
     return with(session) {
@@ -241,9 +237,7 @@ public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.()
 /**
  * Builds a boxed / primitive (depending on the [init] block) array type from the given [elementType].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit = {}): KaType {
     return with(session) {
@@ -258,9 +252,7 @@ public fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Un
  * Builds the underlying array type of [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs)
  * function parameter with the given [elementType].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun buildVarargArrayType(elementType: KaType): KaType {
     return with(session) {
@@ -273,8 +265,6 @@ public fun buildVarargArrayType(elementType: KaType): KaType {
 /**
  * Builds a [KaTypeParameterType] with the given type parameter symbol.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit = {}): KaTypeParameterType {
     return with(session) {
@@ -288,9 +278,7 @@ public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypePar
 /**
  * Builds a [KaStarTypeProjection] (`*`).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun buildStarTypeProjection(): KaStarTypeProjection {
     return with(session) {

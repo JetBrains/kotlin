@@ -1,9 +1,12 @@
-// IGNORE_BACKEND: WASM_JS, WASM_WASI, JS_IR_ES6
-// WASM_MUTE_REASON: IGNORED_IN_JS
+// KT-66098: ClassCastException
+// IGNORE_BACKEND: JS_IR_ES6
+// ^^^ KT-82349: ClassCastException
 // WITH_COROUTINES
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Wasm-JS:2.3,2.4
+// ^^^ KT-78040 is available in 2.4.20-Beta2
 
 import helpers.*
 import kotlin.coroutines.*

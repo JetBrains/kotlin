@@ -1,7 +1,7 @@
 <caret_constructor_MyClass>:
   KtNameReferenceExpression(109,116): 'MyClass'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         test/MyClass
@@ -10,7 +10,7 @@
 <caret_constructor_MyClass_fqn>:
   KtNameReferenceExpression(139,146): 'MyClass'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         test/MyClass
@@ -19,7 +19,7 @@
 <caret_constructor_List>:
   KtNameReferenceExpression(165,169): 'List'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         kotlin/collections/List
@@ -28,7 +28,7 @@
 <caret_constructor_MutableList>:
   KtNameReferenceExpression(196,207): 'MutableList'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         kotlin/collections/MutableList
@@ -37,7 +37,7 @@
 <caret_constructor_List_MyClass>:
   KtNameReferenceExpression(240,247): 'MyClass'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         test/MyClass
@@ -46,7 +46,7 @@
 <caret_staticMember_MyClass>:
   KtNameReferenceExpression(303,310): 'MyClass'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         test/MyClass
@@ -55,7 +55,7 @@
 <caret_staticMember_MyClass_fqn>:
   KtNameReferenceExpression(346,353): 'MyClass'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         test/MyClass
@@ -64,7 +64,7 @@
 <caret_staticMember_List>:
   KtNameReferenceExpression(385,389): 'List'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         kotlin/collections/List
@@ -73,7 +73,7 @@
 <caret_staticMember_MutableList>:
   KtNameReferenceExpression(429,440): 'MutableList'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         kotlin/collections/MutableList
@@ -82,7 +82,7 @@
 <caret_staticMember_List_MyClass>:
   KtNameReferenceExpression(486,493): 'MyClass'
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    contextSensitiveResolutionStatus: NotAvailable
     KaSymbolResolutionSuccess:
       symbols = [
         test/MyClass

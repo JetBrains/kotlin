@@ -21,16 +21,18 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
+import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.native.resolve.KonanLibrariesResolveSupport
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.Properties
+import kotlin.io.path.Path
 
 class NativeSecondStageCompilationConfig(
         val project: Project,
@@ -391,7 +393,7 @@ class NativeSecondStageCompilationConfig(
 
     val includedLibraries: List<KotlinLibrary>
         get() = getIncludedLibraries(
-                configuration.konanIncludedLibraries.map { File(it) },
+                configuration.konanIncludedLibraries.map { Path(it) },
                 configuration,
                 resolve.resolvedLibraries
         )
@@ -476,14 +478,17 @@ class NativeSecondStageCompilationConfig(
         } ?: true
     }
 
+    val enableReleaseBinaryCache: Boolean
+        get() = configuration.get(BinaryOptions.enableReleaseBinaryCache) ?: false
+
     internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
         // Intentionally optimize in debug mode only. See `RuntimeLinkageStrategy`.
         val defaultStrategy = if (debug) RuntimeLinkageStrategy.Optimize else RuntimeLinkageStrategy.Raw
         configuration.get(BinaryOptions.linkRuntime) ?: defaultStrategy
     }
 
-    override val manifestProperties = configuration.konanManifestAddend?.let {
-        File(it).loadProperties()
+    override val manifestProperties: Properties? = configuration.konanManifestAddend?.let {
+        Path(it).readProperties()
     }
 
     private val defaultPropertyLazyInitialization = true
@@ -529,6 +534,7 @@ class NativeSecondStageCompilationConfig(
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")
+        if (optimizationsEnabled) append("-opt")
         append("STATIC")
 
         if (perFileCacheForStdlib != defaultPerFileCacheForStdlib)
@@ -588,6 +594,8 @@ class NativeSecondStageCompilationConfig(
         appendCommonCacheFlavor()
         append("-user")
         append("-pl")
+        if (swiftExport)
+            append("-swift_export")
     }
 
     internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString)
@@ -604,9 +612,10 @@ class NativeSecondStageCompilationConfig(
         }
     }
     internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.child(userCacheFlavorString)
+    internal val dumpBuiltCachesTo = configuration.dumpBuiltCachesTo
 
     internal val ignoreCacheReason = when {
-        optimizationsEnabled -> "for optimized compilation"
+        optimizationsEnabled && !enableReleaseBinaryCache -> "with global optimizations"
         forceNativeThreadStateForFunctions != defaultForceNativeThreadStateForFunctions -> "with non-default forceNativeThreadStateForFunctions"
         else -> null
     }

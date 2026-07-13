@@ -5,8 +5,23 @@
 
 package org.jetbrains.kotlin.commonizer.utils
 
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 
-abstract class KtInlineSourceCommonizerTestCase : KtUsefulTestCase(), InlineSourceBuilderDelegate {
-    override val inlineSourceBuilder: InlineSourceBuilder = InlineSourceBuilderImpl(testRootDisposable)
+abstract class KtInlineSourceCommonizerTestCase : InlineSourceBuilderDelegate {
+    private lateinit var testRootDisposable: Disposable
+
+    @BeforeEach
+    fun setUp() {
+        testRootDisposable = object : Disposable.Default {}
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Disposer.dispose(testRootDisposable)
+    }
+
+    override val inlineSourceBuilder: InlineSourceBuilder by lazy { InlineSourceBuilderImpl(testRootDisposable) }
 }

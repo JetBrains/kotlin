@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -83,7 +83,7 @@ public actual annotation class JsSymbol(actual val name: String)
  *
  * This annotation can be applied only to files and only when the compilation granularity is `PER_FILE`.
  */
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @Target(FILE)
 @SinceKotlin("1.9")
 public actual annotation class JsFileName(actual val name: String)

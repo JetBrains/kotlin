@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+sealed class <#A: kotlin/Any> /ArrayMap : kotlin.collections/Iterable<#A> { // /ArrayMap|null[0]
+    abstract val size // /ArrayMap.size|{}size[0]
+        abstract fun <get-size>(): kotlin/Int // /ArrayMap.size.<get-size>|<get-size>(){}[0]
+    abstract fun copy(): /ArrayMap<#A> // /ArrayMap.copy|copy(){}[0]
+    abstract fun get(kotlin/Int): #A? // /ArrayMap.get|get(kotlin.Int){}[0]
+    abstract fun set(kotlin/Int, #A) // /ArrayMap.set|set(kotlin.Int;1:0){}[0]
+}
+final fun (/ArrayMap<*>)./isEmpty(): kotlin/Boolean // /isEmpty|isEmpty@ArrayMap<*>(){}[0]
+final fun (/ArrayMap<*>)./isNotEmpty(): kotlin/Boolean // /isNotEmpty|isNotEmpty@ArrayMap<*>(){}[0]

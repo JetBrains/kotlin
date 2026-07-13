@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.overrides
@@ -669,7 +670,17 @@ class ConeOverloadConflictResolver(
 }
 
 class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val session: FirSession) : SimpleConstraintSystem {
-    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker {
+    /**
+     * Registers [typeParameters] as free in the constraint system
+     * and returns a substitutor from the passed type parameters to their types.
+     *
+     * [adjustedUpperBoundForTypeParameter] is called on every type parameter - upper bound pair
+     */
+    fun registerTypeVariablesWithCustomUpperBounds(
+        typeParameters: Collection<TypeParameterMarker>,
+        adjustedUpperBoundForTypeParameter: (ConeTypeParameterLookupTag, ConeKotlinType) -> ConeKotlinType =
+            { _, upperBound -> upperBound }
+    ): ConeSubstitutor {
         val csBuilder = system.getBuilder()
         val substitutionMap = typeParameters.associateBy({ it.asCone().typeParameterSymbol }) {
             require(it is ConeTypeParameterLookupTag)
@@ -687,12 +698,16 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val se
                         ?: errorWithAttachment("No ${typeParameter.symbol.fir::class.java} in substitution map") {
                             withFirEntry("typeParameter", typeParameter.symbol.fir)
                         },
-                    substitutor.substituteOrSelf(upperBound.coneType)
+                    substitutor.substituteOrSelf(adjustedUpperBoundForTypeParameter(typeParameter, upperBound.coneType))
                 )
             }
         }
         return substitutor
     }
+
+    override fun registerTypeVariables(
+        typeParameters: Collection<TypeParameterMarker>,
+    ): TypeSubstitutorMarker = registerTypeVariablesWithCustomUpperBounds(typeParameters)
 
     override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker) {
         system.addSubtypeConstraint(subType, superType, SimpleConstraintSystemConstraintPosition)

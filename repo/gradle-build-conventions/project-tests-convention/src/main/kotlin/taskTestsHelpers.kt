@@ -52,13 +52,6 @@ private fun Test.configurationElements(
 
 @KotlinCompilerDistUsage
 fun Test.withDist() {
-    project.normalization {
-        runtimeClasspath {
-            ignore("**/build.txt")
-            ignore("*.spdx.json")
-        }
-    }
-
     val dist = configurationElements("distForTests", dependencies = {
         add(project.dependencies.project(path = ":kotlin-compiler", configuration = "distElements"))
     })

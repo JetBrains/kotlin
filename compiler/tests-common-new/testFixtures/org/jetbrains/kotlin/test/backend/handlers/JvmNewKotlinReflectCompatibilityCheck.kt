@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.KOTLIN_REFLECT_DUMP_MISMATCH
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_JAVA_FACADE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.getDefaultDumpFile
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -18,7 +22,6 @@ import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.lang.ref.SoftReference
@@ -40,6 +43,9 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
     private val k1ReflectStringBuilder = StringBuilder()
     private val newReflectStringBuilder = StringBuilder()
     private var skipAsserts = false
+
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(TestDumpDirectives, CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         // Running the test is impossible if there are errors in Java code
@@ -108,9 +114,9 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         val kotlinReflectDumpMismatch =
             KOTLIN_REFLECT_DUMP_MISMATCH in testServices.moduleStructure.allDirectives
         val k1ReflectFile =
-            testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-k1.txt")
+            testServices.moduleStructure.getDefaultDumpFile(".reflect-k1.txt")
         val newReflectFile =
-            testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-new.txt")
+            testServices.moduleStructure.getDefaultDumpFile(".reflect-new.txt")
         if (kotlinReflectDumpMismatch) {
             assertions.assertFalse(skipAsserts) {
                 "Cannot use both directives: " +
@@ -174,7 +180,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         private fun getNewKotlinReflectDumper(stdlibPathProvider: KotlinStandardLibrariesPathProvider): AlienInstance {
             newKotlinReflectDumper.get()?.let { return it }
             return RunInAlienClassLoader::class.java
-                .newInstanceInNewClassloader(stdlibPathProvider.getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader())
+                .newInstanceInNewClassloader(stdlibPathProvider.getRuntimeAndReflectJarClassLoader())
                 .also { newKotlinReflectDumper = SoftReference(it) }
         }
     }
@@ -210,13 +216,17 @@ class RunInAlienClassLoader {
             val jClass = loader.loadClass(fqn)
             val metadata = jClass.annotations.firstIsInstanceOrNull<Metadata>()
             if (shouldSkipClass(jClass, metadata)) continue
-            when (metadata?.kind) { // See kotlin.Metadata.kind for numbers meanings
-                null, 1 -> out.dumpKClass(jClass.kotlin) // Kotlin and Java classes
-                2 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Facade file
-                3 -> {} // Synthetic class
-                4 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class facade
-                5 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class part
-                else -> error("Unknown kotlin.Metadata kind ${metadata.kind}")
+            try {
+                when (metadata?.kind) { // See kotlin.Metadata.kind for numbers meanings
+                    null, 1 -> out.dumpKClass(jClass.kotlin) // Kotlin and Java classes
+                    2 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Facade file
+                    3 -> {} // Synthetic class
+                    4 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class facade
+                    5 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class part
+                    else -> error("Unknown kotlin.Metadata kind ${metadata.kind}")
+                }
+            } catch (e: Throwable) {
+                throw AssertionError("Exception when dumping contents of $jClass", e)
             }
         }
         return out.toString()

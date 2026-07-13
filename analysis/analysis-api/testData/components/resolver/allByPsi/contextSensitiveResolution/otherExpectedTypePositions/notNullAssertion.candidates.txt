@@ -1163,7 +1163,7 @@ KtNameReferenceExpression(683,694): 'myClassProp'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(695,697): 'to'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1310,7 +1310,7 @@ KtNameReferenceExpression(710,720): 'stringProp'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(721,723): 'to'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1453,7 +1453,7 @@ KtNameReferenceExpression(735,750): 'NestedInheritor'
     isInBestCandidates = false
 
 KtOperationReferenceExpression(751,753): 'to'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1624,7 +1624,7 @@ KtValueArgumentList(783,785): '()'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(786,788): 'to'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3056,7 +3056,7 @@ KtNameReferenceExpression(1242,1243): 'a'
     isInBestCandidates = false
 
 KtOperationReferenceExpression(1244,1247): '!in'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3092,7 +3092,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3129,7 +3129,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun MyClass.contains(that: MyClass): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3169,7 +3169,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T : Comparable<T>, R : ClosedRange<T>, Iterable<T>> R.contains(element: T?): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3208,7 +3208,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3245,7 +3245,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Byte>.contains(value: Int): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3282,7 +3282,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Byte>.contains(value: Long): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3319,7 +3319,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Byte>.contains(value: Short): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3356,7 +3356,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Double>.contains(value: Float): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3393,7 +3393,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Float>.contains(value: Double): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3430,7 +3430,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Int>.contains(value: Byte): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3467,7 +3467,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Int>.contains(value: Long): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3504,7 +3504,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Int>.contains(value: Short): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3541,7 +3541,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Long>.contains(value: Byte): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3578,7 +3578,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Long>.contains(value: Int): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3615,7 +3615,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Long>.contains(value: Short): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3652,7 +3652,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Short>.contains(value: Byte): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3689,7 +3689,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Short>.contains(value: Int): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3864,7 +3864,7 @@ KtNameReferenceExpression(1256,1267): 'myClassProp'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1267,1269): '..'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3900,7 +3900,7 @@ KtOperationReferenceExpression(1267,1269): '..'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

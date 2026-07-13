@@ -64,7 +64,6 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.Annotations
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
@@ -72,6 +71,7 @@ object ComposeCompilerKey : GeneratedDeclarationKey()
 
 abstract class AbstractComposeLowering(
     val context: IrPluginContext,
+    private val irModule: IrModuleFragment,
     val metrics: ModuleMetrics,
     val stabilityInferencer: StabilityInferencer,
     private val featureFlags: FeatureFlags,
@@ -169,7 +169,7 @@ abstract class AbstractComposeLowering(
     fun IrType.unboxType(): IrType? {
         val klass = classOrNull?.owner ?: return null
         val representation = klass.inlineClassRepresentation(
-            treatFullValueClassesWithOneFieldAsBasic = !context.platform.isJvm()
+            treatCompatibleFullValueClassesAsInline = !context.platform.isJvm()
         ) ?: return null
         if (!isInlineClassType()) return null
 
@@ -215,18 +215,6 @@ abstract class AbstractComposeLowering(
 
     fun IrAnnotationContainer.hasComposableAnnotation(): Boolean {
         return hasAnnotation(ComposeFqNames.Composable)
-    }
-
-    fun IrFunction.isInvoke(): Boolean =
-        name == OperatorNameConventions.INVOKE &&
-                parentClassOrNull?.defaultType?.let {
-                    it.isFunction() || it.isSyntheticComposableFunction()
-                } ?: false
-
-    fun IrCall.isInvoke(): Boolean {
-        if (origin == IrStatementOrigin.INVOKE)
-            return true
-        return symbol.owner.isInvoke()
     }
 
     fun IrCall.isComposableCall(): Boolean {
@@ -1258,16 +1246,14 @@ abstract class AbstractComposeLowering(
 
     // Construct a reference to the JVM specific <unsafe-coerce> intrinsic.
     // This code should be kept in sync with the declaration in JvmSymbols.kt.
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? by lazy {
         if (context.platform.isJvm()) {
             context.irFactory.buildFun {
                 name = Name.special("<unsafe-coerce>")
                 origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             }.apply {
-                @Suppress("DEPRECATION")
-                parent = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
-                    context.moduleDescriptor,
+                parent = createEmptyExternalPackageFragment(
+                    irModule,
                     FqName("kotlin.jvm.internal")
                 )
                 val src = addTypeParameter("T", context.irBuiltIns.anyNType)
@@ -1835,7 +1821,7 @@ fun IrAnnotationContainer.hasAnnotationSafe(fqName: FqName): Boolean =
     annotations.any { it.isAnnotationWithEqualFqName(fqName) }
 
 // workaround for KT-45361
-val IrConstructorCall.annotationClass
+val IrAnnotation.annotationClass
     get() = type.classOrNull
 
 fun IrDeclaration.hasFirDeclaration(): Boolean = ((this as? IrMetadataSourceOwner)?.metadata as? FirMetadataSource)?.fir != null
@@ -1903,13 +1889,19 @@ val IrValueParameter.isReceiver
 
 fun IrClass.invokeFunctionNForComposable(context: IrPluginContext, invokeFn: IrSimpleFunction): IrSimpleFunction {
     val realParams = typeParameters.size - /* return type */ 1
-    val newArgsSize = realParams + /* composer */ 1 + changedParamCount(realParams, 0)
+    // `changedParamCount` must account for the `invoke` dispatch receiver (the function instance),
+    // matching `ComposableTypeRemapper.remapType`; otherwise the arity is off by one $changed slot
+    // at multiples of SLOTS_PER_INT (e.g. a 10-parameter composable lambda).
+    val newArgsSize = realParams + /* composer */ 1 + changedParamCount(realParams, invokeFn.thisParamCount)
     val newFnClass = context.irBuiltIns.functionN(newArgsSize)
 
     return newFnClass
         .functions
         .first { it.name == invokeFn.name }
 }
+
+fun IrSimpleFunction.lambdaInvokeWithComposerParam(context: IrPluginContext): IrSimpleFunction =
+    parentAsClass.invokeFunctionNForComposable(context, this)
 
 fun IrFunction.isExternalFunction(): Boolean =
     origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || origin == IrDeclarationOrigin.FAKE_OVERRIDE && getPackageFragment() is IrExternalPackageFragment
@@ -1920,6 +1912,14 @@ fun IrType.isInlineClassType(isJvm: Boolean): Boolean {
     return if (this is IrSimpleType && classifier.owner is IrScript) {
         false
     } else {
-        erasedUpperBound.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = !isJvm)
+        erasedUpperBound.isInlineClass(treatCompatibleFullValueClassesAsInline = !isJvm)
     }
 }
+
+fun IrFunction.isInvoke(): Boolean =
+    name == OperatorNameConventions.INVOKE &&
+            parentClassOrNull?.defaultType?.let {
+                it.isFunction() || it.isSyntheticComposableFunction()
+            } ?: false
+
+fun IrCall.isInvoke() = origin == IrStatementOrigin.INVOKE || symbol.owner.isInvoke()

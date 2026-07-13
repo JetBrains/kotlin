@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.konan.properties
 
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Configurables
 import org.jetbrains.kotlin.konan.target.HostManager

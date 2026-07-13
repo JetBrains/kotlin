@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFi
  * @property allowErrorNodes Whether error nodes are allowed during IR deserialization and initialization.
  *   Caution: This setting is not safe to use, as it can lead to crashes in the frontend or backend.
  *   The only legal case for using this setting is the `dump-ir` command of the `klib` command-line tool.
+ * @property deserializeTypeAliases Whether to deserialize [org.jetbrains.kotlin.ir.declarations.IrTypeAlias] declarations.
+ *   Type aliases don't need to be (de)serialized anymore. See KT-86632.
+ *   The only case for enabling it is the klib tool and its ability to dump (even older) KLIBs.
  */
 abstract class BasicIrModuleDeserializer(
     val linker: KotlinIrLinker,
@@ -37,6 +40,7 @@ abstract class BasicIrModuleDeserializer(
     override val strategyResolver: (String) -> DeserializationStrategy,
     libraryAbiVersion: KotlinAbiVersion,
     private val allowErrorNodes: Boolean = false,
+    private val deserializeTypeAliases: Boolean = false,
 ) : IrModuleDeserializer(moduleDescriptor, libraryAbiVersion) {
 
     private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
@@ -68,7 +72,15 @@ abstract class BasicIrModuleDeserializer(
                 val file = fileReader.createFile(moduleFragment, fileProto, linker.fileEntryDeserializer)
 
                 _definedPackageNames += file.packageFqName
-                this += deserializeIrFile(fileProto, file, fileReader, i, this@BasicIrModuleDeserializer, allowErrorNodes)
+                this += deserializeIrFile(
+                    fileProto,
+                    file,
+                    fileReader,
+                    i,
+                    this@BasicIrModuleDeserializer,
+                    allowErrorNodes,
+                    deserializeTypeAliases
+                )
 
                 if (!strategyResolver(file.fileEntry.name).onDemand)
                     moduleFragment.files.add(file)
@@ -103,7 +115,7 @@ abstract class BasicIrModuleDeserializer(
 
     private fun deserializeIrFile(
         fileProto: ProtoFile, file: IrFile, fileReader: IrLibraryFileFromBytes,
-        fileIndex: Int, moduleDeserializer: IrModuleDeserializer, allowErrorNodes: Boolean,
+        fileIndex: Int, moduleDeserializer: IrModuleDeserializer, allowErrorNodes: Boolean, deserializeTypeAliases: Boolean,
     ): FileDeserializationState {
         val fileStrategy = strategyResolver(file.fileEntry.name)
 
@@ -121,6 +133,7 @@ abstract class BasicIrModuleDeserializer(
                     else -> DeserializeFunctionBodies.NONE
                 },
                 fixSwappedKProperty2TypeParameterOrder = moduleDeserializer.compatibilityMode.swappedKProperty2TypeParameterOrder,
+                deserializeTypeAliases = deserializeTypeAliases,
             ),
             moduleDeserializer,
         )

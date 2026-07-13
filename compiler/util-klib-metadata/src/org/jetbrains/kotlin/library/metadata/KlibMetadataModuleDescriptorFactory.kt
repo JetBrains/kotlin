@@ -17,11 +17,12 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
 
-@K1Deprecation
 interface KlibMetadataModuleDescriptorFactory {
 
     val descriptorFactory: KlibModuleDescriptorFactory
     val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
+
+    @OptIn(K1Deprecation::class)
     val flexibleTypeDeserializer: FlexibleTypeDeserializer
 
     fun createDescriptor(
@@ -29,7 +30,7 @@ interface KlibMetadataModuleDescriptorFactory {
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns,
-    ) = createDescriptorOptionalBuiltIns(
+    ): ModuleDescriptorImpl = createDescriptorOptionalBuiltIns(
         library,
         languageVersionSettings,
         storageManager,
@@ -41,7 +42,7 @@ interface KlibMetadataModuleDescriptorFactory {
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
-    ) = createDescriptorOptionalBuiltIns(
+    ): ModuleDescriptorImpl = createDescriptorOptionalBuiltIns(
         library, languageVersionSettings, storageManager, null, LookupTracker.DO_NOTHING
     )
 

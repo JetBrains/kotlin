@@ -9,7 +9,7 @@ KtCallExpression(51,56): 'foo()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -28,6 +28,7 @@ KtCallExpression(51,56): 'foo()'
               annotations: []
               typeArguments: []
               type: kotlin/Any
+            typeParameters: []
             visibility: PUBLIC
           type = kotlin.Any
         type = kotlin.String

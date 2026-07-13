@@ -4,15 +4,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("project-tests-convention")
-    id("test-inputs-check")
-}
-
-repositories {
-    githubCommit("webassembly", "testsuite")
-    githubRelease("webassembly", "wabt", revisionPrefix = "")
+    id("test-inputs-check-v2")
 }
 
 val wabtVersion = "1.0.19"
@@ -42,9 +40,10 @@ dependencies {
 
     implementation(kotlinStdlib())
     implementation(kotlinxCollectionsImmutable())
-    testCompileOnly(kotlinTest("junit"))
-    testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(libs.kotlinx.serialization.json)
 

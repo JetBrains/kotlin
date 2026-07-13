@@ -180,6 +180,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirTooLargeFunctionImportChecker,
         FirTopLevelPropertiesChecker,
         FirPackageConflictsWithClassifierChecker,
+        FirKotlinPackageChecker,
         PlatformClassMappedToKotlinImportsChecker,
     )
 
@@ -224,6 +225,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirValueParameterDefaultValueTypeMismatchChecker,
         FirMissingDependencyClassForParameterChecker,
         FirDestructuringParameterChecker,
+        FirEqualityBoundAnnotationApplicabilityChecker,
     )
 
     override val enumEntryCheckers: Set<FirEnumEntryChecker> = setOf(

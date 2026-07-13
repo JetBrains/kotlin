@@ -86,17 +86,6 @@ object JSConfigurationKeys {
     @JvmField
     val FRIEND_PATHS_DISABLED = CompilerConfigurationKey.create<Boolean>("FRIEND_PATHS_DISABLED")
 
-    @JvmField
-    val METADATA_ONLY = CompilerConfigurationKey.create<Boolean>("METADATA_ONLY")
-
-    // Enable additional checkers.
-    @JvmField
-    val DEVELOPER_MODE = CompilerConfigurationKey.create<Boolean>("DEVELOPER_MODE")
-
-    // Generate comments with file path at the start of each file block.
-    @JvmField
-    val GENERATE_COMMENTS_WITH_FILE_PATH = CompilerConfigurationKey.create<Boolean>("GENERATE_COMMENTS_WITH_FILE_PATH")
-
     // Generate polyfills for newest properties, methods and classes from ES6+.
     @JvmField
     val GENERATE_POLYFILLS = CompilerConfigurationKey.create<Boolean>("GENERATE_POLYFILLS")
@@ -291,18 +280,6 @@ var CompilerConfiguration.incrementalNextRoundChecker: IncrementalNextRoundCheck
 var CompilerConfiguration.friendPathsDisabled: Boolean
     get() = getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)
     set(value) { put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, value) }
-
-var CompilerConfiguration.metadataOnly: Boolean
-    get() = getBoolean(JSConfigurationKeys.METADATA_ONLY)
-    set(value) { put(JSConfigurationKeys.METADATA_ONLY, value) }
-
-var CompilerConfiguration.developerMode: Boolean
-    get() = getBoolean(JSConfigurationKeys.DEVELOPER_MODE)
-    set(value) { put(JSConfigurationKeys.DEVELOPER_MODE, value) }
-
-var CompilerConfiguration.generateCommentsWithFilePath: Boolean
-    get() = getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
-    set(value) { put(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH, value) }
 
 var CompilerConfiguration.generatePolyfills: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)

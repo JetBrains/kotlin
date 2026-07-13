@@ -45,7 +45,7 @@ internal fun convertAnalyzedFirToIr(
     frontendOutput: AllModulesFrontendOutput,
     environment: ModuleCompilerEnvironment
 ): ModuleCompilerIrBackendInput {
-    val extensions = JvmFir2IrExtensions(configuration)
+    val extensions = JvmFir2IrExtensions()
 
     (
         val moduleFragment = irModuleFragment,
@@ -97,7 +97,7 @@ internal fun generateCodeFromIr(
             input.pluginContext.irBuiltIns,
             input.symbolTable,
             input.components.irProviders,
-            input.extensions,
+            debuggerExtensions = null,
             FirJvmBackendExtension(
                 input.components,
                 input.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()

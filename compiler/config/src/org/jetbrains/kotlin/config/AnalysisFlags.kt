@@ -41,6 +41,9 @@ object AnalysisFlags {
     val optIn by AnalysisFlag.Delegates.ListOfStrings
 
     @JvmStatic
+    val escapingFunctionsList by AnalysisFlag.Delegates.ListOfStrings
+
+    @JvmStatic
     val explicitApiVersion by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
@@ -95,8 +98,12 @@ object AnalysisFlags {
     val lenientMode by AnalysisFlag.Delegates.Boolean
 
     val hierarchicalMultiplatformCompilation by AnalysisFlag.Delegates.Boolean(defaultValue = false)
+    val kmpJvmIncrementalCompilationEnabled by AnalysisFlag.Delegates.Boolean(defaultValue = false)
 
     val headerMode by AnalysisFlag.Delegates.Boolean
 
     val headerModeType by AnalysisFlag.Delegates.HeaderModeTypeAnyByDefault
 }
+
+val LanguageVersionSettings.hmppProvidersEnabled: Boolean
+    get() = getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) || getFlag(AnalysisFlags.kmpJvmIncrementalCompilationEnabled)

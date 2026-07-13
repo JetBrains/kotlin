@@ -289,7 +289,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun captureFromArguments(type: RigidTypeMarker, status: CaptureStatus): RigidTypeMarker? {
-        return captureKTypeFromArguments(type as KType) as AbstractKType?
+        return captureKTypeFromArguments(type as AbstractKType)
     }
 
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
@@ -336,7 +336,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
         val substitutor = KTypeSubstitutor.create(type as KType)
         return object : TypeCheckerState.SupertypesPolicy.DoCustomTransform() {
             override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): RigidTypeMarker {
-                return substitutor.substitute(type.lowerBoundIfFlexible() as KType).type as AbstractKType
+                return substitutor.substituteTopLevelType(type.lowerBoundIfFlexible() as KType) as AbstractKType
             }
         }
     }

@@ -11,9 +11,15 @@ See [java-flight-recorder/README.md](../java-flight-recorder/README.md) for avai
 ## Usage
 
 ```kotlin
-id("test-inputs-check-v2")
+plugins {
+    id("test-inputs-check-v2")
+}
 
-// zero configuration :)
+// all config options with their default values
+testInputsCheck {
+    enabled = true
+    failFast = false
+}
 ```
 
 Run your tests, for example:
@@ -41,29 +47,33 @@ automatically rendered)
 flowchart TD
     FileExists["File.exists()"]
     FileRead["FileInputStream.read(), ..."]
-    InsideRootProjectDir["Is inside root project dir?"]
-    InsideCurrentProjectBuildDir["Is outside current project's build dir?"]
-    IsNotDeclared["Is not declared in Gradle?"]
-    Ignore
-    UndeclaredInput["Undeclared input found!"]
+    RootDir["Outside root dir?"]
+    BuildDir["Inside build dir?"]
+    KlibCache["Dynamically created klib cache?"]
+    DeclaredInGradle["Is declared in Gradle?"]
+    AllowedInput["Allowed input"]
+    UndeclaredInput["Undeclared input"]
     
-    FileRead --> InsideRootProjectDir
-    FileExists -->|false| Ignore
-    FileExists -->|true| InsideRootProjectDir
+    FileRead --> RootDir
+    FileExists -->|false| AllowedInput
+    FileExists -->|true| RootDir
     
-    InsideRootProjectDir -->|no| Ignore
-    InsideRootProjectDir -->|yes| InsideCurrentProjectBuildDir
+    RootDir -->|yes| AllowedInput
+    RootDir -->|no| BuildDir
     
-    InsideCurrentProjectBuildDir -->|no| Ignore
-    InsideCurrentProjectBuildDir -->|yes| IsNotDeclared
+    BuildDir -->|yes| AllowedInput
+    BuildDir -->|no| KlibCache
     
-    IsNotDeclared -->|no| Ignore
-    IsNotDeclared -->|yes| UndeclaredInput
+    KlibCache -->|yes| AllowedInput
+    KlibCache -->|no| DeclaredInGradle
+    
+    DeclaredInGradle -->|yes| AllowedInput
+    DeclaredInGradle -->|no| UndeclaredInput
 ```
 
-### Ignoring files outside the root project directory
+### Allowing files outside the root project directory
 
-We ignore files outside the root project directory (like `~/IdeaProjects/kotlin`).
+We allow reading files outside the root project directory (like `~/IdeaProjects/kotlin`).
 
 Why? Because these files are not produced by our build. They are either useless to cache or be tracked by other Gradle mechanisms.
 
@@ -84,22 +94,31 @@ Some examples:
    as inputs
 7. `/dev/random`, `/dev/urandom` — these cannot be inputs in any meaningful sense.
 
-### Ignoring files inside the current project's build directory
+### Allowing files inside the current project's build directory
 
 Most of the files in the project's build directory are already tracked as inputs, but sometimes it happens that test code writes some files
 to that directory and then reads them back.
 
 To support such cases, we simply allow all reads from the build directory.
 
-### Ignoring non-existent files
+### Allowing files from dynamically created klib cache
 
-We ignore files for which `File.exists()` returned `false`.
+The files in `kotlin-native/dist/klib/cache` are written dynamically during test execution and then read back. We don't consider them 
+inputs, thus we allow reading them in `TestInputsGuard`.
+
+There is only one exception: the stdlib cache. It is produced by `:kotlin-native:distStdlibCache` and written into 
+`.../klib/cache/{target}-gSTATIC-system/stdlib-per-file-cache`. Files inside this directory are not unconditionally 
+allowed to read because they are not dynamically created.
+
+### Allowing non-existent files
+
+We allow files for which `File.exists()` returned `false`.
 
 Why?
 
 #### Reason 1: Reduce the noise of false positives
 
-If we did not ignore `File.exists() == false`, it would produce a ton of false positives.
+If we didn't allow `File.exists() == false`, it would produce a ton of false positives.
 
 The majority of cases is like this:
 
@@ -123,7 +142,7 @@ assertThat(syntheticClass.sourceFile).doesNotExist()
 
 In that case, the only way to fix the false positive would be to either:
 
-- explicitly tell `test-inputs-check-v2` to ignore it
+- explicitly tell `test-inputs-check-v2` to allow it
     - that would require maintaining a hand-crafted whitelist that can grow huge (as it was the case for `test-inputs-check` v1)
 - modify the code
     - but the code is perfectly valid, it generates a synthetic class and asserts that its source file does not exist
@@ -173,21 +192,21 @@ flowchart TD
     Test -->|"jvmArgumentProviders.add()"| TestInstrumentationArgumentProvider
     Test -->|"doFirst { writeText() }"| declaredInputsTxt@{shape: cyl, label: "declared-inputs.txt"}
     declaredInputsTxt -->|"-Dtest.instrumenter..."| TestInstrumentationAgent
-    Test --> |"finalizedBy()"| CheckUndeclaredInputs
+    Test --> |"finalizedBy()"| CheckTestInputs
     TestInstrumentationArgumentProvider -->|"-javaagent"| agentJar
     TestInstrumentationArgumentProvider -->|"-Xbootclasspath/a"| bootClasspathJar
     subgraph bootClasspathJar
-        UndeclaredInputsGuard -->|"emit()"| UndeclaredInputEvent
+        TestInputsChecker -->|"emit()"| UndeclaredInputEvent
     end
     subgraph agentJar
         TestInstrumentationAgent -->|"File.exists()"| InputCheckingFileExistsAdvice
         TestInstrumentationAgent -->|"FileInputStream.read(), ..."| InputCheckingFileReadAdvice
-        InputCheckingFileExistsAdvice --> UndeclaredInputsGuard
-        InputCheckingFileReadAdvice --> UndeclaredInputsGuard     
+        InputCheckingFileExistsAdvice --> TestInputsChecker
+        InputCheckingFileReadAdvice --> TestInputsChecker     
     end
     UndeclaredInputEvent -->|"JFR magic :)"| testJfr@{shape: cyl, label: "test.jfr"}
-    testJfr --> CheckUndeclaredInputs
-    CheckUndeclaredInputs --> undeclaredInputsTxt@{shape: cyl, label: "undeclared-inputs.txt"}
+    testJfr --> CheckTestInputs
+    CheckTestInputs --> undeclaredInputsTxt@{shape: cyl, label: "undeclared-inputs.txt"}
 ```
 
 ### How is the Java Agent registered?
@@ -212,24 +231,24 @@ It provides the following JVM options:
 - A path to that file is passed via system property to `TestInstrumentationAgent`
 - The `TestInstrumentationAgent` uses ByteBuddy to register advices: `InputCheckingFileExistsAdvice` and `InputCheckingFileReadAdvice`
 - The bytecode from advices is injected at the end of instrumented methods
-- Both of the advices delegate execution to `UndeclaredInputsGuard`
-- The `UndeclaredInputsGuard` takes a file path as argument and checks whether it's not found in `declared-inputs.txt` (among other checks)
+- Both of the advices delegate execution to `TestInputsChecker`
+- The `TestInputsChecker` takes a file path as argument and checks whether it's not found in `declared-inputs.txt` (among other checks)
 - In that case, it emits `UndeclaredInputEvent` (visible to JFR as `jetbrains.UndeclaredInput`)
 - At the end of test execution, all JFR events are dumped to `test.jfr` (the name of this file depends on the test task, so for
   `functionalTest` it would be `functionalTest.jfr`)
 
 ### How is the user informed about verification results?
 
-Every `Test` task is finalized by its `CheckUndeclaredInputs` counterpart.
+Every `Test` task is finalized by its `CheckTestInputs` counterpart.
 
 For example:
 
-- `test` -> `checkUndeclaredInputsForTest`
-- `functionalTest` -> `checkUndeclaredInputsForFunctionalTest`
+- `test` -> `checkInputsForTest`
+- `functionalTest` -> `checkInputsForFunctionalTest`
 - etc.
 
-The `CheckUndeclaredInputs` task takes `test.jfr` snapshot, reads its contents via built-in Java API, and throws an error if there is at
+The `CheckTestInputs` task takes `test.jfr` snapshot, reads its contents via built-in Java API, and throws an error if there is at
 least one undeclared input.
 
-In any case, it produces the `undeclared-inputs-for-{taskName}.txt` file (can be empty), so the `CheckUndeclaredInputs` task  can be cached.
+In any case, it produces the `undeclared-inputs-for-{taskName}.txt` file (can be empty), so the `CheckTestInputs` task  can be cached.
 

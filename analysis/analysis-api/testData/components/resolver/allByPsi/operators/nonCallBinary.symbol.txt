@@ -39,7 +39,7 @@ KtUserType(24,27): 'Any'
 
 KtNameReferenceExpression(24,27): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -65,7 +65,7 @@ KtUserType(47,50): 'Any'
 
 KtNameReferenceExpression(47,50): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -79,7 +79,7 @@ KtBinaryExpression(74,80): 'a ?: b'
 
 KtNameReferenceExpression(74,75): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val a: kotlin.Any?
@@ -87,12 +87,12 @@ KtNameReferenceExpression(74,75): 'a'
 
 KtOperationReferenceExpression(76,78): '?:'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(79,80): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val b: kotlin.Any
@@ -106,7 +106,7 @@ KtConstantExpression(115,119): 'true'
 
 KtOperationReferenceExpression(120,122): '&&'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtConstantExpression(123,128): 'false'
@@ -120,7 +120,7 @@ KtConstantExpression(133,137): 'true'
 
 KtOperationReferenceExpression(138,140): '||'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtConstantExpression(141,146): 'false'
@@ -131,7 +131,7 @@ KtBinaryExpression(177,184): 'a === b'
 
 KtNameReferenceExpression(177,178): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val a: kotlin.Any?
@@ -139,12 +139,12 @@ KtNameReferenceExpression(177,178): 'a'
 
 KtOperationReferenceExpression(179,182): '==='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(183,184): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val b: kotlin.Any
@@ -155,7 +155,7 @@ KtBinaryExpression(189,196): 'a !== b'
 
 KtNameReferenceExpression(189,190): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val a: kotlin.Any?
@@ -163,12 +163,12 @@ KtNameReferenceExpression(189,190): 'a'
 
 KtOperationReferenceExpression(191,194): '!=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(195,196): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val b: kotlin.Any
@@ -188,7 +188,7 @@ KtBinaryExpression(240,245): 'x = 2'
 
 KtNameReferenceExpression(240,241): 'x'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var x: kotlin.Int
@@ -196,7 +196,7 @@ KtNameReferenceExpression(240,241): 'x'
 
 KtOperationReferenceExpression(242,243): '='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtConstantExpression(244,245): '2'

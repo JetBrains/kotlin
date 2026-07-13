@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiClass
-import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.junit.jupiter.api.Assertions
 import java.io.File
 import java.util.regex.Pattern
 
@@ -21,7 +21,7 @@ object LightClassTestCommon {
     ): String {
         val text = FileUtil.loadFile(testDataFile, true)
         val matcher = SUBJECT_FQ_NAME_PATTERN.matcher(text)
-        TestCase.assertTrue("No FqName specified. First line of the form '// f.q.Name' expected", matcher.find())
+        Assertions.assertTrue(matcher.find(), "No FqName specified. First line of the form '// f.q.Name' expected")
         return matcher.group(1)
     }
 
@@ -47,7 +47,7 @@ object LightClassTestCommon {
         if (lightClass == null) {
             return NOT_GENERATED_DIRECTIVE
         }
-        TestCase.assertTrue("Not a light class: $lightClass ($fqName)", lightClass is KtLightClass)
+        Assertions.assertTrue(lightClass is KtLightClass, "Not a light class: $lightClass ($fqName)")
         return normalizeText(PsiClassRenderer.renderClass(lightClass, renderInner = true, membersFilter = membersFilter))
     }
 

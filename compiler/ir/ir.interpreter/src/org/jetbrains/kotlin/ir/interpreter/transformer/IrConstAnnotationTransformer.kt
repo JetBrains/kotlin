@@ -7,16 +7,13 @@ package org.jetbrains.kotlin.ir.interpreter.transformer
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.isAnnotation
-import org.jetbrains.kotlin.ir.util.parentsWithSelf
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.toIrConst
 
 internal abstract class IrConstAnnotationTransformer(private val context: IrConstEvaluationContext) {
@@ -43,9 +40,9 @@ internal abstract class IrConstAnnotationTransformer(private val context: IrCons
         }
     }
 
-    private fun transformAnnotation(annotation: IrConstructorCall) {
+    private fun transformAnnotation(annotation: IrAnnotation) {
         if (annotation.type is IrErrorType) return
-        for ([param, arg] in (annotation.symbol.owner.parameters zip annotation.arguments)) {
+        for ([param, arg] in (annotation.classSymbol.owner.primaryConstructor!!.parameters zip annotation.arguments)) {
             if (arg != null) {
                 annotation.arguments[param] = transformAnnotationArgument(arg, param)
             }
@@ -77,7 +74,7 @@ internal abstract class IrConstAnnotationTransformer(private val context: IrCons
             this is IrErrorExpression -> null
             this is IrGetClass && argument.type is IrErrorType -> null
             this is IrGetEnumValue || this is IrClassReference -> this
-            this is IrConstructorCall && this.type.isAnnotation() -> {
+            this is IrAnnotation -> {
                 transformAnnotation(this)
                 this
             }

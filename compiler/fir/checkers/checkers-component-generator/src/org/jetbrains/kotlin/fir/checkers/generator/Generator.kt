@@ -128,14 +128,14 @@ class Generator(
         }
     }
 
-    private fun generateComposedComponent() {
-        val composedComponentName = "Composed$checkersComponentName"
-        val filename = "${composedComponentName}.kt"
+    private fun generateCompositeComponent() {
+        val compositeComponentName = "Composite$checkersComponentName"
+        val filename = "${compositeComponentName}.kt"
         generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printImports(true, MPP_CHECKER_KIND_FQN, MPP_CHECKER_WITH_KIND_FQN)
             printGeneratedMessage()
-            println("class $composedComponentName(val predicate: (FirCheckerWithMppKind) -> Boolean) : $checkersComponentName() {")
+            println("class $compositeComponentName(val predicate: (FirCheckerWithMppKind) -> Boolean) : $checkersComponentName() {")
             withIndent {
                 println("constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })")
                 println()
@@ -144,23 +144,14 @@ class Generator(
                 for ([alias, _] in configuration.aliases.values) {
                     println("override ${alias.valDeclaration}")
                     withIndent {
-                        println("get() = _${alias.fieldName}")
+                        println("field: ${alias.mutableSetType} = mutableSetOf()")
                     }
                 }
                 for ([fieldName, classFqn] in configuration.additionalCheckers) {
                     println("override val $fieldName: ${classFqn.simpleName.setType}")
                     withIndent {
-                        println("get() = _$fieldName")
+                        println("field: ${classFqn.simpleName.mutableSetType} = mutableSetOf()")
                     }
-                }
-                println()
-
-                // private mutable delegates
-                for ([alias, _] in configuration.aliases.values) {
-                    println("private val _${alias.fieldName}: ${alias.mutableSetType} = mutableSetOf()")
-                }
-                for ([fieldName, classFqn] in configuration.additionalCheckers) {
-                    println("private val _$fieldName: ${classFqn.simpleName.mutableSetType} = mutableSetOf()")
                 }
                 println()
 
@@ -169,10 +160,10 @@ class Generator(
                 println("fun register(checkers: $checkersComponentName) {")
                 withIndent {
                     for ([alias, _] in configuration.aliases.values) {
-                        println("checkers.${alias.fieldName}.filterTo(_${alias.fieldName}, predicate)")
+                        println("checkers.${alias.fieldName}.filterTo(${alias.fieldName}, predicate)")
                     }
                     for (fieldName in configuration.additionalCheckers.keys) {
-                        println("checkers.$fieldName.filterTo(_$fieldName, predicate)")
+                        println("checkers.$fieldName.filterTo($fieldName, predicate)")
                     }
                 }
                 println("}")
@@ -387,7 +378,7 @@ class Generator(
     fun generate() {
         generateAliases()
         generateAbstractCheckersComponent()
-        generateComposedComponent()
+        generateCompositeComponent()
         generateFilteredComponent()
         generateDiagnosticComponent()
     }

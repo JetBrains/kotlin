@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.implicitCast
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScope: Fir2IrConversionScope) : Fir2IrComponents by c {
@@ -90,9 +90,9 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
         if (this is ConeCapturedType && this.constructor.projection.kind == ProjectionKind.IN) {
             // But `Captured(in Type)?` does accepts nulls independently of `Type`
             if (isMarkedNullable) return true
-            return constructor.projection.type!!.canBeNull(session)
+            return constructor.projection.type!!.canBeNull()
         }
-        return canBeNull(session) || hasEnhancedNullability
+        return canBeNull() || hasEnhancedNullability
     }
 
     fun IrStatementContainer.coerceStatementsToUnit(coerceLastExpressionToUnit: Boolean): IrStatementContainer {
@@ -215,14 +215,15 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
             // Cast type massage 1. Remove @EnhancedNullability
             // Cast type massage 2. Convert it to a non-null variant (in case of @FlexibleNullability)
             val castType = original.type.removeAnnotations { annotationCall ->
-                val constructorSymbol = annotationCall.symbol.takeIf { it.isBound } ?: return@removeAnnotations false
+                @OptIn(DeprecatedCompilerApi::class)
+                if (!annotationCall.symbol.isBound) return@removeAnnotations false
                 /*
                  * @EnhancedNullability and @FlexibleNullability are symbols from builtins and should be already
                  *   bound at the time of body conversion, so it's safe to take the owner for them
                  * If symbol is unbound then this annotation can not be neither @EnhancedNullability or @FlexibleNullability
                  */
                 @OptIn(UnsafeDuringIrConstructionAPI::class)
-                val classId = constructorSymbol.owner.parentAsClass.classId
+                val classId = annotationCall.classId
                 classId == StandardClassIds.Annotations.EnhancedNullability ||
                         classId == StandardClassIds.Annotations.FlexibleNullability
             }.makeNotNull()

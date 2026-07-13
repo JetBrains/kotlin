@@ -294,7 +294,7 @@ class CallAndReferenceGenerator(
         val classSymbol = when (this) {
             is FirResolvedQualifier -> {
                 if (resolvedToCompanionObject) return null
-                this.symbol as? FirClassSymbol<*>
+                this.qualifierSymbol as? FirClassSymbol<*>
             }
             else -> {
                 val type = this.resolvedType.fullyExpandedType().lowerBoundIfFlexible()
@@ -672,7 +672,7 @@ class CallAndReferenceGenerator(
                             // that's why we unwrap the intersection override and use the type of the value class property.
                             // See compiler/testData/codegen/box/inlineClasses/kt70461.kt
                             val finalIrType =
-                                if (firSymbol.isPotentialInlineClassProperty &&
+                                if (firSymbol.isPotentialInlineClassProperty(session) &&
                                     property.isIntersectionOverride &&
                                     property.dispatchReceiverType is ConeIntersectionType
                                 ) {
@@ -1084,7 +1084,7 @@ class CallAndReferenceGenerator(
             return when (this) {
                 is IrErrorExpression -> true
                 is IrGetClass -> this.argument.type is IrErrorType
-                is IrConstructorCall -> {
+                is IrAnnotation -> {
                     for ([i, expression] in this.arguments.withIndex()) {
                         if (expression.cleanUp()) {
                             this.arguments[i] = null
@@ -1106,32 +1106,37 @@ class CallAndReferenceGenerator(
     }
 
     internal fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
-        return convertToGetObject(qualifier, null)!!
+        return convertToGetObject(qualifier, null)
+            ?: qualifier.convertWithOffsets { startOffset, endOffset ->
+                @OptIn(ResolvedQualifierTypeAccess::class)
+                IrErrorCallExpressionImpl(
+                    startOffset, endOffset, qualifier.resolvedType.toIrType(),
+                    "Resolved qualifier ${qualifier.render()} does not have correctly resolved type"
+                )
+            }
     }
+
+    private val FirCallableReferenceAccess.hasBoundReceiver: Boolean
+        get() = (dispatchReceiver != null || extensionReceiver != null) &&
+                calleeReference.toResolvedCallableSymbol()?.isStatic != true
+
 
     internal fun convertToGetObject(
         qualifier: FirResolvedQualifier,
         callableReferenceAccess: FirCallableReferenceAccess?,
     ): IrExpression? {
-        val classSymbol = qualifier.resolvedType.toClassLikeSymbol()
+        val classSymbol = qualifier.accessedObjectSymbol ?: return null
 
-        if (callableReferenceAccess?.isBound == false) {
+        if (callableReferenceAccess?.hasBoundReceiver == false) {
             return null
         }
 
-        val irType = qualifier.resolvedType.toIrType()
         return qualifier.convertWithOffsets { startOffset, endOffset ->
-            if (classSymbol != null) {
-                IrGetObjectValueImpl(
-                    startOffset, endOffset, irType,
-                    classSymbol.toIrSymbol() as IrClassSymbol
-                )
-            } else {
-                IrErrorCallExpressionImpl(
-                    startOffset, endOffset, irType,
-                    "Resolved qualifier ${qualifier.render()} does not have correctly resolved type"
-                )
-            }
+            @OptIn(ResolvedQualifierTypeAccess::class)
+            IrGetObjectValueImpl(
+                startOffset, endOffset, qualifier.resolvedType.toIrType(),
+                classSymbol.toIrSymbol() as IrClassSymbol
+            )
         }
     }
 
@@ -1552,7 +1557,7 @@ class CallAndReferenceGenerator(
                 }
             }
 
-            is IrConstructorCall if statement is FirAnnotationCall -> {
+            is IrAnnotation if statement is FirAnnotationCall -> {
                 // annotation calls don't have receivers
             }
 

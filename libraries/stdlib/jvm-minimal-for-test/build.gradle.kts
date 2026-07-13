@@ -3,6 +3,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 description = "Kotlin Mock Runtime for Tests"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     `maven-publish`
 }

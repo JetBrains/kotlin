@@ -68,7 +68,7 @@ FILE: interface.kt
 
     }
     @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.WARNING| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.WARNING|]) public abstract interface IW : R|kotlin/Any| {
-        public open static operator fun invoke(): R|kotlin/Unit| {
+        public final static operator fun invoke(): R|kotlin/Unit| {
         }
 
     }

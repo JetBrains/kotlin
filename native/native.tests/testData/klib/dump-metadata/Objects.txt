@@ -6,8 +6,8 @@ library {
 
     // class name: A
     // class name: B
-    // class name: B.C
     // class name: B.Companion
+    // class name: B.C
     // class name: D
     // class name: D.E
 
@@ -29,18 +29,18 @@ library {
       // nested class: C
     }
 
-    public final object B.C : kotlin/Any {
-
-      private constructor()
-
-      public final fun c(): kotlin/Unit
-    }
-
     public final companion object B.Companion : kotlin/Any {
 
       private constructor()
 
       public final fun b(): kotlin/Unit
+    }
+
+    public final object B.C : kotlin/Any {
+
+      private constructor()
+
+      public final fun c(): kotlin/Unit
     }
 
     public final class D : kotlin/Any {
@@ -57,6 +57,9 @@ library {
       private constructor()
 
       public final fun e(): kotlin/Unit
+    }
+
+    package {
     }
   }
 }

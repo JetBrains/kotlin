@@ -1,0 +1,3 @@
+expression: 5000L
+expression PSI: KtConstantExpression
+type: kotlin.Long

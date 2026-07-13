@@ -15,9 +15,12 @@ import net.bytebuddy.matcher.ElementMatchers.named
 import net.bytebuddy.matcher.ElementMatchers.none
 import org.jetbrains.kotlin.testFramework.inputchecking.InputCheckingFileExistsAdvice
 import org.jetbrains.kotlin.testFramework.inputchecking.InputCheckingFileReadAdvice
-import org.jetbrains.kotlin.testFramework.inputchecking.UndeclaredInputsGuard
+import org.jetbrains.kotlin.testFramework.inputchecking.TestInputsChecker
+import java.io.File
 import java.lang.instrument.ClassFileTransformer
 import java.lang.instrument.Instrumentation
+import java.nio.file.Paths
+import kotlin.io.path.pathString
 
 object TestInstrumentationAgent {
     @JvmStatic
@@ -29,13 +32,41 @@ object TestInstrumentationAgent {
 
         instrumentMockApplicationCreationTracing(instrumentation, debug)
 
-        if (System.getProperty("test.instrumenter.inputs.check.enabled") == "true") {
+        if (System.getProperty("test.instrumenter.inputs.check.enabled").toBoolean()) {
             instrumentEmittingCustomJfrEvents(instrumentation)
         }
     }
 
     private fun instrumentMockApplicationCreationTracing(instrumentation: Instrumentation, debug: Boolean) {
         instrumentation.addTransformer(MockApplicationCreationTracingInstrumenter(debug))
+    }
+
+    private fun instrumentEmittingCustomJfrEvents(instrumentation: Instrumentation) {
+        initializeUndeclaredInputsGuard()
+        installInputCheckingAdvices(instrumentation)
+    }
+
+    private fun initializeUndeclaredInputsGuard() {
+        val rootDir = System.getProperty("test.instrumenter.root.dir")
+        val buildDir = System.getProperty("test.instrumenter.build.dir")
+        val failFast = System.getProperty("test.instrumenter.fail.fast").toBoolean()
+        val declaredInputs = File(System.getProperty("test.instrumenter.declared.inputs.file"))
+            .readLines()
+            .filter(String::isNotEmpty)
+
+        val nativeHome = System.getProperty("kotlin.internal.native.test.nativeHome")?.let(Paths::get)
+        val nativeTestTarget = System.getProperty("kotlin.internal.native.test.target")
+        val klibCacheDir = nativeHome?.resolve("klib/cache")
+        val klibStdlibCacheDir = klibCacheDir?.resolve("$nativeTestTarget-gSTATIC-system/stdlib-per-file-cache")
+
+        TestInputsChecker.initialize(
+            rootDir,
+            buildDir,
+            klibCacheDir?.pathString,
+            klibStdlibCacheDir?.pathString,
+            declaredInputs,
+            failFast
+        )
     }
 
     /**
@@ -60,9 +91,7 @@ object TestInstrumentationAgent {
      * The resulting bytecode is the same as if we had used [TypeStrategy.Default.REDEFINE],
      * but the illegal modifications are caught earlier (by ByteBuddy, not JVM).
      */
-    private fun instrumentEmittingCustomJfrEvents(instrumentation: Instrumentation) {
-        UndeclaredInputsGuard.initialize()
-
+    private fun installInputCheckingAdvices(instrumentation: Instrumentation) {
         AgentBuilder.Default()
             .ignore(none())
             .with(InitializationStrategy.NoOp.INSTANCE)

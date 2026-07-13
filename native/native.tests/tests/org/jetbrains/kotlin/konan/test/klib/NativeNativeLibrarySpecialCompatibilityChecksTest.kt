@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.test.klib.compatibility.LibrarySpecialCompatibilityC
 import org.jetbrains.kotlin.test.klib.compatibility.StdlibSpecialCompatibilityChecksTest
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.pathString
 import kotlin.test.assertNotNull
 import kotlin.test.fail
 
@@ -47,9 +50,9 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
 
     override fun runCompiler(context: CompilerInvocationContext) {
         runNativeCompiler(context.messageCollector, context.expectedExitCode) {
-            this.freeArgs = listOf(context.sourceFile.absolutePath)
-            this.libraries = (context.additionalLibraries + context.fakeLibraryPath).toTypedArray()
-            this.outputName = context.outputDir.resolve(context.moduleName).absolutePath
+            this.freeArgs = listOf(context.sourceFile.absolutePathString())
+            this.libraries = (context.additionalLibraries + listOf(context.fakeLibraryPath)).map { it.pathString }.toTypedArray()
+            this.outputName = context.outputDir.resolve(context.moduleName).absolutePathString()
             this.moduleName = context.moduleName
             this.produce = "library"
             this.nostdlib = true
@@ -106,7 +109,7 @@ private fun runNativeCompiler(
 @Suppress("JUnitTestCaseWithNoTests")
 class StdLibNativeLibrarySpecialCompatibilityChecksTest : NativeLibrarySpecialCompatibilityChecksTest(),
     StdlibSpecialCompatibilityChecksTest {
-    override val originalLibraryPath: String
+    override val originalLibraryPath: Path
         get() = patchedNativeStdlibWithoutJarManifest
 
     override val libraryDisplayName: String

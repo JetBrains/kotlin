@@ -1,16 +1,10 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-}
-
-dependencies {
-    compileOnly(libs.intellij.asm)
-
-    implementation(kotlinStdlib())
-    implementation(libs.bytebuddy)
-
-    testImplementation(libs.junit.jupiter.api)
 }
 
 sourceSets {
@@ -30,7 +24,18 @@ sourceSets {
     }
 }
 
+val bootClasspathCompileOnly by configurations.getting
+
+dependencies {
+    compileOnly(libs.intellij.asm)
+    bootClasspathCompileOnly(libs.org.jetbrains.annotations)
+
+    implementation(kotlinStdlib())
+    implementation(libs.bytebuddy)
+}
+
 val agentJar by task<ShadowJar> {
+    archiveClassifier = "agent"
     from(sourceSets.main.map { it.output })
     configurations = project.configurations.runtimeClasspath.map { listOf(it) }
     manifest {
@@ -57,8 +62,3 @@ configurations {
         }
     }
 }
-
-testing.suites.withType<JvmTestSuite>().configureEach {
-    useJUnitJupiter()
-}
-

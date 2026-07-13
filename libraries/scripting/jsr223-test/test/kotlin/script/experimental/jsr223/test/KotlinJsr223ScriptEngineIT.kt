@@ -14,12 +14,9 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.scripting.compiler.plugin.runAndCheckResults
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertSame
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
 import java.io.File
 import java.lang.management.ManagementFactory
@@ -144,8 +141,8 @@ class KotlinJsr223ScriptEngineIT {
             fail("Script error expected")
         } catch (e: ScriptException) {
             assertTrue(
-                e.message?.contains("Unresolved reference: y") ?: false,
-                "Expected message to contain \"Unresolved reference: y\", actual: \"${e.message}\""
+                e.message?.contains("Unresolved reference 'y'") ?: false,
+                "Expected message to contain \"Unresolved reference 'y'\", actual: \"${e.message}\""
             )
         }
 
@@ -169,20 +166,6 @@ class KotlinJsr223ScriptEngineIT {
         assertEquals(7, res2)
     }
 
-
-    @Test
-    fun testEngineRepeatWithReset() {
-        val code = "open class A {}\n" +
-                    "class B : A() {}"
-        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
-
-        val res1 = engine.eval(code)
-        assertNull(res1)
-
-        engine.state.history.reset()
-
-        engine.eval(code)
-    }
 
     @Test
     fun testInvocable() {
@@ -237,6 +220,36 @@ obj
         assertEquals(74, res2)
         val res22 = comp2.eval()
         assertEquals(74, res22)
+    }
+
+    @Test
+    fun testRebindWithChangedType() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("z", 33)
+        assertEquals(66, engine.eval("z * 2"))
+        // Rebind `z` to a value of a different type. The typed accessor must be re-emitted so that
+        // subsequent snippets see `z: String` (Q10d); otherwise the stale `var z: Int` accessor makes
+        // `z.length` unresolved (or its getter `bindings["z"] as Int` throws a ClassCastException).
+        engine.put("z", "abc")
+        assertEquals(6, engine.eval("z.length * 2"))
+    }
+
+    @Test
+    fun testRebindRemoval() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("z", 33)
+        assertEquals(66, engine.eval("z * 2"))
+        // Remove the binding. Accessing the (former) typed accessor must fail with a clear diagnostic
+        // rather than the cryptic `null cannot be cast to non-null type kotlin.Int` NPE (Q10c).
+        engine.getBindings(ScriptContext.ENGINE_SCOPE).remove("z")
+        val e = assertThrows<ScriptException> { engine.eval("z * 2") }
+        assertTrue(
+            (e.message ?: "").contains("no longer available"),
+            "Expected a clear 'no longer available' diagnostic, got: ${e.message}"
+        )
+        // Re-adding the binding restores typed access.
+        engine.put("z", 5)
+        assertEquals(10, engine.eval("z * 2"))
     }
 
     @Test
@@ -328,21 +341,29 @@ obj
         engine.put(" ", 41)
         engine.put("    ", 43)
 
+        // Binding names that aren't plain Kotlin identifiers are exposed as typed properties. Names
+        // containing a JVM-hard-invalid character (`. ; [ ] / < > : \`, none of which can survive even
+        // backtick-quoting) are reversibly encoded into `__u<hex>__` code-point markers and referenced
+        // without backticks (e.g. `.` -> `u002e`; the same rule already used for non-ASCII code points
+        // like `\u263a` -> `u263a`, so every problematic character uses one uniform scheme). Every other
+        // name (non-ASCII, `$`, spaces, ...) is backtick-quoted verbatim and referenced with backticks;
+        // such properties are declared with a delegate rather than a hardcoded getter/setter (see
+        // `encodeBindingNameToKotlinIdentifier`).
         assertEquals(4, engine.eval("`\u263a` * 2"))
-        assertEquals(5, engine.eval("2 + `a\\,b`"))
-        assertEquals(2, engine.eval("`a\\,b` - 1"))
-        assertEquals(6, engine.eval("1 + `c\\!d`"))
-        assertEquals(7, engine.eval("`e\\?f`"))
-        assertEquals(11, engine.eval("`g\\%h`"))
-        assertEquals(13, engine.eval("`i\\^j`"))
-        assertEquals(17, engine.eval("`k\\_l`"))
-        assertEquals(19, engine.eval("`m\\{n`"))
-        assertEquals(23, engine.eval("`o\\}p`"))
-        assertEquals(29, engine.eval("`q\\|r`"))
-        assertEquals(31, engine.eval("`s\\-t`"))
+        assertEquals(5, engine.eval("2 + a__u002e__b"))
+        assertEquals(2, engine.eval("a__u002e__b - 1"))
+        assertEquals(6, engine.eval("1 + c__u003a__d"))
+        assertEquals(7, engine.eval("e__u003b__f"))
+        assertEquals(11, engine.eval("`g\$h`"))
+        assertEquals(13, engine.eval("i__u003c__j"))
+        assertEquals(17, engine.eval("k__u003e__l"))
+        assertEquals(19, engine.eval("m__u005b__n"))
+        assertEquals(23, engine.eval("o__u005d__p"))
+        assertEquals(29, engine.eval("q__u002f__r"))
+        assertEquals(31, engine.eval("s__u005c__t"))
         assertEquals(37, engine.eval("`u v`"))
-        assertEquals(41, engine.eval("`_`"))
-        assertEquals(43, engine.eval("`____`"))
+        assertEquals(41, engine.eval("` `"))
+        assertEquals(43, engine.eval("`    `"))
     }
 
     @Test

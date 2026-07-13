@@ -5,6 +5,10 @@ import shortNameBasedDestructuring = JS_TESTS.foo.shortNameBasedDestructuring;
 import fullNameBasedDestructuring = JS_TESTS.foo.fullNameBasedDestructuring;
 import shortPositionBasedDestructuring = JS_TESTS.foo.shortPositionBasedDestructuring;
 import fullPositionBasedDestructuring = JS_TESTS.foo.fullPositionBasedDestructuring;
+import WithIgnoredPrimaryAndPropertyAndHiddenCopy = JS_TESTS.foo.WithIgnoredPrimaryAndPropertyAndHiddenCopy;
+import WithIgnoredPrimaryAndPropertyAndExposedCopy = JS_TESTS.foo.WithIgnoredPrimaryAndPropertyAndExposedCopy;
+import WithIgnoredPropertyAndExposedCopy = JS_TESTS.foo.WithIgnoredPropertyAndExposedCopy;
+import createWithIgnoredPrimaryAndHiddenCopyWithoutSecondary = JS_TESTS.foo.createWithIgnoredPrimaryAndHiddenCopyWithoutSecondary;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -56,6 +60,32 @@ function box(): string {
     assert(fullNameBasedDestructuring() === "4 2")
     assert(shortPositionBasedDestructuring() === "42")
     assert(fullPositionBasedDestructuring() === "4 2")
+
+    const hiddenCopy = WithIgnoredPrimaryAndPropertyAndHiddenCopy.create(7, "Hidden");
+    assert(hiddenCopy.a === 7);
+    assert(hiddenCopy.b === "Hidden");
+    assert(typeof (hiddenCopy as any).copy === "undefined");
+
+    const exposedCopy = WithIgnoredPrimaryAndPropertyAndExposedCopy.create(1, "Exposed");
+    assert(exposedCopy.a === 1);
+    assert(exposedCopy.b === "Exposed");
+    const exposedCopyResult = exposedCopy.copy(2, "Copy");
+    assert(exposedCopyResult.a === 2);
+    assert(exposedCopyResult.b === "Copy");
+    const exposedCopyResultWithDefaultA = exposedCopy.copy(undefined, "DefaultA");
+    assert(exposedCopyResultWithDefaultA.a === 1);
+    assert(exposedCopyResultWithDefaultA.b === "DefaultA");
+
+    const ignoredProperty = new WithIgnoredPropertyAndExposedCopy(7, 11);
+    assert(ignoredProperty.value === 7);
+    assert(typeof (ignoredProperty as any).hidden === "undefined");
+    const copiedIgnoredProperty = ignoredProperty.copy(17, 23);
+    assert(copiedIgnoredProperty.value === 17);
+    assert(typeof (copiedIgnoredProperty as any).hidden === "undefined");
+
+    const hiddenCopyWithoutSecondary = createWithIgnoredPrimaryAndHiddenCopyWithoutSecondary(11);
+    assert(hiddenCopyWithoutSecondary.value === 11);
+    assert(typeof (hiddenCopyWithoutSecondary as any).copy === "undefined");
 
     return "OK";
 }

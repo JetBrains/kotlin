@@ -12,34 +12,41 @@ repositories {
 }
 
 kotlin {
-    watchosArm32("watchosLibArm32")
+    watchosDeviceArm64("watchosLibDeviceArm64")
+    watchosSimulatorArm64("watchosLibSimulatorArm64")
     watchosArm64("watchosLibArm64")
     watchosX64("watchosLibX64")
 
-    watchosArm32("watchosLibArm32") {
-        println("Configuring ${this.name}")
+    watchosDeviceArm64("watchosLibDeviceArm64") {
+        logger.lifecycle("Configuring ${this.name}")
+    }
+
+    watchosSimulatorArm64("watchosLibSimulatorArm64") {
+        logger.lifecycle("Configuring ${this.name}")
     }
 
     watchosArm64("watchosLibArm64") {
-        println("Configuring ${this.name}")
+        logger.lifecycle("Configuring ${this.name}")
     }
 
     watchosX64("watchosLibX64") {
-        println("Configuring ${this.name}")
+        logger.lifecycle("Configuring ${this.name}")
     }
 
     sourceSets {
         val watchosLibMain by creating
         val watchosLibDeviceMain by creating
 
-        val watchosLibArm32Main by getting
+        val watchosLibDeviceArm64Main by getting
+        val watchosLibSimulatorArm64Main by getting
         val watchosLibArm64Main by getting
         val watchosLibX64Main by getting
 
         watchosLibDeviceMain.dependsOn(watchosLibMain)
         watchosLibX64Main.dependsOn(watchosLibMain)
+        watchosLibSimulatorArm64Main.dependsOn(watchosLibMain)
 
-        watchosLibArm32Main.dependsOn(watchosLibDeviceMain)
+        watchosLibDeviceArm64Main.dependsOn(watchosLibDeviceMain)
         watchosLibArm64Main.dependsOn(watchosLibDeviceMain)
     }
 }

@@ -3,10 +3,12 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public protocol INTERFACE: KotlinRuntime.KotlinBase {
+public protocol INTERFACE: KotlinRuntime.KotlinBase, main._INTERFACE {
 }
 @objc(_INTERFACE)
-package protocol _INTERFACE {
+public protocol _INTERFACE {
+}
+public protocol __INTERFACE: KotlinRuntimeSupport._KotlinBridgeable {
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     package init() {
@@ -294,7 +296,7 @@ public var nullablePrim: Swift.Int32? {
 }
 public var nullableRef: main.Class_without_package? {
     get {
-        return { switch __root___nullableRef_get() { case nil: .none; case let res: main.Class_without_package.__createClassWrapper(externalRCRef: res); } }()
+        return { switch __root___nullableRef_get() { case nil: .none; case let res?: main.Class_without_package.__createClassWrapper(externalRCRef: res); } }()
     }
     set {
         return { __root___nullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package___(newValue.map { it in it.__externalRCRef() } ?? nil); return () }()
@@ -394,7 +396,7 @@ public func nullable_output_prim() -> Swift.Int32? {
     return __root___nullable_output_prim().map { it in it.int32Value }
 }
 public func nullable_output_ref() -> main.Class_without_package? {
-    return { switch __root___nullable_output_ref() { case nil: .none; case let res: main.Class_without_package.__createClassWrapper(externalRCRef: res); } }()
+    return { switch __root___nullable_output_ref() { case nil: .none; case let res?: main.Class_without_package.__createClassWrapper(externalRCRef: res); } }()
 }
 public func produce_ABSTRACT_CLASS() -> main.ABSTRACT_CLASS {
     return main.ABSTRACT_CLASS.__createClassWrapper(externalRCRef: __root___produce_ABSTRACT_CLASS())
@@ -480,11 +482,13 @@ public func setExtensionVarOnNullableRef(
 ) -> Swift.Void {
     return { __root___extensionVarOnNullableRef_set__TypesOfArgumentsE__Swift_Optional_main_Class_without_package__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v); return () }()
 }
-extension main.INTERFACE where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.INTERFACE where Self : main.__INTERFACE {
 }
 extension main.INTERFACE {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.INTERFACE where Wrapped : main._INTERFACE {
+extension KotlinRuntimeSupport._KotlinExistential: main.INTERFACE, main.__INTERFACE where Wrapped : main._INTERFACE {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._INTERFACE {
 }
 extension ExportedKotlinPackages.namespace.deeper {
     public final class Class_with_package: KotlinRuntime.KotlinBase {

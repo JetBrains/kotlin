@@ -1,1 +1,3 @@
 bar: kotlin.Int
+
+override var bar: kotlin.Int

@@ -272,7 +272,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                     .approximateDeclarationType(Visibilities.Local, isLocal = true)
 
                 returnType = if (returnType is ConeTypeParameterType) {
-                    if (returnType.canBeNull(session)) {
+                    if (returnType.canBeNull()) {
                         session.builtinTypes.nullableAnyType.coneType
                     } else {
                         session.builtinTypes.anyType.coneType

@@ -47,8 +47,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INCOMPATIB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_CLASS_ON_COMPANION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_CLASS_PROPERTY_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE
@@ -61,6 +63,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME_AS_JVM_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC
@@ -112,6 +115,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATED_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.STRICTFP_ON_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE
@@ -183,6 +187,10 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "The resulting type of this ''javaClass'' call is ''{0}'' and not ''{1}''. Use ''::class.java'' to access type ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
+        )
+        map.put(
+            JAVA_CLASS_PROPERTY_REFERENCE,
+            "'::javaClass' returns a property reference and is error-prone. Use '.javaClass' or '::class.java' to access the Java class of the receiver.",
         )
 
         map.put(
@@ -375,6 +383,10 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED,
             "'@JvmExposeBoxed' cannot expose inline functions with reified type parameters."
         )
+        map.put(
+            JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE,
+            "'@JvmExposeBoxed' cannot expose private functions."
+        )
 
         map.put(
             JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE,
@@ -413,6 +425,12 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC,
             "Using protected members that are not '@JvmStatic' in the superclass companion is not yet supported."
+        )
+        map.put(
+            SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING,
+            "Using protected members that are not '@JvmStatic' in the superclass companion is not yet supported.".toDeprecationWarningMessage(
+                LanguageFeature.ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics
+            )
         )
 
         map.put(
@@ -542,6 +560,11 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION,
             "'@JvmOverloads' annotation may generate conflicting overloads with the '@IntroducedAt' annotation."
+        )
+
+        map.put(
+            INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD,
+            "Interface companion block property must either be 'const' or annotated with '@JvmField'."
         )
     }
 }

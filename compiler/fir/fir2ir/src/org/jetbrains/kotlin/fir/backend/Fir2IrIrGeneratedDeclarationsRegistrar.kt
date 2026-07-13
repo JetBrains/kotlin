@@ -15,15 +15,13 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
-import org.jetbrains.kotlin.fir.deserialization.toResolvedQualifier
+import org.jetbrains.kotlin.fir.deserialization.buildEnumEntryAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
@@ -707,24 +705,10 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             is IrGetEnumValue -> {
                 val enumClassId = (this.symbol.owner.parent as IrClass).classId!!
                 val enumVariantName = this.symbol.owner.name
-                val enumEntrySymbol = session.symbolProvider.getClassLikeSymbolByClassId(enumClassId)?.let { classSymbol ->
-                    (classSymbol as? FirRegularClassSymbol)?.declarationSymbols
-                        ?.filterIsInstance<FirEnumEntrySymbol>()
-                        ?.find { it.name == enumVariantName }
-                } ?: error("Could not resolve FirEnumEntry for $enumClassId.$enumVariantName")
 
-                buildPropertyAccessExpression {
-                    val receiver = enumClassId.toResolvedQualifier(session)
-                    coneTypeOrNull = receiver.resolvedType
-                    calleeReference = buildResolvedNamedReference {
-                        name = enumVariantName
-                        resolvedSymbol = enumEntrySymbol
-                    }
-                    explicitReceiver = receiver
-                    dispatchReceiver = receiver
-                }
+                buildEnumEntryAccessExpression(enumClassId, enumVariantName, session)
             }
-            is IrConstructorCall -> this.toFirAnnotation()
+            is IrAnnotation -> this.toFirAnnotation()
             is IrVararg -> {
                 val varargElements = this.elements.map { element ->
                     when (element) {
@@ -762,17 +746,16 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
     }
 
-    private fun IrConstructorCall.toFirAnnotation(): FirAnnotation {
-        val annotationClassId = this.symbol.owner.constructedClass.classId!!
+    private fun IrAnnotation.toFirAnnotation(): FirAnnotation {
+        val annotationClassId = this.classId
         return buildAnnotation {
             annotationTypeRef = annotationClassId
                 .toLookupTag()
                 .constructClassType()
                 .toFirResolvedTypeRef()
             argumentMapping = buildAnnotationArgumentMapping {
-                for ([i, argument] in this@toFirAnnotation.arguments.withIndex()) {
+                for ([argName, argument] in this@toFirAnnotation.argumentMapping) {
                     if (argument == null) continue
-                    val argName = this@toFirAnnotation.symbol.owner.parameters[i].name
                     this.mapping[argName] = argument.toFirExpression()
                 }
             }
@@ -817,7 +800,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             return extractGeneratedIrDeclarations(declaration).isNotEmpty()
         }
 
-        private fun extractGeneratedIrDeclarations(declaration: FirDeclaration): List<IrConstructorCall> {
+        private fun extractGeneratedIrDeclarations(declaration: FirDeclaration): List<IrAnnotation> {
             when (declaration.origin) {
                 is FirDeclarationOrigin.Synthetic,
                 is FirDeclarationOrigin.Delegated

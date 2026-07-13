@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.registerAllExtensions
 import org.jetbrains.kotlin.metadata.ExtensionRegistryLite
 import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
-@K1Deprecation
 object KlibMetadataSerializerProtocol : SerializerExtensionProtocol(
     ExtensionRegistryLite {
         registerAllExtensions(this)

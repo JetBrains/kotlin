@@ -1,6 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("generated-sources")
     id("java-test-fixtures")
@@ -8,10 +11,8 @@ plugins {
 
 dependencies {
     implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization"))
     api(project(":compiler:frontend.common"))
     implementation(project(":compiler:util"))
-    implementation(project(":compiler:config"))
     testFixturesImplementation(project(":core:descriptors"))
 
     if (kotlinBuildProperties.isInIdeaSync.get()) {
@@ -29,7 +30,6 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-optInToK1Deprecation()
 
 tasks.withType<KotlinJvmCompile> {
     compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")

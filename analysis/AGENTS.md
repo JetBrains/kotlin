@@ -113,3 +113,6 @@ WHEN writing or managing test data files:
 
 WHEN seeking historical context on design decisions:
 → READ [`docs/design-documents/README.md`](docs/design-documents/README.md) (these are historical snapshots, not necessarily up to date)
+
+WHEN working with stubs:
+→ READ [`stubs/README.md`](stubs/README.md)

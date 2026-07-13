@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.testUtils
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.objcexport.getErasedTypeClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -14,6 +15,7 @@ internal fun ModuleDescriptor.getTopLevelFunExtensionType(name: String): ClassDe
 }
 
 internal fun ClassDescriptor.getMemberFun(name: String): FunctionDescriptor {
+    @OptIn(K1Deprecation::class)
     return unsubstitutedMemberScope.findSingleFunction(Name.identifier(name))
 }
 
@@ -23,6 +25,7 @@ internal fun ClassDescriptor.getMemberProperty(name: String): PropertyDescriptor
 }
 
 internal fun ModuleDescriptor.getTopLevelFun(name: String): FunctionDescriptor {
+    @OptIn(K1Deprecation::class)
     return getPackage(FqName.ROOT).memberScope.findSingleFunction(Name.identifier(name))
 }
 

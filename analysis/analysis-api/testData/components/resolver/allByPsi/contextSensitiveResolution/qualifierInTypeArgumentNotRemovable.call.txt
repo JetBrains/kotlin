@@ -1,0 +1,214 @@
+KtFile: 'qualifierInTypeArgumentNotRemovable.kt'
+  null
+
+KtPackageDirective(70,82): 'package test'
+  null
+
+KtNameReferenceExpression(78,82): 'test'
+  null
+
+KtImportList(82,82): ''
+  null
+
+KtClass(84,93): 'class Foo'
+  null
+
+KtClass(95,150): 'sealed class Base<T> {'
+  null
+
+KtDeclarationModifierList(95,101): 'sealed'
+  null
+
+KtTypeParameterList(112,115): '<T>'
+  null
+
+KtTypeParameter(113,114): 'T'
+  null
+
+KtClassBody(116,150): '{'
+  null
+
+KtClass(122,148): 'class Child<T> : Base<T>()'
+  null
+
+KtTypeParameterList(133,136): '<T>'
+  null
+
+KtTypeParameter(134,135): 'T'
+  null
+
+KtSuperTypeList(139,148): 'Base<T>()'
+  null
+
+KtSuperTypeCallEntry(139,148): 'Base<T>()'
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base<T>
+        symbol = <constructor>(): test.Base<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
+
+KtConstructorCalleeExpression(139,146): 'Base<T>'
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base<T>
+        symbol = <constructor>(): test.Base<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
+
+KtTypeReference(139,146): 'Base<T>'
+  null
+
+KtUserType(139,146): 'Base<T>'
+  null
+
+KtNameReferenceExpression(139,143): 'Base'
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base<T>
+        symbol = <constructor>(): test.Base<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
+
+KtTypeArgumentList(143,146): '<T>'
+  null
+
+KtTypeProjection(144,145): 'T'
+  null
+
+KtTypeReference(144,145): 'T'
+  null
+
+KtUserType(144,145): 'T'
+  null
+
+KtNameReferenceExpression(144,145): 'T'
+  null
+
+KtValueArgumentList(146,148): '()'
+  null
+
+KtNamedFunction(152,204): 'fun usage(b: Base<Foo>) {'
+  null
+
+KtParameterList(161,175): '(b: Base<Foo>)'
+  null
+
+KtParameter(162,174): 'b: Base<Foo>'
+  null
+
+KtTypeReference(165,174): 'Base<Foo>'
+  null
+
+KtUserType(165,174): 'Base<Foo>'
+  null
+
+KtNameReferenceExpression(165,169): 'Base'
+  null
+
+KtTypeArgumentList(169,174): '<Foo>'
+  null
+
+KtTypeProjection(170,173): 'Foo'
+  null
+
+KtTypeReference(170,173): 'Foo'
+  null
+
+KtUserType(170,173): 'Foo'
+  null
+
+KtNameReferenceExpression(170,173): 'Foo'
+  null
+
+KtBlockExpression(176,204): '{'
+  null
+
+KtBinaryExpressionWithTypeRHS(182,202): 'b as Base.Child<Foo>'
+  null
+
+KtNameReferenceExpression(182,183): 'b'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = test.Base<test.Foo>
+        symbol = b: test.Base<test.Foo>
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(184,186): 'as'
+  null
+
+KtTypeReference(187,202): 'Base.Child<Foo>'
+  null
+
+KtUserType(187,202): 'Base.Child<Foo>'
+  null
+
+KtUserType(187,191): 'Base'
+  null
+
+KtNameReferenceExpression(187,191): 'Base'
+  null
+
+KtNameReferenceExpression(192,197): 'Child'
+  null
+
+KtTypeArgumentList(197,202): '<Foo>'
+  null
+
+KtTypeProjection(198,201): 'Foo'
+  null
+
+KtTypeReference(198,201): 'Foo'
+  null
+
+KtUserType(198,201): 'Foo'
+  null
+
+KtNameReferenceExpression(198,201): 'Foo'
+  null

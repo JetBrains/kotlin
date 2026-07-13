@@ -39,24 +39,35 @@ const val precompiledKotlinTestOutputName: String = "kotlin-kotlin-test"
 internal enum class PrecompileSetup(
     val debugFriendly: Boolean,
     val newExceptionProposal: Boolean,
+    val wasmCoroutinesStackSwitching: Boolean,
     val stdlibOutputDir: File,
     val kotlinTestOutputDir: File,
 ) {
     REGULAR(
         debugFriendly = false,
         newExceptionProposal = false,
+        wasmCoroutinesStackSwitching = false,
         File(outputDir, "out/precompile/$precompiledStdlibOutputName"),
         File(outputDir, "out/precompile/$precompiledKotlinTestOutputName")
     ),
     NEW_EXCEPTION_PROPOSAL(
         debugFriendly = false,
         newExceptionProposal = true,
+        wasmCoroutinesStackSwitching = false,
         File(outputDir, "out/precompile_new_exception/$precompiledStdlibOutputName"),
         File(outputDir, "out/precompile_new_exception/$precompiledKotlinTestOutputName")
+    ),
+    STACK_SWITCHING_PROPOSAL(
+        debugFriendly = false,
+        newExceptionProposal = false,
+        wasmCoroutinesStackSwitching = true,
+        File(outputDir, "out/precompile_stack_switching/$precompiledStdlibOutputName"),
+        File(outputDir, "out/precompile_stack_switching/$precompiledKotlinTestOutputName")
     ),
     DEBUG_FRIENDLY(
         debugFriendly = true,
         newExceptionProposal = false,
+        wasmCoroutinesStackSwitching = false,
         stdlibOutputDir = File(outputDir, "out/precompile_debug_friendly/$precompiledStdlibOutputName"),
         kotlinTestOutputDir = File(outputDir, "out/precompile_debug_friendly/$precompiledKotlinTestOutputName")
     ),
@@ -90,6 +101,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             wasmIncludedModuleOnly = true
             wasmUseNewExceptionProposal = setup.newExceptionProposal
             wasmForceDebugFriendlyCompilation = setup.debugFriendly
+            wasmUseStackSwitchingProposal = setup.wasmCoroutinesStackSwitching
             this.libraries = libraries
             this.includes = includes
         }

@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.jps.build;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,209 +18,231 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncrementalCacheVersionChangedTest {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  private void run(String fileName) {
+    runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/" + fileName);
   }
 
+  @Test
   public void testAllFilesPresentInCacheVersionChangedAbstractIncrementalCacheVersionChangedTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^.]+)$"), null, true);
   }
 
+  @Test
   @TestMetadata("clearedHasKotlin")
   public void testClearedHasKotlin() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin/");
   }
 
+  @Test
   @TestMetadata("exportedModule")
   public void testExportedModule() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/exportedModule/");
   }
 
+  @Test
   @TestMetadata("javaOnlyModulesAreNotAffected")
   public void testJavaOnlyModulesAreNotAffected() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected/");
   }
 
+  @Test
   @TestMetadata("module1Modified")
   public void testModule1Modified() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/module1Modified/");
   }
 
+  @Test
   @TestMetadata("module2Modified")
   public void testModule2Modified() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/module2Modified/");
   }
 
+  @Test
   @TestMetadata("moduleWithConstantModified")
   public void testModuleWithConstantModified() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified/");
   }
 
+  @Test
   @TestMetadata("moduleWithInlineModified")
   public void testModuleWithInlineModified() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified/");
   }
 
+  @Test
   @TestMetadata("touchedFile")
   public void testTouchedFile() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedFile/");
   }
 
+  @Test
   @TestMetadata("touchedOnlyJavaFile")
   public void testTouchedOnlyJavaFile() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile/");
   }
 
+  @Test
   @TestMetadata("untouchedFiles")
   public void testUntouchedFiles() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles/");
   }
 
+  @Test
   @TestMetadata("withError")
   public void testWithError() {
     runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/withError/");
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClearedHasKotlin extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class ClearedHasKotlin {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInClearedHasKotlin() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/exportedModule")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class ExportedModule extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class ExportedModule {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/exportedModule/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInExportedModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/exportedModule"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class JavaOnlyModulesAreNotAffected extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class JavaOnlyModulesAreNotAffected {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInJavaOnlyModulesAreNotAffected() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/module1Modified")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class Module1Modified extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class Module1Modified {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/module1Modified/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInModule1Modified() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/module1Modified"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/module2Modified")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class Module2Modified extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class Module2Modified {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/module2Modified/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInModule2Modified() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/module2Modified"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class ModuleWithConstantModified extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class ModuleWithConstantModified {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInModuleWithConstantModified() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class ModuleWithInlineModified extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class ModuleWithInlineModified {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInModuleWithInlineModified() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedFile")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class TouchedFile extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class TouchedFile {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedFile/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInTouchedFile() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedFile"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class TouchedOnlyJavaFile extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class TouchedOnlyJavaFile {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInTouchedOnlyJavaFile() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class UntouchedFiles extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class UntouchedFiles {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInUntouchedFiles() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/cacheVersionChanged/withError")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class WithError extends AbstractIncrementalCacheVersionChangedTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class WithError {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/cacheVersionChanged/withError/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInWithError() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/withError"), Pattern.compile("^([^.]+)$"), null, true);
     }

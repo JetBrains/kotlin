@@ -28,11 +28,11 @@ class AbiValidationBuildToolsJvmTests : BaseCompilationTest() {
 
     @Test
     @DisplayName("Smoke test of ABI validation for JVM")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testJvmDump() {
         val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
         jvmProject(toolchain, toolchain.createInProcessExecutionPolicy()) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile()
 
             val classFiles = module.outputDirectory.walk()

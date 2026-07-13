@@ -6,7 +6,7 @@ KtNameReferenceExpression(170,173): 'foo'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -25,6 +25,7 @@ KtNameReferenceExpression(170,173): 'foo'
               annotations: []
               typeArguments: []
               type: kotlin/Boolean
+            typeParameters: []
             visibility: PUBLIC
           type = kotlin.Boolean
       ]
@@ -32,7 +33,7 @@ KtNameReferenceExpression(170,173): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -59,6 +60,7 @@ KtNameReferenceExpression(170,173): 'foo'
                 type: T
             ]
             type: Base<kotlin/Boolean, T>
+          typeParameters: []
           visibility: PUBLIC
         type = Base<kotlin.Boolean, T>
       extensionReceiver = KaExplicitReceiverValue:

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.AbiFilters
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TestName
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 
@@ -18,17 +18,20 @@ class PrecompiledCasesTest {
         val baseOutputPath = File("src/sharedTests/resources/precompiled")
     }
 
-    @Rule
-    @JvmField
-    val testName = TestName()
+    private lateinit var testMethodName: String
+
+    @BeforeEach
+    fun captureTestName(testInfo: TestInfo) {
+        testMethodName = testInfo.testMethod.get().name
+    }
 
     @Test
     fun parcelable() = snapshotAPIAndCompare()
 
     @Test
     fun jar() {
-        val testDir = baseOutputPath.resolve(testName.methodName)
-        val target = testDir.resolve(testName.methodName + ".txt")
+        val testDir = baseOutputPath.resolve(testMethodName)
+        val target = testDir.resolve(testMethodName + ".txt")
 
         doCheck(listOf(testDir), target, AbiFilters.EMPTY)
     }
@@ -40,9 +43,9 @@ class PrecompiledCasesTest {
         includedAnnotatedWith: Set<String> = emptySet(),
         excludedAnnotatedWith: Set<String> = emptySet(),
     ) {
-        val testDir = baseOutputPath.resolve(testName.methodName)
+        val testDir = baseOutputPath.resolve(testMethodName)
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
-        val target = testDir.resolve(testName.methodName + ".txt")
+        val target = testDir.resolve(testMethodName + ".txt")
 
         doCheck(listOf(testDir), target, filters)
     }

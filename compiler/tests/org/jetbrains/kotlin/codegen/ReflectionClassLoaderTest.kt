@@ -7,18 +7,17 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.FirParser
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 open class ReflectionClassLoaderTest : CodegenTestCase() {
-    override val useFir: Boolean
-        get() = true
-
     override val firParser: FirParser
         get() = FirParser.LightTree
 
     override val prefix get() = "reflection/classLoaders"
 
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun setUp() {
         configurationKind = ConfigurationKind.ALL
         createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind)
     }
@@ -34,6 +33,7 @@ open class ReflectionClassLoaderTest : CodegenTestCase() {
         t1.methodByName("doTest")(t1.newInstance(), t1.getKClass(), t2.getKClass())
     }
 
+    @Test
     fun testSimpleDifferentClassLoaders() {
         loadFile("$prefix/differentClassLoaders.kt")
 
@@ -43,6 +43,7 @@ open class ReflectionClassLoaderTest : CodegenTestCase() {
         )
     }
 
+    @Test
     fun testClassLoaderWithNonTrivialEqualsAndHashCode() {
         // Check that class loaders do not participate as keys in hash maps (use identity hash maps instead)
 
@@ -59,6 +60,7 @@ open class ReflectionClassLoaderTest : CodegenTestCase() {
         )
     }
 
+    @Test
     fun testParentFirst() {
         // Check that for a child class loader, a class reference would be the same as for his parent
 
@@ -74,6 +76,7 @@ open class ReflectionClassLoaderTest : CodegenTestCase() {
         )
     }
 
+    @Test
     fun testKTypeEquality() {
         /*
          * Check that typeOf<List<Clz>>() when clz is loaded by different classloaders

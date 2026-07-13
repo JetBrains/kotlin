@@ -48,10 +48,11 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 class ComposableTargetAnnotationsTransformer(
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
-) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags) {
+) : AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags) {
     private val ComposableTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableTarget)
     private val ComposableOpenTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableOpenTarget)
     private val ComposableInferredTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableInferredTarget)
@@ -331,9 +332,9 @@ class ComposableTargetAnnotationsTransformer(
     val List<IrAnnotation>.target: Item
         get() =
             firstOrNull { it.isComposableTarget }?.let { constructor ->
-                constructor.firstParameterOrNull<String>()?.let { Token(it) }
+                constructor.getConstArgument<String>("applier")?.let { Token(it) }
             } ?: firstOrNull { it.isComposableOpenTarget }?.let { constructor ->
-                constructor.firstParameterOrNull<Int>()?.let { Open(it) }
+                constructor.getConstArgument<Int>("index")?.let { Open(it) }
             } ?: firstOrNull { it.isComposableTargetMarked }?.let { constructor ->
                 val fqName = constructor.classSymbol.owner.fqNameWhenAvailable
                 fqName?.let {
@@ -344,7 +345,7 @@ class ComposableTargetAnnotationsTransformer(
     val IrFunction.scheme: Scheme?
         get() =
             annotations.firstOrNull { it.isComposableInferredTarget }?.let { constructor ->
-                constructor.firstParameterOrNull<String>()?.let {
+                constructor.getConstArgument<String>("scheme")?.let {
                     deserializeScheme(it)
                 }
             }
@@ -980,9 +981,6 @@ class InferenceResolvedParameter(
 
     override fun hashCode(): Int = element.hashCode() * 31 + 103
 }
-
-private inline fun <reified T> IrAnnotation.firstParameterOrNull() =
-    (arguments.firstOrNull() as? IrConst)?.value as? T
 
 private val IrAnnotation.isComposableTarget
     get() = classId == ComposeClassIds.ComposableTarget

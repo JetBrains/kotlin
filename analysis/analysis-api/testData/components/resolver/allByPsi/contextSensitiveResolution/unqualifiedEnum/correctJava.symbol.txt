@@ -30,7 +30,7 @@ KtUserType(44,52): 'JavaEnum'
 
 KtNameReferenceExpression(44,52): 'JavaEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaEnum
@@ -41,7 +41,7 @@ KtWhenExpression(56,106): 'when (javaEnum) {'
 
 KtNameReferenceExpression(62,70): 'javaEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       javaEnum: JavaEnum
@@ -55,7 +55,7 @@ KtWhenConditionWithExpression(78,83): 'FIRST'
 
 KtNameReferenceExpression(78,83): 'FIRST'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaEnum.FIRST
@@ -72,7 +72,7 @@ KtWhenConditionWithExpression(93,99): 'SECOND'
 
 KtNameReferenceExpression(93,99): 'SECOND'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaEnum.SECOND

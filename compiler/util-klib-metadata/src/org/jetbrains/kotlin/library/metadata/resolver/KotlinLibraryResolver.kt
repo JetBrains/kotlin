@@ -1,15 +1,32 @@
 package org.jetbrains.kotlin.library.metadata.resolver
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.UnresolvedLibrary
 
-@K1Deprecation
 interface KotlinLibraryResolver<L : KotlinLibrary> {
 
     val searchPathResolver: SearchPathResolver<L>
+
+    @Deprecated(
+        "noEndorsedLibs is deprecated since 1.9.20",
+        ReplaceWith("resolveWithoutDependencies(unresolvedLibraries, noStdLib, noDefaultLibs, duplicatedUniqueNameStrategy)"),
+        DeprecationLevel.HIDDEN,
+    )
+    fun resolveWithDependencies(
+        unresolvedLibraries: List<UnresolvedLibrary>,
+        noStdLib: Boolean = false,
+        noDefaultLibs: Boolean = false,
+        noEndorsedLibs: Boolean = false,
+        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.DENY,
+    ): KotlinLibraryResolveResult =
+        resolveWithDependencies(
+            unresolvedLibraries,
+            noStdLib,
+            noDefaultLibs,
+            duplicatedUniqueNameStrategy,
+        )
 
     /**
      * Given the list of Kotlin/Native library names, ABI version and other parameters
@@ -19,14 +36,12 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean = false,
         noDefaultLibs: Boolean = false,
-        noEndorsedLibs: Boolean = false,
         duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.DENY,
     ): KotlinLibraryResolveResult =
         resolveWithoutDependencies(
             unresolvedLibraries,
             noStdLib,
             noDefaultLibs,
-            noEndorsedLibs,
             duplicatedUniqueNameStrategy,
         ).resolveDependencies()
 
@@ -41,22 +56,32 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
             unresolvedLibraries,
             noStdLib,
             noDefaultLibs,
-            noEndorsedLibs,
             DuplicatedUniqueNameStrategy.DENY
         )
 
+    @Deprecated(
+        "noEndorsedLibs is deprecated since 1.9.20",
+        ReplaceWith("resolveWithoutDependencies(unresolvedLibraries, noStdLib, noDefaultLibs, duplicatedUniqueNameStrategy)"),
+        DeprecationLevel.HIDDEN,
+    )
     fun resolveWithoutDependencies(
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean = false,
         noDefaultLibs: Boolean = false,
         noEndorsedLibs: Boolean = false,
         duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy,
+    ): List<KotlinLibrary> = resolveWithoutDependencies(unresolvedLibraries, noStdLib, noDefaultLibs, duplicatedUniqueNameStrategy)
+
+    fun resolveWithoutDependencies(
+        unresolvedLibraries: List<UnresolvedLibrary>,
+        noStdLib: Boolean = false,
+        noDefaultLibs: Boolean = false,
+        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy,
     ): List<KotlinLibrary>
 
     fun List<KotlinLibrary>.resolveDependencies(): KotlinLibraryResolveResult
 }
 
-@K1Deprecation
 interface KotlinLibraryResolveResult {
 
     fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean): KotlinLibraryResolveResult

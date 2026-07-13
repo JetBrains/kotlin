@@ -27,7 +27,7 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
         executionStrategy: KotlinCompilerExecutionStrategy,
         log: KotlinLogger,
         compilerMessageRenderer: ProblemsApiCompilerMessageRenderer,
-    ): CompilationResult {
+    ): Pair<CompilationResult, ExecutionPolicy> {
         try {
             val kotlinToolchains = buildSession.kotlinToolchains
             val compilationOperationBuilder = buildOperationFactory.createOperation(kotlinToolchains)
@@ -45,7 +45,7 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
                 KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinToolchains.createInProcessExecutionPolicy()
             }
             return metrics.measure(RUN_COMPILATION) {
-                buildSession.executeOperation(compilationOperation, executionConfig, log)
+                buildSession.executeOperation(compilationOperation, executionConfig, log) to executionConfig
             }.also { extractMetrics(metrics, compilationOperation) }
         } catch (e: Throwable) {
             wrapAndRethrowCompilationException(executionStrategy, e)

@@ -1,6 +1,6 @@
 KtNameReferenceExpression(82,86): 'copy'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Data.copy(<dispatch receiver>: Data, aaa: kotlin.Int): Data

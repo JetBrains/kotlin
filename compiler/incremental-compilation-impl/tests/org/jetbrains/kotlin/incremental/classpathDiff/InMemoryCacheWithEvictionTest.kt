@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.google.common.util.concurrent.AtomicDouble
 import org.jetbrains.kotlin.incremental.classpathDiff.InMemoryCacheWithEviction.EntryState.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 

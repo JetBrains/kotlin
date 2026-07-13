@@ -7,5 +7,9 @@ package org.jetbrains.kotlin.kotlinp
 
 data class Settings(
     val isVerbose: Boolean,
-    val sortDeclarations: Boolean
+    val sortDeclarations: Boolean,
+    val showAnnotationArguments: Boolean = true,
+    val annotationsInOneLine: Boolean = false,
+    val showTypeAbbreviations: Boolean = true,
+    val showVarargTypes: Boolean = true,
 )

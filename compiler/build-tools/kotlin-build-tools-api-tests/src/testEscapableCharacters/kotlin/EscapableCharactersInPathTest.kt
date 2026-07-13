@@ -16,10 +16,10 @@ import org.junit.jupiter.api.DisplayName
 class EscapableCharactersInPathTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Classpath contains whitespaces or other escapable characters")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testInClasspath(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
 
             module1.createPredefinedFile("secret.kt", "new-file")
 

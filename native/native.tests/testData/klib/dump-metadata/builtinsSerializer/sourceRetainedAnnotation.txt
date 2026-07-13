@@ -5,12 +5,17 @@ library {
     // package name: test
 
     // class name: test/A
-    // class name: test/Enum
     // class name: test/Klass
+    // class name: test/Enum
 
     @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
     @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
     public final annotation class test/A : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final class test/Klass : kotlin/Any {
 
       public constructor()
     }
@@ -22,11 +27,6 @@ library {
       ENTRY,
 
       // has Enum.entries
-    }
-
-    public final class test/Klass : kotlin/Any {
-
-      public constructor()
     }
 
     package {

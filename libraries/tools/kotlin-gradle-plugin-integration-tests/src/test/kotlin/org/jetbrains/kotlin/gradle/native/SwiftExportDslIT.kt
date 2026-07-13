@@ -420,9 +420,10 @@ class SwiftExportDslIT : KGPBaseTest() {
                 }
             }
 
+            // Coroutines export is only supported for iOS 18.0 and above
             build(
                 ":embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, iphoneOsDeploymentTarget = "18.0")
             ) {
                 val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)

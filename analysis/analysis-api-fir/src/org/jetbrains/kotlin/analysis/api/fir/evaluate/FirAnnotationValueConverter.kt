@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
 internal object FirAnnotationValueConverter {
@@ -81,22 +82,15 @@ internal object FirAnnotationValueConverter {
 
     private fun Collection<FirExpression>.convertVarargsExpression(
         builder: KaSymbolByFirBuilder,
-    ): Pair<Collection<KaAnnotationValue>, KtElement?> {
-        var representativePsi: KtElement? = null
+    ): Collection<KaAnnotationValue> {
         val flattenedVarargs = buildList {
             for (expr in this@convertVarargsExpression) {
                 val converted = expr.convertConstantExpression(builder) ?: continue
-
-                if ((expr is FirSpreadArgumentExpression || expr is FirNamedArgumentExpression) && converted is KaAnnotationValue.ArrayValue) {
-                    addAll(converted.values)
-                } else {
-                    add(converted)
-                }
-                representativePsi = representativePsi ?: converted.sourcePsi
+                add(converted)
             }
         }
 
-        return flattenedVarargs to representativePsi
+        return flattenedVarargs
     }
 
 
@@ -121,15 +115,18 @@ internal object FirAnnotationValueConverter {
             }
 
             is FirVarargArgumentsExpression -> {
-                // Vararg arguments may have multiple independent expressions associated.
-                // Choose one to be the representative PSI value for the entire assembled argument.
-                val [annotationValues, representativePsi] = arguments.convertVarargsExpression(builder)
-                KaArrayAnnotationValueImpl(annotationValues, representativePsi ?: sourcePsi, token)
+                // Vararg arguments set their source to the first component.
+                // This component may also be spread / named.
+                // In this case, unwrap it.
+                val representativePsi = (sourcePsi as? KtValueArgument)?.getArgumentExpression() ?: sourcePsi
+
+                val annotationValues = arguments.convertVarargsExpression(builder)
+                KaArrayAnnotationValueImpl(annotationValues, representativePsi, token)
             }
 
             is FirCollectionLiteral -> {
                 // Desugared collection literals.
-                KaArrayAnnotationValueImpl(argumentList.arguments.convertVarargsExpression(builder).first, sourcePsi, token)
+                KaArrayAnnotationValueImpl(argumentList.arguments.convertVarargsExpression(builder), sourcePsi, token)
             }
 
             is FirFunctionCall -> {

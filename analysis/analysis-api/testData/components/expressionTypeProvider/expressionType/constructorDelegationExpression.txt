@@ -1,0 +1,3 @@
+expression: this
+expression PSI: KtConstructorDelegationReferenceExpression
+type: kotlin.Unit

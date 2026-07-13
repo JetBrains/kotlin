@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
-import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -38,8 +37,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import java.io.StringWriter
 
 /**
@@ -343,6 +345,8 @@ tailrec fun IrDeclaration.getPackageFragment(): IrPackageFragment {
         ?: (parent as IrDeclaration).getPackageFragment()
 }
 
+fun IrAnnotation.isAnnotation(classId: ClassId): Boolean = isAnnotationWithEqualFqName(classId.asSingleFqName())
+
 // Just delegate to IrAnnotation.isAnnotationWithEqualFqName(FqName) which is capable to correctly handle unbound symbols.
 fun IrAnnotation.isAnnotation(name: FqName): Boolean = isAnnotationWithEqualFqName(name)
 
@@ -360,50 +364,18 @@ fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
         it.classSymbol == symbol
     }
 
-fun IrAnnotation.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
-
-fun IrAnnotation.getAnnotationStringValue(name: String): String =
-    getAnnotationValueOrNull<String>(name)!!
-
-inline fun <reified T> IrAnnotation.getAnnotationValueOrNull(name: String): T? =
-    getAnnotationValueOrNullImpl(name) as T?
-
-@PublishedApi
-internal fun IrAnnotation.getAnnotationValueOrNullImpl(name: String): Any? {
-    val argument = when (val argumentMapping = argumentMapping) {
-        null -> {
-            @OptIn(DeprecatedCompilerApi::class)
-            val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
-            parameter?.let { arguments[it.indexInParameters] }
-        }
-        else -> argumentMapping[Name.identifier(name)]
-    }
-    return (argument as IrConst?)?.value
-}
-
-inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? =
-    getAnnotationArgumentValueImpl(fqName, argumentName) as T?
-
-@PublishedApi
-internal fun IrAnnotationContainer.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
+inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
     val annotation = this.annotations.findAnnotation(fqName) ?: return null
-    return annotation.getAnnotationValueOrNull(argumentName)
+    return annotation.getConstArgument(argumentName)
 }
 
 fun IrClass.getAnnotationRetention(): KotlinRetention? {
     val retentionArgument =
-        getAnnotation(StandardNames.FqNames.retention)?.getValueArgument(StandardClassIds.Annotations.ParameterNames.retentionValue)
+        getAnnotation(StandardNames.FqNames.retention)?.argumentMapping[StandardClassIds.Annotations.ParameterNames.retentionValue]
                 as? IrGetEnumValue ?: return null
     val retentionArgumentValue = retentionArgument.symbol.owner
     return KotlinRetention.valueOf(retentionArgumentValue.name.asString())
 }
-
-// To be generalized to IrMemberAccessExpression as soon as properties get symbols.
-fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-    val index = symbol.owner.parameters.find { it.name == name }?.indexInParameters ?: return null
-    return arguments[index]
-}
-
 
 val IrConstructor.constructedClassType get() = (parent as IrClass).thisReceiver?.type!!
 
@@ -1096,7 +1068,7 @@ object SetDeclarationsParentVisitor : IrVisitor<Unit, IrDeclarationParent>() {
 
 
 val IrFunction.isStatic: Boolean
-    get() = parent is IrClass && dispatchReceiverParameter == null
+    get() = parent is IrClass && dispatchReceiverParameter == null && this.visibility != DescriptorVisibilities.LOCAL
 
 val IrDeclaration.isTopLevel: Boolean
     get() {
@@ -1285,7 +1257,6 @@ fun IrFactory.createStaticFunctionWithReceivers(
     isFakeOverride: Boolean = oldFunction.isFakeOverride,
     copyMetadata: Boolean = true,
     typeParametersFromContext: List<IrTypeParameter> = listOf(),
-    remapMultiFieldValueClassStructure: (IrFunction, IrFunction, Map<IrValueParameter, IrValueParameter>?) -> Unit
 ): IrSimpleFunction {
     return createSimpleFunction(
         startOffset = oldFunction.startOffset,
@@ -1310,7 +1281,6 @@ fun IrFactory.createStaticFunctionWithReceivers(
         annotations = oldFunction.annotations
 
         copyFunctionSignatureAsStaticFrom(oldFunction, returnType, dispatchReceiverType, typeParametersFromContext)
-        remapMultiFieldValueClassStructure(oldFunction, this, null)
 
         if (copyMetadata) metadata = oldFunction.metadata
 
@@ -1321,13 +1291,14 @@ fun IrFactory.createStaticFunctionWithReceivers(
 fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
     if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)
 
-// SAM class used as a superclass can sometimes have type projections.
-// But that's not suitable for super-types, so we erase them
-fun IrType.removeProjections(): IrType {
+fun IrType.removeProjectionsToMakeValidSuperType(): IrType {
     if (this !is IrSimpleType) return this
     val arguments = arguments.mapIndexed { index, argument ->
         val typeParameter = (classifier as IrClassSymbol).owner.typeParameters[index]
-        fun erasedUpperBound() = typeParameter.erasedUpperBound.defaultType
+        fun erasedUpperBound(): IrSimpleType {
+            val wasNullable = argument.typeOrNull?.isNullable() == true
+            return typeParameter.erasedUpperBound.defaultType.withNullability(wasNullable)
+        }
 
         // Star projections are not allowed in supertype clause
         if (argument !is IrTypeProjection) return@mapIndexed erasedUpperBound()
@@ -1604,7 +1575,7 @@ fun IrElement.sourceElement(): AbstractKtSourceElement? =
     if (startOffset >= 0) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
     else null
 
-fun IrFunction.isTopLevelInPackage(name: String, packageFqName: FqName) =
+fun IrDeclarationWithName.isTopLevelInPackage(name: String, packageFqName: FqName) =
     this.name.asString() == name && parent.kotlinFqName == packageFqName
 
 val IrValueDeclaration.isAssignable: Boolean

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.BackendInput
 import org.jetbrains.kotlin.cli.common.buildFile
@@ -56,9 +55,10 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
         val baseBackendInput = with(fir2IrResult) {
             BackendInput(
                 irModuleFragment, irBuiltIns, symbolTable, components.irProviders,
-                JvmGeneratorExtensionsImpl(configuration), jvmBackendExtension, pluginContext
+                debuggerExtensions = null, jvmBackendExtension, pluginContext
             )
         }
+
         val codegenFactory = JvmIrCodegenFactory(configuration)
 
         val chunk = configuration.moduleChunk!!.modules
@@ -129,7 +129,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
         backendInput: BackendInput,
         diagnosticsReporter: BaseDiagnosticsCollector,
         backendClassResolver: JvmBackendClassResolver,
-    ) : JvmIrCodegenFactory.CodegenInput {
+    ): JvmIrCodegenFactory.CodegenInput {
         val state = GenerationState(
             project,
             moduleDescriptor,

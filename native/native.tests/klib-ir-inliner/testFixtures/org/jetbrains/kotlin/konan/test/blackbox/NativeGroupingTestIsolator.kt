@@ -10,15 +10,18 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.collectToggledCheckers
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isDisabledNative
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.testKind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     companion object {
@@ -52,6 +55,7 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
         val specificTokens = listOfNotNull(
             computeAssertionsModeToken(moduleStructure),
             computeFreeCompilerArgsToken(moduleStructure),
+            computeToggledCheckersToken(registeredDirectives),
         )
 
         return when (specificTokens.size) {
@@ -71,6 +75,11 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
         return FreeCompilerArgsToken(freeArgs.toSet())
     }
 
+    private fun computeToggledCheckersToken(registeredDirectives: RegisteredDirectives): ToggledCheckersToken? =
+        registeredDirectives.collectToggledCheckers().let { [additional, disabled] -> additional + disabled }
+            .ifNotEmpty { ToggledCheckersToken(this) }
+
+
     private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
     private val sourceContainsCache = HashMap<Pair<TestModuleStructure, Regex>, Boolean>()
 
@@ -79,4 +88,6 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
     }
 
     private data class FreeCompilerArgsToken(val freeArgs: Set<String>) : BatchToken()
+
+    private data class ToggledCheckersToken(val toggledCheckers: Set<String>) : BatchToken()
 }

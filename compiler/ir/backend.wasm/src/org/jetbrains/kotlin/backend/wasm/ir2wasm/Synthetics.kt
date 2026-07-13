@@ -42,6 +42,7 @@ object Synthetics {
     object Globals {
         val addressesAndLengthsGlobal = FieldGlobalSymbol("addressesAndLengthsGlobal".toSyntheticSignature())
         val stringPoolGlobal = FieldGlobalSymbol("stringPoolGlobal".toSyntheticSignature())
+        val wasmMemoryGlobal = FieldGlobalSymbol("wasmMemoryGlobal".toSyntheticSignature())
     }
 
     // GC TYPES
@@ -95,6 +96,8 @@ object Synthetics {
         val jsExceptionTagFuncType = FunctionHeapTypeSymbol(jsExceptionTagFuncTypeSignature)
         val parameterlessNoReturnFunctionType = FunctionHeapTypeSymbol(parameterlessNoReturnFunctionTypeSignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
+
+        val wasmContFunctionType = ContFunctionHeapTypeSymbol(1)
     }
 
 }

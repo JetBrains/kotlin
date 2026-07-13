@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.*
 import org.jetbrains.kotlin.KtPsiSourceElement
@@ -15,9 +16,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.isLazyResolvable
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
+import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.psi.*
@@ -62,8 +63,14 @@ internal object LLContainingClassCalculator {
         return when (source.kind) {
             ImplicitConstructor,
             is EnumGeneratedDeclaration,
+            is MembersImplementedByDelegation,
             ReplEvalFunction,
                 -> computeContainingClass(symbol, source.psi)
+
+            is ClassDelegationField -> {
+                val psi = source.psi as? KtDelegatedSuperTypeEntry ?: return null
+                computeContainingClass(symbol, psi.parentOfType<KtClassOrObject>())
+            }
 
             is DefaultAccessor,
             is DelegatedPropertyAccessor,
@@ -90,10 +97,7 @@ internal object LLContainingClassCalculator {
             is KtFakeSourceElementKind -> null
 
             // TODO(KT-85643): KtRealSourceElementKind should be converted to KtFakeSourceElementKind once the issue is fixed
-            is KtRealSourceElementKind if symbol.origin is FirDeclarationOrigin.SubstitutionOverride -> when (val psi = source.psi) {
-                // Substituted callables usually have the containing psi as a source element
-                // Note: KtCallableDeclaration cannot be used since if present it points to the original callables which has no relation
-                // to the containing class
+            is KtRealSourceElementKind if symbol is FirCallableSymbol<*> && symbol.isCopyCreatedInScope -> when (val psi = source.psi) {
                 is KtClassLikeDeclaration -> computeContainingClass(symbol, psi)
                 else -> null
             }

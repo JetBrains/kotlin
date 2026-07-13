@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-@OptIn(K1Deprecation::class)
 @K1Deprecation
 fun resolveKtPrimitive(
     csBuilder: ConstraintSystemBuilder,

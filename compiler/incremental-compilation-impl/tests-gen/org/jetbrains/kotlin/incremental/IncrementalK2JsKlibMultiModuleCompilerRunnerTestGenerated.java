@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.incremental;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,443 +18,491 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalK2JsKlibMultiModuleCompilerRunnerTestGenerated extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  private void run(String fileName) {
+    runTest("jps/jps-plugin/testData/incremental/multiModule/common/" + fileName);
   }
 
+  @Test
   public void testAllFilesPresentInCommonAbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common"), Pattern.compile("^([^.]+)$"), null, true);
   }
 
+  @Test
   @TestMetadata("classAdded")
   public void testClassAdded() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/classAdded/");
   }
 
+  @Test
   @TestMetadata("classRemoved")
   public void testClassRemoved() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/classRemoved/");
   }
 
+  @Test
   @TestMetadata("constantValueChanged")
   public void testConstantValueChanged() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/constantValueChanged/");
   }
 
+  @Test
   @TestMetadata("copyFileToAnotherModule")
   public void testCopyFileToAnotherModule() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule/");
   }
 
+  @Test
   @TestMetadata("defaultArgumentInConstructorRemoved")
   public void testDefaultArgumentInConstructorRemoved() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved/");
   }
 
+  @Test
   @TestMetadata("defaultParameterAdded")
   public void testDefaultParameterAdded() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded/");
   }
 
+  @Test
   @TestMetadata("defaultParameterAddedForTopLevelFun")
   public void testDefaultParameterAddedForTopLevelFun() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun/");
   }
 
+  @Test
   @TestMetadata("defaultParameterRemoved")
   public void testDefaultParameterRemoved() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved/");
   }
 
+  @Test
   @TestMetadata("defaultParameterRemovedForTopLevelFun")
   public void testDefaultParameterRemovedForTopLevelFun() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun/");
   }
 
+  @Test
   @TestMetadata("defaultValueInConstructorRemoved")
   public void testDefaultValueInConstructorRemoved() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved/");
   }
 
+  @Test
   @TestMetadata("duplicatedClass")
   public void testDuplicatedClass() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/duplicatedClass/");
   }
 
+  @Test
   @TestMetadata("exportedDependency")
   public void testExportedDependency() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/exportedDependency/");
   }
 
+  @Test
   @TestMetadata("functionFromDifferentPackageChanged")
   public void testFunctionFromDifferentPackageChanged() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged/");
   }
 
+  @Test
   @TestMetadata("inlineFunctionInlined")
   public void testInlineFunctionInlined() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined/");
   }
 
+  @Test
   @TestMetadata("inlineFunctionTwoPackageParts")
   public void testInlineFunctionTwoPackageParts() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts/");
   }
 
+  @Test
   @TestMetadata("moveFileToAnotherModule")
   public void testMoveFileToAnotherModule() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule/");
   }
 
+  @Test
   @TestMetadata("simple")
   public void testSimple() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/simple/");
   }
 
+  @Test
   @TestMetadata("simpleDependency")
   public void testSimpleDependency() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependency/");
   }
 
+  @Test
   @TestMetadata("simpleDependencyErrorOnAccessToInternal1")
   public void testSimpleDependencyErrorOnAccessToInternal1() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1/");
   }
 
+  @Test
   @TestMetadata("simpleDependencyErrorOnAccessToInternal2")
   public void testSimpleDependencyErrorOnAccessToInternal2() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2/");
   }
 
+  @Test
   @TestMetadata("simpleDependencyUnchanged")
   public void testSimpleDependencyUnchanged() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged/");
   }
 
+  @Test
   @TestMetadata("transitiveDependency")
   public void testTransitiveDependency() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/transitiveDependency/");
   }
 
+  @Test
   @TestMetadata("transitiveInlining")
   public void testTransitiveInlining() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/transitiveInlining/");
   }
 
+  @Test
   @TestMetadata("twoDependants")
   public void testTwoDependants() {
     runTest("jps/jps-plugin/testData/incremental/multiModule/common/twoDependants/");
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/classAdded")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClassAdded extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class ClassAdded {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/classAdded/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInClassAdded() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/classAdded"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/classRemoved")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class ClassRemoved extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class ClassRemoved {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/classRemoved/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInClassRemoved() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/classRemoved"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/constantValueChanged")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class ConstantValueChanged extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class ConstantValueChanged {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/constantValueChanged/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInConstantValueChanged() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/constantValueChanged"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class CopyFileToAnotherModule extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class CopyFileToAnotherModule {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInCopyFileToAnotherModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class DefaultArgumentInConstructorRemoved extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class DefaultArgumentInConstructorRemoved {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInDefaultArgumentInConstructorRemoved() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class DefaultParameterAdded extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class DefaultParameterAdded {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInDefaultParameterAdded() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class DefaultParameterAddedForTopLevelFun extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class DefaultParameterAddedForTopLevelFun {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInDefaultParameterAddedForTopLevelFun() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class DefaultParameterRemoved extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class DefaultParameterRemoved {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInDefaultParameterRemoved() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class DefaultParameterRemovedForTopLevelFun extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class DefaultParameterRemovedForTopLevelFun {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInDefaultParameterRemovedForTopLevelFun() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class DefaultValueInConstructorRemoved extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class DefaultValueInConstructorRemoved {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInDefaultValueInConstructorRemoved() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/duplicatedClass")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class DuplicatedClass extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class DuplicatedClass {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/duplicatedClass/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInDuplicatedClass() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/duplicatedClass"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/exportedDependency")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class ExportedDependency extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class ExportedDependency {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/exportedDependency/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInExportedDependency() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/exportedDependency"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class FunctionFromDifferentPackageChanged extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class FunctionFromDifferentPackageChanged {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInFunctionFromDifferentPackageChanged() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class InlineFunctionInlined extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class InlineFunctionInlined {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInInlineFunctionInlined() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class InlineFunctionTwoPackageParts extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class InlineFunctionTwoPackageParts {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInInlineFunctionTwoPackageParts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class MoveFileToAnotherModule extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class MoveFileToAnotherModule {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInMoveFileToAnotherModule() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/simple")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class Simple extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class Simple {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/simple/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInSimple() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simple"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependency")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class SimpleDependency extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class SimpleDependency {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependency/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInSimpleDependency() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependency"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class SimpleDependencyErrorOnAccessToInternal1 extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class SimpleDependencyErrorOnAccessToInternal1 {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInSimpleDependencyErrorOnAccessToInternal1() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class SimpleDependencyErrorOnAccessToInternal2 extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class SimpleDependencyErrorOnAccessToInternal2 {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInSimpleDependencyErrorOnAccessToInternal2() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class SimpleDependencyUnchanged extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class SimpleDependencyUnchanged {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInSimpleDependencyUnchanged() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/transitiveDependency")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class TransitiveDependency extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class TransitiveDependency {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/transitiveDependency/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInTransitiveDependency() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/transitiveDependency"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/transitiveInlining")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class TransitiveInlining extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class TransitiveInlining {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/transitiveInlining/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInTransitiveInlining() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/transitiveInlining"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
+  @Nested
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/twoDependants")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class TwoDependants extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  public class TwoDependants {
+    private void run(String fileName) {
+      runTest("jps/jps-plugin/testData/incremental/multiModule/common/twoDependants/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInTwoDependants() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/twoDependants"), Pattern.compile("^([^.]+)$"), null, true);
     }

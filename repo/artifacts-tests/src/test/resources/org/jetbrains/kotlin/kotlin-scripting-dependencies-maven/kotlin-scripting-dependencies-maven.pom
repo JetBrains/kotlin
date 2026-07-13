@@ -50,37 +50,31 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>3.8.8</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-http</artifactId>
-      <version>3.5.3</version>
+      <version>3.9.16</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.resolver</groupId>
       <artifactId>maven-resolver-connector-basic</artifactId>
-      <version>1.9.22</version>
+      <version>1.9.27</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.resolver</groupId>
       <artifactId>maven-resolver-transport-file</artifactId>
-      <version>1.9.22</version>
+      <version>1.9.27</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.resolver</groupId>
-      <artifactId>maven-resolver-transport-wagon</artifactId>
-      <version>1.9.22</version>
+      <artifactId>maven-resolver-transport-http</artifactId>
+      <version>1.9.27</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.resolver</groupId>
       <artifactId>maven-resolver-impl</artifactId>
-      <version>1.9.22</version>
+      <version>1.9.27</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

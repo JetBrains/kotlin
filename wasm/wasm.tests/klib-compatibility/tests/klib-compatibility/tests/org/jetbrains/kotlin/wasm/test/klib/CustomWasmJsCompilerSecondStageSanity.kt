@@ -63,6 +63,7 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkMutedWithIgnoreRuntimeErrors2ndStage() {
+        // TODO KT-87378 Reconsider behavior of IGNORE_* directives, so no exception would be thrown here
         val exception = assertThrows<TestAbortedException> {
             runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
         }
@@ -83,6 +84,7 @@ class CustomWasmJsCompilerSecondStageSanity :
     @Test
     fun checkMutedDueToFrontendErrorWithCustom1stStageOfOldLV() {
         Assumptions.assumeFalse(LanguageVersion.LATEST_STABLE == customWasmJsCompilerSettings.defaultLanguageVersion)
+        // TODO KT-87378 Reconsider behavior of IGNORE_* directives, so no exception would be thrown here
         val exception = assertThrows<Throwable> {
             runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
         }
@@ -93,8 +95,6 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkMutedWithWASM_IGNORE_FOR() {
-        // `IGNORE_*` directives report failed test as ignored. Contrary to that, directive `// WASM_IGNORE_FOR: ...` reports test as passed,
-        // since there are other executors that succeed, and it's an issue neither in the compiler nor in the test, but in the executor's mentioned in the directive.
         runTest(testDataRoot + "mutedWithWASM_IGNORE_FOR.kt")
     }
 

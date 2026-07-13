@@ -10,11 +10,14 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
+import org.jetbrains.kotlin.gradle.targets.js.ir.WASM_INCLUDED_MODULE_ONLY
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin
@@ -25,8 +28,8 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
@@ -37,10 +40,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(
-            wasmOptions = BuildOptions.WasmOptions(perModule = false)
-        )
 
     @DisplayName("Check js target with browser")
     @GradleTest
@@ -59,15 +58,21 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 
             buildScriptInjection {
                 kotlinMultiplatform.wasmJs {
-                    binaries.executable().forEach {
-                        it.linkTask.configure {
-                            compilerOptions.freeCompilerArgs.add("-Xwasm-generate-closed-world-multimodule")
-                        }
-                    }
+                    binaries.executable()
                 }
             }
 
-            build("assemble") {
+            build(
+                "assemble",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
+                ),
+            ) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
 
@@ -89,7 +94,17 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                     }
             }
 
-            build(":wasmJsD8ProductionRun") {
+            build(
+                ":wasmJsD8ProductionRun",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
+                )
+            ) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
                 assertTasksUpToDate(":compileProductionExecutableKotlinWasmJs")
                 assertTasksUpToDate(":compileProductionExecutableKotlinWasmJsOptimize")
                 assertTasksExecuted(":wasmJsD8ProductionRun")
@@ -102,10 +117,146 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                 )
             }
 
-            build(":wasmJsD8ProductionRun") {
+            build(
+                ":wasmJsD8ProductionRun",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
+                )
+            ) {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
                 assertTasksExecuted(":wasmJsD8ProductionRun")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Check js target per-module closed world dev only")
+    @TestMetadata(value = "new-mpp-wasm-js")
+    @GradleTest
+    fun jsTargetClosedWorldDevOnly(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify {
+                it.replace("<JsEngine>", "d8")
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.wasmJs {
+                    binaries.executable()
+                }
+            }
+
+            build(
+                "assemble",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD_ONLY_IN_DEV)
+                ),
+            ) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+
+                assertOutputDoesNotContain(WASM_INCLUDED_MODULE_ONLY)
+
+                val original =
+                    projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin")
+                val optimized =
+                    projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/optimized")
+
+                val originalWasm = original.resolve("redefined-wasm-module-name.wasm")
+                val optimizedWasm = optimized.resolve("redefined-wasm-module-name.wasm")
+
+                assertTrue {
+                    Files.size(originalWasm) > Files.size(optimizedWasm)
+                }
+
+                original.listDirectoryEntries("*.wasm")
+                    .also {
+                        assertTrue {
+                            it.size == 1
+                        }
+                    }
+            }
+
+            build(
+                ":wasmJsD8DevelopmentRun",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD_ONLY_IN_DEV)
+                )
+            ) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
+
+                val original =
+                    projectPath.resolve("build/compileSync/wasmJs/main/developmentExecutable/kotlin")
+
+                original.listDirectoryEntries("*.wasm")
+                    .also {
+                        assertTrue {
+                            it.size > 1
+                        }
+                    }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Check js target with per-module closed world incremental build with rerun tasks")
+    @GradleTest
+    fun jsTargetPerModuleClosedWorldWithRerunTasks(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify {
+                it.replace("<JsEngine>", "d8")
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.wasmJs {
+                    binaries.executable()
+                }
+            }
+
+            build(
+                ":compileDevelopmentExecutableKotlinWasmJs",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
+                ),
+            ) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
+
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/redefined-wasm-module-name.wasm")
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/kotlin-kotlin-stdlib.wasm")
+            }
+
+            build(
+                ":compileDevelopmentExecutableKotlinWasmJs",
+                *rerunTask(":compileDevelopmentExecutableKotlinWasmJs"),
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
+                )
+            ) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
+
+                // Incremental build should not remove unchanged files
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/redefined-wasm-module-name.wasm")
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/kotlin-kotlin-stdlib.wasm")
             }
         }
     }
@@ -172,6 +323,11 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
 
         build("compileProductionExecutableKotlinWasmJsOptimize") {
+            assertNoDiagnostic(
+                KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                "Wasm compilation mode selecting"
+            )
+
             assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
             assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
 
@@ -399,7 +555,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            wasmOptions = BuildOptions.WasmOptions(perModule = true)
+            wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_OPEN_WORLD)
         )
 
     @DisplayName("Check js target with browser")
@@ -419,6 +575,11 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             val developmentSize: MutableMap<String, Long> = mutableMapOf()
 
             build("wasmJsDevelopmentExecutableCompileSync") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
 
                 projectPath.resolve("build/wasm/packages/redefined-wasm-module-name/kotlin").listDirectoryEntries()
@@ -452,41 +613,53 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun wasiTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
-            build(":wasmWasiTest") {
-                assertTasksExecuted(":kotlinWasmNodeJsSetup")
-                assertTasksExecuted(":compileKotlinWasmWasi")
-                assertTasksExecuted(":wasmWasiNodeTest")
-            }
+            wasmWasiTest("Node", "NodeJs")
+        }
+    }
 
-            build(":wasmWasiTest") {
-                assertTasksUpToDate(":kotlinWasmNodeJsSetup", ":compileKotlinWasmWasi", ":wasmWasiNodeTest")
-            }
+    @DisplayName("Check wasi target with wasmtime")
+    @GradleTest
+    fun wasiWasmtimeTarget(gradleVersion: GradleVersion) {
+        project("wasm-wasmtime-test", gradleVersion) {
+            wasmWasiTest("Wasmtime")
+        }
+    }
 
-            projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
-                it.replace(
-                    "fun test2() = assertEquals(foo(), 2)",
-                    """
+    private fun TestProject.wasmWasiTest(engine: String, engineSetup: String = engine) {
+        build(":wasmWasiTest") {
+            assertTasksExecuted(":kotlinWasm${engineSetup}Setup")
+            assertTasksExecuted(":compileKotlinWasmWasi")
+            assertTasksExecuted(":wasmWasi${engine}Test")
+        }
+
+        build(":wasmWasiTest") {
+            assertTasksUpToDate(":kotlinWasm${engineSetup}Setup", ":compileKotlinWasmWasi", ":wasmWasi${engine}Test")
+        }
+
+        projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
+            it.replace(
+                "fun test2() = assertEquals(foo(), 2)",
+                """
                     |fun test2() = assertEquals(foo(), 2)
                     |
                     |@Test
                     |fun test3() = assertEquals(foo(), 3)
                     |""".trimMargin()
-                )
-            }
+            )
+        }
 
-            buildAndFail(":wasmWasiTest") {
-                assertTasksUpToDate(":compileKotlinWasmWasi")
-                assertTasksFailed(":wasmWasiNodeTest")
-            }
+        buildAndFail(":wasmWasiTest") {
+            assertTasksUpToDate(":compileKotlinWasmWasi")
+            assertTasksFailed(":wasmWasi${engine}Test")
+        }
 
-            build(":wasmWasiNodeProductionRun") {
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
+        build(":wasmWasi${engine}ProductionRun") {
+            assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
+            assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
 
-                assertTasksAreNotInTaskGraph(":kotlinWasmToolingSetup")
+            assertTasksAreNotInTaskGraph(":kotlinWasmToolingSetup")
 
-                assertNoBuildWarnings()
-            }
+            assertNoBuildWarnings()
         }
     }
 
@@ -774,7 +947,11 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     fun testBrowserNullPrint(gradleVersion: GradleVersion) {
         project("kt-63230", gradleVersion) {
             build("check", "-Pkotlin.tests.individualTaskReports=true") {
-                assertTestResults(projectPath.resolve("TEST-wasm.xml"), "wasmJsBrowserTest")
+                assertTestResults(
+                    projectPath.resolve("TEST-wasm.xml"),
+                    "wasmJsBrowserTest",
+                    stripBrowserVersionInfoFromTestCaseNames = true,
+                )
             }
         }
     }
@@ -962,8 +1139,8 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testDifferentBinaryenVersions(gradleVersion: GradleVersion) {
         project("wasm-browser-several-modules", gradleVersion) {
-            val binaryenVersionForFoo = "123"
-            val binaryenVersionForBar = "119"
+            val binaryenVersionForFoo = "128"
+            val binaryenVersionForBar = "125"
             subProject("foo").let {
                 it.buildScriptInjection {
                     project.extensions.getByType(BinaryenEnvSpec::class.java).version.set(binaryenVersionForFoo)

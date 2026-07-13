@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.extensions
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
@@ -41,23 +39,20 @@ class ClassGeneratorExtensionAdapterImpl(private val extension: ClassGeneratorEx
     ): ClassBuilderFactory = object : DelegatingClassBuilderFactory(interceptedFactory) {
         override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
             val classBuilder = interceptedFactory.newClassBuilder(origin)
-            val irClass = origin.unwrapOrigin<IrClass>()
+            val irClass = origin.declaration as? IrClass
             return DelegatingClassBuilderAdapter(
-                extension.generateClass(
-                    ClassGeneratorAdapter(irClass, classBuilder),
-                    irClass
-                ),
+                extension.generateClass(ClassGeneratorAdapter(classBuilder), irClass),
                 classBuilder
             )
         }
     }
 }
 
-private class ClassGeneratorAdapter(val irClass: IrClass?, val builder: ClassBuilder) : ClassGenerator {
+private class ClassGeneratorAdapter(val builder: ClassBuilder) : ClassGenerator {
     override fun defineClass(
         version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>
     ) {
-        builder.defineClass(irClass?.psiElement, version, access, name, signature, superName, interfaces)
+        builder.defineClass(version, access, name, signature, superName, interfaces)
     }
 
     override fun newField(
@@ -100,7 +95,7 @@ private class DelegatingClassBuilderAdapter(
     override fun getDelegate(): ClassBuilder = originalClassBuilder
 
     override fun defineClass(
-        origin: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>
+        version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>,
     ) {
         generator.defineClass(version, access, name, signature, superName, interfaces)
     }
@@ -108,12 +103,12 @@ private class DelegatingClassBuilderAdapter(
     override fun newField(
         origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, value: Any?
     ): FieldVisitor =
-        generator.newField(origin.unwrapOrigin(), access, name, desc, signature, value)
+        generator.newField(origin.declaration as? IrField, access, name, desc, signature, value)
 
     override fun newMethod(
         origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?
     ): MethodVisitor =
-        generator.newMethod(origin.unwrapOrigin(), access, name, desc, signature, exceptions)
+        generator.newMethod(origin.declaration as? IrFunction, access, name, desc, signature, exceptions)
 
     override fun newRecordComponent(name: String, desc: String, signature: String?): RecordComponentVisitor =
         generator.newRecordComponent(name, desc, signature)
@@ -137,9 +132,6 @@ private class DelegatingClassBuilderAdapter(
         generator.done(generateSmapCopyToAnnotation)
     }
 }
-
-private inline fun <reified T : IrDeclaration> JvmDeclarationOrigin.unwrapOrigin(): T? =
-    (this as? JvmIrDeclarationOrigin)?.declaration as? T
 
 private fun IrDeclaration?.wrapToOrigin(): JvmDeclarationOrigin =
     this?.descriptorOrigin ?: JvmDeclarationOrigin.NO_ORIGIN

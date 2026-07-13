@@ -372,10 +372,10 @@ internal object ClassicKDocReferenceResolver {
                 extensionSymbolsLayer.filter { callable ->
                     if (!callable.isExtension) return@filter false
                     val expectedReceiverType = callable.receiverType ?: return@filter false
-                    createUnificationSubstitutor(
+                    createSubtypingUnificationSubstitutor(
                         actualReceiverType,
                         expectedReceiverType,
-                        KaUnificationSubstitutorPolicy.EXISTENTIAL
+                        KaUnificationSubstitutorPolicy.ASSIGN_ALL
                     ) != null
                 }.map { it.toResolveResult(receiverClassReference = receiverClassSymbol) }
             }.firstOrNull {

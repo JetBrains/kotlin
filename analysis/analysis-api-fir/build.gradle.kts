@@ -4,12 +4,15 @@ import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("generated-sources")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -17,6 +20,7 @@ dependencies {
     implementation(project(":core:language.targets.jvm"))
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:ir.psi2ir"))
@@ -28,7 +32,6 @@ dependencies {
     implementation(project(":compiler:backend.jvm.entrypoint"))
     api(intellijCore())
     implementation(project(":analysis:analysis-api-platform-interface"))
-    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:symbol-light-classes"))
     implementation(project(":native:native.config"))
     implementation(libs.caffeine)
@@ -65,24 +68,18 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-optInToK1Deprecation()
-
 optInToUnsafeDuringIrConstructionAPI()
 
 projectTests {
     testTask(
         jUnitMode = JUnitMode.JUnit5,
         javaLauncher = JdkMajorVersion.JDK_1_8,
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_21_0)
     ) {
         useJUnitPlatform()
 
         @OptIn(TemporaryTestFederationApi::class)
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 5)
-
-        testInputsCheck {
-            allowFlightRecorder = true
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")
@@ -113,23 +110,21 @@ projectTests {
     }
 }
 
-allprojects {
-    tasks.withType<KotlinJvmCompile>().configureEach {
-        compilerOptions.optIn.addAll(
-            listOf(
-                "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
-                "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
-                "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
-                "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
-                "org.jetbrains.kotlin.analysis.api.KaIdeApi",
-                "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
-                "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
-                "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
-                "org.jetbrains.kotlin.analysis.api.components.KaSessionComponentImplementationDetail",
-                "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
-            )
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+            "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+            "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+            "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+            "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
+            "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+            "org.jetbrains.kotlin.analysis.api.components.KaSessionComponentImplementationDetail",
+            "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
         )
-    }
+    )
 }
 
 generatedSourcesTask(

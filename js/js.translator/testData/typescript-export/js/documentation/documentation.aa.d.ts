@@ -228,7 +228,8 @@ declare namespace JS_TESTS {
          */
         constructor();
         /**
-         * A property to be overridden with a custom JS name in the implementing class.
+         * Case 1: @JsName on an overridden property.
+         * The JavaScript name differs from the Kotlin override.
          */
         get jsOverridableProp(): string;
         /**

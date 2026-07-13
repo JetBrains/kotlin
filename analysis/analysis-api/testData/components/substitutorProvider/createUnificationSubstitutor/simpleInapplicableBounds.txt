@@ -1,7 +1,0 @@
-UNIVERSAL:
-Substitutor: null
-
-EXISTENTIAL:
-Substitutor: <map substitutor: {R = kotlin/Int, T = kotlin/Int}>
-Substituted pairs:
-kotlin/collections/List<kotlin/Int> <: kotlin/collections/List<kotlin/Int> (Original: kotlin/collections/List<T> <: kotlin/collections/List<R>)

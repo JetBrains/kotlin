@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.commonizer.core
 import org.jetbrains.kotlin.commonizer.DefaultCommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValueParameter>, List<CirValueParameter>?>() {
@@ -45,8 +45,8 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
         )
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun mismatchedParameterListSize1() = doTestFailure(
+    @Test
+    fun mismatchedParameterListSize1() = doTestFailure<IllegalCommonizerStateException>(
         mockValueParams(
             "a" to "kotlin/String",
             "b" to "kotlin/Int",
@@ -60,8 +60,8 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
         emptyList()
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun mismatchedParameterListSize2() = doTestFailure(
+    @Test
+    fun mismatchedParameterListSize2() = doTestFailure<IllegalCommonizerStateException>(
         mockValueParams(
             "a" to "kotlin/String",
             "b" to "kotlin/Int",
@@ -83,8 +83,8 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
         )
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun mismatchedParameterListSize3() = doTestFailure(
+    @Test
+    fun mismatchedParameterListSize3() = doTestFailure<IllegalCommonizerStateException>(
         mockValueParams(
             "a" to "kotlin/String",
             "b" to "kotlin/Int",

@@ -64,8 +64,38 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("actualEnumCloneJvm.kt")
+  public void testActualEnumCloneJvm() {
+    run("actualEnumCloneJvm.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInSymbolByReference() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "withTestCompilerPluginEnabled");
+  }
+
+  @Test
+  @TestMetadata("companionBlockFunctionLibrary.kt")
+  public void testCompanionBlockFunctionLibrary() {
+    run("companionBlockFunctionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockPropertyLibrary.kt")
+  public void testCompanionBlockPropertyLibrary() {
+    run("companionBlockPropertyLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("companionExtensionFunctionLibrary.kt")
+  public void testCompanionExtensionFunctionLibrary() {
+    run("companionExtensionFunctionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("companionExtensionPropertyLibrary.kt")
+  public void testCompanionExtensionPropertyLibrary() {
+    run("companionExtensionPropertyLibrary.kt");
   }
 
   @Test
@@ -165,9 +195,21 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("enumEntriesLibrary.kt")
+  public void testEnumEntriesLibrary() {
+    run("enumEntriesLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("enumValueOf.kt")
   public void testEnumValueOf() {
     run("enumValueOf.kt");
+  }
+
+  @Test
+  @TestMetadata("enumValueOfLibrary.kt")
+  public void testEnumValueOfLibrary() {
+    run("enumValueOfLibrary.kt");
   }
 
   @Test
@@ -525,6 +567,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("package.kt")
+  public void testPackage() {
+    run("package.kt");
+  }
+
+  @Test
   @TestMetadata("primaryConstructorValueParameter.kt")
   public void testPrimaryConstructorValueParameter() {
     run("primaryConstructorValueParameter.kt");
@@ -677,9 +725,9 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
     }
 
     @Test
-    @TestMetadata("actualEnum.kt")
-    public void testActualEnum() {
-      run("actualEnum.kt");
+    @TestMetadata("actualEnumCloneJs.kt")
+    public void testActualEnumCloneJs() {
+      run("actualEnumCloneJs.kt");
     }
 
     @Test

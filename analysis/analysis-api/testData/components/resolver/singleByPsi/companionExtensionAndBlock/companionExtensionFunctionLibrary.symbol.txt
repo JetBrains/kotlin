@@ -1,0 +1,7 @@
+KtNameReferenceExpression(75,82): 'static1'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /static1(<extension receiver>: Foo): kotlin.Unit
+    ]

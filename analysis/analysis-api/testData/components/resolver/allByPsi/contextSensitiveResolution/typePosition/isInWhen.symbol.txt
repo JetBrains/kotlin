@@ -45,7 +45,7 @@ KtUserType(148,154): 'String'
 
 KtNameReferenceExpression(148,154): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -86,7 +86,7 @@ KtUserType(163,174): 'SealedClass'
 
 KtNameReferenceExpression(163,174): 'SealedClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -121,7 +121,7 @@ KtUserType(215,218): 'Int'
 
 KtNameReferenceExpression(215,218): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -159,7 +159,7 @@ KtUserType(225,236): 'SealedClass'
 
 KtNameReferenceExpression(225,236): 'SealedClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -197,7 +197,7 @@ KtUserType(291,298): 'Boolean'
 
 KtNameReferenceExpression(291,298): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -235,7 +235,7 @@ KtUserType(308,319): 'SealedClass'
 
 KtNameReferenceExpression(308,319): 'SealedClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -276,7 +276,7 @@ KtUserType(358,374): 'SealedInheritor1'
 
 KtNameReferenceExpression(358,374): 'SealedInheritor1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor1
@@ -314,7 +314,7 @@ KtUserType(415,421): 'String'
 
 KtNameReferenceExpression(415,421): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -355,7 +355,7 @@ KtUserType(439,450): 'SealedClass'
 
 KtNameReferenceExpression(439,450): 'SealedClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -387,7 +387,7 @@ KtUserType(484,495): 'SealedClass'
 
 KtNameReferenceExpression(484,495): 'SealedClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -407,7 +407,7 @@ KtUserType(498,504): 'String'
 
 KtNameReferenceExpression(498,504): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -436,7 +436,7 @@ KtIsExpression(533,561): 'instance is SealedInheritor1'
 
 KtNameReferenceExpression(533,541): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -444,7 +444,7 @@ KtNameReferenceExpression(533,541): 'instance'
 
 KtOperationReferenceExpression(542,544): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(545,561): 'SealedInheritor1'
@@ -461,7 +461,7 @@ KtUserType(545,561): 'SealedInheritor1'
 
 KtNameReferenceExpression(545,561): 'SealedInheritor1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor1
@@ -475,7 +475,7 @@ KtDotQualifiedExpression(565,579): 'instance.prop1'
 
 KtNameReferenceExpression(565,573): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -483,7 +483,7 @@ KtNameReferenceExpression(565,573): 'instance'
 
 KtNameReferenceExpression(574,579): 'prop1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop1: kotlin.String
@@ -500,7 +500,7 @@ KtIsExpression(588,605): 'instance is Inner'
 
 KtNameReferenceExpression(588,596): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -508,7 +508,7 @@ KtNameReferenceExpression(588,596): 'instance'
 
 KtOperationReferenceExpression(597,599): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(600,605): 'Inner'
@@ -525,7 +525,7 @@ KtUserType(600,605): 'Inner'
 
 KtNameReferenceExpression(600,605): 'Inner'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.Inner
@@ -539,7 +539,7 @@ KtDotQualifiedExpression(609,627): 'instance.innerProp'
 
 KtNameReferenceExpression(609,617): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -547,7 +547,7 @@ KtNameReferenceExpression(609,617): 'instance'
 
 KtNameReferenceExpression(618,627): 'innerProp'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val innerProp: kotlin.String
@@ -564,7 +564,7 @@ KtIsExpression(636,671): 'instance is IndirectSealedInheritor'
 
 KtNameReferenceExpression(636,644): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -572,7 +572,7 @@ KtNameReferenceExpression(636,644): 'instance'
 
 KtOperationReferenceExpression(645,647): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(648,671): 'IndirectSealedInheritor'
@@ -589,7 +589,7 @@ KtUserType(648,671): 'IndirectSealedInheritor'
 
 KtNameReferenceExpression(648,671): 'IndirectSealedInheritor'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.IndirectSealedInheritor
@@ -603,7 +603,7 @@ KtDotQualifiedExpression(675,689): 'instance.prop1'
 
 KtNameReferenceExpression(675,683): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -611,7 +611,7 @@ KtNameReferenceExpression(675,683): 'instance'
 
 KtNameReferenceExpression(684,689): 'prop1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop1: kotlin.String
@@ -628,7 +628,7 @@ KtIsExpression(698,727): 'instance !is SealedInheritor2'
 
 KtNameReferenceExpression(698,706): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -636,7 +636,7 @@ KtNameReferenceExpression(698,706): 'instance'
 
 KtOperationReferenceExpression(707,710): '!is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(711,727): 'SealedInheritor2'
@@ -653,7 +653,7 @@ KtUserType(711,727): 'SealedInheritor2'
 
 KtNameReferenceExpression(711,727): 'SealedInheritor2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor2
@@ -676,7 +676,7 @@ KtIsExpression(745,780): 'instance !is SealedSealedInheritor1'
 
 KtNameReferenceExpression(745,753): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -684,7 +684,7 @@ KtNameReferenceExpression(745,753): 'instance'
 
 KtOperationReferenceExpression(754,757): '!is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(758,780): 'SealedSealedInheritor1'
@@ -701,7 +701,7 @@ KtUserType(758,780): 'SealedSealedInheritor1'
 
 KtNameReferenceExpression(758,780): 'SealedSealedInheritor1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedSealedInheritor1
@@ -745,7 +745,7 @@ KtUserType(859,870): 'SealedClass'
 
 KtNameReferenceExpression(859,870): 'SealedClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -765,7 +765,7 @@ KtUserType(873,879): 'String'
 
 KtNameReferenceExpression(873,879): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -785,7 +785,7 @@ KtWhenExpression(893,1158): 'when (instance) {'
 
 KtNameReferenceExpression(899,907): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -811,7 +811,7 @@ KtUserType(922,938): 'SealedInheritor1'
 
 KtNameReferenceExpression(922,938): 'SealedInheritor1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor1
@@ -825,7 +825,7 @@ KtDotQualifiedExpression(942,956): 'instance.prop1'
 
 KtNameReferenceExpression(942,950): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -833,7 +833,7 @@ KtNameReferenceExpression(942,950): 'instance'
 
 KtNameReferenceExpression(951,956): 'prop1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop1: kotlin.String
@@ -859,7 +859,7 @@ KtUserType(968,973): 'Inner'
 
 KtNameReferenceExpression(968,973): 'Inner'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.Inner
@@ -873,7 +873,7 @@ KtDotQualifiedExpression(977,995): 'instance.innerProp'
 
 KtNameReferenceExpression(977,985): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -881,7 +881,7 @@ KtNameReferenceExpression(977,985): 'instance'
 
 KtNameReferenceExpression(986,995): 'innerProp'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val innerProp: kotlin.String
@@ -907,7 +907,7 @@ KtUserType(1007,1030): 'IndirectSealedInheritor'
 
 KtNameReferenceExpression(1007,1030): 'IndirectSealedInheritor'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.IndirectSealedInheritor
@@ -921,7 +921,7 @@ KtDotQualifiedExpression(1034,1048): 'instance.prop1'
 
 KtNameReferenceExpression(1034,1042): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -929,7 +929,7 @@ KtNameReferenceExpression(1034,1042): 'instance'
 
 KtNameReferenceExpression(1043,1048): 'prop1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop1: kotlin.String
@@ -955,7 +955,7 @@ KtUserType(1061,1077): 'SealedInheritor2'
 
 KtNameReferenceExpression(1061,1077): 'SealedInheritor2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor2
@@ -987,7 +987,7 @@ KtUserType(1099,1121): 'SealedSealedInheritor1'
 
 KtNameReferenceExpression(1099,1121): 'SealedSealedInheritor1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedSealedInheritor1
@@ -1031,7 +1031,7 @@ KtUserType(1194,1205): 'SealedClass'
 
 KtNameReferenceExpression(1194,1205): 'SealedClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -1051,7 +1051,7 @@ KtUserType(1208,1214): 'String'
 
 KtNameReferenceExpression(1208,1214): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -1071,7 +1071,7 @@ KtWhenExpression(1228,1621): 'when (instance) {'
 
 KtNameReferenceExpression(1234,1242): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -1097,7 +1097,7 @@ KtUserType(1257,1273): 'SealedInheritor1'
 
 KtNameReferenceExpression(1257,1273): 'SealedInheritor1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor1
@@ -1111,7 +1111,7 @@ KtIsExpression(1277,1312): 'instance is IndirectSealedInheritor'
 
 KtNameReferenceExpression(1277,1285): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -1119,7 +1119,7 @@ KtNameReferenceExpression(1277,1285): 'instance'
 
 KtOperationReferenceExpression(1286,1288): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(1289,1312): 'IndirectSealedInheritor'
@@ -1136,7 +1136,7 @@ KtUserType(1289,1312): 'IndirectSealedInheritor'
 
 KtNameReferenceExpression(1289,1312): 'IndirectSealedInheritor'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.IndirectSealedInheritor
@@ -1150,7 +1150,7 @@ KtDotQualifiedExpression(1316,1330): 'instance.prop1'
 
 KtNameReferenceExpression(1316,1324): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -1158,7 +1158,7 @@ KtNameReferenceExpression(1316,1324): 'instance'
 
 KtNameReferenceExpression(1325,1330): 'prop1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop1: kotlin.String
@@ -1184,7 +1184,7 @@ KtUserType(1363,1379): 'SealedInheritor1'
 
 KtNameReferenceExpression(1363,1379): 'SealedInheritor1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor1
@@ -1198,7 +1198,7 @@ KtIsExpression(1383,1411): 'instance is SealedInheritor2'
 
 KtNameReferenceExpression(1383,1391): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -1206,7 +1206,7 @@ KtNameReferenceExpression(1383,1391): 'instance'
 
 KtOperationReferenceExpression(1392,1394): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(1395,1411): 'SealedInheritor2'
@@ -1223,7 +1223,7 @@ KtUserType(1395,1411): 'SealedInheritor2'
 
 KtNameReferenceExpression(1395,1411): 'SealedInheritor2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor2
@@ -1237,7 +1237,7 @@ KtDotQualifiedExpression(1415,1429): 'instance.prop2'
 
 KtNameReferenceExpression(1415,1423): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -1245,7 +1245,7 @@ KtNameReferenceExpression(1415,1423): 'instance'
 
 KtNameReferenceExpression(1424,1429): 'prop2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop2: kotlin.Int
@@ -1271,7 +1271,7 @@ KtUserType(1442,1458): 'SealedInheritor2'
 
 KtNameReferenceExpression(1442,1458): 'SealedInheritor2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor2
@@ -1285,7 +1285,7 @@ KtIsExpression(1462,1490): 'instance is SealedInheritor1'
 
 KtNameReferenceExpression(1462,1470): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -1293,7 +1293,7 @@ KtNameReferenceExpression(1462,1470): 'instance'
 
 KtOperationReferenceExpression(1471,1473): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(1474,1490): 'SealedInheritor1'
@@ -1310,7 +1310,7 @@ KtUserType(1474,1490): 'SealedInheritor1'
 
 KtNameReferenceExpression(1474,1490): 'SealedInheritor1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor1
@@ -1324,7 +1324,7 @@ KtDotQualifiedExpression(1494,1508): 'instance.prop1'
 
 KtNameReferenceExpression(1494,1502): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -1332,7 +1332,7 @@ KtNameReferenceExpression(1494,1502): 'instance'
 
 KtNameReferenceExpression(1503,1508): 'prop1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop1: kotlin.String
@@ -1358,7 +1358,7 @@ KtUserType(1521,1537): 'SealedInheritor1'
 
 KtNameReferenceExpression(1521,1537): 'SealedInheritor1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor1
@@ -1372,7 +1372,7 @@ KtIsExpression(1541,1575): 'instance is SealedSealedInheritor1'
 
 KtNameReferenceExpression(1541,1549): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -1380,7 +1380,7 @@ KtNameReferenceExpression(1541,1549): 'instance'
 
 KtOperationReferenceExpression(1550,1552): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(1553,1575): 'SealedSealedInheritor1'
@@ -1397,7 +1397,7 @@ KtUserType(1553,1575): 'SealedSealedInheritor1'
 
 KtNameReferenceExpression(1553,1575): 'SealedSealedInheritor1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedSealedInheritor1
@@ -1411,7 +1411,7 @@ KtDotQualifiedExpression(1579,1593): 'instance.prop3'
 
 KtNameReferenceExpression(1579,1587): 'instance'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
@@ -1419,7 +1419,7 @@ KtNameReferenceExpression(1579,1587): 'instance'
 
 KtNameReferenceExpression(1588,1593): 'prop3'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop3: kotlin.Boolean

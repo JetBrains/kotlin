@@ -20,18 +20,20 @@ import org.jetbrains.kotlin.sir.util.SirPlatformModule
 /**
  * A module provider implementation that generates a [SirModule] for each given [KaModule].
  *
- * [platformLibs] are Kotlin/Native distribution platform libraries, represented as [SirPlatformModule].
- * [cinteropReexportLibs] are user-provided cinterop klibs to be re-exported through an existing ObjC module,
- * represented as [SirCinteropModule]. For both, no Swift code is generated; references become `import <name>`.
+ * [platformLibs] are Kotlin/Native distribution platform libraries, represented as [SirPlatformModule]; for
+ * them no Swift code is generated and references become `import <name>`.
+ * [cinteropReexportLib] is a user-provided cinterop klib representing pre-existing ObjC modules mapped to the
+ * Clang module names stored in the cinterop klib manifest;
+ * its types are referenced bare and import those ObjC modules.
  */
 public class SirOneToOneModuleProvider(
     platformLibs: Collection<KaLibraryModule>,
-    cinteropReexportLibs: Collection<KaLibraryModule> = emptyList(),
+    cinteropReexportLib: Pair<KaLibraryModule, List<String>>? = null,
 ) : SirModuleProvider {
 
     private val moduleCache: MutableMap<KaModule, SirModule> = buildMap<KaModule, SirModule> {
         platformLibs.forEach { put(it, SirPlatformModule(it.moduleName)) }
-        cinteropReexportLibs.forEach { put(it, SirCinteropModule(it.moduleName)) }
+        cinteropReexportLib?.let { put(it.first, SirCinteropModule(it.second)) }
     }.toMutableMap()
 
     public val modules: Map<KaModule, SirModule>

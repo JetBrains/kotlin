@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.name
 
 const val KOTLIN_NATIVE_STDLIB_NAME: String = "stdlib"
 const val KOTLIN_JS_STDLIB_NAME: String = "kotlin"
@@ -80,7 +82,15 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     fun resolve(unresolved: LenientUnresolvedLibrary): L?
     fun resolve(unresolved: RequiredUnresolvedLibrary): L
     fun resolve(givenPath: String): L
-    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L>
+
+    @Deprecated(
+        "noEndorsedLibs is deprecated since 1.9.20",
+        ReplaceWith("defaultLinks(noStdLib, noDefaultLibs)"),
+        DeprecationLevel.HIDDEN,
+    )
+    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L> = defaultLinks(noStdLib, noDefaultLibs)
+    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<L>
+
     fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean
     fun isProvidedByDefault(unresolved: UnresolvedLibrary): Boolean = false
 }
@@ -230,7 +240,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                 .onEach { it.isImplicitlyLoadedFromKotlinNativeDistribution = true }
         } else emptySequence()
 
-    override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L> {
+    override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<L> {
 
         val result = mutableListOf<L>()
 
@@ -240,12 +250,6 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
             result.add(library)
         }
 
-        // Endorsed libraries in distHead.
-        if (!noEndorsedLibs) {
-            distHead?.let {
-                result.addAll(getDefaultLibrariesFromDir(it))
-            }
-        }
         // Platform libraries resolve.
         if (!noDefaultLibs) {
             distPlatformHead?.let {
@@ -284,7 +288,7 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     ) : this(directLibs, distributionKlib, skipCurrentDir, logger, knownIrProviders)
 
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean {
-        val candidatePath = candidate.libraryFile.absolutePath
+        val candidatePath = candidate.path.absolutePathString()
 
         val candidateCompilerVersion = candidate.versions.compilerVersion
         val candidateAbiVersion = candidate.versions.abiVersion
@@ -340,12 +344,12 @@ fun validateNoLibrariesWerePassedViaCliByUniqueName(givenNames: List<String>, re
 
     for (library in resolvedLibraries) {
         val uniqueName = library.uniqueName
-        if (uniqueName in potentiallyUniqueNames && uniqueName != library.libraryFile.name) {
+        if (uniqueName in potentiallyUniqueNames && uniqueName != library.path.name) {
             // The name of the library file or the library directory does not match the unique name,
             // and at the same time this unique name was specified at CLI argument.
             // Need to report an error.
             logger.error(
-                "KLIB resolver: Library '${library.libraryFile}' was found by its unique name '$uniqueName'. " +
+                "KLIB resolver: Library '${library.path}' was found by its unique name '$uniqueName'. " +
                         "This could happen if the library unique name was passed instead of the library path via the compiler CLI argument `-library` (`-l`). " +
                         "Note that using unique name is deprecated and will become unavailable in one of the future Kotlin releases. " +
                         "Please, specify full paths to libraries in compiler CLI arguments."

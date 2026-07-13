@@ -1,2 +1,3 @@
 expression: incomplete[0]
+expression PSI: KtArrayAccessExpression
 type: kotlin.Unit

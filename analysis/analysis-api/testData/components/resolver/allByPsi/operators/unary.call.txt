@@ -200,7 +200,7 @@ KtPrefixExpression(230,232): '+a'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(230,231): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -257,7 +257,7 @@ KtPrefixExpression(237,239): '-a'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(237,238): '-'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -314,7 +314,7 @@ KtPrefixExpression(244,246): '!a'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(244,245): '!'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -389,7 +389,7 @@ KtPrefixExpression(251,254): '++a'
         typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(251,253): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -482,7 +482,7 @@ KtPrefixExpression(259,262): '--a'
         typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(259,261): '--'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -592,7 +592,7 @@ KtNameReferenceExpression(267,268): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(268,270): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -685,7 +685,7 @@ KtNameReferenceExpression(275,276): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(276,278): '--'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC

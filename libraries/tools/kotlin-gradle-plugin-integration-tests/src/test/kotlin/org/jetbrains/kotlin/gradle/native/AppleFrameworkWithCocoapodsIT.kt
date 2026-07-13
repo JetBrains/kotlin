@@ -109,7 +109,7 @@ class AppleFrameworkWithCocoapodsIT : KGPBaseTest() {
 
                     with(cocoapods) {
                         version = "1.0.0"
-                        ios.deploymentTarget = "16.0"
+                        ios.deploymentTarget = "17.6"
                         noPodspec()
 
                         pod("Base64") {

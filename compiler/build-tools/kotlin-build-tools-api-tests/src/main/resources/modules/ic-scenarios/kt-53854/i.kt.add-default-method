@@ -1,0 +1,4 @@
+interface I {
+    fun existing() = 1
+    fun newDefault() = 2
+}

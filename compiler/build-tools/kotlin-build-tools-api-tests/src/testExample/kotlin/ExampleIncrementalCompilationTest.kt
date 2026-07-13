@@ -24,10 +24,10 @@ import kotlin.io.path.writeText
 class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample IC test with a single module")
     @DefaultStrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testSingleModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
 
             // this is not the scenario DSL, so the module is not built at this moment
 
@@ -47,11 +47,11 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Sample IC test with 2 modules and custom compilation options")
     @DefaultStrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testTwoModules(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
             // this is not the scenario DSL, so the modules are not built at this moment
 

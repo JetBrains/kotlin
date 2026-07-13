@@ -12,14 +12,16 @@ import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.test.Assertions
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.directives.toClassifiedDumpFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.utils.withExtension
 import kotlin.metadata.*
 import kotlin.metadata.jvm.KotlinClassMetadata
 
+@OptIn(TestInfrastructureInternals::class)
 fun Assertions.checkTxtAccordingToBackend(module: TestModule, actual: String, fileSuffix: String = "") {
     val testDataFile = module.files.first().originalFile
-    val expectedFile = testDataFile.withExtension("$fileSuffix.txt")
+    val expectedFile = testDataFile.toClassifiedDumpFile("$fileSuffix.txt", module.directives)
     assertEqualsToFile(expectedFile, actual)
 }
 

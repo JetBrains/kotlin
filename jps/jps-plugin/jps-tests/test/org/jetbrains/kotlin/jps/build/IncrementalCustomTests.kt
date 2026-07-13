@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.incremental.testingUtils.Modification
+import org.junit.jupiter.api.Test
 
 class IncrementalRenameModuleTest : AbstractIncrementalJpsTest() {
+    @Test
     fun testRenameModule() {
-        doTest("jps/jps-plugin/testData/incremental/custom/renameModule/")
+        runTest("jps/jps-plugin/testData/incremental/custom/renameModule/")
     }
 
     override fun performAdditionalModifications(modifications: List<Modification>) {

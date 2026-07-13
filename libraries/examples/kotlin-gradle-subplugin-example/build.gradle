@@ -2,15 +2,13 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import plugins.KotlinBuildPublishingPlugin
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("java-gradle-plugin")
     id("org.jetbrains.kotlin.jvm")
     id("com.gradle.plugin-publish")
     id("maven-publish")
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
 }
 
 dependencies {

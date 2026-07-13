@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
-import org.jetbrains.kotlin.ir.util.getValueArgument
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isAnnotation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeRuntimeNames
@@ -36,8 +35,8 @@ private fun IrAnnotation.bindReverseBridgeToMethod(bridgeFunction: IrSimpleFunct
     if (!isAnnotation(NativeRuntimeNames.Annotations.BindReverseBridgeToMethod.asSingleFqName())) {
         return null
     }
-    val targetClass = (getValueArgument(Name.identifier("targetClass")) as IrClassReference).classType.getClass()!!
-    val targetMethod = getAnnotationStringValue("targetMethod")
+    val targetClass = (argumentMapping[Name.identifier("targetClass")] as IrClassReference).classType.getClass()!!
+    val targetMethod = getConstArgument<String>("targetMethod")!!
     return BindReverseBridgeToMethod(this, bridgeFunction, targetClass, targetMethod)
 }
 

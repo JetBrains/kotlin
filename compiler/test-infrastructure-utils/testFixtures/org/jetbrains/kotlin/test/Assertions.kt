@@ -43,7 +43,7 @@ abstract class Assertions {
     abstract fun assertTrue(value: Boolean, message: (() -> String)? = null)
     abstract fun assertFalse(value: Boolean, message: (() -> String)? = null)
     abstract fun assertNotNull(value: Any?, message: (() -> String)? = null)
-    abstract fun <T> assertSameElements(expected: Collection<T>, actual: Collection<T>, message: (() -> String)?)
+    abstract fun <T> assertSameElements(expected: Collection<T>, actual: Collection<T>, message: (() -> String)? = null)
 
     fun <T> assertContainsElements(collection: Collection<T>, vararg expected: T) {
         assertContainsElements(collection, expected.toList())

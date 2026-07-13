@@ -1,10 +1,9 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: WASM, WASM_JS, WASM_WASI, JS_IR, JS_IR_ES6
 
 var initOrder = ""
 
 fun trackInit(tag: String, value: String): String {
-    initOrder += tag
+    initOrder += "$tag "
     return value
 }
 
@@ -41,8 +40,8 @@ fun box(): String {
     // Verify initialization order:
     // Inner class companion is independent of outer — accessing Inner companion
     // should not trigger Outer companion initialization (similar to nested classes).
-    if (afterInner != "I") return "FAIL: expected only inner init first, got afterInner=$afterInner"
-    if (initOrder != "IO") return "FAIL: expected IO, got initOrder=$initOrder"
+    if (afterInner != "I ") return "FAIL: expected only inner init first, got afterInner=$afterInner"
+    if (initOrder != "I O ") return "FAIL: expected IO, got initOrder=$initOrder"
 
     // Access outer companion from inner class instance
     val outer = Outer()

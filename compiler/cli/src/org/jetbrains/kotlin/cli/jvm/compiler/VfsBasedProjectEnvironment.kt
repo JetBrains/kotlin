@@ -75,6 +75,11 @@ open class VfsBasedProjectEnvironment(
     override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider =
         getPackagePartProviderFn(fileSearchScope.asPsiSearchScope())
 
+    /**
+     * A (maybe temporary) mechanism for extending the classpath handled by package providers; nop by default
+     */
+    open fun updateClasspath(classpath: List<File>) {}
+
     @OptIn(SessionConfiguration::class)
     override fun registerAsJavaElementFinder(firSession: FirSession) {
         val psiFinderExtensionPoint = PsiElementFinder.EP.getPoint(project)

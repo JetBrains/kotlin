@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.library.KlibMockDSL.Companion.mockKlib
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import java.io.File
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.pathString
 
 abstract class AbstractMockedKlibLoaderTest(
     private val stdlibUniqueName: String,
@@ -21,7 +23,7 @@ abstract class AbstractMockedKlibLoaderTest(
             uniqueName = stdlibUniqueName,
             klibDir = tmpDir.resolve("stdlib"),
             withCompanionBlocksAndExtensionsFeature = false,
-        ).path
+        ).pathString
     }
 
     final override fun compileKlib(
@@ -45,11 +47,11 @@ abstract class AbstractMockedKlibLoaderTest(
     }
 
     private fun mockKlib(
-        klibDir: File,
+        klibDir: Path,
         uniqueName: String,
         abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
         withCompanionBlocksAndExtensionsFeature: Boolean,
-    ): File = mockKlib(klibDir) {
+    ): Path = mockKlib(klibDir) {
         manifest(
             uniqueName = uniqueName,
             builtInsPlatform = builtInsPlatform,
@@ -63,13 +65,5 @@ abstract class AbstractMockedKlibLoaderTest(
             this[KLIB_PROPERTY_IR_PROVIDER] = "simulation_of_some_ir_provider"
             this[KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION] = withCompanionBlocksAndExtensionsFeature.toString()
         }
-    }
-
-    companion object {
-        private fun File.zipDirAs(zipFile: File) {
-            toKlibFile().zipDirAs(zipFile.toKlibFile())
-        }
-
-        private fun File.toKlibFile() = KlibFile(absolutePath)
     }
 }

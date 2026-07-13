@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
-import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
-import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.PartialLinkageConfig
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -31,6 +28,7 @@ import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
+import java.nio.file.Path
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class KonanIrLinker(
@@ -39,7 +37,6 @@ class KonanIrLinker(
     symbolTable: SymbolTable,
     friendModules: Map<String, Collection<String>>,
     private val forwardModuleDescriptor: ModuleDescriptor?,
-    private val stubGenerator: DeclarationStubGenerator,
     private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory,
     exportedDependencies: List<ModuleDescriptor>,
     partialLinkageConfig: PartialLinkageConfig,
@@ -53,7 +50,7 @@ class KonanIrLinker(
     }
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let {
-        KonanForwardDeclarationModuleDeserializer(it, this, stubGenerator)
+        KonanForwardDeclarationModuleDeserializer(it, this)
     }
 
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
@@ -122,20 +119,15 @@ class KonanIrLinker(
         }
     }
 
-    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
-        stubGenerator.unboundSymbolGeneration = true
-        super.postProcess(irBuiltIns, inOrAfterLinkageStep)
-    }
-
     private val String.isForwardDeclarationModuleName: Boolean get() = this == KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME.asString()
 
-    val modules: Map<String, IrModuleFragment>
-        get() = mutableMapOf<String, IrModuleFragment>().apply {
+    val modules: Map<Path, IrModuleFragment>
+        get() = mutableMapOf<Path, IrModuleFragment>().apply {
             deserializersForModules
                 .filter { !it.key.isForwardDeclarationModuleName && it.value.moduleDescriptor !== currentModule }
                 .forEach {
                     val klib = it.value.klib
-                    this[klib.location.path] = it.value.moduleFragment
+                    this[klib.path] = it.value.moduleFragment
                 }
         }
 }

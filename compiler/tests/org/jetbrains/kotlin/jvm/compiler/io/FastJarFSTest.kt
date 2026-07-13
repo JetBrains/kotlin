@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.jvm.compiler.io
 
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.openapi.util.Disposer
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.Assert
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -20,32 +20,35 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 
-abstract class AbstractFastJarFSTest : TestCase() {
+abstract class AbstractFastJarFSTest {
 
     protected var fs: FastJarFileSystem? = null
+    protected lateinit var testInfo: TestInfo
     protected var coreAppEnv: JavaCoreApplicationEnvironment? = null
     private val rootDisposable = Disposer.newDisposable("${FastJarFSTest::class.simpleName}.rootDisposable")
 
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun setUp(testInfo: TestInfo) {
+        this.testInfo = testInfo
         fs = FastJarFileSystem.createIfUnmappingPossible()
         coreAppEnv = JavaCoreApplicationEnvironment(rootDisposable)
     }
 
-    override fun tearDown() {
+    @AfterEach
+    fun tearDown() {
         coreAppEnv = null
         rootDisposable.dispose()
         fs?.clearHandlersCache()
         fs = null
-        super.tearDown()
     }
 }
 
 class FastJarFSTest : AbstractFastJarFSTest() {
 
+    @Test
     fun testZip64FormatIsSupported() {
         val fs = fs ?: return
-        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val tmpDir = KotlinTestUtils.tmpDirForTest(testInfo)
         val jarFile = File(tmpDir, "tmp.jar")
         val out = ZipOutputStream(FileOutputStream(jarFile))
 
@@ -67,52 +70,55 @@ class FastJarFSTest : AbstractFastJarFSTest() {
 
         for (i in indicesToCheck) {
             val file = fs.findFileByPath(jarFile.absolutePath + "!/$i.txt") ?: error("Not found $i.txt")
-            Assert.assertEquals(String(file.contentsToByteArray()), i.toString())
+            assertEquals(String(file.contentsToByteArray()), i.toString())
         }
     }
 
+    @Test
     fun testInvalidJar() {
         val fs = fs ?: return
-        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val tmpDir = KotlinTestUtils.tmpDirForTest(testInfo)
         val badJarFile = File(tmpDir, "file.pom")
         badJarFile.writeText(A_POM_FILE)
 
         val errFromFastJarFs = captureErr {
             fs.findFileByPath(badJarFile.absolutePath + "!/a.class")
         }
-        Assert.assertTrue(errFromFastJarFs.contains("WARN: Error while reading zip file:"))
+        Assertions.assertTrue(errFromFastJarFs.contains("WARN: Error while reading zip file:"))
 
         val errFromCoreJarFs = captureErr {
             coreAppEnv!!.jarFileSystem.findFileByPath(badJarFile.absolutePath + "!/a.class")
         }
         // Asserting that core jar FS still behaves the same way as the "emulation" implemented in FastJarFS
-        Assert.assertTrue(
+        Assertions.assertTrue(
             errFromCoreJarFs.contains("WARN: error in opening zip file") ||
-                    errFromCoreJarFs.contains("WARN: zip END header not found")
+                                errFromCoreJarFs.contains("WARN: zip END header not found")
         )
     }
 
+    @Test
     fun testEmptyJar() {
         val fs = fs ?: return
-        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val tmpDir = KotlinTestUtils.tmpDirForTest(testInfo)
         val emptyJarFile = File(tmpDir, "empty.jar")
         emptyJarFile.createNewFile()
 
         val errFromFastJarFs = captureErr {
             fs.findFileByPath(emptyJarFile.absolutePath + "!/a.class")
         }
-        Assert.assertTrue(errFromFastJarFs.contains("WARN: Error while reading zip file:"))
+        Assertions.assertTrue(errFromFastJarFs.contains("WARN: Error while reading zip file:"))
 
         val errFromCoreJarFs = captureErr {
             coreAppEnv!!.jarFileSystem.findFileByPath(emptyJarFile.absolutePath + "!/a.class")
         }
         // Asserting that core jar FS still behaves the same way as the "emulation" implemented in FastJarFS
-        Assert.assertTrue(errFromCoreJarFs.contains("WARN: zip file is empty"))
+        Assertions.assertTrue(errFromCoreJarFs.contains("WARN: zip file is empty"))
     }
 
+    @Test
     fun testPlainDecoding() {
         val fs = fs ?: return
-        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val tmpDir = KotlinTestUtils.tmpDirForTest(testInfo)
         val jarFile = File(tmpDir, "tmp.jar")
 
         val data = "someFlatData"

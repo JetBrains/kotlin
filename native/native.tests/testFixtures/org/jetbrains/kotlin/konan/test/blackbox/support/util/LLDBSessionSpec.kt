@@ -37,17 +37,28 @@ abstract class LLDBSessionSpec {
         val kt84923Message = "attached to process, but could not pause execution; attach failed"
         assumeFalse(output.contains(kt84923Message)) { "Test skipped because of KT-84923" }
 
+        // LLDB sporadically fails to run its Objective-C runtime introspection code in the inferior
+        // (timing- and load-dependent, so it only happens on some CI runs) and reports this warning.
+        // It is harmless for these tests: LLDB just falls back to symbol-based type lookup.
+        val sanitizedOutput = output.lineSequence()
+            .filterNot { line -> IGNORED_LLDB_WARNINGS.any { line.startsWith(it) } }
+            .joinToString("\n")
+
         // Ideally, we should just check that stderr is empty.
         // Tracked in KT-86532.
         for (prefix in listOf(PYTHON_EXCEPTION_HEADER, "warning:")) {
-            assertFalse(prefix in output) {
-                "Unexpected output in debugger: ${output.substring(output.indexOf(prefix))}"
+            assertFalse(prefix in sanitizedOutput) {
+                "Unexpected output in debugger: ${sanitizedOutput.substring(sanitizedOutput.indexOf(prefix))}"
             }
         }
     }
 
     companion object {
         private const val PYTHON_EXCEPTION_HEADER = "Traceback (most recent call last):"
+
+        private val IGNORED_LLDB_WARNINGS = listOf(
+            "warning: could not execute support code to read Objective-C class data in the process.",
+        )
     }
 }
 

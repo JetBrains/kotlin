@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.tooling
 
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata.ProjectTargetMetadata
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 /*
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.

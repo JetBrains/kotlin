@@ -5,16 +5,11 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -29,19 +24,14 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.testFramework.FrontendBackendConfiguration
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.File
 
-open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendConfiguration {
-    override val useFir: Boolean
-        get() = true
-
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
-
+open class K2JvmVersionRequirementTest : TestCaseWithTmpdir() {
     private fun doTest(
         expectedVersionRequirement: VersionRequirement.Version,
         expectedLevel: DeprecationLevel,
@@ -96,7 +86,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
             val descriptor = module.findUnambiguousDescriptorByFqName(fqName)
 
             val requirement = extractRequirement(descriptor)
-            assertTrue("Expecting absence of any requirements for $fqName, but `$requirement`", requirement.isEmpty())
+            assertTrue(requirement.isEmpty()) { "Expecting absence of any requirements for $fqName, but `$requirement`" }
         }
     }
 
@@ -139,8 +129,9 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         specificFeatures: Map<LanguageFeature, LanguageFeature.State>,
     ) {
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(
-            listOf(ForTestCompileRuntime.transformTestDataPath("compiler/testData/versionRequirement/${getTestName(true)}.kt")),
+            listOf(ForTestCompileRuntime.transformTestDataPath("compiler/testData/versionRequirement/${getTestName(testInfo.testMethod.get().name, true)}.kt")),
             outputDirectory,
+            @OptIn(CoreEnvironmentDeprecation::class)
             KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
                 KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, outputDirectory).apply {
@@ -150,8 +141,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
                         analysisFlags.toMap() + mapOf(AnalysisFlags.explicitApiVersion to true),
                         specificFeatures
                     )
-                }.also {
-                    configureIrFir(it)
+                    useFir = true
                 },
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
@@ -161,16 +151,16 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
     private fun loadModule(): ModuleDescriptor {
         @Suppress("DEPRECATION_ERROR")
         return JvmResolveUtil.analyze(
+            @OptIn(CoreEnvironmentDeprecation::class)
             KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
-                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir).also {
-                    configureIrFir(it)
-                },
+                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
         ).moduleDescriptor
     }
 
+    @Test
     fun testDefinitelyNotNull() {
         doTest(
             VersionRequirement.Version(1, 7), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
@@ -193,6 +183,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         )
     }
 
+    @Test
     fun testLanguageVersionViaAnnotation() {
         doTest(
             VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message",
@@ -207,6 +198,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         )
     }
 
+    @Test
     fun testApiVersionViaAnnotation() {
         doTest(
             VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", ProtoBuf.VersionRequirement.VersionKind.API_VERSION, 42,
@@ -220,6 +212,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         )
     }
 
+    @Test
     fun testCompilerVersionViaAnnotation() {
         doTest(
             VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message",
@@ -234,6 +227,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         )
     }
 
+    @Test
     fun testPatchVersion() {
         doTest(
             VersionRequirement.Version(1, 1, 50), DeprecationLevel.HIDDEN, null,
@@ -242,6 +236,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         )
     }
 
+    @Test
     fun testNestedClassMembers() {
         doTest(
             VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,

@@ -3,7 +3,7 @@
 /* FILE package=<root> fileName=A.kt */
 
 public class A
-    internal inline /* static */ fun internalInlineStaticMethod(): String
+    internal inline companion fun internalInlineStaticMethod(): String
         /* ACCESSOR use-site */ access$o$tAKt()
     internal inline fun internalInlineMethod(): String
         /* ACCESSOR use-site */ access$k$tAKt()

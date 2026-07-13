@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.*
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.io.path.div
+import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.io.path.readBytes
+import kotlin.io.path.relativeTo
+import kotlin.test.*
 
 @OptIn(ExperimentalBuildToolsApi::class)
 @DisplayName("Gradle / Compiler Reference Index")
@@ -214,6 +213,23 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
     fun testEnablingCriDoesNotFailNativeCompile(gradleVersion: GradleVersion) {
         nativeProject("native-simple-project", gradleVersion) {
             build("assemble") {
+                assertNoDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("CRI warning without BTA is only emitted for JVM targets in KMP")
+    fun testCriWarningWithoutBtaOnlyForJvmInKmp(gradleVersion: GradleVersion) {
+        val options = defaultBuildOptions.copy(
+            runViaBuildToolsApi = false,
+            generateCompilerRefIndex = true,
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        project("jvm-and-js-hmpp", gradleVersion, buildOptions = options) {
+            build("compileKotlinJvm") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
+            }
+            build("compileKotlinJs") {
                 assertNoDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
             }
         }

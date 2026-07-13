@@ -31,12 +31,12 @@ MODULE_FRAGMENT name:<enum.kt>
         init: EXPRESSION_BODY
           ENUM_CONSTRUCTOR_CALL 'private constructor <init> (rgb: kotlin.Int) [primary] declared in test.Color'
             ARG rgb: CONST Int type=kotlin.Int value=255
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/Color.values|values#static(){}[0] visibility:public modality:FINAL returnType:kotlin.Array<test.Color>
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/Color.values|values#static(){}[0] visibility:public modality:FINAL returnType:kotlin.Array<test.Color> [companion]
         SYNTHETIC_BODY kind=ENUM_VALUES
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:test/Color.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL returnType:test.Color
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:test/Color.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL returnType:test.Color [companion]
         VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
         SYNTHETIC_BODY kind=ENUM_VALUEOF
       PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/Color.entries|#static{}entries[0] visibility:public modality:FINAL [val]
-        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:test/Color.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<test.Color>
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:test/Color.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<test.Color> [companion]
           correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/Color.entries|#static{}entries[0] visibility:public modality:FINAL [val]
           SYNTHETIC_BODY kind=ENUM_ENTRIES

@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.test.frontend.fir
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.contentRoots
-import org.jetbrains.kotlin.cli.extensionsStorage
+import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
-import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
 import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.FrontendFacade
@@ -59,8 +58,10 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import kotlin.io.path.absolutePathString
 
 open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
     override val additionalServices: List<ServiceRegistrationData>
@@ -168,7 +169,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         moduleDataProvider: ModuleDataProvider,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        jvmSessionFactoryContext: FirJvmSessionFactory.Context?,
+        jvmSessionFactoryContext: FirJvmSessionFactory.Context?
     ): FirSession {
         val languageVersionSettings = module.languageVersionSettings
         val targetPlatform = module.targetPlatform(testServices)
@@ -305,7 +306,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             sessionConfigurator,
             jvmSessionFactoryContext,
             project,
-            ktFiles.values,
+            ktFiles.values
         )
 
         val firAnalyzerFacade = FirAnalyzerFacade(
@@ -367,7 +368,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             targetPlatform.isJvm() -> {
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
-                    PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)),
+                    PsiBasedProjectFileSearchScope(newModuleSearchScope(project, ktFiles)),
                     createIncrementalCompilationSymbolProviders = { null },
                     extensionRegistrars,
                     configuration,
@@ -441,7 +442,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                             val loadedKlibs = KlibLoader { libraryPaths(allPaths) }.load().librariesStdlibFirst
                             val [interopLibs, regularLibs] = loadedKlibs.partition { it.isCInteropLibrary() }
 
-                            dependencies(regularLibs.map { it.libraryFile.absolutePath })
+                            dependencies(regularLibs.map { it.path.absolutePathString() })
                             friendDependencies(friendPaths)
 
                             if (interopLibs.isNotEmpty()) {
@@ -449,7 +450,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                                     Name.special("<regular interop dependencies of $mainModuleName>"),
                                     FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
                                 )
-                                this@build.dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
+                                this@build.dependencies(interopModuleData, interopLibs.map { it.path.absolutePathString() })
                             }
                         }
                         targetPlatform.isWasm() -> {
@@ -485,5 +486,11 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             }
         }
 
+        fun newModuleSearchScope(project: Project, files: Collection<KtFile>): GlobalSearchScope {
+            // In case of separate modules, the source module scope generally consists of the following scopes:
+            // 1) scope which only contains passed Kotlin source files (.kt and .kts)
+            // 2) scope which contains all Java source files (.java) in the project
+            return GlobalSearchScope.filesScope(project, files.map { it.virtualFile }.toSet()).uniteWith(AllJavaSourcesInProjectScope(project))
+        }
     }
 }

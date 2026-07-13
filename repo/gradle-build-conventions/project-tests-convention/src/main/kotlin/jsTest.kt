@@ -26,9 +26,6 @@ fun ProjectTestsExtension.jsTestTask(
     jUnitMode = JUnitMode.JUnit5,
     skipInLocalBuild = skipInLocalBuild,
 ) {
-    testInputsCheck {
-        allowFlightRecorder.set(true)
-    }
 
     val project = this@jsTestTask.project
 

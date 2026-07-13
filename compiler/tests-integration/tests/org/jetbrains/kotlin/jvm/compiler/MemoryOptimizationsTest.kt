@@ -27,16 +27,19 @@ import org.jetbrains.kotlin.resolve.scopes.findFirstFunction
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.runWithDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.lowerIfFlexible
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.upperIfFlexible
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class MemoryOptimizationsTest : KtUsefulTestCase() {
-    fun testBasicFlexibleTypeCase() {
+class MemoryOptimizationsTest {
+    @Test
+    fun testBasicFlexibleTypeCase(): Unit = runWithDisposable { testRootDisposable ->
         @Suppress("DEPRECATION_ERROR")
         val moduleDescriptor = JvmResolveUtil.analyze(
             KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
@@ -63,7 +66,8 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
         assertTrue(parameterType.lowerIfFlexible() === upperBound.makeNullableAsSpecified(false))
     }
 
-    fun testSubstitutorDoNotRecreateUnchangedDescriptor() {
+    @Test
+    fun testSubstitutorDoNotRecreateUnchangedDescriptor(): Unit = runWithDisposable { testRootDisposable ->
         val text =
             """
                 |package test

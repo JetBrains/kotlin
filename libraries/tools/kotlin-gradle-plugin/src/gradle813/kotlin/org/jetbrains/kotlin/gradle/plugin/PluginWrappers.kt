@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.internal.*
 
 private const val PLUGIN_VARIANT_NAME = "gradle813"
 
@@ -58,5 +59,6 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
 
 @Suppress("UnusedReceiverParameter")
 private fun Project.registerVariantImplementations() {
-
+    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
+    factories[BuildNeededDependentTasksWiringProvider.Factory::class] = BuildNeededDependentTaskWiringProviderG95.Factory()
 }

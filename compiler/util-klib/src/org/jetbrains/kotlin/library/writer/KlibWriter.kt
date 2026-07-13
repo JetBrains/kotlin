@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.library.writer
 
-import org.jetbrains.kotlin.konan.file.createTempDir
-import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -15,8 +14,15 @@ import org.jetbrains.kotlin.library.impl.KlibManifestComponentWriterImpl
 import org.jetbrains.kotlin.library.impl.KlibManifestComponentWriterImpl.Companion.NON_CUSTOMIZED_PROPERTY_NAMES
 import org.jetbrains.kotlin.library.impl.KlibManifestComponentWriterImpl.Companion.getPropertyNameForListOfTargetNames
 import org.jetbrains.kotlin.library.impl.KlibResourcesComponentWriterImpl
-import java.util.Properties
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Files.createTempDirectory
+import java.nio.file.Path
+import java.util.*
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
+import kotlin.io.path.absolute
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
 
 /**
  * The [KlibWriter] component is the unified endpoint for writing [KotlinLibrary] artifacts to the file system.
@@ -30,6 +36,7 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  */
 class KlibWriter(init: KlibWriterSpec.() -> Unit) {
     private var format: KlibFormat = KlibFormat.Directory
+    private var allowIncrementalOverwriting: Boolean = false
     private val componentWriters = mutableListOf<KlibComponentWriter>()
 
     private var moduleName: String? = null
@@ -45,6 +52,10 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
 
             override fun format(format: KlibFormat) {
                 this@KlibWriter.format = format
+            }
+
+            override fun allowIncrementalOverwriting(allowed: Boolean) {
+                this@KlibWriter.allowIncrementalOverwriting = allowed
             }
 
             override fun include(vararg writers: KlibComponentWriter) {
@@ -81,7 +92,12 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
         }.init()
     }
 
-    fun writeTo(destinationPath: String) {
+    @OptIn(ExperimentalPathApi::class)
+    fun writeTo(destinationPath: Path) {
+        check(!allowIncrementalOverwriting || format != KlibFormat.ZipArchive) {
+            "Writing a KLIB in ZIP format if `allowIncrementalOverwriting` is set to `true` is not supported."
+        }
+
         val allComponentWriters: List<KlibComponentWriter> = buildList {
             this += componentWriters
 
@@ -92,25 +108,35 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
             this += KlibResourcesComponentWriterImpl
         }
 
-        val destination = KlibFile(destinationPath).absoluteFile
-
-        if (destination.exists) {
-            destination.deleteRecursively()
-        } else {
-            destination.parentFile.mkdirs()
+        when {
+            !destinationPath.exists() -> {
+                // We need to compute absolute path for the generated KLIB artifact
+                // in order to be able to create all containing directories beforehand.
+                //
+                // Illustrative example:
+                //   Path(".").parent == null
+                //   Path(".").absolute().parent != null
+                destinationPath.absolute().parent.createDirectories()
+            }
+            !allowIncrementalOverwriting -> {
+                destinationPath.deleteRecursively()
+            }
         }
 
         when (format) {
-            KlibFormat.Directory -> writeComponents(allComponentWriters, root = destination)
+            KlibFormat.Directory -> writeComponents(allComponentWriters, root = destinationPath)
 
             KlibFormat.ZipArchive -> {
-                val temporaryDir = createTempDir("klib")
+                val temporaryDir = createTempDirectory("klib")
                 writeComponents(allComponentWriters, root = temporaryDir)
-                temporaryDir.zipDirAs(destination)
+                temporaryDir.zipDirAs(destinationPath)
                 temporaryDir.deleteRecursively()
             }
         }
+
     }
+
+    fun writeTo(destinationPath: String) = writeTo(Path(destinationPath))
 
     private fun validateManifestPropertiesAndCreateComponentWriter(): KlibManifestComponentWriterImpl {
         val moduleName = checkNotNull(moduleName) {
@@ -147,7 +173,7 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
     }
 
     companion object {
-        private fun writeComponents(allComponentWriters: List<KlibComponentWriter>, root: KlibFile) {
+        private fun writeComponents(allComponentWriters: List<KlibComponentWriter>, root: Path) {
             for (componentWriter in allComponentWriters) {
                 componentWriter.writeTo(root)
             }
@@ -157,6 +183,7 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
 
 interface KlibWriterSpec {
     fun format(format: KlibFormat)
+    fun allowIncrementalOverwriting(allowed: Boolean)
     fun include(vararg writers: KlibComponentWriter)
     fun include(writers: Collection<KlibComponentWriter>)
     fun manifest(init: KlibManifestWriterSpec.() -> Unit)

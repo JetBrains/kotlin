@@ -26,22 +26,24 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
+import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
 fun evalFile(scriptFile: File, cacheDir: File? = null): ResultWithDiagnostics<EvaluationResult> =
     withMainKtsCacheDir(cacheDir?.absolutePath ?: "") {
-        val scriptDefinition = createJvmCompilationConfigurationFromTemplate<MainKtsScript>() {
-            updateClasspath(classpathFromClass<Composable>())
-        }
-        val evaluationEnv = MainKtsEvaluationConfiguration.with {
-            jvm {
-                baseClassLoader(null)
+        val scriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>(
+            compilation = {
+                updateClasspath(classpathFromClass<Composable>())
+            },
+            evaluation = {
+                jvm {
+                    baseClassLoader(null)
+                }
+                constructorArgs(emptyArray<String>())
+                enableScriptsInstancesSharing()
             }
-            constructorArgs(emptyArray<String>())
-            enableScriptsInstancesSharing()
-        }
+        )
 
-        BasicJvmScriptingHost.createLegacy().eval(scriptFile.toScriptSource(), scriptDefinition, evaluationEnv)
+        BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration)
     }
 
 const val TEST_DATA_ROOT = "testData"

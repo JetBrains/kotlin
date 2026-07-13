@@ -25,7 +25,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
         assumeTrue { kotlinToolingVersion >= KotlinToolingVersion(2, 4, 20, "snapshot") }
 
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile(
                 compilationConfigAction = {
                     it.compilerArguments.applyArgumentStrings(listOf("-jvm-target", "21", "-jvm-default", "enable"))
@@ -43,7 +43,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
         assumeTrue { kotlinToolingVersion >= KotlinToolingVersion(2, 4, 20, "snapshot") }
 
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile(
                 compilationConfigAction = {
                     it.compilerArguments.applyArgumentStrings(listOf("-jvm-target", "21", "-jvm-default", "bogus"))
@@ -64,7 +64,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
         assumeTrue { kotlinToolingVersion >= KotlinToolingVersion(2, 4, 20, "snapshot") }
 
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile(
                 compilationConfigAction = {
                     it.compilerArguments.applyArgumentStrings(listOf("-jvm-target", "target", "-jvm-default", "bogus"))

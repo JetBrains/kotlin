@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -694,18 +695,6 @@ internal class CodeGeneratorVisitor(
         codegen.getVirtualFunctionTrampoline(irFunction)
     }
 
-    private fun shouldEmitFinalFunctionTrampolineAlias(declaration: IrSimpleFunction) =
-            // The alias only matters for caches consumed by a later recompile.
-            context.config.produce.isCache // In a monolithic build no caller cache can reference a stale trampoline symbol.
-                    && declaration.parent is IrClass
-                    && !declaration.isOverridable // No trampoline would be generated.
-                    && declaration.isReal
-                    && declaration.origin !is DECLARATION_ORIGIN_BRIDGE_METHOD
-                    && !declaration.isExternal
-                    && declaration.shouldGenerateBody()
-                    && declaration.originalConstructor == null
-                    && codegen.linkageOf(declaration) == LLVMLinkage.LLVMExternalLinkage
-
     override fun visitConstructor(declaration: IrConstructor) {
         // All constructors are lowered by this point, but for some cases original constructors are left as is; just skip them here.
         return
@@ -739,10 +728,8 @@ internal class CodeGeneratorVisitor(
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         context.log{"visitFunction                  : ${ir2string(declaration)}"}
 
-        if (declaration.isOverridable && declaration.origin !is DECLARATION_ORIGIN_BRIDGE_METHOD)
+        if (declaration.needsVirtualTrampoline)
             buildVirtualFunctionTrampoline(declaration)
-        else if (shouldEmitFinalFunctionTrampolineAlias(declaration))
-            codegen.emitFinalFunctionTrampolineAlias(declaration)
 
         handleStaticInitializer(declaration)
 
@@ -2449,7 +2436,7 @@ internal class CodeGeneratorVisitor(
         assert(irClass.isExternalObjCClass())
 
         val annotation = irClass.annotations.findAnnotation(externalObjCClassFqName)!!
-        val protocolGetterName = annotation.getAnnotationValueOrNull<String>("protocolGetter") ?: return null
+        val protocolGetterName = annotation.getConstArgument<String>("protocolGetter") ?: return null
         val protocolGetterProto = LlvmFunctionProto(
                 protocolGetterName,
                 LlvmFunctionSignature(LlvmRetType(llvm.pointerType, isObjectType = false)),
@@ -2567,13 +2554,16 @@ internal class CodeGeneratorVisitor(
         check(!function.isTypedIntrinsic)
 
         val foreignExceptionModeFromAnnotation = function.annotations.findAnnotation(RuntimeNames.filterExceptions)?.let {
-            ForeignExceptionMode.byValue(it.getAnnotationValueOrNull<String>("mode"))
+            ForeignExceptionMode.byValue(it.getConstArgument("mode"))
         }
 
         val needsNativeThreadState: Boolean
         val filterExceptionWith: ForeignExceptionMode.Mode?
 
-        if (llvmCallable.name in context.config.forceNativeThreadStateForFunctions) {
+        val forceNativeThreadState = llvmCallable.name in context.config.forceNativeThreadStateForFunctions
+                || function.annotations.hasAnnotation(RuntimeNames.forceNativeThreadStateAnnotation)
+
+        if (forceNativeThreadState) {
             // This is a quick hack for functions that break the contract of `SymbolName` by being blocking,
             // and therefore need the native thread state.
             // See e.g., KT-75895 and KT-79384.
@@ -2730,7 +2720,7 @@ internal class CodeGeneratorVisitor(
         llvm.irStaticInitializers.forEach {
             val library = it.konanLibrary
             val initializers = libraryToInitializers[library]
-                    ?: error("initializer for not included library ${library?.libraryFile}")
+                    ?: error("initializer for not included library ${library?.path}")
 
             initializers.add(it.runtimeInitializer)
         }
@@ -2764,11 +2754,11 @@ internal class CodeGeneratorVisitor(
             } else {
                 // A cached library.
                 check(initializer == null) {
-                    "found initializer from ${library.libraryFile}, which is not included into compilation"
+                    "found initializer from ${library.path}, which is not included into compilation"
                 }
 
                 val cache = context.config.cachedLibraries.getLibraryCache(library)
-                        ?: error("Library ${library.libraryFile} is expected to be cached")
+                        ?: error("Library ${library.path} is expected to be cached")
 
                 when (cache) {
                     is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
@@ -2777,7 +2767,7 @@ internal class CodeGeneratorVisitor(
                             is DependenciesTracker.DependencyKind.WholeModule -> {
                                 val fileIdProvider: FileIdProvider = context.moduleDeserializerProvider.getDeserializerOrNull(library)
                                         ?.let { FileIdProvider(it) }
-                                        ?: error("Can't find deserializer for ${library.libraryFile}")
+                                        ?: error("Can't find deserializer for ${library.path}")
                                 fileIdProvider.sortedFileIds
                             }
                             is DependenciesTracker.DependencyKind.CertainFiles ->

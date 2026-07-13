@@ -110,7 +110,11 @@ internal interface FirMissingDependencyClassProxy {
             is ConeDefinitelyNotNullType -> original.forEachClassLikeType(action)
             is ConeIntersectionType -> intersectedTypes.forEach { it.forEachClassLikeType(action) }
             is ConeClassLikeType -> action(this)
-            else -> {} // Ignore all type parameters.
+            // Ignore all type parameters (nothing to check there)
+            is ConeTypeParameterType -> {}
+            // Ignore also captured types (we don't want to check them mainly because of KT-73821 conclusion)
+            is ConeCapturedType -> {}
+            else -> {}
         }
     }
 

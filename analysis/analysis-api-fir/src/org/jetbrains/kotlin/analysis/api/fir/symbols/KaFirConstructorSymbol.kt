@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirSecondaryCons
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTypeAliasedConstructorMemberPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -75,24 +77,30 @@ internal class KaFirConstructorSymbol private constructor(
             }
         }
 
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion {
-            val backingPsi = backingPsi
-            if (backingPsi != null) {
-                val visibility = backingPsi.visibilityByModifiers ?: backingPsi.ifNoStatusCompilerPluginPresent {
-                    val owner = backingPsi.getContainingClassOrObject()
-                    when {
-                        owner is KtObjectDeclaration || owner is KtEnumEntry || owner.hasModifier(ENUM_KEYWORD) -> Visibilities.Private
-                        owner.hasModifier(SEALED_KEYWORD) -> Visibilities.Protected
-                        else -> Visibilities.Public
-                    }
-                }
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { computeCompilerVisibility().asKaSymbolVisibility }
 
-                visibility?.let { return it }
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
+    override val compilerVisibility: Visibility
+        get() = withValidityAssertion { computeCompilerVisibility() }
+
+    private fun computeCompilerVisibility(): Visibility {
+        val backingPsi = backingPsi
+        if (backingPsi != null) {
+            val visibility = backingPsi.visibilityByModifiers ?: backingPsi.ifNoStatusCompilerPluginPresent {
+                val owner = backingPsi.getContainingClassOrObject()
+                when {
+                    owner is KtObjectDeclaration || owner is KtEnumEntry || owner.hasModifier(ENUM_KEYWORD) -> Visibilities.Private
+                    owner.hasModifier(SEALED_KEYWORD) -> Visibilities.Protected
+                    else -> Visibilities.Public
+                }
             }
 
-            firSymbol.visibility
+            visibility?.let { return it }
         }
+
+        return firSymbol.visibility
+    }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {

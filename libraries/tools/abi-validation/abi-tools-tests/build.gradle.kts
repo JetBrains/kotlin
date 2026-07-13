@@ -1,6 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
 }
@@ -37,7 +40,10 @@ configurations.getByName("testEmbeddableImplementation").extendsFrom(configurati
 dependencies {
     // common dependencies for all tests
     testImplementation(kotlinStdlib())
-    testImplementation(kotlinTest("junit"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     "compilingImplementation"(kotlinStdlib())
 
@@ -57,24 +63,22 @@ tasks.test {
 }
 
 projectTests {
-    testTask(taskName = "testOriginal", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit4) {
+    testTask(taskName = "testOriginal", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit5) {
         group = "verification"
         testClassesDirs = testOriginalSourceSet.output.classesDirs
         classpath = testOriginalSourceSet.runtimeClasspath
 
-        useJUnit()
         systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
         systemProperty("testCasesClassesDirs", compilingSourceSet.output.classesDirs.asPath)
 
         dependsOn(compilingSourceSet.output)
     }
 
-    testTask(taskName = "testEmbeddable", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit4) {
+    testTask(taskName = "testEmbeddable", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit5) {
         group = "verification"
         testClassesDirs = testEmbeddableSourceSet.output.classesDirs
         classpath = testEmbeddableSourceSet.runtimeClasspath
 
-        useJUnit()
         systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
         systemProperty("testCasesClassesDirs", compilingSourceSet.output.classesDirs.asPath)
 

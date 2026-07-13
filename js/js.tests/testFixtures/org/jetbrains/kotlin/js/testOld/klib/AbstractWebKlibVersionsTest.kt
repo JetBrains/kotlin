@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.js.testOld.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.util.toMetadataVersion
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -27,7 +30,7 @@ abstract class AbstractWebKlibVersionsTest {
 
     @Test
     fun testABIVersionCLIFlag() {
-        val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/resolve/mismatched-abi-version")
+        val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/resolve/library-with-dependency")
         val klibDir = createKlibDir("lib1")
 
         val correctVersions = arrayOf(
@@ -71,7 +74,7 @@ abstract class AbstractWebKlibVersionsTest {
 
     @Test
     fun testMetadataVersionCLIFlag() {
-        val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/resolve/mismatched-abi-version")
+        val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/resolve/library-with-dependency")
         val klibDir = createKlibDir("lib1")
 
         val correctVersions = arrayOf(
@@ -114,6 +117,64 @@ abstract class AbstractWebKlibVersionsTest {
         }
     }
 
+    @Test
+    fun testCompileAgainstDependencyWithSupportedMetadataVersions() {
+        val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/resolve/library-with-dependency")
+        val currentLanguageVersionIndex = LanguageVersion.entries.indexOf(LanguageVersion.LATEST_STABLE)
+        val supportedDependencyMetadataVersions = listOf(
+            LanguageVersion.entries[currentLanguageVersionIndex - 2],
+            LanguageVersion.entries[currentLanguageVersionIndex - 1],
+            LanguageVersion.LATEST_STABLE,
+            LanguageVersion.entries[currentLanguageVersionIndex + 1],
+        ).map { it.toMetadataVersion().toString() }
+
+        val dependency = createKlibDir("lib1")
+        val usage = createKlibDir("lib2")
+        for (metadataVersion in supportedDependencyMetadataVersions) {
+            compileKlib(
+                sourceFile = testDataDir.resolve("lib1.kt"),
+                outputFile = dependency,
+                extraArgs = arrayOf(
+                    CommonCompilerArguments::metadataVersion.cliArgument + "=" + metadataVersion,
+                    CommonCompilerArguments::skipMetadataVersionCheck.cliArgument,
+                )
+            ).assertSuccess()
+
+            compileKlib(
+                sourceFile = testDataDir.resolve("lib2.kt"),
+                dependencies = arrayOf(dependency),
+                outputFile = usage,
+            ).assertSuccess()
+        }
+    }
+
+    @Test
+    fun testCompileAgainstDependencyWithUnsupportedMetadataVersions() {
+        val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/resolve/library-with-dependency")
+        val currentLanguageVersionIndex = LanguageVersion.entries.indexOf(LanguageVersion.LATEST_STABLE)
+        val metadataVersion = LanguageVersion.entries[currentLanguageVersionIndex + 2].toMetadataVersion().toString()
+
+        val dependency = createKlibDir("lib1")
+        compileKlib(
+            sourceFile = testDataDir.resolve("lib1.kt"),
+            outputFile = dependency,
+            extraArgs = arrayOf(
+                CommonCompilerArguments::metadataVersion.cliArgument + "=" + metadataVersion,
+                CommonCompilerArguments::skipMetadataVersionCheck.cliArgument,
+            )
+        ).assertSuccess()
+
+        val result = compileKlib(
+            sourceFile = testDataDir.resolve("lib2.kt"),
+            dependencies = arrayOf(dependency),
+            outputFile = createKlibDir("lib2"),
+        )
+
+        result.assertFailure()
+        assertTrue(result.output.contains("compiled with an incompatible version of Kotlin"))
+        assertTrue(result.output.contains("The actual metadata version is $metadataVersion"))
+    }
+
     private fun createKlibDir(name: String): File =
         tmpdir.resolve(name).apply(File::mkdirs)
 
@@ -144,4 +205,3 @@ abstract class AbstractWebKlibVersionsTest {
         }
     }
 }
-

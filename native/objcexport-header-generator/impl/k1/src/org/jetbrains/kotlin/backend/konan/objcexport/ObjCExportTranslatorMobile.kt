@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 class ObjCExportTranslatorMobile internal constructor(private val delegate: ObjCExportTranslatorImpl) : ObjCExportTranslator by delegate {
     companion object {
         fun create(namer: ObjCExportNamer, configuration: ObjCExportLazy.Configuration): ObjCExportTranslatorMobile {
+            @OptIn(K1Deprecation::class)
             val mapper = ObjCExportMapper(
                 local = true,
                 unitSuspendFunctionExport = configuration.unitSuspendFunctionExport,

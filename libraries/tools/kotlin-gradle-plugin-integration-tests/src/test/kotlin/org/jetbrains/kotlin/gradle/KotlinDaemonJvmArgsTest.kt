@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -196,6 +197,31 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
                 assertKotlinDaemonJvmOptions(
                     listOf("-Xmx758m", "--Duser.country=US")
                 )
+            }
+        }
+    }
+
+    @DisplayName("Incorrect JVM arguments trigger tooling diagnostic")
+    @GradleTest
+    fun toolingDiagnosticIsEmitted(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
+            enableGradleDaemonMemoryLimitInMb = null,
+        ) {
+            gradleProperties.append(
+                """
+                kotlin.daemon.jvmargs=-XX:+NonExistentFlag
+                """.trimIndent()
+            )
+
+            buildAndFail("assemble") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
+            }
+
+            build("assemble", buildOptions = defaultBuildOptions.copy(useDaemonFallbackStrategy = true)) {
+                assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
             }
         }
     }

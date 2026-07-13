@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_CLASS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.BackendKind
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPath
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransitive
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
@@ -94,12 +96,11 @@ class IrTextDumpHandler(
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = listOf(TestDumpDirectives, CodegenTestDirectives)
 
     private val pathRelativizer = IrFileEntryPathRelativizer(testServices)
 
     private val baseDumper = MultiModuleInfoDumper()
-    private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()
 
     private var byteCodeListingEnabled = false
 
@@ -164,15 +165,26 @@ class IrTextDumpHandler(
 
         @OptIn(InternalSymbolFinderAPI::class)
         return irBuiltIns.symbolFinder.findClass(classId)?.owner
-            ?: assertions.fail { "Can't find a class in external dependencies: $externalClassId" }
+            ?: testInfraError( "Can't find a class in external dependencies: $externalClassId" )
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
-        val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(getDumpExtension())
-        checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
-        buildersForSeparateFileDumps.entries.forEach { [expectedFile, dump] -> checkOneExpectedFile(expectedFile, dump.toString()) }
+        val actualDump = baseDumper.generateResultingDump()
+        val baseDumpExtension = getBaseDumpExtension()
+        val baseGoldenFile = moduleStructure.originalTestDataFiles.first()
+            .withExtension(baseDumpExtension)
+
+        val hasTargetSpecificDifferenceDirective = validateTargetSpecificDumpFile(
+            testServices, assertions, baseGoldenFile,
+            baseDumpExtension = baseDumpExtension,
+            actualDump,
+            isKotlinLikeDump = false,
+        )
+
+        if (!hasTargetSpecificDifferenceDirective) {
+            checkOneExpectedFile(baseGoldenFile, actualDump)
+        }
     }
 
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
@@ -183,8 +195,14 @@ class IrTextDumpHandler(
         }
     }
 
-    private fun getDumpExtension(): String {
+    private fun getBaseDumpExtension(): String {
         return customExtension ?: (if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION)
+    }
+
+    private fun getDumpExtension(): String {
+        return customExtension
+            ?: getTargetSpecificDumpExtension(testServices, getBaseDumpExtension())
+            ?: getBaseDumpExtension()
     }
 }
 

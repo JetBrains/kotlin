@@ -1,7 +1,9 @@
 expression: """
    const val CODE = "const val CODE = ..."
 """.trimIndent()
-constant: NOT_EVALUATED
-constantValueKind: NOT_EVALUATED
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED
+constant: "const val CODE = "const val CODE = ..." "
+constantValueKind: StringValue
+constantValueSource: DOT_QUALIFIED_EXPRESSION
+constantValueSourceText: """
+   const val CODE = "const val CODE = ..."
+""".trimIndent()

@@ -17,7 +17,7 @@ class SerializedMetadataLibraryProvider(
     override val moduleHeaderData: ByteArray,
     fragments: List<ListOfFragmentParts>,
     fragmentNames: List<String>,
-    override val metadataVersion: KlibMetadataVersion
+    override val metadataVersion: KlibMetadataVersion,
 ) : KlibModuleMetadata.MetadataLibraryProvider {
     private val fragmentMap: Map<String, MapOfFragmentParts>
 

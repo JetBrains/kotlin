@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("project-tests-convention")
@@ -23,6 +26,7 @@ dependencies {
     implementation(project(":analysis:analysis-api-standalone"))
 
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
+    implementation(project(":kotlin-util-klib"))
     compileOnly(project(":kotlin-util-klib-metadata"))
 }
 
@@ -30,7 +34,9 @@ sourceSets {
     "main" { projectDefault() }
 }
 
-optInToK1Deprecation()
+tasks.named("check") {
+    dependsOn(":native:swift:swift-export-standalone-integration-tests:check")
+}
 
 publish()
 

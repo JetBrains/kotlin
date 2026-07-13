@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,11 +13,7 @@ import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.UserDataProperty
-import org.jetbrains.kotlin.psi.analysisContext
-import org.jetbrains.kotlin.psi.doNotAnalyze
+import org.jetbrains.kotlin.psi.*
 
 /**
  * Specifies how references to non-local declarations in dangling files should be resolved.
@@ -174,7 +170,7 @@ public val PsiFile.copyOrigin: PsiFile?
 /**
  * The resolution mode explicitly set for this dangling file, or `null` for files that are not dangling or if the mode was not set.
  *
- * Use the [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] function for specifying the analysis mode. The effect is
+ * Use the [analyzeCopy][org.jetbrains.kotlin.analysis.api.session.analyzeCopy] function for specifying the analysis mode. The effect is
  * thread-local by design, as the file might potentially be resolved concurrently in different threads.
  *
  * The resolution mode affects equality of [KaDanglingFileModule]s. For each resolution mode, a separate resolution module and session will
@@ -186,7 +182,7 @@ public val KtFile.danglingFileResolutionMode: KaDanglingFileResolutionMode?
 /**
  * Runs the [action] with a resolution mode being explicitly set for the dangling [file].
  *
- * Avoid using this function in client-side code. Use [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
+ * Avoid using this function in client-side code. Use [analyzeCopy][org.jetbrains.kotlin.analysis.api.session.analyzeCopy] instead.
  */
 @KaImplementationDetail
 @OptIn(KaExperimentalApi::class)

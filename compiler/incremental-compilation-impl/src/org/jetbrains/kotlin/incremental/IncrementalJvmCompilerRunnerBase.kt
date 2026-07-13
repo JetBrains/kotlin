@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
@@ -95,6 +96,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
     ) {
         updateIncrementalCache(
             generatedFiles, caches.platformCache, changesCollector,
+            @OptIn(K1Deprecation::class)
             services[JavaClassesTracker::class.java] as? JavaClassesTrackerImpl
         )
     }
@@ -181,6 +183,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
             val targetToCache = mapOf(targetId to caches.platformCache)
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
             register(IncrementalCompilationComponents::class.java, incrementalComponents)
+            @OptIn(K1Deprecation::class)
             javaInteropCoordinator.makeJavaClassesTracker(caches.platformCache)?.let {
                 register(JavaClassesTracker::class.java, it)
             }

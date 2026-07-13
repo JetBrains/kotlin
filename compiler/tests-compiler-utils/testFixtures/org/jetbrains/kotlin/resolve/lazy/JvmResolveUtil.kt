@@ -28,59 +28,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 
 object JvmResolveUtil {
     @JvmStatic
-    @JvmOverloads
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
-    fun createContainer(
-        environment: KotlinCoreEnvironment,
-        files: Collection<KtFile> = emptyList(),
-        targetEnvironment: TargetEnvironment = CompilerEnvironment
-    ): ComponentProvider =
-        @Suppress("DEPRECATION_ERROR")
-        TopDownAnalyzerFacadeForJVM.createContainer(
-            environment.project, files, NoScopeRecordCliBindingTrace(environment.project),
-            environment.configuration, { PackagePartProvider.Empty }, ::FileBasedDeclarationProviderFactory,
-            targetEnvironment
-        )
-
-    @JvmStatic
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
-    fun analyzeAndCheckForErrors(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult {
-        @Suppress("DEPRECATION_ERROR")
-        return analyzeAndCheckForErrors(environment.project, setOf(file), environment.configuration, environment::createPackagePartProvider)
-    }
-
-    @JvmStatic
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
-    fun analyzeAndCheckForErrors(
-        project: Project,
-        files: Collection<KtFile>,
-        configuration: CompilerConfiguration,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = CliBindingTrace(project),
-        klibList: List<KotlinLibrary> = emptyList()
-    ): AnalysisResult {
-        for (file in files) {
-            try {
-                AnalyzingUtils.checkForSyntacticErrors(file)
-            } catch (e: Exception) {
-                throw TestsCompiletimeError(e)
-            }
-        }
-
-        @Suppress("DEPRECATION_ERROR")
-        return analyze(project, files, configuration, packagePartProvider, trace, klibList).apply {
-            try {
-                // Do not report UNRESOLVED_REFERENCE in KAPT mode
-                if (!configuration.skipBodies) {
-                    AnalyzingUtils.throwExceptionOnErrors(bindingContext)
-                }
-            } catch (e: Exception) {
-                throw TestsCompiletimeError(e)
-            }
-        }
-    }
-
-    @JvmStatic
     @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun analyze(environment: KotlinCoreEnvironment): AnalysisResult {
         @Suppress("DEPRECATION_ERROR")

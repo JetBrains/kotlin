@@ -62,7 +62,12 @@ fun TestModule.collectDependencies(
                 customWasmJsCompilerSettings.kotlinTest,
             )
         }
-        WasmTarget.WASI -> error("WASI target is not yet supported in the first phase of ${CustomWebCompilerFirstStageFacade::class.simpleName}")
+        WasmTarget.WASI -> {
+            listOf(
+                customWasmWasiCompilerSettings.stdlib,
+                customWasmWasiCompilerSettings.kotlinTest,
+            )
+        }
     }
 
     val [transitiveLibraries: List<File>, friendLibraries: List<File>] = getTransitivesAndFriends(module = this, testServices)

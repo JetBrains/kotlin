@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FinallyBlockExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
@@ -61,7 +63,6 @@ import org.jetbrains.kotlin.types.model.isNullableType
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.getChildren
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -133,7 +134,7 @@ fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
     return toRegularClassSymbol(session)?.isInlineOrValue == true
 }
 
-fun ConeKotlinType.isBasicSingleFieldValueClass(session: FirSession): Boolean =
+fun ConeKotlinType.isInlineClass(session: FirSession): Boolean =
     with(session.typeContext) { typeConstructor().isInlineClass() }
 
 fun ConeKotlinType.getValueClassTypeRecursionType(session: FirSession): RecursionType? =
@@ -150,12 +151,12 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     val asRegularClass = plainRegularClass ?: leastUpperBound(session).toRegularClassSymbol(session) ?: return null
     val primaryConstructor = asRegularClass.primaryConstructorIfAny(session) ?: return null
     // Recursion in Value Classes with nullable types (e.g. `value class VC(val x: VC?, ...)`) is supported only for Multi-Field Full Value Classes
-    // Generally, there is no need to disallow it for Single-field value classes as well, so there is KT-86498 for that.
+    // Generally, there is no need to disallow it for single-field value classes as well, so there is KT-86498 for that.
     // Below we forbid recursion for all other cases
-    // Reminder: Single-field value class is basic if it has @JvmInline annotation or if the FullValueClasses feature is disabled
+    // Reminder: single-field value class is considered inline if it has @JvmInline annotation or if the FullValueClasses feature is disabled
     val isSubjectForCheck = when (asRegularClass.valueClassRepresentation) {
         null -> false
-        is BasicValueClassRepresentation -> true
+        is InlineClassRepresentation -> true
         is FullValueClassRepresentation if isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
         is FullValueClassRepresentation -> true
     }
@@ -1109,16 +1110,8 @@ fun FirBasedSymbol<*>?.isExpect(): Boolean {
     }
 }
 
-context(context: SessionHolder)
 fun FirResolvedQualifier.resolvedSymbolOrCompanionSymbol(): FirClassLikeSymbol<*>? {
-    return symbol?.applyIf(resolvedToCompanionObject) {
-        fullyExpandedClass()?.resolvedCompanionObjectSymbol
-    }
-}
-
-context(context: SessionHolder)
-fun FirResolvedQualifier.resolvedCompanionSymbol(): FirClassLikeSymbol<*>? {
-    return symbol.takeIf { resolvedToCompanionObject }?.fullyExpandedClass()?.resolvedCompanionObjectSymbol
+    return if (resolvedToCompanionObject) accessedObjectSymbol else qualifierSymbol
 }
 
 context(context: CheckerContext)
@@ -1183,4 +1176,79 @@ fun FirFunctionSymbol<*>.isArrayLambdaConstructor(): Boolean {
     return this is FirConstructorSymbol &&
             valueParameterSymbols.size == 2 &&
             resolvedReturnType.isArrayOrPrimitiveArray
+}
+
+/**
+ * @return true if the symbol is generated `copy` function from a data-class
+ */
+fun FirFunction.isCopyMethod(): Boolean =
+    origin == FirDeclarationOrigin.Synthetic.DataClassMember
+            && nameOrSpecialName == StandardNames.DATA_CLASS_COPY
+            && getContainingClassSymbol()?.isData == true
+
+@OptIn(SymbolInternals::class)
+context(context: CheckerContext)
+fun FirBasedSymbol<*>.isExportedToJs(): Boolean {
+    val declaration = fir
+    val session = context.session
+
+    if (declaration is FirMemberDeclaration) {
+        val visibility = declaration.visibility
+        if (visibility != Visibilities.Public && visibility != Visibilities.Protected) {
+            return false
+        }
+
+        /**
+         * We don't need to check anything except the `copy` method because
+         * - `componentN` are not exported to JS at all. See [org.jetbrains.kotlin.ir.backend.js.lower.ExcludeSyntheticDeclarationsFromExportLowering]
+         * - `toString`, `hashCode`, and `equals` are members of `Any` so they are exported anyway. See [org.jetbrains.kotlin.ir.backend.js.ir.shouldDeclarationBeExported]
+         */
+        if (
+            declaration.origin == FirDeclarationOrigin.Synthetic.DataClassMember &&
+            declaration.nameOrSpecialName != StandardNames.DATA_CLASS_COPY
+        ) {
+            return false
+        }
+    }
+
+    if (hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.jsExportIgnore, session)) {
+        return false
+    }
+
+    if (
+        hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.jsExport, session) ||
+        hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.jsExportDefault, session) ||
+        getAnnotationBooleanParameter(StandardClassIds.Annotations.jsImplicitExport, session) == true ||
+        getContainingFile()?.symbol?.hasAnnotation(StandardClassIds.Annotations.jsExport, session) == true
+    ) {
+        /**
+         * The rules for exporting data class copy functions are inheriting rules for consistent `copy` visibility,
+         * described in KT-11914. The migration process is exactly the same as for the visibility modifiers (described in details in the same ticket)
+         *
+         * For more context see [shouldExportDataClassCopy] from org.jetbrains.kotlin.ir.backend.js.ir package
+         */
+        if (declaration is FirFunction && declaration.isCopyMethod()) {
+            val dataClass = getContainingClassSymbol()
+            val primaryConstructor = dataClass?.getPrimaryConstructorSymbol(session, context.scopeSession) ?: return false
+
+            return when {
+                dataClass.hasAnnotation(StandardClassIds.Annotations.ExposedCopyVisibility, session) -> true
+                primaryConstructor.isExportedToJs() -> true
+                LanguageFeature.DataClassCopyRespectsConstructorVisibility.isEnabled() -> false
+                else -> !dataClass.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility, session)
+            }
+        }
+
+        return true
+    }
+
+    return false
+}
+
+fun FirBasedSymbol<*>.getContainingFile(): FirFile? {
+    return when (this) {
+        is FirCallableSymbol<*> -> moduleData.session.firProvider.getFirCallableContainerFile(this)
+        is FirClassLikeSymbol<*> -> moduleData.session.firProvider.getFirClassifierContainerFileIfAny(this)
+        else -> null
+    }
 }

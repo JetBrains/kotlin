@@ -34,5 +34,8 @@ library {
 
       public constructor()
     }
+
+    package {
+    }
   }
 }

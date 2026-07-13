@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -132,7 +133,7 @@ internal fun IrDiagnosticReporter.reportExpectActualIrMismatch(
 internal fun IrDiagnosticReporter.reportActualAnnotationsNotMatchExpect(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
-    incompatibilityType: ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>,
+    incompatibilityType: ExpectActualAnnotationsIncompatibilityType<IrAnnotation>,
     reportOn: IrSymbol,
 ) {
     at(reportOn.owner as IrDeclaration).report(

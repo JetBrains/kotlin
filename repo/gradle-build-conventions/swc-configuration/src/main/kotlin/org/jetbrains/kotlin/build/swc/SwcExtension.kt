@@ -18,7 +18,7 @@ abstract class SwcExtension(
     private val swc: SwcEnvSpec,
 ) {
     val swcVersion: String
-        get() = project.property("versions.swc") as String
+        get() = kotlinBuildProperties.versionsProperty("swc").get()
 
     val swcExecutablePath: Provider<String> = swc.executable.also {
         project.extra["swc.path"] = it

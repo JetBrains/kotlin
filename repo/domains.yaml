@@ -24,6 +24,7 @@ Wasm:
 Js:
   include:
     - "js/**"
+    - "libraries/tools/analysis-api-based-klib-reader/**"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
@@ -48,6 +49,7 @@ AnalysisApi:
   include:
     - "analysis/**"
     - "compiler/psi/**"
+    - "prepare/analysis-api/**"
   exclude:
     - "compiler/psi/parser/**"
   fullyAffectedBy:
@@ -57,6 +59,7 @@ AnalysisApi:
 SwiftExport:
   include:
     - "native/swift/**"
+    - "libraries/tools/analysis-api-based-klib-reader/**"
   fullyAffectedBy:
     - AnalysisApi # todo: Replace this dependency with a reviewed set of @AffectedByAnalysisApi tests
 
@@ -65,7 +68,6 @@ CompilerPlugins:
     - "plugins/**"
   fullyAffectedBy:
     - Compiler
-    - Unknown
 
 Gradle:
   include:
@@ -79,7 +81,6 @@ Maven:
 # It is used to declare which domains will affect IntelliJ and to infer when to run tests against kt-master
 IntelliJ:
   include:
-    - "prepare/analysis-api-*/**"
     - "prepare/ide-plugin-dependencies/**"
   fullyAffectedBy:
     - Compiler

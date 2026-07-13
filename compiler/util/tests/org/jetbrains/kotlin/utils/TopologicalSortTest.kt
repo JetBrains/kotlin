@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.utils
 
-import junit.framework.TestCase
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import kotlin.test.assertFails
 
-class TopologicalSortTest : TestCase() {
+class TopologicalSortTest {
+    @Test
     fun testEmptyGraph() {
-        assertEquals("", emptyList<Any>(), topologicalSort(emptyList<Any>()) { emptyList<Any>() })
+        assertEquals(emptyList<Any>(), topologicalSort(emptyList<Any>()) { emptyList() })
     }
 
+    @Test
     fun testSingleNode() {
         checkGraph(
             """
@@ -23,6 +26,7 @@ class TopologicalSortTest : TestCase() {
         )
     }
 
+    @Test
     fun testDisjointGraph() {
         checkGraph(
             """
@@ -33,6 +37,7 @@ class TopologicalSortTest : TestCase() {
         )
     }
 
+    @Test
     fun testSimpleGraph() {
         checkGraph(
             """
@@ -43,6 +48,7 @@ class TopologicalSortTest : TestCase() {
         )
     }
 
+    @Test
     fun testSimpleGraphShuffledNodes() {
         checkGraph(
             """
@@ -53,6 +59,7 @@ class TopologicalSortTest : TestCase() {
         )
     }
 
+    @Test
     fun testBamboo() {
         checkGraph(
             """
@@ -63,6 +70,7 @@ class TopologicalSortTest : TestCase() {
         )
     }
 
+    @Test
     fun testLongerPath() {
         checkGraph(
             """
@@ -73,6 +81,7 @@ class TopologicalSortTest : TestCase() {
         )
     }
 
+    @Test
     fun testRepeatedEdges() {
         checkGraph(
             """
@@ -83,6 +92,7 @@ class TopologicalSortTest : TestCase() {
         )
     }
 
+    @Test
     fun testSelfLoopReport() {
         val graph = parseFromString(
             """
@@ -93,6 +103,7 @@ class TopologicalSortTest : TestCase() {
         assertFails { topologicalSort(graph.nodes, dependencies = { graph.edges[this].orEmpty() }) }
     }
 
+    @Test
     fun testDirectLoopReport() {
         val graph = parseFromString(
             """
@@ -103,6 +114,7 @@ class TopologicalSortTest : TestCase() {
         assertFails { topologicalSort(graph.nodes, dependencies = { graph.edges[this].orEmpty() }) }
     }
 
+    @Test
     fun testLongLoopReport() {
         val graph = parseFromString(
             """
@@ -115,7 +127,7 @@ class TopologicalSortTest : TestCase() {
 
     private fun checkGraph(description: String, expected: List<String>) {
         val graph = parseFromString(description)
-        assertEquals("Incorrect order of sorted nodes", expected, sortedNodes(graph))
+        assertEquals(expected, sortedNodes(graph)) { "Incorrect order of sorted nodes" }
     }
 
     private fun <T> sortedNodes(graph: Graph<T>): List<T> {
@@ -136,7 +148,7 @@ private class Graph<T>(
 private fun parseFromString(description: String): Graph<String> {
     val [nodeStrings, edgeStrings] = description.lines()
     val nodes = nodeStrings.split(";").map(String::trim).toSet()
-    val edges = buildMap<String, MutableList<String>> {
+    val edges = buildMap {
         edgeStrings.takeIf { it.isNotBlank() }?.split(";")?.forEach { edgeDescription ->
             val [from, to] = edgeDescription.split(">").map(String::trim)
             getOrPut(from) { mutableListOf() }.add(to)

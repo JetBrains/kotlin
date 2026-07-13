@@ -148,13 +148,15 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
     private fun ConeSimpleKotlinType.removeOutProjection(typeContext: ConeTypeContext, isCovariant: Boolean): ConeSimpleKotlinType {
         return when (this) {
             is ConeIntersectionType -> mapTypes { it.removeOutProjection(typeContext, isCovariant) }
-            is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
+            is ConeClassLikeType -> ConeClassLikeTypeImpl(
                 lookupTag,
                 typeArguments.map { it.removeOutProjection(typeContext, isCovariant) }.toTypedArray(),
                 isMarkedNullable,
                 attributes
             )
             is ConeCapturedType -> error("There shouldn't be any captured types here as we call `approximate()`")
+            // Type parameter-based types don't have projections themselves
+            is ConeTypeParameterType -> this
             else -> this
         }
     }

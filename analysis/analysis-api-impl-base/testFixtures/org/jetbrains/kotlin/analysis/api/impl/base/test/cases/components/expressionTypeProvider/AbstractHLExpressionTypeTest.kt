@@ -30,6 +30,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
         val expression = when (selected) {
             is KtExpression -> selected
             is KtValueArgument -> selected.getArgumentExpression()
+            is KtContainerNode -> selected.children.singleOrNull() as? KtExpression
             else -> null
         } ?: error("expect an expression but got ${selected.text}, ${selected::class}")
 
@@ -51,6 +52,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
 
         val actual = buildString {
             appendLine("expression: ${expression.text}")
+            appendLine("expression PSI: ${expression::class.simpleName}")
             appendLine("type: $type")
         }
         testServices.assertions.assertEqualsToTestOutputFile(actual)

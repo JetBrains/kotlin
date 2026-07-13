@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
@@ -15,15 +16,16 @@ import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
+import org.jetbrains.kotlin.ir.declarations.isInlineClass
 
 internal abstract class KonanBackendContext(config: NativeSecondStageCompilationConfig) : BasicNativeBackendPhaseContext(config), CommonBackendContext {
     @OptIn(ValueClassBackendAgnosticApi::class)
     override val inlineClassesUtils: InlineClassesUtils = object : InlineClassesUtils {
         override fun isClassInlineLike(klass: IrClass): Boolean =
-                klass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
+                klass.isInlineClass(treatCompatibleFullValueClassesAsInline = true)
     }
 
+    @OptIn(K1Deprecation::class)
     abstract val builtIns: KonanBuiltIns
 
     abstract override val symbols: BackendNativeSymbols

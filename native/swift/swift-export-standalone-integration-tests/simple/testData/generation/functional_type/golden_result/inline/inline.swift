@@ -8,10 +8,16 @@ public func bar(
 ) -> Swift.Void {
     return { __root___bar__TypesOfArguments__U2829202D_U20Swift_Void_U2829202D_U20Swift_Void__({
         let originalBlock: () -> Swift.Void = inlined
-        return { return { originalBlock(); return true }() }
+        return {
+            let _result = originalBlock()
+            return { _result; return true }()
+        }
     }(), {
         let originalBlock: () -> Swift.Void = notInlined
-        return { return { originalBlock(); return true }() }
+        return {
+            let _result = originalBlock()
+            return { _result; return true }()
+        }
     }()); return () }()
 }
 public func foo(
@@ -19,6 +25,9 @@ public func foo(
 ) -> Swift.Void {
     return { __root___foo__TypesOfArguments__U2829202D_U20Swift_Void__({
         let originalBlock: () -> Swift.Void = inlined
-        return { return { originalBlock(); return true }() }
+        return {
+            let _result = originalBlock()
+            return { _result; return true }()
+        }
     }()); return () }()
 }

@@ -1,2 +1,3 @@
 expression: s[2, -2]
+expression PSI: KtArrayAccessExpression
 type: kotlin.String

@@ -211,7 +211,7 @@ class FirJavaField @FirImplementationDetail constructor(
 }
 
 @FirBuilderDsl
-internal class FirJavaFieldBuilder : FirFieldBuilder() {
+class FirJavaFieldBuilder : FirFieldBuilder() {
     var isFromSource: Boolean by Delegates.notNull()
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     var lazyInitializer: Lazy<FirExpression?>? = null
@@ -249,7 +249,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
 }
 
 @OptIn(ExperimentalContracts::class)
-internal inline fun buildJavaField(init: FirJavaFieldBuilder.() -> Unit): FirJavaField {
+inline fun buildJavaField(init: FirJavaFieldBuilder.() -> Unit): FirJavaField {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

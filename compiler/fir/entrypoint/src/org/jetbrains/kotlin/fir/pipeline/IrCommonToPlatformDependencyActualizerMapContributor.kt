@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.actualizer.IrActualizerMapContributor
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
@@ -18,16 +19,10 @@ import org.jetbrains.kotlin.fir.session.NativeForwardDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.session.structuredProviders
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 
@@ -45,10 +40,10 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
             val mappingProviders = mutableListOf<FirCommonDeclarationsMappingSymbolProvider>()
 
             fun process(session: FirSession) {
-                val mappingProvider = (session.symbolProvider as FirCachingCompositeSymbolProvider)
+                val mappingProvidersOfSesssion = (session.symbolProvider as FirCachingCompositeSymbolProvider)
                     .providers
-                    .firstIsInstanceOrNull<FirCommonDeclarationsMappingSymbolProvider>()
-                mappingProviders.addIfNotNull(mappingProvider)
+                    .filterIsInstance<FirCommonDeclarationsMappingSymbolProvider>()
+                mappingProviders.addAll(mappingProvidersOfSesssion)
                 for (dependency in session.moduleData.dependsOnDependencies) {
                     process(dependency.session)
                 }
@@ -180,7 +175,10 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
     }
 
     private fun FirBasedSymbol<*>.properComponents(): Fir2IrComponents {
-        val sourceSession = dependencyToSourceSession.getValue(moduleData)
+        val sourceSession = when (origin) {
+            is FirDeclarationOrigin.Precompiled -> moduleData.session
+            else -> dependencyToSourceSession.getValue(moduleData)
+        }
         return componentsPerSession.getValue(sourceSession)
     }
 

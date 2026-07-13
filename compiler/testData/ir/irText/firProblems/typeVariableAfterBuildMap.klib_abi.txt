@@ -1,0 +1,51 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /Visibilities { // /Visibilities|null[0]
+    final object Inherited : /Visibility { // /Visibilities.Inherited|null[0]
+        final fun mustCheckInImports(): kotlin/Boolean // /Visibilities.Inherited.mustCheckInImports|mustCheckInImports(){}[0]
+    }
+    final object Internal : /Visibility { // /Visibilities.Internal|null[0]
+        final fun mustCheckInImports(): kotlin/Boolean // /Visibilities.Internal.mustCheckInImports|mustCheckInImports(){}[0]
+    }
+    final object InvisibleFake : /Visibility { // /Visibilities.InvisibleFake|null[0]
+        final val externalDisplayName // /Visibilities.InvisibleFake.externalDisplayName|{}externalDisplayName[0]
+            final fun <get-externalDisplayName>(): kotlin/String // /Visibilities.InvisibleFake.externalDisplayName.<get-externalDisplayName>|<get-externalDisplayName>(){}[0]
+        final fun mustCheckInImports(): kotlin/Boolean // /Visibilities.InvisibleFake.mustCheckInImports|mustCheckInImports(){}[0]
+    }
+    final object Local : /Visibility { // /Visibilities.Local|null[0]
+        final fun mustCheckInImports(): kotlin/Boolean // /Visibilities.Local.mustCheckInImports|mustCheckInImports(){}[0]
+    }
+    final object Private : /Visibility { // /Visibilities.Private|null[0]
+        final fun mustCheckInImports(): kotlin/Boolean // /Visibilities.Private.mustCheckInImports|mustCheckInImports(){}[0]
+    }
+    final object PrivateToThis : /Visibility { // /Visibilities.PrivateToThis|null[0]
+        final val internalDisplayName // /Visibilities.PrivateToThis.internalDisplayName|{}internalDisplayName[0]
+            final fun <get-internalDisplayName>(): kotlin/String // /Visibilities.PrivateToThis.internalDisplayName.<get-internalDisplayName>|<get-internalDisplayName>(){}[0]
+        final fun mustCheckInImports(): kotlin/Boolean // /Visibilities.PrivateToThis.mustCheckInImports|mustCheckInImports(){}[0]
+    }
+    final object Protected : /Visibility { // /Visibilities.Protected|null[0]
+        final fun mustCheckInImports(): kotlin/Boolean // /Visibilities.Protected.mustCheckInImports|mustCheckInImports(){}[0]
+    }
+    final object Public : /Visibility { // /Visibilities.Public|null[0]
+        final fun mustCheckInImports(): kotlin/Boolean // /Visibilities.Public.mustCheckInImports|mustCheckInImports(){}[0]
+    }
+    final object Unknown : /Visibility { // /Visibilities.Unknown|null[0]
+        final fun mustCheckInImports(): kotlin/Boolean // /Visibilities.Unknown.mustCheckInImports|mustCheckInImports(){}[0]
+    }
+}
+abstract class /Visibility { // /Visibility|null[0]
+    open val externalDisplayName // /Visibility.externalDisplayName|{}externalDisplayName[0]
+        open fun <get-externalDisplayName>(): kotlin/String // /Visibility.externalDisplayName.<get-externalDisplayName>|<get-externalDisplayName>(){}[0]
+    open val internalDisplayName // /Visibility.internalDisplayName|{}internalDisplayName[0]
+        open fun <get-internalDisplayName>(): kotlin/String // /Visibility.internalDisplayName.<get-internalDisplayName>|<get-internalDisplayName>(){}[0]
+    final val isPublicAPI // /Visibility.isPublicAPI|{}isPublicAPI[0]
+        final fun <get-isPublicAPI>(): kotlin/Boolean // /Visibility.isPublicAPI.<get-isPublicAPI>|<get-isPublicAPI>(){}[0]
+    final val name // /Visibility.name|{}name[0]
+        final fun <get-name>(): kotlin/String // /Visibility.name.<get-name>|<get-name>(){}[0]
+    constructor <init>(kotlin/String, kotlin/Boolean) // /Visibility.<init>|<init>(kotlin.String;kotlin.Boolean){}[0]
+    abstract fun mustCheckInImports(): kotlin/Boolean // /Visibility.mustCheckInImports|mustCheckInImports(){}[0]
+}

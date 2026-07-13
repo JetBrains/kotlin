@@ -6,7 +6,7 @@ KtPackageDirective(43,55): 'package test'
 
 KtNameReferenceExpression(51,55): 'test'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -38,7 +38,7 @@ KtUserType(80,81): 'C'
 
 KtNameReferenceExpression(80,81): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -70,7 +70,7 @@ KtUserType(105,106): 'C'
 
 KtNameReferenceExpression(105,106): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -90,7 +90,7 @@ KtUserType(113,116): 'Int'
 
 KtNameReferenceExpression(113,116): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -122,7 +122,7 @@ KtDotQualifiedExpression(146,153): 'C.foo()'
 
 KtNameReferenceExpression(146,147): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -136,7 +136,7 @@ KtCallExpression(148,153): 'foo()'
 
 KtNameReferenceExpression(148,151): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/foo(<extension receiver>: test.C): kotlin.Unit
@@ -153,7 +153,7 @@ KtDotQualifiedExpression(158,164): 'C.prop'
 
 KtNameReferenceExpression(158,159): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -161,7 +161,7 @@ KtNameReferenceExpression(158,159): 'C'
 
 KtNameReferenceExpression(160,164): 'prop'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int
@@ -175,7 +175,7 @@ KtCallableReferenceExpression(170,176): 'C::foo'
 
 KtNameReferenceExpression(170,171): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -183,7 +183,7 @@ KtNameReferenceExpression(170,171): 'C'
 
 KtNameReferenceExpression(173,176): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/foo(<extension receiver>: test.C): kotlin.Unit
@@ -197,7 +197,7 @@ KtCallableReferenceExpression(181,188): 'C::prop'
 
 KtNameReferenceExpression(181,182): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -205,7 +205,7 @@ KtNameReferenceExpression(181,182): 'C'
 
 KtNameReferenceExpression(184,188): 'prop'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int

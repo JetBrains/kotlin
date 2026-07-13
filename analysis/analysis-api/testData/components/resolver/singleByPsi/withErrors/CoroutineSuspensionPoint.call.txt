@@ -8,7 +8,7 @@ KtNameReferenceExpression(183,194): 'suspendHere'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -27,6 +27,7 @@ KtNameReferenceExpression(183,194): 'suspendHere'
               annotations: []
               typeArguments: []
               type: Controller
+            typeParameters: []
             visibility: PUBLIC
           type = Controller
         extensionReceiver = null

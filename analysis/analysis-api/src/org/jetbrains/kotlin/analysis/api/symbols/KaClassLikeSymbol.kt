@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -74,11 +73,13 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
     public abstract val isReified: Boolean
 
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.LOCAL }
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 
     abstract override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol>
@@ -96,6 +97,13 @@ public sealed class KaClassLikeSymbol : KaClassifierSymbol() {
      */
     public abstract val classId: ClassId?
 
+    /**
+     * The declaration's type parameters.
+     *
+     * See [Generics](https://kotlinlang.org/docs/generics.html)
+     */
+    public abstract val typeParameters: List<KaTypeParameterSymbol>
+
     abstract override fun createPointer(): KaSymbolPointer<KaClassLikeSymbol>
 }
 
@@ -104,7 +112,7 @@ public sealed class KaClassLikeSymbol : KaClassifierSymbol() {
  */
 @OptIn(KaImplementationDetail::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
-public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
+public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(), KaNamedSymbol {
     final override val modality: KaSymbolModality
         get() = withValidityAssertion { KaSymbolModality.FINAL }
 
@@ -177,8 +185,10 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
     final override val classId: ClassId? get() = withValidityAssertion { null }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.LOCAL }
 
     @KaExperimentalApi
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 
     final override val isExpect: Boolean get() = withValidityAssertion { false }
@@ -197,7 +207,6 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaNamedClassSymbol : KaClassSymbol(),
-    KaTypeParameterOwnerSymbol,
     KaNamedSymbol,
     KaContextReceiversOwner {
 

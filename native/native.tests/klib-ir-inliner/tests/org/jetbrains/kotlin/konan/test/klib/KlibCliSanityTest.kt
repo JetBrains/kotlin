@@ -276,7 +276,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             fail { "Normally unreachable code" }
         } catch (cte: CompilationToolException) {
             val libraryPath = buildDir.resolve("klib-files.unpacked.transformed/lib1").path
-            if (!cte.reason.contains("KLIB loader: Incompatible ABI version 3.4.0 in library: $libraryPath"))
+            if (!cte.reason.contains("KLIB loader: Incompatible ABI version 3.5.0 in library: $libraryPath"))
                 throw cte
         }
     }

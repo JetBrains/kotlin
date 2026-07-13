@@ -38,15 +38,25 @@ internal data class WriteBitcodeFileInput(
         val outputFile: File,
 ) : LlvmIrHolder
 
+internal data class InsertEntryPointAliasInput(
+        override val llvmModule: LLVMModuleRef,
+        val entryPointName: String,
+) : LlvmIrHolder
+
+internal val InsertEntryPointAliasPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, InsertEntryPointAliasInput>(
+        "InsertEntryPointAlias"
+) { _, (llvmModule, entryPointName) ->
+    // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
+    insertAliasToEntryPoint(llvmModule, entryPointName)
+}
+
 /**
  * Write in-memory LLVM module to filesystem as a bitcode.
  */
 internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, WriteBitcodeFileInput>(
         "WriteBitcodeFile",
         postactions = getDefaultLlvmModuleActions(),
-) { context, (llvmModule, outputFile) ->
-    // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
-    insertAliasToEntryPoint(context, llvmModule)
+) { _, (llvmModule, outputFile) ->
     LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPath)
 }
 
@@ -103,7 +113,7 @@ internal val ThreadSanitizerPhase = optimizationPipelinePass(
         pipeline = ::ThreadSanitizerPipeline
 )
 
-internal val StackProtectorPhase = createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
+internal val StackProtectorPhaseInCompiler = createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
         name = "StackProtectorPhase",
         postactions = getDefaultLlvmModuleActions(),
         op = { context: OptimizationState, module: LLVMModuleRef ->
@@ -121,7 +131,12 @@ internal val StackProtectorPhase = createSimpleNamedCompilerPhase<OptimizationSt
         }
 )
 
-internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
+internal val StackProtectorPhaseInLLVM = optimizationPipelinePass(
+        name = "StackProtectorPhase",
+        pipeline = ::StackProtectorPipeline
+)
+
+internal val RemoveRedundantSafepointsPhaseInCompiler = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
         name = "RemoveRedundantSafepoints",
         postactions = getDefaultLlvmModuleActions(),
         op = { context, _ ->
@@ -130,6 +145,11 @@ internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<Bit
                     isSafepointInliningAllowed = context.shouldInlineSafepoints()
             )
         }
+)
+
+internal val RemoveRedundantSafepointsPhaseInLLVM = optimizationPipelinePass(
+        name = "RemoveRedundantSafepoints",
+        pipeline = ::RemoveRedundantSafepointsPipeline
 )
 
 internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
@@ -163,7 +183,11 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     )
     useContext(OptimizationState(context.config, optimizationConfig, context.performanceManager)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
-        it.runAndMeasurePhase(StackProtectorPhase, module)
+        if (context.config.runLLVMPassesInCompiler) {
+            it.runAndMeasurePhase(StackProtectorPhaseInCompiler, module)
+        } else {
+            it.runAndMeasurePhase(StackProtectorPhaseInLLVM, module)
+        }
         it.runAndMeasurePhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
         it.runAndMeasurePhase(ModuleBitcodeOptimizationPhase, module)
         it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
@@ -172,6 +196,11 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
             null -> {}
         }
+        if (!context.config.runLLVMPassesInCompiler) {
+            it.runAndMeasurePhase(RemoveRedundantSafepointsPhaseInLLVM, module)
+        }
     }
-    runAndMeasurePhase(RemoveRedundantSafepointsPhase)
+    if (context.config.runLLVMPassesInCompiler) {
+        runAndMeasurePhase(RemoveRedundantSafepointsPhaseInCompiler)
+    }
 }

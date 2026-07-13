@@ -317,23 +317,35 @@ public class KtPsiUtil {
         return classOrObject instanceof KtClass && ((KtClass) classOrObject).isInterface();
     }
 
-    @Nullable
+    /**
+     * Returns the outermost class that lexically encloses (and includes) the given class.
+     *
+     * <p>Starting from {@code classOrObject}, this repeatedly ascends to the enclosing class
+     * and returns the last one reached — the top of the class-nesting chain.
+     *
+     * <p>The walk stops as soon as a declaration has no enclosing class; in particular:
+     * <ul>
+     *     <li>a top-level class is returned unchanged;</li>
+     *     <li>a nested or inner class resolves to the top-level class that contains it;</li>
+     *     <li>a local class (declared inside a code block) is returned unchanged, and the walk never
+     *         crosses out of a local class into its surrounding block — so a class nested inside a local class
+     *         resolves to that local class rather than to any top-level declaration.</li>
+     * </ul>
+     *
+     * Note: a class declared inside a {@code companion { }} block (which is invalid code) is treated as nested
+     * directly in the class that owns the block.
+     *
+     * @param classOrObject the class to start the search from
+     * @return the outermost enclosing class; never {@code null} — at minimum {@code classOrObject} itself
+     */
+    @NotNull
     public static KtClassOrObject getOutermostClassOrObject(@NotNull KtClassOrObject classOrObject) {
         KtClassOrObject current = classOrObject;
-        while (true) {
-            PsiElement parent = current.getParent();
-            assert parent != null : "Class with no parent: " + current.getText();
-
-            if (parent instanceof PsiFile) {
-                return current;
-            }
-            if (!(parent instanceof KtClassBody)) {
-                // It is a local class, no legitimate outer
-                return current;
-            }
-
-            current = (KtClassOrObject) parent.getParent();
+        KtClassOrObject outer;
+        while ((outer = KtPsiUtilKt.getContainingClassOrObject(current)) != null) {
+            current = outer;
         }
+        return current;
     }
 
     @Nullable

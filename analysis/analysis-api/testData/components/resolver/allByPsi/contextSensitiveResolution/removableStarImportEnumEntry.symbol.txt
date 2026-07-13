@@ -1,0 +1,163 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(25,37): 'package main'
+  null
+
+KtNameReferenceExpression(33,37): 'main'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main
+    ]
+
+KtImportList(39,72): 'import test.Foo'
+  null
+
+KtImportDirective(39,54): 'import test.Foo'
+  null
+
+KtDotQualifiedExpression(46,54): 'test.Foo'
+  null
+
+KtNameReferenceExpression(46,50): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtNameReferenceExpression(51,54): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtImportDirective(55,72): 'import test.Foo.*'
+  null
+
+KtDotQualifiedExpression(62,70): 'test.Foo'
+  null
+
+KtNameReferenceExpression(62,66): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtNameReferenceExpression(67,70): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtNamedFunction(74,101): 'fun expectsFoo(foo: Foo) {}'
+  null
+
+KtParameterList(88,98): '(foo: Foo)'
+  null
+
+KtParameter(89,97): 'foo: Foo'
+  null
+
+KtTypeReference(94,97): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtUserType(94,97): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtNameReferenceExpression(94,97): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtBlockExpression(99,101): '{}'
+  null
+
+KtNamedFunction(103,158): 'fun usage(): Foo {'
+  null
+
+KtParameterList(112,114): '()'
+  null
+
+KtTypeReference(116,119): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtUserType(116,119): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtNameReferenceExpression(116,119): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtBlockExpression(120,158): '{'
+  null
+
+KtCallExpression(126,141): 'expectsFoo(BAR)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main/expectsFoo(foo: test.Foo): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(126,136): 'expectsFoo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main/expectsFoo(foo: test.Foo): kotlin.Unit
+    ]
+
+KtValueArgumentList(136,141): '(BAR)'
+  null
+
+KtValueArgument(137,140): 'BAR'
+  null
+
+KtNameReferenceExpression(137,140): 'BAR'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: ImportCanBeRemoved
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo.BAR
+    ]
+
+KtReturnExpression(146,156): 'return BAR'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main/usage(): test.Foo
+    ]
+
+KtNameReferenceExpression(153,156): 'BAR'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: ImportCanBeRemoved
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo.BAR
+    ]

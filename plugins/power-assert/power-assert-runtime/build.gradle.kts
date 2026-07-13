@@ -5,10 +5,12 @@ import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     `maven-publish`
     id("signing-convention")
-    id("nodejs-cache-redirector-configuration")
     id("nodejs-configuration")
     id("binaryen-configuration")
 }

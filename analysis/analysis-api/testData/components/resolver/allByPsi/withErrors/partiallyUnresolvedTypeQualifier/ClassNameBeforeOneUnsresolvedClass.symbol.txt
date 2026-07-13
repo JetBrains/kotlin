@@ -37,7 +37,7 @@ KtUserType(36,39): 'Foo'
 
 KtNameReferenceExpression(36,39): 'Foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Foo
@@ -45,7 +45,7 @@ KtNameReferenceExpression(36,39): 'Foo'
 
 KtNameReferenceExpression(40,43): 'Bar'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
@@ -80,7 +80,7 @@ KtUserType(82,85): 'Foo'
 
 KtNameReferenceExpression(82,85): 'Foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Foo
@@ -88,7 +88,7 @@ KtNameReferenceExpression(82,85): 'Foo'
 
 KtNameReferenceExpression(86,89): 'Bar'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
@@ -140,7 +140,7 @@ KtUserType(115,116): 'T'
 
 KtNameReferenceExpression(115,116): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -160,7 +160,7 @@ KtUserType(121,125): 'Unit'
 
 KtNameReferenceExpression(121,125): 'Unit'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
@@ -181,7 +181,7 @@ KtCallExpression(142,178): 'take {'
 
 KtNameReferenceExpression(142,146): 'take'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /take(action: (T) -> kotlin.Unit): kotlin.Unit
@@ -221,7 +221,7 @@ KtUserType(166,169): 'Foo'
 
 KtNameReferenceExpression(166,169): 'Foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Foo
@@ -229,7 +229,7 @@ KtNameReferenceExpression(166,169): 'Foo'
 
 KtNameReferenceExpression(170,173): 'Bar'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>

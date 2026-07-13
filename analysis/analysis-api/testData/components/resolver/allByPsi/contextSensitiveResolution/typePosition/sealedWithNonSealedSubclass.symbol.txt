@@ -42,7 +42,7 @@ KtUserType(128,134): 'String'
 
 KtNameReferenceExpression(128,134): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -71,7 +71,7 @@ KtUserType(137,145): 'MySealed'
 
 KtNameReferenceExpression(137,145): 'MySealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -103,7 +103,7 @@ KtUserType(169,175): 'String'
 
 KtNameReferenceExpression(169,175): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -132,7 +132,7 @@ KtUserType(178,186): 'MySealed'
 
 KtNameReferenceExpression(178,186): 'MySealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -164,7 +164,7 @@ KtUserType(222,228): 'String'
 
 KtNameReferenceExpression(222,228): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -187,7 +187,7 @@ KtUserType(237,245): 'MySealed'
 
 KtNameReferenceExpression(237,245): 'MySealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -205,7 +205,7 @@ KtThisExpression(266,270): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -224,18 +224,19 @@ KtThisExpression(266,270): 'this'
           annotations: []
           typeArguments: []
           type: MySealed
+        typeParameters: []
         visibility: PUBLIC
     ]
 
 KtNameReferenceExpression(266,270): 'this'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -254,6 +255,7 @@ KtNameReferenceExpression(266,270): 'this'
           annotations: []
           typeArguments: []
           type: MySealed
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -277,7 +279,7 @@ KtUserType(281,285): 'Left'
 
 KtNameReferenceExpression(281,285): 'Left'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Left
@@ -285,7 +287,7 @@ KtNameReferenceExpression(281,285): 'Left'
 
 KtNameReferenceExpression(289,290): 'x'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val x: kotlin.String
@@ -311,7 +313,7 @@ KtUserType(298,303): 'Right'
 
 KtNameReferenceExpression(298,303): 'Right'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MySealed.Right
@@ -319,7 +321,7 @@ KtNameReferenceExpression(298,303): 'Right'
 
 KtNameReferenceExpression(307,308): 'y'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val y: kotlin.String
@@ -343,14 +345,14 @@ KtUserType(316,333): 'NonSealedSubclass'
 
 KtNameReferenceExpression(316,333): 'NonSealedSubclass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NonSealedSubclass'.>
 
 KtNameReferenceExpression(337,338): 'z'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'z'.>

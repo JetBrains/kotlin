@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // FILE: internal.kt
@@ -15,7 +16,8 @@ class Derived : Generic<String>()
 // FILE: use.kt
 
 inline fun use(data: D, derived: Derived) {
-    val (<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>x<!>) = data
+    val [<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>x<!>] = data
+    (val xd = x) = data
     val xx = data.x
     val y = derived.y
     val foo = derived.foo()

@@ -1,12 +1,13 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
 dependencies {
-    api(project(":compiler:util"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:resolution"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
 

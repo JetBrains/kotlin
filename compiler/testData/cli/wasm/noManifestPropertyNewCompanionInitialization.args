@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/lib/LibraryExample.kt
+-Xwasm
+-Xir-produce-klib-dir
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-libraries
+$STDLIB_WASM_JS$

@@ -13,13 +13,24 @@ import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 
-abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
-    fun doTest(directoryPath: String) {
+@Execution(ExecutionMode.SAME_THREAD, reason = "`executeCompilerGrabOutput` is thread-unsafe, as it replaces `System.out`")
+abstract class AbstractMultiPlatformIntegrationTest {
+    private lateinit var testInfo: TestInfo
+
+    @BeforeEach
+    fun setUp(testInfo: TestInfo) {
+        this.testInfo = testInfo
+    }
+
+    fun runTest(directoryPath: String) {
         val root = File(directoryPath).apply { assert(exists()) }
         val commonSrc = File(root, "common.kt").apply { assert(exists()) }
         val jsSrc = File(root, "js.kt").takeIf(File::exists)
@@ -28,7 +39,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         val common2Src = File(root, "common2.kt").takeIf(File::exists)
         val jvm2Src = File(root, "jvm2.kt").takeIf(File::exists)
 
-        val tmpdir = KtTestUtil.tmpDir(getTestName(true))
+        val tmpdir = KtTestUtil.tmpDir(testInfo.testMethod.get().name)
         val stdlibCommon = ForTestCompileRuntime.stdlibCommonForTests().absolutePath
 
         val commonDest = File(tmpdir, "common").absolutePath

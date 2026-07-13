@@ -1,6 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
 }
@@ -21,7 +24,6 @@ val embeddableTestRuntime by configurations.creating {
 }
 
 dependencies {
-    allTestsRuntime(libs.junit4)
     testImplementation(kotlinStdlib("jdk8"))
     testImplementation(project(":kotlin-scripting-ide-services-unshaded"))
     testImplementation(project(":kotlin-scripting-compiler"))
@@ -59,7 +61,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         dependsOn(":kotlin-compiler:distKotlinc")
         workingDir = rootDir
         doFirst {
@@ -69,7 +71,7 @@ projectTests {
 
     // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
     // To make it work, the dependencies to the intellij sdk should be eliminated
-    testTask("embeddableTest", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
+    testTask("embeddableTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
         workingDir = rootDir
         dependsOn(embeddableTestRuntime)
         classpath = embeddableTestRuntime

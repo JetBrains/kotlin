@@ -48,9 +48,9 @@ class ImplicitValueStorage private constructor(
     }
 
     fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): ImplicitValueStorage {
-        val stack = implicitReceiverStack.add(value)
+        val stack = implicitReceiverStack.adding(value)
         val receiversPerLabel = implicitReceiversByLabel.putIfNameIsNotNull(name, value)
-        val implicitValuesBySymbol = implicitValuesBySymbol.put(value.boundSymbol, value)
+        val implicitValuesBySymbol = implicitValuesBySymbol.putting(value.boundSymbol, value)
 
         return ImplicitValueStorage(
             stack,
@@ -78,7 +78,7 @@ class ImplicitValueStorage private constructor(
         contextParameters: List<ImplicitValue<*>>,
     ): PersistentMap<FirBasedSymbol<*>, ImplicitValue<*>> {
         return contextParameters.fold(this) { acc, value ->
-            acc.put(value.boundSymbol, value)
+            acc.putting(value.boundSymbol, value)
         }
     }
 

@@ -1,0 +1,16 @@
+[type]
+T
+
+[direct super types]
+kotlin.collections.Iterable<*>
+
+[approximated direct super types]
+kotlin.collections.Iterable<*>
+
+[all super types]
+kotlin.collections.Iterable<*>
+kotlin.Any
+
+[approximated all super types]
+kotlin.collections.Iterable<*>
+kotlin.Any

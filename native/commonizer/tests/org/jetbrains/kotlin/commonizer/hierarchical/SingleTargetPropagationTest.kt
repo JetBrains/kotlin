@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * Related https://youtrack.jetbrains.com/issue/KT-46248

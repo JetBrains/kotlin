@@ -24,22 +24,28 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.DaemonOptions
 import org.jetbrains.kotlin.daemon.common.ReportSeverity
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.CleanupMode
+import org.junit.jupiter.api.io.TempDir
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.PrintStream
 import java.nio.file.Files
-import kotlin.test.assertEquals
 
 
 class CompilerClientIT {
 
-    @JvmField
-    @Rule
-    val workingDir = TemporaryFolder()
+    @field:TempDir(cleanup = CleanupMode.NEVER)
+    lateinit var workingDir: File
+
+    @AfterEach
+    fun tearDown() {
+        compilerService.shutdown()
+        workingDir.deleteRecursively()
+    }
 
     private val compilerClasspath: List<File> by lazy {
         filesFromProp("compilerClasspath", "kotlin-compiler.jar", "kotlin-daemon.jar")
@@ -63,7 +69,7 @@ class CompilerClientIT {
 
     private val compilerService: CompileService by lazy {
         val compilerId = CompilerId.makeCompilerId(compilerClasspath)
-        val daemonOptions = DaemonOptions(runFilesPath = File(workingDir.root, "daemonRunPath").absolutePath, verbose = true, reportPerf = true)
+        val daemonOptions = DaemonOptions(runFilesPath = File(workingDir, "daemonRunPath").absolutePath, verbose = true, reportPerf = true)
         val daemonJVMOptions = org.jetbrains.kotlin.daemon.common.DaemonJVMOptions()
         val daemonReportMessages = arrayListOf<DaemonReportMessage>()
 

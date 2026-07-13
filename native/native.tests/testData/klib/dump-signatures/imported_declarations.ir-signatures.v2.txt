@@ -1,14 +1,72 @@
+Module: foo
+// Declared signatures: 7
+foo/PublicClass.<init>|<init>(kotlin.Int){}[0]
+foo/PublicClass.length.<get-length>|<get-length>(){}[0]
+foo/PublicClass.length|{}length[0]
+foo/PublicClass|null[0]
+foo/publicFun|publicFun(){}[0]
+foo/publicVal.<get-publicVal>|<get-publicVal>(){}[0]
+foo/publicVal|{}publicVal[0]
+
+// Imported signatures: 15
+kotlin.text/Appendable.toString|toString(){}[0]
+kotlin.text/Appendable|null[0]
+kotlin.text/StringBuilder.<init>|<init>(){}[0]
+kotlin.text/StringBuilder|null[0]
+kotlin/Any.<init>|<init>(){}[0]
+kotlin/Any|null[0]
+kotlin/CharSequence.length.<get-length>|<get-length>(){}[0]
+kotlin/CharSequence.length|{}length[0]
+kotlin/CharSequence|null[0]
+kotlin/Int|null[0]
+kotlin/Nothing|null[0]
+kotlin/String.length.<get-length>|<get-length>(){}[0]
+kotlin/String.length|{}length[0]
+kotlin/String|null[0]
+kotlin/Unit|null[0]
+
+Module: bar
+// Declared signatures: 7
+bar/PublicClass.<init>|<init>(kotlin.collections.Iterator<*>){}[0]
+bar/PublicClass.iterator.<get-iterator>|<get-iterator>(){}[0]
+bar/PublicClass.iterator|{}iterator[0]
+bar/PublicClass|null[0]
+bar/publicFun|publicFun(){}[0]
+bar/publicVal.<get-publicVal>|<get-publicVal>(){}[0]
+bar/publicVal|{}publicVal[0]
+
+// Imported signatures: 16
+kotlin.collections/Collection|null[0]
+kotlin.collections/HashSet|null[0]
+kotlin.collections/Iterator|null[0]
+kotlin.collections/List.iterator|iterator(){}[0]
+kotlin.collections/List|null[0]
+kotlin.collections/MutableList|null[0]
+kotlin.collections/Set|null[0]
+kotlin.collections/hashSetOf|hashSetOf(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+kotlin.collections/mutableListOf|mutableListOf(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+kotlin/Any.<init>|<init>(){}[0]
+kotlin/Any|null[0]
+kotlin/Array|null[0]
+kotlin/Int|null[0]
+kotlin/Nothing|null[0]
+kotlin/String|null[0]
+kotlin/Unit|null[0]
+
+Module: main
 // Declared signatures: 1
 imported/test|test(){}[0]
 
-// Imported signatures: 15
+// Imported signatures: 17
 bar/publicVal.<get-publicVal>|<get-publicVal>(){}[0]
 bar/publicVal|{}publicVal[0]
 foo/PublicClass.<init>|<init>(kotlin.Int){}[0]
 foo/PublicClass|null[0]
 foo/publicFun|publicFun(){}[0]
 kotlin.collections/List|null[0]
+kotlin.collections/Map.Entry|null[0]
 kotlin.internal.ir/EQEQ|EQEQ(kotlin.Any?;kotlin.Any?){}[0]
+kotlin/Any.<init>|<init>(){}[0]
 kotlin/Any.toString|toString(){}[0]
 kotlin/Any|null[0]
 kotlin/Boolean|null[0]

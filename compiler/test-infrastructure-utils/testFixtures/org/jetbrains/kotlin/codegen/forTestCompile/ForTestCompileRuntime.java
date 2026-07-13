@@ -214,6 +214,11 @@ public class ForTestCompileRuntime {
         return getFileFromProperty(KOTLIN_JS_STDLIB_KLIB_PATH);
     }
 
+    @NotNull
+    public static File jklibStdlibForTests() {
+        return getFileFromProperty(KOTLIN_JKLIB_STDLIB_PATH);
+    }
+
     public static File stdlibWebForTests() {
         return getFileFromProperty(KOTLIN_WEB_STDLIB_KLIB_PATH);
     }
@@ -236,6 +241,11 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File kotlinNativeImageResourcesPathForTests() {
         return getFileFromProperty(KOTLIN_NATIVE_IMAGE_RESOURCES_PATH);
+    }
+
+    @NotNull
+    public static List<File> kotlinNativeImagePluginsRuntimeForTests() {
+        return getFilesFromProperty(KOTLIN_NATIVE_IMAGE_PLUGINS_RUNTIME);
     }
 
     @NotNull
@@ -291,5 +301,9 @@ public class ForTestCompileRuntime {
 
     public static @NotNull File mainKtsJar() {
         return getFileFromProperty(MAIN_KTS_JAR_PATH);
+    }
+
+    public static List<File> parcelizeRuntimeForTests() {
+        return getFilesFromProperty(PARCELIZE_COMPILER_PLUGIN_CLASSPATH);
     }
 }

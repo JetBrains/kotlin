@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -36,7 +37,7 @@ class KT58280JvmWithJavaTestCompileClasspath {
         val project = buildProject()
         project.plugins.apply("java-library")
         project.applyKotlinJvmPlugin()
-        project.repositories.mavenLocal()
+        project.repositories.kotlinBuildDeps()
         project.repositories.mavenCentralCacheRedirector()
         val kotlin = project.kotlinJvmExtension
 

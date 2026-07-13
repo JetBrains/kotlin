@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.findAnnotation
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isInterface
 
 internal enum class ConstantConstructorIntrinsicType {
@@ -47,7 +47,7 @@ internal interface IntrinsicGeneratorEnvironment {
 
 private fun getConstantConstructorIntrinsicType(constructor: IrConstructorSymbol): ConstantConstructorIntrinsicType {
     val annotation = constructor.owner.annotations.findAnnotation(KonanFqNames.constantConstructorIntrinsic)!!
-    val value = annotation.getAnnotationStringValue()!!
+    val value = annotation.getConstArgument<String>("kind")!!
     return ConstantConstructorIntrinsicType.valueOf(value)
 }
 

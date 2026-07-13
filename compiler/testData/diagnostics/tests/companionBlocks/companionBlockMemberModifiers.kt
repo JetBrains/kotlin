@@ -14,7 +14,32 @@ abstract class C {
         <!WRONG_MODIFIER_TARGET!>override<!> fun override() {}
 
         suspend fun suspend() {}
-        <!EXTERNAL_DECLARATION_CANNOT_HAVE_BODY!>external<!> fun external() {}
+        external fun external()
+        <!WRONG_MODIFIER_TARGET!>lateinit<!> fun lateinit() {}
+        <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun tailrec() { <!NON_TAIL_RECURSIVE_CALL!>tailrec<!>() }
+        <!WRONG_MODIFIER_TARGET!>const<!> fun const() {}
+        <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun expect(): String<!>
+        <!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> fun actual() {}
+        <!NOTHING_TO_INLINE!>inline<!> fun inline() {}
+
+        <!WRONG_MODIFIER_TARGET!>companion<!> fun companion() {}
+    }
+}
+
+interface I {
+    companion {
+        private fun private() {}
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> fun protected() {}
+        public fun public() {}
+        internal fun internal() {}
+
+        <!WRONG_MODIFIER_TARGET!>abstract<!> fun abstract()
+        <!WRONG_MODIFIER_TARGET!>open<!> fun open() {}
+        <!WRONG_MODIFIER_TARGET!>final<!> fun final() {}
+        <!WRONG_MODIFIER_TARGET!>override<!> fun override() {}
+
+        suspend fun suspend() {}
+        <!EXTERNAL_DECLARATION_IN_INTERFACE!>external<!> fun external()
         <!WRONG_MODIFIER_TARGET!>lateinit<!> fun lateinit() {}
         <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun tailrec() { <!NON_TAIL_RECURSIVE_CALL!>tailrec<!>() }
         <!WRONG_MODIFIER_TARGET!>const<!> fun const() {}
@@ -45,6 +70,33 @@ abstract class D {
         const val const = 1
         <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> val expect: String
         <!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> val actual = 1
+        inline val inline get() = 1
+
+        <!WRONG_MODIFIER_TARGET!>companion<!> val companion get() = 1
+    }
+}
+
+interface J {
+   companion {
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!PRIVATE_PROPERTY_IN_INTERFACE!>private<!> val private<!> = 1
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> val protected<!> = 1
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!>public val public<!> = 1
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!>internal val internal<!> = 1
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!INTERFACE_COMPANION_BLOCK_VAR!>var<!> internal2<!> = 1
+            internal set
+
+        <!WRONG_MODIFIER_TARGET!>abstract<!> val abstract: String
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>open<!> val bar<!> = 1
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>final<!> val baz<!> = 1
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>override<!> val qux<!> = 1
+
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>suspend<!> val suspend<!> = 1
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>external<!> val external<!> = 1
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!>lateinit <!INTERFACE_COMPANION_BLOCK_VAR!>var<!> lateinit: Any<!>
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>tailrec<!> val tailrec<!> = 1
+        const val const = 1
+        <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> val expect: String
+        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> val actual<!> = 1
         inline val inline get() = 1
 
         <!WRONG_MODIFIER_TARGET!>companion<!> val companion get() = 1

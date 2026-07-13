@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.AffectedByCompiler
 import org.junit.jupiter.api.DisplayName
 
 /**
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.DisplayName
  * [CommonCodeWithPlatformSymbolsIT] should be removed with the IC option when the underlying compiler issue is fixed
  */
 
+@AffectedByCompiler
 abstract class CommonCodeWithPlatformSymbolsITBase(
     val platformType: KotlinPlatformType,
     val taskToExecute: String,

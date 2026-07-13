@@ -1,0 +1,15 @@
+test1: ---
+powerAssert("test".length == 5)
+                   |      |
+                   4      false
+---
+test2: ---bad
+powerAssert("test".length == 5, msg = "bad")
+                   |      |
+                   4      false
+---
+test3: ---bad
+powerAssert("test".length == 5, msg = { "bad" })
+                   |      |
+                   4      false
+---

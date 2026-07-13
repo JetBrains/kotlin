@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.cli.klib.Entry.Directory
 import org.jetbrains.kotlin.cli.klib.Entry.File
-import org.jetbrains.kotlin.konan.file.File as KFile
-import org.jetbrains.kotlin.konan.file.createTempDir
-import org.jetbrains.kotlin.konan.file.unzipTo
-import org.jetbrains.kotlin.konan.file.zipDirAs
-import org.jetbrains.kotlin.konan.file.zipDirAsInternal
+import org.jetbrains.kotlin.io.unzipTo
+import org.jetbrains.kotlin.io.zipDirAs
+import org.jetbrains.kotlin.io.zipDirAsInternal
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -22,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
 import java.nio.file.Files
+import java.nio.file.Files.createTempDirectory
 import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
@@ -32,24 +31,34 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipInputStream
 import kotlin.collections.Iterable
-import kotlin.io.path.copyTo
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createSymbolicLinkPointingTo
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.fileSize
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 import kotlin.io.path.readBytes
+import kotlin.io.path.writeBytes
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.measureTime
 
 class ZipTest {
-    private lateinit var tmpDir: KFile
+    private lateinit var tmpDir: Path
 
     @BeforeEach
     fun setUp(testInfo: TestInfo) {
-        tmpDir = createTempDir(testInfo.testClass.get().simpleName + "_" + testInfo.testMethod.get().name)
+        tmpDir = createTempDirectory(testInfo.testClass.get().simpleName + "_" + testInfo.testMethod.get().name)
     }
 
+    @OptIn(ExperimentalPathApi::class)
     @AfterEach
     fun tearDown() {
-        tmpDir.javaPath.toFile().deleteRecursively()
+        tmpDir.deleteRecursively()
     }
 
     @Test
@@ -59,23 +68,24 @@ class ZipTest {
 
     @Test
     @Disabled
+    @OptIn(ExperimentalPathApi::class)
     fun benchmarkKlibCompressionSimulation() {
         val uncompressed = Root(tmpDir).simulationOfKlibPayload()
-        val compressed = tmpDir.child("compressed.zip")
+        val compressed = tmpDir.resolve("compressed.zip")
 
         runBenchWithWarmup(
             name = "KLIB compression simulation",
             warmupRounds = 20,
             benchmarkRounds = 10,
             pre = System::gc,
-            post = { compressed.delete() },
+            post = { compressed.deleteIfExists() },
         ) {
             uncompressed.zipDirAs(compressed)
         }
     }
 
     // Simulate a real-world KLIB.
-    private fun HasPath.simulationOfKlibPayload(): KFile =
+    private fun HasPath.simulationOfKlibPayload(): Path =
         directory("default") {
             directory("ir") {
                 file("bodies.knb", 3871899u)
@@ -122,24 +132,24 @@ class ZipTest {
 
             symlink("file1.link1", "../dir1/file1")
 
-            symlink("file1.link2", path.child("../dir1/file1").absolutePath) // absolute path in symlink
+            symlink("file1.link2", path.resolve("../dir1/file1").absolutePathString()) // absolute path in symlink
         }
     }
 
     @Test
     fun testSymlinkToFileOutsideCompressedDirectory1() {
-        val externalFile = tmpDir.child("externalFile").apply { writeBytes(Random(System.nanoTime()).nextBytes(100)) }
+        val externalFile = tmpDir.resolve("externalFile").apply { writeBytes(Random(System.nanoTime()).nextBytes(100)) }
 
         assertThrows<ZipException> {
             doTestWithPayload {
-                symlink("link", externalFile.absolutePath)
+                symlink("link", externalFile.absolutePathString())
             }
         }
     }
 
     @Test
     fun testSymlinkToFileOutsideCompressedDirectory2() {
-        val externalFile = tmpDir.child("externalFile").apply { writeBytes(Random(System.nanoTime()).nextBytes(100)) }
+        val externalFile = tmpDir.resolve("externalFile").apply { writeBytes(Random(System.nanoTime()).nextBytes(100)) }
 
         assertThrows<ZipException> {
             doTestWithPayload {
@@ -150,18 +160,18 @@ class ZipTest {
 
     @Test
     fun testSymlinkToDirectoryOutsideCompressedDirectory1() {
-        val externalDir = tmpDir.child("externalDir").apply { mkdirs() }
+        val externalDir = tmpDir.resolve("externalDir").apply { createDirectories() }
 
         assertThrows<ZipException> {
             doTestWithPayload {
-                symlink("link", externalDir.absolutePath)
+                symlink("link", externalDir.absolutePathString())
             }
         }
     }
 
     @Test
     fun testSymlinkToDirectoryOutsideCompressedDirectory2() {
-        val externalDir = tmpDir.child("externalDir").apply { mkdirs() }
+        val externalDir = tmpDir.resolve("externalDir").apply { createDirectories() }
 
         assertThrows<ZipException> {
             doTestWithPayload {
@@ -176,10 +186,10 @@ class ZipTest {
             it.directory("original") {
                 simulationOfKlibPayload()
             }
-        }.javaPath
+        }
 
         // Compress with stable traversal order.
-        val compressedWithStableTraversalPayloadPath = tmpDir.child("compressed-stable.zip").javaPath
+        val compressedWithStableTraversalPayloadPath = tmpDir.resolve("compressed-stable.zip")
         zipDirAsInternal(
             dirPath = originalPayloadPath,
             zipFilePath = compressedWithStableTraversalPayloadPath
@@ -195,7 +205,7 @@ class ZipTest {
         }
 
         repeat(5) { index ->
-            val compressedWithRandomTraversalPayloadPath = tmpDir.child("compressed-random-$index.zip").javaPath
+            val compressedWithRandomTraversalPayloadPath = tmpDir.resolve("compressed-random-$index.zip")
             zipDirAsInternal(
                 dirPath = originalPayloadPath,
                 zipFilePath = compressedWithRandomTraversalPayloadPath,
@@ -206,7 +216,7 @@ class ZipTest {
         }
 
         repeat(5) { index ->
-            val compressedWithReverseTraversalPayloadPath = tmpDir.child("compressed-reverse-$index.zip").javaPath
+            val compressedWithReverseTraversalPayloadPath = tmpDir.resolve("compressed-reverse-$index.zip")
             zipDirAsInternal(
                 dirPath = originalPayloadPath,
                 zipFilePath = compressedWithReverseTraversalPayloadPath,
@@ -217,7 +227,7 @@ class ZipTest {
         }
 
         repeat(5) { index ->
-            val compressedWithRotatedTraversalPayloadPath = tmpDir.child("compressed-rotated-$index.zip").javaPath
+            val compressedWithRotatedTraversalPayloadPath = tmpDir.resolve("compressed-rotated-$index.zip")
             zipDirAsInternal(
                 dirPath = originalPayloadPath,
                 zipFilePath = compressedWithRotatedTraversalPayloadPath,
@@ -236,21 +246,21 @@ class ZipTest {
         }
 
         // Compress.
-        val compressedPayload = tmpDir.child("compressed.zip")
+        val compressedPayload = tmpDir.resolve("compressed.zip")
         originalPayload.zipDirAs(compressedPayload)
 
         // Verify uncompressed entries.
         verifyCompressedPayload(compressedPayload)
 
         // Uncompress.
-        val uncompressedPayload = tmpDir.child("uncompressed")
+        val uncompressedPayload = tmpDir.resolve("uncompressed")
         compressedPayload.unzipTo(uncompressedPayload)
 
         // Compare entries.
         compareEntries(originalPayload, uncompressedPayload)
     }
 
-    private fun verifyCompressedPayload(compressed: KFile) {
+    private fun verifyCompressedPayload(compressed: Path) {
         fun assertTime(actual: FileTime?) {
             if (actual == null) {
                 // OK, time is not set.
@@ -264,7 +274,7 @@ class ZipTest {
             }
         }
 
-        Files.newInputStream(compressed.javaPath).use { inputStream ->
+        Files.newInputStream(compressed).use { inputStream ->
             ZipInputStream(inputStream).use { zipInputStream ->
                 var entry: ZipEntry? = zipInputStream.nextEntry
                 while (entry != null) {
@@ -283,14 +293,14 @@ class ZipTest {
         }
     }
 
-    private fun compareEntries(original: KFile, uncompressed: KFile) {
-        val originalAttributes = Files.readAttributes(original.javaPath, BasicFileAttributes::class.java, LinkOption.NOFOLLOW_LINKS)
-        val uncompressedAttributes = Files.readAttributes(uncompressed.javaPath, BasicFileAttributes::class.java)
+    private fun compareEntries(original: Path, uncompressed: Path) {
+        val originalAttributes = Files.readAttributes(original, BasicFileAttributes::class.java, LinkOption.NOFOLLOW_LINKS)
+        val uncompressedAttributes = Files.readAttributes(uncompressed, BasicFileAttributes::class.java)
 
         when {
             originalAttributes.isDirectory -> {
                 assertTrue(uncompressedAttributes.isDirectory, "Not a directory: $uncompressed")
-                compareEntriesAsSubDirs(original.listFilesOrEmpty, uncompressed.listFilesOrEmpty)
+                compareEntriesAsSubDirs(original.listDirectoryEntries(), uncompressed.listDirectoryEntries())
             }
             originalAttributes.isRegularFile -> {
                 assertTrue(uncompressedAttributes.isRegularFile, "Not a regular file: $uncompressed")
@@ -300,7 +310,7 @@ class ZipTest {
                 // Yes, we don't store symlinks in KLIB archives. Instead, we just copy the original file's content.
                 when {
                     uncompressedAttributes.isRegularFile -> compareEntriesAsFiles(original, uncompressed)
-                    uncompressedAttributes.isDirectory -> compareEntriesAsSubDirs(emptyList(), uncompressed.listFilesOrEmpty)
+                    uncompressedAttributes.isDirectory -> compareEntriesAsSubDirs(emptyList(), uncompressed.listDirectoryEntries())
                     else -> error("Unsupported file type: $uncompressed")
                 }
             }
@@ -308,9 +318,9 @@ class ZipTest {
         }
     }
 
-    private fun compareEntriesAsSubDirs(originalSubDirs: List<KFile>, uncompressedSubDirs: List<KFile>) {
-        val originalSubDirEntries: Map<String, KFile> = originalSubDirs.associateByTo(TreeMap()) { it.name }
-        val uncompressedSubDirEntries: Map<String, KFile> = uncompressedSubDirs.associateByTo(TreeMap()) { it.name }
+    private fun compareEntriesAsSubDirs(originalSubDirs: List<Path>, uncompressedSubDirs: List<Path>) {
+        val originalSubDirEntries: Map<String, Path> = originalSubDirs.associateByTo(TreeMap()) { it.name }
+        val uncompressedSubDirEntries: Map<String, Path> = uncompressedSubDirs.associateByTo(TreeMap()) { it.name }
 
         assertEquals(
             originalSubDirEntries.keys,
@@ -323,53 +333,53 @@ class ZipTest {
         }
     }
 
-    private fun compareEntriesAsFiles(original: KFile, uncompressed: KFile) {
+    private fun compareEntriesAsFiles(original: Path, uncompressed: Path) {
         assertTrue(original.readBytes().contentEquals(uncompressed.readBytes()), "Different contents: $original vs $uncompressed")
     }
 }
 
 private interface HasPath {
-    val path: KFile
+    val path: Path
 }
 
-private class Root(override val path: KFile) : HasPath
+private class Root(override val path: Path) : HasPath
 
 private sealed interface Entry : HasPath {
     fun create()
 
-    class Directory(override val path: KFile) : Entry {
+    class Directory(override val path: Path) : Entry {
         override fun create() {
-            path.mkdirs()
+            path.createDirectories()
         }
     }
 
-    class File(override val path: KFile, private val size: UInt) : Entry {
+    class File(override val path: Path, private val size: UInt) : Entry {
         override fun create() {
             path.writeBytes(Random(System.nanoTime()).nextBytes(size.toInt()))
         }
     }
 
-    class Symlink(override val path: KFile, val targetPath: KFile) : Entry {
+    class Symlink(override val path: Path, val targetPath: Path) : Entry {
         override fun create() {
-            path.createAsSymlink(targetPath.path)
+            path.createSymbolicLinkPointingTo(targetPath)
         }
     }
 }
 
-private inline fun HasPath.directory(name: String, block: HasPath.() -> Unit = {}): KFile {
-    val directory = Directory(this.path.child(name))
+private inline fun HasPath.directory(name: String, block: HasPath.() -> Unit = {}): Path {
+    val directory = Directory(this.path.resolve(name))
     directory.create()
     directory.block()
     return directory.path
 }
 
 private fun HasPath.file(name: String, size: UInt) {
-    val file = File(this.path.child(name), size)
+    val file = File(this.path.resolve(name), size)
     file.create()
 }
 
 private fun HasPath.symlink(name: String, target: String) {
-    val symlink = Entry.Symlink(this.path.child(name), KFile(target))
+    val symlink = Entry.Symlink(this.path.resolve(name), Path(target))
     symlink.create()
 }
 

@@ -20,27 +20,27 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.FirParser;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class AnnotationGenTest extends CodegenTestCase {
-    @Override
-    public boolean getUseFir() {
-        return true;
-    }
 
     @Override
     public @NotNull FirParser getFirParser() {
         return FirParser.LightTree;
     }
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
     }
 
+    @Test
     public void testVolatileProperty() throws Exception {
         loadText("abstract class Foo { @Volatile public var x: String = \"\"; }");
         Class<?> aClass = generateClass("Foo");
@@ -48,6 +48,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertTrue((x.getModifiers() & Modifier.VOLATILE) != 0);
     }
 
+    @Test
     public void testPropField() throws Exception {
         loadText("@[java.lang.Deprecated] var x = 0");
         Class<?> srcClass = generateFacadeClass();
@@ -56,6 +57,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(srcClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
+    @Test
     public void testPropGetter() throws Exception {
         loadText("var x = 0\n" +
                  "@[java.lang.Deprecated] get");
@@ -65,6 +67,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNull(srcClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
+    @Test
     public void testPropSetter() throws Exception {
         loadText("var x = 0\n" +
                  "@[java.lang.Deprecated] set");
@@ -74,6 +77,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNull(scrClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
+    @Test
     public void testAnnotationForParamInTopLevelFunction() throws Exception {
         loadText("fun x(@[java.lang.Deprecated] i: Int) {}");
         Class<?> srcClass = generateFacadeClass();
@@ -82,6 +86,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(getDeprecatedAnnotationFromList(srcClassMethod.getParameterAnnotations()[0]));
     }
 
+    @Test
     public void testAnnotationForParamInInstanceFunction() throws NoSuchMethodException {
         loadText("class A() { fun x(@[java.lang.Deprecated] i: Int) {}}");
         Class<?> aClass = generateClass("A");
@@ -92,6 +97,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(getDeprecatedAnnotationFromList(annotations));
     }
 
+    @Test
     public void testAnnotationForParamInInstanceExtensionFunction() throws NoSuchMethodException {
         loadText("class A() { fun String.x(@[java.lang.Deprecated] i: Int) {}}");
         Class<?> aClass = generateClass("A");
@@ -102,6 +108,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(getDeprecatedAnnotationFromList(annotations));
     }
 
+    @Test
     public void testParamInConstructor() throws NoSuchMethodException {
         loadText("class A (@[java.lang.Deprecated] x: Int) {}");
         Class<?> aClass = generateClass("A");
@@ -112,6 +119,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(getDeprecatedAnnotationFromList(annotations));
     }
 
+    @Test
     public void testParamInEnumConstructor() throws NoSuchMethodException {
         loadText("enum class E(@[java.lang.Deprecated] p: String)");
         Class<?> klass = generateClass("E");
@@ -122,6 +130,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(getDeprecatedAnnotationFromList(annotations));
     }
 
+    @Test
     public void testParamInInnerConstructor() throws NoSuchMethodException {
         loadText("class Outer { inner class Inner(@[java.lang.Deprecated] x: Int) }");
         Class<?> outer = generateClass("Outer");
@@ -133,6 +142,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(getDeprecatedAnnotationFromList(annotations));
     }
 
+    @Test
     public void testPropFieldInConstructor() throws NoSuchFieldException, NoSuchMethodException {
         loadText("class A (@field:java.lang.Deprecated @param:java.lang.Deprecated var x: Int) {}");
         Class<?> aClass = generateClass("A");
@@ -146,6 +156,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(aClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
+    @Test
     public void testAnnotationWithParamForParamInFunction() throws Exception {
         loadText("import java.lang.annotation.*\n" +
                  "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: String)\n" +
@@ -175,6 +186,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         return null;
     }
 
+    @Test
     public void testConstructor() throws NoSuchFieldException, NoSuchMethodException {
         loadText("class A @[java.lang.Deprecated] constructor() {}");
         Class<?> aClass = generateClass("A");
@@ -183,6 +195,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(annotation);
     }
 
+    @Test
     public void testMethod() throws Exception {
         loadText("@[java.lang.Deprecated] fun x () {}");
         Class<?> srcClass = generateFacadeClass();
@@ -190,6 +203,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(srcClassMethod.getAnnotation(Deprecated.class));
     }
 
+    @Test
     public void testClass() throws NoSuchFieldException, NoSuchMethodException {
         loadText("@[java.lang.Deprecated] class A () {}");
         Class<?> aClass = generateClass("A");
@@ -197,6 +211,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(annotation);
     }
 
+    @Test
     public void testSimplestAnnotationClass() {
         loadText("annotation class A");
         Class<?> aClass = generateClass("A");
@@ -207,6 +222,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertEquals("java.lang.annotation.Annotation", interfaces[0].getName());
     }
 
+    @Test
     public void testAnnotationClassWithStringProperty() throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         loadText("import java.lang.annotation.*\n" +
                  "" +
@@ -234,6 +250,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertEquals("239", methods[0].invoke(bClassAnnotation));
     }
 
+    @Test
     public void testAnnotationClassWithAnnotationProperty()
             throws NoSuchMethodException, ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         loadText("import java.lang.annotation.*\n" +
@@ -267,6 +284,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertEquals("239", cClass.getDeclaredMethod("c").invoke(invoke));
     }
 
+    @Test
     public void testAnnotationClassWithStringArrayProperty()
             throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         loadText("import java.lang.annotation.*\n" +
@@ -297,6 +315,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertEquals("932", ((String[]) invoke)[1]);
     }
 
+    @Test
     public void testAnnotationClassWithIntArrayProperty() throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         loadText("import java.lang.annotation.*\n" +
                  "" +
@@ -326,6 +345,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertEquals(932, ((int[]) invoke)[1]);
     }
 
+    @Test
     public void testAnnotationClassWithEnumArrayProperty() {
         loadText("import java.lang.annotation.*\n" +
                  "" +
@@ -340,6 +360,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertEquals(ElementType.METHOD, value[1]);
     }
 
+    @Test
     public void testAnnotationClassWithAnnotationArrayProperty()
             throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         loadText("import java.lang.annotation.*\n" +
@@ -362,7 +383,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         Object invoke = methods[0].invoke(bClassAnnotation);
         Retention[] invoke1 = (Retention[]) invoke;
         assertEquals(2, invoke1.length);
-        assertEquals(invoke1[0].value(), RetentionPolicy.RUNTIME);
-        assertEquals(invoke1[1].value(), RetentionPolicy.SOURCE);
+        assertEquals(RetentionPolicy.RUNTIME, invoke1[0].value());
+        assertEquals(RetentionPolicy.SOURCE, invoke1[1].value());
     }
 }

@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.wasm.declarations
 
+import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
+import org.jetbrains.kotlin.backend.common.checkers.at
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.backend.js.checkers.*
 import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibExportingDeclaration
 
 object WasmKlibExportsChecker {
-    fun check(declarations: List<WasmKlibExportingDeclaration>, context: JsKlibDiagnosticContext, reporter: IrDiagnosticReporter) {
+    fun check(declarations: List<WasmKlibExportingDeclaration>, context: CommonKlibDiagnosticContext, reporter: IrDiagnosticReporter) {
 
         val allExportedNameClashes = declarations.groupBy { it.exportingName }.filterValues { it.size > 1 }
 

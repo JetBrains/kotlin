@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// IGNORE_FIR_DIAGNOSTICS
 import kotlin.*
 import kotlin.jvm.*
 import kotlin.native.concurrent.*

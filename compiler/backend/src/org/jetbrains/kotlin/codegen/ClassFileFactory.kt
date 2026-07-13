@@ -42,11 +42,8 @@ class ClassFileFactory(
     fun newVisitor(origin: JvmDeclarationOrigin, asmType: Type, sourceFiles: List<File>): ClassBuilder {
         val answer = builderFactory.newClassBuilder(origin)
         val classFileName = asmType.internalName + ".class"
-        generators.put(
-            classFileName,
-            ClassBuilderAndSourceFileList(answer, sourceFiles)
-        )
-        if (origin.generatedForCompilerPlugin) {
+        generators[classFileName] = ClassBuilderAndSourceFileList(answer, sourceFiles)
+        if (origin.declaration?.let(generationState.isDeclarationGeneratedForCompilerPlugin) == true) {
             generatedForCompilerPluginSources.addAll(sourceFiles)
         }
         return answer
@@ -75,7 +72,7 @@ class ClassFileFactory(
 
     fun setModuleMapping(moduleProto: JvmModuleProtoBuf.Module) {
         generators.put(
-            JvmCodegenUtil.getMappingFileName(generationState.moduleName),
+            ModuleNameUtil.getMappingFileName(generationState.moduleName),
             object : OutAndSourceFileList(sourceFiles.toList()) {
                 override fun asBytes(factory: ClassBuilderFactory): ByteArray {
                     var flags = 0
@@ -152,7 +149,7 @@ class ClassFileFactory(
             when (relativePath.extension) {
                 "class" -> answer.append(file.asText())
                 "kotlin_module" -> try {
-                    val mapping = ModuleMapping.Companion.loadModuleMapping(
+                    val mapping = ModuleMapping.loadModuleMapping(
                         file.asByteArray(), relativePath.path,
                         DeserializationConfiguration.Default
                     ) { version: MetadataVersion? ->

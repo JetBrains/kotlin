@@ -2,7 +2,7 @@ CONSTRUCTOR:
   KaSamConstructorSymbol:
   annotations: []
   callableId: /IntPredicate
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -35,9 +35,8 @@ CONSTRUCTOR:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -55,6 +54,7 @@ CONSTRUCTOR:
       modality: FINAL
       name: function
       origin: SAM_CONSTRUCTOR
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaFunctionType:
         abbreviation: null
@@ -174,18 +174,19 @@ CONSTRUCTOR:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(samClass.kt)
       getContainingJvmClassName: SamClassKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClass.kt)
   getContainingJvmClassName: SamClassKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: IntPredicate
 
 FUNCTIONAL INTERFACE:
@@ -194,7 +195,6 @@ FUNCTIONAL INTERFACE:
   classId: IntPredicate
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -228,6 +228,6 @@ FUNCTIONAL INTERFACE:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: IntPredicate

@@ -15,7 +15,8 @@ fun String.walkRepositoryKotlinFilesWithoutTestData(f: (File) -> Unit) {
         if (
             path.contains("testdata") ||
             path.contains("kotlin-native") ||
-            path.contains("resources")
+            path.contains("resources") ||
+            path.contains("/build/")
         ) continue
 
         if (file.extension != "kt") continue

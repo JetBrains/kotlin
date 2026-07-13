@@ -7,19 +7,22 @@ package org.jetbrains.kotlin.arguments.description.removed
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
-import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
 val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonCompilerArguments) {
     compilerArgument {
         name = "Xuse-k2"
-        description =
-            "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.".asReleaseDependent()
+        description = ReleaseDependent(
+            "Compile using the K2 compiler pipeline.",
+            KotlinReleaseVersion.v1_7_0..KotlinReleaseVersion.v2_4_0 to "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet."
+        )
         valueType = BooleanType.defaultFalse
+        deprecatedMessage = "Compiler flag -Xuse-k2 is no more supported. " +
+                "Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,

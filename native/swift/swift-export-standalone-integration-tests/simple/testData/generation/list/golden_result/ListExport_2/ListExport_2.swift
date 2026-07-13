@@ -4,17 +4,21 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
-extension ExportedKotlinPackages.list2.MyList where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.list2.MyList where Self : ExportedKotlinPackages.list2.__MyList {
 }
 extension ExportedKotlinPackages.list2.MyList {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.list2.MyList where Wrapped : ExportedKotlinPackages.list2._MyList {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.list2.MyList, ExportedKotlinPackages.list2.__MyList where Wrapped : ExportedKotlinPackages.list2._MyList {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.list2._MyList {
 }
 extension ExportedKotlinPackages.list2 {
-    public protocol MyList: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.List {
+    public protocol MyList: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.List, ExportedKotlinPackages.list2._MyList {
     }
     @objc(_MyList)
-    package protocol _MyList: ExportedKotlinPackages.kotlin.collections._List {
+    public protocol _MyList: ExportedKotlinPackages.kotlin.collections._List {
+    }
+    public protocol __MyList: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__List {
     }
     public static func testListOptAny(
         l: any ExportedKotlinPackages.list2.MyList

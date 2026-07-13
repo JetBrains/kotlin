@@ -2,11 +2,14 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.zip.ZipFile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     java
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 description = "Runner for Swift Export (for embedding purpose)"
@@ -168,6 +171,7 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
     dependencies.add(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils.common")))
 
     dependencies.add(project.dependencies.testFixtures(project(":native:swift:swift-export-standalone-integration-tests")))
+    dependencies.add(project.dependencies.testFixtures(project(":native:swift:swift-export-standalone-integration-tests:external")))
 }
 
 val shadedIntransitiveTestDependenciesJar = tasks.register<ShadowJar>("shadedTestDependencies") {
@@ -225,11 +229,7 @@ projectTests {
             // These dependencies are used by the test classes
             shadedIntransitiveTestDependenciesJar,
             transitiveTestRuntimeClasspath,
-            configurations.testRuntimeClasspath, // Includes KotlinSecurityManager from test-inputs-check
         )
         testClassesDirs = testSourceSet.output.classesDirs
-        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
-            allowFlightRecorder.set(true)
-        }
     }
 }

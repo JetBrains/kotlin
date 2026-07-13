@@ -2,6 +2,9 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import java.net.URI
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     id("generated-sources")
     id("binaryen-configuration")
@@ -33,7 +36,6 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(project(":compiler:psi:psi-api"))
-                implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
                 implementation(intellijCore())
                 runtimeOnly(libs.intellij.fastutil)
                 runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))

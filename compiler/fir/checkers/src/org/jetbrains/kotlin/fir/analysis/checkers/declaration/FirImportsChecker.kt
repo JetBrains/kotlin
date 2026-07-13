@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -37,12 +36,10 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.useArrayLiteralResolution
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
@@ -246,18 +243,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
     private fun checkOperatorRename(import: FirResolvedImport) {
         val alias = import.aliasName ?: return
         val importedName = import.importedName ?: return
-        if (!OperatorConventions.isConventionName(alias)) return
-        when (alias) {
-            OperatorNameConventions.OF if useArrayLiteralResolution() -> {
-                return
-            }
-
-            OperatorNameConventions.PROVIDE_DELEGATE if LanguageFeature.TreatProvideDelegateAsConventionName.isDisabled() -> {
-                return
-            }
-
-            else -> {}
-        }
+        if (!OperatorConventions.isConventionName(alias) || alias == importedName) return
 
         val classId = import.resolvedParentClassId
         val illegalRename = if (classId != null) {

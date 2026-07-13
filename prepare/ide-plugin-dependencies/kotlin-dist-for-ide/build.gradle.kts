@@ -1,8 +1,11 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     java
 }
 
-idePluginDependency {
+idePluginPublishingLatch {
     publish()
 
     val jar: Jar by tasks

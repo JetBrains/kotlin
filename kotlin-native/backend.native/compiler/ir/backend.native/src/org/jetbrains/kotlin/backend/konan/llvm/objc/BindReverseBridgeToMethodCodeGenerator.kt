@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdap
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdapter.Companion.KotlinToObjCMethodAdapter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.findOverriddenMethodOfAny
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 
 /**
  * Collects `@BindReverseBridgeToMethod` annotations from the given file,
@@ -38,19 +40,23 @@ private fun CodeGenerator.resolveReverseBridgeAdapter(
     layoutBuilder: ClassLayoutBuilder,
     bridge: BindReverseBridgeToMethod,
 ): KotlinToObjCMethodAdapter? {
-    val targetFunction = irClass.declarations
-        .filterIsInstance<IrSimpleFunction>()
-        .firstOrNull { it.name.asString() == bridge.targetMethod }
-        ?: return null
+    val targetFunction = irClass.simpleFunctions()
+            .firstOrNull { it.name.asString() == bridge.targetMethod }
+            ?.let { with(layoutBuilder) { it.getLoweredVersion() } }
+            ?: return null
 
-    val vtableIndex = try {
+    val isInterfaceMethod = irClass.isInterface
+    val vtableIndex = if (isInterfaceMethod) {
+        -1
+    } else {
         layoutBuilder.vtableIndex(targetFunction)
-    } catch (_: IllegalArgumentException) {
-        -1 // Not in vtable (e.g., interface method — handled via itable)
     }
 
-    // TODO: Handle itable for interface methods
-    val itablePlace = ClassLayoutBuilder.InterfaceTablePlace.INVALID
+    val itablePlace = if (isInterfaceMethod && targetFunction.findOverriddenMethodOfAny() == null) {
+        layoutBuilder.itablePlace(targetFunction)
+    } else {
+        ClassLayoutBuilder.InterfaceTablePlace.INVALID
+    }
 
     return KotlinToObjCMethodAdapter(
         selector = bridge.targetMethod,

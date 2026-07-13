@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class JpsKotlinCompilerRunnerTest {

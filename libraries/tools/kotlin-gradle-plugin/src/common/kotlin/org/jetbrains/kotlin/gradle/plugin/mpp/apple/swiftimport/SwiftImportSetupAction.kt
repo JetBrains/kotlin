@@ -8,33 +8,34 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.project
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
+import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.DUMP_FILE_ARGS_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Platform
 import org.jetbrains.kotlin.gradle.plugin.testTaskName
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
@@ -42,13 +43,11 @@ import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.io.ObjectInputStream
-import kotlin.io.readLines
-import kotlin.io.resolve
-
 
 internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     if (project.kotlinPropertiesProvider.disableSwiftPMImport) return@KotlinProjectSetupAction
@@ -65,13 +64,14 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     }
 
     val isMacOSHost = HostManager.hostIsMac
+    val ideaSyncEnabled = project.isInIdeaSync
 
     inheritSwiftPMDependenciesFromAppleCompilationDependencies()
 
     val syntheticImportProjectProductType = syntheticImportProjectProductTypeFromFrameworkTypes()
 
-    val transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider()
-    val transitiveLocalSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider.map {
+    val transitiveSwiftPMMetadataProvider = transitiveSwiftPMMetadataProvider()
+    val transitiveLocalSwiftPMMetadataProvider = transitiveSwiftPMMetadataProvider.map {
         it.metadataByDependencyIdentifier.values.flatMap { swiftPMDependencies ->
             swiftPMDependencies.dependencies.mapNotNull { dependency ->
                 when (dependency) {
@@ -81,11 +81,12 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             }
         }
     }
+    val hasLocalSwiftPMDependencies = transitiveLocalSwiftPMMetadataProvider.map { it.isNotEmpty() }
 
     val syntheticImportProjectGenerationTaskForEmbedAndSignLinkage = locateOrRegisterRegenerateLinkageImportProjectTask()
     syntheticImportProjectGenerationTaskForEmbedAndSignLinkage.configure {
         it.configureWithExtension(swiftPMImportExtension)
-        it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
+        it.transitiveSwiftPMMetadata.set(transitiveSwiftPMMetadataProvider)
         it.syntheticProductType.set(syntheticImportProjectProductType)
     }
 
@@ -94,7 +95,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         swiftPMImportExtension = swiftPMImportExtension,
         projectPathProvider = projectPathProvider,
         syntheticImportProjectProductType = syntheticImportProjectProductType,
-        transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider,
+        transitiveSwiftPMMetadataProvider = transitiveSwiftPMMetadataProvider,
     )
     registerXcodeIntegrationTasks(
         projectPathProvider = projectPathProvider,
@@ -106,24 +107,52 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     ) {
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.localPackages.addAll(
-            transitiveLocalSwiftPMDependenciesProvider.map { deps ->
+            transitiveLocalSwiftPMMetadataProvider.map { deps ->
                 deps.map { dep -> dep.absolutePath }
             }
         )
     }
 
+
+    val directSwiftPMMetadataProvider = directSwiftPMMetadataProvider(swiftPMImportExtension)
+
+    val fingerprintSyntheticPackageTask = project.locateOrRegisterTask<FingerprintSyntheticPackage>(
+        FingerprintSyntheticPackage.TASK_NAME
+    ) {
+        it.transitiveSwiftPMMetadata.set(
+            transitiveSwiftPMMetadataProvider
+        )
+        it.directSwiftPMMetadata.set(
+            directSwiftPMMetadataProvider
+        )
+    }
+
+
+    val validateLocalSwiftPMDependencies = project.locateOrRegisterTask<ValidateLocalSwiftPMDependencies>(
+        ValidateLocalSwiftPMDependencies.TASK_NAME,
+    ) {
+        it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
+        it.setupKotlinToolingDiagnosticsParameters(project)
+        it.projectDir.set(project.projectDir)
+        it.localDependencies.addAll(transitiveLocalSwiftPMMetadataProvider)
+    }
+
+    computeLocalPackageDependencyInputFiles.configure {
+        it.dependsOn(validateLocalSwiftPMDependencies)
+    }
+
     val syntheticImportProjectGenerationTaskForCinteropsAndLdDump = project.locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(
         GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName,
-    ) {
-        it.configureWithExtension(swiftPMImportExtension)
-        it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
+    ) { generateTask ->
+        generateTask.configureWithExtension(swiftPMImportExtension)
+        generateTask.transitiveSwiftPMMetadata.set(transitiveSwiftPMMetadataProvider)
         /**
          * The reason we always use dynamic here is to force LD dump to happen at the same time as CC dump.
          *
          * FIXME: KT-84798 This might not be not what we actually want. Having dynamic linkage here might erroneously fail def file creation
          * if the linkage type is incompatible with consumed targets. Probably we want to do LD dump in a separate step and only if necessary
          */
-        it.syntheticProductType.set(SyntheticProductType.DYNAMIC)
+        generateTask.syntheticProductType.set(GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.DYNAMIC)
     }
 
     val syncPersistedPackageResolvedToSyntheticSwiftPMPackage = project.locateOrRegisterTask<SyncPackageResolvedTask>(
@@ -136,11 +165,15 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     ) {
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
+        it.ideaSyncEnabled.set(ideaSyncEnabled)
         it.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
         it.dependsOn(syncPersistedPackageResolvedToSyntheticSwiftPMPackage)
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
+        it.dependsOn(hasLocalSwiftPMDependencies.map { hasLocal ->
+            if (hasLocal) listOf(validateLocalSwiftPMDependencies) else emptyList()
+        })
         it.localPackageManifests.from(
-            transitiveLocalSwiftPMDependenciesProvider.map { localPackageDependencyProvider ->
+            transitiveLocalSwiftPMMetadataProvider.map { localPackageDependencyProvider ->
                 localPackageDependencyProvider.map { localPackageDependency ->
                     localPackageDependency.absolutePath.resolve("Package.swift")
                 }
@@ -149,31 +182,53 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
     }
 
-    syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { syncTaskProvider ->
-        // dest files is fixed to synthetic package
-        syncTaskProvider.destinationFile.set(
-            fetchSyntheticImportProjectPackages.map {
-                it.syntheticLockFile.get()
-            }
-        )
-    }
-
     val syncSyntheticPackageResolvedToPersisted = project.locateOrRegisterTask<SyncPackageResolvedTask>(
         SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME
     )
 
-    project.afterEvaluate {
+    val fingerprintCoordinationService = SwiftImportFingerprintedCoordinationService.registerIfAbsent(
+        this,
+        provideXcodeDumpsDir(),
+        provideCheckoutDir(),
+        provideSyntheticPackageDir(),
+    )
+
+    project.launch {
+        KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
+
         val persistedPackageResolved = providePersistedPackageResolved()
 
         syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { taskProvider ->
             taskProvider.sourceFile.set(persistedPackageResolved)
         }
 
+        syncSyntheticPackageResolvedToPersisted.configure { taskProvider ->
+            taskProvider.destinationFile.set(persistedPackageResolved)
+        }
+
+        fingerprintSyntheticPackageTask.configure {
+            it.packageResolvedSynchronizationFingerprint.set(
+                swiftPMImportExtension.packageResolvedSynchronization
+            )
+        }
+
         when (val packageIdentifier = identifierSynchronizationOrNull()) {
             is PackageResolvedSynchronization.Identifier -> {
                 val packageResolvedSynchronizationIdentifier = packageIdentifier.identifier
-                kotlinExtension.targets.matching { it.supportsSwiftPMImport() }.all {
-                    val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(this)
+                enableFingerprintCoordination(
+                    fingerprintCoordinationService = fingerprintCoordinationService,
+                    generateSyntheticPackageTask = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
+                    fingerprintSyntheticPackageTask = fingerprintSyntheticPackageTask,
+                    transitiveSwiftPMMetadataProvider = transitiveSwiftPMMetadataProvider,
+                    directSwiftPMMetadata = directSwiftPMMetadataProvider,
+                    fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
+                    syncPersistedPackageResolvedToSyntheticSwiftPMPackage = syncPersistedPackageResolvedToSyntheticSwiftPMPackage,
+                    syncSyntheticPackageResolvedToPersisted = syncSyntheticPackageResolvedToPersisted,
+                )
+
+                if (multiplatformExtension.awaitTargets().any { it.supportsSwiftPMImport() }) {
+
+                    val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(project)
 
                     val projectPath = project.path
 
@@ -219,7 +274,13 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                         taskProvider.sourceFile.get().asFile.exists()
                     }
                 }
-
+                syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { taskProvider ->
+                    taskProvider.destinationFile.set(
+                        fetchSyntheticImportProjectPackages.map { task ->
+                            task.syntheticLockFile.get()
+                        }
+                    )
+                }
                 fetchSyntheticImportProjectPackages.configure {
                     it.finalizedBy(syncSyntheticPackageResolvedToPersisted)
                 }
@@ -245,7 +306,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.dependsOn(project.swiftPMImportIdeModelProvider())
     }
 
-    kotlinExtension.targets.matching { it.supportsSwiftPMImport() }.all { target ->
+    kotlinExtension.swiftPMImportTargets().all { target ->
         target as KotlinNativeTarget
 
         tasks.withType(GenerateSyntheticLinkageImportProject::class.java).configureEach {
@@ -254,7 +315,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
         locateOrRegisterSwiftPMDependenciesMetadataTaskForLockFilesAndConsumableConfiguration(
             swiftPMImportExtension,
-            transitiveSwiftPMDependenciesProvider,
+            transitiveSwiftPMMetadataProvider,
             target.konanTarget,
         )
 
@@ -264,17 +325,77 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         val targetSdk = target.konanTarget.appleTarget.sdk
 
         val defFilesAndLdDumpGenerationTask = registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
-            fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
-            computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
-            syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
             discoverModulesImplicitly = swiftPMImportExtension.discoverClangModulesImplicitly,
-            hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
             isMacOSHost = isMacOSHost,
             targetSdk = targetSdk,
-            targetPlatform = targetPlatform,
         )
+
         defFilesAndLdDumpGenerationTask.configure {
             it.architectures.add(target.konanTarget.appleArchitecture)
+        }
+
+
+        val fingerprintXcode = project.locateOrRegisterTask<FingerprintXcodeBuild>(
+            lowerCamelCaseName(
+                FingerprintXcodeBuild.TASK_NAME,
+                targetSdk,
+            )
+        ) { fingerprintTask ->
+            fingerprintTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
+            fingerprintTask.syntheticPackageFingerprint.set(fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() })
+            fingerprintTask.xcodebuildSdk.set(targetSdk)
+        }
+
+        fingerprintXcode.configure {
+            it.architectures.add(target.konanTarget.appleArchitecture)
+
+        }
+
+        val xcodebuildDumpTaskName = lowerCamelCaseName(
+            DumpXcodeBuildArgs.TASK_NAME,
+            targetSdk,
+        )
+        val xcodebuildDumpTask = registerDumpXcodebuildArgsTask(
+            taskName = xcodebuildDumpTaskName,
+            computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
+            fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
+            hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
+            syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
+            targetSdk = targetSdk,
+            targetPlatform = targetPlatform,
+            isMacOSHost = isMacOSHost,
+        )
+
+        xcodebuildDumpTask.configure {
+            it.architectures.add(target.konanTarget.appleArchitecture)
+        }
+
+        defFilesAndLdDumpGenerationTask.configure { task ->
+            task.dependsOn(xcodebuildDumpTask)
+            task.localPackages
+                .filesToTrackFromLocalPackages
+                .set(computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() })
+        }
+
+        project.afterEvaluate {
+            when (identifierSynchronizationOrNull()) {
+                is PackageResolvedSynchronization.Identifier -> {
+                    xcodebuildDumpTask.configure {
+                        it.fingerprintCoordinationService.set(fingerprintCoordinationService)
+                        it.syntheticPackageFingerprint.set(
+                            fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
+                        )
+                        it.xcodebuildFingerprint.set(fingerprintXcode.map { it.xcodebuildFingerprint.get() })
+                    }
+
+                    defFilesAndLdDumpGenerationTask.configure { defFileTask ->
+                        defFileTask.xcodebuildFingerprint.set(
+                            xcodebuildDumpTask.map { it.xcodebuildFingerprint.get() }
+                        )
+                        defFileTask.fingerprintsXcodeDumpsDir.set(provideXcodeDumpsDir())
+                    }
+                }
+            }
         }
 
         tasks.configureEach { task ->
@@ -344,15 +465,16 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
             when (swiftPMDependency) {
                 is SwiftPMDependency.Local -> {
-                    if (checkLocalSwiftDependencyIsValid(swiftPMDependency)) {
-                        computeLocalPackageDependencyInputFiles.configure {
-                            it.localPackages.add(swiftPMDependency.absolutePath)
-                        }
-                        fetchSyntheticImportProjectPackages.configure {
-                            it.localPackageManifests.from(
-                                swiftPMDependency.absolutePath.resolve("Package.swift")
-                            )
-                        }
+                    validateLocalSwiftPMDependencies.configure {
+                        it.localDependencies.add(swiftPMDependency)
+                    }
+                    computeLocalPackageDependencyInputFiles.configure {
+                        it.localPackages.add(swiftPMDependency.absolutePath)
+                    }
+                    fetchSyntheticImportProjectPackages.configure {
+                        it.localPackageManifests.from(
+                            swiftPMDependency.absolutePath.resolve("Package.swift")
+                        )
                     }
                 }
                 is SwiftPMDependency.Remote -> Unit
@@ -386,9 +508,9 @@ internal fun Project.syntheticImportProjectProductTypeFromFrameworkTypes() = pro
      * FIXME: KT-83873 This linkage configuration is not correct in general
      */
     if (hasDynamicFrameworks) {
-        SyntheticProductType.DYNAMIC
+        GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.DYNAMIC
     } else {
-        SyntheticProductType.INFERRED
+        GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.INFERRED
     }
 }
 
@@ -424,7 +546,7 @@ private fun Project.getKonanTargetsForUmbrellaPackageProvider(): Provider<Set<Ko
     }
 
 
-private fun Project.getAggregatedTransitiveDependenciesProvider(): Provider<TransitiveSwiftPMDependencies> =
+private fun Project.getAggregatedTransitiveDependenciesProvider(): Provider<TransitiveSwiftPMMetadata> =
     getIdentifierLockFilesMetadataProvider().map { lockFilesMetadata ->
         val merged = linkedMapOf<SwiftPMDependencyIdentifier, SwiftPMImportMetadata>()
 
@@ -466,7 +588,7 @@ private fun Project.getAggregatedTransitiveDependenciesProvider(): Provider<Tran
                 deterministic[dependencyIdentifier] = metadata
             }
 
-        TransitiveSwiftPMDependencies(deterministic)
+        TransitiveSwiftPMMetadata(deterministic)
     }
 
 private fun Project.updateDependenciesWithAggregatedResults(
@@ -485,10 +607,69 @@ private fun Project.updateDependenciesWithAggregatedResults(
     )
 }
 
+private fun Project.enableFingerprintCoordination(
+    fingerprintCoordinationService: Provider<SwiftImportFingerprintedCoordinationService>,
+    generateSyntheticPackageTask: TaskProvider<GenerateSyntheticLinkageImportProject>,
+    fingerprintSyntheticPackageTask: TaskProvider<FingerprintSyntheticPackage>,
+    transitiveSwiftPMMetadataProvider: Provider<TransitiveSwiftPMMetadata>,
+    fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
+    directSwiftPMMetadata: Provider<SwiftPMImportMetadata>,
+    syncPersistedPackageResolvedToSyntheticSwiftPMPackage: TaskProvider<SyncPackageResolvedTask>,
+    syncSyntheticPackageResolvedToPersisted: TaskProvider<SyncPackageResolvedTask>,
+) {
+    val fingerprintedSwiftPMDependencyGraph = transitiveSwiftPMMetadataProvider.zip(directSwiftPMMetadata) { transitiveMetadata, directMetadata ->
+        fingerprintSwiftPMDependencyGraph(
+            directMetadata,
+            transitiveMetadata,
+            normalizeVersions = false,
+        )
+    }
+
+    syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
+        // dest files is fixed to synthetic package
+        it.syntheticPackagesRoot.set(
+            provideSyntheticPackageDir()
+        )
+        it.packageFingerprint.set(
+            fingerprintSyntheticPackageTask.map {
+                it.syntheticPackageFingerprint.get()
+            }
+        )
+        it.dependsOn(fingerprintSyntheticPackageTask)
+    }
+
+    syncSyntheticPackageResolvedToPersisted.configure {
+        it.syntheticPackagesRoot.set(
+            provideSyntheticPackageDir()
+        )
+        it.packageFingerprint.set(
+            fingerprintSyntheticPackageTask.map {
+                it.syntheticPackageFingerprint.get()
+            }
+        )
+    }
+
+    generateSyntheticPackageTask.configure {
+        it.useOnlyTransitiveImportedDependencies()
+        it.coordinationService.set(fingerprintCoordinationService)
+        it.syntheticPackageFingerprint.set(
+            fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
+        )
+        it.transitiveSwiftPMMetadata.set(fingerprintedSwiftPMDependencyGraph)
+    }
+
+    fetchSyntheticImportProjectPackages.configure {
+        it.syntheticPackageFingerprint.set(
+            fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
+        )
+        it.coordinationService.set(fingerprintCoordinationService)
+    }
+}
+
 private fun Project.locateOrRegisterUmbrellaFetchTask(
     identifier: String,
     aggregationService: Provider<SwiftPMLockTaskAggregationBuildService>,
-    checkOutDir : Provider<Directory>,
+    checkOutDir: Provider<Directory>,
     actualGeneratedClaimer: String?,
     isMacOSHost: Boolean,
 ): String? {
@@ -512,6 +693,7 @@ private fun Project.locateOrRegisterUmbrellaFetchTask(
         it.dependsOn(actualGeneratedClaimer)
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { aggregatedTransitiveDependencies.get().metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() } }
+        it.ideaSyncEnabled.set(project.isInIdeaSync)
         it.swiftPMDependenciesCheckout.set(checkOutDir)
         it.gitIgnoreCheckoutDir.set(true)
     }
@@ -553,9 +735,9 @@ private fun Project.locateOrRegisterUmbrellaPackageGenerateTask(
         task.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         task.onlyIf { aggregatedTransitiveDependenciesProvider.get().metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() } }
         task.useOnlyTransitiveImportedDependencies()
-        task.syntheticProductType.set(SyntheticProductType.INFERRED)
+        task.syntheticProductType.set(GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.INFERRED)
         task.syntheticImportProjectRoot.set(swiftPMRootPath)
-        task.dependencyIdentifierToImportedSwiftPMDependencies.set(
+        task.transitiveSwiftPMMetadata.set(
             aggregatedTransitiveDependenciesProvider
         )
         task.konanTargets.set(konanTargetsProvider)
@@ -563,26 +745,46 @@ private fun Project.locateOrRegisterUmbrellaPackageGenerateTask(
     return actualGeneratedClaimer
 }
 
+private fun Project.directSwiftPMMetadataProvider(
+    swiftPMImportExtension: SwiftPMImportExtension,
+): Provider<SwiftPMImportMetadata> = provider {
+    SwiftPMImportMetadata(
+        konanTargets = multiplatformExtension.swiftPMImportTargets()
+            .map { (it as KotlinNativeTarget).konanTarget.name }
+            .sorted()
+            .toSet(),
+        iosDeploymentVersion = swiftPMImportExtension.iosMinimumDeploymentTarget.orNull,
+        macosDeploymentVersion = swiftPMImportExtension.macosMinimumDeploymentTarget.orNull,
+        watchosDeploymentVersion = swiftPMImportExtension.watchosMinimumDeploymentTarget.orNull,
+        tvosDeploymentVersion = swiftPMImportExtension.tvosMinimumDeploymentTarget.orNull,
+        isModulesDiscoveryEnabled = swiftPMImportExtension.discoverClangModulesImplicitly.get(),
+        dependencies = swiftPMImportExtension.swiftPMDependencies.toSet(),
+    )
+}
+
 private fun KotlinTarget.supportsSwiftPMImport() = this is KotlinNativeTarget && this.konanTarget.family.isAppleFamily
+
+private fun KotlinMultiplatformExtension.swiftPMImportTargets() =
+    targets.matching { it.supportsSwiftPMImport() }
 
 private fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (this) {
     KonanTarget.IOS_ARM64,
     KonanTarget.IOS_SIMULATOR_ARM64,
     KonanTarget.IOS_X64,
-        -> Platform.iOS
+        -> SwiftPMDependency.Platform.iOS
     KonanTarget.MACOS_ARM64,
     KonanTarget.MACOS_X64,
-        -> Platform.macOS
+        -> SwiftPMDependency.Platform.macOS
     KonanTarget.TVOS_ARM64,
     KonanTarget.TVOS_SIMULATOR_ARM64,
     KonanTarget.TVOS_X64,
-        -> Platform.tvOS
+        -> SwiftPMDependency.Platform.tvOS
     KonanTarget.WATCHOS_ARM32,
     KonanTarget.WATCHOS_ARM64,
     KonanTarget.WATCHOS_DEVICE_ARM64,
     KonanTarget.WATCHOS_SIMULATOR_ARM64,
     KonanTarget.WATCHOS_X64,
-        -> Platform.watchOS
+        -> SwiftPMDependency.Platform.watchOS
 
     KonanTarget.ANDROID_ARM32,
     KonanTarget.ANDROID_ARM64,
@@ -593,38 +795,6 @@ private fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (th
     KonanTarget.LINUX_X64,
     KonanTarget.MINGW_X64,
         -> error("unsupported targets")
-}
-
-private fun Project.checkLocalSwiftDependencyIsValid(swiftPMDependency: SwiftPMDependency.Local): Boolean {
-    val resolvedPath = swiftPMDependency.absolutePath
-    val originalPath = project.projectDir.toPath().relativize(resolvedPath.toPath()).toString()
-
-    // Validate at configuration time for direct dependencies using diagnostics
-    if (!resolvedPath.exists()) {
-        project.reportDiagnostic(
-            KotlinToolingDiagnostics.SwiftPMLocalPackageDirectoryNotFound(
-                resolvedPath.absolutePath,
-                originalPath
-            )
-        )
-        return false
-    }
-
-    if (!resolvedPath.resolve("Package.swift").exists()) {
-        project.reportDiagnostic(
-            KotlinToolingDiagnostics.SwiftPMLocalPackageMissingManifest(resolvedPath)
-        )
-        return false
-    }
-
-    if (swiftPMDependency.packageName.isBlank()) {
-        project.reportDiagnostic(
-            KotlinToolingDiagnostics.SwiftPMLocalPackageInvalidName(originalPath)
-        )
-        return false
-    }
-
-    return true
 }
 
 internal fun Project.identifierSynchronizationOrNull(): PackageResolvedSynchronization.Identifier? {
@@ -715,14 +885,9 @@ internal fun Project.locateOrRegisterRegenerateLinkageImportProjectTask(): TaskP
 }
 
 private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
-    computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
-    fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
-    syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
     discoverModulesImplicitly: Provider<Boolean>,
-    hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
     isMacOSHost: Boolean,
     targetSdk: String,
-    targetPlatform: String,
 ): TaskProvider<ConvertSyntheticSwiftPMImportProjectIntoDefFile> {
     return project.locateOrRegisterTask<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(
         lowerCamelCaseName(
@@ -731,21 +896,42 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
         )
     ) {
         it.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
-        it.dependsOn(fetchSyntheticImportProjectPackages)
-        it.dependsOn(computeLocalPackageDependencyInputFiles)
-        it.resolvedPackagesState.from(
+        it.xcodebuildSdk.set(targetSdk)
+        it.discoverModulesImplicitly.set(discoverModulesImplicitly)
+        it.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies())
+        it.ideaSyncEnabled.set(project.isInIdeaSync)
+    }
+}
+
+private fun Project.registerDumpXcodebuildArgsTask(
+    taskName: String,
+    computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
+    fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
+    syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
+    hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
+    targetSdk: String,
+    targetPlatform: String,
+    isMacOSHost: Boolean,
+): TaskProvider<DumpXcodeBuildArgs> {
+    return project.locateOrRegisterTask<DumpXcodeBuildArgs>(
+        taskName
+    ) { dumpTask ->
+        dumpTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
+        dumpTask.onlyIf("Project does not have any SwiftPM dependencies") { hasDirectOrTransitiveSwiftPMDependencies.get() }
+        dumpTask.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
+        dumpTask.resolvedPackagesState.from(
             fetchSyntheticImportProjectPackages.map { it.inputManifests },
             fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
         )
-        it.xcodebuildPlatform.set(targetPlatform)
-        it.xcodebuildSdk.set(targetSdk)
-        it.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
-        it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
-        it.discoverModulesImplicitly.set(discoverModulesImplicitly)
-        it.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
-        it.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
+        dumpTask.xcodebuildPlatform.set(targetPlatform)
+        dumpTask.xcodebuildSdk.set(targetSdk)
+        dumpTask.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
+        dumpTask.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
+        dumpTask.localPackages.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() })
+        dumpTask.ideaSyncEnabled.set(project.isInIdeaSync)
     }
 }
+
 
 internal const val PROJECT_PATH_ENV = "XCODEPROJ_PATH"
 internal fun searchForGradlew(path: File?): File? {
@@ -754,10 +940,14 @@ internal fun searchForGradlew(path: File?): File? {
     return searchForGradlew(path.parentFile)
 }
 
-internal fun Project.hasDirectOrTransitiveSwiftPMDependencies(): Provider<Boolean> {
+internal fun Project.directSwiftPMDependencies(): Provider<Set<SwiftPMDependency>> {
     val swiftPMImportExtension = locateOrRegisterSwiftPMDependenciesExtension()
-    val hasDirectSwiftPMDependencies = provider { swiftPMImportExtension.swiftPMDependencies.isNotEmpty() }
-    return transitiveSwiftPMDependenciesProvider().map { transitiveDependencies ->
+    return provider { swiftPMImportExtension.swiftPMDependencies }
+}
+
+internal fun Project.hasDirectOrTransitiveSwiftPMDependencies(): Provider<Boolean> {
+    val hasDirectSwiftPMDependencies = directSwiftPMDependencies().map { it.isNotEmpty() }
+    return transitiveSwiftPMMetadataProvider().map { transitiveDependencies ->
         hasDirectSwiftPMDependencies.get() || transitiveDependencies.metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() }
     }
 }
@@ -766,8 +956,8 @@ internal fun Project.registerPackageGeneration(
     suffix: String,
     swiftPMImportExtension: SwiftPMImportExtension,
     syntheticImportProjectRoot: Provider<File>,
-    syntheticImportProjectProductType: Provider<SyntheticProductType>,
-    transitiveSwiftPMDependenciesProvider: Provider<TransitiveSwiftPMDependencies>,
+    syntheticImportProjectProductType: Provider<GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType>,
+    transitiveSwiftPMMetadataProvider: Provider<TransitiveSwiftPMMetadata>,
 ): TaskProvider<GenerateSyntheticLinkageImportProject> {
     return registerTask<GenerateSyntheticLinkageImportProject>(
         lowerCamelCaseName(
@@ -775,7 +965,7 @@ internal fun Project.registerPackageGeneration(
             suffix,
         ),
     ) {
-        it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
+        it.transitiveSwiftPMMetadata.set(transitiveSwiftPMMetadataProvider)
         it.configureWithExtension(swiftPMImportExtension)
         it.syntheticImportProjectRoot.set(
             project.layout.dir(syntheticImportProjectRoot)
@@ -784,11 +974,35 @@ internal fun Project.registerPackageGeneration(
     }
 }
 
+internal const val SHARED_XCODE_DUMP_DIR = "build/kotlin/swiftPMXcodeDumps"
+private fun Project.provideXcodeDumpsDir(): Provider<Directory> =
+    layout.dir(
+        provider {
+            rootProject.projectDir.resolve(SHARED_XCODE_DUMP_DIR)
+        }
+    )
+
+internal const val SHARED_SYNTHETIC_PACKAGE_DIR = "build/kotlin/swiftSyntheticPackages"
+private fun Project.provideSyntheticPackageDir(): Provider<Directory> =
+    layout.dir(
+        provider {
+            rootProject.projectDir.resolve(SHARED_SYNTHETIC_PACKAGE_DIR)
+        }
+    )
+
+internal const val SHARED_CHECKOUT_DIR = "build/kotlin/swiftPMCheckouts"
+private fun Project.provideCheckoutDir(): Provider<Directory> =
+    layout.dir(
+        provider {
+            rootProject.projectDir.resolve(SHARED_CHECKOUT_DIR)
+        }
+    )
+
 private fun Project.registerXcodeIntegrationLinkagePackageGeneration(
     swiftPMImportExtension: SwiftPMImportExtension,
     projectPathProvider: Provider<String>,
-    syntheticImportProjectProductType: Provider<SyntheticProductType>,
-    transitiveSwiftPMDependenciesProvider: Provider<TransitiveSwiftPMDependencies>,
+    syntheticImportProjectProductType: Provider<GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType>,
+    transitiveSwiftPMMetadataProvider: Provider<TransitiveSwiftPMMetadata>,
 ): TaskProvider<GenerateSyntheticLinkageImportProject> = registerPackageGeneration(
     suffix = "forLinkageForCli",
     swiftPMImportExtension = swiftPMImportExtension,
@@ -804,7 +1018,7 @@ private fun Project.registerXcodeIntegrationLinkagePackageGeneration(
             project.layout.buildDirectory.dir("tmp/swiftImport-unconfigured/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME").getFile()
         ),
     syntheticImportProjectProductType = syntheticImportProjectProductType,
-    transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider,
+    transitiveSwiftPMMetadataProvider = transitiveSwiftPMMetadataProvider,
 )
 
 private fun Project.registerXcodeIntegrationTasks(
@@ -857,7 +1071,7 @@ private fun Project.providerIdentifierRoot(identifier: String): Provider<Directo
 private fun Project.provideIdentifierPackageRoot(identifier: String): Provider<Directory> =
     providerIdentifierRoot(identifier).map { it.dir("swiftImport") }
 
-private fun Project.provideIdentifierCheckoutDir(identifier: String) : Provider<Directory> {
+private fun Project.provideIdentifierCheckoutDir(identifier: String): Provider<Directory> {
     return providerIdentifierRoot(identifier).map { it.dir("swiftPMCheckout") }
 }
 
@@ -868,5 +1082,28 @@ internal fun Project.swiftPMImportIdeModelProvider(): Provider<SwiftPMImportIdeM
             hasDirectOrTransitiveSwiftPMDependencies,
             ("${project.path}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}").replace("::", ":"),
             SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+            project.directSwiftPMDependencies().map directSwiftPMDependencies@ { dependencies ->
+                val declaredDependencies = dependencies.map {
+                    when (it) {
+                        is SwiftPMDependency.Local -> LocalSwiftPMDependencyForIde(it.absolutePath)
+                        is SwiftPMDependency.Remote -> {
+                            RemoteSwiftPMDependencyForIde(
+                                when (val repository = it.repository) {
+                                    is SwiftPMDependency.Remote.Repository.Id -> repository.value
+                                    is SwiftPMDependency.Remote.Repository.Url -> repository.value
+                                }
+                            )
+                        }
+                    }
+                }
+                if (declaredDependencies.isEmpty()) return@directSwiftPMDependencies null
+
+                val fetchTask = tasks.getByName(FetchSyntheticImportProjectPackages.TASK_NAME) as FetchSyntheticImportProjectPackages
+                DeclaredSwiftPMDependencies(
+                    dependencies = declaredDependencies,
+                    checkoutPath = fetchTask.swiftPMDependenciesCheckout.getFile(),
+                    swiftPackageResolveTaskPath = fetchTask.path,
+                )
+            }.orNull
         )
     }

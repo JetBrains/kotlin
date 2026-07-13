@@ -76,7 +76,7 @@ fun serializeSingleFirFile(
                 packageProto.propertyList.isEmpty() &&
                 packageProto.typeAliasList.isEmpty() &&
                 classesProto.isEmpty(),
-        serializerExtension.stringTable as SerializableStringTable,
+        serializerExtension.stringTable,
         fileAnnotations = fileAnnotationProtos,
     )
 }

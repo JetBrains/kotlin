@@ -18,7 +18,10 @@ abstract class AbstractIncrementalK2FirICLightTreeJvmJpsTest(
         if (LanguageVersion.LATEST_STABLE.major < 2) {
             arguments.languageVersion = "2.0"
         }
-        additionalCommandLineArguments = additionalCommandLineArguments + listOf(K2JVMCompilerArguments::useFirIC.cliArgument, K2JVMCompilerArguments::useFirLT.cliArgument)
+        additionalCommandLineArguments = additionalCommandLineArguments + listOf(
+            K2JVMCompilerArguments::useFirIC.cliArgument,
+            @Suppress("DEPRECATION") K2JVMCompilerArguments::useFirLT.cliArgument,
+        )
         super.updateCommandLineArguments(arguments)
     }
 

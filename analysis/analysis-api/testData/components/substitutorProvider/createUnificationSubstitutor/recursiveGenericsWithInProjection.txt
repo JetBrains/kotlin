@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <map substitutor: {R = SomeClassIn}>
-Substituted pairs:
-SomeClassIn <: GenericFooIn<SomeClassIn> (Original: SomeClassIn <: GenericFooIn<R>)
-
-EXISTENTIAL:
-Substitutor: <map substitutor: {R = SomeClassIn}>
-Substituted pairs:
-SomeClassIn <: GenericFooIn<SomeClassIn> (Original: SomeClassIn <: GenericFooIn<R>)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -59,11 +59,18 @@ internal fun doubleSignBit(value: Double): Int {
 
 @UsedFromCompilerGeneratedCode
 internal fun getNumberHashCode(obj: Double): Int {
+    // JS VMs don't canonicalize NaN values, so their raw bytes may differ
+    // (spec: https://tc39.es/ecma262/multipage/structured-data.html#sec-numerictorawbytes).
+    // Without user-land canonicalization, the values of the [bufInt32] elements
+    // could differ for different NaN representations (KT-86954).
+    // However, NaN hash codes should be consistent with equality semantics.
+    // To ensure this, we canonicalize NaN values in place before computing the hash code.
+    val value = if (obj.isNaN()) Double.NaN else obj
     @Suppress("DEPRECATED_IDENTITY_EQUALS")
-    if (jsBitwiseOr(obj, 0).unsafeCast<Double>() === obj) {
-        return obj.toInt()
+    if (jsBitwiseOr(value, 0).unsafeCast<Double>() === value) {
+        return value.toInt()
     }
 
-    bufFloat64[0] = obj
+    bufFloat64[0] = value
     return bufInt32[highIndex] * 31 + bufInt32[lowIndex]
 }

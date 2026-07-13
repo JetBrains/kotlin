@@ -1,6 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
 }
@@ -12,7 +15,6 @@ dependencies {
     testFixturesImplementation(libs.junit.jupiter.api)
 
     testFixturesImplementation(kotlinTest("junit"))
-    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesImplementation(project(":compiler:psi:psi-api"))
     testFixturesApi(testFixtures(project(":compiler:psi:psi-api")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))

@@ -2,7 +2,7 @@
 
 rem Based on scalac.bat from the Scala distribution
 rem Copyright 2002-2011, LAMP/EPFL
-rem Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+rem Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
 rem Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 
 rem We adopt the following conventions:

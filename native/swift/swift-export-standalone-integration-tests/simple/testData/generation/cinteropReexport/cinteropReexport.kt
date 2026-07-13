@@ -3,12 +3,10 @@
 // APPLE_ONLY_VALIDATION
 
 // MODULE: fooKitInterop
-// SWIFT_EXPORT_CONFIG: reexportAsObjCModule=FooKit
 
 // FILE: fooKitInterop.def
 language = Objective-C
-headers = Foo.h
-headerFilter = Foo.h
+modules = FooKit BarKit
 package = foo
 
 // FILE: Foo.h
@@ -18,9 +16,25 @@ package = foo
 - (int)someValue;
 @end
 
+@protocol Zar
+- (int)barValue;
+@end
+
+// FILE: Bar.h
+#import <Foundation/Foundation.h>
+
+@interface Bar : NSObject
+- (int)someValue;
+@end
+
 // FILE: module.modulemap
 module FooKit {
     header "Foo.h"
+    export *
+}
+
+module BarKit {
+    header "Bar.h"
     export *
 }
 
@@ -31,7 +45,15 @@ module FooKit {
 package main
 
 import foo.Foo
+import foo.Bar
+import foo.ZarProtocol
 
 fun consumesFoo(x: Foo): Int = 0
 
+fun consumesBar(x: Bar): Int = 0
+
 fun producesFoo(): Foo? = null
+
+// The cinterop names the Objective-C protocol `Zar` as the Kotlin interface `ZarProtocol`; the
+// generated Swift must reference it under its original Objective-C name `Zar`.
+fun consumesBar(x: ZarProtocol): Int = 0

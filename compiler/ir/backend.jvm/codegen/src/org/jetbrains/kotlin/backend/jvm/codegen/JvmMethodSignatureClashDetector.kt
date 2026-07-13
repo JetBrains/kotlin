@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureClashDetector
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
@@ -171,6 +172,7 @@ internal class JvmIrConflictingDeclarationsData(
     fun render(): String = renderer.render(this)
 
     companion object {
+        @OptIn(K1Deprecation::class)
         private val renderer = CommonRenderers.renderConflictingSignatureData(
             signatureKind = "JVM",
             sortUsing = MemberComparator.INSTANCE,

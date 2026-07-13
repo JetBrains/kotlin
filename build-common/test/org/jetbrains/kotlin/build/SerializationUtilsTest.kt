@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.build
 
-import junit.framework.TestCase
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
-class SerializationUtilsTest : TestCase() {
+class SerializationUtilsTest {
     data class TestPropertyTypes(
             val intNull: Int?,
             val int: Int,
@@ -52,4 +52,3 @@ class SerializationUtilsTest : TestCase() {
         assertEquals(TestAddedField2(1, null), deserialized)
     }
 }
-

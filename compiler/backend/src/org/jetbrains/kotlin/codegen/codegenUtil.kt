@@ -5,27 +5,16 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.SpecialSignatureInfo
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
-import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
@@ -34,12 +23,8 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 
-fun generateIsCheck(
-    v: InstructionAdapter,
-    kotlinType: KotlinType,
-    asmType: Type
-) {
-    if (TypeUtils.isNullableType(kotlinType)) {
+fun generateIsCheck(v: InstructionAdapter, type: IrType, asmType: Type) {
+    if (type.isNullable()) {
         val nope = Label()
         val end = Label()
 
@@ -48,7 +33,7 @@ fun generateIsCheck(
 
             ifnull(nope)
 
-            TypeIntrinsics.instanceOf(this, kotlinType, asmType)
+            TypeIntrinsics.instanceOf(this, type, asmType)
 
             goTo(end)
 
@@ -59,25 +44,19 @@ fun generateIsCheck(
             mark(end)
         }
     } else {
-        TypeIntrinsics.instanceOf(v, kotlinType, asmType)
+        TypeIntrinsics.instanceOf(v, type, asmType)
     }
 }
 
-fun generateAsCast(
-    v: InstructionAdapter,
-    kotlinType: KotlinType,
-    asmType: Type,
-    isSafe: Boolean,
-    unifiedNullChecks: Boolean,
-) {
+fun generateAsCast(v: InstructionAdapter, type: IrType, asmType: Type, isSafe: Boolean, unifiedNullChecks: Boolean) {
     if (!isSafe) {
-        if (!TypeUtils.isNullableType(kotlinType)) {
-            generateNullCheckForNonSafeAs(v, kotlinType, unifiedNullChecks)
+        if (!type.isNullable()) {
+            generateNullCheckForNonSafeAs(v, type, unifiedNullChecks)
         }
     } else {
         with(v) {
             dup()
-            TypeIntrinsics.instanceOf(v, kotlinType, asmType)
+            TypeIntrinsics.instanceOf(v, type, asmType)
             val ok = Label()
             ifne(ok)
             pop()
@@ -86,103 +65,24 @@ fun generateAsCast(
         }
     }
 
-    TypeIntrinsics.checkcast(v, kotlinType, asmType, isSafe)
+    TypeIntrinsics.checkcast(v, type, asmType, isSafe)
 }
 
-private fun generateNullCheckForNonSafeAs(
-    v: InstructionAdapter,
-    type: KotlinType,
-    unifiedNullChecks: Boolean,
-) {
+private fun generateNullCheckForNonSafeAs(v: InstructionAdapter, type: IrType, unifiedNullChecks: Boolean) {
     with(v) {
         dup()
         val nonnull = Label()
         ifnonnull(nonnull)
         val exceptionClass = if (unifiedNullChecks) "java/lang/NullPointerException" else "kotlin/TypeCastException"
-        AsmUtil.genThrow(
-            v,
-            exceptionClass,
-            "null cannot be cast to non-null type " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
-        )
+        AsmUtil.genThrow(v, exceptionClass, "null cannot be cast to non-null type ${type.render()}")
         mark(nonnull)
     }
 }
 
-fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String? =
-    valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }
-
-fun CallableDescriptor.isJvmStaticInObjectOrClassOrInterface(): Boolean =
-    isJvmStaticIn {
-        DescriptorUtils.isNonCompanionObject(it) ||
-                // This is necessary because for generation of @JvmStatic methods from companion of class A
-                // we create a synthesized descriptor containing in class A
-                DescriptorUtils.isClassOrEnumClass(it) || isJvmInterface(it)
-    }
-
-fun CallableDescriptor.isJvmStaticInCompanionObject(): Boolean =
-    isJvmStaticIn { DescriptorUtils.isCompanionObject(it) }
-
-private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) -> Boolean): Boolean =
-    when (this) {
-        is PropertyAccessorDescriptor -> {
-            val propertyDescriptor = correspondingProperty
-            predicate(propertyDescriptor.containingDeclaration) &&
-                    (hasJvmStaticAnnotation() || propertyDescriptor.hasJvmStaticAnnotation())
-        }
-        else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
-    }
-
 class JvmKotlinType(val type: Type, val kotlinType: KotlinTypeMarker? = null)
-
-fun KtExpression?.kotlinType(bindingContext: BindingContext) = this?.let(bindingContext::getType)
-
-fun FunctionDescriptor.isGenericToArray(): Boolean {
-    if (name.asString() != "toArray") return false
-    if (valueParameters.size != 1 || typeParameters.size != 1) return false
-
-    val returnType = returnType ?: throw AssertionError(toString())
-    val paramType = valueParameters[0].type
-
-    if (!KotlinBuiltIns.isArray(returnType) || !KotlinBuiltIns.isArray(paramType)) return false
-
-    val elementType = typeParameters[0].defaultType
-    return KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(returnType)) &&
-            KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(paramType))
-}
-
-fun FunctionDescriptor.isNonGenericToArray(): Boolean {
-    if (name.asString() != "toArray") return false
-    if (valueParameters.isNotEmpty() || typeParameters.isNotEmpty()) return false
-
-    val returnType = returnType
-    return returnType != null && KotlinBuiltIns.isArray(returnType)
-}
-
-fun MemberDescriptor.isToArrayFromCollection(): Boolean {
-    if (this !is FunctionDescriptor) return false
-
-    val containingClassDescriptor = containingDeclaration as? ClassDescriptor ?: return false
-    if (containingClassDescriptor.source == SourceElement.NO_SOURCE) return false
-
-    val collectionClass = builtIns.collection
-    if (!isSubclass(containingClassDescriptor, collectionClass)) return false
-
-    return isGenericToArray() || isNonGenericToArray()
-}
-
-val CallableDescriptor.arity: Int
-    get() = valueParameters.size +
-            (if (extensionReceiverParameter != null) 1 else 0) +
-            (if (dispatchReceiverParameter != null) 1 else 0)
 
 fun FqName.topLevelClassInternalName() = JvmClassName.internalNameByClassId(ClassId(parent(), shortName()))
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
-
-inline fun FrameMap.useTmpVar(type: Type, block: (index: Int) -> Unit) {
-    val index = enterTemp(type)
-    block(index)
-    leaveTemp(type)
-}
 
 fun TypeSystemCommonBackendContext.extractReificationArgument(initialType: KotlinTypeMarker): Pair<TypeParameterMarker, ReificationArgument>? {
     var type = initialType

@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
 }
@@ -16,8 +19,6 @@ dependencies {
     api(project(":analysis:decompiled:decompiler-to-stubs"))
     implementation(project(":kotlin-util-klib-metadata"))
 
-    implementation(project(":js:js.serializer"))
-
     compileOnly(intellijCore())
 
     testFixturesApi(platform(libs.junit.bom))
@@ -26,5 +27,3 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
 }
-
-optInToK1Deprecation()

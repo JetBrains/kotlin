@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -15,7 +18,6 @@ dependencies {
     api(project(":compiler:ir.serialization.common"))
     api(project(":compiler:ir.serialization.js"))
     api(project(":js:js.ast"))
-    implementation(project(":js:js.frontend"))
     implementation(project(":js:js.parser"))
     api(project(":js:js.sourcemap"))
 
@@ -38,5 +40,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-
-optInToK1Deprecation()

@@ -139,3 +139,6 @@ WHEN working with PSI visitors:
 
 WHEN creating PSI elements programmatically:
 → READ [psi-api/src/org/jetbrains/kotlin/psi/KtPsiFactory.kt](psi-api/src/org/jetbrains/kotlin/psi/KtPsiFactory.kt)
+
+WHEN working with stubs:
+→ READ [`analysis/stubs/README.md`](../../analysis/stubs/README.md)

@@ -1,2 +1,3 @@
 expression: a.bar()
+expression PSI: KtDotQualifiedExpression
 type: kotlin.String?

@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-Container<*> <: Container<*> (Original: Container<*> <: Container<*>)
-
-EXISTENTIAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-Container<*> <: Container<*> (Original: Container<*> <: Container<*>)

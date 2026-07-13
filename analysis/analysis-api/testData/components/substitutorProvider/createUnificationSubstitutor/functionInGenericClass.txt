@@ -1,7 +1,0 @@
-UNIVERSAL:
-Substitutor: null
-
-EXISTENTIAL:
-Substitutor: <map substitutor: {A = kotlin/Number, B = kotlin/Number}>
-Substituted pairs:
-kotlin/Number <: kotlin/Number (Original: B <: A)

@@ -5,7 +5,7 @@
 
 package kotlin.reflect.js.internal
 
-import kotlin.reflect.*
+import kotlin.reflect.KClass
 
 internal abstract class KClassImpl<T : Any> : KClass<T> {
     internal abstract val jClass: JsClass<T>
@@ -23,7 +23,7 @@ internal abstract class KClassImpl<T : Any> : KClass<T> {
             // NothingKClassImpl doesn't provide the jClass property; therefore, process it separately.
             // This can't be NothingKClassImpl because it overload equals.
             is NothingKClassImpl -> false
-            is KClassImpl<*> -> jClass == other.jClass
+            is KClassImpl<*> -> jClass == other.jClass && simpleName == other.simpleName
             else -> false
         }
     }
@@ -47,7 +47,7 @@ internal class SimpleKClassImpl<T : Any>(override val jClass: JsClass<T>) : KCla
 
 internal class PrimitiveKClassImpl<T : Any>(
     override val jClass: JsClass<T>,
-    private val givenSimpleName: String,
+    override val simpleName: String,
     private val isInstanceFunction: (Any?) -> Boolean
 ) : KClassImpl<T>() {
 
@@ -55,13 +55,6 @@ internal class PrimitiveKClassImpl<T : Any>(
     @SinceKotlin("2.2")
     override val isInterface: Boolean
         get() = false
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is PrimitiveKClassImpl<*>) return false
-        return super.equals(other) && givenSimpleName == other.givenSimpleName
-    }
-
-    override val simpleName: String? get() = givenSimpleName
 
     override fun isInstance(value: Any?): Boolean {
         return isInstanceFunction(value)

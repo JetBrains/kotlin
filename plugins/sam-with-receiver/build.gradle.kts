@@ -1,20 +1,21 @@
 description = "Kotlin SamWithReceiver Compiler Plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
     embedded(project(":kotlin-sam-with-receiver-compiler-plugin.common")) { isTransitive = false }
-    embedded(project(":kotlin-sam-with-receiver-compiler-plugin.k1")) { isTransitive = false }
     embedded(project(":kotlin-sam-with-receiver-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-sam-with-receiver-compiler-plugin.cli")) { isTransitive = false }
 
     testFixturesApi(project(":kotlin-sam-with-receiver-compiler-plugin.cli"))
-    testFixturesApi(project(":kotlin-scripting-jvm-host-unshaded"))
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
@@ -25,8 +26,6 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(toolsJar())
-
-    testFixturesApi(intellijCore())
 }
 
 optInToExperimentalCompilerApi()
@@ -35,8 +34,6 @@ sourceSets {
     "main" { none() }
     "testFixtures" { projectDefault() }
 }
-
-optInToK1Deprecation()
 
 publish()
 

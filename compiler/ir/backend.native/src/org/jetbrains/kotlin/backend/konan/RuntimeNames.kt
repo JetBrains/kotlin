@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 object RuntimeNames {
     val symbolNameAnnotation = NativeRuntimeNames.Annotations.symbolNameClassId.asSingleFqName()
+    val forceNativeThreadStateAnnotation = FqName("kotlin.native.ForceNativeThreadState")
     val cnameAnnotation = NativeRuntimeNames.Annotations.cNameClassId.asSingleFqName()
     val exportForCppRuntime = NativeRuntimeNames.Annotations.exportForCppRuntimeClassId.asSingleFqName()
     val exportedBridge = NativeRuntimeNames.Annotations.exportedBridgeClassId.asSingleFqName()

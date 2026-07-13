@@ -4,7 +4,6 @@ callables: 1
   KaNamedFunctionSymbol:
     annotations: []
     callableId: test/nested/dummyTest
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     contractEffects: []
@@ -36,9 +35,8 @@ callables: 1
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -56,11 +54,13 @@ callables: 1
         modality: FINAL
         name: value
         origin: PLUGIN
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: test/nested/Test
+        typeParameters: []
         visibility: PUBLIC
     ]
     visibility: PUBLIC

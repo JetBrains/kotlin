@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
@@ -136,7 +136,7 @@ internal object CompilationServiceImpl : CompilationService {
 
     private fun clearJarCaches() {
         ZipHandler.clearFileAccessorCache()
-        @OptIn(K1Deprecation::class)
+        @OptIn(CoreEnvironmentDeprecation::class)
         KotlinCoreEnvironment.applicationEnvironment?.apply {
             (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
             (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()

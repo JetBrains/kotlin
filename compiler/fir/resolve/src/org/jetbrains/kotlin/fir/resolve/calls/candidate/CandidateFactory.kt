@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 class CandidateFactory private constructor(
     val context: ResolutionContext,
@@ -170,6 +171,7 @@ class CandidateFactory private constructor(
         if (symbol is FirPropertySymbol && LanguageFeature.PrioritizedEnumEntries.isDisabled()) {
             val containingClass = symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.fir
             if (containingClass != null && symbol.fir.isEnumEntries(containingClass)) {
+                @OptIn(OnlyForDefaultLanguageFeatureDisabled::class) // PrioritizedEnumEntries
                 result.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
             }
         }
@@ -254,7 +256,7 @@ class CandidateFactory private constructor(
     private fun FirExpression?.isCandidateFromCompanionObjectTypeScope(useSiteSession: FirSession): Boolean {
         val resolvedQualifier = this?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return false
         val originClassOfCandidate = this.resolvedType.classId ?: return false
-        val companion = resolvedQualifier.symbol?.fullyExpandedClass(useSiteSession)?.fir?.companionObjectSymbol
+        val companion = resolvedQualifier.qualifierSymbol?.fullyExpandedClass(useSiteSession)?.fir?.companionObjectSymbol
         return companion?.classId == originClassOfCandidate
     }
 

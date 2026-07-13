@@ -91,6 +91,9 @@ open class KonanCacheTask @Inject constructor(
     @Suppress("unused") // used only by Gradle machinery via reflection.
     protected val codegenLibs: Provider<Directory> = compilerDistribution.map { it.nativeLibs }
 
+    @get:Input
+    val withOptimizations: Property<Boolean> = objectFactory.property(Boolean::class.java)
+
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     @Suppress("unused") // used only by Gradle machinery via reflection.
@@ -112,7 +115,12 @@ open class KonanCacheTask @Inject constructor(
 
         val klibFile = klib.get().asFile
         val args = buildList {
-            add("-g")
+            if (withOptimizations.get()) {
+                add("-opt")
+                add("-Xbinary=enableReleaseBinaryCache=true")
+            } else {
+                add("-g")
+            }
             add("-target")
             add(target.get())
             add("-produce")

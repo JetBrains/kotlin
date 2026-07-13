@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
@@ -56,6 +57,7 @@ open class BaseJvmIrMangler : IrBasedKotlinManglerImpl() {
         JvmIrManglerComputer(StringBuilder(256), mode, compatibleMode)
 }
 
+@OptIn(K1Deprecation::class)
 open class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : DescriptorBasedKotlinManglerImpl() {
     private object ExportChecker : DescriptorExportCheckerVisitor() {
         override fun DeclarationDescriptor.isPlatformSpecificExported() = true

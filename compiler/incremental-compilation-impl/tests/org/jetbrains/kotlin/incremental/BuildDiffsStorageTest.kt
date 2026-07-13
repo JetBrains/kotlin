@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.name.FqName
-import org.junit.After
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
 import java.util.*
@@ -30,12 +30,12 @@ class BuildDiffsStorageTest {
     private val random = Random(System.currentTimeMillis())
     private val icContext = IncrementalCompilationContext()
 
-    @Before
+    @BeforeEach
     fun setUp() {
         storageFile = Files.createTempFile("BuildDiffsStorageTest", "storage").toFile()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         storageFile.delete()
     }
@@ -46,7 +46,7 @@ class BuildDiffsStorageTest {
         val fqNames = listOf(FqName("fizz.Buzz"))
         val diff = BuildDifference(100, true, DirtyData(lookupSymbols, fqNames))
         val diffs = BuildDiffsStorage(listOf(diff))
-        Assert.assertEquals(
+        Assertions.assertEquals(
             "BuildDiffsStorage(buildDiffs=[BuildDifference(ts=100, isIncremental=true, dirtyData=DirtyData(dirtyLookupSymbols=[LookupSymbol(name=foo, scope=bar)], dirtyClassesFqNames=[fizz.Buzz], dirtyClassesFqNamesForceRecompile=[]))])",
             diffs.toString()
         )
@@ -58,7 +58,7 @@ class BuildDiffsStorageTest {
         BuildDiffsStorage.writeToFile(icContext, storageFile, diffs)
 
         val diffsDeserialized = BuildDiffsStorage.readFromFile(storageFile, reporter = null)
-        Assert.assertEquals(diffs.toString(), diffsDeserialized.toString())
+        Assertions.assertEquals(diffs.toString(), diffsDeserialized.toString())
     }
 
     @Test
@@ -69,7 +69,7 @@ class BuildDiffsStorageTest {
 
         val diffsDeserialized = BuildDiffsStorage.readFromFile(storageFile, reporter = null)
         val expected = generated.sortedBy { it.ts }.takeLast(BuildDiffsStorage.MAX_DIFFS_ENTRIES).toTypedArray()
-        Assert.assertArrayEquals(expected, diffsDeserialized?.buildDiffs?.toTypedArray())
+        Assertions.assertArrayEquals(expected, diffsDeserialized?.buildDiffs?.toTypedArray())
     }
 
     @Test
@@ -77,7 +77,7 @@ class BuildDiffsStorageTest {
         storageFile.delete()
 
         val diffsDeserialized = BuildDiffsStorage.readFromFile(storageFile, reporter = null)
-        Assert.assertEquals(null, diffsDeserialized)
+        Assertions.assertNull(diffsDeserialized)
     }
 
     @Test
@@ -89,7 +89,7 @@ class BuildDiffsStorageTest {
         try {
             BuildDiffsStorage.CURRENT_VERSION++
             val diffsDeserialized = BuildDiffsStorage.readFromFile(storageFile, reporter = null)
-            Assert.assertEquals(null, diffsDeserialized)
+        Assertions.assertNull(diffsDeserialized)
         } finally {
             BuildDiffsStorage.CURRENT_VERSION = versionBackup
         }

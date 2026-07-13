@@ -207,6 +207,39 @@ object FirExpressionEvaluator {
             }
         }
 
+        /**
+         * Imagine some argument in the named form for some vararg parameter:
+         * `MyAnno(myVarargParam = arrayOf("42"))`.
+         *
+         * If we just do nothing, the representation of this argument will be: `varargExpr(spread(["42"]))`.
+         * This is a complex structure, easy to mistreat, especially if in the end goal is to obtain the list of
+         * passed arguments (in this case, `"42"`).
+         *
+         * Therefore, here we inline the array/vararg contents of spread arguments:
+         * `varargExpr(spread(["42"]))` becomes `varargExpr("42")`.
+         * Similarly, `arrayOf(*[1, 2, 3])` is inlined to `[1, 2, 3]`.
+         */
+        private inline fun evaluateVarargOr(
+            arguments: List<FirExpression>,
+            action: (NotEvaluated) -> Nothing,
+        ): List<FirExpression> {
+            return buildList {
+                for (argument in arguments) {
+                    when (val result = evaluateOr<FirExpression>(argument, action)) {
+                        is FirSpreadArgumentExpression -> {
+                            when (val inner = result.expression) {
+                                // the function is applied after arguments are already evaluated,
+                                // so inner.arguments have already flat structure
+                                is FirCollectionLiteral -> addAll(inner.arguments)
+                                else -> add(result)
+                            }
+                        }
+                        else -> add(result)
+                    }
+                }
+            }
+        }
+
         override fun visitElement(element: FirElement, data: Nothing?): FirEvaluatorResult {
             return NotConst
         }
@@ -302,7 +335,9 @@ object FirExpressionEvaluator {
                 source = collectionLiteral.source
                 coneTypeOrNull = collectionLiteral.coneTypeOrNull
                 annotations.addAll(collectionLiteral.annotations)
-                argumentList = evaluateOr(collectionLiteral.argumentList) { return it }
+                argumentList = buildArgumentList {
+                    arguments.addAll(evaluateVarargOr(collectionLiteral.argumentList.arguments) { return it })
+                }
             }.wrap()
         }
 
@@ -312,7 +347,7 @@ object FirExpressionEvaluator {
                 source = varargArgumentsExpression.source
                 coneTypeOrNull = varargArgumentsExpression.coneTypeOrNull
                 annotations.addAll(varargArgumentsExpression.annotations)
-                arguments.addAll(varargArgumentsExpression.arguments.map { evaluateOr(it) { return it } })
+                arguments.addAll(evaluateVarargOr(varargArgumentsExpression.arguments) { return it })
                 coneElementTypeOrNull = varargArgumentsExpression.coneElementTypeOrNull
             }.wrap()
         }

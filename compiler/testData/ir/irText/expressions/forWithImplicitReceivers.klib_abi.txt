@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /FiveTimes // /FiveTimes|null[0]
+abstract interface /IReceiver { // /IReceiver|null[0]
+    open fun (/IntCell).hasNext(): kotlin/Boolean // /IReceiver.hasNext|hasNext@IntCell(){}[0]
+    open fun (/FiveTimes).iterator(): /IntCell // /IReceiver.iterator|iterator@FiveTimes(){}[0]
+    open fun (/IntCell).next(): kotlin/Int // /IReceiver.next|next@IntCell(){}[0]
+}
+final class /IntCell { // /IntCell|null[0]
+    final var value // /IntCell.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // /IntCell.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(kotlin/Int) // /IntCell.value.<set-value>|<set-value>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int) // /IntCell.<init>|<init>(kotlin.Int){}[0]
+}
+final fun (/IReceiver)./test() // /test|test@IReceiver(){}[0]

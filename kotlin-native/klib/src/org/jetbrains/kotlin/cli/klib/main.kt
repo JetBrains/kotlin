@@ -6,6 +6,7 @@
 
 package org.jetbrains.kotlin.cli.klib
 
+import org.jetbrains.kotlin.cli.klib.KlibToolArgumentsParserResult.ParsedArguments
 import kotlin.system.exitProcess
 
 /**
@@ -22,29 +23,27 @@ fun main(args: Array<String>) {
 }
 
 private fun execImpl(output: KlibToolOutput, rawArgs: Array<String>): Int {
-    val args = KlibToolArgumentsParser(output).parseArguments(rawArgs)
-
-    if (args != null) {
-        val command = when (args.commandName) {
-            "dump-abi" -> DumpAbi(output, args)
-            "dump-ir" -> DumpIr(output, args)
-            "dump-ir-signatures" -> DumpIrSignatures(output, args)
-            "dump-ir-inlinable-functions" -> DumpIrInlinableFunctions(output, args)
-            "dump-metadata" -> DumpMetadata(output, args)
-            "dump-metadata-signatures" -> DumpMetadataSignatures(output, args)
-            "info" -> Info(output, args)
-            else -> {
-                output.logError("Unknown command: ${args.commandName}")
-                null
+    when (val args = KlibToolArgumentsParser(output).parseArguments(rawArgs)) {
+        KlibToolArgumentsParserResult.Error -> return 1
+        KlibToolArgumentsParserResult.UsagePrinted -> return 0
+        is ParsedArguments -> {
+            val command = when (args.command) {
+                CliCommand.DUMP_ABI -> DumpAbi(output, args)
+                CliCommand.DUMP_IR -> DumpIr(output, args)
+                CliCommand.DUMP_IR_SIGNATURES -> DumpIrSignatures(output, args)
+                CliCommand.DUMP_IR_INLINABLE_FUNCTIONS -> DumpIrInlinableFunctions(output, args)
+                CliCommand.DUMP_METADATA -> DumpMetadata(output, args)
+                CliCommand.DUMP_METADATA_SIGNATURES -> DumpMetadataSignatures(output, args)
+                CliCommand.INFO -> Info(output, args)
             }
-        }
 
-        try {
-            command?.execute()
-        } catch (t: Throwable) {
-            output.logErrorWithStackTrace(t)
+            try {
+                command.execute()
+            } catch (t: Throwable) {
+                output.logErrorWithStackTrace(t)
+            }
+
+            return if (output.hasErrors) 1 else 0
         }
     }
-
-    return if (output.hasErrors) 1 else 0
 }

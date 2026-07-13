@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseScope
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolveExtensionInfoProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -26,29 +26,25 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 internal class KaFirResolveExtensionInfoProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaResolveExtensionInfoProvider, KaFirSessionComponent {
-    override val resolveExtensionScopeWithTopLevelDeclarations: KaScope
-        get() = withValidityAssertion {
-            val tools = analysisSession.extensionTools
-            if (tools.isEmpty()) return KaBaseEmptyScope(token)
-            return KaFirResolveExtensionScope(analysisSession, tools)
-        }
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsResolveExtensionInfoProvider, KaFirSessionComponent {
+    override fun resolveExtensionScopeWithTopLevelDeclarations(): KaScope = withValidityAssertion {
+        val tools = analysisSession.extensionTools
+        if (tools.isEmpty()) return KaBaseEmptyScope(token)
+        return KaFirResolveExtensionScope(analysisSession, tools)
+    }
 
-    override val VirtualFile.isResolveExtensionFile: Boolean
-        get() = withValidityAssertion {
-            navigationTargetsProvider != null
-        }
+    override fun isResolveExtensionFile(virtualFile: VirtualFile): Boolean = withValidityAssertion {
+        virtualFile.navigationTargetsProvider != null
+    }
 
-    override val KtElement.isFromResolveExtension: Boolean
-        get() = withValidityAssertion {
-            containingKtFile.virtualFile?.isResolveExtensionFile == true
-        }
+    override fun isFromResolveExtension(element: KtElement): Boolean = withValidityAssertion {
+        element.containingKtFile.virtualFile?.let { isResolveExtensionFile(it) } == true
+    }
 
-    override val KtElement.resolveExtensionNavigationElements: Collection<PsiElement>
-        get() = withValidityAssertion {
-            val targetsProvider = containingFile?.virtualFile?.navigationTargetsProvider ?: return emptyList()
-            return with(targetsProvider) { analysisSession.getNavigationTargets(this@resolveExtensionNavigationElements) }
-        }
+    override fun resolveExtensionNavigationElements(element: KtElement): Collection<PsiElement> = withValidityAssertion {
+        val targetsProvider = element.containingFile?.virtualFile?.navigationTargetsProvider ?: return emptyList()
+        return with(targetsProvider) { analysisSession.getNavigationTargets(element) }
+    }
 }
 
 private class KaFirResolveExtensionScope(

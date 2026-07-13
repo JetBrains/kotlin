@@ -13,8 +13,13 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.isSimulator
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestFile
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
@@ -22,6 +27,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.native.executors.RunProcessResult
@@ -81,6 +87,88 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             compilationResult.resultingArtifact,
             compilationResult.loggedData,
             listOf(TestName("embedStaticLibraries"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
+
+    // Tests the `-native-library` compiler flag.
+    @Test
+    @TestMetadata("embedStaticLibraries.kt")
+    fun testNativeLibraries() {
+        // Reuse the test data from the previous test for simplicity.
+        val embedStaticLibrariesDir = interopDir.resolve("embedStaticLibraries")
+        val bcFiles = (1..4).map {
+            val source = embedStaticLibrariesDir.resolve("$it.c")
+            compileWithClang(
+                testRunSettings = testRunSettings,
+                clangDistribution = ClangDistribution.Llvm, // To be compatible with the K/N LLVM IR.
+                sourceFiles = listOf(source),
+                outputFile = buildDir.resolve("$it.bc"),
+                additionalClangFlags = listOf("-emit-llvm", "-c"),
+                debug = false, // K/N LLVM IR uses incompatible DWARF version 2, while Clang defaults to 4.
+            ).assertSuccess().resultingArtifact.path
+        }
+        val defFile = buildDir.resolve("nativeLibraries.def").also {
+            it.writeText("")
+        }
+
+        val cinteropKlib = cinteropToLibrary(
+            defFile = defFile,
+            outputDir = buildDir,
+            freeCompilerArgs = TestCompilerArgs(
+                compilerArgs = emptyList(),
+                cinteropArgs = listOf(
+                    "-header", embedStaticLibrariesDir.resolve("embedStaticLibraries.h").absolutePath,
+                    "-pkg", "embedStaticLibraries",
+                )
+            )
+        ).assertSuccess().resultingArtifact
+
+        val kotlinKlib = compileLibrary(
+            testRunSettings,
+            source = embedStaticLibrariesDir.resolve("embedStaticLibraries.kt"),
+            freeCompilerArgs = listOf(
+                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                "-native-library", bcFiles[0],
+                "-native-library", bcFiles[1],
+            ),
+            dependencies = listOf(cinteropKlib)
+        ).assertSuccess().resultingArtifact
+
+        val testCase = TestCase(
+            id = TestCaseId.Named("nativeLibraries"),
+            kind = TestKind.STANDALONE_NO_TR,
+            modules = emptySet(),
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    // Using the flag when compiling klibs to an executable doesn't seem useful.
+                    // But we better check it anyway, in case someone relies on that behavior.
+                    "-native-library", bcFiles[2],
+                    "-native-library", bcFiles[3],
+                ),
+            ),
+            nominalPackageName = PackageName("nativeLibraries"),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+            extras = TestCase.NoTestRunnerExtras("main")
+        ).apply {
+            initialize(null, null)
+        }
+
+        val executableResult = ExecutableCompilation(
+            testRunSettings,
+            freeCompilerArgs = testCase.freeCompilerArgs,
+            sourceModules = testCase.modules,
+            extras = testCase.extras,
+            dependencies = setOf(cinteropKlib.asLibraryDependency(), kotlinKlib.asLibraryDependency()),
+            expectedArtifact = TestCompilationArtifact.Executable(
+                buildDir.resolve("main." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix)
+            ),
+        ).result.assertSuccess()
+
+        val testExecutable = TestExecutable(
+            executableResult.resultingArtifact,
+            executableResult.loggedData,
+            listOf(TestName("nativeLibraries"))
         )
         runExecutableAndVerify(testCase, testExecutable)
     }

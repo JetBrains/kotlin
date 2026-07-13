@@ -324,15 +324,12 @@ internal class PartiallyLinkedIrTreePatcher(
                 // Generate IR call that throws linkage error. Report compiler warning.
                 blockBody.statements += with(irBuiltIns) { partialLinkageCase.throwLinkageError(declaration, issueSignificance) }
 
-                // Don't remove inline functions, this may harm linkage in K/N backend with enabled static caches.
-                if (!declaration.isInline) {
-                    if (declaration.isTopLevel) {
-                        val property = declaration.correspondingPropertySymbol?.owner
-                        if (property != null)
-                            property.scheduleForRemoval()
-                        else
-                            declaration.scheduleForRemoval()
-                    }
+                if (partialLinkageCase is DeclarationWithUnusableClassifier && !declaration.isLocal) {
+                    val property = declaration.correspondingPropertySymbol?.owner
+                    if (property != null)
+                        property.scheduleForRemoval()
+                    else
+                        declaration.scheduleForRemoval()
                 }
 
                 // Return the function. There is nothing to process below it.

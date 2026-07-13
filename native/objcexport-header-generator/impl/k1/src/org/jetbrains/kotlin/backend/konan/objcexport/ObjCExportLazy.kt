@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
@@ -65,6 +66,7 @@ interface ObjCExportLazy {
     fun translate(file: KtFile): List<ObjCTopLevel>
 }
 
+@OptIn(K1Deprecation::class)
 @JvmOverloads
 fun createObjCExportLazy(
     configuration: ObjCExportLazy.Configuration,
@@ -86,6 +88,7 @@ fun createObjCExportLazy(
     deprecationResolver
 )
 
+@OptIn(K1Deprecation::class)
 @InternalKotlinNativeApi
 class ObjCExportLazyImpl(
     private val configuration: ObjCExportLazy.Configuration,
@@ -462,6 +465,7 @@ internal fun createNamerConfiguration(configuration: ObjCExportLazy.Configuratio
         override val topLevelNamePrefix = abbreviate(configuration.frameworkName)
 
         override fun getAdditionalPrefix(module: ModuleDescriptor): String? {
+            @OptIn(K1Deprecation::class)
             if (module.isNativeStdlib() || module.isCommonStdlibCheckSpecificallyForIDE()) return "Kotlin"
 
             // Note: incorrect for compiler since it doesn't store ModuleInfo to ModuleDescriptor.

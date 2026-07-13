@@ -1,9 +1,15 @@
 // This artifact is deprecated and will be remove in the near future. Use `kotlin-jps-plugin` instead
-idePluginDependency {
+plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
+}
+
+idePluginPublishingLatch {
     @Suppress("UNCHECKED_CAST")
-    val embeddedDependencies = rootProject.extra["kotlinJpsPluginEmbeddedDependencies"] as List<String>
+    val embeddedDependencies = CompilerModules.kotlinJpsPluginEmbeddedDependencies
     @Suppress("UNCHECKED_CAST")
-    val mavenDependencies = rootProject.extra["kotlinJpsPluginMavenDependencies"] as List<String>
+    val mavenDependencies = CompilerModules.kotlinJpsPluginMavenDependencies
     @Suppress("UNCHECKED_CAST")
     val mavenDependenciesLibs = rootProject.extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"] as List<String>
 

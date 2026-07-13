@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.asAnnotationQualifier
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 internal fun KaAnnotatedSymbol.hasJvmSyntheticAnnotation(): Boolean {
     if (this is KaPropertySymbol) return backingFieldSymbol?.hasJvmSyntheticAnnotation() == true
@@ -55,19 +54,16 @@ private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(annotationClassId: Cl
     }
 }
 
-internal fun KaSession.isHiddenByDeprecation(
-    symbol: KaAnnotatedSymbol,
-    annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-): Boolean {
-    return symbol.deprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN &&
+internal fun KaSession.isHiddenByDeprecation(symbol: KaAnnotatedSymbol): Boolean {
+    val deprecation = symbol.deprecation
+    return deprecation?.level == KaDeprecationLevel.HIDDEN &&
             // see KT-80649
             !symbol.annotations.contains(JvmStandardClassIds.Annotations.Java.Deprecated)
 }
 
-internal fun KaSession.isHiddenOrSynthetic(
-    symbol: KaAnnotatedSymbol,
-    annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-): Boolean = isHiddenByDeprecation(symbol, annotationUseSiteTarget) || symbol.hasJvmSyntheticAnnotation()
+internal fun KaSession.isHiddenOrSynthetic(symbol: KaAnnotatedSymbol): Boolean {
+    return isHiddenByDeprecation(symbol) || symbol.hasJvmSyntheticAnnotation()
+}
 
 internal fun KaAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmField in annotations
 

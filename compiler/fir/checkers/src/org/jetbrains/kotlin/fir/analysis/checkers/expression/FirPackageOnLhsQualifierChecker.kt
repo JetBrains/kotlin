@@ -17,7 +17,7 @@ object FirPackageOnLhsQualifierChecker : FirResolvedQualifierChecker(MppCheckerK
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
         // Check that the expression is a package qualifier
-        if (expression.symbol != null) return
+        if (expression.qualifierSymbol != null) return
 
         // Left-Hand Side check
         val lastCallableReferenceAccess = context.callsOrAssignments.lastOrNull() as? FirCallableReferenceAccess

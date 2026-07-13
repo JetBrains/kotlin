@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.wasmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -221,6 +222,6 @@ typealias ProjectAction = AbstractProject<out BaseCompilationOperation, out Base
 typealias ScenarioCreator = BaseCompilationTest.(ScenarioAction) -> Unit
 typealias ScenarioAction = Scenario<out BaseCompilationOperation.Builder, out BaseIncrementalCompilationConfiguration.Builder>.() -> Unit
 
-fun KotlinToolchains.supportsJs() = KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, null)
-fun KotlinToolchains.supportsWasm() = KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, null)
-fun KotlinToolchains.supportsMetadata() = KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, null)
+fun KotlinToolchains.supportsJs() = KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 4, 20)
+fun KotlinToolchains.supportsWasm() = KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 4, 20)
+fun KotlinToolchains.supportsMetadata() = KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 4, 20)

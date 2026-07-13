@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeParameter
 import org.jetbrains.kotlin.backend.jvm.originalOfSuspendForInline
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.IrFrameMap
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.ApiVersion
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isClassWithFqName
 import org.jetbrains.kotlin.ir.util.*
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -128,7 +129,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         } else {
             val sourceMapper = context.getSourceMapper(classCodegen.irClass)
             val frameMap = irFunction.createFrameMapWithReceivers()
-            context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().toIrBasedDescriptor())
+            context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal())
             try {
                 val adapter = InstructionAdapter(methodVisitor)
                 ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, sourceMapper, reifiedTypeParameters).generate()
@@ -169,8 +170,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             mappings,
             IrInlineIntrinsicsSupport(classCodegen, irFunction, irFunction.fileParent),
             context.typeSystem,
-            context.config.languageVersionSettings,
-            context.config.unifiedNullChecks,
+            context.irBuiltIns,
         )
         reifiedTypeInliner.reifyInstructions(methodNode)
     }
@@ -262,14 +262,14 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 ?.findAnnotation(StandardNames.FqNames.deprecatedSinceKotlin)
         if (deprecatedSinceKotlin != null) {
             val hiddenSinceArgument =
-                deprecatedSinceKotlin.getValueArgument(StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinHiddenSince)
+                deprecatedSinceKotlin.argumentMapping[StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinHiddenSince]
                     ?: return false
             val hiddenSince = ((hiddenSinceArgument as? IrConst)?.value as? String)?.let(ApiVersion.Companion::parse)
             if (hiddenSince != null) {
                 return context.config.languageVersionSettings.apiVersion >= hiddenSince
             }
         }
-        val level = deprecated.getValueArgument(StandardClassIds.Annotations.ParameterNames.deprecatedLevel)
+        val level = deprecated.argumentMapping[StandardClassIds.Annotations.ParameterNames.deprecatedLevel]
         return level is IrGetEnumValue && level.symbol.owner.name.asString() == DeprecationLevel.HIDDEN.name
     }
 
@@ -279,7 +279,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         ) return null
 
         // @Throws(vararg exceptionClasses: KClass<out Throwable>)
-        val exceptionClasses = function.getAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME)?.arguments[0] ?: return null
+        val exceptionClasses = function.getAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME)?.argumentMapping[Name.identifier("exceptionClasses")] ?: return null
         return (exceptionClasses as IrVararg).elements.map { exceptionClass ->
             classCodegen.typeMapper.mapType((exceptionClass as IrClassReference).classType).internalName
         }
@@ -374,7 +374,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 // this certainly looks like a workaround for a javac bug.
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER,
+                IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER,
                 JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB,
                 JvmLoweredDeclarationOrigin.TO_ARRAY,
                 IrDeclarationOrigin.IR_BUILTINS_STUB,

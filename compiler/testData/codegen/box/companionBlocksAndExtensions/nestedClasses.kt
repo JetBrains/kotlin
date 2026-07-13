@@ -1,24 +1,17 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: WASM, WASM_JS, WASM_WASI, JS_IR, JS_IR_ES6
 
 var initOrder = ""
 
 class Outer {
     companion {
-        val outerVal: String = run {
-            initOrder += "O"
-            "OuterVal"
-        }
+        val outerVal: String = run { initOrder += "O "; "OuterVal" }
 
         fun outerFun() = "OuterFun"
     }
 
     class Nested {
         companion {
-            val nestedStaticVal: String = run {
-                initOrder += "N"
-                "NestedVal"
-            }
+            val nestedStaticVal: String = run { initOrder += "N "; "NestedVal" }
 
             fun nestedStaticFun() = "NestedFun"
         }
@@ -33,14 +26,14 @@ fun box(): String {
     if (Outer.Nested.nestedStaticFun() != "NestedFun") return "FAIL: nestedStaticFun=${Outer.Nested.nestedStaticFun()}"
 
     // Nested init should not trigger outer init
-    if (initOrder != "N") return "FAIL: expected only nested init, got initOrder=$initOrder"
+    if (initOrder != "N ") return "FAIL: expected only nested init, got initOrder=$initOrder"
 
     // Now access outer companion
     if (Outer.outerVal != "OuterVal") return "FAIL: outerVal=${Outer.outerVal}"
     if (Outer.outerFun() != "OuterFun") return "FAIL: outerFun=${Outer.outerFun()}"
 
     // Now both should be initialized
-    if (initOrder != "NO") return "FAIL: initOrder=$initOrder"
+    if (initOrder != "N O ") return "FAIL: initOrder=$initOrder"
 
     // Instance access
     val nested = Outer.Nested()

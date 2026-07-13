@@ -123,6 +123,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("assignmentExpression.kt")
+  public void testAssignmentExpression() {
+    run("assignmentExpression.kt");
+  }
+
+  @Test
   @TestMetadata("assignmentExpressionTarget.kt")
   public void testAssignmentExpressionTarget() {
     run("assignmentExpressionTarget.kt");
@@ -132,6 +138,30 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   @TestMetadata("binaryExpression.kt")
   public void testBinaryExpression() {
     run("binaryExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("bitwiseXor.kt")
+  public void testBitwiseXor() {
+    run("bitwiseXor.kt");
+  }
+
+  @Test
+  @TestMetadata("bitwiseXorLongs.kt")
+  public void testBitwiseXorLongs() {
+    run("bitwiseXorLongs.kt");
+  }
+
+  @Test
+  @TestMetadata("booleanExpression.kt")
+  public void testBooleanExpression() {
+    run("booleanExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("booleanExpressionIncorrectOperands.kt")
+  public void testBooleanExpressionIncorrectOperands() {
+    run("booleanExpressionIncorrectOperands.kt");
   }
 
   @Test
@@ -153,6 +183,30 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("classDeclaration.kt")
+  public void testClassDeclaration() {
+    run("classDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("classInitializer.kt")
+  public void testClassInitializer() {
+    run("classInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("compareExpression.kt")
+  public void testCompareExpression() {
+    run("compareExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorDelegationExpression.kt")
+  public void testConstructorDelegationExpression() {
+    run("constructorDelegationExpression.kt");
+  }
+
+  @Test
   @TestMetadata("contextParameter.kt")
   public void testContextParameter() {
     run("contextParameter.kt");
@@ -162,6 +216,66 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   @TestMetadata("contextParameterUsage.kt")
   public void testContextParameterUsage() {
     run("contextParameterUsage.kt");
+  }
+
+  @Test
+  @TestMetadata("continueExpression.kt")
+  public void testContinueExpression() {
+    run("continueExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("customNotOperator.kt")
+  public void testCustomNotOperator() {
+    run("customNotOperator.kt");
+  }
+
+  @Test
+  @TestMetadata("double.kt")
+  public void testDouble() {
+    run("double.kt");
+  }
+
+  @Test
+  @TestMetadata("eagerBooleanExpression.kt")
+  public void testEagerBooleanExpression() {
+    run("eagerBooleanExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("expectedLongLiteral.kt")
+  public void testExpectedLongLiteral() {
+    run("expectedLongLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("expectedLongLiteral2.kt")
+  public void testExpectedLongLiteral2() {
+    run("expectedLongLiteral2.kt");
+  }
+
+  @Test
+  @TestMetadata("expectedLongLiteral3.kt")
+  public void testExpectedLongLiteral3() {
+    run("expectedLongLiteral3.kt");
+  }
+
+  @Test
+  @TestMetadata("expectedLongLiteral4.kt")
+  public void testExpectedLongLiteral4() {
+    run("expectedLongLiteral4.kt");
+  }
+
+  @Test
+  @TestMetadata("expectedLongLiteral5.kt")
+  public void testExpectedLongLiteral5() {
+    run("expectedLongLiteral5.kt");
+  }
+
+  @Test
+  @TestMetadata("float.kt")
+  public void testFloat() {
+    run("float.kt");
   }
 
   @Test
@@ -177,6 +291,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("functionDeclaration.kt")
+  public void testFunctionDeclaration() {
+    run("functionDeclaration.kt");
+  }
+
+  @Test
   @TestMetadata("inParens.kt")
   public void testInParens() {
     run("inParens.kt");
@@ -186,6 +306,36 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   @TestMetadata("incompleteGet.kt")
   public void testIncompleteGet() {
     run("incompleteGet.kt");
+  }
+
+  @Test
+  @TestMetadata("incorrectCompareOverload.kt")
+  public void testIncorrectCompareOverload() {
+    run("incorrectCompareOverload.kt");
+  }
+
+  @Test
+  @TestMetadata("incorrectContainsOverload.kt")
+  public void testIncorrectContainsOverload() {
+    run("incorrectContainsOverload.kt");
+  }
+
+  @Test
+  @TestMetadata("incorrectEqualsImplementation.kt")
+  public void testIncorrectEqualsImplementation() {
+    run("incorrectEqualsImplementation.kt");
+  }
+
+  @Test
+  @TestMetadata("incorrectEqualsImplementation2.kt")
+  public void testIncorrectEqualsImplementation2() {
+    run("incorrectEqualsImplementation2.kt");
+  }
+
+  @Test
+  @TestMetadata("incorrectPlusAssignOverload.kt")
+  public void testIncorrectPlusAssignOverload() {
+    run("incorrectPlusAssignOverload.kt");
   }
 
   @Test
@@ -210,6 +360,24 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   @TestMetadata("intLiteral.kt")
   public void testIntLiteral() {
     run("intLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("intLiteralWithByteExpectedType.kt")
+  public void testIntLiteralWithByteExpectedType() {
+    run("intLiteralWithByteExpectedType.kt");
+  }
+
+  @Test
+  @TestMetadata("intLiteralWithInvalidExpectedType.kt")
+  public void testIntLiteralWithInvalidExpectedType() {
+    run("intLiteralWithInvalidExpectedType.kt");
+  }
+
+  @Test
+  @TestMetadata("isExpression.kt")
+  public void testIsExpression() {
+    run("isExpression.kt");
   }
 
   @Test
@@ -249,6 +417,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("largeIntLiteralWithByteExpectedType.kt")
+  public void testLargeIntLiteralWithByteExpectedType() {
+    run("largeIntLiteralWithByteExpectedType.kt");
+  }
+
+  @Test
   @TestMetadata("listElement_listOf.kt")
   public void testListElement_listOf() {
     run("listElement_listOf.kt");
@@ -273,6 +447,24 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("longLiteralWithExpectedInt.kt")
+  public void testLongLiteralWithExpectedInt() {
+    run("longLiteralWithExpectedInt.kt");
+  }
+
+  @Test
+  @TestMetadata("longLiteralWithExpectedInt2.kt")
+  public void testLongLiteralWithExpectedInt2() {
+    run("longLiteralWithExpectedInt2.kt");
+  }
+
+  @Test
+  @TestMetadata("loopExpression.kt")
+  public void testLoopExpression() {
+    run("loopExpression.kt");
+  }
+
+  @Test
   @TestMetadata("methodReference_instance_convertedTo_Runnable.kt")
   public void testMethodReference_instance_convertedTo_Runnable() {
     run("methodReference_instance_convertedTo_Runnable.kt");
@@ -294,6 +486,18 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   @TestMetadata("nonExpression.kt")
   public void testNonExpression() {
     run("nonExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("objectDeclaration.kt")
+  public void testObjectDeclaration() {
+    run("objectDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("overloadWithNoSpecifiedType.kt")
+  public void testOverloadWithNoSpecifiedType() {
+    run("overloadWithNoSpecifiedType.kt");
   }
 
   @Test
@@ -369,6 +573,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("referenceEquality.kt")
+  public void testReferenceEquality() {
+    run("referenceEquality.kt");
+  }
+
+  @Test
   @TestMetadata("resolvedSuper.kt")
   public void testResolvedSuper() {
     run("resolvedSuper.kt");
@@ -378,6 +588,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   @TestMetadata("returnExpression.kt")
   public void testReturnExpression() {
     run("returnExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("returnLabel.kt")
+  public void testReturnLabel() {
+    run("returnLabel.kt");
   }
 
   @Test
@@ -417,6 +633,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("superReference.kt")
+  public void testSuperReference() {
+    run("superReference.kt");
+  }
+
+  @Test
   @TestMetadata("suspendLambda.kt")
   public void testSuspendLambda() {
     run("suspendLambda.kt");
@@ -426,6 +648,18 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   @TestMetadata("thisExpression_plusAssign_this.kt")
   public void testThisExpression_plusAssign_this() {
     run("thisExpression_plusAssign_this.kt");
+  }
+
+  @Test
+  @TestMetadata("throwExpression.kt")
+  public void testThrowExpression() {
+    run("throwExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("tryExpression.kt")
+  public void testTryExpression() {
+    run("tryExpression.kt");
   }
 
   @Test
@@ -477,9 +711,21 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("variableDeclaration.kt")
+  public void testVariableDeclaration() {
+    run("variableDeclaration.kt");
+  }
+
+  @Test
   @TestMetadata("whileExpression.kt")
   public void testWhileExpression() {
     run("whileExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("whileLoop.kt")
+  public void testWhileLoop() {
+    run("whileLoop.kt");
   }
 
   @Nested

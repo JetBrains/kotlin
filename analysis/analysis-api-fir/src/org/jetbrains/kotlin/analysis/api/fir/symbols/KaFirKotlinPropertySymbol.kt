@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
 import org.jetbrains.kotlin.analysis.api.impl.base.util.callableIdForName
@@ -84,6 +85,10 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
             backingPsi?.psiBasedVisibility(::isOverride)
         }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { (compilerVisibilityByPsi ?: firSymbol.visibility).asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { compilerVisibilityByPsi ?: firSymbol.visibility }
 
@@ -364,12 +369,25 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
             firSymbol.getKtConstantInitializer(builder)
         }
 
+    @Deprecated(
+        "Use `KaKotlinProperty.primaryConstructorParameter` instead.",
+        ReplaceWith("primaryConstructorParameter != null")
+    )
     override val isFromPrimaryConstructor: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null)
                 false
             else
                 firSymbol.fir.fromPrimaryConstructor == true
+        }
+
+    override val primaryConstructorParameter: KaValueParameterSymbol?
+        get() = withValidityAssertion {
+            if (backingPsi != null) {
+                return null
+            }
+            val firValueParameter = firSymbol.correspondingValueParameterFromPrimaryConstructor ?: return@withValidityAssertion null
+            return KaFirValueParameterSymbol(firValueParameter, analysisSession)
         }
 
     override val isExternal: Boolean
@@ -512,8 +530,21 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
                 ?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer(builder)
         }
 
+    @Deprecated(
+        "Use `correspondingPrimaryConstructorParameter` instead.",
+        replaceWith = ReplaceWith("correspondingPrimaryConstructorParameter != null")
+    )
     override val isFromPrimaryConstructor: Boolean
         get() = withValidityAssertion { true }
+
+    override val primaryConstructorParameter: KaValueParameterSymbol?
+        get() = withValidityAssertion {
+            if (backingPsi != null) {
+                return KaFirValueParameterSymbol(backingPsi, analysisSession)
+            }
+            val firValueParameter = firSymbol.correspondingValueParameterFromPrimaryConstructor ?: return@withValidityAssertion null
+            return KaFirValueParameterSymbol(firValueParameter, analysisSession)
+        }
 
     override val isExternal: Boolean
         get() = withValidityAssertion {
@@ -619,8 +650,15 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
             backingPsi?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer(builder)
         }
 
+    @Deprecated(
+        "Use `correspondingPrimaryConstructorParameter` instead.",
+        replaceWith = ReplaceWith("correspondingPrimaryConstructorParameter != null")
+    )
     override val isFromPrimaryConstructor: Boolean
         get() = withValidityAssertion { false }
+
+    override val primaryConstructorParameter: KaValueParameterSymbol?
+        get() = withValidityAssertion { null }
 
     override val isExternal: Boolean
         get() = withValidityAssertion { false }

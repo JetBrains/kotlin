@@ -8,6 +8,9 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.util.*
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     kotlin("plugin.serialization")
     alias(libs.plugins.gradle.node)
@@ -17,7 +20,7 @@ plugins {
     id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -26,9 +29,7 @@ node {
     download.set(true)
     version.set(nodejsLtsVersion)
     nodeProjectDir.set(layout.buildDirectory.dir("node"))
-    if (cacheRedirectorEnabled) {
-        distBaseUrl.set("https://cache-redirector.jetbrains.com/nodejs.org/dist")
-    }
+    distBaseUrl.set(null as String?)
 }
 
 val testJsRuntime by configurations.creating {
@@ -44,7 +45,6 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(protobufFull())
     testFixturesApi(testFixtures(project(":compiler:tests-common")))

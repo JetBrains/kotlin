@@ -27,13 +27,9 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfac
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.flattenAndFilterOwnProviders
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.registerLibrarySessionComponents
-import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
-import org.jetbrains.kotlin.fir.session.StructuredProviders
-import org.jetbrains.kotlin.fir.session.registerCliCompilerAndCommonComponents
-import org.jetbrains.kotlin.fir.session.registerCommonComponentsAfterExtensionsAreConfigured
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import java.io.File
 
@@ -78,6 +74,7 @@ internal fun createScriptingAdditionalLibrariesSession(
         StructuredProviders::class,
         StructuredProviders(
             sourceProviders = emptyList(),
+            incrementalProvider = null,
             dependencyProviders = providers,
             sharedProvider = sharedLibrarySession.symbolProvider,
         )

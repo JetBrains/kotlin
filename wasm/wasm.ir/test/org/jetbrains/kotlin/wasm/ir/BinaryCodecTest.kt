@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.wasm.ir
 
 import org.jetbrains.kotlin.testFederation.SmokeTest
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
 class BinaryCodecTest {
     @SmokeTest
@@ -17,37 +17,37 @@ class BinaryCodecTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     fun `bulk-memory-operations`() =
         testProposal("bulk-memory-operations")
 
     @Test
-    @Ignore
+    @Disabled
     fun `exception-handling`() =
         testProposal("exception-handling")
 
     @Test
-    @Ignore
+    @Disabled
     fun `function-references`() =
         testProposal("function-references")
 
     @Test
-    @Ignore
+    @Disabled
     fun `reference-types`() =
         testProposal("reference-types", ignoreFiles = listOf("ref_func.wast"))
 
     @Test
-    @Ignore
+    @Disabled
     fun simd() =
         testProposal("simd")
 
     @Test
-    @Ignore
+    @Disabled
     fun `tail-call`() =
         testProposal("tail-call")
 
     @Test
-    @Ignore
+    @Disabled
     fun threads() =
         testProposal("threads")
 }

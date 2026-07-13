@@ -57,7 +57,7 @@ KtUserType(119,128): 'A<String>'
 
 KtNameReferenceExpression(119,120): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -83,7 +83,7 @@ KtUserType(121,127): 'String'
 
 KtNameReferenceExpression(121,127): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -115,7 +115,7 @@ KtUserType(152,153): 'T'
 
 KtNameReferenceExpression(152,153): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -129,7 +129,7 @@ KtCallExpression(156,162): 'TODO()'
 
 KtNameReferenceExpression(156,160): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -173,7 +173,7 @@ KtUserType(191,200): 'A<String>'
 
 KtNameReferenceExpression(191,192): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -199,7 +199,7 @@ KtUserType(193,199): 'String'
 
 KtNameReferenceExpression(193,199): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -231,7 +231,7 @@ KtUserType(224,225): 'T'
 
 KtNameReferenceExpression(224,225): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -245,7 +245,7 @@ KtCallExpression(228,234): 'TODO()'
 
 KtNameReferenceExpression(228,232): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -286,7 +286,7 @@ KtUserType(255,261): 'A<Int>'
 
 KtNameReferenceExpression(255,256): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -312,7 +312,7 @@ KtUserType(257,260): 'Int'
 
 KtNameReferenceExpression(257,260): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -344,7 +344,7 @@ KtUserType(278,284): 'A<Int>'
 
 KtNameReferenceExpression(278,279): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -370,7 +370,7 @@ KtUserType(280,283): 'Int'
 
 KtNameReferenceExpression(280,283): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -393,7 +393,7 @@ KtIsExpression(307,319): 'x is A<*>.B1'
 
 KtNameReferenceExpression(307,308): 'x'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       x: A<kotlin.Int>
@@ -401,7 +401,7 @@ KtNameReferenceExpression(307,308): 'x'
 
 KtOperationReferenceExpression(309,311): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(312,319): 'A<*>.B1'
@@ -424,7 +424,7 @@ KtUserType(312,316): 'A<*>'
 
 KtNameReferenceExpression(312,313): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -438,7 +438,7 @@ KtTypeProjection(314,315): '*'
 
 KtNameReferenceExpression(317,319): 'B1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A.B1
@@ -458,7 +458,7 @@ KtIsExpression(334,348): 'x is A<Int>.B2'
 
 KtNameReferenceExpression(334,335): 'x'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       x: A<kotlin.Int>
@@ -466,7 +466,7 @@ KtNameReferenceExpression(334,335): 'x'
 
 KtOperationReferenceExpression(336,338): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(339,348): 'A<Int>.B2'
@@ -489,7 +489,7 @@ KtUserType(339,345): 'A<Int>'
 
 KtNameReferenceExpression(339,340): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -515,7 +515,7 @@ KtUserType(341,344): 'Int'
 
 KtNameReferenceExpression(341,344): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -523,7 +523,7 @@ KtNameReferenceExpression(341,344): 'Int'
 
 KtNameReferenceExpression(346,348): 'B2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A.B2
@@ -543,7 +543,7 @@ KtIsExpression(363,371): 'x is A.C'
 
 KtNameReferenceExpression(363,364): 'x'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       x: A<kotlin.Int>
@@ -551,7 +551,7 @@ KtNameReferenceExpression(363,364): 'x'
 
 KtOperationReferenceExpression(365,367): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(368,371): 'A.C'
@@ -574,7 +574,7 @@ KtUserType(368,369): 'A'
 
 KtNameReferenceExpression(368,369): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -582,7 +582,7 @@ KtNameReferenceExpression(368,369): 'A'
 
 KtNameReferenceExpression(370,371): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A.C
@@ -605,7 +605,7 @@ KtIsExpression(404,411): 'x is B1'
 
 KtNameReferenceExpression(404,405): 'x'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       x: A<kotlin.Int>
@@ -613,7 +613,7 @@ KtNameReferenceExpression(404,405): 'x'
 
 KtOperationReferenceExpression(406,408): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(409,411): 'B1'
@@ -628,7 +628,7 @@ KtUserType(409,411): 'B1'
 
 KtNameReferenceExpression(409,411): 'B1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'B1'.>
@@ -647,7 +647,7 @@ KtIsExpression(426,433): 'x is B2'
 
 KtNameReferenceExpression(426,427): 'x'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       x: A<kotlin.Int>
@@ -655,7 +655,7 @@ KtNameReferenceExpression(426,427): 'x'
 
 KtOperationReferenceExpression(428,430): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(431,433): 'B2'
@@ -670,7 +670,7 @@ KtUserType(431,433): 'B2'
 
 KtNameReferenceExpression(431,433): 'B2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'B2'.>
@@ -689,7 +689,7 @@ KtIsExpression(448,454): 'x is C'
 
 KtNameReferenceExpression(448,449): 'x'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       x: A<kotlin.Int>
@@ -697,7 +697,7 @@ KtNameReferenceExpression(448,449): 'x'
 
 KtOperationReferenceExpression(450,452): 'is'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(453,454): 'C'
@@ -714,7 +714,7 @@ KtUserType(453,454): 'C'
 
 KtNameReferenceExpression(453,454): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /A.C

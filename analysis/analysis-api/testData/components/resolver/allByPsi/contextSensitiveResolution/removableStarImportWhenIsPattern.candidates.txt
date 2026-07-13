@@ -1,0 +1,161 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(27,39): 'package main'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(35,39): 'main'
+  NO_CANDIDATES
+
+KtImportList(41,76): 'import test.Base'
+  NO_CANDIDATES
+
+KtImportDirective(41,57): 'import test.Base'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(48,57): 'test.Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(48,52): 'test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(53,57): 'Base'
+  NO_CANDIDATES
+
+KtImportDirective(58,76): 'import test.Base.*'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(65,74): 'test.Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(65,69): 'test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(70,74): 'Base'
+  NO_CANDIDATES
+
+KtNamedFunction(78,155): 'fun usage(b: Base) {'
+  NO_CANDIDATES
+
+KtParameterList(87,96): '(b: Base)'
+  NO_CANDIDATES
+
+KtParameter(88,95): 'b: Base'
+  NO_CANDIDATES
+
+KtTypeReference(91,95): 'Base'
+  NO_CANDIDATES
+
+KtUserType(91,95): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(91,95): 'Base'
+  NO_CANDIDATES
+
+KtBlockExpression(97,155): '{'
+  NO_CANDIDATES
+
+KtWhenExpression(103,153): 'when (b) {'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(109,110): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = test.Base
+        symbol = b: test.Base
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtWhenEntry(122,147): 'is Child -> "".hashCode()'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(122,130): 'is Child'
+  NO_CANDIDATES
+
+KtTypeReference(125,130): 'Child'
+  NO_CANDIDATES
+
+KtUserType(125,130): 'Child'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(125,130): 'Child'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(134,147): '"".hashCode()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtStringTemplateExpression(134,136): '""'
+  NO_CANDIDATES
+
+KtCallExpression(137,147): 'hashCode()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(137,145): 'hashCode'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(145,147): '()'
+  NO_CANDIDATES

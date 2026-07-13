@@ -910,7 +910,7 @@ KtCallExpression(625,630): 'foo()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -929,6 +929,7 @@ KtCallExpression(625,630): 'foo()'
             annotations: []
             typeArguments: []
             type: one/MyClass
+          typeParameters: []
           visibility: PUBLIC
         type = one.MyClass
       extensionReceiver = null
@@ -951,7 +952,7 @@ KtNameReferenceExpression(625,628): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -970,6 +971,7 @@ KtNameReferenceExpression(625,628): 'foo'
             annotations: []
             typeArguments: []
             type: one/MyClass
+          typeParameters: []
           visibility: PUBLIC
         type = one.MyClass
       extensionReceiver = null
@@ -1470,7 +1472,7 @@ KtCallExpression(891,896): 'foo()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1489,6 +1491,7 @@ KtCallExpression(891,896): 'foo()'
             annotations: []
             typeArguments: []
             type: one/MyClass.InnerOuter.InnerNested
+          typeParameters: []
           visibility: PUBLIC
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
@@ -1511,7 +1514,7 @@ KtNameReferenceExpression(891,894): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1530,6 +1533,7 @@ KtNameReferenceExpression(891,894): 'foo'
             annotations: []
             typeArguments: []
             type: one/MyClass.InnerOuter.InnerNested
+          typeParameters: []
           visibility: PUBLIC
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
@@ -2171,7 +2175,7 @@ KtCallExpression(1272,1282): 'body(this)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -2189,6 +2193,7 @@ KtCallExpression(1272,1282): 'body(this)'
           returnType: KaTypeParameterType:
             annotations: []
             type: T
+          typeParameters: []
           visibility: PUBLIC
         type = T
       signature = KaFunctionSignature:

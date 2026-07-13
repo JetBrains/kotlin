@@ -93,6 +93,8 @@ internal abstract class DefaultProblemsReporter @Inject constructor(
 
 // Default setup for all gradle variants since 8.6
 internal fun ProblemSpec.defaultSpecConfiguration(diagnostic: ToolingDiagnostic, severity: ToolingDiagnostic.Severity): ProblemSpec {
+    // Fixed by KT-87509
+    @Suppress("DEPRECATION")
     return details(diagnostic.message)
         .severity(severity.problemSeverity)
         .apply {

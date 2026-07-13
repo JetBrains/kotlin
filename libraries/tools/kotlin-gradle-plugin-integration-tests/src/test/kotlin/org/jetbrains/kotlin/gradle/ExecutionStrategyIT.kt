@@ -6,6 +6,7 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -130,9 +131,11 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 "build",
                 "-Pkotlin.daemon.jvmargs=-Xmxqwerty",
             ) {
+                assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
+
                 assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
-                assertOutputContains("Failed to compile with Kotlin daemon.")
-                assertOutputContains("Fallback strategy (compiling without Kotlin daemon) is turned off.")
+                assertOutputContains("Failed to compile with Kotlin daemon")
+                assertOutputContains("Fallback strategy (kotlin.daemon.useFallbackStrategy=false, compiling without Kotlin daemon) is turned off.")
             }
         }
     }
@@ -165,9 +168,11 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 "build",
                 "-Pkotlin.daemon.jvmargs=-Xmxqwerty",
             ) {
+                assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
+
                 assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
-                assertOutputContains("Failed to compile with Kotlin daemon.")
-                assertOutputContains("Fallback strategy (compiling without Kotlin daemon) is turned off.")
+                assertOutputContains("Failed to compile with Kotlin daemon")
+                assertOutputContains("Fallback strategy (kotlin.daemon.useFallbackStrategy=false, compiling without Kotlin daemon) is turned off.")
             }
         }
     }
@@ -279,9 +284,11 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 assertOutputContains(expectedFinishStrategy.asFinishLogMessage)
                 checkOutput(this@project)
 
+
                 if (testFallbackStrategy) {
+                    assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
                     assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
-                    assertOutputContains("Using fallback strategy: Compile without Kotlin daemon")
+                    assertOutputContains("Using fallback strategy (kotlin.daemon.useFallbackStrategy=true): Compile without Kotlin daemon")
                 } else if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
                     // 256m is the default value for Gradle 5.0+
                     val defaultJvmSettingsForGivenGradleVersion =

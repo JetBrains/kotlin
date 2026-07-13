@@ -1,6 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
-
 // FILE: a/A.java
 package a;
 public interface A {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 
-@K1Deprecation
 interface KlibModuleDescriptorFactory {
 
     /**

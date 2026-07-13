@@ -114,7 +114,6 @@ fun box() {
 // test.kt:19 box
 // test.kt:1 protoOf.copy$default_8mg6yi_k$
 // test.kt:1 protoOf.copy$default_8mg6yi_k$
-// test.kt:1 protoOf.copy_xhhsuv_k$
 // test.kt:4 <init>
 // test.kt:4 <init>
 // test.kt:4 <init>

@@ -4,21 +4,35 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
     kotlin("jvm")
     `jvm-test-suite`
     id("test-symlink-transformation")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
 val assignmentCompilerPlugin = configurations.dependencyScope("assignmentCompilerPlugin")
+val serializationCompilerPlugin = configurations.dependencyScope("serializationCompilerPlugin")
+val serializationCore = configurations.dependencyScope("serializationCore")
+val pluginSandbox = configurations.dependencyScope("pluginSandbox")
 
 val noArgCompilerPluginResolvable = configurations.resolvable("noArgCompilerPluginResolvable") {
     extendsFrom(noArgCompilerPlugin.get())
 }
 val assignmentCompilerPluginResolvable = configurations.resolvable("assignmentCompilerPluginResolvable") {
     extendsFrom(assignmentCompilerPlugin.get())
+}
+val serializationCompilerPluginResolvable = configurations.resolvable("serializationCompilerPluginResolvable") {
+    extendsFrom(serializationCompilerPlugin.get())
+}
+val serializationCoreResolvable = configurations.resolvable("serializationCoreResolvable") {
+    extendsFrom(serializationCore.get())
+}
+val pluginSandboxResolvable = configurations.resolvable("pluginSandboxResolvable") {
+    extendsFrom(pluginSandbox.get())
 }
 
 val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
@@ -83,6 +97,9 @@ dependencies {
     noArgCompilerPlugin(project(":kotlin-noarg-compiler-plugin.embeddable"))
     assignmentCompilerPlugin(project(":kotlin-assignment-compiler-plugin.embeddable"))
     scriptingCompilerPlugin(project(":kotlin-scripting-compiler-embeddable"))
+    serializationCompilerPlugin(project(":kotlinx-serialization-compiler-plugin.embeddable"))
+    serializationCore(libs.kotlinx.serialization.core)
+    pluginSandbox(project(":plugins:plugin-sandbox"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
@@ -258,11 +275,6 @@ testing {
 
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                            testInputsCheck {
-                                if (implVersion.version < KotlinToolingVersion(2, 2, 0, "snapshot")) {
-                                    extraPermissions.add("permission java.util.PropertyPermission \"*\", \"read,write\";")
-                                }
-                            }
                         }
                     }
                 }
@@ -305,20 +317,6 @@ testing {
                         "build/daemon"
                     )
                     addClasspathProperty(unpackedResourcesResolvable, "kotlin.test.templates.classpath")
-                    testInputsCheck {
-                        with(extraPermissions) {
-                            add("permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";")
-                            add("permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";")
-
-                            // paths below are not expected to exist,
-                            // these are here to pass some implicit `exists()` checks in the Kotlin compiler
-                            add("permission java.io.FilePermission \"<no_path>/lib\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-compiler.jar\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-compiler-impl.jar\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-common.jar\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-jvm.jar\", \"read\";")
-                        }
-                    }
                 }
             }
         }
@@ -371,6 +369,9 @@ testing {
                     addClasspathProperty(noArgCompilerPluginResolvable.get(), "NOARG_COMPILER_PLUGIN")
                     addClasspathProperty(assignmentCompilerPluginResolvable.get(), "ASSIGNMENT_COMPILER_PLUGIN")
                     addClasspathProperty(scriptingCompilerPluginResolvable.get(), "SCRIPTING_COMPILER_PLUGIN")
+                    addClasspathProperty(serializationCompilerPluginResolvable.get(), "SERIALIZATION_COMPILER_PLUGIN")
+                    addClasspathProperty(serializationCoreResolvable.get(), "SERIALIZATION_CORE")
+                    addClasspathProperty(pluginSandboxResolvable.get(), "PLUGIN_SANDBOX")
 
                     // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
                     exclude(

@@ -124,7 +124,7 @@ class MutableCheckerContext private constructor(
             containingFileSymbol,
             sessionHolder,
             returnTypeCalculator,
-            suppressedDiagnostics.addAll(diagnosticNames),
+            suppressedDiagnostics.addingAll(diagnosticNames),
             this.allInfosSuppressed || allInfosSuppressed,
             this.allWarningsSuppressed || allWarningsSuppressed,
             this.allErrorsSuppressed || allErrorsSuppressed

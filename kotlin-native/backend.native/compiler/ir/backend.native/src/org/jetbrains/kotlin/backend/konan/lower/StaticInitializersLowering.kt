@@ -9,9 +9,12 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
 import org.jetbrains.kotlin.backend.konan.llvm.storageKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -20,11 +23,17 @@ import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.library.newCompanionInitializationEnabled
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal object StaticInitializersOrigins {
@@ -60,6 +69,8 @@ internal fun ConfigChecks.shouldBeInitializedEagerly(irField: IrField): Boolean 
     return annotations.hasAnnotation(KonanFqNames.eagerInitialization)
 }
 
+internal var IrClass.clinitTriggerFunction: IrSimpleFunctionSymbol? by irAttribute(copyByDefault = false)
+
 internal class StaticInitializersLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrVisitorVoid() {
@@ -71,10 +82,26 @@ internal class StaticInitializersLowering(val context: Context) : FileLoweringPa
                 declaration.acceptChildrenVoid(this)
             }
             override fun visitClass(declaration: IrClass) {
+                declaration.addChild(declaration.getClinitTriggerFunction().owner.apply {
+                    body = context.irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+                })
                 processDeclarationContainter(declaration)
                 declaration.acceptChildrenVoid(this)
             }
         })
+    }
+
+    // An internal static method to trigger class initialization:
+    // * the regular rules of this lowering will insert calls to the actual initializers inside the body
+    // * initializers of other classes will emit calls to this trigger, when needed
+    private fun IrClass.getClinitTriggerFunction() = ::clinitTriggerFunction.getOrSetIfNull {
+        context.irFactory.buildFun {
+            name = Name.identifier($$"$clinit_trigger")
+            visibility = DescriptorVisibilities.PUBLIC
+            returnType = context.irBuiltIns.unitType
+        }.apply {
+            parent = this@getClinitTriggerFunction
+        }.symbol
     }
 
     private fun IrStatement.isConst(): Boolean = when (this) {
@@ -98,6 +125,52 @@ internal class StaticInitializersLowering(val context: Context) : FileLoweringPa
         val eagerGlobalInitializers = mutableListOf<IrExpression>()
 
         val builder = context.irBuiltIns.createIrBuilder((container as IrSymbolOwner).symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+
+        if (container is IrClass && !container.isInterface && container.konanLibrary?.newCompanionInitializationEnabled == true) {
+            // Implemented as defined in
+            // https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-5.html#jvms-5.5
+            // Next, if C is a class rather than an interface, then let SC be its superclass and let SI1, ..., SIn be all
+            // superinterfaces of C (whether direct or indirect) that declare at least one non-abstract, non-static method.
+            // The order of superinterfaces is given by a recursive enumeration over the superinterface hierarchy of each interface
+            // directly implemented by C. For each interface I directly implemented by C (in the order of the interfaces array of C),
+            // the enumeration recurs on I's superinterfaces (in the order of the interfaces array of I) before returning I.
+            // For each S in the list [ SC, SI1, ..., SIn ], if S has not yet been initialized, then recursively perform this entire
+            // procedure for S. If necessary, verify and prepare S first.
+
+            val superClassesToInitialize = buildList {
+                container.getSuperClassNotAny()?.let { add(it) }
+                fun IrDeclaration.triggersInterfaceInitialization(): Boolean {
+                    if (this !is IrOverridableDeclaration<*>) return false
+                    if (isFakeOverride) return false
+                    if (modality == Modality.ABSTRACT) return false
+                    if (this is IrSimpleFunction && !isStatic) return true
+                    if (this is IrProperty && (getter?.isStatic ?: backingField?.isStatic) != true) return true
+                    return false
+                }
+
+                fun IrClass.needsInitializationAsInterface() = isInterface && declarations.any { it.triggersInterfaceInitialization() }
+                val seen = mutableSetOf<IrClassSymbol>()
+                fun IrClass.collectSuperInterfacesToInitialize() {
+                    if (!seen.add(symbol))
+                        return
+                    for (superType in superTypes) {
+                        val superClass = superType.classOrFail.owner
+                        if (superClass.isInterface) {
+                            superClass.collectSuperInterfacesToInitialize()
+                        }
+                    }
+                    if (needsInitializationAsInterface()) {
+                        add(this)
+                    }
+                }
+                container.collectSuperInterfacesToInitialize()
+            }
+            for (superClass in superClassesToInitialize) {
+                val trigger = superClass.getClinitTriggerFunction()
+                globalInitializers.add(builder.irCall(trigger))
+                threadLocalInitializers.add(builder.irCall(trigger))
+            }
+        }
 
         for (declaration in container.declarations) {
             val irField = (declaration as? IrField) ?: (declaration as? IrProperty)?.backingField

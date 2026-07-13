@@ -362,7 +362,6 @@ private fun CommonBackendContext.createStaticBodilessMethod(function: IrFunction
         function.toInlineClassImplementationName(),
         function,
         typeParametersFromContext = extractTypeParameters(function.parentAsClass),
-        remapMultiFieldValueClassStructure = ::remapMultiFieldValueClassStructure
     )
 
 private var IrFunction.staticMethod: IrSimpleFunction? by irAttribute(copyByDefault = false)

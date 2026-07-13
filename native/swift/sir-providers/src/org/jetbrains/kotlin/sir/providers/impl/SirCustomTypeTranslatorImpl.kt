@@ -1,60 +1,28 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds.BYTE
-import org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds.INT
-import org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds.LONG
-import org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds.SHORT
-import org.jetbrains.kotlin.analysis.api.components.isBooleanType
-import org.jetbrains.kotlin.analysis.api.components.isByteType
-import org.jetbrains.kotlin.analysis.api.components.isCharType
 import org.jetbrains.kotlin.analysis.api.components.isClassType
-import org.jetbrains.kotlin.analysis.api.components.isDoubleType
-import org.jetbrains.kotlin.analysis.api.components.isFloatType
-import org.jetbrains.kotlin.analysis.api.components.isIntType
-import org.jetbrains.kotlin.analysis.api.components.isLongType
-import org.jetbrains.kotlin.analysis.api.components.isShortType
-import org.jetbrains.kotlin.analysis.api.components.isStringType
-import org.jetbrains.kotlin.analysis.api.components.isUByteType
-import org.jetbrains.kotlin.analysis.api.components.isUIntType
-import org.jetbrains.kotlin.analysis.api.components.isULongType
-import org.jetbrains.kotlin.analysis.api.components.isUShortType
-import org.jetbrains.kotlin.analysis.api.components.isUnitType
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.BYTE
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.INT
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.LONG
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.SHORT
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.StandardNames.RANGES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.sir.CFunctionBridge
-import org.jetbrains.kotlin.sir.KotlinFunctionBridge
-import org.jetbrains.kotlin.sir.SirArrayType
-import org.jetbrains.kotlin.sir.SirDictionaryType
-import org.jetbrains.kotlin.sir.SirExistentialType
-import org.jetbrains.kotlin.sir.SirFunctionBridge
-import org.jetbrains.kotlin.sir.SirFunctionalType
-import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirOptionalType
-import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirCustomTypeTranslator
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
-import org.jetbrains.kotlin.sir.SirBridge
-import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSArray
-import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSDictionary
-import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSSet
-import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsObjCBridged
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.*
 import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
 import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule

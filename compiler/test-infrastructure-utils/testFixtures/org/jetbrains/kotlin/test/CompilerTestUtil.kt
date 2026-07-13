@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.konan.file.File.Companion.userDir
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.PathUtil.kotlinPathsForDistDirectory
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 
 object CompilerTestUtil {
     @JvmStatic
@@ -89,13 +89,12 @@ object CompilerTestUtil {
             .replace("info: executable production duration: \\d+ms".toRegex(), "info: executable production duration: [time]")
             .replace(System.getProperty("java.runtime.version"), "\$JVM_VERSION$")
             .replace((" " + MetadataVersion.INSTANCE.toString().replace(".", "\\.") + "(?!\\-)").toRegex(), " \\\$ABI_VERSION\\\$")
-            .replace((" " + JsMetadataVersion.INSTANCE.toString().replace(".", "\\.") + "(?!\\-)").toRegex(), " \\\$ABI_VERSION\\\$")
             .replace(KotlinCompilerVersion.VERSION, "\$VERSION$")
             .replace(" " + MetadataVersion.INSTANCE_NEXT, " \$ABI_VERSION_NEXT$")
             .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
             .replace("log4j:WARN.*\n".toRegex(), "")
             .replace(kotlinPathsForDistDirectory.homePath.absolutePath, "\$PROJECT_DIR$")
             .replace(kotlinPathsForDistDirectory.homePath.parentFile.absolutePath, "\$DIST_DIR$")
-            .replace(userDir.absolutePath, "\$USER_DIR$")
+            .replace(Path(System.getProperty("user.dir")).absolutePathString(), "\$USER_DIR$")
     }
 }

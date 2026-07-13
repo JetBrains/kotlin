@@ -47,6 +47,38 @@ class TypeGenerator(
             )
 
         typeCodegenContext.defineFunctionType(declaration.symbol, wasmFunctionType)
+
+        if (backendContext.wasmUseStackSwitching &&
+            declaration.parentClassOrNull?.symbol?.isSuspendFunction() == true
+        ) {
+            defineSuspendFunctionStackSwitchingTypes(
+                declaration = declaration,
+                parameterTypes = parameterTypes,
+                wasmFunctionType = wasmFunctionType
+            )
+        }
+    }
+
+    private fun defineSuspendFunctionStackSwitchingTypes(
+        declaration: IrFunction,
+        parameterTypes: List<WasmType>,
+        wasmFunctionType: WasmFunctionType
+    ) {
+        val arity = parameterTypes.size
+        val suspendFunArity = arity - 2
+        val wasmFunctionTypeRef = typeCodegenContext.referenceFunctionHeapType(declaration.symbol)
+
+        typeCodegenContext.defineContFunctionType(suspendFunArity, wasmFunctionType)
+        typeCodegenContext.defineContType(arity, WasmContType(arity, wasmFunctionTypeRef))
+
+        val kotlinAny = wasmModuleTypeTransformer.transformType(irBuiltIns.anyType)
+        val suspendedContFunctionType = WasmFunctionType(listOf(), listOf(kotlinAny))
+
+        typeCodegenContext.defineContFunctionType(0, suspendedContFunctionType)
+
+        val suspendedContFunctionTypeRef = typeCodegenContext.referenceHeapContFunctionType(0)
+        val suspendedContType = WasmContType(0, suspendedContFunctionTypeRef)
+        typeCodegenContext.defineContType(0, suspendedContType)
     }
 
     fun generateClassTypes(declaration: IrClass) {

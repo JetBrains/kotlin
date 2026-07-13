@@ -38,7 +38,6 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.allTypeParameters
-import kotlin.reflect.jvm.internal.types.getMutableCollectionKClass
 import kotlin.reflect.jvm.javaConstructor
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.jvmErasure
@@ -137,7 +136,7 @@ private fun createJavaSimpleType(
     mutableCollectionClass: KClass<*>? = null,
 ): SimpleKType = SimpleKType(
     classifier, arguments, isMarkedNullable,
-    annotations = emptyList(),
+    lazyAnnotations = lazyOf(emptyList()),
     abbreviation = null,
     isDefinitelyNotNullType = false,
     isNothingType = false,
@@ -258,7 +257,7 @@ private val TypeVariable<*>.kotlinContainer: KTypeParameterOwnerImpl
 // when the KTypeParameter instances are already created, but not yet stored in `KClass.typeParameters`.
 private fun TypeVariable<*>.findKTypeParameterInContainer(knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>): KTypeParameter =
     knownTypeParameters[this]
-        ?: kotlinContainer.typeParameters.singleOrNull { it.name == name }
+        ?: kotlinContainer.typeParameters.getOrNull(genericDeclaration.typeParameters.indexOf(this))
         ?: throw KotlinReflectionInternalError("Type parameter $name is not found in $kotlinContainer")
 
 internal fun Array<out TypeVariable<*>>.toKTypeParameters(container: KTypeParameterOwnerImpl): List<KTypeParameter> {

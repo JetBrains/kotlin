@@ -1,2 +1,3 @@
 expression: arr[0]
+expression PSI: KtArrayAccessExpression
 type: ERROR_TYPE(Unresolved name: set)

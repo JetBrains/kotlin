@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K1JvmIrCodegenFactory
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
@@ -111,14 +111,19 @@ open class GenericReplCompiler(
                 else -> error("Unexpected result ${analysisResult::class.java}")
             }
 
-            val generationState = GenerationState(psiFile.project, compilerState.analyzerEngine.module, compilerConfiguration)
+            val generationState = GenerationState(
+                psiFile.project,
+                compilerState.analyzerEngine.module,
+                compilerConfiguration,
+                jvmBackendClassResolver = K1JvmBackendClassResolverForModuleWithDependencies(compilerState.analyzerEngine.module),
+            )
 
             val generatorExtensions =
                 object : JvmGeneratorExtensionsImpl(environment.configuration) {
                     override fun getPreviousScripts() =
                         compilerState.history.map { compilerState.symbolTable.descriptorExtension.referenceScript(it.item) }
                 }
-            val codegenFactory = JvmIrCodegenFactory(
+            val codegenFactory = K1JvmIrCodegenFactory(
                 environment.configuration,
                 compilerState.mangler, compilerState.symbolTable, generatorExtensions
             )
@@ -127,7 +132,7 @@ open class GenericReplCompiler(
                 generationState, listOf(psiFile), compilerState.analyzerEngine.trace.bindingContext,
             )
 
-            codegenFactory.generateModule(generationState, irBackendInput)
+            codegenFactory.normalFactory.generateModule(generationState, irBackendInput)
 
             compilerState.history.push(LineId(codeLine.no, 0, codeLine.hashCode()), scriptDescriptor)
 

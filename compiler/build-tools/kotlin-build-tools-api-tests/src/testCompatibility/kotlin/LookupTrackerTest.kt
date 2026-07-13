@@ -42,7 +42,7 @@ class LookupTrackerTest : BaseCompilationTest() {
     fun lookupsNonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         assumeSupportsLookups(strategyConfig, incremental = false)
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
             var lookupRecorded = false
             val lookupTracker = object : CompilerLookupTracker {
                 override fun recordLookup(
@@ -71,7 +71,7 @@ class LookupTrackerTest : BaseCompilationTest() {
     fun lookupsIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         assumeSupportsLookups(strategyConfig, incremental = true)
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
             var lookupRecorded = false
             val lookupTracker = object : CompilerLookupTracker {
                 override fun recordLookup(

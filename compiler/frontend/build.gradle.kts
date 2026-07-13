@@ -1,6 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -18,7 +21,6 @@ dependencies {
     api(project(":compiler:psi:parser"))
     api(project(":compiler:frontend.common"))
     api(project(":compiler:frontend.common-psi"))
-    api(project(":kotlin-script-runtime"))
     api(libs.vavr)
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)

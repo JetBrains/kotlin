@@ -1,18 +1,19 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("generated-sources")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
     api(project(":core:util.runtime"))
     api(project(":compiler:arguments.common"))
     api(project(":compiler:plugin-api"))
-    api(project(":compiler:resolution.common"))
     implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:frontend:cfg"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:serialization"))
     implementation(project(":compiler:resolution"))
@@ -26,7 +27,6 @@ dependencies {
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:frontend.java"))
-    implementation(project(":compiler:resolution.common.jvm"))
     implementation(project(":compiler:util"))
     implementation(project(":core:compiler.common.jvm"))
 
@@ -34,14 +34,11 @@ dependencies {
     implementation(project(":js:js.config"))
     implementation(project(":wasm:wasm.config"))
     implementation(project(":native:native.config"))
-    api(project(":compiler:plugin-api"))
-    implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    compileOnly(intellijCore())
     compileOnly(libs.guava)
     implementation(libs.kotlinx.coroutines.core)
 
@@ -60,12 +57,17 @@ sourceSets {
     }
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xannotation-target-all")
+    }
+}
+
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 optInToExperimentalCompilerApi()
-optInToK1Deprecation()
 
 tasks.jar.configure {
     //excludes unused bunch files

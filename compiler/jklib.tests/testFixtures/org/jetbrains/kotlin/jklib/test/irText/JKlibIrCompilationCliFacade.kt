@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.jklib.test.irText
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibIrCompilationArtifact
 import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibIrCompilationPhase
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
+import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.model.ArtifactKind
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BackendKinds.IrBackend
@@ -23,22 +27,29 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 @Suppress("UNCHECKED_CAST")
 class JKlibIrCompilationCliFacade(testServices: TestServices) :
-    DeserializerFacade<JKlibKLibWithArtifact, IrBackendInput>(testServices, ArtifactKinds.KLib as ArtifactKind<JKlibKLibWithArtifact>, IrBackend) {
+    DeserializerFacade<JKlibKLibWithArtifact, IrBackendInput>(
+        testServices,
+        ArtifactKinds.KLib as ArtifactKind<JKlibKLibWithArtifact>,
+        IrBackend
+    ) {
 
-    override fun transform(module: TestModule, inputArtifact: JKlibKLibWithArtifact): IrBackendInput {
+    override fun transform(module: TestModule, inputArtifact: JKlibKLibWithArtifact): IrBackendInput? {
         val serializationArtifact = inputArtifact.cliArtifact
+        val input = serializationArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
+        val configuration = input.configuration
 
-        val compilationArtifact = JKlibIrCompilationPhase.executePhase(serializationArtifact)
+        val compilationArtifact = JKlibIrCompilationPhase.executePhase(input)
 
-        val diagnosticsReporter = serializationArtifact.configuration.diagnosticsCollector
+        if (CheckCompilationErrors.CheckDiagnosticCollector.checkHasErrors(configuration)) {
+            return processErrorFromCliPhase(configuration, testServices)
+        }
 
-        return JKlibDeserializedIrBackendInput(compilationArtifact, diagnosticsReporter)
+        return JKlibDeserializedIrBackendInput(compilationArtifact)
     }
 }
 
 class JKlibDeserializedIrBackendInput(
     val compilationArtifact: JKlibIrCompilationArtifact,
-    override val diagnosticReporter: BaseDiagnosticsCollector
 ) : IrBackendInput() {
 
     override val irModuleFragment: IrModuleFragment
@@ -47,12 +58,10 @@ class JKlibDeserializedIrBackendInput(
     override val irBuiltIns: IrBuiltIns
         get() = compilationArtifact.pluginContext.irBuiltIns
 
-    // Bypassing full mangler initialization since IR text verification doesn't necessitate linking steps.
     override val irMangler: KotlinMangler.IrMangler
-        get() = object : KotlinMangler.IrMangler {
-            override fun IrDeclaration.mangleString(compatibleMode: Boolean): String = ""
-            override fun IrDeclaration.isExported(compatibleMode: Boolean): Boolean = true
-            override fun IrDeclaration.signatureString(compatibleMode: Boolean): String = ""
-            override val String.hashMangle: Long get() = 0L
-        }
+        get() = JKlibIrMangler()
+
+    override val diagnosticReporter: BaseDiagnosticsCollector
+        get() = compilationArtifact.configuration.diagnosticsCollector
 }
+

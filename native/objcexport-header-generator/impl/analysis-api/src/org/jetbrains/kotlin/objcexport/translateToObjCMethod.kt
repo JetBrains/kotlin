@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.export.utilities.isFakeOverride
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.mangleIfStdMacro
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -244,7 +245,7 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
         return anyMethodSelector
     }
 
-    sb.append(getMangledName(symbol, forSwift = false))
+    val methodName = getMangledName(symbol, forSwift = false)
 
     parameters.forEachIndexed { index, [bridge, parameter] ->
         val name = when (bridge) {
@@ -268,21 +269,29 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
         }
 
         if (index == 0) {
-            sb.append(
+            val firstParam = (
                 when {
                     bridge is MethodBridgeValueParameter.ErrorOutParameter -> "AndReturn"
                     bridge is MethodBridgeValueParameter.SuspendCompletion -> "With"
                     method.isConstructor -> "With"
                     else -> ""
                 }
-            )
-            sb.append(name.replaceFirstChar(Char::uppercaseChar))
+                ) + name.replaceFirstChar(Char::uppercaseChar)
+
+            // First parameter, when combined with the method name may require mangling. E.g.: fun N(ULL: Int)
+            sb.append((methodName + firstParam).mangleIfStdMacro())
         } else {
-            sb.append(name)
+            sb.append(name.mangleIfStdMacro())
         }
 
         if (!isPropertyGetter) sb.append(':')
     }
+
+    // No parameters to add to the method name. Mangle and append the method name.
+    if (parameters.isEmpty()) {
+        sb.append(methodName.mangleIfStdMacro())
+    }
+
     return sb.toString()
 }
 
@@ -298,7 +307,7 @@ fun ObjCExportContext.getMangledName(symbol: KaFunctionSymbol, forSwift: Boolean
 }
 
 internal fun String.startsWithWords(words: String) = this.startsWith(words) &&
-        (this.length == words.length || !this[words.length].isLowerCase())
+    (this.length == words.length || !this[words.length].isLowerCase())
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReturnType]

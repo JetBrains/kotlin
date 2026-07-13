@@ -60,6 +60,7 @@ internal fun TypeParameterScope(
     container: KaDeclarationSymbol,
     config: TypeScriptExportConfig,
     transitivelyExportedClasses: MutableSet<KaClassLikeSymbol>,
+    superTypeApproximator: SuperTypeApproximator,
     outerScope: TypeParameterScope = emptyMap(),
     renameOuterTypeParameters: Boolean = false,
 ): TypeParameterScope {
@@ -102,7 +103,7 @@ internal fun TypeParameterScope(
             i += 1
             val constraints = tp.upperBounds
                 .mapNotNull {
-                    val exportedType = TypeExporter(config, this, transitivelyExportedClasses).exportType(it)
+                    val exportedType = TypeExporter(config, this, transitivelyExportedClasses, superTypeApproximator).exportType(it)
                     if (exportedType is ExportedType.ErrorType) return@mapNotNull null
                     if (exportedType is ExportedType.ImplicitlyExportedType && exportedType.exportedSupertype == Primitive.Any) {
                         exportedType.copy(exportedSupertype = Primitive.Unknown)

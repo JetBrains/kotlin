@@ -1,10 +1,13 @@
 description = "Lombok compiler plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val guavaForTests by configurations.dependencyScope("guavaForTests")
@@ -59,14 +62,10 @@ val log4j2CoreClasspathForTests by configurations.resolvable("log4j2CoreClasspat
 }
 
 dependencies {
-    embedded(project(":kotlin-lombok-compiler-plugin.common")) { isTransitive = false }
-    embedded(project(":kotlin-lombok-compiler-plugin.k1")) { isTransitive = false }
     embedded(project(":kotlin-lombok-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-lombok-compiler-plugin.cli")) { isTransitive = false }
 
     testFixturesApi(intellijCore())
-    testFixturesApi(project(":kotlin-lombok-compiler-plugin.common"))
-    testFixturesApi(project(":kotlin-lombok-compiler-plugin.k1"))
     testFixturesApi(project(":kotlin-lombok-compiler-plugin.k2"))
     testFixturesApi(project(":kotlin-lombok-compiler-plugin.cli"))
 
@@ -110,13 +109,6 @@ projectTests {
         jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)
     ) {
-        testInputsCheck {
-            // Log4j2's `LogManager.getLogger(...)` calls `System.getProperties()` during initialization,
-            // which requires read+write access on `java.util.PropertyPermission "*"`.
-            with(extraPermissions) {
-                add("permission java.util.PropertyPermission \"*\", \"read,write\";")
-            }
-        }
 
         val prefix = "org.jetbrains.kotlin.test"
         addClasspathProperty(guavaClasspathForTests, "$prefix.guava")

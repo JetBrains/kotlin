@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.records
 
-import com.intellij.psi.JavaElementVisitor
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.PsiRecordComponent
-import com.intellij.psi.PsiRecordHeader
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -32,7 +28,7 @@ internal class SymbolLightRecordHeader(
                 ?: return@withClassSymbol emptyList()
 
             val components = primaryConstructorSymbol.valueParameters.mapNotNull { parameterSymbol ->
-                val backingFieldSymbol = parameterSymbol.generatedPrimaryConstructorProperty?.backingFieldSymbol
+                val backingFieldSymbol = parameterSymbol.primaryConstructorProperty?.backingFieldSymbol
                     ?: return@mapNotNull null
                 SymbolLightRecordComponent(
                     parameterSymbol = parameterSymbol,

@@ -29,12 +29,12 @@ enum class Enum : Enum<Enum> {
 
   }
 
-  /* static */ fun valueOf(value: String): Enum /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): Enum /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<Enum> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<Enum> /* Synthetic body for ENUM_VALUES */
 
-  /* static */ val entries: EnumEntries<Enum>
-    get(): EnumEntries<Enum> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<Enum>
+    companion get(): EnumEntries<Enum> /* Synthetic body for ENUM_ENTRIES */
 
 }
 

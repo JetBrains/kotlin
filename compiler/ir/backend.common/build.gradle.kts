@@ -1,7 +1,10 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -17,7 +20,6 @@ dependencies {
     compileOnly(intellijCore())
 
     testImplementation(kotlinTest("junit"))
-    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
     testFixturesImplementation(kotlinTest("junit"))
 }
@@ -30,4 +32,3 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-optInToK1Deprecation()

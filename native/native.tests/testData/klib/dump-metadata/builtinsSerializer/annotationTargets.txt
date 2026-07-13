@@ -4,10 +4,18 @@ library {
   library fragment {
     // package name: test
 
+    // class name: test/anno
     // class name: test/C1
     // class name: test/C1.C2
     // class name: test/C1.Companion
-    // class name: test/anno
+
+    public final annotation class test/anno : kotlin/Annotation {
+
+      public constructor(x: kotlin/String)
+
+      public final val x: kotlin/String
+        public final get
+    }
 
     @test/anno(x = "top level class")
     public final class test/C1 : kotlin/Any {
@@ -46,14 +54,6 @@ library {
     public final companion object test/C1.Companion : kotlin/Any {
 
       private constructor()
-    }
-
-    public final annotation class test/anno : kotlin/Annotation {
-
-      public constructor(x: kotlin/String)
-
-      public final val x: kotlin/String
-        public final get
     }
 
     package {

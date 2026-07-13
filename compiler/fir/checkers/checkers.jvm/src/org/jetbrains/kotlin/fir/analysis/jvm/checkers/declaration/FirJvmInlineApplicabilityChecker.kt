@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -44,27 +43,14 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
                 // only report if value keyword exists, this ignores the deprecated inline class syntax
                 val keyword = declaration.getModifier(KtTokens.VALUE_KEYWORD)!!.source
                 val primaryConstructorParameterCount = declaration.primaryConstructorIfAny(context.session)?.valueParameterSymbols?.size
-                val jvmInlineMultiFieldValueClassesEnabled = LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled()
-                when {
-                    // should not advise switching to Full Value Classes, that would NOT help
-                    primaryConstructorParameterCount == null || primaryConstructorParameterCount == 0 -> {
-                        reporter.reportOn(keyword, FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION)
-                    }
+                when (primaryConstructorParameterCount) {
+                    // should not advise enabling Full Value Classes or adding @JvmInline, that would NOT help
+                    null, 0 -> {}
+                    1 -> reporter.reportOn(keyword, FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION)
 
-                    // should advise switching to Full Value Classes, that would help
-                    // However, if the parameter number exceeds 1 and jvmInlineMultiFieldValueClassesEnabled is off,
+                    // should advise enabling Full Value Classes, that would help
+                    // However, if the parameter number exceeds 1,
                     // [FirValueClassDeclarationChecker] will report the diagnostic in multi-platform way itself.
-                    primaryConstructorParameterCount == 1 || jvmInlineMultiFieldValueClassesEnabled -> {
-                        reporter.reportOn(
-                            keyword,
-                            FirErrors.UNSUPPORTED_FEATURE,
-                            LanguageFeature.FullValueClasses to context.languageVersionSettings
-                        )
-                    }
-
-                    // The complexity appears because in this left case there are both reasons to advise switching to full value classes:
-                    // - Missing @JvmInline
-                    // - Multiple parameters, having no [LanguageFeature.JvmInlineMultiFieldValueClasses]
                 }
             }
         }

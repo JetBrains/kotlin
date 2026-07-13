@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.io.readProperties
+import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
 import org.jetbrains.kotlin.js.testOld.utils.runWasmCompiler
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
@@ -19,7 +21,8 @@ import org.jetbrains.kotlin.test.klib.compatibility.LibrarySpecialCompatibilityC
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import java.io.File
-import java.util.*
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 
 abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
     abstract val isWasm: Boolean
@@ -44,9 +47,9 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
 
     override fun runCompiler(context: CompilerInvocationContext) {
         fun CommonJsAndWasmCompilerArguments.configureCommonArgs() {
-            this.freeArgs = listOf(context.sourceFile.absolutePath)
-            this.libraries = (context.additionalLibraries + context.fakeLibraryPath).joinToString(File.pathSeparator)
-            this.outputDir = context.outputDir.absolutePath
+            this.freeArgs = listOf(context.sourceFile.absolutePathString())
+            this.libraries = (context.additionalLibraries + listOf(context.fakeLibraryPath)).joinToString(File.pathSeparator)
+            this.outputDir = context.outputDir.absolutePathString()
             this.moduleName = context.moduleName
             @Suppress("DEPRECATION")
             this.irProduceKlibFile = true
@@ -76,11 +79,11 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
     override val patchedLibraryPostfix: String
         get() = if (isWasm) "wasm" else "js"
 
-    override fun additionalPatchedLibraryProperties(manifestFile: File) {
+    override fun additionalPatchedLibraryProperties(manifestFile: Path) {
         if (isWasm) {
-            val properties = manifestFile.inputStream().use { Properties().apply { load(it) } }
+            val properties = manifestFile.readProperties()
             properties[KLIB_PROPERTY_BUILTINS_PLATFORM] = BuiltInsPlatform.WASM.name
-            manifestFile.outputStream().use { properties.store(it, null) }
+            manifestFile.writeProperties(properties)
         }
     }
 }

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
  */
 class StructuredProviders(
     val sourceProviders: List<FirSymbolProvider>,
+    val incrementalProvider: FirSymbolProvider?,
     val dependencyProviders: List<FirSymbolProvider>,
     val sharedProvider: FirSymbolProvider
 ) : FirSessionComponent

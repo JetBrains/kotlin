@@ -219,19 +219,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
-    @Argument(
-        value = "-output",
-        valueDescription = "<filepath>",
-        description = "",
-        isObsolete = true,
-    )
-    var outputFile: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
     @Argument(
         value = "-target",
         valueDescription = "{ es5, es2015 }",

@@ -1,2 +1,3 @@
 expression: for(i in 1..2) {}
+expression PSI: KtForExpression
 type: kotlin.Unit

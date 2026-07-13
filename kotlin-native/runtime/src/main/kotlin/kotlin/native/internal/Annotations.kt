@@ -161,11 +161,18 @@ public annotation class ReflectionPackageName(val name: String)
  * Indicates that the marked function is an exported bridge between Kotlin and the platform.
  * This annotation prevents the function from being removed by DCE
  * and specifies a stable [bridgeName] for the function symbol.
+ *
+ * If [nonVirtualTargetMethod] is not empty, each call to a method with that name inside
+ * the bridge body is dispatched non-virtually (as if via `super`), bypassing the virtual table.
+ * Swift Export uses this for forward bridges that must invoke the inherited Kotlin implementation
+ * of an open method without re-entering a vtable slot patched with a Swift reverse trampoline
+ * (which would otherwise recurse infinitely for non-overridden methods and `super` calls from a
+ * Swift subclass).
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(value = AnnotationRetention.BINARY)
 @ExperimentalNativeApi
-public annotation class ExportedBridge(val bridgeName: String)
+public annotation class ExportedBridge(val bridgeName: String, val nonVirtualTargetMethod: String = "")
 
 /**
  * Indicates that the marked external function is an imported bridge from the platform to Kotlin.

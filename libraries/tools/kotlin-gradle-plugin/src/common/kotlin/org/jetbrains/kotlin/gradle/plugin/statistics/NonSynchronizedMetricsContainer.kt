@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
+import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.Serializable
 
@@ -28,6 +29,8 @@ internal open class NonSynchronizedMetricsContainer : StatisticsValuesConsumer, 
 
     private val stringMetrics = HashMap<MetricDescriptor<StringMetrics>, MutableList<Pair<String, Long?>>>()
 
+    private val stringListMetrics = HashMap<MetricDescriptor<StringListMetrics>, MutableList<Pair<List<String>, Long?>>>()
+
     private fun <V, K : MetricDescriptor<*>> putToCollection(
         collection: MutableMap<K, MutableList<Pair<V, Long?>>>,
         key: K,
@@ -52,6 +55,11 @@ internal open class NonSynchronizedMetricsContainer : StatisticsValuesConsumer, 
         return true
     }
 
+    override fun report(metric: StringListMetrics, value: List<String>, subprojectName: String?, weight: Long?): Boolean {
+        putToCollection(stringListMetrics, MetricDescriptor(metric, subprojectName), value, weight)
+        return true
+    }
+
     open fun readFromMetricConsumer(metricConsumer: NonSynchronizedMetricsContainer) {
         metricConsumer.booleanMetrics.forEach {
             it.value.forEach { (value, weight) -> putToCollection(booleanMetrics, MetricDescriptor(it.key.name, it.key.subprojectName), value, weight) }
@@ -61,6 +69,9 @@ internal open class NonSynchronizedMetricsContainer : StatisticsValuesConsumer, 
         }
         metricConsumer.numericalMetrics.forEach {
             it.value.forEach { (value, weight) -> putToCollection(numericalMetrics, MetricDescriptor(it.key.name, it.key.subprojectName), value, weight) }
+        }
+        metricConsumer.stringListMetrics.forEach {
+            it.value.forEach { (value, weight) -> putToCollection(stringListMetrics, MetricDescriptor(it.key.name, it.key.subprojectName), value, weight) }
         }
     }
 
@@ -72,6 +83,9 @@ internal open class NonSynchronizedMetricsContainer : StatisticsValuesConsumer, 
             it.value.forEach { (value, weight) -> metricConsumer.report(it.key.name, value, it.key.subprojectName, weight) }
         }
         stringMetrics.forEach {
+            it.value.forEach { (value, weight) -> metricConsumer.report(it.key.name, value, it.key.subprojectName, weight) }
+        }
+        stringListMetrics.forEach {
             it.value.forEach { (value, weight) -> metricConsumer.report(it.key.name, value, it.key.subprojectName, weight) }
         }
     }

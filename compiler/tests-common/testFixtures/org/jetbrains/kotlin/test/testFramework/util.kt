@@ -16,8 +16,32 @@
 
 package org.jetbrains.kotlin.test.testFramework
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Disposer
 
 fun <T> runWriteAction(action: () -> T): T {
     return ApplicationManager.getApplication().runWriteAction<T>(action)
+}
+
+fun disposeRootDisposable(rootDisposable: Disposable) {
+    val application: Application? = ApplicationManager.getApplication()
+    // If core environment was not initialized, then the application wouldn't be available
+    if (application != null) {
+        application.runWriteAction {
+            Disposer.dispose(rootDisposable)
+        }
+    } else {
+        Disposer.dispose(rootDisposable)
+    }
+}
+
+inline fun runWithDisposable(block: (Disposable) -> Unit) {
+    val disposable = Disposer.newDisposable()
+    try {
+        block(disposable)
+    } finally {
+        disposeRootDisposable(disposable)
+    }
 }

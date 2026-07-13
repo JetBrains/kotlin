@@ -42,7 +42,7 @@ KtUserType(37,40): 'Int'
 
 KtNameReferenceExpression(37,40): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -89,7 +89,7 @@ KtUserType(70,71): 'T'
 
 KtNameReferenceExpression(70,71): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -115,7 +115,7 @@ KtUserType(86,89): 'Int'
 
 KtNameReferenceExpression(86,89): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -135,7 +135,7 @@ KtUserType(92,99): 'Boolean'
 
 KtNameReferenceExpression(92,99): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -164,7 +164,7 @@ KtConstantExpression(126,127): '1'
 
 KtOperationReferenceExpression(128,130): 'in'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
@@ -178,7 +178,7 @@ KtCallExpression(131,140): 'MyClass()'
 
 KtNameReferenceExpression(131,138): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -201,7 +201,7 @@ KtCallExpression(145,154): 'MyClass()'
 
 KtNameReferenceExpression(145,152): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -218,7 +218,7 @@ KtCallExpression(155,166): 'contains(2)'
 
 KtNameReferenceExpression(155,163): 'contains'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
@@ -244,7 +244,7 @@ KtConstantExpression(171,172): '2'
 
 KtOperationReferenceExpression(173,176): '!in'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
@@ -258,7 +258,7 @@ KtCallExpression(177,186): 'MyClass()'
 
 KtNameReferenceExpression(177,184): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -284,7 +284,7 @@ KtWhenConditionInRange(211,223): 'in MyClass()'
 
 KtOperationReferenceExpression(211,213): 'in'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
@@ -298,7 +298,7 @@ KtCallExpression(214,223): 'MyClass()'
 
 KtNameReferenceExpression(214,221): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -330,7 +330,7 @@ KtWhenConditionInRange(270,283): '!in MyClass()'
 
 KtOperationReferenceExpression(270,273): '!in'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
@@ -344,7 +344,7 @@ KtCallExpression(274,283): 'MyClass()'
 
 KtNameReferenceExpression(274,281): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass

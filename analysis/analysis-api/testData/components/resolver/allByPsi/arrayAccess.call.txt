@@ -99,7 +99,7 @@ KtNameReferenceExpression(40,44): 'list'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(45,47): '+='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -651,7 +651,7 @@ KtConstantExpression(164,165): '1'
   null
 
 KtOperationReferenceExpression(168,170): '+='
-  KaSuccessCallInfo:
+  KaCompoundArrayAccessCallResolutionAttempt:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -948,7 +948,7 @@ KtConstantExpression(183,184): '2'
   null
 
 KtOperationReferenceExpression(187,189): '+='
-  KaSuccessCallInfo:
+  KaCompoundArrayAccessCallResolutionAttempt:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -1315,7 +1315,7 @@ KtPrefixExpression(245,254): '--list[i]'
         }
 
 KtOperationReferenceExpression(245,247): '--'
-  KaSuccessCallInfo:
+  KaCompoundArrayAccessCallResolutionAttempt:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -1608,7 +1608,7 @@ KtPrefixExpression(266,277): '++(list[2])'
         }
 
 KtOperationReferenceExpression(266,268): '++'
-  KaSuccessCallInfo:
+  KaCompoundArrayAccessCallResolutionAttempt:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

@@ -6,7 +6,7 @@ KtPackageDirective(0,11): 'package bar'
 
 KtNameReferenceExpression(8,11): 'bar'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       bar
@@ -38,7 +38,7 @@ KtUserType(31,37): 'Number'
 
 KtNameReferenceExpression(31,37): 'Number'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Number
@@ -82,7 +82,7 @@ KtUserType(64,65): 'T'
 
 KtNameReferenceExpression(64,65): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       T

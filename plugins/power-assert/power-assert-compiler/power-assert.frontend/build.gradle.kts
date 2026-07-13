@@ -1,6 +1,9 @@
 description = "Kotlin Power-Assert Compiler Plugin (Frontend)"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 

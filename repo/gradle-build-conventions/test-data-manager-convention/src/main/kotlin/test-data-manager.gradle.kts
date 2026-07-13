@@ -93,24 +93,23 @@ private fun JavaExec.wireFromTestTask(peerTaskName: String) {
     enableAssertions = testTask.enableAssertions
     minHeapSize = testTask.minHeapSize
     maxHeapSize = testTask.maxHeapSize
-    jvmArgumentProviders += testTask.jvmArgumentProviders
     javaLauncher = testTask.javaLauncher
 
     /**
-     * This disables `KotlinSecurityManager` in the Test Data Manager.
-     * Currently, the policy file is only generated in 'test' tasks (see `test-inputs-check.gradle.kts`),
-     * so the policy will be non-existent until the corresponding test task runs. However, the following
-     * properties are still carried on from the 'test' task – unless they're filtered, the Test Data
-     * Manager process will crash:
-     *
-     * ```
-     * -Djava.security.manager=org.jetbrains.kotlin.security.KotlinSecurityManager
-     * -Djava.security.policy=some/subproject/path/build/permissions-for-test.policy
-     * ```
+     * Filter out system properties used by `test-inputs-check` and `test-inputs-check-v2`.
+     * Otherwise, the task would crash with either missing security policy or `declared-inputs-for-test.txt` file.
      *
      * Also see KT-84278.
      */
-    systemProperties = testTask.systemProperties.filterKeys { !it.startsWith("java.security.") }
+    systemProperties = testTask.systemProperties.filterKeys {
+        !it.startsWith("java.security.") && !it.startsWith("test.instrumenter.")
+    }
+
+    /**
+     * Filter out JVM argument provider used by `test-inputs-check-v2`
+     */
+    jvmArgumentProviders += testTask.jvmArgumentProviders
+        .filter { it !is JfrArgumentProvider }
 
     // Forward idea.active to enable IDE integration in TestDataManagerRunner
     if (project.providers.systemProperty("idea.active").isPresent) {

@@ -1258,6 +1258,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("unaryIntLiteralInUnresolvedInfixCall.kt")
+    public void testUnaryIntLiteralInUnresolvedInfixCall() {
+      run("unaryIntLiteralInUnresolvedInfixCall.kt");
+    }
+
+    @Test
     @TestMetadata("unaryMinusIntLiteral.kt")
     public void testUnaryMinusIntLiteral() {
       run("unaryMinusIntLiteral.kt");

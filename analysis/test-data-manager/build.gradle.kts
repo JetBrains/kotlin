@@ -1,7 +1,10 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
     id("project-tests-convention")
 }
 

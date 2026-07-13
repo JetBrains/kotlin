@@ -574,7 +574,7 @@ open class FirTypeResolveTransformer(
 
     fun addTypeParametersScope(firMemberDeclaration: FirMemberDeclaration) {
         if (firMemberDeclaration.typeParameters.isNotEmpty()) {
-            scopes = scopes.add(FirMemberTypeParameterScope(firMemberDeclaration))
+            scopes = scopes.adding(FirMemberTypeParameterScope(firMemberDeclaration))
         }
     }
 
@@ -582,8 +582,8 @@ open class FirTypeResolveTransformer(
         // small optimization to skip unnecessary allocations
         val scopesAreTheSame = scopes === staticScopes
 
-        scopes = scopes.addAll(list)
-        staticScopes = if (scopesAreTheSame) scopes else staticScopes.addAll(list)
+        scopes = scopes.addingAll(list)
+        staticScopes = if (scopesAreTheSame) scopes else staticScopes.addingAll(list)
     }
 
     /**

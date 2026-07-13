@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.integration
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 
 class ParallelBuildTest : KotlinIntegrationTestBase() {
+    @Test
     fun testParallelBuild() {
         fun rawString(text: String): String = "\"\"\"$text\"\"\""
 

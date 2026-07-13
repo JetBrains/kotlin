@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNonPublicApi
@@ -46,20 +45,13 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import java.io.File
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
 @OptIn(ObsoleteTestInfrastructure::class)
-abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
-    "",
-    "kt",
-    KotlinParserDefinition()
-) {
-    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory()
-
+abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
     private fun createFile(filePath: String, fileType: IElementType): PsiFile {
         val psiFactory = KtPsiFactory(myProject)
         return when (fileType) {
@@ -72,7 +64,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         }
     }
 
-    protected open fun doRawFirTest(filePath: String) {
+    protected open fun runTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
         val firFileDump = dumpFirFile(firFile)

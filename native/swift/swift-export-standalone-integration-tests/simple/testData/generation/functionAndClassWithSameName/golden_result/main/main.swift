@@ -54,20 +54,26 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
     }
 }
 public typealias TCJ = any main.CompletableJob
-public protocol CompletableJob: KotlinRuntime.KotlinBase, main.Job {
+public protocol CompletableJob: KotlinRuntime.KotlinBase, main.Job, main._CompletableJob {
 }
-public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
+public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase, main._InterfaceWithFactory {
 }
-public protocol Job: KotlinRuntime.KotlinBase {
+public protocol Job: KotlinRuntime.KotlinBase, main._Job {
 }
 @objc(_CompletableJob)
-package protocol _CompletableJob: main._Job {
+public protocol _CompletableJob: main._Job {
 }
 @objc(_InterfaceWithFactory)
-package protocol _InterfaceWithFactory {
+public protocol _InterfaceWithFactory {
 }
 @objc(_Job)
-package protocol _Job {
+public protocol _Job {
+}
+public protocol __CompletableJob: KotlinRuntimeSupport._KotlinBridgeable, main.__Job {
+}
+public protocol __InterfaceWithFactory: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __Job: KotlinRuntimeSupport._KotlinBridgeable {
 }
 public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
     public var value: Swift.Int32 {
@@ -161,23 +167,29 @@ public func utcOffset(
 ) -> main.UtcOffset {
     return main.UtcOffset.__createClassWrapper(externalRCRef: __root___UtcOffset__TypesOfArguments__Swift_Int32__(x))
 }
-extension main.CompletableJob where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.CompletableJob where Self : main.__CompletableJob {
 }
 extension main.CompletableJob {
 }
-extension main.InterfaceWithFactory where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.InterfaceWithFactory where Self : main.__InterfaceWithFactory {
 }
 extension main.InterfaceWithFactory {
 }
-extension main.Job where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.Job where Self : main.__Job {
 }
 extension main.Job {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.Job where Wrapped : main._Job {
+extension KotlinRuntimeSupport._KotlinExistential: main.Job, main.__Job where Wrapped : main._Job {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.CompletableJob where Wrapped : main._CompletableJob {
+extension KotlinRuntimeSupport._KotlinExistential: main.CompletableJob, main.__CompletableJob where Wrapped : main._CompletableJob {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
+extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory, main.__InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Job {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._CompletableJob {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._InterfaceWithFactory {
 }
 extension ExportedKotlinPackages.test.factory {
     public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase {

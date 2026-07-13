@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
@@ -139,12 +140,14 @@ abstract class WasmBoxRunnerBase(
         }
 
         val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
+        val useStackSwitchingProposal = USE_STACK_SWITCHING_PROPOSAL in testServices.moduleStructure.allDirectives
 
         return wasmEngines
             .mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
+                    useStackSwitching = useStackSwitchingProposal,
                     entryFile = collectedJsArtifacts.entryPath,
                     jsFilePaths = jsFilePaths,
                     workingDirectory = outputDir,
@@ -158,6 +161,7 @@ class WasmVMException(nested: Throwable, val vmName: String) : Throwable("WasmVM
 internal fun WasmVM.runWithCaughtExceptions(
     debugMode: DebugMode,
     useNewExceptionHandling: Boolean,
+    useStackSwitching: Boolean,
     entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
@@ -171,6 +175,7 @@ internal fun WasmVM.runWithCaughtExceptions(
             jsFilePaths,
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
+            useStackSwitching = useStackSwitching,
         )
     } catch (e: Throwable) {
         return WasmVMException(e, vmName)

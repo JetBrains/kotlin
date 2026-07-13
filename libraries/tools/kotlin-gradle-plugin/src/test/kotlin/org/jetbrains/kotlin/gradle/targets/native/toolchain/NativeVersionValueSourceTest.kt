@@ -9,6 +9,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
 import org.jetbrains.kotlin.gradle.testing.WithTemporaryFolder
 import org.jetbrains.kotlin.gradle.testing.newTempDirectory
+import org.jetbrains.kotlin.gradle.utils.unzipTarGz
 import org.junit.jupiter.api.io.TempDir
 import java.io.BufferedOutputStream
 import java.io.File
@@ -41,6 +42,18 @@ class NativeVersionValueSourceTest : WithTemporaryFolder {
         assertTrue("Marker file should be created") { versionDir.resolve(NativeVersionValueSource.Companion.MARKER_FILE).exists() }
     }
 
+    @Test
+    fun testUnzipTarGz() {
+        val targetDir = newTempDirectory().resolve("target").also { it.createDirectories() }
+        val archive = createTarGz()
+
+        archive.toPath().unzipTarGz(targetDir)
+
+        assertTrue("Directory should be extracted") { targetDir.resolve("version").toFile().isDirectory }
+        assertEquals("class A {}", targetDir.resolve("version/A.kt").toFile().readText())
+        assertTrue("File B.kt should be extracted") { targetDir.resolve("version/B.kt").exists() }
+    }
+
     private fun createTarGz(): File {
         val tarFile = newTempDirectory().resolve("version.tar.gz").toFile()
         TarArchiveOutputStream(
@@ -50,6 +63,9 @@ class NativeVersionValueSourceTest : WithTemporaryFolder {
                 )
             )
         ).use {
+            it.putArchiveEntry(TarArchiveEntry("version/"))
+            it.closeArchiveEntry()
+
             val fileContents = "class A {}".toByteArray()
             val entry = TarArchiveEntry("version/A.kt")
             entry.size = fileContents.size.toLong()

@@ -409,7 +409,7 @@ KtNameReferenceExpression(479,486): 'oldItem'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(487,489): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -725,7 +725,7 @@ KtNameReferenceExpression(706,713): 'oldItem'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(714,716): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -993,7 +993,7 @@ KtNameReferenceExpression(875,882): 'oldItem'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(883,885): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1132,7 +1132,7 @@ KtNameReferenceExpression(956,957): 'i'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(958,960): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1238,7 +1238,7 @@ KtNameReferenceExpression(967,968): 'i'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(969,971): '!='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1344,7 +1344,7 @@ KtNameReferenceExpression(979,980): 'm'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(981,983): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1450,7 +1450,7 @@ KtNameReferenceExpression(990,991): 'm'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(992,994): '!='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

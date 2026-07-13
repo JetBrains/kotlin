@@ -40,14 +40,15 @@ Compiler:
  - compiler/resolution.common
  - compiler/resolution.common.jvm
  - compiler/serialization
+ - compiler/serialization.common
  - compiler/test-infrastructure
  - compiler/test-infrastructure-utils
  - compiler/test-infrastructure-utils.common
  - compiler/test-security-manager
  - compiler/testData
  - compiler/testFixtures
+ - compiler/testResources
  - compiler/tests
- - compiler/tests-against-klib
  - compiler/tests-common
  - compiler/tests-common-new
  - compiler/tests-compiler-utils
@@ -75,7 +76,6 @@ Js:
  - js/js.frontend
  - js/js.frontend.common
  - js/js.parser
- - js/js.serializer
  - js/js.sourcemap
  - js/js.tests
  - js/js.translator/ReadMe.md
@@ -92,6 +92,7 @@ Native:
  - native/analysis-api-based-test-utils
  - native/base
  - native/binary-options
+ - native/cinterop.deserialization
  - native/cli-native
  - native/commonizer
  - native/commonizer-api
@@ -122,6 +123,7 @@ AnalysisApi:
  - compiler/psi/psi-frontend-utils
  - compiler/psi/psi-impl
  - compiler/psi/psi-utils
+ - prepare/analysis-api
 
 SwiftExport:
  - native/swift
@@ -147,6 +149,9 @@ CompilerPlugins:
 Compiler, CompilerPlugins:
  - plugins/plugin-sandbox
  - plugins/scripting
+
+Js, SwiftExport:
+ - libraries/tools/analysis-api-based-klib-reader
 
 Gradle:
  - libraries/tools/gradle
@@ -178,7 +183,6 @@ Maven:
  - libraries/tools/maven-archetypes
 
 IntelliJ:
- - prepare/analysis-api-test-framework
  - prepare/ide-plugin-dependencies
 
 BuildInfrastructure:
@@ -206,6 +210,7 @@ Unknown:
  - SECURITY.md
  - annotations
  - benchmarks
+ - code-rules.md
  - dependencies
  - docs
  - generators
@@ -228,7 +233,6 @@ Unknown:
  - libraries/scripting
  - libraries/tools/abi-comparator
  - libraries/tools/abi-validation
- - libraries/tools/analysis-api-based-klib-reader
  - libraries/tools/atomicfu
  - libraries/tools/binary-compatibility-validator
  - libraries/tools/dukat

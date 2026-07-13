@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.commonizer.core.TypeCommonizerTest.Companion.areEqua
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.commonizer.utils.mockClassType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, CirValueParameter?>() {
 
@@ -32,22 +32,22 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
         mockValueParam("org/sample/Foo")
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun differentReturnTypes1() = doTestFailure(
+    @Test
+    fun differentReturnTypes1() = doTestFailure<IllegalCommonizerStateException>(
         mockValueParam("kotlin/String"),
         mockValueParam("kotlin/String"),
         mockValueParam("kotlin/Int")
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun differentReturnTypes2() = doTestFailure(
+    @Test
+    fun differentReturnTypes2() = doTestFailure<IllegalCommonizerStateException>(
         mockValueParam("kotlin/String"),
         mockValueParam("kotlin/String"),
         mockValueParam("org/sample/Foo")
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun differentReturnTypes3() = doTestFailure(
+    @Test
+    fun differentReturnTypes3() = doTestFailure<IllegalCommonizerStateException>(
         mockValueParam("org/sample/Foo"),
         mockValueParam("org/sample/Foo"),
         mockValueParam("org/sample/Bar")
@@ -69,15 +69,15 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
         mockValueParam("org/sample/Foo", hasVarargElementType = true)
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun someDoesNotHaveVararg1() = doTestFailure(
+    @Test
+    fun someDoesNotHaveVararg1() = doTestFailure<IllegalCommonizerStateException>(
         mockValueParam("kotlin/String", hasVarargElementType = true),
         mockValueParam("kotlin/String", hasVarargElementType = true),
         mockValueParam("kotlin/String", hasVarargElementType = false)
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun someDoesNotHaveVararg2() = doTestFailure(
+    @Test
+    fun someDoesNotHaveVararg2() = doTestFailure<IllegalCommonizerStateException>(
         mockValueParam("org/sample/Foo", hasVarargElementType = false),
         mockValueParam("org/sample/Foo", hasVarargElementType = false),
         mockValueParam("org/sample/Foo", hasVarargElementType = true)
@@ -131,8 +131,8 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
         mockValueParam("kotlin/String", isNoinline = true)
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun anyDeclaresDefaultValue() = doTestFailure(
+    @Test
+    fun anyDeclaresDefaultValue() = doTestFailure<IllegalCommonizerStateException>(
         mockValueParam("kotlin/String", declaresDefaultValue = false),
         mockValueParam("kotlin/String", declaresDefaultValue = false),
         mockValueParam("kotlin/String", declaresDefaultValue = true)
@@ -184,4 +184,3 @@ fun areEqual(classifiers: CirKnownClassifiers, a: CirValueParameter, b: CirValue
             || (aVarargElementType != null && bVarargElementType != null
             && areEqual(classifiers, aVarargElementType, bVarargElementType))
 }
-

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.serialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.descriptors.*
@@ -35,6 +36,7 @@ class JvmIdSignatureDescriptor(mangler: KotlinMangler.DescriptorMangler) : IdSig
             computeStoredFileSignature(descriptor)
         }
 
+        @OptIn(K1Deprecation::class)
         override fun platformSpecificProperty(descriptor: PropertyDescriptor) {
             // See KT-31646
             setSpecialJavaProperty(descriptor is JavaForKotlinOverridePropertyDescriptor)

@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
-import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.File
 
@@ -142,8 +143,8 @@ fun <SourceFile> serializeModuleIntoKlib(
 
     val [fragmentNames, fragmentParts] = compiledKotlinFiles
         .groupBy { it.fqName }
-        .map { [fqn, data] ->
-            fqn to data.sortedBy { it.path }.map { it.metadata }
+        .map { [fqn, serializedData] ->
+            fqn to serializedData.sortedBy { it.path }.map { it.metadata }
         }
         .sortedBy { it.first }
         .unzip()
@@ -168,6 +169,30 @@ fun <SourceFile> serializeModuleIntoKlib(
     )
 }
 
+private fun serializeKlibHeader(
+    languageVersionSettings: LanguageVersionSettings,
+    moduleName: String,
+    fragmentNames: List<String>,
+    emptyPackages: List<String>
+): KlibMetadataProtoBuf.Header {
+    val header = KlibMetadataProtoBuf.Header.newBuilder()
+
+    header.moduleName = moduleName
+
+    if (languageVersionSettings.isPreRelease()) {
+        header.flags = KlibMetadataHeaderFlags.PRE_RELEASE
+    }
+
+    fragmentNames.forEach {
+        header.addPackageFragmentName(it)
+    }
+    emptyPackages.forEach {
+        header.addEmptyPackage(it)
+    }
+
+    return header.build()
+}
+
 fun addLanguageFeaturesToManifest(manifestProperties: Properties, languageVersionSettings: LanguageVersionSettings) {
     val enabledFeatures = languageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures()
     val presentableEnabledFeatures = enabledFeatures.sortedBy(LanguageFeature::name).joinToString(" ") { "+$it" }
@@ -190,4 +215,3 @@ fun addLanguageFeaturesToManifest(manifestProperties: Properties, languageVersio
         manifestProperties.setProperty(KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION, true.toString())
     }
 }
-

@@ -191,6 +191,15 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirExpressionsResolveTransformer::transformSuperReceiverExpression,
     )
 
+    override fun transformComponentCall(
+        componentCall: FirComponentCall,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        componentCall,
+        data,
+        FirExpressionsResolveTransformer::transformComponentCall,
+    )
+
     override fun transformFunctionCall(
         functionCall: FirFunctionCall,
         data: ResolutionMode,

@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -10,8 +13,6 @@ dependencies {
     // Some binary options are leaking via module API surface
     api(project(":native:binary-options"))
 }
-
-optInToK1Deprecation()
 
 kotlin {
     compilerOptions {

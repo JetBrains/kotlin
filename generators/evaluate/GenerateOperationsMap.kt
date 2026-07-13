@@ -100,7 +100,7 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
     )
     unaryOperationsMap.add(
         Operation(
-            className = "Char",
+            className = null,
             name = "code",
             parameterTypes = listOf("Char"),
             isFunction = false

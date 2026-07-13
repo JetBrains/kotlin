@@ -4,6 +4,12 @@
  * Version of kotlin-gradle-plugin-idea module that should be resolved for compatibility tests
  * This version can be treated as 'minimal guaranteed backwards compatible version' of the module.
  */
+plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
+}
+
 val testedVersion = "1.8.20-dev-4242"
 
 val isSnapshotTest = hasProperty("kgp-idea.snapshot_test")
@@ -16,9 +22,6 @@ repositories {
         mavenLocal()
         mavenCentral()
     }
-
-    maven(url = "https://redirector.kotlinlang.org/maven/bootstrap")
-    maven(url = "https://redirector.kotlinlang.org/maven/kotlin-ide-plugin-dependencies")
 }
 
 val classpathDestination = layout.buildDirectory.dir("classpath")

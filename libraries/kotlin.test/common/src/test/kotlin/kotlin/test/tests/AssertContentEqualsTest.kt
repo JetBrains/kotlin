@@ -7,6 +7,7 @@ package kotlin.test.tests
 
 import kotlin.test.*
 
+@OptIn(ExperimentalKotlinTestApi::class)
 class AssertContentEqualsTest {
 
     @Test
@@ -37,6 +38,20 @@ class AssertContentEqualsTest {
         testFailureMessage("Iterable elements differ at index 0. Expected element <1>, actual element <3>.") {
             assertContentEquals(setOf(1, 2, 3).asIterable(), setOf(3, 2, 1))
         }
+    }
+
+    @Test
+    fun testAssertContentEqualsIterableLazy() {
+        val list: Iterable<Int> = listOf(1, 2, 3)
+        val range: Iterable<Int> = 1..3
+
+        assertContentEquals(list, range) { fail() }
+
+        val msg = "Should share similar values"
+        testFailureMessagesAreTheSame(
+            expected = { assertContentEquals(list, setOf(5, 6, 7), msg) },
+            actual = { assertContentEquals(list, setOf(5, 6, 7)) { msg } }
+        )
     }
 
     @Test
@@ -73,6 +88,27 @@ class AssertContentEqualsTest {
     }
 
     @Test
+    fun testAssertContentEqualsSequenceLazy() {
+        val sequence1: Sequence<Int> = object : Sequence<Int> {
+            override fun iterator(): Iterator<Int> = listOf(1, 2, 3).iterator()
+            override fun toString(): String = "[1, 2, 3]"
+        }
+        val sequence2: Sequence<Int> = object : Sequence<Int> {
+            override fun iterator(): Iterator<Int> = (1..3).iterator()
+            override fun toString(): String = "1..3"
+        }
+
+        assertContentEquals(sequence1, sequence1) { fail() } // ref equality
+        assertContentEquals(sequence1, sequence2) { fail() } // elements equal
+
+        val msg = "Should share similar values"
+        testFailureMessagesAreTheSame(
+            expected = { assertContentEquals(sequence1, sequenceOf(4), msg) },
+            actual = { assertContentEquals(sequence1, sequenceOf(4)) { msg } }
+        )
+    }
+
+    @Test
     fun testAssertContentEqualsArray() {
         val array1: Array<Int> = arrayOf(1, 2, 3)
         val array2: Array<Int> = arrayOf(1, 2, 3)
@@ -97,6 +133,21 @@ class AssertContentEqualsTest {
         testFailureMessage("Array sizes differ. Expected size is 3, actual size is 4.\nExpected <[1, 2, 3]>, actual <[0, -1, -2, -3]>.") {
             assertContentEquals(array1, Array(4) { -it })
         }
+    }
+
+    @Test
+    fun testAssertContentEqualsArrayLazy() {
+        val array1: Array<Int> = arrayOf(1, 2, 3)
+        val array2: Array<Int> = arrayOf(1, 2, 3)
+
+        assertContentEquals(array1, array1) { fail() } // ref equality
+        assertContentEquals(array1, array2) { fail() } // elements equal
+
+        val msg = "Should share similar values"
+        testFailureMessagesAreTheSame(
+            expected = { assertContentEquals(array1, arrayOf(5, 6), msg) },
+            actual = { assertContentEquals(array1, arrayOf(5, 6)) { msg } }
+        )
     }
 
     @Test
@@ -130,6 +181,21 @@ class AssertContentEqualsTest {
         }
     }
 
+    @Test
+    fun testAssertContentEqualsDoubleArrayLazy() {
+        val array1: DoubleArray = doubleArrayOf(1.0, Double.NaN, 3.0)
+        val array2: DoubleArray = doubleArrayOf(1.0, Double.NaN, 3.0)
+
+        assertContentEquals(array1, array1) { fail() } // ref equality
+        assertContentEquals(array1, array2) { fail() } // elements equal
+
+        val msg = "Should share similar values"
+        testFailureMessagesAreTheSame(
+            expected = { assertContentEquals(array1, doubleArrayOf(0.0), msg) },
+            actual = { assertContentEquals(array1, doubleArrayOf(0.0)) { msg } }
+        )
+    }
+
     @OptIn(ExperimentalUnsignedTypes::class)
     @Test
     fun testAssertContentEqualsULongArray() {
@@ -156,5 +222,21 @@ class AssertContentEqualsTest {
         testFailureMessage("Array sizes differ. Expected size is 3, actual size is 4.\nExpected <[1, 2, 3]>, actual <[4, 3, 2, 1]>.") {
             assertContentEquals(array1, ULongArray(4) { 4uL - it.toUInt() })
         }
+    }
+
+    @OptIn(ExperimentalUnsignedTypes::class)
+    @Test
+    fun testAssertContentEqualsULongArrayLazy() {
+        val array1: ULongArray = ulongArrayOf(1u, 2u, 3u)
+        val array2: ULongArray = ulongArrayOf(1u, 2u, 3u)
+
+        assertContentEquals(array1, array1) { fail() } // ref equality
+        assertContentEquals(array1, array2) { fail() } // elements equal
+
+        val msg = "Should share similar values"
+        testFailureMessagesAreTheSame(
+            expected = { assertContentEquals(array1, ulongArrayOf(0u), msg) },
+            actual = { assertContentEquals(array1, ulongArrayOf(0u)) { msg } }
+        )
     }
 }

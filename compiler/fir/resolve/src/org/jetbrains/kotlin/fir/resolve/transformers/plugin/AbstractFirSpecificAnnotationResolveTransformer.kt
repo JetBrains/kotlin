@@ -229,8 +229,13 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                     packageFqName = symbol.classId.packageFqName
                     relativeClassFqName = symbol.classId.relativeClassName
                     coneTypeOrNull = session.builtinTypes.unitType.coneType
-                    this.symbol = symbol
-                    isFullyQualified = segments.isNotEmpty()
+                    this.qualifierSymbol = symbol
+                    if (segments.isNotEmpty()) {
+                        explicitParent = buildResolvedQualifier {
+                            packageFqName = symbol.classId.packageFqName
+                            resolvedToCompanionObject = false
+                        }
+                    }
                     resolvedToCompanionObject = false
                 }
 
@@ -690,7 +695,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
      */
     fun beforeTransformingChildren(parentDeclaration: FirDeclaration): PersistentList<FirDeclaration> {
         val current = owners
-        owners = owners.add(parentDeclaration)
+        owners = owners.adding(parentDeclaration)
         return current
     }
 

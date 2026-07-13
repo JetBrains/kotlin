@@ -18,7 +18,7 @@ class A<T : <!NON_EXPORTABLE_TYPE("upper bound; C")!>C<!>, S: <!NON_EXPORTABLE_T
 interface I2<T> where T : <!NON_EXPORTABLE_TYPE("upper bound; C")!>C<!>, T : <!NON_EXPORTABLE_TYPE("upper bound; I")!>I<!>
 
 @JsExport
-class B<T>(val a: T, <!NON_EXPORTABLE_TYPE("parameter; Comparable<T (of class B<T>)>")!>val b: Comparable<T><!>) {
+class B<T>(val a: T, <!NON_EXPORTABLE_TYPE("parameter; Comparable<T (of class B<T>)>"), NON_EXPORTABLE_TYPE("property; Comparable<T (of class B<T>)>")!>val b: Comparable<T><!>) {
     <!NON_EXPORTABLE_TYPE("property; Comparable<T (of class B<T>)>")!>val c: Comparable<T><!> = b
 }
 

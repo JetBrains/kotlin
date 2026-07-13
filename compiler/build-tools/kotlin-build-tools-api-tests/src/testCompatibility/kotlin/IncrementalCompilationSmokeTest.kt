@@ -32,14 +32,14 @@ import kotlin.io.path.writeText
 class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("IC works with the externally tracked changes, similarly to Gradle")
     @DefaultStrategyAndPlatformAgnosticScenarioTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun multiModuleExternallyTracked(scenario: ScenarioCreator) {
         runMultiModuleTest(scenario, useTrackedModules = false)
     }
 
     @DisplayName("IC works with the changes tracking via our internal machinery, similarly to Maven")
     @DefaultStrategyAndPlatformAgnosticScenarioTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun multiModuleInternallyTracked(scenario: ScenarioCreator) {
         runMultiModuleTest(scenario, useTrackedModules = true)
     }
@@ -135,19 +135,17 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                     KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion(2, 1, 20, "Beta1"),
                     "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${kotlinToolchains.getCompilerVersion()}"
                 )
-                assumeFalse(this is JsScenarioDsl) // internal tracking currently doesn't fully work for JS
-                assumeFalse(this is WasmScenarioDsl) // internal tracking currently doesn't fully work for Wasm
             }
             val module1 = if (useTrackedModules) {
-                trackedModule("jvm-module-1")
+                trackedModule("basic-multimodule-project/module-1")
             } else {
-                module("jvm-module-1")
+                module("basic-multimodule-project/module-1")
             }
 
             val module2 = if (useTrackedModules) {
-                trackedModule("jvm-module-2", listOf(module1))
+                trackedModule("basic-multimodule-project/module-2", listOf(module1))
             } else {
-                module("jvm-module-2", listOf(module1))
+                module("basic-multimodule-project/module-2", listOf(module1))
             }
 
             module1.createPredefinedFile("secret.kt", "new-file")

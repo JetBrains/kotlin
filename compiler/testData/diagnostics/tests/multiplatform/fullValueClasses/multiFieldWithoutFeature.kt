@@ -15,11 +15,11 @@ annotation class JvmInline
 expect <!UNSUPPORTED_FEATURE!>value<!> class Final(val value1: String, val value2: String)
 <!UNSUPPORTED_FEATURE, UNSUPPORTED_FEATURE{METADATA}!>value<!> class Final1(val value1: String, val value2: String)
 expect value class Final2(val value1: String)
-<!UNSUPPORTED_FEATURE!>value<!> class Final3(val value1: String)
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final3(val value1: String)
 expect value class Final4<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>()<!>
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final5<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE{METADATA}!>()<!>
+value class Final5<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE{METADATA}!>()<!>
 expect <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class Final6
-<!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS{METADATA}, VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final7
+<!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS{METADATA}!>value<!> class Final7
 
 @JvmInline
 expect value class Final8<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val value1: String, val value2: String)<!>
@@ -53,9 +53,9 @@ expect <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, INLINE_CLASS_DEPRECATED
 package kotlin.jvm
 
 actual <!UNSUPPORTED_FEATURE!>value<!> class Final actual constructor(val value1: String, val value2: String)
-actual <!UNSUPPORTED_FEATURE!>value<!> class Final2 actual constructor(val value1: String)
-actual <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final4 <!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>actual constructor()<!>
-actual <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final6
+actual <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class Final2 actual constructor(val value1: String)
+actual value class Final4 <!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>actual constructor()<!>
+actual <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class Final6
 
 @JvmInline
 actual value class Final8 <!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>actual constructor(val value1: String, val value2: String)<!>

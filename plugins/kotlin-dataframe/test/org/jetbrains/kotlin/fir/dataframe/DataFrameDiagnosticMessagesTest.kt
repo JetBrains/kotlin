@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.test.utils.verifyDiagnostics
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ImportedSchemasDiagnostics
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.SchemaInfoDiagnostics
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class DataFrameDiagnosticMessagesTest {
     @Test

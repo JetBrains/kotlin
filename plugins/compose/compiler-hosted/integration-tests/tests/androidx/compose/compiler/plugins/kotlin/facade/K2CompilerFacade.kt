@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -72,11 +71,6 @@ class FirAnalysisResult(
             valueTransform = { AnalysisResult.Diagnostic(it.factoryName, it.textRanges) }
         )
 }
-
-private class FirFrontendResult(
-    val firResult: Fir2IrActualizedResult,
-    val generatorExtensions: JvmGeneratorExtensions,
-)
 
 class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacade(environment) {
     private val project: Project
@@ -181,7 +175,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     private fun frontend(
         platformFiles: List<SourceFile>,
         commonFiles: List<SourceFile>,
-    ): FirFrontendResult {
+    ): Fir2IrActualizedResult {
         val analysisResult = analyze(platformFiles, commonFiles)
 
         FirDiagnosticsCompilerResultsReporter.throwFirstErrorAsException(
@@ -190,29 +184,26 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         )
 
         val fir2IrExtensions = JvmFir2IrExtensions(
-            configuration,
         )
 
-        val fir2IrResult = analysisResult.frontendOutput.convertToIrAndActualizeForJvm(
+        return analysisResult.frontendOutput.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
             configuration,
             analysisResult.reporter,
             configuration.getCompilerExtensions(IrGenerationExtension),
         )
-
-        return FirFrontendResult(fir2IrResult, fir2IrExtensions)
     }
 
     override fun compileToIr(files: List<SourceFile>): IrModuleFragment =
-        frontend(files, listOf()).firResult.irModuleFragment
+        frontend(files, listOf()).irModuleFragment
 
     override fun compile(
         platformFiles: List<SourceFile>,
         commonFiles: List<SourceFile>,
     ): GenerationState {
         val frontendResult = frontend(platformFiles, commonFiles)
-        val irModuleFragment = frontendResult.firResult.irModuleFragment
-        val components = frontendResult.firResult.components
+        val irModuleFragment = frontendResult.irModuleFragment
+        val components = frontendResult.components
 
         val generationState = GenerationState(
             project,
@@ -224,19 +215,18 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
         val backendInput = JvmIrCodegenFactory.BackendInput(
             irModuleFragment,
-            frontendResult.firResult.pluginContext.irBuiltIns,
-            frontendResult.firResult.symbolTable,
+            frontendResult.pluginContext.irBuiltIns,
+            frontendResult.symbolTable,
             components.irProviders,
-            frontendResult.generatorExtensions,
+            debuggerExtensions = null,
             FirJvmBackendExtension(
                 components,
                 frontendResult
-                    .firResult
                     .irActualizedResult
                     ?.actualizedExpectDeclarations
                     ?.extractFirDeclarations()
             ),
-            frontendResult.firResult.pluginContext,
+            frontendResult.pluginContext,
         )
         JvmIrCodegenFactory(configuration).generateModule(generationState, backendInput)
         return generationState

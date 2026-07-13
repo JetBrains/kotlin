@@ -384,7 +384,7 @@ class FirStatusResolver(
             is FirCallableDeclaration -> {
                 val containingPropertyModality = containingProperty?.modality
                 when {
-                    containingClass == null -> Modality.FINAL
+                    containingClass == null || declaration.isStatic -> Modality.FINAL
                     declaration is FirPropertyAccessor && containingPropertyModality != null -> containingPropertyModality
                     containingClass.classKind == ClassKind.INTERFACE -> {
                         when {

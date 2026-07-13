@@ -60,13 +60,13 @@
       @17:0..18:11 BLOCK_BODY
         @17:0..18:11 ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
         @17:0..18:11 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test5 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Test5>]' type=kotlin.Unit
-    @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Test5>
+    @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Test5> [companion]
       @-1:-1..-1 SYNTHETIC_BODY kind=ENUM_VALUES
-    @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Test5
+    @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Test5 [companion]
       @17:0..18:11 VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
       @-1:-1..-1 SYNTHETIC_BODY kind=ENUM_VALUEOF
     @-1:-1..-1 PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.Test5>
+      @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.Test5> [companion]
         @-1:-1..-1 SYNTHETIC_BODY kind=ENUM_ENTRIES
     @-1:-1..-1 FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> (<this>:kotlin.Enum<<root>.Test5>, other:<root>.Test5) returnType:kotlin.Int [fake_override,operator]
       @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.Test5>

@@ -2,12 +2,12 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-
-    // Can't enable the plugin because Java Security Manager is not supported with JDK 24+.
-    // See KTI-3068 and https://openjdk.org/jeps/486.
-    // id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {

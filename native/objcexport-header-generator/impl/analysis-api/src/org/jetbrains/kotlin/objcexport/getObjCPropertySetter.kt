@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.backend.konan.objCMacroDefinitions
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
 
 /**
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
  */
 internal fun ObjCExportContext.getObjCPropertySetter(symbol: KaPropertySymbol, objCName: String): String? {
 
-    if (!symbol.hasReservedName) return null
+    if (!symbol.hasReservedName && symbol.name.asString() !in objCMacroDefinitions) return null
 
     val setterName = symbol.setter?.let {
         val setterSelector = getSelector(it, getFunctionMethodBridge(it))

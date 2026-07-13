@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseContextParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseUnrestorableSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -49,6 +50,12 @@ internal class KaFirContextParameterSymbol private constructor(
     override val name: Name
         get() = withValidityAssertion { backingPsi?.parameterName ?: firSymbol.name }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion {
+            FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility.asKaSymbolVisibility
+        }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
 
@@ -66,14 +73,15 @@ internal class KaFirContextParameterSymbol private constructor(
 
         // Some non-relevant declarations still might have context parameters due to transition from
         // context receivers, so they shouldn't be restored in this case by a non-psi pointer
-        if (ownerSymbol !is KaContextParameterOwnerSymbol) {
+        val index = (ownerSymbol.firSymbol.fir as? FirCallableDeclaration)?.contextParameters?.indexOf(firSymbol.fir)
+        if (index == null || index == -1) {
             return KaBaseUnrestorableSymbolPointer()
         }
 
         return KaBaseContextParameterSymbolPointer(
             ownerPointer = analysisSession.createOwnerPointer(this),
             name = name,
-            index = (ownerSymbol.firSymbol.fir as FirCallableDeclaration).contextParameters.indexOf(firSymbol.fir),
+            index = index,
             originalSymbol = this,
         )
     }

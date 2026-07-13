@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.name.JsStandardClassIds
@@ -26,10 +25,7 @@ internal fun IrAnnotationContainer.isJsExportIgnoreDeclaration(): Boolean {
 }
 
 internal val IrDeclarationWithName.exportedJsExportName: String
-    get() = getAnnotation(JsStandardClassIds.Annotations.JsName.asSingleFqName())?.getSingleConstStringArgument() ?: name.toString()
-
-internal fun IrConstructorCall.getSingleConstStringArgument() =
-    (arguments[0] as IrConst).value as String
+    get() = getAnnotation(JsStandardClassIds.Annotations.JsName.asSingleFqName())?.getConstArgument<String>("name") ?: name.toString()
 
 fun IrModuleFragment.collectJsExportNames(): Map<IrFile, Map<IrDeclarationWithName, String>> =
     files.associateWith { irFile ->

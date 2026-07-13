@@ -3,9 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 description = "Kotlin Scripting Compiler Plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val kotlinxSerializationGradlePluginClasspath by configurations.creating
@@ -32,6 +35,9 @@ dependencies {
     compileOnly(project(":core:reflection.common.jvm"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))
+    compileOnly(project(":compiler:backend.common.jvm"))
+    compileOnly(project(":compiler:serialization.common"))
+    compileOnly(project(":compiler:serialization"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
@@ -39,6 +45,7 @@ dependencies {
     api(kotlinStdlib())
     api(commonDependency("org.jline", "jline"))
     compileOnly(intellijCore())
+    compileOnly(libs.intellij.asm)
 
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":core:descriptors.jvm"))
@@ -46,6 +53,7 @@ dependencies {
     compileOnly(project(":compiler:container"))
     compileOnly(project(":compiler:ir.psi2ir"))
     compileOnly(project(":compiler:resolution"))
+    compileOnly(project(":kotlin-util-klib-metadata"))
     implementation(project(":kotlin-power-assert-compiler-plugin")) // TODO: KT-74787
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
@@ -82,6 +90,7 @@ dependencies {
 
 optInToExperimentalCompilerApi()
 optInToK1Deprecation()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }
@@ -105,18 +114,6 @@ testsJar()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        testInputsCheck {
-            extraPermissions.addAll(
-                """permission java.lang.reflect.ReflectPermission "newProxyInPackage.org.jetbrains.kotlin.scripting.compiler.test";""",
-                """permission java.util.PropertyPermission "*", "read,write";""",
-                """permission java.net.NetPermission "getProxySelector";""",
-                """permission java.io.FilePermission "someDependency1.jar", "read";""",
-                """permission java.io.FilePermission "someDependency2.jar", "read";""",
-                """permission java.io.FilePermission "script.kts", "read";""",
-                // FileSystemDependenciesResolver tries to load from the current path
-                """permission java.io.FilePermission "junit:junit:4.11", "read";""",
-            )
-        }
         systemProperty("kotlin.main.kts.compiled.scripts.cache.dir", "build/main.kts.compiled.cache")
         // MavenDependenciesResolver() tries to load from mavenLocal folder, so this file moves mavenLocal inside build folder.
         addFileProperty(project.layout.projectDirectory.file("test-maven-settings.xml"), "org.apache.maven.user-settings")

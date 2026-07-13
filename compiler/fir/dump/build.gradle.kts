@@ -4,25 +4,38 @@
  */
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
 dependencies {
-    implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization"))
+    runtimeOnly(project(":core:deserialization"))
     implementation(project(":compiler:fir:cones"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:providers"))
     implementation(project(":compiler:fir:semantics"))
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:fir-jvm"))
-    implementation(project(":compiler:cli"))
+    implementation(project(":compiler:fir:fir2ir"))
+    runtimeOnly(project(":compiler:cli"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.apache.commons:commons-lang3"))
     compileOnly(libs.apache.commons.text)
+}
+
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.types.model.K2Only",
+        )
+    )
 }
 
 sourceSets {

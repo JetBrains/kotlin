@@ -232,7 +232,7 @@ KtConstantExpression(126,127): '1'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(128,130): 'in'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -621,7 +621,7 @@ KtConstantExpression(171,172): '2'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(173,176): '!in'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -799,7 +799,7 @@ KtWhenConditionInRange(211,223): 'in MyClass()'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(211,213): 'in'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -983,7 +983,7 @@ KtWhenConditionInRange(270,283): '!in MyClass()'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(270,273): '!in'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

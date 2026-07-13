@@ -4,11 +4,24 @@ library {
   library fragment {
     // package name: test
 
+    // class name: test/Empty
+    // class name: test/JustAnnotation
     // class name: test/AnnotationArray
     // class name: test/C1
     // class name: test/C2
-    // class name: test/Empty
-    // class name: test/JustAnnotation
+
+    public final annotation class test/Empty : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final annotation class test/JustAnnotation : kotlin/Annotation {
+
+      public constructor(annotation: test/Empty)
+
+      public final val annotation: test/Empty
+        public final get
+    }
 
     public final annotation class test/AnnotationArray : kotlin/Annotation {
 
@@ -31,17 +44,7 @@ library {
       public constructor()
     }
 
-    public final annotation class test/Empty : kotlin/Annotation {
-
-      public constructor()
-    }
-
-    public final annotation class test/JustAnnotation : kotlin/Annotation {
-
-      public constructor(annotation: test/Empty)
-
-      public final val annotation: test/Empty
-        public final get
+    package {
     }
   }
 }

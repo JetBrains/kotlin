@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.library.metadata
 
 import java.nio.file.Path
-import org.jetbrains.kotlin.K1Deprecation
 
-@K1Deprecation
 data class KlibInputModule<Config>(
     val name: String,
     val path: Path,

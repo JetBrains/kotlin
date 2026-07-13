@@ -167,30 +167,13 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             )
             defaultWithErrorOnSet("startOffset", undefinedOffset())
             defaultWithErrorOnSet("endOffset", undefinedOffset())
-            implementation.generationCallback = {
-                println()
-                printlnMultiLine(
-                    """
-                    companion object {
-                        @Deprecated(
-                            message = "Use org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment instead",
-                            replaceWith = ReplaceWith("createEmptyExternalPackageFragment", "org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment")
-                        )
-                        fun createEmptyExternalPackageFragment(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment =
-                            org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment(module, fqName)
-                    }
-                    """
-                )
-            }
         }
 
         impl(file) {
             implementation.putImplementationOptInInConstructor = false
-            implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName")
+            implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName", "module")
             defaultWithErrorOnSet("startOffset", "0")
             defaultWithErrorOnSet("endOffset", "maxOf(fileEntry.maxOffset, 0)")
-            isMutable("module")
-            isLateinit("module")
         }
 
         allImplOf(loop) {
@@ -392,8 +375,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(annotation) {
             default("classSymbol", "symbol.owner.parentAsClass.symbol", withGetter = true)
+            default("argumentMapping", "IrAnnotationArgsView(arguments, symbol)")
 
             implementation.additionalImports.add(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "parentAsClass"))
+            implementation.additionalImports.add(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "IrAnnotationArgsView"))
 
             implementation.generationCallback = {
                 println()

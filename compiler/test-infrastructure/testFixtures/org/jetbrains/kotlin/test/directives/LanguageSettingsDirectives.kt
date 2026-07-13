@@ -74,6 +74,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "List of opted in annotations (AnalysisFlags.optIn)"
     )
 
+    val UNSTABLE_CAPTURE by stringDirective(
+        description = "Fully-qualified names of functions that count as escaping (use + to add, - to remove)"
+    )
+
     val IGNORE_DATA_FLOW_IN_ASSERT by directive(
         description = "Enables corresponding analysis flag (AnalysisFlags.ignoreDataFlowInAssert)"
     )

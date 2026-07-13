@@ -1,6 +1,26 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
+    namespace kotlin.collections {
+        interface KtMutableList<E> extends kotlin.collections.KtList<E>/*, kotlin.collections.MutableCollection<E> */ {
+            asJsArrayView(): Array<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtMutableList": unique symbol;
+            } & kotlin.collections.KtList<any>["__doNotUseOrImplementIt"];
+        }
+        namespace KtMutableList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
+        }
+        interface KtList<out E> /* extends kotlin.collections.Collection<E> */ {
+            asJsReadonlyArrayView(): ReadonlyArray<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtList": unique symbol;
+            };
+        }
+        namespace KtList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+        }
+    }
     namespace foo {
         function sum(x: number, y: number): number;
         function varargByte(x: Int8Array): number;
@@ -24,8 +44,8 @@ declare namespace JS_TESTS {
         function genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & foo.SomeExternalInterface & Error>(x: T): T;
         function generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Nullable<E>;
         function inlineFun(x: number, callback: (p0: number) => void): void;
-        function formatList(value: any/* kotlin.collections.MutableList<any> */): string;
-        function createList(): any/* kotlin.collections.MutableList<any> */;
+        function formatList(value: kotlin.collections.KtMutableList<any>): string;
+        function createList(): kotlin.collections.KtMutableList<any>;
         function defaultParametersAtTheBegining(a: string | undefined, b: string): string;
         function nonDefaultParameterInBetween(a: string | undefined, b: string, c?: string): string;
         function concatWithContextParameters(scope1: foo.Scope1, scope2: foo.Scope2): string;

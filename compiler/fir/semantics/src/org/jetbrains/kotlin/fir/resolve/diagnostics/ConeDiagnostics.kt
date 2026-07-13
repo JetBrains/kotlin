@@ -50,6 +50,10 @@ interface ConeDiagnosticWithSingleCandidate : ConeDiagnosticWithCandidates {
     override val candidateSymbols: Collection<FirBasedSymbol<*>> get() = listOf(candidateSymbol)
 }
 
+class ConeFallbackIsImpossible(val bound: ConeKotlinType, val containingCandidate: AbstractCallCandidate<*>) : ConeDiagnostic {
+    override val reason: String get() = "Not a superclass of 'List' expected"
+}
+
 class ConeUnresolvedReferenceError(val name: Name) : ConeUnresolvedError {
     override val qualifier: String get() = if (!name.isSpecial) name.asString() else "NO_NAME"
     override val reason: String get() = "Unresolved reference: ${name.asString()}"
@@ -497,4 +501,9 @@ object ContextSensitiveResolutionMightBeUsed : ConeDiagnostic {
 object ContextSensitiveResolutionMightBeUsedInsteadOfImport : ConeDiagnostic {
     override val reason: String
         get() = "Resolved through import, but context-sensitive resolution might be used"
+}
+
+object ConeResolvedToCompanionObjectWasRecentlyFixed : ConeDiagnostic {
+    override val reason: String
+        get() = "resolvedToCompanionObject was incorrectly lost until recently"
 }

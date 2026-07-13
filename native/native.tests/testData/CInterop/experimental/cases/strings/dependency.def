@@ -1,0 +1,2 @@
+headers = strings.h
+noStringConversion = constCharPtr2 widePtr2

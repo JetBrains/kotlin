@@ -7,25 +7,24 @@ package org.jetbrains.kotlin.backend.konan.testUtils
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.tooling.core.closure
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
 import java.io.File
-
 
 class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
 
@@ -83,6 +82,7 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
             ?.readObjCEntryPoints()
             ?: ObjCEntryPoints.ALL
 
+        @OptIn(K1Deprecation::class)
         val mapper = ObjCExportMapper(
             deprecationResolver = DeprecationResolver(
                 storageManager = LockBasedStorageManager.NO_LOCKS,
@@ -101,7 +101,7 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
             .filter { descriptor ->
                 val origin = descriptor.getCapability(KlibModuleOrigin.CAPABILITY) ?: return@filter true
                 origin is DeserializedKlibModuleOrigin &&
-                    origin.library.libraryFile.javaFile().toPath() in exportedKlibs
+                    origin.library.path in exportedKlibs
             }
 
         val namer = ObjCExportNamerImpl(

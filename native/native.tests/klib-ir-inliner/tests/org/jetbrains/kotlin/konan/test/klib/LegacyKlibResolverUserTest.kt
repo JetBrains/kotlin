@@ -9,15 +9,10 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolverLegacy
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
-import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
 import org.jetbrains.kotlin.util.Logger
@@ -25,7 +20,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
-import kotlin.collections.set
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
@@ -164,7 +158,7 @@ class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
             knownIrProviders = knownIrProviders
         ) {
             override fun libraryComponentBuilder(file: KlibFile, isDefault: Boolean): List<KotlinLibrary> =
-                createKotlinLibraryComponents(file, isDefault, null as ZipFileSystemAccessor?)
+                createKotlinLibraryComponents(file, isDefault, null as org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor?)
         }
 
         val library = resolveSingleFileKlib(KlibFile(libraryFile.path).canonicalFile)
@@ -175,7 +169,6 @@ class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
             unresolvedLibraries = library.unresolvedDependencies,
             noStdLib = !isForKotlinNative,
             noDefaultLibs = !isForKotlinNative,
-            noEndorsedLibs = !isForKotlinNative,
         ).getFullList()
     }
 }

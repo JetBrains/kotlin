@@ -36,6 +36,12 @@ public fun __root___foo(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___foo_opt")
+public fun __root___foo_opt(): kotlin.native.internal.NativePtr {
+    val _result = run { foo_opt() }
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___unsupported")
 public fun __root___unsupported(): kotlin.native.internal.NativePtr {
     val _result = run { unsupported() }

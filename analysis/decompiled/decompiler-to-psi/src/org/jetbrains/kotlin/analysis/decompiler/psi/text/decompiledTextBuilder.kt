@@ -9,7 +9,7 @@ import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
-import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -26,7 +26,7 @@ private const val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
 private const val DECOMPILED_CONTRACT_STUB = "contract { /* compiled contract */ }"
 
 @OptIn(IntellijInternalApi::class, KtImplementationDetail::class, KtExperimentalApi::class)
-internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyPrinter(indentSize = 4).apply {
+internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIndentedText {
     (fileStub.kind as? KotlinFileStubKind.Invalid)?.errorMessage?.let {
         return it
     }
@@ -44,11 +44,12 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
 
     // The visitor is declared as local to capture the pretty printer as a context
     val visitor = object : KtVisitorVoid() {
-        // A workaround to access the object in a nested context
-        private inline val explicitThis get() = this
+        private fun process(element: PsiElement?) {
+            element?.accept(this)
+        }
 
         override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-            withSuffix(" ") { classOrObject.modifierList?.accept(this) }
+            withSuffix(" ") { process(classOrObject.modifierList) }
             when (classOrObject) {
                 is KtObjectDeclaration -> append("object")
                 is KtClass -> when {
@@ -65,12 +66,12 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
             }
 
             classOrObject.typeParameterList?.accept(this)
-            withPrefix(" ") { classOrObject.primaryConstructor?.accept(this) }
+            withPrefix(" ") { process(classOrObject.primaryConstructor) }
             withPrefix(" : ") {
-                classOrObject.getSuperTypeList()?.accept(this)
+                process(classOrObject.getSuperTypeList())
             }
 
-            withPrefix(" ") { classOrObject.typeConstraintList?.accept(this) }
+            withPrefix(" ") { process(classOrObject.typeConstraintList) }
             appendLine(" {")
             withIndent {
                 val isEnumClass = classOrObject is KtClass && classOrObject.isEnum()
@@ -82,13 +83,16 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                 }
 
                 withSuffix("\n") {
-                    "\n\n".separated(
+                    appendBlocks(
+                        "\n\n",
                         {
                             if (isEnumClass) {
-                                printCollection(enumEntries, separator = ",\n\n", postfix = ";") { it.accept(explicitThis) }
+                                appendCollection(enumEntries, separator = ",\n\n", postfix = ";") { process(it) }
                             }
                         },
-                        { printCollectionIfNotEmpty(members, separator = "\n\n") { it.accept(explicitThis) } },
+                        {
+                            appendCollection(members, separator = "\n\n", skipIfEmpty = true) { process(it) }
+                        }
                     )
                 }
             }
@@ -99,9 +103,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
             appendLine("companion {")
             withIndent {
                 withSuffix("\n") {
-                    printCollectionIfNotEmpty(companionBlock.declarations, separator = "\n\n") {
-                        it.accept(explicitThis)
-                    }
+                    appendCollection(companionBlock.declarations, separator = "\n\n", skipIfEmpty = true) { process(it) }
                 }
             }
 
@@ -109,14 +111,14 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
         }
 
         override fun visitEnumEntry(enumEntry: KtEnumEntry) {
-            withSuffix(" ") { enumEntry.modifierList?.accept(this) }
+            withSuffix(" ") { process(enumEntry.modifierList) }
             append(enumEntry.name?.quoteIfNeeded())
         }
 
         override fun visitNamedFunction(function: KtNamedFunction) {
-            withSuffix(" ") { function.modifierList?.accept(this) }
+            withSuffix(" ") { process(function.modifierList) }
             append("fun ")
-            withSuffix(" ") { function.typeParameterList?.accept(this) }
+            withSuffix(" ") { process(function.typeParameterList) }
             withSuffix(".") {
                 function.receiverTypeReference?.let {
                     printTypeReference(it, position = TypeReferencePosition.DECLARATION_RECEIVER)
@@ -125,9 +127,9 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
 
             append(function.name?.quoteIfNeeded())
             function.valueParameterList?.accept(this)
-            withPrefix(": ") { function.typeReference?.accept(this) }
+            withPrefix(": ") { process(function.typeReference) }
 
-            withPrefix(" ") { function.typeConstraintList?.accept(this) }
+            withPrefix(" ") { process(function.typeConstraintList) }
 
             printBody(function)
         }
@@ -148,16 +150,16 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
         }
 
         override fun visitTypeAlias(typeAlias: KtTypeAlias) {
-            withSuffix(" ") { typeAlias.modifierList?.accept(this) }
+            withSuffix(" ") { process(typeAlias.modifierList) }
             append("typealias ")
             append(typeAlias.name?.quoteIfNeeded())
             typeAlias.typeParameterList?.accept(this)
-            withPrefix(" ") { typeAlias.typeConstraintList?.accept(this) }
-            withPrefix(" = ") { typeAlias.getTypeReference()?.accept(this) }
+            withPrefix(" ") { process(typeAlias.typeConstraintList) }
+            withPrefix(" = ") { process(typeAlias.getTypeReference()) }
         }
 
         override fun visitConstructor(constructor: KtConstructor<*>) {
-            withSuffix(" ") { constructor.modifierList?.accept(this) }
+            withSuffix(" ") { process(constructor.modifierList) }
             append("constructor")
             constructor.valueParameterList?.accept(this)
             if (constructor is KtSecondaryConstructor) {
@@ -168,9 +170,9 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
         }
 
         override fun visitTypeParameter(parameter: KtTypeParameter) {
-            withSuffix(" ") { parameter.modifierList?.accept(this) }
+            withSuffix(" ") { process(parameter.modifierList) }
             append(parameter.name?.quoteIfNeeded())
-            withPrefix(" : ") { parameter.extendsBound?.accept(this) }
+            withPrefix(" : ") { process(parameter.extendsBound) }
         }
 
         override fun visitTypeReference(typeReference: KtTypeReference) {
@@ -182,12 +184,12 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
             val typeElement = typeReference.typeElement
             val closeParenthesisIsRequired = when (position) {
                 TypeReferencePosition.REGULAR -> {
-                    withSuffix(" ") { modifierList?.accept(this) }
+                    withSuffix(" ") { process(modifierList) }
                     false
                 }
 
                 TypeReferencePosition.CONTEXT_RECEIVER -> {
-                    val openParenthesisIsAdded = modifierList != null && checkIfPrinted {
+                    val openParenthesisIsAdded = modifierList != null && hasPrinted {
                         withPrefix("(") {
                             withSuffix(" ") {
                                 printAnnotations(modifierList)
@@ -206,10 +208,10 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                     val annotationCallAmbiguityIsImpossible = typeElement is KtUserType ||
                             typeElement is KtNullableType && typeElement.innerType is KtUserType && typeElement.modifierList == null
 
-                    val parenthesisIsAddedWithModifier = checkIfPrinted {
+                    val parenthesisIsAddedWithModifier = hasPrinted {
                         withSuffix(" ") {
                             withPrefix(if (annotationCallAmbiguityIsImpossible) "" else "(") {
-                                modifierList?.accept(this)
+                                process(modifierList)
                             }
                         }
                     } && !annotationCallAmbiguityIsImpossible
@@ -226,10 +228,10 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                     parenthesisIsAddedWithModifier || parenthesisIsRequired
                 }
                 TypeReferencePosition.FUNCTION_TYPE_RECEIVER -> {
-                    val hasModifier = checkIfPrinted {
+                    val hasModifier = hasPrinted {
                         withSuffix(" ") {
                             withPrefix("(") {
-                                modifierList?.accept(this)
+                                process(modifierList)
                             }
                         }
                     }
@@ -260,10 +262,11 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                     withSuffix(".") { printTypeElement(typeElement.qualifier) }
                     append(typeElement.referencedName?.quoteIfNeeded())
                     val args = typeElement.typeArguments
-                    printCollectionIfNotEmpty(args, prefix = "<", postfix = ">") {
-                        " ".separated(
+                    appendCollection(args, prefix = "<", postfix = ">", skipIfEmpty = true) {
+                        appendBlocks(
+                            separator = " ",
                             { it.projectionKind.token?.value?.let(::append) },
-                            { it.typeReference?.accept(explicitThis) }
+                            { process(it.typeReference) }
                         )
                     }
 
@@ -275,7 +278,12 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                 }
                 is KtFunctionType -> {
                     withSuffix(" ") {
-                        printCollectionIfNotEmpty(typeElement.contextReceiversTypeReferences, prefix = "context(", postfix = ")") {
+                        appendCollection(
+                            typeElement.contextReceiversTypeReferences,
+                            prefix = "context(",
+                            postfix = ")",
+                            skipIfEmpty = true
+                        ) {
                             printTypeReference(it, position = TypeReferencePosition.CONTEXT_RECEIVER)
                         }
                     }
@@ -286,17 +294,17 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                         }
                     }
 
-                    printCollection(typeElement.parameters, prefix = "(", postfix = ")") { param ->
+                    appendCollection(typeElement.parameters, prefix = "(", postfix = ")") { param ->
                         withSuffix(": ") {
                             param.name?.let(::append)
                         }
 
-                        param.typeReference?.accept(explicitThis)
+                        process(param.typeReference)
                     }
 
                     typeElement.returnTypeReference?.let { returnType ->
                         append(" -> ")
-                        returnType.accept(explicitThis)
+                        process(returnType)
                     }
                 }
 
@@ -305,7 +313,8 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                  * but this is a future-proof implementation
                  */
                 is KtIntersectionType -> {
-                    " & ".separated(
+                    appendBlocks(
+                        separator = " & ",
                         {
                             typeElement.getLeftTypeRef()?.let {
                                 printTypeReference(it, position = TypeReferencePosition.FUNCTION_TYPE_RECEIVER)
@@ -320,10 +329,10 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                 }
 
                 is KtNullableType -> {
-                    val openParenthesisIsAdded = checkIfPrinted {
+                    val openParenthesisIsAdded = hasPrinted {
                         withPrefix("(") {
                             withSuffix(" ") {
-                                typeElement.modifierList?.accept(this)
+                                process(typeElement.modifierList)
                             }
                         }
                     }
@@ -388,8 +397,9 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                     printClassId(bean.classId)
 
                     val arguments = bean.arguments
-                    printCollectionIfNotEmpty(arguments, prefix = "<", postfix = ">") { arg ->
-                        " ".separated(
+                    appendCollection(arguments, prefix = "<", postfix = ">", skipIfEmpty = true) { arg ->
+                        appendBlocks(
+                            separator = " ",
                             { arg.projectionKind.token?.value?.let(::append) },
                             { arg.type?.let(::printKotlinTypeBean) },
                         )
@@ -425,7 +435,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
         }
 
         override fun visitProperty(property: KtProperty) {
-            withSuffix(" ") { property.modifierList?.accept(this) }
+            withSuffix(" ") { process(property.modifierList) }
 
             if (property.isVar) {
                 append("var ")
@@ -433,7 +443,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                 append("val ")
             }
 
-            withSuffix(" ") { property.typeParameterList?.accept(this) }
+            withSuffix(" ") { process(property.typeParameterList) }
             withSuffix(".") {
                 property.receiverTypeReference?.let {
                     printTypeReference(it, position = TypeReferencePosition.DECLARATION_RECEIVER)
@@ -441,10 +451,10 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
             }
 
             append(property.name?.quoteIfNeeded())
-            withPrefix(": ") { property.typeReference?.accept(this) }
-            withPrefix(" ") { property.typeConstraintList?.accept(this) }
+            withPrefix(": ") { process(property.typeReference) }
+            withPrefix(" ") { process(property.typeConstraintList) }
 
-            val hasInitializerOrDelegate = checkIfPrinted {
+            val hasInitializerOrDelegate = hasPrinted {
                 when {
                     property.hasDelegate() -> append(" by ")
                     property.hasInitializer() -> append(" = ")
@@ -460,14 +470,14 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
             }
 
             withIndent {
-                printCollectionIfNotEmpty(property.accessors, prefix = "\n", separator = "\n") {
-                    it.accept(explicitThis)
+                appendCollection(property.accessors, prefix = "\n", separator = "\n", skipIfEmpty = true) {
+                    process(it)
                 }
             }
         }
 
         override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
-            withSuffix(" ") { accessor.modifierList?.accept(this) }
+            withSuffix(" ") { process(accessor.modifierList) }
             if (accessor.isGetter) {
                 append("get")
             } else {
@@ -475,18 +485,18 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
             }
 
             accessor.parameterList?.accept(this)
-            withPrefix(": ") { accessor.typeReference?.accept(this) }
+            withPrefix(": ") { process(accessor.typeReference) }
             printBody(accessor)
         }
 
         override fun visitParameterList(list: KtParameterList) {
-            printCollection(list.parameters, prefix = "(", postfix = ")") {
-                it.accept(explicitThis)
+            appendCollection(list.parameters, prefix = "(", postfix = ")") {
+                process(it)
             }
         }
 
         override fun visitParameter(parameter: KtParameter) {
-            withSuffix(" ") { parameter.modifierList?.accept(this) }
+            withSuffix(" ") { process(parameter.modifierList) }
             append(parameter.name?.quoteIfNeeded())
             append(": ")
             parameter.typeReference?.accept(this)
@@ -496,15 +506,15 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
         }
 
         override fun visitTypeParameterList(list: KtTypeParameterList) {
-            printCollection(list.parameters, prefix = "<", postfix = ">") {
-                it.accept(explicitThis)
+            appendCollection(list.parameters, prefix = "<", postfix = ">") {
+                process(it)
             }
         }
 
         override fun visitTypeConstraintList(list: KtTypeConstraintList) {
             append("where ")
-            printCollection(list.constraints, separator = ", ") {
-                it.accept(explicitThis)
+            appendCollection(list.constraints, separator = ", ") {
+                process(it)
             }
         }
 
@@ -517,8 +527,9 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
         }
 
         override fun visitModifierList(list: KtModifierList) {
-            " ".separated(
-                { list.contextParameterList?.accept(this) },
+            appendBlocks(
+                separator = " ",
+                { process(list.contextParameterList) },
                 { printAnnotations(list) },
                 { printModifiers(list) },
             )
@@ -529,8 +540,8 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
                 contextParameterList.contextReceivers()
             }
 
-            printCollection(contextElements, prefix = "context(", postfix = ")") {
-                it.accept(explicitThis)
+            appendCollection(contextElements, prefix = "context(", postfix = ")") {
+                process(it)
             }
         }
 
@@ -549,14 +560,14 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
         }
 
         fun printAnnotations(container: KtAnnotationsContainer) {
-            printCollectionIfNotEmpty(container.annotationEntries, separator = " ") {
-                it.accept(explicitThis)
+            appendCollection(container.annotationEntries, separator = " ", skipIfEmpty = true) {
+                process(it)
             }
         }
 
         override fun visitSuperTypeList(list: KtSuperTypeList) {
-            printCollection(list.entries) {
-                it.accept(explicitThis)
+            appendCollection(list.entries) {
+                process(it)
             }
         }
 
@@ -600,10 +611,10 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
     // Psi for files is not guaranteed to present as it has to be set explicitly (see PsiFileStubImpl)
     // On the other side, declarations build psi on demand, so they can be used directly to simplify the logic
     val declarations = fileStub.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY).asList()
-    printCollectionIfNotEmpty(declarations, separator = "\n\n", postfix = "\n") {
+    appendCollection(declarations, separator = "\n\n", postfix = "\n", skipIfEmpty = true) {
         it.accept(visitor)
     }
-}.toString()
+}
 
 private enum class TypeReferencePosition {
     REGULAR,

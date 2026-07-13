@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
@@ -133,7 +135,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     private fun IrSimpleFunction.getInternalFunctionForManglingIfNeeded(): IrSimpleFunction? {
         if (visibility == DescriptorVisibilities.INTERNAL &&
             origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
-            origin != JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR &&
             origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
             origin != IrDeclarationOrigin.PROPERTY_DELEGATE &&
             origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
@@ -210,7 +211,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     }
 
     private fun isBoxMethodForInlineClass(function: IrFunction): Boolean =
-        function.parent.let { it is IrClass && it.isSingleFieldValueClass } &&
+        function.parent.let { it is IrClass && it.isInlineClass } &&
                 function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER &&
                 function.name.asString() == "box-impl"
 
@@ -337,7 +338,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         private fun IrAnnotationContainer.getSuppressWildcardsAnnotationValue(): Boolean? =
             getAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)?.run {
-                if (arguments.size >= 1) (arguments[0] as? IrConst)?.value as? Boolean ?: true else null
+                if (argumentMapping.isNotEmpty()) getConstArgument<Boolean>(JvmSuppressWildcards::suppress.name) ?: true else null
             }
     }
 
@@ -409,7 +410,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     // TODO: get rid of this (probably via some special lowering)
     private fun mapOverriddenSpecialBuiltinIfNeeded(callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
         // Do not remap calls to static replacements of inline class methods, since they have completely different signatures.
-        if (callee.isStaticValueClassReplacement) return null
+        if (callee.isStaticInlineClassReplacement) return null
+        @OptIn(K1Deprecation::class)
         val overriddenSpecialBuiltinFunction =
             (callee.toIrBasedDescriptor().getOverriddenBuiltinReflectingJvmDescriptor() as IrBasedSimpleFunctionDescriptor?)?.owner
         if (overriddenSpecialBuiltinFunction != null && !superCall) {
@@ -437,12 +439,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     }
 
     private fun getJvmMethodNameIfSpecial(irFunction: IrSimpleFunction): String? {
-        if (
-            irFunction.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
-        ) {
-            return null
-        }
+        if (irFunction.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) return null
 
         return irFunction.getBuiltinSpecialPropertyGetterName()
             ?: irFunction.getDifferentNameForJvmBuiltinFunction()

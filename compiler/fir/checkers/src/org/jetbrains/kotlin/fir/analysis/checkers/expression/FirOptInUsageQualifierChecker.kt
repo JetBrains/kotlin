@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.isExperimentalMarker
-import org.jetbrains.kotlin.fir.analysis.checkers.resolvedCompanionSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeResolvedToCompanionObjectWasRecentlyFixed
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
@@ -32,15 +32,16 @@ object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
     private fun checkNotAcceptedExperimentalities(
         expression: FirResolvedQualifier,
     ) {
-        val symbol = expression.symbol ?: return
-        val companionObjectSymbol = expression.resolvedCompanionSymbol()
+        val symbol = expression.qualifierSymbol ?: return
+        val companionObjectSymbol = expression.accessedObjectSymbol.takeIf { expression.resolvedToCompanionObject }
         with(FirOptInUsageBaseChecker) {
-            val [hardExperimentalities, softExperimentalities] = symbol.loadExperimentalitiesForQualifier(companionObjectSymbol)
-            reportNotAcceptedExperimentalities(hardExperimentalities, expression)
+            val [regular, potentiallyUnderDeprecation] = symbol.loadExperimentalitiesForQualifier(companionObjectSymbol)
+            reportNotAcceptedExperimentalities(regular, expression)
             reportNotAcceptedExperimentalities(
-                softExperimentalities,
+                potentiallyUnderDeprecation,
                 expression,
-                reportErrorsAsDeprecationWarnings = LanguageFeature.ReportOptInUsageOnCompanionObjectAccesses.isDisabled(),
+                reportErrorsAsDeprecationWarnings = LanguageFeature.ReportOptInUsageOnCompanionObjectAccesses.isDisabled() ||
+                        LanguageFeature.ReportDeprecatedCompanionInDelegation.isDisabled() && ConeResolvedToCompanionObjectWasRecentlyFixed in expression.nonFatalDiagnostics,
             )
         }
     }
@@ -52,7 +53,7 @@ object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         val containingElements = context.containingElements
         val parentExpression = containingElements.lastOrNull { it is FirQualifiedAccessExpression && it.dispatchReceiver == expression }
         val source = parentExpression?.source ?: return
-        expression.symbol?.checkContainingClasses(source)
+        expression.qualifierSymbol?.checkContainingClasses(source)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

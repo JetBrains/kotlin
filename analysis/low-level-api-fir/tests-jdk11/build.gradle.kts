@@ -1,7 +1,10 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -22,6 +25,14 @@ sourceSets {
 }
 
 configureJvmToolchain(JdkMajorVersion.JDK_11_0)
+
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
+        )
+    )
+}
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {

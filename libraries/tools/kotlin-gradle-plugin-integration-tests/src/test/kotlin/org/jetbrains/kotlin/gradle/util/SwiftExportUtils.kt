@@ -38,18 +38,22 @@ internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     testBuildDir: Path,
     archs: List<String> = listOf("arm64"),
     sdk: String = "iphoneos",
-    iphoneOsDeploymentTarget: String = "14.1",
+    iphoneOsDeploymentTarget: String = "17.6",
+    customVariables: Map<String, String> = emptyMap(),
 ) = EnvironmentalVariables(
-    "CONFIGURATION" to "Debug",
-    "SDK_NAME" to sdk,
-    "ARCHS" to archs.joinToString(" "),
-    "ONLY_ACTIVE_ARCH" to "YES",
-    "TARGET_BUILD_DIR" to testBuildDir.absolutePathString(),
-    "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
-    "PLATFORM_NAME" to sdk,
-    "DEPLOYMENT_TARGET_SETTING_NAME" to "IPHONEOS_DEPLOYMENT_TARGET",
-    "IPHONEOS_DEPLOYMENT_TARGET" to iphoneOsDeploymentTarget,
-    "BUILT_PRODUCTS_DIR" to projectPath.resolve("build/builtProductsDir").absolutePathString(),
+    buildMap {
+        put("CONFIGURATION", "Debug")
+        put("SDK_NAME", sdk)
+        put("ARCHS", archs.joinToString(" "))
+        put("ONLY_ACTIVE_ARCH", "YES")
+        put("TARGET_BUILD_DIR", testBuildDir.absolutePathString())
+        put("FRAMEWORKS_FOLDER_PATH", "build/xcode-derived")
+        put("PLATFORM_NAME", sdk)
+        put("DEPLOYMENT_TARGET_SETTING_NAME", "IPHONEOS_DEPLOYMENT_TARGET")
+        put("IPHONEOS_DEPLOYMENT_TARGET", iphoneOsDeploymentTarget)
+        put("BUILT_PRODUCTS_DIR", projectPath.resolve("build/builtProductsDir").absolutePathString())
+        putAll(customVariables)
+    }
 )
 
 internal fun KGPBaseTest.publishMultiplatformLibrary(

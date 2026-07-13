@@ -1,6 +1,24 @@
 {
   "reflection": [
     {
+      "type": "androidx.compose.compiler.plugins.kotlin.ComposeCommandLineProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "gnu.trove.TObjectHashingStrategy"
     },
     {
@@ -157,6 +175,17 @@
     },
     {
       "type": "java.util.Set"
+    },
+    {
+      "type": "java.util.zip.Inflater",
+      "methods": [
+        {
+          "name": "setInput",
+          "parameterTypes": [
+            "java.nio.ByteBuffer"
+          ]
+        }
+      ]
     },
     {
       "type": "jdk.internal.jrtfs.JrtFileSystemProvider"
@@ -354,6 +383,42 @@
       "type": "kotlinx.coroutines.scheduling.CoroutineScheduler"
     },
     {
+      "type": "org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.allopen.AllOpenComponentRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.assignment.plugin.AssignmentCommandLineProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.assignment.plugin.AssignmentComponentRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter",
       "methods": [
         {
@@ -469,10 +534,28 @@
       "type": "org.jetbrains.kotlin.extensions.CompilerConfigurationExtension[]"
     },
     {
+      "type": "org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension[]"
+    },
+    {
       "type": "org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension"
     },
     {
       "type": "org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.StorageComponentContainerContributor"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.StorageComponentContainerContributor[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptorExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptorExtension[]"
     },
     {
       "type": "org.jetbrains.kotlin.load.java.ErasedOverridabilityCondition"
@@ -485,6 +568,60 @@
     },
     {
       "type": "org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.lombok.LombokCommandLineProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.lombok.LombokComponentRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.noarg.NoArgComponentRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.powerassert.PowerAssertCommandLineProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.powerassert.PowerAssertCompilerPluginRegistrar",
       "methods": [
         {
           "name": "<init>",
@@ -1190,6 +1327,48 @@
       ]
     },
     {
+      "type": "org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.samWithReceiver.SamWithReceiverComponentRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCommandLineProcessor",
       "methods": [
         {
@@ -1217,7 +1396,31 @@
       ]
     },
     {
+      "type": "org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"
+    },
+    {
+      "type": "org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin[]"
+    },
+    {
       "type": "org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInsLoaderImpl"
+    },
+    {
+      "type": "org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginOptions",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "sun.management.VMManagementImpl",

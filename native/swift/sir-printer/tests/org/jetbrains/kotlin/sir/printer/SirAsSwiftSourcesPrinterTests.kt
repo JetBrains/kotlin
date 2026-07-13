@@ -1695,6 +1695,91 @@ class SirAsSwiftSourcesPrinterTests {
         )
     }
 
+    @Test
+    fun `should print struct with variables`() {
+        val module = buildModule {
+            name = "Test"
+            buildStruct {
+                name = "Foo"
+                buildVariable {
+                    name = "constantValue"
+                    isConstant = true
+                    type = SirNominalType(SirSwiftModule.bool)
+                }.also(declarations::add)
+                buildVariable {
+                    name = "storedValue"
+                    type = SirNominalType(SirSwiftModule.int)
+                }.also(declarations::add)
+                buildVariable {
+                    name = "readOnlyValue"
+                    type = SirNominalType(SirSwiftModule.string)
+                    getter = buildGetter {
+                        body = SirFunctionBody(listOf("\"hello\""))
+                    }
+                }.also { it.getter?.parent = it }.also(declarations::add)
+                buildVariable {
+                    name = "writeableValue"
+                    type = SirNominalType(SirSwiftModule.int)
+                    getter = buildGetter {
+                        body = SirFunctionBody(listOf("storedValue"))
+                    }
+                    setter = buildSetter {
+                        body = SirFunctionBody(listOf("storedValue = newValue"))
+                    }
+                }.also {
+                    it.getter?.parent = it
+                    it.setter?.parent = it
+                }.also(declarations::add)
+                buildInit {
+                    isFailable = false
+                    body = SirFunctionBody(listOf("constantValue = true", "storedValue = 1"))
+                }.also(declarations::add)
+            }.attachDeclarations().also(declarations::add)
+        }.attachDeclarations()
+
+        runTest(module, "testData/struct_with_variables")
+    }
+
+    @Test
+    fun `should print struct with protocol`() {
+        val module = buildModule {
+            name = "Test"
+            val foo = buildProtocol {
+                name = "Foo"
+            }.also(declarations::add)
+            buildStruct {
+                name = "Bar"
+                protocols.add(foo)
+            }.also(declarations::add)
+        }.attachDeclarations()
+
+        runTest(module, "testData/struct_with_protocol")
+    }
+
+    @Test
+    fun `should print enum with associated values`() {
+        val module = buildModule {
+            name = "Test"
+            buildEnum {
+                name = "MyEnum"
+                buildEnumCase {
+                    name = "foo"
+                }.also(declarations::add)
+                buildEnumCase {
+                    name = "bar"
+                    associatedValueTypes.add(SirNominalType(SirSwiftModule.int))
+                }.also(declarations::add)
+                buildEnumCase {
+                    name = "baz"
+                    associatedValueTypes.add(SirNominalType(SirSwiftModule.string))
+                    associatedValueTypes.add(SirNominalType(SirSwiftModule.bool))
+                }.also(declarations::add)
+            }.attachDeclarations().also(declarations::add)
+        }.attachDeclarations()
+
+        runTest(module, "testData/enum_with_associated_values")
+    }
+
     companion object {
         val kotlinRuntimeModule = buildModule {
             name = "KotlinRuntime"

@@ -1,8 +1,11 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -28,7 +31,12 @@ sourceSets {
 kotlin {
     compilerOptions {
         optIn.addAll(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
+            "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
             "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
             "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
             "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
         )
@@ -45,9 +53,6 @@ projectTests {
             JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
         )
     ) {
-        testInputsCheck {
-            allowFlightRecorder = true
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.TestGeneratorKt", generateTestsInBuildDirectory = true)

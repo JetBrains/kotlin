@@ -430,7 +430,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
 
     @Test
     fun `test - functionWithReservedMethodName`() {
-        doTest(headersTestDataDir.resolve("functionWithReservedMethodName"))
+        doTest(headersTestDataDir.resolve("functionWithReservedMethodName"), Configuration(frameworkName = "Shared"))
     }
 
     @Test
@@ -631,6 +631,12 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi // KT-86289
+    fun `test - KT-85423 mangle clashing throws and non-throws`() {
+        doTest(headersTestDataDir.resolve("mangleClashingThrowsAndNonThrows"))
+    }
+
+    @Test
     fun `test - functions annotated with @ObjCName`() {
         doTest(headersTestDataDir.resolve("functionsAnnotatedWithObjCName"))
     }
@@ -698,6 +704,22 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - extensions mangling`() {
         doTest(headersTestDataDir.resolve("extensionsMangling"))
+    }
+
+    @Test
+    fun `test - function parameters mangling`() {
+        doTest(headersTestDataDir.resolve("functionParametersMangling"))
+    }
+
+    @Test
+    fun `test - properties with reserved names`() {
+        doTest(headersTestDataDir.resolve("propertiesWithReservedNames"))
+    }
+
+    @Test
+    @TodoAnalysisApi
+    fun `test - conflict upon mangling a property or a method should be handled by the manglers`() {
+        doTest(headersTestDataDir.resolve("conflictUponManglingPropertyOrMethod"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

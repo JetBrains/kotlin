@@ -50,6 +50,7 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
             val library = klibLoadingResult.librariesStdlibFirst.single()
 
             val metadata = library.metadata
+
             val headerProto = parseModuleHeader(metadata.moduleHeaderData)
 
             val packageMetadataSequence = headerProto.packageFragmentNameList.asSequence().flatMap { packageFragmentName ->

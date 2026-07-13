@@ -1,6 +1,6 @@
 KtNameReferenceExpression(69,79): 'MyRunnable'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /MyRunnable(function: () -> kotlin.Unit): MyRunnable

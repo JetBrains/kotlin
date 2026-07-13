@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
@@ -380,6 +379,7 @@ interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
  */
 class ComposableFunctionBodyTransformer(
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     private val collectSourceInformation: Boolean,
@@ -387,7 +387,7 @@ class ComposableFunctionBodyTransformer(
     targetRuntimeVersion: ComposeRuntimeVersion?,
     featureFlags: FeatureFlags,
 ) :
-    AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
+    AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags),
     FileLoweringPass,
     ModuleLoweringPass {
 
@@ -586,8 +586,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     private val emitParameterNames =
-        context.languageVersionSettings.languageVersion.usesK2 &&
-                context.platform.isJvm() &&
+        context.platform.isJvm() &&
                 targetRuntimeVersion.supportsFeature(ComposeRuntimeFeature.SourceInfoParameterNames) {
                     context.finderForBuiltins().findClass(ComposeClassIds.SourceInformation) != null
                 }
@@ -2864,6 +2863,9 @@ class ComposableFunctionBodyTransformer(
                     IrTypeOperator.CAST,
                     IrTypeOperator.IMPLICIT_CAST -> {
                         populateArgumentMeta(arg.argument, meta)
+                        // `arg.type` is the target type of the cast, and we want `meta.stability`
+                        // to store the stability of that type.
+                        meta.stability = stabilityInferencer.stabilityOf(arg, fileContainingDependent = meta.fileContainingArg)
                     }
                     else -> {
                         // Do nothing

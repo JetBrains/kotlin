@@ -130,7 +130,7 @@ KtNameReferenceExpression(142,159): 'ClientTransaction'
     isInBestCandidates = false
 
 KtOperationReferenceExpression(160,162): '+='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -226,7 +226,7 @@ KtNameReferenceExpression(170,187): 'ClientTransaction'
     isInBestCandidates = false
 
 KtOperationReferenceExpression(188,190): '-='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

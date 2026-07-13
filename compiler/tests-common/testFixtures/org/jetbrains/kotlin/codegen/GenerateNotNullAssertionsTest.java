@@ -25,16 +25,15 @@ import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 // TODO Remove this class once general multi-module bytecode text tests are implemented.
 public class GenerateNotNullAssertionsTest extends CodegenTestCase {
-    @Override
-    public boolean getUseFir() {
-        return true;
-    }
-
     @Override
     public @NotNull FirParser getFirParser() {
         return FirParser.LightTree;
@@ -87,7 +86,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         OutputFileCollection classes = generateClassesInFile();
         OutputFile file = classes.get(className + ".class");
         if (noClassFileIsAnError) {
-            assertNotNull("File for " + className + " is absent", file);
+            assertNotNull(file, "File for " + className + " is absent");
         }
         else if (file == null) {
             return;
@@ -102,16 +101,15 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
                 return new MethodVisitor(Opcodes.API_VERSION) {
                     @Override
                     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-                        assertFalse(
-                                "Intrinsics method is called: " + name + desc + "  Caller: " + callerName + callerDesc,
-                                "kotlin/jvm/internal/Intrinsics".equals(owner)
-                        );
+                        assertNotEquals("kotlin/jvm/internal/Intrinsics", owner,
+                                                   "Intrinsics method is called: " + name + desc + "  Caller: " + callerName + callerDesc);
                     }
                 };
             }
         }, 0);
     }
 
+    @Test
     public void testNoAssertionsForKotlinFromBinary() {
         doTestNoAssertionsForKotlinFromBinary("noAssertionsForKotlin.kt", "noAssertionsForKotlinMain.kt");
     }

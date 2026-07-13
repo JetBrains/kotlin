@@ -4,11 +4,9 @@
  */
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.library.KotlinLibrary
 
-@K1Deprecation
 class DeserializedSourceFile(
     val name_: String, val library: KotlinLibrary
 ) : SourceFile {
@@ -22,5 +20,5 @@ class DeserializedSourceFile(
         return library.hashCode() xor name.hashCode()
     }
 
-    override fun toString() = "DeserializedSourceFile(\"$name\" from \"${library.libraryFile}\")"
+    override fun toString(): String = "DeserializedSourceFile(\"$name\" from \"${library.path}\")"
 }

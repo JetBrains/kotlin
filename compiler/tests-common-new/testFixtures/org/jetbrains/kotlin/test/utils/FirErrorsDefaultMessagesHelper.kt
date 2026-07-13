@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationErrors
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
@@ -56,6 +57,7 @@ private val lastCharRegex = """[.}\d]""".toRegex()
 
 private val lastCharExclusions = listOf(
     FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED.name,
+    FirJsErrors.DATA_CLASS_COPY_JS_EXPORTABILITY_WILL_BE_CHANGED.name,
     FirErrors.ERROR_SUPPRESSION.name,
     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION.name,
     FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR.name,
@@ -85,6 +87,7 @@ private val duplicateIdExclusions = listOf(
     JvmBackendErrors.INLINE_CALL_CYCLE.name,
     IrActualizationErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.name,
     JsKlibErrors.EXPORTING_JS_NAME_CLASH.name,
+    CliDiagnostics.KOTLIN_PACKAGE_USAGE.name,
 )
 
 fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(

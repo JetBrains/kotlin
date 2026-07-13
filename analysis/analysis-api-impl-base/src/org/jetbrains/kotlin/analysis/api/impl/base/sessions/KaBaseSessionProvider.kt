@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isResolvable
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
@@ -70,7 +70,7 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         }
     }
 
-    override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
+    override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: PsiElement) {
         // Catch issues with analysis on invalid PSI as early as possible.
         PsiUtilCore.ensureValid(useSiteElement)
 
@@ -98,7 +98,7 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         writeActionStartedChecker.beforeEnteringAnalysis()
     }
 
-    override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: KtElement): Nothing {
+    override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: PsiElement): Nothing {
         handleAnalysisException(throwable)
     }
 
@@ -118,7 +118,7 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         throw throwable
     }
 
-    override fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement) {
+    override fun afterLeavingAnalysis(session: KaSession, useSiteElement: PsiElement) {
         afterLeavingAnalysis(session)
     }
 

@@ -194,12 +194,6 @@ public class AtomicfuJsWithInlinedFunInKlibTestGenerated extends AbstractAtomicf
     }
 
     @Test
-    @TestMetadata("MultiFileCAS.kt")
-    public void testMultiFileCAS() {
-      run("MultiFileCAS.kt");
-    }
-
-    @Test
     @TestMetadata("MultiInitTest.kt")
     public void testMultiInitTest() {
       run("MultiInitTest.kt");

@@ -31,14 +31,14 @@ KtUserType(27,33): 'Hidden'
 
 KtNameReferenceExpression(27,33): 'Hidden'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'class Nested : Any': it is private in 'Hidden'.>
 
 KtNameReferenceExpression(34,40): 'Nested'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /Hidden.Nested
@@ -53,5 +53,5 @@ KtConstantExpression(43,47): 'null'
 
 KtOperationReferenceExpression(47,49): '!!'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null

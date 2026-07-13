@@ -1,6 +1,17 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
+    namespace kotlin.collections {
+        interface KtList<out E> /* extends kotlin.collections.Collection<E> */ {
+            asJsReadonlyArrayView(): ReadonlyArray<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtList": unique symbol;
+            };
+        }
+        namespace KtList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+        }
+    }
     namespace foo {
         function makeFunInterfaceWithSam(): foo.FunIFace;
         function makeNoRuntimeFunInterfaceWithSam(): foo.NoRuntimeFunIface;
@@ -33,7 +44,7 @@ declare namespace JS_TESTS {
             const Symbol: unique symbol;
         }
         interface ExportedParent {
-            anotherParentMethod(): any/* kotlin.collections.List<string> */;
+            anotherParentMethod(): kotlin.collections.KtList<string>;
             parentAsyncMethod(): Promise<string>;
             withDefaultImplementation(): string;
             anotherDefaultImplementation(): string;
@@ -111,7 +122,7 @@ declare namespace JS_TESTS {
         class KotlinFooImpl implements foo.IFoo<string> {
             constructor();
             foo(): string;
-            anotherParentMethod(): any/* kotlin.collections.List<string> */;
+            anotherParentMethod(): kotlin.collections.KtList<string>;
             withBridge(x: string): string;
             withDefaults(value?: string): string;
             asyncFoo(): Promise<string>;

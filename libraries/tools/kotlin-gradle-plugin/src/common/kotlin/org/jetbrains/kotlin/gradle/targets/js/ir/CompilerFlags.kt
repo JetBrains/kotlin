@@ -21,7 +21,7 @@ internal const val PER_FILE = "-Xir-per-file"
 internal const val PER_MODULE = "-Xir-per-module"
 internal const val PER_MODULE_OUTPUT_NAME = "-Xir-per-module-output-name"
 
-internal const val WASM_BACKEND = "-Xwasm"
 internal const val WASM_TARGET = "-Xwasm-target"
 internal const val WASM_FORCE_DEBUG_FRIENDLY = "-Xwasm-debug-friendly"
 internal const val WASM_INCLUDED_MODULE_ONLY = "-Xwasm-included-module-only"
+internal const val WASM_GENERATE_CLOSED_WORLD_MULTIMODULE = "-Xwasm-generate-closed-world-multimodule"

@@ -5,3 +5,11 @@ STEP 0:
 
 STEP 1:
     dependencies: lib
+
+STEP 2:
+    dependencies: lib
+    modifications:
+            U : main.1.kt -> main.kt
+
+STEP 3:
+    dependencies: lib

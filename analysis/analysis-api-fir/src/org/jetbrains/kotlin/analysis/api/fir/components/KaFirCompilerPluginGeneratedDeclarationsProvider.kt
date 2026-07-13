@@ -1,18 +1,18 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDeclarations
-import org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDeclarationsProvider
+import org.jetbrains.kotlin.analysis.api.compilerPlugins.KaCompilerPluginGeneratedDeclarations
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseCompilerPluginGeneratedDeclarations
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseScope
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompilerPluginGeneratedDeclarationsProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -27,14 +27,13 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import kotlin.collections.orEmpty
 
 internal class KaFirCompilerPluginGeneratedDeclarationsProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaCompilerPluginGeneratedDeclarationsProvider {
-    override val KaModule.compilerPluginGeneratedDeclarations: KaCompilerPluginGeneratedDeclarations
-        get() = withValidityAssertion {
-            val firSessionForModule = analysisSession.resolutionFacade.sessionProvider.getSession(this)
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsCompilerPluginGeneratedDeclarationsProvider {
+    override fun compilerPluginGeneratedDeclarations(module: KaModule): KaCompilerPluginGeneratedDeclarations =
+        withValidityAssertion {
+            val firSessionForModule = analysisSession.resolutionFacade.sessionProvider.getSession(module)
             val generatedDeclarationsSymbolProviderForModule = firSessionForModule.generatedDeclarationsSymbolProvider
                 ?: return KaBaseCompilerPluginGeneratedDeclarations(KaBaseEmptyScope(analysisSession.token))
 
