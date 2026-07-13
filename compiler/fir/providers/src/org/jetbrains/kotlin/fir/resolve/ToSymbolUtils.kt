@@ -70,6 +70,9 @@ val ConeTypeParameterLookupTag.typeParameterSymbol: FirTypeParameterSymbol
         else -> error("impossible branch")
     }
 
+val ConeTypeParameterLookupTag.symbol: FirTypeParameterSymbol
+    get() = typeParameterSymbol
+
 fun ConeClassifierLookupTag.toTypeParameterSymbol(): FirTypeParameterSymbol? =
     (this as? ConeTypeParameterLookupTag)?.typeParameterSymbol
 
