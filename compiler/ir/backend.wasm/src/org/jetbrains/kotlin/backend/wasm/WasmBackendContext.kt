@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
 
 class WasmBackendContext(
-    val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
     override val symbolTable: SymbolTable,
     val irModuleFragment: IrModuleFragment,
