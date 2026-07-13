@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_FALLBACK_VARIANT
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.packMergedKlibTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
 import org.jetbrains.kotlin.gradle.utils.isAllGradleProjectsEvaluated
@@ -48,6 +50,7 @@ internal fun KotlinTargetSoftwareComponent(
     target.project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
         kotlinComponent.internal.usages.forEach { kotlinUsageContext ->
             /* Explicitly typing 'Project' to avoid smart cast from 'target.project as ProjectInternal' */
+            //
             val project: Project = target.project
             val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
             val configuration = project.configurations.maybeCreateDependencyScope(publishedConfigurationName) {
@@ -57,7 +60,7 @@ internal fun KotlinTargetSoftwareComponent(
                 } else {
                     extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
                 }
-                artifacts.addAll(kotlinUsageContext.artifacts)
+
                 // KT-64789: workaround for missing 'org.gradle.libraryelements' attribute on the kotlinUsageContext returned keys Set
                 // So far I don't know the reason why it appears only on the second call to `keySet()`
                 // Test failing without it - KotlinAndroidMppIT#testMppAndroidLibFlavorsPublication
@@ -66,6 +69,14 @@ internal fun KotlinTargetSoftwareComponent(
                     project.providers,
                     dest = this
                 )
+                if (kotlinUsageContext.artifacts.any { it.extension == "klib" }) {
+                    outgoing.artifact(project.packMergedKlibTask)
+                    val currentUsage = attributes.getAttribute(Usage.USAGE_ATTRIBUTE)
+                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(currentUsage.name + "-merged"))
+                } else {
+                    artifacts.addAll(kotlinUsageContext.artifacts)
+
+                }
             }
 
             adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
@@ -96,7 +107,8 @@ private fun Configuration.filterOutNonResolvableDependenciesForStandardKmpResolu
 ) {
     val resolvableConfiguration = project.configurations.getByName(kotlinUsageContext.compilation.compileDependencyConfigurationName)
     val consumableConfiguration = project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName)
-    val isJvmOrAndroidPublication = kotlinUsageContext.compilation.platformType !in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
+    val isJvmOrAndroidPublication =
+        kotlinUsageContext.compilation.platformType !in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
 
     // TODO: Included builds
     dependencies.addAllLater(project.provider {
