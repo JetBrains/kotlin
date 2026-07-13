@@ -25,7 +25,10 @@ import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.internal.component.external.model.TestFixturesSupport
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.jvm.JvmLibrary
 import org.gradle.jvm.tasks.Jar
+import org.gradle.language.base.artifact.SourcesArtifact
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
 import plugins.KotlinBuildPublishingPlugin
@@ -241,6 +244,31 @@ fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
         }
         from({ allSources })
     }
+}
+
+/**
+ * Adds the resolved `-sources.jar` artifacts of every component resolved through [configuration] to this
+ * (sources) jar. Unlike [addEmbeddedSources], which embeds the sources of included *projects*, this embeds
+ * the sources of external Maven *libraries*.
+ */
+fun Jar.addEmbeddedLibrarySources(configuration: Configuration) {
+    val archiveOperations = project.serviceOf<ArchiveOperations>()
+    val dependencyHandler = project.dependencies
+    val allLibrarySources by lazy {
+        val moduleComponentIds = configuration.incoming.resolutionResult.allComponents.map { it.id }
+
+        // Resolve Maven artifacts directly as for non-Gradle artifacts, metadata isn't available
+        dependencyHandler.createArtifactResolutionQuery()
+            .forComponents(moduleComponentIds)
+            .withArtifacts(JvmLibrary::class.java, SourcesArtifact::class.java)
+            .execute()
+            .resolvedComponents
+            .flatMap { it.getArtifacts(SourcesArtifact::class.java) }
+            .filterIsInstance<ResolvedArtifactResult>()
+            .map { archiveOperations.zipTree(it.file) }
+    }
+
+    from({ allLibrarySources })
 }
 
 @JvmOverloads

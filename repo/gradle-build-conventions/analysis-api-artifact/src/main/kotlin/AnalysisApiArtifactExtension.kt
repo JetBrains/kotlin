@@ -4,13 +4,8 @@
  */
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.provider.Property
-import org.gradle.jvm.JvmLibrary
-import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.language.base.artifact.SourcesArtifact
 import javax.inject.Inject
 
 abstract class AnalysisApiArtifactExtension @Inject constructor(private val project: Project) {
@@ -74,23 +69,6 @@ abstract class AnalysisApiArtifactExtension @Inject constructor(private val proj
         }
 
         javadocJar()
-    }
-
-    private fun Jar.addEmbeddedLibrarySources(configuration: Configuration) = with(project) {
-        val allLibrarySources by lazy {
-            val moduleComponentIds = configuration.incoming.resolutionResult.allComponents.map { it.id }
-
-            dependencies.createArtifactResolutionQuery()
-                .forComponents(moduleComponentIds)
-                .withArtifacts(JvmLibrary::class.java, SourcesArtifact::class.java)
-                .execute()
-                .resolvedComponents
-                .flatMap { it.getArtifacts(SourcesArtifact::class.java) }
-                .filterIsInstance<ResolvedArtifactResult>()
-                .map { zipTree(it.file) }
-        }
-
-        from({ allLibrarySources })
     }
 }
 
