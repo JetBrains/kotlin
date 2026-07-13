@@ -449,6 +449,9 @@
       "allDeclaredMethods": true
     },
     {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.RemovedCompilerArguments"
+    },
+    {
       "type": "org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings",
       "fields": [
         {

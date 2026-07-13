@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.compiler.nativeimage
 
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.utils.graalvm.BundledCompilerPlugins
 
 object NativeImagePluginDirectives : SimpleDirectivesContainer() {
     val COMPILER_PLUGIN by stringDirective(
@@ -43,12 +42,9 @@ data class PluginSpec(
 private val WHITESPACE = Regex("""\s+""")
 
 fun RegisteredDirectives.pluginSpecs(): List<PluginSpec> =
-    this[NativeImagePluginDirectives.COMPILER_PLUGIN].mapNotNull { entry ->
-        val tokens = entry.split(WHITESPACE).filter { it.isNotBlank() }
-        val jarName = tokens.firstOrNull() ?: return@mapNotNull null
-        val options = tokens.drop(1).flatMap { it.split(",") }.filter { it.isNotBlank() }
-        val pluginId = BundledCompilerPlugins.lookupByClasspathEntry(jarName)?.pluginId ?: return@mapNotNull null
-        PluginSpec(pluginId, jarName, options)
+    this[NativeImagePluginDirectives.COMPILER_PLUGIN].map { entry ->
+        val [pluginId, jarName, options] = entry.split(WHITESPACE).filter { it.isNotBlank() }
+        PluginSpec(pluginId, jarName, options.split(",").filter { it.isNotBlank() })
     }
 
 fun RegisteredDirectives.pluginOrderConstraints(): List<String> =

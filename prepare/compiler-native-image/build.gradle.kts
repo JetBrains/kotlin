@@ -3,7 +3,6 @@ import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.javaToolchains
 import org.gradle.kotlin.dsl.register
 import java.util.regex.Pattern.quote
-import kotlin.io.path.exists
 
 description = "Kotlin Compiler (Native Image)"
 
@@ -52,60 +51,6 @@ dependencies {
         jarPrefixes = listOf("kotlin-serialization-compiler-plugin"),
     ) {
         nativeImageClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.allopen",
-        registrarFqName = "org.jetbrains.kotlin.allopen.AllOpenComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor",
-        jarPrefixes = listOf("allopen-compiler-plugin", "kotlin-allopen-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-allopen-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.noarg",
-        registrarFqName = "org.jetbrains.kotlin.noarg.NoArgComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor",
-        jarPrefixes = listOf("noarg-compiler-plugin", "kotlin-noarg-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-noarg-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.samWithReceiver",
-        registrarFqName = "org.jetbrains.kotlin.samWithReceiver.SamWithReceiverComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor",
-        jarPrefixes = listOf("sam-with-receiver-compiler-plugin", "kotlin-sam-with-receiver-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-sam-with-receiver-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.assignment",
-        registrarFqName = "org.jetbrains.kotlin.assignment.plugin.AssignmentComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.assignment.plugin.AssignmentCommandLineProcessor",
-        jarPrefixes = listOf("assignment-compiler-plugin", "kotlin-assignment-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-assignment-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.lombok",
-        registrarFqName = "org.jetbrains.kotlin.lombok.LombokComponentRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.lombok.LombokCommandLineProcessor",
-        jarPrefixes = listOf("lombok-compiler-plugin", "kotlin-lombok-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-lombok-compiler-plugin.embeddable"))
-    }
-
-    bundledCompilerPlugin(
-        pluginId = "org.jetbrains.kotlin.powerassert",
-        registrarFqName = "org.jetbrains.kotlin.powerassert.PowerAssertCompilerPluginRegistrar",
-        commandLineProcessorFqName = "org.jetbrains.kotlin.powerassert.PowerAssertCommandLineProcessor",
-        jarPrefixes = listOf("power-assert-compiler-plugin", "kotlin-power-assert-compiler-plugin"),
-    ) {
-        nativeImageClasspath(project(":kotlin-power-assert-compiler-plugin.embeddable"))
     }
 
     bundledCompilerPlugin(
@@ -235,16 +180,10 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     outputs.file(executableFile)
 
     doFirst {
-        val javaHome = launcher.get().executablePath.asFile.toPath().parent.parent
-
-        val nativeImageName = if (isWindows) "native-image.exe" else "native-image"
-        val nativeImageBin = javaHome.resolve("lib/svm/bin/$nativeImageName")
-        if (!nativeImageBin.exists()) {
-            throw GradleException("native-image not found at ${nativeImageBin.toAbsolutePath()} (JAVA_HOME=${javaHome.toAbsolutePath()})")
-        }
+        val nativeImageExecutable = if (isWindows) "native-image.exe" else "native-image"
         val fullClasspath = classpathFiles.joinToString(File.pathSeparator) { it.absolutePath }
         commandLine(
-            nativeImageBin,
+            nativeImageExecutable,
             "--add-opens", "java.base/java.lang=ALL-UNNAMED",
             "--add-opens", "java.base/java.io=ALL-UNNAMED",
             "--add-opens", "java.base/java.nio=ALL-UNNAMED",
@@ -253,6 +192,15 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
             "-H:+AddAllCharsets",
             "-H:+UnlockExperimentalVMOptions",
             "-H:+AllowJRTFileSystem",
+            "-H:+RuntimeClassLoading",
+            "-H:Preserve=package=java.*",
+            "-H:Preserve=package=kotlin",
+            "-H:Preserve=package=kotlin.collections",
+            "-H:Preserve=package=kotlin.jvm.internal",
+            "-H:Preserve=package=kotlin.ranges",
+            "-H:Preserve=package=kotlin.text",
+            "-H:Preserve=package=kotlin.sequences",
+            "-H:Preserve=package=org.jetbrains.kotlin.*",
             "-cp", fullClasspath,
             "-o", outputFile.get().asFile.absolutePath,
             mainClass,

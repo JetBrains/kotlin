@@ -96,17 +96,6 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         val pluginConfigurations = arguments.pluginConfigurations.asList()
         val pluginOrderConstraints = arguments.pluginOrderConstraints.asList()
 
-        if (isGraalNativeImageRuntime) {
-            PluginCliParser.loadBundledCompilerPlugins(
-                pluginConfigurations = pluginConfigurations,
-                pluginOptions = pluginOptions,
-                pluginClasspaths = pluginClasspaths,
-                pluginOrderConstraints = pluginOrderConstraints,
-                configuration = configuration,
-            )
-            return
-        }
-
         if (!checkPluginsArguments(configuration, useK2 = true, pluginClasspaths, pluginOptions, pluginConfigurations)) {
             return
         }
