@@ -22,7 +22,8 @@ import java.util.*
 abstract class UsefulDeclarationProcessor(
     private val printReachabilityInfo: Boolean,
     protected val removeUnusedAssociatedObjects: Boolean,
-    private val dumpReachabilityInfoToFile: String? = null
+    private val dumpReachabilityInfoToFile: String? = null,
+    private val ignoreFieldWrites: Boolean = false,
 ) {
     abstract val context: JsCommonBackendContext
 
@@ -58,8 +59,10 @@ abstract class UsefulDeclarationProcessor(
             inlinedBlock.inlinedFunctionSymbol?.owner?.addToUsefulPolyfilledDeclarations()
         }
 
-        override fun visitGetField(expression: IrGetField, data: IrDeclaration) {
-            super.visitGetField(expression, data)
+        override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {
+            super.visitFieldAccess(expression, data)
+
+            if (ignoreFieldWrites && expression is IrSetField) return
 
             val field = expression.symbol.owner.apply { enqueue(data, "field access") }
             val correspondingProperty = field.correspondingPropertySymbol?.owner ?: return
