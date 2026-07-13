@@ -4,3 +4,9 @@ Pattern: code-rules.md
 Lines starting with `Pattern:` are rule pattern directives.
 They can go right after the rule title (`# $name`). Empty lines are allowed between the title and the patterns.
 Each pattern directive should be on a separate line, with empty lines allowed between them.
+
+# TODOs
+
+When adding a TODO, make sure include a YouTrack issue number (KT-XXXXX) in the description.
+
+Pattern: *.kt

@@ -964,17 +964,6 @@ The default value is 1.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xllvm-lto-passes"
-        compilerName = "llvmLTOPasses"
-        description = "Custom set of LLVM passes to run as the LTOOptimizationPipeline.".asReleaseDependent()
-        valueType = StringType.defaultNull
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_0,
-        )
-    }
-
-    compilerArgument {
         name = "Xmanifest-native-targets"
         description =
             "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.".asReleaseDependent()
