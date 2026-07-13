@@ -33,7 +33,7 @@ import lldb
 
 _NULL = "null"
 _BENCH_LOGGING = False
-_FAST_ARRAY_PREFETCH_RADIUS = 500
+_FAST_ARRAY_PREFETCH_RADIUS = 50
 _RUNTIME_TYPE_INVALID = 0
 _RUNTIME_TYPE_OBJECT = 1
 _RUNTIME_TYPE_VECTOR128 = 10
@@ -235,6 +235,7 @@ _TOTAL_MEMBERS_LIMIT = 50
 class CachedSbValueResponses:
     def __init__(self):
         self.children_count = None
+        self.summary = None
 
 
 def _trace_children_count_cache(message):
@@ -326,6 +327,24 @@ def _set_cached_children_count_for_key(process, key, children_count):
         )
 
 
+def _get_cached_summary_for_key(process, key):
+    if key == 0:
+        return None
+    _, is_cache_valid = _ensure_sbvalue_query_cache_state(process)
+    if not is_cache_valid:
+        return None
+    responses = _SBVALUE_QUERY_CACHE.get(key)
+    return None if responses is None else responses.summary
+
+
+def _set_cached_summary_for_key(process, key, summary):
+    if key == 0 or summary is None:
+        return
+    responses = _get_or_create_cached_sbvalue_responses_for_key(process, key)
+    if responses is not None:
+        responses.summary = summary
+
+
 def _children_count(value):
     key = _sbvalue_query_cache_key(value)
     responses = _get_cached_sbvalue_responses(value)
@@ -414,6 +433,10 @@ def _read_string(addr, size):
 
 
 def _render_object(addr):
+    process = lldb.debugger.GetSelectedTarget().GetProcess()
+    cached = _get_cached_summary_for_key(process, addr)
+    if cached is not None:
+        return cached
     buff_addr = _evaluate("(void *)Konan_DebugBuffer()").unsigned
     buff_len = _evaluate(
         (
@@ -424,7 +447,9 @@ def _render_object(addr):
             f");"
         )
     ).signed
-    return _read_string(buff_addr, buff_len)
+    summary = _read_string(buff_addr, buff_len)
+    _set_cached_summary_for_key(process, addr, summary)
+    return summary
 
 
 def kotlin_object_type_summary(lldb_val, _):
@@ -865,81 +890,40 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         for batch_start in range(start, end + 1, max_batch_count):
             batch_end = min(end, batch_start + max_batch_count - 1)
             count = batch_end - batch_start + 1
-            indices_size = count * 4
-            counts_size = count * 4
-            result_size = count * pointer_size
-
-            indices_addr = self._align_up(buffer_addr, 4)
-            counts_addr = self._align_up(indices_addr + indices_size, 4)
-            result_addr = self._align_up(
-                counts_addr + counts_size, pointer_size
-            )
-            required_size = (result_addr - buffer_addr) + result_size
-            if required_size > buffer_size:
-                raise DebuggerException(
-                    "Konan_DebugBuffer is too small for FastKonanArraySyntheticProvider"
-                )
-
             indices = list(range(batch_start, batch_end + 1))
-            indices_bytes = struct.pack(f"{prefix}{count}i", *indices)
-            error = lldb.SBError()
-            bytes_written = self._process.WriteMemory(
-                indices_addr, indices_bytes, error
+            address_layout = self._address_batch_layout(
+                buffer_addr, buffer_size, count
             )
-            if not error.Success() or bytes_written != len(indices_bytes):
-                raise DebuggerException(
-                    "Failed to write FastKonanArraySyntheticProvider indices"
-                )
+            counts_layout = self._counts_batch_layout(
+                buffer_addr, buffer_size, count
+            )
+            summary_layout = self._summary_batch_layout(
+                buffer_addr, buffer_size, count
+            )
 
-            eval_exception = None
-            try:
-                _evaluate(
-                    (
-                        f"((void)Konan_DebugBatchGetFieldAddress("
-                        f"{_hex(self._valobj.unsigned)}, "
-                        f"(int32_t *){_hex(indices_addr)}, "
-                        f"{count}, "
-                        f"(void **){_hex(result_addr)}"
-                        f"), (void *){_hex(result_addr)})"
-                    )
-                )
-                _evaluate(
-                    (
-                        f"((void)Konan_DebugBatchGetFieldCount("
-                        f"{_hex(self._valobj.unsigned)}, "
-                        f"(int32_t *){_hex(indices_addr)}, "
-                        f"{count}, "
-                        f"(int32_t *){_hex(counts_addr)}"
-                        f"), (void *){_hex(counts_addr)})"
-                    )
-                )
-            except EvaluateDebuggerException as exception:
-                eval_exception = exception
-
-            raw_addresses = self._process.ReadMemory(
-                result_addr, result_size, error
+            addresses = self._run_batch_address_request(
+                indices, count, prefix, address_layout
             )
-            if not error.Success():
-                raise DebuggerException(
-                    "Failed to read FastKonanArraySyntheticProvider addresses"
-                )
-
-            pointer_format = "Q" if pointer_size == 8 else "I"
-            addresses = struct.unpack(
-                f"{prefix}{count}{pointer_format}", raw_addresses
+            counts = self._run_batch_count_request(
+                indices, count, prefix, counts_layout
             )
-            raw_counts = self._process.ReadMemory(
-                counts_addr, counts_size, error
-            )
-            if not error.Success():
-                raise DebuggerException(
-                    "Failed to read FastKonanArraySyntheticProvider counts"
+            summary_offsets, summary_lengths, summary_data = (
+                self._run_batch_summary_request(
+                    indices, count, prefix, summary_layout
                 )
-            counts = struct.unpack(f"{prefix}{count}i", raw_counts)
-            if eval_exception is not None:
-                raise eval_exception
-            for child_index, child_address, child_count in zip(
-                indices, addresses, counts
+            )
+            for (
+                child_index,
+                child_address,
+                child_count,
+                summary_offset,
+                summary_length,
+            ) in zip(
+                indices,
+                addresses,
+                counts,
+                summary_offsets,
+                summary_lengths,
             ):
                 self._cached_addresses[child_index] = child_address
                 if (
@@ -947,14 +931,20 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
                     and child_address
                 ):
                     child_key = self._read_pointer(child_address)
-                    _trace_children_count_cache(
-                        f"batch-seed index={child_index} "
-                        f"address={_hex(child_address)} key={_hex(child_key)} "
-                        f"count={child_count}"
-                    )
                     _set_cached_children_count_for_key(
                         self._process, child_key, child_count
                     )
+                    if (
+                        summary_data is not None
+                        and summary_offset >= 0
+                        and summary_length > 0
+                    ):
+                        summary = summary_data[
+                            summary_offset : summary_offset + summary_length - 1
+                        ].decode("utf-8", errors="replace")
+                        _set_cached_summary_for_key(
+                            self._process, child_key, summary
+                        )
 
         self._cache_range = (start, end)
 
@@ -964,17 +954,188 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         high = self._children_count
         while low < high:
             mid = (low + high + 1) // 2
-            indices_addr = self._align_up(buffer_addr, 4)
-            counts_addr = self._align_up(indices_addr + mid * 4, 4)
-            result_addr = self._align_up(
-                counts_addr + mid * 4, pointer_size
-            )
-            required_size = (result_addr - buffer_addr) + mid * pointer_size
-            if required_size <= buffer_size:
+            if self._batch_layout_fits(buffer_addr, buffer_size, mid):
                 low = mid
             else:
                 high = mid - 1
         return low
+
+    def _address_batch_layout(self, buffer_addr, buffer_size, count):
+        pointer_size = self._target.GetAddressByteSize()
+        indices_addr = self._align_up(buffer_addr, 4)
+        result_addr = self._align_up(
+            indices_addr + count * 4, pointer_size
+        )
+        required_size = (result_addr - buffer_addr) + count * pointer_size
+
+        return {
+            "indices_addr": indices_addr,
+            "result_addr": result_addr,
+            "fits": required_size <= buffer_size,
+        }
+
+    def _counts_batch_layout(self, buffer_addr, buffer_size, count):
+        indices_addr = self._align_up(buffer_addr, 4)
+        counts_addr = self._align_up(indices_addr + count * 4, 4)
+        required_size = (counts_addr - buffer_addr) + count * 4
+
+        return {
+            "indices_addr": indices_addr,
+            "counts_addr": counts_addr,
+            "fits": required_size <= buffer_size,
+        }
+
+    def _summary_batch_layout(self, buffer_addr, buffer_size, count):
+        indices_addr = self._align_up(buffer_addr, 4)
+        summary_offsets_addr = self._align_up(indices_addr + count * 4, 4)
+        summary_lengths_addr = self._align_up(
+            summary_offsets_addr + count * 4, 4
+        )
+        summary_buffer_addr = summary_lengths_addr + count * 4
+        required_size = summary_buffer_addr - buffer_addr
+        fits = required_size < buffer_size
+        summary_buffer_size = buffer_size - required_size if fits else 0
+
+        return {
+            "indices_addr": indices_addr,
+            "summary_offsets_addr": summary_offsets_addr,
+            "summary_lengths_addr": summary_lengths_addr,
+            "summary_buffer_addr": summary_buffer_addr,
+            "summary_buffer_size": summary_buffer_size,
+            "fits": fits,
+        }
+
+    def _batch_layout_fits(self, buffer_addr, buffer_size, count):
+        if not self._address_batch_layout(
+            buffer_addr, buffer_size, count
+        )["fits"]:
+            return False
+        if not self._counts_batch_layout(
+            buffer_addr, buffer_size, count
+        )["fits"]:
+            return False
+        if self._element_runtime_type != _RUNTIME_TYPE_OBJECT:
+            return True
+        return self._summary_batch_layout(
+            buffer_addr, buffer_size, count
+        )["fits"]
+
+    def _write_batch_indices(self, indices, count, prefix, indices_addr):
+        indices_bytes = struct.pack(f"{prefix}{count}i", *indices)
+        error = lldb.SBError()
+        bytes_written = self._process.WriteMemory(
+            indices_addr, indices_bytes, error
+        )
+        if not error.Success() or bytes_written != len(indices_bytes):
+            raise DebuggerException(
+                "Failed to write FastKonanArraySyntheticProvider indices"
+            )
+
+    def _run_batch_address_request(self, indices, count, prefix, layout):
+        self._write_batch_indices(indices, count, prefix, layout["indices_addr"])
+        _evaluate(
+            (
+                f"((void)Konan_DebugBatchGetFieldAddress("
+                f"{_hex(self._valobj.unsigned)}, "
+                f"(int32_t *){_hex(layout['indices_addr'])}, "
+                f"{count}, "
+                f"(void **){_hex(layout['result_addr'])}"
+                f"), (void *){_hex(layout['result_addr'])})"
+            )
+        )
+        error = lldb.SBError()
+        pointer_size = self._target.GetAddressByteSize()
+        raw_addresses = self._process.ReadMemory(
+            layout["result_addr"], count * pointer_size, error
+        )
+        if not error.Success():
+            raise DebuggerException(
+                "Failed to read FastKonanArraySyntheticProvider addresses"
+            )
+        pointer_format = "Q" if pointer_size == 8 else "I"
+        return struct.unpack(f"{prefix}{count}{pointer_format}", raw_addresses)
+
+    def _run_batch_count_request(self, indices, count, prefix, layout):
+        self._write_batch_indices(indices, count, prefix, layout["indices_addr"])
+        _evaluate(
+            (
+                f"((void)Konan_DebugBatchGetFieldCount("
+                f"{_hex(self._valobj.unsigned)}, "
+                f"(int32_t *){_hex(layout['indices_addr'])}, "
+                f"{count}, "
+                f"(int32_t *){_hex(layout['counts_addr'])}"
+                f"), (void *){_hex(layout['counts_addr'])})"
+            )
+        )
+        error = lldb.SBError()
+        raw_counts = self._process.ReadMemory(
+            layout["counts_addr"], count * 4, error
+        )
+        if not error.Success():
+            raise DebuggerException(
+                "Failed to read FastKonanArraySyntheticProvider counts"
+            )
+        return struct.unpack(f"{prefix}{count}i", raw_counts)
+
+    def _run_batch_summary_request(self, indices, count, prefix, layout):
+        if self._element_runtime_type != _RUNTIME_TYPE_OBJECT:
+            return ([-1] * count, [0] * count, None)
+
+        self._write_batch_indices(indices, count, prefix, layout["indices_addr"])
+        _evaluate(
+            (
+                f"((void)Konan_DebugBatchObjectToUtf8Array("
+                f"{_hex(self._valobj.unsigned)}, "
+                f"(int32_t *){_hex(layout['indices_addr'])}, "
+                f"{count}, "
+                f"(int32_t *){_hex(layout['summary_offsets_addr'])}, "
+                f"(int32_t *){_hex(layout['summary_lengths_addr'])}, "
+                f"(char *){_hex(layout['summary_buffer_addr'])}, "
+                f"{layout['summary_buffer_size']}"
+                f"), (void *){_hex(layout['summary_buffer_addr'])})"
+            )
+        )
+
+        error = lldb.SBError()
+        raw_summary_offsets = self._process.ReadMemory(
+            layout["summary_offsets_addr"], count * 4, error
+        )
+        if not error.Success():
+            raise DebuggerException(
+                "Failed to read FastKonanArraySyntheticProvider summary offsets"
+            )
+        raw_summary_lengths = self._process.ReadMemory(
+            layout["summary_lengths_addr"], count * 4, error
+        )
+        if not error.Success():
+            raise DebuggerException(
+                "Failed to read FastKonanArraySyntheticProvider summary lengths"
+            )
+        summary_offsets = struct.unpack(
+            f"{prefix}{count}i", raw_summary_offsets
+        )
+        summary_lengths = struct.unpack(
+            f"{prefix}{count}i", raw_summary_lengths
+        )
+        max_summary_end = max(
+            (
+                offset + length
+                for offset, length in zip(summary_offsets, summary_lengths)
+                if offset >= 0 and length > 0
+            ),
+            default=0,
+        )
+        if max_summary_end <= 0:
+            return (summary_offsets, summary_lengths, None)
+
+        summary_data = self._process.ReadMemory(
+            layout["summary_buffer_addr"], max_summary_end, error
+        )
+        if not error.Success():
+            raise DebuggerException(
+                "Failed to read FastKonanArraySyntheticProvider summaries"
+            )
+        return (summary_offsets, summary_lengths, summary_data)
 
     def _struct_prefix(self):
         byte_order = self._target.GetByteOrder()
