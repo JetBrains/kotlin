@@ -103,7 +103,6 @@ fun ConeKotlinType.findClassRepresentation(
             ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
         is ConeStubType -> (this.constructor.variable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)
             ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-        is ConeLookupTagBasedType -> null
     }
 
 private fun ConeTypeParameterLookupTag.findClassRepresentationThatIsSubtypeOf(

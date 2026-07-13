@@ -64,7 +64,6 @@ fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): Lis
             is ConeCapturedType -> unwrappedType.constructor.supertypes?.forEach { it.collectClassIds() }
             is ConeIntegerLiteralType -> {}
             is ConeTypeParameterType -> unwrappedType.toTypeParameterSymbol(useSiteSession)?.resolvedBounds?.forEach { it.coneType.collectClassIds() }
-            is ConeLookupTagBasedType -> {}
             is ConeStubType -> {}
             is ConeTypeVariableType -> {}
         }

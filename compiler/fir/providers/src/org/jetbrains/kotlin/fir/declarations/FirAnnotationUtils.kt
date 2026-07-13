@@ -272,7 +272,6 @@ fun ConeKotlinType.isRestrictSuspensionReceiver(): Boolean {
         is ConeTypeParameterType -> {
             lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isRestrictSuspensionReceiver() }
         }
-        is ConeLookupTagBasedType -> error("impossible branch")
         is ConeFlexibleType -> upperBound.isRestrictSuspensionReceiver()
         is ConeDefinitelyNotNullType -> original.isRestrictSuspensionReceiver()
         is ConeCapturedType -> constructor.supertypes?.any { it.isRestrictSuspensionReceiver() } == true

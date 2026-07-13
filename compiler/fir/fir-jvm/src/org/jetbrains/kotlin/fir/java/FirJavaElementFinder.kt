@@ -395,7 +395,7 @@ private fun ConeKotlinType.mapToCanonicalString(session: FirSession): String {
             errorWithAttachment("Unexpected type: ${this::class.java}") {
                 withConeTypeEntry("type", this@mapToCanonicalString)
             }
-        is ConeLookupTagBasedType -> lookupTag.name.asString()
+        is ConeTypeParameterType -> lookupTag.name.asString()
     }
 }
 

@@ -152,7 +152,6 @@ inline fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinTyp
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {
     is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isMarkedNullable, attributes)
     is ConeErrorType -> this
-    else -> error("Unknown cone type: ${this::class}")
 }
 
 fun ConeKotlinType.toTypeProjection(variance: Variance): ConeTypeProjection =

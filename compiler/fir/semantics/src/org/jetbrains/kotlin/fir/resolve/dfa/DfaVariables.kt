@@ -176,7 +176,6 @@ private fun ConeKotlinType.isFinal(session: FirSession): Boolean = when (this) {
     is ConeCapturedType -> constructor.supertypes?.any { it.isFinal(session) } == true
     is ConeIntegerLiteralType -> true
 
-    is ConeLookupTagBasedType,
     is ConeStubType,
     is ConeTypeVariableType,
         -> false

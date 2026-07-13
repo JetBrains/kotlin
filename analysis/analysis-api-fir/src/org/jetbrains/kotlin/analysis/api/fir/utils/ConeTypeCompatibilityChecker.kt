@@ -113,7 +113,6 @@ internal object ConeTypeCompatibilityChecker {
             is ConeStubType,
             is ConeTypeParameterType,
             is ConeIntegerLiteralType,
-            is ConeLookupTagBasedType
                 -> false
         }
     }
@@ -252,7 +251,6 @@ internal object ConeTypeCompatibilityChecker {
             is ConeLookupTagBasedType -> when (this) {
                 is ConeClassLikeType -> setOf(this)
                 is ConeTypeParameterType -> emptySet()
-                else -> error("missing branch for ${javaClass.name}")
             }
             is ConeTypeVariableType -> emptySet()
             is ConeDefinitelyNotNullType -> original.collectLowerBounds()

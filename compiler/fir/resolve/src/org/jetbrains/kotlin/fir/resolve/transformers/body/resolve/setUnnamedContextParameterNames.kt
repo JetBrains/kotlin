@@ -61,7 +61,7 @@ private fun ConeKotlinType.erasedUpperBoundName(tryApproximation: Boolean): Name
             }
             bounds.first().coneType.erasedUpperBoundName(tryApproximation)
         }
-        is ConeLookupTagBasedType -> fullyExpandedType().lookupTagIfAny?.name
+        is ConeClassLikeType -> fullyExpandedType().lookupTagIfAny?.name
         is ConeDefinitelyNotNullType -> original.erasedUpperBoundName(tryApproximation)
         is ConeFlexibleType -> upperBound.erasedUpperBoundName(tryApproximation)
         else if tryApproximation -> {

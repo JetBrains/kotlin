@@ -231,7 +231,6 @@ private object ConeIntegerLiteralTypeExtensions {
         return when (this) {
             is ConeErrorType -> this
             is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isMarkedNullable, attributes)
-            else -> error("sealed")
         }
     }
 }

@@ -252,7 +252,6 @@ abstract class FirDataFlowAnalyzer(
                                 is ConeCapturedType -> constructor.supertypes?.all { it.isAcceptableForSmartcast() } == true
                                 is ConeIntegerLiteralType -> true
 
-                                is ConeLookupTagBasedType,
                                 is ConeStubType,
                                 is ConeTypeVariableType,
                                     -> false
