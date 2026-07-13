@@ -58,7 +58,6 @@ dependencies {
     testFixturesApi(kotlinTest())
     testFixturesApi(project(":kotlin-scripting-compiler-impl"))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(commonDependency("com.android.tools:r8"))
     testFixturesCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesCompileOnly(toolsJarApi())
