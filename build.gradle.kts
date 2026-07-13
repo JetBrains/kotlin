@@ -653,12 +653,9 @@ tasks {
     }
 
     register<Exec>("installJps") {
-        val installTask = this
-        allprojects {
-            plugins.withType<MavenPublishPlugin> {
-                installTask.dependsOn(tasks.named("publishToMavenLocal"))
-            }
-        }
+        inputs.files(localPublishedMarkElements.get().incoming.artifactView { lenient(true) }.files)
+            .withPathSensitivity(PathSensitivity.NONE)
+            .withPropertyName("localPublishedMarks")
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
         commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests", "-DexcludeTestModules=true")
