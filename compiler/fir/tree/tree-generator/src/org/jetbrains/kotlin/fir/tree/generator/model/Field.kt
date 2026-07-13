@@ -58,7 +58,6 @@ class SimpleField(
     override var isFinal: Boolean = false,
     override var isParameter: Boolean = false,
 ) : Field() {
-
     override fun internalCopy(): Field {
         return SimpleField(
             name = name,
@@ -79,6 +78,7 @@ class SimpleField(
         typeRef = typeRef.substitute(map) as TypeRefWithNullability
     }
 }
+
 // ----------- Field list -----------
 
 class ListField(

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
+import org.jetbrains.kotlin.fir.tree.generator.firSymbolIdType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.model.ListField
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ElementOrRef
 import org.jetbrains.kotlin.generators.tree.config.AbstractElementConfigurator
+import org.jetbrains.kotlin.generators.tree.printer.call
 
 abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, Field, Element.Kind>() {
     override fun createElement(name: String, propertyName: String, category: Element.Kind): Element {
@@ -32,7 +34,7 @@ abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, F
             isChild = isChild,
             isMutable = isMutable,
             withReplace = withReplace,
-            withTransform = withTransform
+            withTransform = withTransform,
         ).apply(initializer)
     }
 
@@ -107,13 +109,48 @@ abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, F
 
     protected fun declaredSymbol(symbolType: ClassRef<*>): Field = declaredSymbol("symbol", symbolType)
 
-    protected fun referencedSymbol(name: String, symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false, initializer: SimpleField.() -> Unit = {}): Field =
-        field(name, symbolType, nullable, withReplace)
-            .apply { symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED }
-            .apply(initializer)
+    protected fun referencedSymbol(
+        name: String,
+        symbolType: ClassRef<*>,
+        nullable: Boolean = false,
+        withReplace: Boolean = false,
+        asSymbolId: Boolean = false, // TODO (marco): Name?
+        initializer: SimpleField.() -> Unit = {},
+    ): Field {
+        val symbolField =
+            field(name, symbolType, nullable, withReplace)
+                .apply { symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED }
+                .apply(initializer)
 
-    protected fun referencedSymbol(symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false, initializer: SimpleField.() -> Unit = {}): Field =
-        referencedSymbol("symbol", symbolType, nullable, withReplace, initializer)
+        if (asSymbolId) {
+            val symbolIdField = field(
+                name + "Id", // TODO (marco): Add a proper constant/function for this.
+                firSymbolIdType.withArgs(symbolType),
+                nullable = nullable,
+                // TODO (marco): How to handle `withReplace`?
+                //withReplace = withReplace,
+            )
+
+            symbolField.apply {
+                customRepresentation = AbstractField.CustomRepresentation(
+                    field = symbolIdField,
+                    toRepresentation = { originalField -> "${originalField.name}${originalField.call()}symbolId" },
+                    fromRepresentation = { representationField -> "${representationField.name}${representationField.call()}symbol" },
+                )
+            }
+        }
+
+        return symbolField
+    }
+
+    protected fun referencedSymbol(
+        symbolType: ClassRef<*>,
+        nullable: Boolean = false,
+        withReplace: Boolean = false,
+        asSymbolId: Boolean = false,
+        initializer: SimpleField.() -> Unit = {}
+    ): Field =
+        referencedSymbol("symbol", symbolType, nullable, withReplace, asSymbolId, initializer)
 
     protected fun Element.generateBooleanFields(vararg names: String) {
         names.forEach {
