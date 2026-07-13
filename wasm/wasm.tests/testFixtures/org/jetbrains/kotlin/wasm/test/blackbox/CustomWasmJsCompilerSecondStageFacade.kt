@@ -75,7 +75,6 @@ class CustomWasmJsCompilerSecondStageFacade private constructor(
             val facade = CustomWasmJsCompilerSecondStageFacade(testServices, customWebCompilerSettings)
             val (exitCode, output, executableFolder) = facade.runCli(
                 module,
-                customLanguageFeatures = module.directives[LanguageSettingsDirectives.LANGUAGE],
                 mainLibrary,
                 regularDependencies,
                 friendDependencies,
@@ -95,7 +94,6 @@ class CustomWasmJsCompilerSecondStageFacade private constructor(
 
     fun runCli(
         module: TestModule,
-        customLanguageFeatures: List<String>,
         mainLibrary: String, // JS/Wasm backends accept only one main library. Repetitive `-Xinclude` override the previous value.
         regularDependencies: Set<String>,
         friendDependencies: Set<String>,
@@ -127,8 +125,6 @@ class CustomWasmJsCompilerSecondStageFacade private constructor(
                 runIf(USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives) {
                     listOf(KotlinWasmCompilerArguments::wasmUseNewExceptionProposal.cliArgument)
                 },
-                customLanguageFeatures
-                    .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
             )
         }
 
