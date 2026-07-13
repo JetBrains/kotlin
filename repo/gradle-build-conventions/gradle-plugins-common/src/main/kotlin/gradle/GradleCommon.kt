@@ -587,12 +587,22 @@ private fun Project.createGradlePluginVariant(
 
     dependencies {
         variantSourceSet.compileOnlyConfigurationName("org.jetbrains.kotlin:kotlin-stdlib:${GradlePluginVariant.GRADLE_MIN.bundledKotlinVersion}.0")
-        if (variant == GradlePluginVariant.GRADLE_813) {
-            // Workaround until 'dev.gradleplugins:gradle-api:8.13' will be published
-            variantSourceSet.compileOnlyConfigurationName("org.jetbrains.intellij.deps:gradle-api:${variant.gradleApiVersion}")
-            variantSourceSet.compileOnlyConfigurationName("javax.inject:javax.inject:1")
-        } else {
-            variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
+        when {
+            variant >= GradlePluginVariant.GRADLE_96 -> {
+                variantSourceSet.compileOnlyConfigurationName("org.gradle.experimental:gradle-public-api:${variant.gradleApiVersion}") {
+                    capabilities {
+                        requireCapability("org.gradle.experimental:gradle-public-api-internal")
+                    }
+                }
+            }
+            variant == GradlePluginVariant.GRADLE_813 -> {
+                // Workaround until 'dev.gradleplugins:gradle-api:8.13' will be published
+                variantSourceSet.compileOnlyConfigurationName("org.jetbrains.intellij.deps:gradle-api:${variant.gradleApiVersion}")
+                variantSourceSet.compileOnlyConfigurationName("javax.inject:javax.inject:1")
+            }
+            else -> {
+                variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
+            }
         }
         if (this@createGradlePluginVariant.name !in testPlugins) {
             variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api"))
@@ -912,6 +922,7 @@ fun Project.createGradlePluginVariants(
         GradlePluginVariant.GRADLE_88,
         GradlePluginVariant.GRADLE_811,
         GradlePluginVariant.GRADLE_813,
+        GradlePluginVariant.GRADLE_96,
     ).forEach { variant ->
         createGradlePluginVariant(
             variant = variant,

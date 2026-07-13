@@ -1,18 +1,13 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporterG88
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG88
-import org.jetbrains.kotlin.gradle.plugin.internal.*
 
-private const val PLUGIN_VARIANT_NAME = "gradle88"
+private const val PLUGIN_VARIANT_NAME = "gradle96"
 
 open class KotlinPluginWrapper : AbstractKotlinPluginWrapper() {
 
@@ -61,12 +56,7 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
     }
 }
 
+@Suppress("UnusedReceiverParameter")
 private fun Project.registerVariantImplementations() {
-    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
-    factories[ProblemsReporter.Factory::class] =
-        ProblemsReporterG88.Factory()
-    factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
-        CompilerDiagnosticsProblemsReporterG88.Factory()
-    factories[ProjectDependencyAccessor.Factory::class] = ProjectDependencyAccessorG88.Factory()
-    factories[BuildNeededDependentTasksWiringProvider.Factory::class] = BuildNeededDependentTaskWiringProviderG95.Factory()
+
 }
