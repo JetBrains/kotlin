@@ -834,6 +834,9 @@ internal class BtaImplOptionsGenerator(
             if (hasActiveViolations) {
                 function("collectRestrictedArgViolations") {
                     addModifiers(KModifier.INTERNAL, KModifier.OVERRIDE)
+                    addAnnotation(
+                        AnnotationSpec.builder(ClassName("kotlin", "Suppress")).addMember("%S", "DEPRECATION").build()
+                    )
                     addParameter("compilerArgs", rootCompilerArgsClass)
                     addParameter("defaultArgs", rootCompilerArgsClass)
                     addStatement("super.collectRestrictedArgViolations(compilerArgs, defaultArgs)")

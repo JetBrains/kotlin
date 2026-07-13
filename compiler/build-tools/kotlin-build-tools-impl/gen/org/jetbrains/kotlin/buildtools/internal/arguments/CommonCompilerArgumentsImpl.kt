@@ -531,6 +531,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     return arguments
   }
 
+  @Suppress("DEPRECATION")
   internal override fun collectRestrictedArgViolations(compilerArgs: CommonToolArguments, defaultArgs: CommonToolArguments) {
     super.collectRestrictedArgViolations(compilerArgs, defaultArgs)
     val args = compilerArgs as CommonCompilerArguments
