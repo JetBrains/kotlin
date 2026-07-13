@@ -44,7 +44,6 @@ private fun Test.muteWithDatabase() {
         project.objects.newInstance<MuteWithDatabaseArgumentProvider>().apply {
             mutesFile.fileValue(File(project.rootDir, "tests/mute-common.csv"))
         })
-    systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (project.rootProject.hasProperty("skipMutedTests")) "true" else "false")
     // This system property is only useful for JUnit Platform, but it does no harm on JUnit4
     systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 }
@@ -233,8 +232,8 @@ internal fun Project.createGeneralTestTask(
         environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
         environment("PROJECT_CLASSES_DIRS", project.testSourceSet.output.classesDirs.asPath)
         environment("PROJECT_BUILD_DIR", project.layout.buildDirectory.get().asFile)
-        systemProperty("kotlin.test.update.test.data", if (project.rootProject.hasProperty("kotlin.test.update.test.data")) "true" else "false")
-        systemProperty("cacheRedirectorEnabled", project.rootProject.findProperty("cacheRedirectorEnabled")?.toString() ?: "false")
+        systemProperty("kotlin.test.update.test.data", project.kotlinBuildProperties.booleanProperty("kotlin.test.update.test.data", false).get())
+        systemProperty("cacheRedirectorEnabled", project.kotlinBuildProperties.isCacheRedirectorEnabled.get())
         project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
             systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", n)
