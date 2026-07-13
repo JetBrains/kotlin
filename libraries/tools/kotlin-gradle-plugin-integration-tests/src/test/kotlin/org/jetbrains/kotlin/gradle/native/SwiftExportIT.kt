@@ -796,9 +796,23 @@ class SwiftExportIT : KGPBaseTest() {
                 }
             }
 
+            val iosAppXcodeProj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val envVars = swiftExportEmbedAndSignEnvVariables(
+                testBuildDir,
+                customVariables = mapOf(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            )
+
+            build(
+                ":integrateLinkagePackage",
+                environmentVariables = envVars
+            )
+
             build(
                 ":embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+                environmentVariables = envVars
             ) {
                 // The swiftPMImport cinterop task must have run.
                 assertTasksExecuted(":cinteropSwiftPMImportIosArm64")
@@ -859,7 +873,7 @@ class SwiftExportIT : KGPBaseTest() {
             }
 
             build(
-                "integrateLinkagePackage",
+                ":integrateLinkagePackage",
                 environmentVariables = envVars
             )
 
