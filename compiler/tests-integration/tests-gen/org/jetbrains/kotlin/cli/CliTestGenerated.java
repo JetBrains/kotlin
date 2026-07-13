@@ -2795,6 +2795,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("unknownWasmTarget.args")
+    public void testUnknownWasmTarget() {
+      run("unknownWasmTarget.args");
+    }
+
+    @Test
     @TestMetadata("wasmExtraHelp.args")
     public void testWasmExtraHelp() {
       run("wasmExtraHelp.args");

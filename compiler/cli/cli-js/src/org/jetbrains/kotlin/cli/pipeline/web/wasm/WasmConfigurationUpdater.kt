@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.wasm.wasmLowerings
+import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.list
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.js.initializeFinalArtifactConfiguration
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.targetPlatform
@@ -61,7 +63,14 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
         configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, arguments.wasmUseTrapsInsteadOfExceptions)
         configuration.put(WasmConfigurationKeys.WASM_IC_GENERATE_UNCHANGED_MODULES, arguments.regenerateUnchangedModules)
 
-        val wasmTarget = arguments.wasmTarget?.let(WasmTarget::fromName)
+        val wasmTargetName = arguments.wasmTarget
+        val wasmTarget = wasmTargetName?.let(WasmTarget::fromName)
+        if (wasmTargetName != null && wasmTarget == null) {
+            configuration.report(
+                WEB_ARGUMENT_ERROR,
+                "Unknown Wasm target: $wasmTargetName. Valid values are: ${WasmTarget.entries.joinToString { it.alias }}"
+            )
+        }
 
         configuration.put(
             WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL,

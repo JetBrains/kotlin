@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/distStdlibMain.kt
+-Xwasm-target=wasm-unknown
+-libraries
+$STDLIB_WASM_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
