@@ -1,3 +1,4 @@
+// Declared signatures: 18
 just_cinterop_c/do_int|1434322103267605694[100]
 just_cinterop_c/do_my_struct_t_ptr|-1042971359980028537[100]
 just_cinterop_c/do_my_struct_t|-3313067324655591103[100]
@@ -15,5 +16,6 @@ just_cinterop_c/my_struct.i|5014384761142332495[100]
 just_cinterop_c/my_struct.s.<get-s>|-1662172381559511151[100]
 just_cinterop_c/my_struct.s.<set-s>|2278768972836500772[100]
 just_cinterop_c/my_struct.s|7217541905509134881[100]
-just_cinterop_c/my_struct_t|null[100]
 just_cinterop_c/my_struct|null[100]
+
+// Imported signatures: 0

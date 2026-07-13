@@ -1,3 +1,4 @@
+// Declared signatures: 18
 just_cinterop_c/do_int|do_int(kotlin.Int){}[100]
 just_cinterop_c/do_my_struct_t_ptr|do_my_struct_t_ptr(kotlinx.cinterop.CValuesRef<just_cinterop_c.my_struct>?){}[100]
 just_cinterop_c/do_my_struct_t|do_my_struct_t(kotlinx.cinterop.CValue<just_cinterop_c.my_struct>){}[100]
@@ -15,5 +16,6 @@ just_cinterop_c/my_struct.i|{}i[100]
 just_cinterop_c/my_struct.s.<get-s>|<get-s>(){}[100]
 just_cinterop_c/my_struct.s.<set-s>|<set-s>(kotlin.Short){}[100]
 just_cinterop_c/my_struct.s|{}s[100]
-just_cinterop_c/my_struct_t|null[100]
 just_cinterop_c/my_struct|null[100]
+
+// Imported signatures: 0

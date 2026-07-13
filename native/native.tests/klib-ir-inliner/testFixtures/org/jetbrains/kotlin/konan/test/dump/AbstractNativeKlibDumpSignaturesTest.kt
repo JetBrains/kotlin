@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.konan.test.dump
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadataSignatures
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpSignatures
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.test.Constructor
@@ -15,19 +15,24 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 import java.io.File
 
-abstract class AbstractNativeKlibDumpMetadataSignaturesTest : AbstractKlibToolDumpTest() {
+abstract class AbstractNativeKlibDumpIrSignaturesTest : AbstractKlibToolDumpTest() {
     override fun getDumpHandlers(): List<Constructor<AbstractKlibToolDumpHandler>> =
-        KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.map { signatureVersion ->
-            ::KlibToolMetadataSignaturesDumpHandler.bind(signatureVersion)
+        KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.flatMap { signatureVersion ->
+            listOf(
+                ::KlibToolSignaturesDumpHandler.bind(/* signatureVersion= */ signatureVersion, /* onlyTopLevelSignatures= */ false),
+                ::KlibToolSignaturesDumpHandler.bind(/* signatureVersion= */ signatureVersion, /* onlyTopLevelSignatures= */ true),
+            )
         }
 }
 
-private class KlibToolMetadataSignaturesDumpHandler(
+private class KlibToolSignaturesDumpHandler(
     testServices: TestServices,
     override val signatureVersion: KotlinIrSignatureVersion,
-) : AbstractKlibToolDumpHandler(testServices, suffix = "metadata-signatures") {
-    override fun makeDump(klib: File): String = KLIB(klib).dumpMetadataSignatures(
+    private val onlyTopLevelSignatures: Boolean,
+) : AbstractKlibToolDumpHandler(testServices, suffix = if (onlyTopLevelSignatures) "tl" else null) {
+    override fun makeDump(klib: File) = KLIB(klib).dumpSignatures(
         testServices.testRunSettings.get<KotlinNativeClassLoader>().classLoader,
-        signatureVersion
+        signatureVersion,
+        onlyTopLevelSignatures,
     )
 }

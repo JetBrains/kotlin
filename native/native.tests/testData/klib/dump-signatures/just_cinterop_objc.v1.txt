@@ -1,3 +1,4 @@
+// Declared signatures: 29
 just_cinterop_c/Bar.<init>|-5645683436151566731[100]
 just_cinterop_c/Bar.Companion|null[100]
 just_cinterop_c/Bar.privateProperty.<get-privateProperty>|-8267707224930489207[100]
@@ -27,3 +28,5 @@ just_cinterop_c/FooProtocol.publicProperty|-4143202904126433310[100]
 just_cinterop_c/FooProtocol.setPublicProperty|-3886657688182583568[100]
 just_cinterop_c/FooProtocolMeta|null[100]
 just_cinterop_c/FooProtocol|null[100]
+
+// Imported signatures: 0

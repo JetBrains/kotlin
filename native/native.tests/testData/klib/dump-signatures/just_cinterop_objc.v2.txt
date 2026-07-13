@@ -1,3 +1,4 @@
+// Declared signatures: 29
 just_cinterop_c/Bar.<init>|<init>(){}[100]
 just_cinterop_c/Bar.Companion|null[100]
 just_cinterop_c/Bar.privateProperty.<get-privateProperty>|objc:privateProperty#Accessor[100]
@@ -27,3 +28,5 @@ just_cinterop_c/FooProtocol.publicProperty|{}publicProperty[100]
 just_cinterop_c/FooProtocol.setPublicProperty|objc:setPublicProperty:[100]
 just_cinterop_c/FooProtocolMeta|null[100]
 just_cinterop_c/FooProtocol|null[100]
+
+// Imported signatures: 0
