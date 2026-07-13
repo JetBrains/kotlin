@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -41,6 +43,27 @@ class ClassHierarchyChangesTest : BaseCompilationTest() {
             module.replaceFileWithVersion("Items.kt", "change-items-supertype")
             module.compile {
                 assertCompiledSources("Items.kt", "Usage.kt")
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-11196: 'override' error must not be missed in mixed A(kt)<-B(java)<-C(kt) hierarchy")
+    @TestMetadata("ic-scenarios/kt-11196")
+    fun testHiddenOverrideThroughJavaIntermediaryIsDetected(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = module("ic-scenarios/kt-11196")
+
+            // Add A.foo(); C.foo() now hides it through the Java middle class B and needs an `override` modifier.
+            // A clean build reports this error, but incremental compilation silently accepts it (false-positive success).
+            module.replaceFileWithVersion("A.kt", "add-foo")
+
+            module.compile {
+                expectFail()
+                assertLogContainsPatterns(
+                    LogLevel.ERROR,
+                    ".*'foo' hides member of supertype 'A' and needs .*'override' modifier.*".toRegex()
+                )
             }
         }
     }
