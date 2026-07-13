@@ -5944,6 +5944,11 @@ internal class InterfaceCompanionBlockPropertyPrivateFieldImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InterfaceCompanionBlockPropertyPrivateField
 
+internal class JvmSpecializeNotSupportedHereImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmSpecializeNotSupportedHere
+
 internal class JavaTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,

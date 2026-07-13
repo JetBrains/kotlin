@@ -6,18 +6,11 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.*
-import org.jetbrains.kotlin.backend.jvm.viewOfOriginalSuspendFunction
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
-import org.jetbrains.kotlin.ir.util.collectRealOverrides
-import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 /**
  * Computes the JVM signature of a given IrFunction. The function is passed as an IrRawFunctionReference
@@ -28,20 +21,7 @@ object SignatureString : IntrinsicMethod() {
         val argument = generateSequence(expression.arguments[0] as IrStatement) { (it as? IrBlock)?.statements?.lastOrNull() }
             .filterIsInstance<IrRawFunctionReference>().single()
         val function = argument.symbol.owner
-        generateSignatureString(codegen.mv, function, codegen.classCodegen)
+        codegen.mv.aconst(codegen.classCodegen.methodSignatureMapper.generateSignatureString(function))
         return MaterialValue(codegen, AsmTypes.JAVA_STRING_TYPE, codegen.context.irBuiltIns.stringType)
-    }
-
-    internal fun generateSignatureString(v: InstructionAdapter, function: IrFunction, codegen: ClassCodegen) {
-        var resolved = when (function) {
-            is IrSimpleFunction -> function.collectRealOverrides().first()
-            is IrConstructor -> function
-        }
-        if (resolved.isSuspend) {
-            resolved = resolved.viewOfOriginalSuspendFunction ?: resolved
-        }
-        val method = codegen.methodSignatureMapper.mapAsmMethod(resolved)
-        val descriptor = method.name + method.descriptor
-        v.aconst(descriptor)
     }
 }

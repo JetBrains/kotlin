@@ -7,17 +7,25 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.extractReificationArgument
 import org.jetbrains.kotlin.codegen.extractUsedReifiedParameters
-import org.jetbrains.kotlin.codegen.generateAsCast
-import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
-import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
-import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrTypeArguments
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReificationArgument
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.isBootstrapSpecializedCall
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.processCatch
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.reificationArgument
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.reifiedOperationKind
+import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -30,32 +38,12 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.math.max
 
-class ReificationArgument(
-    val parameterName: String, val nullable: Boolean, val arrayDepth: Int
-) {
-    fun asString(): String =
-        "[".repeat(arrayDepth) + parameterName + (if (nullable) "?" else "")
-
-    fun combine(replacement: ReificationArgument): ReificationArgument =
-        ReificationArgument(
-            replacement.parameterName,
-            this.nullable || (replacement.nullable && this.arrayDepth == 0),
-            this.arrayDepth + replacement.arrayDepth
-        )
-}
-
 class ReifiedTypeInliner(
     private val parametersMapping: TypeParameterMappings?,
     private val intrinsicsSupport: IntrinsicsSupport,
     private val typeSystem: TypeSystemCommonBackendContext,
     private val irBuiltIns: IrBuiltIns,
 ) {
-    enum class OperationKind {
-        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED, TYPE_OF, CATCH;
-
-        val id: Int get() = ordinal
-    }
-
     interface IntrinsicsSupport {
         val config: JvmBackendConfig
 
@@ -109,7 +97,7 @@ class ReifiedTypeInliner(
         }
 
         @JvmStatic
-        fun putReifiedOperationMarker(operationKind: OperationKind, argument: ReificationArgument, v: InstructionAdapter) {
+        fun putReifiedOperationMarker(operationKind: ReifiedOperationKind, argument: ReificationArgument, v: InstructionAdapter) {
             v.iconst(operationKind.id)
             v.visitLdcInsn(argument.asString())
             v.invokestatic(
@@ -121,7 +109,7 @@ class ReifiedTypeInliner(
         fun putReifiedOperationMarkerIfNeeded(
             typeParameter: TypeParameterMarker,
             isNullable: Boolean,
-            operationKind: OperationKind,
+            operationKind: ReifiedOperationKind,
             v: InstructionAdapter,
             typeSystem: TypeSystemCommonBackendContext
         ) {
@@ -150,12 +138,20 @@ class ReifiedTypeInliner(
         maxStackSize = 0
         maxLocals = 0
         val result = ReifiedTypeParametersUsages()
+        var toLightIrTypeMapping: LightIrTypeArguments? = null
         for (insn in node.instructions.toArray()) {
             if (isOperationReifiedMarker(insn)) {
                 val newNames = processReifyMarker(insn as MethodInsnNode, node)
                 if (newNames != null) {
                     result.mergeAll(newNames)
                 }
+            } else if (insn is InvokeDynamicInsnNode && insn.isBootstrapSpecializedCall) {
+                if (toLightIrTypeMapping == null) {
+                    toLightIrTypeMapping = LightIrTypeArguments(
+                        parametersMapping?.values.orEmpty().associate { it.index to parametersMapping!!.mapTypeToLightIrType(it.type)!! })
+                }
+                val specializedTypeArguments = LightIrTypeArguments.decode(insn.bsmArgs[3] as String).reify(toLightIrTypeMapping)
+                insn.bsmArgs = insn.bsmArgs.copyOf().apply { this[3] = specializedTypeArguments.encode() }
             }
         }
 
@@ -165,7 +161,7 @@ class ReifiedTypeInliner(
     }
 
     private fun processReifyMarker(insn: MethodInsnNode, node: MethodNode): ReifiedTypeParametersUsages? {
-        val operationKind = insn.operationKind ?: return null
+        val operationKind = insn.reifiedOperationKind ?: return null
         val reificationArgument = insn.reificationArgument ?: return null
         val mapping = parametersMapping?.get(reificationArgument.parameterName) ?: return null
 
@@ -181,19 +177,19 @@ class ReifiedTypeInliner(
         // Otherwise nullability on all but the innermost dimension of a multidimensional array will be lost,
         // and reified type parameters used as arguments to classifier types will never be reified.
         val instructions = node.instructions
-        if (mapping.reificationArgument == null || operationKind == OperationKind.TYPE_OF) {
+        if (mapping.reificationArgument == null || operationKind == ReifiedOperationKind.TYPE_OF) {
             val processed = (isPluginNext(insn) && processPlugin(insn, instructions, type)) || when (operationKind) {
                 // TODO: if `process*` returns false, then the marked sequence is invalid - simply leaving the marker in place
                 //   will lead to an exception at runtime. What to do instead? Possible that the bytecode has been removed by
                 //   dead code elimination (e.g. result of `T::class.java` was unused) and now we only need to erase the marker.
-                OperationKind.NEW_ARRAY -> processNewArray(insn, asmType)
-                OperationKind.AS -> processAs(insn, instructions, type, asmType, safe = false)
-                OperationKind.SAFE_AS -> processAs(insn, instructions, type, asmType, safe = true)
-                OperationKind.IS -> processIs(insn, instructions, type, asmType)
-                OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
-                OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, type, asmType)
-                OperationKind.TYPE_OF -> processTypeOf(insn, node, type)
-                OperationKind.CATCH -> processCatch(insn, node, asmType)
+                ReifiedOperationKind.NEW_ARRAY -> processNewArray(insn, asmType)
+                ReifiedOperationKind.AS -> processAs(insn, instructions, type, asmType, safe = false)
+                ReifiedOperationKind.SAFE_AS -> processAs(insn, instructions, type, asmType, safe = true)
+                ReifiedOperationKind.IS -> processIs(insn, instructions, type, asmType)
+                ReifiedOperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
+                ReifiedOperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, type, asmType)
+                ReifiedOperationKind.TYPE_OF -> processTypeOf(insn, node, type)
+                ReifiedOperationKind.CATCH -> processCatch(insn, node, asmType)
             }
 
             if (processed) {
@@ -238,10 +234,15 @@ class ReifiedTypeInliner(
     ): Boolean = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
         if (stubCheckcast !is TypeInsnNode) return false
 
-        val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateAsCast(InstructionAdapter(newMethodNode), type, asmType, safe, intrinsicsSupport.config.unifiedNullChecks)
+        TypeIntrinsics.asCast(
+            type.classFqName?.asString(),
+            type.isNullable(),
+            asmType.internalName,
+            safe,
+            intrinsicsSupport.config.unifiedNullChecks,
+            type.render(),
+        ) { instructions.insertBefore(stubCheckcast, it) }
 
-        instructions.insert(insn, newMethodNode.instructions)
         // Keep stubCheckcast to avoid VerifyErrors on 1.8+ bytecode,
         // it's safe to remove cast to Object as FrameMap will use it as default value for merged branches
         if (stubCheckcast.desc == AsmTypes.OBJECT_TYPE.internalName) {
@@ -262,10 +263,12 @@ class ReifiedTypeInliner(
     ): Boolean = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
         if (stubInstanceOf !is TypeInsnNode) return false
 
-        val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateIsCheck(InstructionAdapter(newMethodNode), type, asmType)
+        TypeIntrinsics.isCheck(
+            type.classFqName?.asString(),
+            type.isNullable(),
+            asmType.internalName,
+        ) { instructions.insertBefore(stubInstanceOf, it) }
 
-        instructions.insert(insn, newMethodNode.instructions)
         instructions.remove(stubInstanceOf)
 
         // TODO: refine max stack calculation (it's not always as big as +2)
@@ -287,32 +290,6 @@ class ReifiedTypeInliner(
         node.instructions.remove(stubConstNull)
 
         maxStackSize = max(maxStackSize, newMethodNode.maxStack)
-        return true
-    }
-
-    private fun processCatch(
-        insn: MethodInsnNode,
-        node: MethodNode,
-        asmType: Type,
-    ): Boolean {
-        var labelInsn = insn.findPreviousOrNull { it is LabelNode } as LabelNode?
-            ?: error("cannot locate label of catch block handler")
-
-        var catchBlock = node.tryCatchBlocks.find { it.handler == labelInsn && it.type != null }
-
-        // there might be a LABEL and LINE_NUMBER before the actual start of the handler
-        if (catchBlock == null && labelInsn.next is LineNumberNode) {
-            labelInsn = labelInsn.findPreviousOrNull { it is LabelNode } as LabelNode?
-                ?: error("cannot locate label of catch block handler before line number")
-
-            catchBlock = node.tryCatchBlocks.find { it.handler == labelInsn && it.type != null } ?: return false
-        }
-
-        if (catchBlock == null) error("cannot identify catch block")
-
-        // null-check is not required for catch
-        catchBlock.type = asmType.internalName
-
         return true
     }
 
@@ -409,43 +386,26 @@ class ReifiedTypeInliner(
     }
 }
 
-val MethodInsnNode.reificationArgument: ReificationArgument?
-    get() {
-        val prev = previous!!
-
-        val reificationArgumentRaw = when (prev.opcode) {
-            Opcodes.LDC -> (prev as LdcInsnNode).cst as String
-            else -> return null
-        }
-
-        val arrayDepth = reificationArgumentRaw.indexOfFirst { it != '[' }
-        val parameterName = reificationArgumentRaw.substring(arrayDepth).removeSuffix("?")
-        val nullable = reificationArgumentRaw.endsWith('?')
-
-        return ReificationArgument(parameterName, nullable, arrayDepth)
-    }
-
-val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind?
-    get() =
-        previous?.previous?.intConstant?.let {
-            ReifiedTypeInliner.OperationKind.entries.getOrNull(it)
-        }
-
 class TypeParameterMappings(
     typeSystem: TypeSystemCommonBackendContext,
     typeArguments: Map<out TypeParameterMarker, IrType>,
     allReified: Boolean,
-    mapType: (IrType, BothSignatureWriter) -> Type
+    mapType: (IrType, BothSignatureWriter) -> Type,
+    val mapTypeToLightIrType: (IrType) -> LightIrType?,
 ) {
     private val mappingsByName = hashMapOf<String, TypeParameterMapping<IrType>>()
 
+    internal val values: Collection<TypeParameterMapping<IrType>>
+        get() = mappingsByName.values
+
     init {
         with(typeSystem) {
-            for ([parameter, type] in typeArguments.entries) {
+            for ([typeParameterIndex, entry] in typeArguments.entries.withIndex()) {
+                val [parameter, type] = entry
                 val name = parameter.getName().identifier
                 val sw = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
                 mappingsByName[name] = TypeParameterMapping(
-                    type, mapType(type, sw), sw.toString(), allReified || parameter.isReified(),
+                    type, typeParameterIndex, mapType(type, sw), sw.toString(), allReified || parameter.isReified(),
                     typeSystem.extractReificationArgument(type)?.second,
                     typeSystem.extractUsedReifiedParameters(type)
                 )
@@ -463,6 +423,7 @@ class TypeParameterMappings(
 
 class TypeParameterMapping<KT : KotlinTypeMarker>(
     val type: KT,
+    val index: Int,
     val asmType: Type,
     val signature: String,
     val isReified: Boolean,

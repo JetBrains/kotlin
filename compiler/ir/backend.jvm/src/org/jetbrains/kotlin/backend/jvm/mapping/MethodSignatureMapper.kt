@@ -192,7 +192,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         function is IrConstructor || (function.returnType.isUnit() && !function.isGetter)
 
     // See also: KotlinTypeMapper.forceBoxedReturnType
-    private fun forceBoxedReturnType(function: IrFunction): Boolean =
+    fun forceBoxedReturnType(function: IrFunction): Boolean =
         (function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && function.returnType.isInlineClassType()) ||
                 isBoxMethodForInlineClass(function) ||
                 forceFoxedReturnTypeOnOverride(function) ||
@@ -503,4 +503,16 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             else ->
                 Opcodes.H_INVOKEVIRTUAL
         }
+
+    fun generateSignatureString(irFun: IrFunction): String {
+        var resolved = when (irFun) {
+            is IrSimpleFunction -> irFun.collectRealOverrides().first()
+            is IrConstructor -> irFun
+        }
+        if (resolved.isSuspend) {
+            resolved = resolved.viewOfOriginalSuspendFunction ?: resolved
+        }
+        val method = mapAsmMethod(resolved)
+        return method.name + method.descriptor
+    }
 }

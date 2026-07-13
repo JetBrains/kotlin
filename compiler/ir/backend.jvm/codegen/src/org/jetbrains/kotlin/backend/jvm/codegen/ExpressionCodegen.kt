@@ -19,13 +19,14 @@ import org.jetbrains.kotlin.codegen.coroutines.generateCoroutineSuspendedCheck
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putReifiedOperationMarker
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.*
-import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ClassInstance
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecLVTEntry
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -136,6 +137,7 @@ class ExpressionCodegen(
     val classCodegen: ClassCodegen,
     val smap: SourceMapper,
     val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
+    val specLVT: MutableList<SpecLVTEntry?> = mutableListOf(),
 ) : IrVisitor<PromisedValue, BlockInfo>() {
     override fun toString(): String = signature.toString()
 
@@ -359,10 +361,23 @@ class ExpressionCodegen(
         }
     }
 
+    fun visitLocalVariable(
+        name: String,
+        descriptor: String,
+        signature: String?,
+        start: Label,
+        end: Label,
+        index: Int,
+        type: IrType?,
+    ) {
+        specLVT.add(type?.asSpecTypeParameterUsage()?.let { SpecLVTEntry(index, specLVT.size, it) })
+        mv.visitLocalVariable(name, descriptor, signature, start, end, index)
+    }
+
     private fun writeParameterInLocalVariableTable(startLabel: Label, endLabel: Label) {
         if (!irFunction.isInline && irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) return
         if (!irFunction.isStatic) {
-            mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0)
+            visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0, null)
         }
         for (parameter in irFunction.parameters) {
             fun writeToLVT(isReceiver: Boolean) = writeValueParameterInLocalVariableTable(parameter, startLabel, endLabel, isReceiver)
@@ -391,8 +406,8 @@ class ExpressionCodegen(
 
         val type = typeMapper.mapType(param)
         // NOTE: we expect all value parameters to be present in the frame.
-        mv.visitLocalVariable(
-            name, type.descriptor, null, startLabel, endLabel, findLocalIndex(param.symbol)
+        visitLocalVariable(
+            name, type.descriptor, null, startLabel, endLabel, findLocalIndex(param.symbol), param.type,
         )
     }
 
@@ -447,11 +462,19 @@ class ExpressionCodegen(
             if (it.declaration.isVisibleInLVT) {
                 var start = it.startLabel
                 for (gap in it.gaps) {
-                    mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, gap.start, it.index)
+                    visitLocalVariable(
+                        it.declaration.name.asString(),
+                        it.type.descriptor,
+                        null,
+                        start,
+                        gap.start,
+                        it.index,
+                        it.declaration.type
+                    )
                     start = gap.end
                 }
                 val end = it.explicitEndLabel ?: endLabel
-                mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, end, it.index)
+                visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, end, it.index, it.declaration.type)
             }
         }
 
@@ -725,7 +748,16 @@ class ExpressionCodegen(
             }
         } else if (declaration.isVisibleInLVT) {
             declaration.markLineNumber(startOffset = true)
-            pushDefaultValueOnStack(varType, mv)
+            if (declaration.type.isJvmSpecializedGeneric) {
+                mv.invokestatic(
+                    "kotlin/jvm/internal/Intrinsics",
+                    "specializedTypeDefaultValueMarker${declaration.type.genericTypeParameterIndex!!}",
+                    "()Ljava/lang/Object;",
+                    false
+                )
+            } else {
+                pushDefaultValueOnStack(varType, mv)
+            }
             mv.store(index, varType)
         }
 
@@ -1073,12 +1105,12 @@ class ExpressionCodegen(
                 val boxedRightType = typeMapper.boxType(typeOperand)
 
                 if (typeOperand.isReifiedTypeParameter) {
-                    val operationKind = if (expression.operator == IrTypeOperator.CAST) AS else SAFE_AS
+                    val operationKind = if (expression.operator == IrTypeOperator.CAST) ReifiedOperationKind.AS else ReifiedOperationKind.SAFE_AS
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind)
                     mv.checkcast(boxedRightType)
                 } else {
                     assert(expression.operator == IrTypeOperator.CAST) { "IrTypeOperator.SAFE_CAST should have been lowered." }
-                    TypeIntrinsics.checkcast(mv, typeOperand, boxedRightType, false)
+                    TypeIntrinsics.checkcast(typeOperand.classFqName?.asString(), boxedRightType.internalName) { it.accept(mv) }
                 }
                 MaterialValue(this, boxedRightType, expression.type)
             }
@@ -1093,10 +1125,10 @@ class ExpressionCodegen(
                 expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
                 if (typeOperand.isReifiedTypeParameter) {
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, OperationKind.IS)
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedOperationKind.IS)
                     mv.instanceOf(type)
                 } else {
-                    TypeIntrinsics.instanceOf(mv, typeOperand, type)
+                    TypeIntrinsics.instanceOf(typeOperand.classFqName?.asString(), type.internalName) { it.accept(mv) }
                 }
                 expression.onStack
             }
@@ -1105,7 +1137,7 @@ class ExpressionCodegen(
         }
     }
 
-    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: OperationKind): Boolean {
+    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: ReifiedOperationKind): Boolean {
         val [typeParameter, second] = typeMapper.typeSystem.extractReificationArgument(type) ?: return false
         consumeReifiedOperationMarker(typeParameter)
         putReifiedOperationMarker(operationKind, second, visitor)
@@ -1306,7 +1338,7 @@ class ExpressionCodegen(
             val descriptorType = parameter.asmType
             val index = frameMap.enter(parameter, descriptorType)
             clause.markLineNumber(true)
-            putReifiedOperationMarkerIfTypeIsReifiedParameter(parameter.type, CATCH)
+            putReifiedOperationMarkerIfTypeIsReifiedParameter(parameter.type, ReifiedOperationKind.CATCH)
             mv.store(index, descriptorType)
             val afterStore = markNewLabel()
 
@@ -1502,7 +1534,7 @@ class ExpressionCodegen(
                 val classType = classReference.classType
                 val classifier = classType.classifierOrNull
                 if (classifier is IrTypeParameterSymbol) {
-                    val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, OperationKind.JAVA_CLASS)
+                    val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedOperationKind.JAVA_CLASS)
                     assert(success) {
                         "Non-reified type parameter under ::class should be rejected by type checker: ${classType.render()}"
                     }
@@ -1556,7 +1588,9 @@ class ExpressionCodegen(
                 it.symbol to (element.typeArguments[it.index] ?: it.defaultType)
             }
 
-        val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter)
+        val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter) {
+            LightIrTypeMapper(classCodegen.context).mapType(it)
+        }
         val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data, context.evaluatorData)
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
@@ -1600,11 +1634,9 @@ class ExpressionCodegen(
 
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {
-            val asmType = typeMapper.mapType(classType)
-            if (wrapPrimitives || classType.getClass()?.isInlineClass == true || !isPrimitive(asmType)) {
-                v.aconst(typeMapper.boxType(classType))
-            } else {
-                v.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")
+            when (val instance = typeMapper.generateClassInstance(classType, wrapPrimitives)) {
+                is ClassInstance.ConstClass -> v.aconst(Type.getType(instance.descriptor))
+                is ClassInstance.StaticOf -> v.getstatic(instance.internalName, "TYPE", "Ljava/lang/Class;")
             }
         }
     }

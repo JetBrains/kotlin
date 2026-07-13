@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.name.FqName
 
 object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -24,7 +26,7 @@ object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.C
         val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
 
         val forbidReified = (containingDeclaration is FirRegularClassSymbol) ||
-                (containingDeclaration is FirNamedFunctionSymbol && !containingDeclaration.isInline) ||
+                (containingDeclaration is FirNamedFunctionSymbol && !containingDeclaration.isInline && !declaration.isJvmSpecialized) ||
                 (containingDeclaration is FirPropertySymbol && !containingDeclaration.areAccessorsInline())
 
         if (forbidReified) {
@@ -41,5 +43,9 @@ object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.C
         if (isVar && setterSymbol?.isInline != true) return false
         return true
     }
+
+    context(context: CheckerContext)
+    private val FirTypeParameter.isJvmSpecialized: Boolean
+        get() = annotations.any { it.fqName(context.session) == FqName("kotlin.jvm.JvmSpecialize") }
 
 }

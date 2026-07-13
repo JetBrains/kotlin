@@ -119,6 +119,8 @@ private val jvmFilePhases = createFilePhases(
     ::BridgeLowering,
     ::SyntheticAccessorLowering,
 
+    ::JvmSpecializationLowering,
+
     ::JvmArgumentNullabilityAssertionsLowering,
     ::ToArrayLowering,
     ::JvmSafeCallChainFoldingLowering,

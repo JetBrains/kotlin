@@ -715,6 +715,41 @@ class JvmSymbols(
         }.symbol
 
     /**
+     * fun <T> `<jvm-$debugName-marker>`(value: T): T
+     */
+    private fun jvmSpecializationMarker(debugName: String): IrSimpleFunctionSymbol {
+        return irFactory.buildFun {
+            name = Name.special("<jvm-$debugName-marker>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val t = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter("value", t.defaultType)
+            returnType = t.defaultType
+        }.symbol
+    }
+
+    val jvmBoxMarkerIntrinsic: IrSimpleFunctionSymbol = jvmSpecializationMarker("box")
+    val jvmUnboxMarkerIntrinsic: IrSimpleFunctionSymbol = jvmSpecializationMarker("unbox")
+    val jvmSpecializedArgumentMarker: IrSimpleFunctionSymbol = jvmSpecializationMarker("specialized-argument")
+    val jvmSpecializedReceiverMarker: IrSimpleFunctionSymbol = jvmSpecializationMarker("specialized-receiver")
+
+    /**
+     * fun <T> `<jvm-specialized-method-call-argument-marker>`(value: T, i: Int): T
+     */
+    val jvmSpecializedMethodCallArgumentMarker: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<jvm-specialized-method-call-argument-marker>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val t = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter("value", t.defaultType)
+            addValueParameter("i", irBuiltIns.intType)
+            returnType = t.defaultType
+        }.symbol
+
+    /**
      * An intrinsic used to represent [MethodType] objects in bootstrap method arguments (see [jvmIndyIntrinsic] above).
      * The value argument is a raw function reference to the corresponding method (e.g., `java.lang.function.Supplier#get`).
      * The resulting method type is unsubstituted.

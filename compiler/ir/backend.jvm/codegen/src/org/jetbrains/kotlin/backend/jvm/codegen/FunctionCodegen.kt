@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.isJavaLangDeprecatedOnlyAddedByCompiler
+import org.jetbrains.kotlin.backend.jvm.mapping.LightIrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeParameter
+import org.jetbrains.kotlin.backend.jvm.mapping.specTypeParametersUsages
 import org.jetbrains.kotlin.backend.jvm.originalOfSuspendForInline
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -19,6 +21,8 @@ import org.jetbrains.kotlin.codegen.IrFrameMap
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.JvmSpecializeMetadataValue
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecLVTEntry
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -116,6 +120,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             }
         }
 
+        var specLVT: List<SpecLVTEntry>? = null
+
         // `$$forInline` versions of suspend functions have the same bodies as the originals, but with different
         // name/flags/annotations and with no state machine.
         val notForInline = irFunction.originalOfSuspendForInline
@@ -132,7 +138,9 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal())
             try {
                 val adapter = InstructionAdapter(methodVisitor)
-                ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, sourceMapper, reifiedTypeParameters).generate()
+                val codegen = ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, sourceMapper, reifiedTypeParameters)
+                codegen.generate()
+                specLVT = codegen.specLVT.filterNotNull()
                 postReifyEvaluatorGeneratedMethod(methodNode)
             } finally {
                 context.state.globalInlineContext.exitDeclaration()
@@ -140,6 +148,17 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             methodVisitor.visitMaxs(-1, -1)
             SMAP(sourceMapper.resultMappings)
         }
+
+        if (irFunction.isJvmSpecialized) {
+            val defaultMetadata = JvmSpecializeMetadataValue(
+                emptyList(),
+                irFunction.specTypeParametersUsages(),
+                irFunction.typeParameters.map { it.name.asString() },
+                specLVT.orEmpty(),
+            )
+            defaultMetadata.emitAnnotation(methodVisitor)
+        }
+
         methodVisitor.visitEnd()
         return SMAPAndMethodNode(methodNode, smap)
     }
@@ -165,7 +184,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             context.evaluatorData!!.capturedTypeParametersMapping,
             allReified = false,
             classCodegen.typeMapper::mapTypeParameter
-        )
+        ) { LightIrTypeMapper(classCodegen.context).mapType(it) }
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
             IrInlineIntrinsicsSupport(classCodegen, irFunction, irFunction.fileParent),
