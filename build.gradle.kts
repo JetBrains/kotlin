@@ -74,6 +74,7 @@ plugins {
     id("project-tests-convention") apply false
     id("test-federation-convention") apply false
     id("nodejs-configuration") apply false
+    id("d8-root-configuration")
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
