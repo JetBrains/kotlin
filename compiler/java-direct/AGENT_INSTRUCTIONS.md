@@ -351,12 +351,12 @@ When profiling java-direct code paths:
 |----------|----------------|
 | `implDocs/MERGED_REFACTORING_PLAN_2026_05_04.md` | PSI removal × resolver unification — Stages 1-4 plan, dependencies, and acceptance criteria. |
 | `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` | Three-phase PSI removal plan; Phases 1-2 landed, **Phase 3** (source-only PSI/AST switch) is the next effort. |
-| `implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` | IntelliJ-full-pipeline regression categorisation (Cat A-E). |
+| `implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` | IntelliJ-full-pipeline regression categorisation (Cat A-E). **The tracked next step** — but re-baseline first: its code references are stale (see the doc's status banner). |
 | `implDocs/ARCHITECTURE.md` | Callback patterns, key files, JLS implicit rules, common fixes. |
 | `implDocs/RESOLUTION_PIPELINE.md` | Before any resolution fix. |
 | `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes. |
 | `ITERATION_RESULTS.md` | Current iteration log — template + brevity rules; new entries on top. |
-| `implDocs/archive/` | Historical iterations and **landed** design docs: the interface-rollback inventory, the FIRSESSION-injection proposal, the JTC / TYPE_USE / `fir-jvm` cleanups, and per-iteration logs. `ITERATION_RESULTS_2026_06_01.md` is the most recent log archive. |
+| `implDocs/archive/` | Historical iterations and **landed** design docs: the interface-rollback inventory, the FIRSESSION-injection proposal, the JTC / TYPE_USE / `fir-jvm` cleanups, the resolution-pipeline collapse, the model-side outer-arg recovery, the `review.md` responses, and per-iteration logs. `ITERATION_RESULTS_2026_07_13.md` is the most recent log archive. |
 
 ---
 
@@ -405,7 +405,15 @@ Keep the working doc set small — these files are read into context every sessi
 
 ---
 
-*Last updated: 2026-07-08 (added the Simplification Discipline section: default to one
+*Last updated: 2026-07-13 (docs cleanup: archived the iteration log →
+`implDocs/archive/ITERATION_RESULTS_2026_07_13.md` and reset the live log to its template;
+moved the landed `COLLAPSE_RESOLUTION_PIPELINES_2026_07_06`, `MODEL_SIDE_OUTER_ARG_RECOVERY_2026_06_10`
+and `REVIEW_MD_RESPONSES_2026_07_08` docs (plus the raw `review.md` and the resolved `r*_3_*`
+review rounds) into the archive with banners; repointed the one living reference in
+`RESOLUTION_SCHEMA.md`; flagged `IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` as the active next step
+needing re-baselining.)*
+
+*Previously: 2026-07-08 (added the Simplification Discipline section: default to one
 generic path over per-representation splits, treat "a unit test needs a fake" as a code
 smell rather than a justification, re-verify complexity claims against current code every
 pass instead of reciting earlier reasoning, and back pushback on simplification with a

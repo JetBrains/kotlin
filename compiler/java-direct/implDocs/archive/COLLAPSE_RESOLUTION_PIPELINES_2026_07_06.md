@@ -1,8 +1,12 @@
 # Collapsing java-direct's representation-specific resolution pipelines
 
-**Status**: in progress — steps 1-4 of 6 landed (2026-07-06), full `:compiler:java-direct:test`
-suite green (2830/2830) after each step. Steps 5-6 (dead-parameter removal, `substringBefore('<')`
-truncation fixes, new regression tests, doc updates) remain. This document records the plan agreed
+> **Archived 2026-07-13.** All 6 steps of this plan have **landed** (see the
+> 2026-07-06 → 2026-07-08 entries in `archive/ITERATION_RESULTS_2026_07_13.md`); the
+> single origin-agnostic resolution pipeline it describes is the current design. Kept for
+> the design rationale only. Living summary: `implDocs/RESOLUTION_SCHEMA.md`.
+
+**Status**: landed — all 6 steps complete (2026-07-06 → 2026-07-08), full
+`:compiler:java-direct:test` suite green after each step. This document records the plan agreed
 with reviewers for addressing the "too many representation-specific pipelines" criticism of the
 class-resolution code, and is updated as delivery steps land. See `ITERATION_RESULTS.md` for the
 terse per-step log; this file holds the full rationale.

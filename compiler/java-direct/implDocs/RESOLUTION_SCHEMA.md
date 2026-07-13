@@ -6,7 +6,7 @@ the main scenarios. Kept at the level of classes/files; method names appear only
 distinguish a branch. For the end-to-end *type-name → ClassId → FIR symbol* call chain see
 `RESOLUTION_PIPELINE.md`; this document is the structural companion to it.
 
-**Collapsed schema (see `COLLAPSE_RESOLUTION_PIPELINES_2026_07_06.md` for the full design/rationale).**
+**Collapsed schema (see `archive/COLLAPSE_RESOLUTION_PIPELINES_2026_07_06.md` for the full design/rationale).**
 The four class representations a reference can resolve to — current-file source, other-file
 source, binary Java (`FirJavaClass`), and Kotlin/deserialized (`FirRegularClass`) — used to be
 handled by genuinely different, hand-rolled code paths in the *structural* (`JavaClass`-returning)

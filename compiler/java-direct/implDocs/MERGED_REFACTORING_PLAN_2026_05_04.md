@@ -1,14 +1,26 @@
 # Merged Refactoring Plan: PSI Removal × Resolver Unification — 2026-05-04
 
-> **Status snapshot.** Baseline is `HEAD` (commit `b300d9ac8536` plus the 2026-05-04
-> follow-ups), with PSI Phase 1 already landed and turned ON by default
-> (`USE_BINARY_FINDER = true` in
-> `compiler/java-direct/src/.../JavaDirectPluginRegistrar.kt`); 2692/2692 (100%)
-> `JavaUsingAst*` tests are green. See [`ITERATION_RESULTS.md`](../ITERATION_RESULTS.md)
-> 2026-04-30 / 2026-05-04 entries for the landed work and follow-ups (six original
-> failures fixed; `<javaSourceRoots packagePrefix="…">` plumbed through `JavaPackageIndexer`).
-> This document sequences the two remaining design tracks; it does not change either
-> track's architectural decisions and modifies no production source files.
+> **Status snapshot (2026-07-13, branch `rr/ic/direct-java-dev2`).** Both tracks this document
+> sequences have **largely landed**, and the code is now ahead of the step-by-step timeline below:
+> * **PSI-replacement track:** Phases 1 and 2 are done. Binary Java lookups now flow through the
+>   deserializer seam `JvmBinaryClassFinderInputs` / `JvmBinaryClassFinderInputsOverIndex`
+>   (index + ASM), not PSI or `FirJavaFacade`; `JavaSymbolProvider` is source-only and AST-backed.
+>   The old `JavaDirectPluginRegistrar` extension (and its `USE_BINARY_FINDER` flag) **no longer
+>   exists** — wiring moved into `compiler/cli/cli-jvm/src/.../JvmFrontendPipelinePhase.kt`. The
+>   Phase-1 `BinaryJavaClassFinder` was deleted; `CombinedJavaClassFinder.kt` remains as an
+>   uninstantiated dead leftover. **Phase 3 (formal PSI removal) is the next effort** and needs
+>   re-baselining: the source path is already AST-only, so the "PSI-source behind a flag for 1–2
+>   releases" transition window in §2.5 was skipped rather than executed.
+> * **Resolver-unification track:** landed. Classifier resolution is origin-agnostic through
+>   `firSession.symbolProvider`; the interface rollback (rule 7) and the laziness residue
+>   (`JavaSupertypeLoopChecker`, typed session access) are in place.
+> * **Open loose ends:** delete `CombinedJavaClassFinder.kt`; resolve the hardcoded
+>   `if (true /*configuration.useJavaDirect*/)` in `JvmFrontendPipelinePhase.kt` (honor
+>   `JvmAnalysisFlags.useJavaDirect` or commit to always-on); close the IJ-FP regression delta.
+>
+> Treat §§4–7 below as the original execution timeline, not current status. For the authoritative
+> latest state see [`AGENT_INSTRUCTIONS.md`](../AGENT_INSTRUCTIONS.md) and
+> [`ITERATION_RESULTS.md`](../ITERATION_RESULTS.md).
 >
 > See also: [`AGENT_INSTRUCTIONS.md`](../AGENT_INSTRUCTIONS.md),
 > [`implDocs/ARCHITECTURE.md`](ARCHITECTURE.md),

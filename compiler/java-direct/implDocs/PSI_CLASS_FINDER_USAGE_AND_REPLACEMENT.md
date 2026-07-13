@@ -1,9 +1,31 @@
 # PSI `JavaClassFinder` Usage and Replacement (java-direct, current `HEAD`)
 
-> **Status snapshot.** Baseline is `HEAD` (commit `b300d9ac8536`, see `ITERATION_RESULTS.md`).
-> The `java-direct` plugin is wired up unconditionally in `JvmConfigurationPipelinePhase`, so every
-> production JVM-FIR compilation goes through `JavaClassFinderOverAstFactory`. This document is a
-> design analysis only — **no production source files are modified.**
+> **Status snapshot (2026-07-13, branch `rr/ic/direct-java-dev2`).** **Phases 1 and 2 have
+> landed in production code; Phase 3 (formal PSI removal) is the next effort.** The code is now
+> *ahead* of the phase narrative in Part 2 below — treat Part 1/Part 2 as the original design
+> record, not the current wiring. Reality today:
+> * The `JavaDirectPluginRegistrar` / `JavaClassFinderFactory` extension mechanism described in
+>   §1.1 **no longer exists.** `java-direct` is wired directly in
+>   `compiler/cli/cli-jvm/src/.../JvmFrontendPipelinePhase.kt`, which builds the sessions with two
+>   lambdas: `createJavaDirectSourceJavaFacadeBuilder` (source facade) and
+>   `createJavaDirectBinaryClassFinderInputsBuilder` (binary inputs).
+> * **Binary Java lookups no longer go through PSI or `FirJavaFacade`.** A deserializer-side seam,
+>   `JvmBinaryClassFinderInputs` (in `fir-jvm`), is implemented by `JvmBinaryClassFinderInputsOverIndex`
+>   (`JvmDependenciesIndex` + ASM `BinaryJavaClass`) and consumed by `JvmClassFileBasedSymbolProvider`.
+>   PSI (`JavaClassFinderImpl`) is only reached off the `java-direct` path (non-`java-direct` FIR,
+>   K1, LL/IDE/IC — all out of scope here). This is the Phase-2 end-state.
+> * `JavaSymbolProvider` is narrowed to **source-only** (`isInSourceIndex` gate); the source facade
+>   is AST-only (`JavaClassFinderOverAstImpl`) with **no PSI-source fallback** — the Phase-3
+>   "PSI-source behind a flag for 1–2 releases" safety net (§2.5) was *not* implemented.
+> * The `BinaryJavaClassFinder` stepping stone (Phase 1) has been **deleted**;
+>   `CombinedJavaClassFinder.kt` still exists on disk but is **never instantiated** (dead leftover
+>   to be removed).
+> * The pipeline currently hardcodes `if (true /*configuration.useJavaDirect*/)` — the
+>   `JvmAnalysisFlags.useJavaDirect` gate is not yet honored.
+>
+> Remaining work: re-baseline Phase 3 / Step 7 against the fact that PSI-source is already
+> bypassed, delete the dead `CombinedJavaClassFinder.kt`, resolve the `if (true …)` hardcode, and
+> close the IJ-FP regression delta.
 >
 > See also: [`AGENT_INSTRUCTIONS.md`](../AGENT_INSTRUCTIONS.md),
 > [`implDocs/ARCHITECTURE.md`](ARCHITECTURE.md),

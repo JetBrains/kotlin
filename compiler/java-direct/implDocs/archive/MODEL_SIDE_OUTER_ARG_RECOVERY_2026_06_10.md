@@ -1,5 +1,10 @@
 # Model-side outer-argument recovery (2026-06-10)
 
+> **Archived 2026-07-13.** This refactoring has **landed**: `findTypeArgsForClassInHierarchy` /
+> `substituteTypeArgs` now live in `java-direct`'s `JavaTypeResolver.kt`, and the
+> `MutableJavaTypeParameterStack.containingClassSymbol` side-channel plus its `FirJavaFacade`
+> setter are gone from shared FIR. Kept for the design rationale only.
+
 ## Motivation
 
 `JavaTypeConversion.kt` is a **shared FIR** file (PSI, binary, and `java-direct` all run through it).

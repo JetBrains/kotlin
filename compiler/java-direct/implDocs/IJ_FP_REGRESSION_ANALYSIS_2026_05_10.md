@@ -1,5 +1,17 @@
 # IntelliJFullPipelineTestsGenerated — Regression Analysis (java-direct vs master)
 
+> **Status (2026-07-13): ACTIVE NEXT STEP — needs re-baselining before use.** With the
+> `JavaUsingAst*` suite feature-complete (2838/2838), closing this IntelliJ-full-pipeline
+> regression delta is the main outstanding correctness item (alongside PSI-removal Phase 3).
+> **Caveat:** this analysis is 2 months old and its code references are now dead — the wiring it
+> describes (`JavaDirectPluginRegistrar` / `USE_BINARY_FINDER`, `BinaryJavaClassFinder` /
+> `CombinedJavaClassFinder`, the `JvmConfigurationPipelinePhase` gate; see "Note on activation"
+> below) no longer exists. Binary Java lookups now flow through `JvmBinaryClassFinderInputs` /
+> `JvmBinaryClassFinderInputsOverIndex`, and wiring lives in `JvmFrontendPipelinePhase.kt`.
+> **First action: re-run the 11-module modularized IJ-FP subset on current `HEAD` and re-derive
+> the delta** against today's wiring, then act on the still-reproducing categories (A/C/D/E).
+> Tracked as the next effort in `../AGENT_INSTRUCTIONS.md`.
+
 **Date:** 2026-05-10
 **Inputs:**
 - `report-2026-05-08__16-34.direct.log` — CI run on `rr/ic/direct-java`

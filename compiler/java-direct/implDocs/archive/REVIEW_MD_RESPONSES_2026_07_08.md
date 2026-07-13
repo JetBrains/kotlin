@@ -1,5 +1,9 @@
 # Responses to `review.md` (resolution-pipeline comments)
 
+> **Archived 2026-07-13.** All comments are resolved (12/13 fixed, #6 accepted/out-of-scope and
+> pinned by a regression test). The raw review this answers is archived alongside as
+> `review_2026_07_06.md`. Kept for the point-by-point history only.
+
 **Date**: 2026-07-08
 **Scope**: point-by-point answers to every comment in `compiler/java-direct/review.md`
 (Denis Zharkov's inline review of the class-resolution code), cross-referenced against the
