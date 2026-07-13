@@ -13,6 +13,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.pathString
 import kotlin.reflect.KProperty
 
 class LocalClaudeAgent private constructor(
@@ -72,8 +76,20 @@ class LocalClaudeAgent private constructor(
             add("--model")
             add(model)
 
+            // `dontAsk` means "allow only pre-approved tools, **don't ask** for more".
             add("--permission-mode")
             add("dontAsk")
+
+            // Don't save sessions to disk.
+            add("--no-session-persistence")
+
+            // Only use MCP servers from --mcp-config (= none).
+            add("--strict-mcp-config")
+
+            // Don't load `CLAUDE.md`, `./.claude`, `~/.claude/` etc.
+            // See https://code.claude.com/docs/en/agent-sdk/claude-code-features#control-filesystem-settings-with-settingsources.
+            add("--setting-sources")
+            add("")
         }
 
         private suspend fun getAuthSettings(): AuthSettings = withContext(Dispatchers.IO) {
@@ -152,7 +168,25 @@ class LocalClaudeAgent private constructor(
         var output: ClaudeOutput? = null
 
         return runCatching {
-            executionResult = runProcess(project.root, input, command)
+            val temporaryConfigDir = createTempDirectory(prefix = "claude-config")
+            try {
+                executionResult = runProcess(
+                    directory = project.root,
+                    input = input,
+                    addEnvironment = mapOf(
+                        // Don't read ~/.claude.json.
+                        // See https://code.claude.com/docs/en/agent-sdk/claude-code-features#what-settingsources-does-not-control.
+                        "CLAUDE_CONFIG_DIR" to temporaryConfigDir.pathString,
+
+                        // Don't write prompt history to disk.
+                        "CLAUDE_CODE_SKIP_PROMPT_HISTORY" to "1",
+                    ),
+                    command = command
+                )
+            } finally {
+                @OptIn(ExperimentalPathApi::class)
+                temporaryConfigDir.deleteRecursively()
+            }
             output = json.decodeFromString<ClaudeOutput>(executionResult.stdout)
             executionResult.checkExitCode()
             check(!output.isError) { "Claude returned an error: is_error = true in the output" }
