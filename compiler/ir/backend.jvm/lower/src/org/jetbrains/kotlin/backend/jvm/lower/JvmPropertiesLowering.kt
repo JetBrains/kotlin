@@ -58,6 +58,9 @@ internal class JvmPropertiesLowering(
 
     override fun visitCall(expression: IrCall): IrExpression {
         if (expression.type.isUnit()) {
+            // Note: the execution reaches this point only for pure expressions.
+            // Therefore, if the expression is Unit-typed, it has no side effects
+            // and can be safely replaced with `irUnit`:
             return backendContext.createIrBuilder(
                 currentScope!!.scope.scopeOwnerSymbol,
                 expression.startOffset,

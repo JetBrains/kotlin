@@ -126,4 +126,16 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
+
+    compilerArgument {
+        name = "Xllvm-lto-passes"
+        compilerName = "llvmLTOPasses"
+        description = "Custom set of LLVM passes to run as the LTOOptimizationPipeline.".asReleaseDependent()
+        valueType = StringType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }

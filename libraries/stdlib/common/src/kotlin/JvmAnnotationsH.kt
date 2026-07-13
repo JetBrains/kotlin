@@ -258,4 +258,5 @@ public expect annotation class JvmSerializableLambda()
 public expect annotation class JvmExposeBoxed(val jvmName: String = "")
 
 @Target(CLASS)
+@SinceKotlin("2.4")
 public annotation class JvmMultiFieldValueClass

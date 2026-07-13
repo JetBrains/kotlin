@@ -57,6 +57,7 @@ public annotation class SymbolName(val name: String)
 @SymbolNameIsInternal
 @SinceKotlin("2.4")
 public annotation class ForceNativeThreadState {
+    // Doesn't require @SinceKotlin, as it is a temporary experment that will be removed before the release branching.
     public annotation class AllowExceptions
 }
 
