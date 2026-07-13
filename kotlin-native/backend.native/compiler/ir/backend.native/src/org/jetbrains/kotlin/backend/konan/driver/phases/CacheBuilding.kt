@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.CacheStorage
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.OutputFiles
@@ -30,6 +31,9 @@ internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nati
     val moduleDeserializer = parent.moduleDeserializerProvider.getDeserializerOrNull(module.descriptor.kotlinLibrary)
     if (moduleDeserializer == null) {
         require(module.descriptor.isFromCInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
+        // C-interop libraries have no deserialized IR, so CacheInfoBuilder is not run for them. Still record
+        // the library fingerprint, so that the cache staleness check can detect a changed library (KT-87273).
+        context.klibHash = SerializedKlibFingerprint(module.descriptor.kotlinLibrary.path.toFile()).klibFingerprint
     } else {
         CacheInfoBuilder(context, moduleDeserializer, module).build()
     }
