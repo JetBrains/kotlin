@@ -1,4 +1,5 @@
 import GeneratorInputKind.RuntimeClasspath
+import org.gradle.kotlin.dsl.testRuntimeOnly
 
 plugins {
     id("common-configuration")
@@ -37,9 +38,11 @@ val (nativeInteropRuntimeSourceSet, nativeInteropRuntimeApi) = extraSourceSet("n
 dependencies {
     api(kotlinStdlib("jdk8"))
     api(project(":core:util.runtime"))
-    api(intellijPlatformUtil()) {
-        exclude(module = "annotations")
-    }
+
+    api(intellijCore())
+    implementation(intellijJDom())
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.analysis.api.intellij.patched.kotlinx.coroutines.core.jvm)
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
