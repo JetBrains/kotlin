@@ -21,6 +21,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -40,6 +41,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          typeParameters: []
           visibility: PRIVATE
         callableId: null
         contextParameters: []
@@ -47,6 +49,7 @@ scopes:
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -63,6 +66,7 @@ scopes:
           receiverParameter: KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -86,11 +90,13 @@ scopes:
                   type: <local>/Schema1
               ]
               type: DataFrame<<local>/Schema1>
+            typeParameters: []
             visibility: PUBLIC
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          typeParameters: []
           valueParameters: []
           visibility: LOCAL
         hasBackingField: true
@@ -104,7 +110,6 @@ scopes:
         isExpect: false
         isExtension: true
         isExternal: false
-        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
@@ -113,9 +118,11 @@ scopes:
         modality: FINAL
         name: column
         origin: PLUGIN
+        primaryConstructorParameter: null
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -139,6 +146,7 @@ scopes:
                 type: <local>/Schema1
             ]
             type: DataFrame<<local>/Schema1>
+          typeParameters: []
           visibility: PUBLIC
         returnType: KaUsualClassType:
           annotations: []
@@ -181,8 +189,8 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -200,11 +208,13 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC
@@ -277,6 +287,7 @@ scopes:
         annotations: []
         callableId: null
         containingClassId: null
+        contextParameters: []
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -310,8 +321,8 @@ scopes:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -329,6 +340,7 @@ scopes:
         modality: FINAL
         name: df
         origin: SOURCE
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -336,6 +348,7 @@ scopes:
             *
           ]
           type: DataFrame<*>
+        typeParameters: []
         visibility: PUBLIC
     constructors: 0
 
@@ -467,6 +480,7 @@ scopes:
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -489,6 +503,7 @@ scopes:
                 type: T
             ]
             type: DataFrame<T>
+          typeParameters: []
           visibility: PUBLIC
         returnType: KaUsualClassType:
           annotations: []
@@ -531,8 +546,8 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -550,17 +565,19 @@ scopes:
             modality: FINAL
             name: columnName
             origin: SOURCE
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/String
+            typeParameters: []
             visibility: PUBLIC
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -578,6 +595,7 @@ scopes:
             modality: FINAL
             name: expression
             origin: SOURCE
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaFunctionType:
               annotations: []
@@ -587,6 +605,7 @@ scopes:
                   type: R
               ]
               type: () -> R
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC
@@ -624,8 +643,8 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -643,6 +662,7 @@ scopes:
             modality: FINAL
             name: df
             origin: SOURCE
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -650,6 +670,7 @@ scopes:
                 *
               ]
               type: DataFrame<*>
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC

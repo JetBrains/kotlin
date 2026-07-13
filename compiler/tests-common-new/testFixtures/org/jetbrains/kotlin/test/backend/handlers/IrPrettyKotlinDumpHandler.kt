@@ -62,6 +62,10 @@ class IrPrettyKotlinDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        // When target backend is specified in DUMP_IR_DIFFERENCE test directive, the actual KT-like dump is expected to differ from the golden data
+        // KT-like dumps are not that very useful, so it's simpler just to skip this handler to not create unnecessary `*.kt.<backend>.patch` files
+        if (testServices.getMatchedBackendFromDirective(CodegenTestDirectives.DUMP_IR_DIFFERENCE) != null)
+            return
         val actualDump = if (dumper.isEmpty()) null else dumper.generateResultingDump()
         assertEqualsToDump(DUMP_EXTENSION, actualDump)
     }

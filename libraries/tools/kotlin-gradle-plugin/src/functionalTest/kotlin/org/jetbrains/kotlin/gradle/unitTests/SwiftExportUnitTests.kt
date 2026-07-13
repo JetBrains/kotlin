@@ -154,6 +154,33 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test swift export embed and sign wires linkage check when SwiftPM dependencies are present`() {
+        val project = swiftExportProject()
+        project.evaluate()
+
+        // The wiring is unconditional (gated on !disableSwiftPMImport), so tasks are registered
+        // even without SwiftPM dependencies. At runtime, hasDirectOrTransitiveSwiftPMDependencies
+        // serves as an onlyIf guard, suppressing execution when no deps are configured.
+
+        val regenerateTask = project.tasks.findByName("generateSyntheticLinkageSwiftPMImportProjectForEmbedAndSignLinkage")
+        val checkTask = project.tasks.findByName("checkSyntheticImportProjectIsCorrectlyIntegratedForEmbedSwiftExport")
+
+        assertNotNull(regenerateTask, "regenerate linkage task should be registered")
+        assertNotNull(checkTask, "checkSyntheticImportProjectIsCorrectlyIntegrated task should be registered")
+
+        val copySwiftExportTask = project.tasks.getByName("copyDebugSPMIntermediates")
+        val copySwiftExportDependencies = copySwiftExportTask.taskDependencies.getDependencies(null)
+        assert(copySwiftExportDependencies.contains(regenerateTask)) {
+            "copyDebugSPMIntermediates should depend on regenerate linkage project task, got: ${copySwiftExportDependencies.joinToString { it.name }}"
+        }
+
+        val regenerateDependencies = regenerateTask.taskDependencies.getDependencies(null)
+        assert(regenerateDependencies.contains(checkTask)) {
+            "regenerate linkage task should depend on checkSyntheticImportProjectIsCorrectlyIntegrated, got: ${regenerateDependencies.joinToString { it.name }}"
+        }
+    }
+
+    @Test
     fun `test swift export missing arch`() {
         val project = swiftExportProject(archs = "arm64", multiplatform = {
             @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation

@@ -9,21 +9,21 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.lazy.descriptors.getSourceForArgument
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.KotlinType
 
 internal class ConstantValueGeneratorImpl(
     moduleDescriptor: ModuleDescriptor,
     symbolTable: ReferenceSymbolTable,
-    typeTranslator: TypeTranslator,
+    private val typeTranslator: TypeTranslator,
     allowErrorTypeInAnnotations: Boolean,
-) : ConstantValueGenerator(moduleDescriptor, symbolTable, typeTranslator, allowErrorTypeInAnnotations) {
+) : ConstantValueGenerator(moduleDescriptor, symbolTable, allowErrorTypeInAnnotations) {
     override fun extractAnnotationOffsets(annotationDescriptor: AnnotationDescriptor): Pair<Int, Int> =
         extractOffsets(annotationDescriptor.source)
 
@@ -35,4 +35,6 @@ internal class ConstantValueGeneratorImpl(
         if (psi == null || psi.containingFile.fileType.isBinary) return UNDEFINED_OFFSET to UNDEFINED_OFFSET
         return Pair(psi.startOffset, psi.endOffset)
     }
+
+    override fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
 }

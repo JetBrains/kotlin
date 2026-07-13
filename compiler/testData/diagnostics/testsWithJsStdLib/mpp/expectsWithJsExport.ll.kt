@@ -5,6 +5,7 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects -AllowExpectDeclarationsInJsExport
+// ALLOW_KOTLIN_PACKAGE
 // ISSUE: KT-64951
 
 // MODULE: m1-common
@@ -53,31 +54,31 @@ annotation class JsExport
 // FILE: alias.kt
 import kotlin.js.*
 
-actual typealias Export = <!OPT_IN_USAGE!>kotlin.js.JsExport<!>
+actual typealias Export = kotlin.js.JsExport
 
 // FILE: js1.kt
 import kotlin.js.*
 
-@<!OPT_IN_USAGE!>Export<!>
+@Export
 actual class WithExportOnExpect {
     actual fun foo() {}
     actual val bar = 42
 }
 
-@<!OPT_IN_USAGE!>JsExport<!>
+@JsExport
 actual class WithExportOnActual {
     actual fun foo() {}
     actual val bar = 42
 }
 
-@<!OPT_IN_USAGE!>Export<!>
+@Export
 actual class WithExportTypealiasOnActual {
     actual fun foo() {}
     actual val bar = 42
 }
 
 // FILE: js2.kt
-@file:<!OPT_IN_USAGE!>JsExport<!>
+@file:JsExport
 import kotlin.js.*
 
 actual class WithFileExportOnActual {

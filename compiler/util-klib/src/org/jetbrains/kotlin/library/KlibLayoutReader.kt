@@ -15,11 +15,12 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.zip.ZipException
+import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.copyTo
+import kotlin.io.path.copyToRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
-import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 
 /**
@@ -80,7 +81,8 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
                 fileOrDirectory.isDirectory() -> {
                     val tempDir = createTempDirectory(fileOrDirectory.name)
                     tempDir.deleteOnExitRecursively()
-                    fileOrDirectory.listDirectoryEntries().forEach { file -> file.copyTo(tempDir.resolve(file.name)) }
+                    @OptIn(ExperimentalPathApi::class)
+                    fileOrDirectory.copyToRecursively(tempDir, followLinks = false, overwrite = true)
                     tempDir
                 }
 

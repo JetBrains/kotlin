@@ -57,7 +57,7 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
                     null if firElement is FirBackingField -> {
                         val variableSymbol = when (val psi = firElement.psi) {
                             is KtProperty -> psi.symbol as KaPropertySymbol
-                            is KtParameter -> (psi.symbol as KaValueParameterSymbol).generatedPrimaryConstructorProperty!!
+                            is KtParameter -> (psi.symbol as KaValueParameterSymbol).primaryConstructorProperty!!
                             else -> error("Unexpected psi element: $psi")
                         }
 

@@ -186,7 +186,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                 isFun = classKind == ClassKind.INTERFACE
             }
 
-            declarationList = FirLazyJavaDeclarationList(javaClass, classSymbol, javaPackage)
+            declarationList = FirLazyJavaDeclarationList(javaClass, classSymbol)
         }.apply {
             if (originalStatus.modality == Modality.SEALED) {
                 setSealedClassInheritors {
@@ -216,7 +216,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
 
 /** @see FirJavaDeclarationList */
 @FirImplementationDetail
-class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularClassSymbol, javaPackage: JavaPackage?) : FirJavaDeclarationList {
+class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularClassSymbol) : FirJavaDeclarationList {
     /**
      * [LazyThreadSafetyMode.PUBLICATION] is used here to avoid any potential problems with deadlocks
      * as we cannot control how Java resolution will access [declarations].
@@ -259,7 +259,6 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
                 dispatchReceiver,
                 moduleData,
                 classSymbol,
-                javaPackage
             )
 
             declarations += firJavaMethod
@@ -290,7 +289,6 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
                 classTypeParameters,
                 parentClassSymbol,
                 moduleData,
-                javaPackage
             )
         }
 
@@ -303,7 +301,6 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
                 classTypeParameters,
                 parentClassSymbol,
                 moduleData,
-                javaPackage,
             )
         }
 
@@ -570,7 +567,6 @@ private fun convertJavaMethodToFir(
     dispatchReceiver: ConeClassLikeType,
     moduleData: FirModuleData,
     containingClassSymbol: FirRegularClassSymbol,
-    javaPackage: JavaPackage?,
 ): FirJavaMethod {
     val session = moduleData.session
     val methodName = javaMethod.name
@@ -615,13 +611,10 @@ private fun convertJavaMethodToFir(
         if (containingClass.isRecord && valueParameters.isEmpty() && containingClass.recordComponents.any { it.name == methodName }) {
             isJavaRecordComponent = true
         }
-        // Can be called only after .build() because we need to access fir.resolvedAnnotationsWithClassIds
-        methodStatus.returnValueStatus = session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForJavaCallable(
-            session,
-            methodSymbol,
-            containingClassSymbol,
-            javaPackage?.annotations?.mapNotNull { it.classId }
-        )
+        // Note: the must-use-return-value status is intentionally NOT computed here. It is derived from annotations
+        // during signature enhancement (see FirSignatureEnhancement.enhanceStatus). Computing it here — while the
+        // containing FirJavaClass's declaration list is still being built — could re-enter that in-progress lazy via
+        // inner class resolution and cause a StackOverflowError.
     }
 }
 
@@ -648,7 +641,6 @@ private fun convertJavaConstructorToFir(
     classTypeParameters: List<FirTypeParameter>,
     outerClassSymbol: FirRegularClassSymbol?,
     moduleData: FirModuleData,
-    javaPackage: JavaPackage?,
 ): FirJavaConstructor {
     val session = moduleData.session
     val constructorSymbol = FirConstructorSymbol(constructorId)
@@ -698,13 +690,7 @@ private fun convertJavaConstructorToFir(
         }
     }.apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
-        // Can be called only after .build() because we need to access fir.resolvedAnnotationsWithClassIds
-        methodStatus.returnValueStatus = session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForJavaCallable(
-            session,
-            constructorSymbol,
-            classSymbol,
-            javaPackage?.annotations?.mapNotNull { it.classId }
-        )
+        // See the note in convertJavaMethodToFir: return-value status is computed during signature enhancement.
     }
 }
 

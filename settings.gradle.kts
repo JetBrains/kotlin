@@ -217,7 +217,6 @@ include(
     ":compiler:tests-mutes",
     ":compiler:tests-mutes:mutes-junit4",
     ":compiler:tests-mutes:mutes-junit5",
-    ":compiler:tests-against-klib",
     ":compiler:jklib.tests",
     ":js:js.ast",
     ":js:js.sourcemap",
@@ -459,6 +458,7 @@ include(
     ":wasm:wasm.debug.browsers",
     ":repo:test-federation-runtime",
     ":repo:codebase-tests",
+    ":repo:auto-code-review",
     ":repo:artifacts-tests"
 )
 

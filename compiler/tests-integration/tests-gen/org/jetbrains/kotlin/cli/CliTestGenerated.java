@@ -1389,6 +1389,12 @@ public class CliTestGenerated extends AbstractCliTest {
     public void testExecutorSubmitEnabled() {
       run("executorSubmitEnabled.args");
     }
+
+    @Test
+    @TestMetadata("unitConversionWithEla.args")
+    public void testUnitConversionWithEla() {
+      run("unitConversionWithEla.args");
+    }
   }
 
   @Nested
@@ -1834,12 +1840,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("firHello20.args")
     public void testFirHello20() {
       run("firHello20.args");
-    }
-
-    @Test
-    @TestMetadata("firHello20WithFlag.args")
-    public void testFirHello20WithFlag() {
-      run("firHello20WithFlag.args");
     }
 
     @Test
@@ -2741,6 +2741,18 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("distStdlibWasmJs.args")
+    public void testDistStdlibWasmJs() {
+      run("distStdlibWasmJs.args");
+    }
+
+    @Test
+    @TestMetadata("distStdlibWasmWasi.args")
+    public void testDistStdlibWasmWasi() {
+      run("distStdlibWasmWasi.args");
+    }
+
+    @Test
     @TestMetadata("exportKDoc.args")
     public void testExportKDoc() {
       run("exportKDoc.args");
@@ -2956,6 +2968,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("optionalExpectationUsage.args")
     public void testOptionalExpectationUsage() {
       run("optionalExpectationUsage.args");
+    }
+
+    @Test
+    @TestMetadata("removedArguments.args")
+    public void testRemovedArguments() {
+      run("removedArguments.args");
     }
 
     @Test

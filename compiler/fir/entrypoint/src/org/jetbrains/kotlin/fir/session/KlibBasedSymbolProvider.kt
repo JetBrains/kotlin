@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.kotlin.utils.SmartList
-import java.nio.file.Paths
 
 class KlibBasedSymbolProvider(
     session: FirSession,
@@ -81,8 +80,7 @@ class KlibBasedSymbolProvider(
     }
 
     override fun moduleData(library: KotlinLibrary): FirModuleData? {
-        val libraryPath = Paths.get(library.libraryFile.path)
-        return moduleDataProvider.getModuleData(libraryPath)
+        return moduleDataProvider.getModuleData(library.path)
     }
 
     override fun createDeserializedContainerSource(

@@ -17,19 +17,7 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
     fileprivate init(_ currentTask: UnsafeCurrentTask) {
         let __kt = __root___SwiftJob_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        self.task.withLock { $0 = currentTask }
-        __root___SwiftJob_init_initialize(__kt, { [weak self] shouldCancel in
-            guard let self else { return true }
-            return self.task.withLock { task in
-                guard let task else { return true }
-                defer { if shouldCancel { task.cancel() } }
-                return task.isCancelled
-            }
-        })
-    }
-
-    fileprivate func clear() {
-        task.withLock { $0 = nil }
+        __root___SwiftJob_init_initialize(__kt, setTask(currentTask))
     }
 
     package override init(
@@ -39,12 +27,24 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 
-    public func cancelExternally() -> Swift.Void {
-        return __root___SwiftJob_cancelExternally(self.__externalRCRef())
+    private func setTask(_ task: UnsafeCurrentTask) -> (() -> Void) {
+        self.task.withLock {
+            guard $0 == nil else { fatalError("KotlinTask has already been initialized with a Task") }
+            $0 = task
+        }
+        return { [weak self] in self?.task.withLock { task in task?.cancel() } }
     }
 
-    public func setCallback(_ callback: @escaping @convention(block) (Bool) -> Bool) {
-        __root___SwiftJob_setCallback(self.__externalRCRef(), callback)
+    fileprivate func setTask(_ task: UnsafeCurrentTask) {
+        __root___SwiftJob_setCallback(self.__externalRCRef(), setTask(task))
+    }
+
+    fileprivate func clear() {
+        task.withLock { $0 = nil }
+    }
+
+    fileprivate func cancelExternally() -> Swift.Void {
+        return __root___SwiftJob_cancelExternally(self.__externalRCRef())
     }
 }
 
@@ -70,25 +70,27 @@ package func withKotlinContinuation<T>(
 
 package func withKotlinTask<T>(
     _ continuation: @escaping (T) -> Void,
-    _ exception: @escaping (Error) -> Void,
+    _ exception: @escaping (Error?) -> Void,
     _ cancellation: KotlinTask,
     _ operation: @escaping () async throws -> T
 ) {
-    let task = Task {
-        await withTaskCancellationHandler {
-            do {
-                let result = try await operation()
-                continuation(result)
-            } catch {
-                exception(error)
+    Task {
+        await withUnsafeCurrentTask { currentTask in
+            cancellation.setTask(currentTask!)
+            defer { cancellation.clear() }
+            await withTaskCancellationHandler {
+                do {
+                    let result = try await operation()
+                    continuation(result)
+                } catch let error as CancellationError {
+                    exception(nil)
+                } catch {
+                    exception(error)
+                }
+            } onCancel: {
+                cancellation.cancelExternally()
             }
-        } onCancel: {
-            cancellation.cancelExternally()
         }
-    }
-    cancellation.setCallback { shouldCancel in
-        defer { if shouldCancel { task.cancel() } }
-        return task.isCancelled
     }
 }
 

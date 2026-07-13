@@ -3,6 +3,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -22,6 +23,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
     getContainingJvmClassName: CompanionPropertyKt
@@ -34,6 +36,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -50,6 +53,7 @@ KaKotlinPropertySymbol:
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -68,6 +72,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: Foo
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
       getContainingJvmClassName: CompanionPropertyKt
@@ -78,6 +83,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
@@ -96,7 +102,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: true
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -105,9 +110,11 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: static1
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -126,6 +133,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: Foo
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
     getContainingJvmClassName: CompanionPropertyKt

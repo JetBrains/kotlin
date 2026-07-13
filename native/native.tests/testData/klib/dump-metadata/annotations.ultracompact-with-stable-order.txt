@@ -2,9 +2,9 @@ public final annotation class test/AnnoBackingField : kotlin/Annotation
 public constructor test/AnnoBackingField.<init>()
 public final annotation class test/AnnoClass : kotlin/Annotation
 public constructor test/AnnoClass.<init>()
-@kotlin/annotation/Target public final annotation class test/AnnoClassTypeParameter : kotlin/Annotation
+public final annotation class test/AnnoClassTypeParameter : kotlin/Annotation
 public constructor test/AnnoClassTypeParameter.<init>()
-@kotlin/annotation/Target public final annotation class test/AnnoClassUsageTypeParameter : kotlin/Annotation
+public final annotation class test/AnnoClassUsageTypeParameter : kotlin/Annotation
 public constructor test/AnnoClassUsageTypeParameter.<init>()
 public final annotation class test/AnnoConstructor : kotlin/Annotation
 public constructor test/AnnoConstructor.<init>()
@@ -18,7 +18,7 @@ public final annotation class test/AnnoFunctionExtensionReceiver : kotlin/Annota
 public constructor test/AnnoFunctionExtensionReceiver.<init>()
 public final annotation class test/AnnoFunctionParam : kotlin/Annotation
 public constructor test/AnnoFunctionParam.<init>()
-@kotlin/annotation/Target public final annotation class test/AnnoFunctionTypeParameter : kotlin/Annotation
+public final annotation class test/AnnoFunctionTypeParameter : kotlin/Annotation
 public constructor test/AnnoFunctionTypeParameter.<init>()
 public final annotation class test/AnnoGetter : kotlin/Annotation
 public constructor test/AnnoGetter.<init>()
@@ -34,28 +34,28 @@ public final annotation class test/AnnoSetter : kotlin/Annotation
 public constructor test/AnnoSetter.<init>()
 public final annotation class test/AnnoSetter2 : kotlin/Annotation
 public constructor test/AnnoSetter2.<init>()
-@kotlin/annotation/Target public final annotation class test/AnnoType : kotlin/Annotation
+public final annotation class test/AnnoType : kotlin/Annotation
 public constructor test/AnnoType.<init>()
-public final class test/B<@test/AnnoClassTypeParameter T#0> : kotlin/Any
+public final class test/B<T#0> : kotlin/Any
 public constructor test/B.<init>()
-@test/AnnoClass public final class test/Foo : kotlin/Any
-@test/AnnoConstructor public constructor test/Foo.<init>(@test/AnnoConstructorParameter i: kotlin/Int)
-@delegate:test/AnnoDelegatedField public final /* delegated */ val test/Foo.immutableProp: kotlin/Int
+public final class test/Foo : kotlin/Any
+public constructor test/Foo.<init>(@test/AnnoConstructorParameter i: kotlin/Int)
+public final /* delegated */ val test/Foo.immutableProp: kotlin/Int
 public final /* non-default */ /* getter */ test/Foo.immutableProp.<get-immutableProp>
 public final var test/Foo.mutableProp: kotlin/Int
 public final /* getter */ test/Foo.mutableProp.<get-mutableProp>
-@test/AnnoSetter2 public final /* non-default */ /* setter */ test/Foo.mutableProp.<set-mutableProp>(@test/AnnoSetParam2 x: kotlin/Int)
-@test/AnnoProperty @field:test/AnnoBackingField public final var test/Foo.prop: kotlin/Int
-@test/AnnoGetter public final /* non-default */ /* getter */ test/Foo.prop.<get-prop>
-@test/AnnoSetter public final /* non-default */ /* setter */ test/Foo.prop.<set-prop>(@test/AnnoSetParam x: kotlin/Int)
+public final /* non-default */ /* setter */ test/Foo.mutableProp.<set-mutableProp>(@test/AnnoSetParam2 x: kotlin/Int)
+public final var test/Foo.prop: kotlin/Int
+public final /* non-default */ /* getter */ test/Foo.prop.<get-prop>
+public final /* non-default */ /* setter */ test/Foo.prop.<set-prop>(@test/AnnoSetParam x: kotlin/Int)
 public final class test/Param : kotlin/Any
 public constructor test/Param.<init>()
-@test/AnnoFunction @receiver:test/AnnoFunctionExtensionReceiver public final fun test/Foo.test/extfun(@test/AnnoFunctionParam x: kotlin/Int): kotlin/Unit
-public final fun <@test/AnnoFunctionTypeParameter T#0> test/f(x: test/B<@test/AnnoClassUsageTypeParameter kotlin/Int>): kotlin/Unit
-public final fun test/varargWithCustomAndExtensionFunctionTypeAnnotation(vararg v: @test/AnnoType @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit>): kotlin/Unit
-public final fun test/varargWithCustomTypeAnnotationOnInt(vararg v: @test/AnnoType kotlin/Int): kotlin/Unit
-public final fun test/varargWithCustomTypeAnnotationOnLambda(vararg v: @test/AnnoType kotlin/Function0<kotlin/Unit>): kotlin/Unit
-public final fun test/varargWithCustomTypeAnnotationOnParam(vararg v: @test/AnnoType test/Param): kotlin/Unit
-public final fun test/varargWithExtensionFunctionTypeAnnotation(vararg v: @kotlin/ExtensionFunctionType kotlin/Function1<kotlin/Int, kotlin/Unit>): kotlin/Unit
-@test/AnnoPropertyExtensionReceiver public final val test/Foo.test/extProp: kotlin/Int
+public final fun test/Foo.test/extfun(@test/AnnoFunctionParam x: kotlin/Int): kotlin/Unit
+public final fun <T#0> test/f(x: test/B<kotlin/Int>): kotlin/Unit
+public final fun test/varargWithCustomAndExtensionFunctionTypeAnnotation(vararg v: kotlin/Function1<kotlin/Int, kotlin/Unit>): kotlin/Unit
+public final fun test/varargWithCustomTypeAnnotationOnInt(vararg v: kotlin/Int): kotlin/Unit
+public final fun test/varargWithCustomTypeAnnotationOnLambda(vararg v: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+public final fun test/varargWithCustomTypeAnnotationOnParam(vararg v: test/Param): kotlin/Unit
+public final fun test/varargWithExtensionFunctionTypeAnnotation(vararg v: kotlin/Function1<kotlin/Int, kotlin/Unit>): kotlin/Unit
+public final val test/Foo.test/extProp: kotlin/Int
 public final /* non-default */ /* getter */ test/extProp.<get-extProp>

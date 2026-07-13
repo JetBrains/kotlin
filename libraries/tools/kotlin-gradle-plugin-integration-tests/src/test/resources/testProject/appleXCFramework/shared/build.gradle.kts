@@ -27,7 +27,6 @@ kotlin {
         }
     }
     listOf(
-        watchosArm32(),
         watchosArm64(),
         watchosDeviceArm64(),
         watchosSimulatorArm64(),

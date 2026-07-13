@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// LANGUAGE: +EagerLambdaAnalysis, +CallCompletionRefinementsFor25, +UnitConversionsOnArbitraryExpressions, +InferThrowableTypeParameterToUpperBound
+// LANGUAGE: +EagerLambdaAnalysis, +CallCompletionRefinementsFor25, +InferThrowableTypeParameterToUpperBound
 // ISSUES: KT-86176
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -40,8 +40,8 @@ fun test() {
     val case4 = suspendAndSuspend { notSuspend() }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>case4<!>
 
-    val case5 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>suspendAndSuspend<!>(propertyNonSuspendType)
-     <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: suspendAndSuspend, [/suspendAndSuspend, /suspendAndSuspend]")!>case5<!>
+    val case5 = suspendAndSuspend(propertyNonSuspendType)
+     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>case5<!>
 
     val case6 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>suspendAndSuspend<!> { TODO() }
 
@@ -57,8 +57,8 @@ fun test() {
     val case10 = stringSuspendAndUnitNotSuspend { notSuspend() }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>case10<!>
 
-    val case11 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>stringSuspendAndUnitNotSuspend<!>(propertyNonSuspendType)
-     <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: stringSuspendAndUnitNotSuspend, [/stringSuspendAndUnitNotSuspend, /stringSuspendAndUnitNotSuspend]")!>case11<!>
+    val case11 = stringSuspendAndUnitNotSuspend(propertyNonSuspendType)
+     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>case11<!>
 
     val case12 = <!NONE_APPLICABLE!>stringSuspendAndUnitNotSuspend<!>(propertySuspendType)
 

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.daemon.common.ReportCategory
 import org.jetbrains.kotlin.daemon.common.ReportSeverity
 import org.jetbrains.kotlin.daemon.testfixtures.FakeCompilerServicesFacadeBase
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 

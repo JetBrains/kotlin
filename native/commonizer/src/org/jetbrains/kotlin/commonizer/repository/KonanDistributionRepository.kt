@@ -35,7 +35,7 @@ internal class KonanDistributionRepository(
 
                 klibLoaderResult.librariesStdlibFirst.mapToSetOrEmpty { library ->
                     if (library.versions.metadataVersion == null)
-                        logger.errorAndExitJvmProcess("Library does not have metadata version specified in manifest: ${library.libraryFile}")
+                        logger.errorAndExitJvmProcess("Library does not have metadata version specified in manifest: ${library.path}")
 
                     NativeLibrary(library)
                 }

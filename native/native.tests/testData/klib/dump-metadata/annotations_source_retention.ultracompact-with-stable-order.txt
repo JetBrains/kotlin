@@ -1,32 +1,32 @@
-@kotlin/annotation/Retention public final annotation class test/AnnoBackingField : kotlin/Annotation
+public final annotation class test/AnnoBackingField : kotlin/Annotation
 public constructor test/AnnoBackingField.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoClass : kotlin/Annotation
+public final annotation class test/AnnoClass : kotlin/Annotation
 public constructor test/AnnoClass.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoConstructor : kotlin/Annotation
+public final annotation class test/AnnoConstructor : kotlin/Annotation
 public constructor test/AnnoConstructor.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoConstructorParameter : kotlin/Annotation
+public final annotation class test/AnnoConstructorParameter : kotlin/Annotation
 public constructor test/AnnoConstructorParameter.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoDelegatedField : kotlin/Annotation
+public final annotation class test/AnnoDelegatedField : kotlin/Annotation
 public constructor test/AnnoDelegatedField.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoFunction : kotlin/Annotation
+public final annotation class test/AnnoFunction : kotlin/Annotation
 public constructor test/AnnoFunction.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoFunctionExtensionReceiver : kotlin/Annotation
+public final annotation class test/AnnoFunctionExtensionReceiver : kotlin/Annotation
 public constructor test/AnnoFunctionExtensionReceiver.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoFunctionParam : kotlin/Annotation
+public final annotation class test/AnnoFunctionParam : kotlin/Annotation
 public constructor test/AnnoFunctionParam.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoGetter : kotlin/Annotation
+public final annotation class test/AnnoGetter : kotlin/Annotation
 public constructor test/AnnoGetter.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoProperty : kotlin/Annotation
+public final annotation class test/AnnoProperty : kotlin/Annotation
 public constructor test/AnnoProperty.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoPropertyExtensionReceiver : kotlin/Annotation
+public final annotation class test/AnnoPropertyExtensionReceiver : kotlin/Annotation
 public constructor test/AnnoPropertyExtensionReceiver.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoSetParam : kotlin/Annotation
+public final annotation class test/AnnoSetParam : kotlin/Annotation
 public constructor test/AnnoSetParam.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoSetParam2 : kotlin/Annotation
+public final annotation class test/AnnoSetParam2 : kotlin/Annotation
 public constructor test/AnnoSetParam2.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoSetter : kotlin/Annotation
+public final annotation class test/AnnoSetter : kotlin/Annotation
 public constructor test/AnnoSetter.<init>()
-@kotlin/annotation/Retention public final annotation class test/AnnoSetter2 : kotlin/Annotation
+public final annotation class test/AnnoSetter2 : kotlin/Annotation
 public constructor test/AnnoSetter2.<init>()
 public final class test/Foo : kotlin/Any
 public constructor test/Foo.<init>(i: kotlin/Int)

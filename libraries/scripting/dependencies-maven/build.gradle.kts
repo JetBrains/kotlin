@@ -13,12 +13,11 @@ dependencies {
     implementation(kotlinStdlib())
     api(project(":kotlin-scripting-dependencies"))
 
-    implementation("org.apache.maven:maven-core:3.8.8")
-    implementation("org.apache.maven.wagon:wagon-http:3.5.3")
-    implementation("org.apache.maven.resolver:maven-resolver-connector-basic:1.9.22")
-    implementation("org.apache.maven.resolver:maven-resolver-transport-file:1.9.22")
-    implementation("org.apache.maven.resolver:maven-resolver-transport-wagon:1.9.22")
-    implementation("org.apache.maven.resolver:maven-resolver-impl:1.9.22")
+    implementation("org.apache.maven:maven-core:3.9.16")
+    implementation("org.apache.maven.resolver:maven-resolver-connector-basic:1.9.27")
+    implementation("org.apache.maven.resolver:maven-resolver-transport-file:1.9.27")
+    implementation("org.apache.maven.resolver:maven-resolver-transport-http:1.9.27")
+    implementation("org.apache.maven.resolver:maven-resolver-impl:1.9.27")
     implementation(libs.apache.commons.io)
 
     testImplementation(projectTests(":kotlin-scripting-dependencies"))

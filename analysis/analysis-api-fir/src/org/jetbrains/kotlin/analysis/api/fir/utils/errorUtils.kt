@@ -14,8 +14,21 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 
+private val recursionGuard = ThreadLocal.withInitial { false }
+
 internal fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, analysisSession: KaSession, symbol: KaSymbol) {
-    withEntry(name, symbol) { KaDebugRenderer(renderExtra = true).render(analysisSession, it) }
+    withEntry(name, symbol) { symbol ->
+        if (recursionGuard.get()) {
+            return@withEntry "Recursion detected"
+        }
+
+        recursionGuard.set(true)
+        try {
+            KaDebugRenderer(renderExtra = true).render(analysisSession, symbol)
+        } finally {
+            recursionGuard.set(false)
+        }
+    }
 
     val psi = symbol.psi
     val psiModule = psi?.let { context(analysisSession) { it.kaModule } }

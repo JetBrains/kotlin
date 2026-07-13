@@ -54,13 +54,19 @@ abstract class SupertypeSupplier {
 }
 
 fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): List<FirClassSymbol<*>> {
-    val lookupTags = mutableListOf<ConeClassLikeLookupTag>()
+    val lookupTags = SmartSet.create<ConeClassLikeLookupTag>()
 
     fun ConeKotlinType.collectClassIds() {
         when (val unwrappedType = unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(useSiteSession)) {
             is ConeClassLikeType -> lookupTags.addIfNotNull(unwrappedType.lookupTag)
             is ConeIntersectionType -> unwrappedType.intersectedTypes.forEach { it.collectClassIds() }
-            else -> {}
+
+            is ConeCapturedType -> unwrappedType.constructor.supertypes?.forEach { it.collectClassIds() }
+            is ConeIntegerLiteralType -> {}
+            is ConeTypeParameterType -> unwrappedType.toTypeParameterSymbol(useSiteSession)?.resolvedBounds?.forEach { it.coneType.collectClassIds() }
+            is ConeLookupTagBasedType -> {}
+            is ConeStubType -> {}
+            is ConeTypeVariableType -> {}
         }
     }
 

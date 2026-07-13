@@ -57,7 +57,8 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
             Bad("2.2-Beta1"),
             Good("2.3"),
             Good("2.4"),
-            Bad("2.5"),
+            Good("2.5"),
+            Bad("2.6"),
         ).forEach { testData ->
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,

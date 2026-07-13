@@ -7,6 +7,7 @@ KtCallExpression(168,182): 'foo(1L, "str")'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -25,12 +26,14 @@ KtCallExpression(168,182): 'foo(1L, "str")'
               annotations: []
               typeArguments: []
               type: kotlin/Long
+            typeParameters: []
             visibility: PUBLIC
           type = kotlin.Long,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -49,6 +52,7 @@ KtCallExpression(168,182): 'foo(1L, "str")'
               annotations: []
               typeArguments: []
               type: kotlin/Boolean
+            typeParameters: []
             visibility: PUBLIC
           type = kotlin.Boolean
       ]

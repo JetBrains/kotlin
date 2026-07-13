@@ -3,3 +3,4 @@ org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,KT-82305,
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11IrBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11FirLightTreeBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlin.analysis.low.level.api.fir.ContextCollectorSourceTestGenerated.SmartCasts.testCollectionLiteralWithLambda,KTI-3169,FLAKY
+org.jetbrains.kotlin.konan.test.blackbox.KT59030WorkaroundTest.kt59030,KT-87582,STABLE

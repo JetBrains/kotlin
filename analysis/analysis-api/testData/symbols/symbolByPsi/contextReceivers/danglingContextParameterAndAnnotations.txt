@@ -2,6 +2,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: Anno
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -23,116 +24,8 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotations: []
-        backingFieldSymbol: KaBackingFieldSymbol:
-          annotations: []
-          callableId: null
-          contextReceivers: []
-          isActual: false
-          isCompanion: false
-          isDelegated: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isNotDefault: false
-          isVal: true
-          location: PROPERTY
-          modality: FINAL
-          name: field
-          origin: PROPERTY_BACKING_FIELD
-          owningProperty: KaKotlinPropertySymbol(/Anno.position)
-          receiverParameter: null
-          returnType: KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: kotlin/String
-          visibility: PRIVATE
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: Anno
-          getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
-          getContainingJvmClassName: Anno
-          getContainingModule: KaSourceModule "Sources of main"
-          deprecation: null
-          importableFqName: null
-        callableId: /Anno.position
-        contextParameters: []
-        contextReceivers: []
-        getter: KaPropertyGetterSymbol:
-          annotations: []
-          callableId: null
-          contextReceivers: []
-          hasStableParameterNames: true
-          isActual: false
-          isCompanion: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isInline: false
-          isNotDefault: false
-          isOverride: false
-          location: PROPERTY
-          modality: FINAL
-          origin: SOURCE
-          receiverParameter: null
-          returnType: KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: kotlin/String
-          valueParameters: []
-          visibility: PUBLIC
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: Anno
-          getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
-          getContainingJvmClassName: Anno
-          getContainingModule: KaSourceModule "Sources of main"
-          deprecation: null
-          importableFqName: null
-        hasBackingField: true
-        hasGetter: true
-        hasSetter: false
-        initializer: KaNonConstantInitializerValue(val position: String)
-        isActual: false
-        isCompanion: false
-        isConst: false
-        isDelegated: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isFromPrimaryConstructor: true
-        isLateInit: false
-        isOverride: false
-        isStatic: false
-        isVal: true
-        location: CLASS
-        modality: FINAL
-        name: position
-        origin: SOURCE
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/String
-        setter: null
-        typeParameters: []
-        visibility: PUBLIC
-        getDispatchReceiver(): KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: Anno
-        getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
-        getContainingJvmClassName: Anno
-        getContainingModule: KaSourceModule "Sources of main"
-        deprecation: null
-        javaGetterName: getPosition
-        javaSetterName: null
-        isInline: false
-        importableFqName: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -150,11 +43,13 @@ KaConstructorSymbol:
       modality: FINAL
       name: position
       origin: SOURCE
+      primaryConstructorProperty: KaKotlinPropertySymbol(/Anno.position)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
       getContainingJvmClassName: Anno
@@ -209,6 +104,7 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -228,6 +124,7 @@ KaContextParameterSymbol:
         psi: KtAnnotationEntry
     ]
     type: ERROR_TYPE
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -238,6 +135,7 @@ KaContextParameterSymbol:
 KaContextParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -262,6 +160,7 @@ KaContextParameterSymbol:
         type: ERROR_TYPE
     ]
     type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  ERROR CLASS: Symbol not found for Unresolved>
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -306,6 +205,7 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -325,6 +225,7 @@ KaContextParameterSymbol:
         psi: KtAnnotationEntry
     ]
     type: ERROR_TYPE
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -335,6 +236,7 @@ KaContextParameterSymbol:
 KaContextParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -359,6 +261,7 @@ KaContextParameterSymbol:
         type: ERROR_TYPE
     ]
     type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  ERROR CLASS: Symbol not found for Unresolved>
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -443,6 +346,7 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -462,6 +366,7 @@ KaContextParameterSymbol:
         psi: KtAnnotationEntry
     ]
     type: ERROR_TYPE
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -472,6 +377,7 @@ KaContextParameterSymbol:
 KaContextParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -496,6 +402,7 @@ KaContextParameterSymbol:
         type: ERROR_TYPE
     ]
     type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  ERROR CLASS: Symbol not found for Unresolved>
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null

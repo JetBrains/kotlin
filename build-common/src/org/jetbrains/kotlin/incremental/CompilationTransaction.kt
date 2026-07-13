@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.incremental.storage.InMemoryStorageInterface
-import org.jetbrains.kotlin.konan.file.use
 import java.io.Closeable
 import java.io.File
 import java.nio.file.Files
@@ -286,5 +285,9 @@ class TransactionOutputsRegistrar(
     override fun addOutputFileGeneratedForPlugin(outputFile: File) {
         transaction.registerAddedOrChangedFile(outputFile.toPath())
         origin.addOutputFileGeneratedForPlugin(outputFile)
+    }
+
+    override fun addSourceFileGeneratedForPlugin(sourceFile: File) {
+        origin.addSourceFileGeneratedForPlugin(sourceFile)
     }
 }

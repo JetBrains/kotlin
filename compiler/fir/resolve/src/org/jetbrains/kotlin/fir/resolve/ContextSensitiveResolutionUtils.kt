@@ -136,7 +136,7 @@ private fun FirCallableSymbol<*>.hadImplicitTypeInSource(): Boolean {
 
 private fun FirExpression.obtainSymbol(): FirBasedSymbol<*>? = when (this) {
     is FirPropertyAccessExpression -> toResolvedCallableSymbol()
-    is FirResolvedQualifier -> symbol
+    is FirResolvedQualifier -> qualifierSymbol
     else -> null
 }
 

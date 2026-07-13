@@ -6,6 +6,7 @@ KaPropertyGetterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -25,6 +26,7 @@ KaPropertyGetterSymbol:
         psi: KtAnnotationEntry
     ]
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -46,6 +48,7 @@ KaPropertyGetterSymbol:
       ]
       typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(getterWithReceiverAndAnnotations.kt)
     getContainingJvmClassName: GetterWithReceiverAndAnnotationsKt
@@ -56,6 +59,7 @@ KaPropertyGetterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   valueParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(getterWithReceiverAndAnnotations.kt)

@@ -16,7 +16,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -47,18 +50,18 @@ public class TestFiles {
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
 
     @NotNull
-    public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
+    public static <M extends LegacyTestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
         return createTestFiles(testFileName, expectedText, factory, false);
     }
 
     @NotNull
-    public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
+    public static <M extends LegacyTestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
             boolean preserveLocations) {
         return createTestFiles(testFileName, expectedText, factory, preserveLocations, false);
     }
 
     @NotNull
-    public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
+    public static <M extends LegacyTestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
             boolean preserveLocations, boolean parseDirectivesPerFile) {
         Map<String, M> modules = new HashMap<>();
         List<F> testFiles = Lists.newArrayList();
@@ -260,10 +263,10 @@ public class TestFiles {
         M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<String> dependsOn);
     }
 
-    public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<KotlinBaseTest.TestModule, F> {
+    public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<LegacyTestModule, F> {
         @Override
         public final F createFile(
-                @Nullable KotlinBaseTest.TestModule module,
+                @Nullable LegacyTestModule module,
                 @NotNull String fileName,
                 @NotNull String text,
                 @NotNull Directives directives
@@ -275,7 +278,7 @@ public class TestFiles {
         public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives);
 
         @Override
-        public KotlinBaseTest.TestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<String> dependsOn) {
+        public LegacyTestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<String> dependsOn) {
             return null;
         }
     }

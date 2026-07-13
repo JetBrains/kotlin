@@ -20,7 +20,7 @@ FILE: [ResolvedTo(RAW_FIR)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public? final? [ResolvedTo(RAW_FIR)] val prop: Any
-            private final? [ResolvedTo(RAW_FIR)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Any
 
     }
@@ -47,7 +47,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public? final? [ResolvedTo(RAW_FIR)] val prop: Any
-            private final? [ResolvedTo(RAW_FIR)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Any
 
     }
@@ -74,7 +74,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val prop: Any
-            private final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=A] get(): Any
 
     }
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] val prop: Any
-            private final? [ResolvedTo(COMPANION_GENERATION)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=A] get(): Any
 
     }
@@ -128,7 +128,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public? final? [ResolvedTo(SUPER_TYPES)] val prop: Any
-            private final? [ResolvedTo(SUPER_TYPES)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=A] get(): Any
 
     }
@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public? final? [ResolvedTo(TYPES)] val prop: R|kotlin/Any|
-            private final? [ResolvedTo(TYPES)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final? [ResolvedTo(TYPES)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(TYPES)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public final [ResolvedTo(STATUS)] val prop: R|kotlin/Any|
-            private final [ResolvedTo(STATUS)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: R|kotlin/Any|
-            private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -236,7 +236,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/Any|
-            private final [ResolvedTo(CONTRACTS)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -263,7 +263,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /explicitType]] val prop: R|kotlin/Any|
-            private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] backing field field: R|@R|Anno|(LAZY_EXPRESSION)  MyList<@R|Anno|(LAZY_EXPRESSION)  MyList<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|/explicitType|()
+            private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] backing field field: R|@R|Anno|(LAZY_EXPRESSION)  MyList<@R|Anno|(LAZY_EXPRESSION)  MyList<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|/explicitType|()
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -290,7 +290,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /explicitType]] val prop: R|kotlin/Any|
-            private final [ResolvedTo(CONSTANT_EVALUATION)] backing field field: R|@R|Anno|(LAZY_EXPRESSION)  MyList<@R|Anno|(LAZY_EXPRESSION)  MyList<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|/explicitType|()
+            private final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] backing field field: R|@R|Anno|(LAZY_EXPRESSION)  MyList<@R|Anno|(LAZY_EXPRESSION)  MyList<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|/explicitType|()
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -317,7 +317,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any|
-            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>>| = R|/explicitType|()
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] backing field field: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>>| = R|/explicitType|()
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -344,7 +344,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any|
-            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>>| = R|/explicitType|()
+            private final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] backing field field: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>>| = R|/explicitType|()
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -373,7 +373,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] explicitBackingFieldWithAnnotatedImplicitType.k
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any|
-            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>>| = R|/explicitType|()
+            private final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] backing field field: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>>| = R|/explicitType|()
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }

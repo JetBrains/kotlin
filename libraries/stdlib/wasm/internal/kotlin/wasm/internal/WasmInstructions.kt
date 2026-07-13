@@ -499,20 +499,24 @@ internal fun wasm_i64_trunc_sat_f32_s(a: Float): Long =
 internal fun wasm_i64_trunc_sat_f64_s(a: Double): Long =
     implementedAsIntrinsic
 
-@WasmOp(WasmOp.I32_LOAD)
-internal fun wasm_i32_load(x: Int): Int =
-    implementedAsIntrinsic
-
 @WasmOp(WasmOp.I32_LOAD8_S)
 internal fun wasm_i32_load8_s(x: Int): Byte =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.I32_LOAD16_S)
+internal fun wasm_i32_load16_s(x: Int): Short =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_LOAD16_U)
 internal fun wasm_i32_load16_u(x: Int): Int =
     implementedAsIntrinsic
 
-@WasmOp(WasmOp.I32_STORE)
-internal fun wasm_i32_store(addr: Int, i: Int): Unit =
+@WasmOp(WasmOp.I32_LOAD)
+internal fun wasm_i32_load(x: Int): Int =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.I64_LOAD)
+internal fun wasm_i64_load(x: Int): Long =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_STORE8)
@@ -521,6 +525,18 @@ internal fun wasm_i32_store8(addr: Int, i: Byte): Unit =
 
 @WasmOp(WasmOp.I32_STORE16)
 internal fun wasm_i32_store16(addr: Int, c: Char): Unit =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.I32_STORE16)
+internal fun wasm_i32_store16(addr: Int, c: Short): Unit =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.I32_STORE)
+internal fun wasm_i32_store(addr: Int, i: Int): Unit =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.I64_STORE)
+internal fun wasm_i64_store(addr: Int, i: Long): Unit =
     implementedAsIntrinsic
 
 /**

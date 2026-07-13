@@ -1,4 +1,4 @@
-@test/Primitives public final class test/C : kotlin/Any
+public final class test/C : kotlin/Any
 public constructor test/C.<init>()
 public final annotation class test/Primitives : kotlin/Annotation
 public constructor test/Primitives.<init>(byte: kotlin/Byte, char: kotlin/Char, short: kotlin/Short, int: kotlin/Int, long: kotlin/Long, float: kotlin/Float, double: kotlin/Double, boolean: kotlin/Boolean)

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScope: Fir2IrConversionScope) : Fir2IrComponents by c {
@@ -91,9 +90,9 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
         if (this is ConeCapturedType && this.constructor.projection.kind == ProjectionKind.IN) {
             // But `Captured(in Type)?` does accepts nulls independently of `Type`
             if (isMarkedNullable) return true
-            return constructor.projection.type!!.canBeNull(session)
+            return constructor.projection.type!!.canBeNull()
         }
-        return canBeNull(session) || hasEnhancedNullability
+        return canBeNull() || hasEnhancedNullability
     }
 
     fun IrStatementContainer.coerceStatementsToUnit(coerceLastExpressionToUnit: Boolean): IrStatementContainer {

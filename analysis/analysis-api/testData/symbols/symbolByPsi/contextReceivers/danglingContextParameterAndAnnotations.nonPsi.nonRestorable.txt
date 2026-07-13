@@ -4,6 +4,7 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -23,6 +24,7 @@ KaContextParameterSymbol:
         psi: KtAnnotationEntry
     ]
     type: ERROR_TYPE
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -33,6 +35,7 @@ KaContextParameterSymbol:
 KaContextParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -57,6 +60,7 @@ KaContextParameterSymbol:
         type: ERROR_TYPE
     ]
     type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  ERROR CLASS: Symbol not found for Unresolved>
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -70,6 +74,7 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -89,6 +94,7 @@ KaContextParameterSymbol:
         psi: KtAnnotationEntry
     ]
     type: ERROR_TYPE
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -99,6 +105,7 @@ KaContextParameterSymbol:
 KaContextParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -123,6 +130,7 @@ KaContextParameterSymbol:
         type: ERROR_TYPE
     ]
     type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  ERROR CLASS: Symbol not found for Unresolved>
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -167,6 +175,7 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -186,6 +195,7 @@ KaContextParameterSymbol:
         psi: KtAnnotationEntry
     ]
     type: ERROR_TYPE
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -196,6 +206,7 @@ KaContextParameterSymbol:
 KaContextParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -220,6 +231,7 @@ KaContextParameterSymbol:
         type: ERROR_TYPE
     ]
     type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  ERROR CLASS: Symbol not found for Unresolved>
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null

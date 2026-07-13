@@ -598,7 +598,7 @@ class FirElementSerializer private constructor(
             property.isExternal,
             property.delegateFieldSymbol != null,
             property.isExpect,
-            property.isStatic,
+            property.isCompanionBlockMember,
             ProtoEnumFlags.returnValueStatus(property.status.returnValueStatus),
         )
         if (flags != builder.flags) {
@@ -635,10 +635,18 @@ class FirElementSerializer private constructor(
         val receiverParameter = property.receiverParameter
         if (receiverParameter != null) {
             val receiverTypeRef = receiverParameter.typeRef
-            if (useTypeTable()) {
-                builder.receiverTypeId = local.typeId(receiverTypeRef)
+            if (property.isCompanionExtension) {
+                if (useTypeTable()) {
+                    builder.companionExtensionReceiverTypeId = local.typeId(receiverTypeRef)
+                } else {
+                    builder.setCompanionExtensionReceiverType(local.typeProto(receiverTypeRef))
+                }
             } else {
-                builder.setReceiverType(local.typeProto(receiverTypeRef))
+                if (useTypeTable()) {
+                    builder.receiverTypeId = local.typeId(receiverTypeRef)
+                } else {
+                    builder.setReceiverType(local.typeProto(receiverTypeRef))
+                }
             }
         }
 
@@ -682,7 +690,7 @@ class FirElementSerializer private constructor(
             function.isSuspend,
             namedFunction?.isExpect == true,
             shouldSetStableParameterNames(function),
-            function.isStatic,
+            function.isCompanionBlockMember,
             ProtoEnumFlags.returnValueStatus(namedFunction?.status?.returnValueStatus),
         )
 
@@ -729,10 +737,18 @@ class FirElementSerializer private constructor(
         val receiverParameter = function.receiverParameter
         if (receiverParameter != null) {
             val receiverTypeRef = receiverParameter.typeRef
-            if (useTypeTable()) {
-                builder.receiverTypeId = local.typeId(receiverTypeRef)
+            if (function.isCompanionExtension) {
+                if (useTypeTable()) {
+                    builder.companionExtensionReceiverTypeId = local.typeId(receiverTypeRef)
+                } else {
+                    builder.setCompanionExtensionReceiverType(local.typeProto(receiverTypeRef))
+                }
             } else {
-                builder.setReceiverType(local.typeProto(receiverTypeRef))
+                if (useTypeTable()) {
+                    builder.receiverTypeId = local.typeId(receiverTypeRef)
+                } else {
+                    builder.setReceiverType(local.typeProto(receiverTypeRef))
+                }
             }
         }
 

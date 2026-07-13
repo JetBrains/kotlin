@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -13,6 +15,9 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -23,12 +28,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.calls.inference.isError
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 abstract class ResolutionDiagnostic(val applicability: CandidateApplicability)
 
@@ -38,13 +45,36 @@ abstract class InapplicableArgumentDiagnostic : ResolutionDiagnostic(INAPPLICABL
 
 class MixingNamedAndPositionArguments(override val argument: FirExpression) : InapplicableArgumentDiagnostic()
 
-class InferredEmptyIntersectionDiagnostic(
+class InferredEmptyIntersectionDiagnostic private constructor(
     val incompatibleTypes: Collection<ConeKotlinType>,
     val causingTypes: Collection<ConeKotlinType>,
     val typeVariable: ConeTypeVariable,
     val kind: EmptyIntersectionTypeKind,
-    val isError: Boolean
-) : ResolutionDiagnostic(INAPPLICABLE)
+    val isError: Boolean,
+    applicability: CandidateApplicability,
+) : ResolutionDiagnostic(applicability) {
+    companion object {
+        context(sessionHolder: SessionHolder)
+        operator fun invoke(
+            incompatibleTypes: Collection<ConeKotlinType>,
+            causingTypes: Collection<ConeKotlinType>,
+            typeVariable: ConeTypeVariable,
+            kind: EmptyIntersectionTypeKind,
+        ): InferredEmptyIntersectionDiagnostic {
+            val isError = kind.isError(sessionHolder.session.languageVersionSettings)
+            val isInapplicable = isError || LanguageFeature.FixApplicabilityOfEmptyIntersection.isDisabled()
+
+            return InferredEmptyIntersectionDiagnostic(
+                incompatibleTypes,
+                causingTypes,
+                typeVariable,
+                kind,
+                isError,
+                if (isInapplicable) INAPPLICABLE else RESOLVED_LOW_PRIORITY
+            )
+        }
+    }
+}
 
 class TooManyArguments(
     val argument: FirExpression,
@@ -141,6 +171,7 @@ object InvokeOnHiddenCompanionObject : ResolutionDiagnostic(HIDDEN)
 
 class InapplicableNullableReceiver(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_CALL)
 
+@OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.EnumEntries)
 object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
 
 object LowerPriorityForDynamic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)

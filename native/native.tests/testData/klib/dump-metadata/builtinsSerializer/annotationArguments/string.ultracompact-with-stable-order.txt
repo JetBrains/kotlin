@@ -1,6 +1,6 @@
-@test/JustString @test/StringArray public final class test/C1 : kotlin/Any
+public final class test/C1 : kotlin/Any
 public constructor test/C1.<init>()
-@test/StringArray public final class test/C2 : kotlin/Any
+public final class test/C2 : kotlin/Any
 public constructor test/C2.<init>()
 public final annotation class test/JustString : kotlin/Annotation
 public constructor test/JustString.<init>(string: kotlin/String)

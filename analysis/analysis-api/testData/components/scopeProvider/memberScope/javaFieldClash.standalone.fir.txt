@@ -1,6 +1,7 @@
 KaJavaFieldSymbol:
   annotations: []
   callableId: /JavaClass.field
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -19,6 +20,7 @@ KaJavaFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -33,6 +35,7 @@ KaJavaFieldSymbol:
 KaJavaFieldSymbol:
   annotations: []
   callableId: /JavaClass.field
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -50,6 +53,7 @@ KaJavaFieldSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/String!
+  typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -95,8 +99,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -114,11 +118,13 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
@@ -231,6 +237,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: JavaClass
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false

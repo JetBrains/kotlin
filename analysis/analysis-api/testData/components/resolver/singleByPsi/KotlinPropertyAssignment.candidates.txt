@@ -119,6 +119,7 @@
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -137,6 +138,7 @@
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
         extensionReceiver = null

@@ -97,8 +97,8 @@ callables: 5
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -116,11 +116,13 @@ callables: 5
         modality: FINAL
         name: foo
         origin: SOURCE
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: generated/GenClass2
+        typeParameters: []
         visibility: PUBLIC
     ]
     visibility: PUBLIC
@@ -155,6 +157,7 @@ callables: 5
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -173,6 +176,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       visibility: PUBLIC
     returnType: KaUsualClassType:
       annotations: []
@@ -190,6 +194,7 @@ callables: 5
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -209,6 +214,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       visibility: PRIVATE
     callableId: generated/genTopLevelVal1
     contextParameters: []
@@ -216,6 +222,7 @@ callables: 5
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
@@ -234,6 +241,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       valueParameters: []
       visibility: PUBLIC
     hasBackingField: true
@@ -247,7 +255,6 @@ callables: 5
     isExpect: false
     isExtension: false
     isExternal: false
-    isFromPrimaryConstructor: false
     isLateInit: false
     isOverride: false
     isStatic: false
@@ -256,6 +263,7 @@ callables: 5
     modality: FINAL
     name: genTopLevelVal1
     origin: SOURCE
+    primaryConstructorParameter: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -273,6 +281,7 @@ callables: 5
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -292,6 +301,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       visibility: PRIVATE
     callableId: generated/genTopLevelVar1
     contextParameters: []
@@ -299,6 +309,7 @@ callables: 5
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
@@ -317,6 +328,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       valueParameters: []
       visibility: PUBLIC
     hasBackingField: true
@@ -330,7 +342,6 @@ callables: 5
     isExpect: false
     isExtension: false
     isExternal: false
-    isFromPrimaryConstructor: false
     isLateInit: false
     isOverride: false
     isStatic: false
@@ -339,6 +350,7 @@ callables: 5
     modality: FINAL
     name: genTopLevelVar1
     origin: SOURCE
+    primaryConstructorParameter: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -347,6 +359,7 @@ callables: 5
     setter: KaPropertySetterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
@@ -363,8 +376,8 @@ callables: 5
       parameter: KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -382,23 +395,26 @@ callables: 5
         modality: FINAL
         name: value
         origin: SOURCE
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: kotlin/String
+        typeParameters: []
         visibility: PUBLIC
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Unit
+      typeParameters: []
       valueParameters: [
         KaValueParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
-          generatedPrimaryConstructorProperty: null
           hasDeclaredDefaultValue: false
           hasDefaultValue: false
           isActual: false
@@ -416,11 +432,13 @@ callables: 5
           modality: FINAL
           name: value
           origin: SOURCE
+          primaryConstructorProperty: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: kotlin/String
+          typeParameters: []
           visibility: PUBLIC
       ]
       visibility: INTERNAL
@@ -435,6 +453,7 @@ callables: 5
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -454,6 +473,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PRIVATE
     callableId: generated/genExtensionVal1
     contextParameters: []
@@ -461,6 +481,7 @@ callables: 5
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
@@ -477,6 +498,7 @@ callables: 5
       receiverParameter: KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -495,11 +517,13 @@ callables: 5
           annotations: []
           typeArguments: []
           type: generated/GenClass2
+        typeParameters: []
         visibility: PUBLIC
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       valueParameters: []
       visibility: PUBLIC
     hasBackingField: false
@@ -513,7 +537,6 @@ callables: 5
     isExpect: false
     isExtension: true
     isExternal: false
-    isFromPrimaryConstructor: false
     isLateInit: false
     isOverride: false
     isStatic: false
@@ -522,9 +545,11 @@ callables: 5
     modality: FINAL
     name: genExtensionVal1
     origin: SOURCE
+    primaryConstructorParameter: null
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -543,6 +568,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: generated/GenClass2
+      typeParameters: []
       visibility: PUBLIC
     returnType: KaUsualClassType:
       annotations: []

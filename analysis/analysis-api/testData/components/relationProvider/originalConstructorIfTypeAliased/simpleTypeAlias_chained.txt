@@ -3,6 +3,7 @@ Resolved constructor:
     annotations: []
     callableId: null
     containingClassId: test/MyTypeAliasSecond
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -33,6 +34,7 @@ Original constructor if type aliased:
     annotations: []
     callableId: null
     containingClassId: test/MyClass
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false

@@ -33,6 +33,48 @@ public fun InternalLibInterface_experimentalFun__reverse(self: InternalLibInterf
     return run<Unit> { _result }
 }
 
+@ImportedBridge("InternalLibInterface_experimentalProp_get__reverse_swift")
+internal external fun InternalLibInterface_experimentalProp_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(InternalLibInterface::class, "<get-experimentalProp>")
+public fun InternalLibInterface_experimentalProp_get__reverse(self: InternalLibInterface): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = InternalLibInterface_experimentalProp_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("InternalLibInterface_experimentalProp_set__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun InternalLibInterface_experimentalProp_set__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(InternalLibInterface::class, "<set-experimentalProp>")
+public fun InternalLibInterface_experimentalProp_set__TypesOfArguments__Swift_String____reverse(self: InternalLibInterface, newValue: kotlin.String): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __newValue = newValue.objcPtr()
+    val _result = InternalLibInterface_experimentalProp_set__TypesOfArguments__Swift_String____reverse_swift(__self, __newValue)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("InternalLibInterface_foo_get__reverse_swift")
+internal external fun InternalLibInterface_foo_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(InternalLibInterface::class, "<get-foo>")
+public fun InternalLibInterface_foo_get__reverse(self: InternalLibInterface): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = InternalLibInterface_foo_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("InternalLibInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun InternalLibInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(InternalLibInterface::class, "<set-foo>")
+public fun InternalLibInterface_foo_set__TypesOfArguments__Swift_String____reverse(self: InternalLibInterface, newValue: kotlin.String): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __newValue = newValue.objcPtr()
+    val _result = InternalLibInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(__self, __newValue)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("InternalLibInterface_internalFun__reverse_swift")
 internal external fun InternalLibInterface_internalFun__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 
@@ -40,6 +82,27 @@ internal external fun InternalLibInterface_internalFun__reverse_swift(self: kotl
 public fun InternalLibInterface_internalFun__reverse(self: InternalLibInterface): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = InternalLibInterface_internalFun__reverse_swift(__self)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("InternalLibInterface_internalProp_get__reverse_swift")
+internal external fun InternalLibInterface_internalProp_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(InternalLibInterface::class, "<get-internalProp>")
+public fun InternalLibInterface_internalProp_get__reverse(self: InternalLibInterface): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = InternalLibInterface_internalProp_get__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(InternalLibInterface::class, "<set-internalProp>")
+public fun InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String____reverse(self: InternalLibInterface, newValue: kotlin.String): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __newValue = newValue.objcPtr()
+    val _result = InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String____reverse_swift(__self, __newValue)
     return run<Unit> { _result }
 }
 

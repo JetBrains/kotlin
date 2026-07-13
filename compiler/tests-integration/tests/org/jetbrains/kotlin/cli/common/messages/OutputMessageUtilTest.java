@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.cli.common.messages;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-public class OutputMessageUtilTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class OutputMessageUtilTest {
     enum TargetOS {
         UNIX {
             @Override
@@ -62,39 +64,45 @@ public class OutputMessageUtilTest extends TestCase {
         List<File> sourceFiles = Arrays.asList(sourceFileArray);
         String message = OutputMessageUtil.formatOutputMessage(sourceFiles, outputFile);
         OutputMessageUtil.Output output = OutputMessageUtil.parseOutputMessage(message);
-        assertNotNull("Output is null", output);
+        assertNotNull(output, "Output is null");
         assertEquals(sourceFiles, output.sourceFiles);
         assertEquals(outputFile, output.outputFile);
     }
 
-    public void testOneInOneOut() throws Exception {
+    @Test
+    public void testOneInOneOut() {
         doTest("foo/bar.class", "foo/bar.kt");
         doTest("/foo/bar.class", "/foo/bar.kt");
         doTest("/foo/bar.class", "foo/bar.kt");
         doTest("foo/bar.class", "/foo/bar.kt");
     }
 
-    public void testTwoInOneOut() throws Exception {
+    @Test
+    public void testTwoInOneOut() {
         doTest("foo/bar.class", "foo/bar.kt", "foo/buzz.kt");
         doTest("/foo/bar.class", "/foo/bar.kt", "/foo/buzz.kt");
         doTest("foo/bar.class", "/foo/bar.kt", "foo/buzz.kt");
         doTest("foo/bar.class", "foo/bar.kt", "/foo/buzz.kt");
     }
 
-    public void testOneInNoneOut() throws Exception {
+    @Test
+    public void testOneInNoneOut() {
         doTest("foo/bar.class");
         doTest("/foo/bar.class");
     }
 
-    public void testWrongStart() throws Exception {
+    @Test
+    public void testWrongStart() {
         assertNull(OutputMessageUtil.parseOutputMessage("foo\nOutput:\nfoo"));
     }
 
-    public void testTwoOuts() throws Exception {
+    @Test
+    public void testTwoOuts() {
         assertNull(OutputMessageUtil.parseOutputMessage("Output:\nfoo\nbar\nInputs:\n"));
     }
 
-    public void testTooFewStrings() throws Exception {
+    @Test
+    public void testTooFewStrings() {
         assertNull(OutputMessageUtil.parseOutputMessage("Output:\nInputs:"));
     }
 }

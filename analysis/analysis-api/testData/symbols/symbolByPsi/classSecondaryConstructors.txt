@@ -2,6 +2,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: A
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -31,6 +32,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: A
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -52,8 +54,8 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -71,11 +73,13 @@ KaConstructorSymbol:
       modality: FINAL
       name: x
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(classSecondaryConstructors.kt)
       getContainingJvmClassName: A
@@ -94,6 +98,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: A
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -115,8 +120,8 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -134,11 +139,13 @@ KaConstructorSymbol:
       modality: FINAL
       name: y
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(classSecondaryConstructors.kt)
       getContainingJvmClassName: A
@@ -148,8 +155,8 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -167,11 +174,13 @@ KaConstructorSymbol:
       modality: FINAL
       name: z
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(classSecondaryConstructors.kt)
       getContainingJvmClassName: A

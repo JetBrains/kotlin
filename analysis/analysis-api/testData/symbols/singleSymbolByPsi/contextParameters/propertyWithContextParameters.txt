@@ -3,6 +3,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -22,6 +23,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
     getContainingJvmClassName: PropertyWithContextParametersKt
@@ -33,6 +35,7 @@ KaKotlinPropertySymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -53,6 +56,7 @@ KaKotlinPropertySymbol:
         ]
         typeArguments: []
         type: @R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
       getContainingJvmClassName: PropertyWithContextParametersKt
@@ -62,6 +66,7 @@ KaKotlinPropertySymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -87,6 +92,7 @@ KaKotlinPropertySymbol:
             type: @R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int
         ]
         type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
       getContainingJvmClassName: PropertyWithContextParametersKt
@@ -122,6 +128,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -140,6 +147,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
@@ -158,7 +166,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -167,6 +174,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

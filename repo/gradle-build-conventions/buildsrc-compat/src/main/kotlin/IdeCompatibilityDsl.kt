@@ -26,7 +26,7 @@ fun CompatibilityPredicate.or(other: CompatibilityPredicate): CompatibilityPredi
 }
 
 enum class Platform : CompatibilityPredicate {
-    P251;
+    P261;
 
     val version: Int = name.drop(1).toInt()
 
@@ -43,9 +43,9 @@ enum class Platform : CompatibilityPredicate {
 }
 
 enum class Ide(val platform: Platform) : CompatibilityPredicate {
-    IJ251(Platform.P251);
+    IJ261(Platform.P261);
 
-    val kind = Kind.values().first { it.shortName == name.take(2) }
+    val kind = Kind.entries.first { it.shortName == name.take(2) }
     val version = name.dropWhile { !it.isDigit() }.toInt()
 
     val displayVersion: String = when (kind) {

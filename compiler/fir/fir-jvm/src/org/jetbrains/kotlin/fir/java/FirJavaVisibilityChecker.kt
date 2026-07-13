@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.FqName
 
 @NoMutableState
@@ -44,16 +43,11 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
                     if (canSeeProtectedMemberOf(
                             symbol,
                             containingDeclarations,
-                            // Note: dispatch receiver isn't relevant for Java protected static
-                            // See e.g. diagnostics/tests/visibility/packagePrivateStatic.kt
-                            dispatchReceiver.takeUnless { symbol is FirCallableSymbol && symbol.isStatic },
+                            dispatchReceiver,
                             ownerLookupTag,
                             session,
-                            isVariableOrNamedFunction = symbol.isVariableOrNamedFunction(),
-                            isSyntheticProperty = symbol.fir is FirSyntheticPropertyAccessor,
                             supertypeSupplier
-                        )
-                    ) return true
+                        )) return true
 
                     // FE1.0 allows calling public setters with property assignment syntax if the getter is protected.
                     if (!isCallToPropertySetter || symbol !is FirSimpleSyntheticPropertySymbol) return false

@@ -382,18 +382,20 @@ internal open class CreateKCallableVisitor(private val container: KDeclarationCo
             else
                 (descriptor.dispatchReceiverParameter?.let { 1 } ?: 0) + (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
 
+        val boundReceiver = CallableReference.NO_RECEIVER
+        val overriddenStorage = KCallableOverriddenStorage.EMPTY
         when {
             descriptor.isVar -> when (receiverCount) {
-                -1 -> return DescriptorKMutablePropertyN<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
-                0 -> return DescriptorKMutableProperty0<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
-                1 -> return DescriptorKMutableProperty1<Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
-                2 -> return DescriptorKMutableProperty2<Any?, Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                -1 -> return DescriptorKMutablePropertyN<Any?>(container, descriptor, boundReceiver, overriddenStorage)
+                0 -> return DescriptorKMutableProperty0<Any?>(container, descriptor, boundReceiver, overriddenStorage)
+                1 -> return DescriptorKMutableProperty1<Any?, Any?>(container, descriptor, boundReceiver, overriddenStorage)
+                2 -> return DescriptorKMutableProperty2<Any?, Any?, Any?>(container, descriptor, boundReceiver, overriddenStorage)
             }
             else -> when (receiverCount) {
-                -1 -> return DescriptorKPropertyN<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
-                0 -> return DescriptorKProperty0<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
-                1 -> return DescriptorKProperty1<Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
-                2 -> return DescriptorKProperty2<Any?, Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                -1 -> return DescriptorKPropertyN<Any?>(container, descriptor, boundReceiver, overriddenStorage)
+                0 -> return DescriptorKProperty0<Any?>(container, descriptor, boundReceiver, overriddenStorage)
+                1 -> return DescriptorKProperty1<Any?, Any?>(container, descriptor, boundReceiver, overriddenStorage)
+                2 -> return DescriptorKProperty2<Any?, Any?, Any?>(container, descriptor, boundReceiver, overriddenStorage)
             }
         }
 

@@ -41,8 +41,8 @@ KaNamedFunctionSymbol:
           psi: null
       ]
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -60,6 +60,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: argument
       origin: LIBRARY
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: [
@@ -68,6 +69,7 @@ KaNamedFunctionSymbol:
         ]
         typeArguments: []
         type: @R|test/TypeAnno|()  kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: test.MyInterface
@@ -96,6 +98,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -118,6 +121,7 @@ KaKotlinPropertySymbol:
       ]
       typeArguments: []
       type: @R|test/TypeAnno|()  kotlin/String
+    typeParameters: []
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
@@ -134,6 +138,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -155,6 +160,7 @@ KaKotlinPropertySymbol:
       ]
       typeArguments: []
       type: @R|test/TypeAnno|()  kotlin/String
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -177,7 +183,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -186,6 +191,7 @@ KaKotlinPropertySymbol:
   modality: ABSTRACT
   name: property
   origin: LIBRARY
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [

@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.writeText
 
 /**
  * This is the test for the redesigned (new) KLIB writer API (as the opposite of the test for the legacy one: [LegacyKlibWriterTest]).
@@ -33,7 +35,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                 versions(MOCK_VERSIONS)
                 platformAndTargets(BuiltInsPlatform.COMMON)
             }
-        }.writeTo(createNewKlibDir().path)
+        }.writeTo(createNewKlibDir())
 
         // Invalid name
         assertThrows<IllegalStateException> {
@@ -43,7 +45,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                     versions(MOCK_VERSIONS)
                     platformAndTargets(BuiltInsPlatform.COMMON)
                 }
-            }.writeTo(createNewKlibDir().path)
+            }.writeTo(createNewKlibDir())
         }
 
         // Invalid name
@@ -54,7 +56,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                     versions(MOCK_VERSIONS)
                     platformAndTargets(BuiltInsPlatform.COMMON)
                 }
-            }.writeTo(createNewKlibDir().path)
+            }.writeTo(createNewKlibDir())
         }
 
         // No module name
@@ -64,7 +66,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                     versions(MOCK_VERSIONS)
                     platformAndTargets(BuiltInsPlatform.COMMON)
                 }
-            }.writeTo(createNewKlibDir().path)
+            }.writeTo(createNewKlibDir())
         }
     }
 
@@ -77,7 +79,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                 versions(MOCK_VERSIONS)
                 platformAndTargets(BuiltInsPlatform.COMMON)
             }
-        }.writeTo(createNewKlibDir().path)
+        }.writeTo(createNewKlibDir())
 
         // No versions
         assertThrows<IllegalStateException> {
@@ -86,7 +88,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                     moduleName("sample")
                     platformAndTargets(BuiltInsPlatform.COMMON)
                 }
-            }.writeTo(createNewKlibDir().path)
+            }.writeTo(createNewKlibDir())
         }
     }
 
@@ -99,7 +101,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                     moduleName("sample")
                     versions(MOCK_VERSIONS)
                 }
-            }.writeTo(createNewKlibDir().path)
+            }.writeTo(createNewKlibDir())
         }
 
         // OK
@@ -109,7 +111,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                 versions(MOCK_VERSIONS)
                 platformAndTargets(BuiltInsPlatform.COMMON)
             }
-        }.writeTo(createNewKlibDir().path)
+        }.writeTo(createNewKlibDir())
 
         // Unsupported targets
         assertThrows<IllegalStateException> {
@@ -119,7 +121,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                     versions(MOCK_VERSIONS)
                     platformAndTargets(BuiltInsPlatform.COMMON, listOf("foo", "bar"))
                 }
-            }.writeTo(createNewKlibDir().path)
+            }.writeTo(createNewKlibDir())
         }
 
         // OK
@@ -129,7 +131,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                 versions(MOCK_VERSIONS)
                 platformAndTargets(BuiltInsPlatform.JVM)
             }
-        }.writeTo(createNewKlibDir().path)
+        }.writeTo(createNewKlibDir())
 
         // Unsupported targets
         assertThrows<IllegalStateException> {
@@ -139,7 +141,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                     versions(MOCK_VERSIONS)
                     platformAndTargets(BuiltInsPlatform.JVM, listOf("foo", "bar"))
                 }
-            }.writeTo(createNewKlibDir().path)
+            }.writeTo(createNewKlibDir())
         }
 
         // OK
@@ -149,7 +151,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                 versions(MOCK_VERSIONS)
                 platformAndTargets(BuiltInsPlatform.JS)
             }
-        }.writeTo(createNewKlibDir().path)
+        }.writeTo(createNewKlibDir())
 
         // Unsupported targets
         assertThrows<IllegalStateException> {
@@ -159,7 +161,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                     versions(MOCK_VERSIONS)
                     platformAndTargets(BuiltInsPlatform.JS, listOf("foo", "bar"))
                 }
-            }.writeTo(createNewKlibDir().path)
+            }.writeTo(createNewKlibDir())
         }
 
         // OK
@@ -169,7 +171,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                 versions(MOCK_VERSIONS)
                 platformAndTargets(BuiltInsPlatform.NATIVE)
             }
-        }.writeTo(createNewKlibDir().path)
+        }.writeTo(createNewKlibDir())
 
         // OK
         KlibWriter {
@@ -178,7 +180,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                 versions(MOCK_VERSIONS)
                 platformAndTargets(BuiltInsPlatform.NATIVE, listOf("foo", "bar"))
             }
-        }.writeTo(createNewKlibDir().path)
+        }.writeTo(createNewKlibDir())
 
         // OK
         KlibWriter {
@@ -187,7 +189,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                 versions(MOCK_VERSIONS)
                 platformAndTargets(BuiltInsPlatform.WASM)
             }
-        }.writeTo(createNewKlibDir().path)
+        }.writeTo(createNewKlibDir())
 
         // OK
         KlibWriter {
@@ -196,7 +198,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                 versions(MOCK_VERSIONS)
                 platformAndTargets(BuiltInsPlatform.WASM, listOf("foo", "bar"))
             }
-        }.writeTo(createNewKlibDir().path)
+        }.writeTo(createNewKlibDir())
     }
 
     @Test
@@ -211,16 +213,16 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
         }
 
         val klibDir = createNewKlibDir()
-        val staleFile = File(klibDir, "stale.txt").apply { writeText("stale") }
+        val staleFile = klibDir.resolve("stale.txt").apply { writeText("stale") }
 
-        newWriter(true).writeTo(klibDir.path)
+        newWriter(allowIncrementalOverwriting = true).writeTo(klibDir)
         assertTrue(staleFile.exists(), "Pre-existing file must be preserved when allowIncrementalOverwriting = true")
 
-        newWriter(false).writeTo(klibDir.path)
+        newWriter(allowIncrementalOverwriting = false).writeTo(klibDir)
         assertFalse(staleFile.exists(), "Pre-existing file must be removed when allowIncrementalOverwriting = false")
     }
 
-    override fun writeKlib(parameters: NewKlibWriterParameters): File {
+    override fun writeKlib(parameters: NewKlibWriterParameters): Path {
         val klibLocation = createNewKlibDir()
 
         KlibWriter {
@@ -242,7 +244,7 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
                 customProperties { this += parameters.customManifestProperties }
             }
 
-        }.writeTo(klibLocation.path)
+        }.writeTo(klibLocation)
 
         return klibLocation
     }

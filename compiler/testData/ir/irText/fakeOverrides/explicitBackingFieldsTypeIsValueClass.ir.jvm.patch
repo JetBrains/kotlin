@@ -1,0 +1,11 @@
+--- a/explicitBackingFieldsTypeIsValueClass.ir.txt
++++ b/explicitBackingFieldsTypeIsValueClass.ir.jvm_ir.txt
+@@ -151,6 +151,8 @@
+         overridden:
+           public final fun <get-p4> (): <root>.I declared in <root>.A
+   CLASS CLASS name:V modality:FINAL visibility:public [value] superTypes:[<root>.I]
++    annotations:
++      JvmInline
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.V
+     PROPERTY name:x visibility:public modality:FINAL [val]
+       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]

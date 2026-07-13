@@ -49,6 +49,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   }
 
   @Test
+  @TestMetadata("crossModuleVolatile.kt")
+  public void testCrossModuleVolatile() {
+    run("crossModuleVolatile.kt");
+  }
+
+  @Test
   @TestMetadata("dynamic.kt")
   public void testDynamic() {
     run("dynamic.kt");
@@ -100,6 +106,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   @TestMetadata("identityHashCodeOnValueClass.kt")
   public void testIdentityHashCodeOnValueClass() {
     run("identityHashCodeOnValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("interfaceCompanionBlockProperty.kt")
+  public void testInterfaceCompanionBlockProperty() {
+    run("interfaceCompanionBlockProperty.kt");
   }
 
   @Test
@@ -208,6 +220,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   @TestMetadata("oldAtomicTypes.kt")
   public void testOldAtomicTypes() {
     run("oldAtomicTypes.kt");
+  }
+
+  @Test
+  @TestMetadata("prohibitKotlinPackageInNative.kt")
+  public void testProhibitKotlinPackageInNative() {
+    run("prohibitKotlinPackageInNative.kt");
   }
 
   @Test

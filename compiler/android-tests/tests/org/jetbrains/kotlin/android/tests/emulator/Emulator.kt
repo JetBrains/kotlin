@@ -52,6 +52,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
 
             commandLine.withEnvironment("ANDROID_SDK_ROOT", pathManager.androidSdkRoot)
             commandLine.withEnvironment("ANDROID_HOME", pathManager.androidSdkRoot)
+            commandLine.withEnvironment("JAVA_HOME", System.getProperty("java.home"))
 
             return commandLine
         }

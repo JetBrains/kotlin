@@ -2,8 +2,8 @@ public final annotation class test/Anno : kotlin/Annotation
 public constructor test/Anno.<init>(value: kotlin/String)
 public final val test/Anno.value: kotlin/String
 public final /* getter */ test/Anno.value.<get-value>
-@test/Anno public final val test/v1: kotlin/String /* = ... */
+public final val test/v1: kotlin/String /* = ... */
 public final /* getter */ test/v1.<get-v1>
 public final var test/v2: kotlin/String
-@test/Anno public final /* non-default */ /* getter */ test/v2.<get-v2>
-@test/Anno public final /* non-default */ /* setter */ test/v2.<set-v2>(@test/Anno value: kotlin/String)
+public final /* non-default */ /* getter */ test/v2.<get-v2>
+public final /* non-default */ /* setter */ test/v2.<set-v2>(@test/Anno value: kotlin/String)

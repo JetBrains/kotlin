@@ -6,10 +6,10 @@ plugins {
     id("analysis-api-artifact")
 }
 
-val analysisApiSurfaceDependencies: List<String> by rootProject.extra
-val compilerModules: Array<String> by rootProject.extra
-val analysisApiSurfaceModules: Array<String> by rootProject.extra
-val analysisApiModules: Array<String> by rootProject.extra
+val analysisApiSurfaceDependencies: List<String> = CompilerModules.analysisApiSurfaceDependencies
+val compilerModules: Array<String> = CompilerModules.compilerModules
+val analysisApiSurfaceModules: Array<String> = CompilerModules.analysisApiSurfaceModules
+val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
 
 val additionalCompilerProjects = listOf(
     ":kotlin-annotations-jvm",

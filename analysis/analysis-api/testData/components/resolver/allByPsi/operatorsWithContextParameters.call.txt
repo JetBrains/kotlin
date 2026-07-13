@@ -929,6 +929,7 @@ KtPrefixExpression(890,899): '+thisProp'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -947,6 +948,7 @@ KtPrefixExpression(890,899): '+thisProp'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -982,6 +984,7 @@ KtOperationReferenceExpression(890,891): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1000,6 +1003,7 @@ KtOperationReferenceExpression(890,891): '+'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1052,6 +1056,7 @@ KtPrefixExpression(908,910): '+a'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1070,6 +1075,7 @@ KtPrefixExpression(908,910): '+a'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1105,6 +1111,7 @@ KtOperationReferenceExpression(908,909): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1123,6 +1130,7 @@ KtOperationReferenceExpression(908,909): '+'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1175,6 +1183,7 @@ KtBinaryExpression(919,931): 'thisProp + 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1193,6 +1202,7 @@ KtBinaryExpression(919,931): 'thisProp + 1'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1261,6 +1271,7 @@ KtOperationReferenceExpression(928,929): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1279,6 +1290,7 @@ KtOperationReferenceExpression(928,929): '+'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1333,6 +1345,7 @@ KtBinaryExpression(940,945): 'a + 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1351,6 +1364,7 @@ KtBinaryExpression(940,945): 'a + 1'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1419,6 +1433,7 @@ KtOperationReferenceExpression(942,943): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1437,6 +1452,7 @@ KtOperationReferenceExpression(942,943): '+'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1491,6 +1507,7 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1509,6 +1526,7 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1583,6 +1601,7 @@ KtArrayAccessExpression(974,978): 'a[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1601,6 +1620,7 @@ KtArrayAccessExpression(974,978): 'a[1]'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1675,6 +1695,7 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1693,6 +1714,7 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1758,6 +1780,7 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1776,6 +1799,7 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1864,6 +1888,7 @@ KtOperationReferenceExpression(999,1000): '='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1882,6 +1907,7 @@ KtOperationReferenceExpression(999,1000): '='
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1984,6 +2010,7 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -2002,6 +2029,7 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2067,6 +2095,7 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -2085,6 +2114,7 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2173,6 +2203,7 @@ KtOperationReferenceExpression(1018,1019): '='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -2191,6 +2222,7 @@ KtOperationReferenceExpression(1018,1019): '='
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2293,6 +2325,7 @@ KtCallExpression(1032,1042): 'thisProp()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -2311,6 +2344,7 @@ KtCallExpression(1032,1042): 'thisProp()'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2366,6 +2400,7 @@ KtCallExpression(1051,1054): 'a()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -2384,6 +2419,7 @@ KtCallExpression(1051,1054): 'a()'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2439,6 +2475,7 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -2457,6 +2494,7 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2525,6 +2563,7 @@ KtOperationReferenceExpression(1072,1074): '+='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -2543,6 +2582,7 @@ KtOperationReferenceExpression(1072,1074): '+='
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2597,6 +2637,7 @@ KtBinaryExpression(1085,1091): 'a += 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -2615,6 +2656,7 @@ KtBinaryExpression(1085,1091): 'a += 1'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2683,6 +2725,7 @@ KtOperationReferenceExpression(1087,1089): '+='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -2701,6 +2744,7 @@ KtOperationReferenceExpression(1087,1089): '+='
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2758,6 +2802,7 @@ KtPostfixExpression(1100,1110): 'thisProp++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
@@ -2776,6 +2821,7 @@ KtPostfixExpression(1100,1110): 'thisProp++'
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -2846,6 +2892,7 @@ KtOperationReferenceExpression(1108,1110): '++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
@@ -2864,6 +2911,7 @@ KtOperationReferenceExpression(1108,1110): '++'
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -2971,6 +3019,7 @@ KtPostfixExpression(1123,1126): 'a++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
@@ -2989,6 +3038,7 @@ KtPostfixExpression(1123,1126): 'a++'
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -3059,6 +3109,7 @@ KtOperationReferenceExpression(1124,1126): '++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
@@ -3077,6 +3128,7 @@ KtOperationReferenceExpression(1124,1126): '++'
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -3127,6 +3179,7 @@ KtBinaryExpression(1136,1141): 'b + 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3145,6 +3198,7 @@ KtBinaryExpression(1136,1141): 'b + 1'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3213,6 +3267,7 @@ KtOperationReferenceExpression(1138,1139): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3231,6 +3286,7 @@ KtOperationReferenceExpression(1138,1139): '+'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3285,6 +3341,7 @@ KtPrefixExpression(1150,1152): '+b'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3303,6 +3360,7 @@ KtPrefixExpression(1150,1152): '+b'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3338,6 +3396,7 @@ KtOperationReferenceExpression(1150,1151): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3356,6 +3415,7 @@ KtOperationReferenceExpression(1150,1151): '+'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3408,6 +3468,7 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3426,6 +3487,7 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3500,6 +3562,7 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3518,6 +3581,7 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3583,6 +3647,7 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3601,6 +3666,7 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3689,6 +3755,7 @@ KtOperationReferenceExpression(1179,1180): '='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3707,6 +3774,7 @@ KtOperationReferenceExpression(1179,1180): '='
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3809,6 +3877,7 @@ KtCallExpression(1193,1196): 'b()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3827,6 +3896,7 @@ KtCallExpression(1193,1196): 'b()'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3882,6 +3952,7 @@ KtBinaryExpression(1205,1211): 'b += 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3900,6 +3971,7 @@ KtBinaryExpression(1205,1211): 'b += 1'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3968,6 +4040,7 @@ KtOperationReferenceExpression(1207,1209): '+='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -3986,6 +4059,7 @@ KtOperationReferenceExpression(1207,1209): '+='
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -4043,6 +4117,7 @@ KtPostfixExpression(1220,1223): 'b++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
@@ -4061,6 +4136,7 @@ KtPostfixExpression(1220,1223): 'b++'
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -4131,6 +4207,7 @@ KtOperationReferenceExpression(1221,1223): '++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
@@ -4149,6 +4226,7 @@ KtOperationReferenceExpression(1221,1223): '++'
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]

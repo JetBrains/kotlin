@@ -54,8 +54,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -73,10 +73,12 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: vals
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: T1
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(ofOperatorWithoutOperator.kt)
       getContainingJvmClassName: MyList.Companion

@@ -1,6 +1,7 @@
 KaEnumEntrySymbol:
   annotations: []
   callableId: test/E.A
+  contextParameters: []
   contextReceivers: []
   initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
@@ -19,6 +20,7 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: test/E
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(enumClass.kt)
   getContainingJvmClassName: test.E
@@ -29,6 +31,7 @@ KaEnumEntrySymbol:
 KaEnumEntrySymbol:
   annotations: []
   callableId: test/E.B
+  contextParameters: []
   contextReceivers: []
   initializer: null
   isActual: false
@@ -47,6 +50,7 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: test/E
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(enumClass.kt)
   getContainingJvmClassName: test.E
@@ -133,8 +137,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -152,11 +156,13 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: value
       origin: SOURCE_MEMBER_GENERATED
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(enumClass.kt)
       getContainingJvmClassName: test.E
@@ -182,6 +188,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -205,6 +212,7 @@ KaKotlinPropertySymbol:
           type: test/E
       ]
       type: kotlin/enums/EnumEntries<test/E>
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(enumClass.kt)
@@ -223,7 +231,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: true
@@ -232,6 +239,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: entries
   origin: SOURCE_MEMBER_GENERATED
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -258,6 +266,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: test/E
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

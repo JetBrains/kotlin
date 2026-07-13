@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmSymbols
-import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.isPublicAbi
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.mapping.mapSupertype
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.FrameMapBase
 import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
@@ -30,7 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -44,33 +38,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
-class IrFrameMap : FrameMapBase<IrSymbol>() {
-    private val typeMap = mutableMapOf<IrSymbol, Type>()
-
-    override fun enter(key: IrSymbol, type: Type): Int {
-        typeMap[key] = type
-        return super.enter(key, type)
-    }
-
-    override fun leave(key: IrSymbol): Int {
-        typeMap.remove(key)
-        return super.leave(key)
-    }
-
-    fun typeOf(symbol: IrSymbol): Type = typeMap[symbol]
-        ?: error("No mapping for symbol: ${symbol.owner.render()}")
-}
-
-internal val IrFunction.isStatic
-    get() = (this.dispatchReceiverParameter == null && this !is IrConstructor)
-
-fun IrFrameMap.enter(irDeclaration: IrSymbolOwner, type: Type): Int {
-    return enter(irDeclaration.symbol, type)
-}
-
-fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
-    return leave(irDeclaration.symbol)
-}
+internal val IrFunction.isStatic: Boolean
+    get() = this.dispatchReceiverParameter == null && this !is IrConstructor
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     val irFile = declaration.fileParent
@@ -96,13 +65,7 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     )
 }
 
-val IrType.isExtensionFunctionType: Boolean
-    get() = isFunctionTypeOrSubtype() && hasAnnotation(FqNames.extensionFunctionType)
-
-
 /* Borrowed with modifications from AsmUtil.java */
-
-private val NO_FLAG_LOCAL = 0
 
 private fun IrDeclaration.getVisibilityAccessFlagForAnonymous(): Int =
     if (isInlineOrContainedInInline(parent as? IrDeclaration)) Opcodes.ACC_PUBLIC else AsmUtil.NO_FLAG_PACKAGE_PRIVATE
@@ -150,7 +113,7 @@ fun IrDeclarationWithVisibility.getVisibilityAccessFlag(): Int {
         JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE -> Opcodes.ACC_PROTECTED
         DescriptorVisibilities.PUBLIC -> Opcodes.ACC_PUBLIC
         DescriptorVisibilities.INTERNAL -> Opcodes.ACC_PUBLIC
-        DescriptorVisibilities.LOCAL -> NO_FLAG_LOCAL
+        DescriptorVisibilities.LOCAL -> 0
         JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
         else -> throw IllegalStateException("$visibility is not a valid visibility in backend for ${ir2string(this)}")
     }
@@ -240,7 +203,7 @@ internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type, genera
     val kotlinMarkerInterfaces = LinkedHashSet<String>()
     if (generateBodies && irClass.superTypes.any { it.isSuspendFunction() || it.isKSuspendFunction() }) {
         // Do not generate this class in the kapt3 mode (generateBodies=false), because kapt3 transforms supertypes correctly in the
-        // "correctErrorTypes" mode only when the number of supertypes between PSI and bytecode is equal. Otherwise it tries to "correct"
+        // "correctErrorTypes" mode only when the number of supertypes between PSI and bytecode is equal. Otherwise, it tries to "correct"
         // the Function{n} type and fails, because that type doesn't need an import in the Kotlin source (kotlin.Function{n}), but needs one
         // in the Java source (kotlin.jvm.functions.Function{n}), and kapt3 doesn't perform any Kotlin->Java name lookup.
         kotlinMarkerInterfaces.add("kotlin/coroutines/jvm/internal/SuspendFunction")
@@ -334,7 +297,7 @@ val IrClass.reifiedTypeParameters: ReifiedTypeParametersUsages
     get() {
         val tempReifiedTypeParametersUsages = ReifiedTypeParametersUsages()
         fun processTypeParameters(type: IrType) {
-            for (supertypeArgument in (type as? IrSimpleType)?.arguments ?: emptyList()) {
+            for (supertypeArgument in type.arguments.orEmpty()) {
                 if (supertypeArgument is IrTypeProjection) {
                     val typeArgument = supertypeArgument.type
                     if (typeArgument.isReifiedTypeParameter) {

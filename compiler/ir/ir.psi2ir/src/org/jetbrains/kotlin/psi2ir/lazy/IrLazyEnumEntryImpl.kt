@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.generators.TypeTranslator
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 @K1Deprecation

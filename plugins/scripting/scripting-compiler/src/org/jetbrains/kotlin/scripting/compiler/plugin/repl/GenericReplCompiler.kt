@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -112,7 +111,12 @@ open class GenericReplCompiler(
                 else -> error("Unexpected result ${analysisResult::class.java}")
             }
 
-            val generationState = GenerationState(psiFile.project, compilerState.analyzerEngine.module, compilerConfiguration)
+            val generationState = GenerationState(
+                psiFile.project,
+                compilerState.analyzerEngine.module,
+                compilerConfiguration,
+                jvmBackendClassResolver = K1JvmBackendClassResolverForModuleWithDependencies(compilerState.analyzerEngine.module),
+            )
 
             val generatorExtensions =
                 object : JvmGeneratorExtensionsImpl(environment.configuration) {

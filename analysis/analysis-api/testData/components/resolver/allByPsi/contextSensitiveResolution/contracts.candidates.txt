@@ -349,6 +349,7 @@ KtCallExpression(348,397): 'callsInPlace(block1, InvocationKind.EXACTLY_ONCE)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -367,6 +368,7 @@ KtCallExpression(348,397): 'callsInPlace(block1, InvocationKind.EXACTLY_ONCE)'
             annotations: []
             typeArguments: []
             type: kotlin/contracts/ContractBuilder
+          typeParameters: []
           visibility: PUBLIC
         type = kotlin.contracts.ContractBuilder
       extensionReceiver = null
@@ -422,6 +424,7 @@ KtNameReferenceExpression(348,360): 'callsInPlace'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -440,6 +443,7 @@ KtNameReferenceExpression(348,360): 'callsInPlace'
             annotations: []
             typeArguments: []
             type: kotlin/contracts/ContractBuilder
+          typeParameters: []
           visibility: PUBLIC
         type = kotlin.contracts.ContractBuilder
       extensionReceiver = null
@@ -583,6 +587,7 @@ KtCallExpression(406,472): 'callsInPlace(block2, kotlin.contracts.InvocationKind
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -601,6 +606,7 @@ KtCallExpression(406,472): 'callsInPlace(block2, kotlin.contracts.InvocationKind
             annotations: []
             typeArguments: []
             type: kotlin/contracts/ContractBuilder
+          typeParameters: []
           visibility: PUBLIC
         type = kotlin.contracts.ContractBuilder
       extensionReceiver = null
@@ -656,6 +662,7 @@ KtNameReferenceExpression(406,418): 'callsInPlace'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -674,6 +681,7 @@ KtNameReferenceExpression(406,418): 'callsInPlace'
             annotations: []
             typeArguments: []
             type: kotlin/contracts/ContractBuilder
+          typeParameters: []
           visibility: PUBLIC
         type = kotlin.contracts.ContractBuilder
       extensionReceiver = null
@@ -788,61 +796,13 @@ KtDotQualifiedExpression(427,458): 'kotlin.contracts.InvocationKind'
     isInBestCandidates = false
 
 KtDotQualifiedExpression(427,443): 'kotlin.contracts'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.contracts.InvocationKind
-        symbol = <constructor>(): kotlin.contracts.InvocationKind
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(427,433): 'kotlin'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.contracts.InvocationKind
-        symbol = <constructor>(): kotlin.contracts.InvocationKind
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(434,443): 'contracts'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.contracts.InvocationKind
-        symbol = <constructor>(): kotlin.contracts.InvocationKind
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(444,458): 'InvocationKind'
   KaInapplicableCallCandidate:

@@ -19,7 +19,7 @@ class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExt
 
         override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
             FirLombokUsageChecker,
-            FirLombokConflictingLogFieldChecker,
+            FirLombokLogChecker,
             FirLombokToStringChecker,
             FirLombokConstructorsChecker,
             FirLombokEqualsAndHashCodeChecker,

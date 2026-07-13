@@ -105,8 +105,8 @@ FUNCTIONAL INTERFACE FUNCTION:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -124,6 +124,7 @@ FUNCTIONAL INTERFACE FUNCTION:
       modality: FINAL
       name: value
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         abbreviation: null
@@ -149,6 +150,7 @@ FUNCTIONAL INTERFACE FUNCTION:
         isMarkedNullable: false
         isNullable: true
         hasFlexibleNullability: false
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
       getContainingJvmClassName: GenericPredicate

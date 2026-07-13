@@ -1084,6 +1084,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1102,12 +1103,14 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
               annotations: []
               typeArguments: []
               type: Implicit
+            typeParameters: []
             visibility: PUBLIC
           type = Implicit,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1126,6 +1129,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
               annotations: []
               typeArguments: []
               type: Explicit
+            typeParameters: []
             visibility: PUBLIC
           type = Explicit
       ]
@@ -1181,6 +1185,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1199,12 +1204,14 @@ KtNameReferenceExpression(691,698): 'unnamed'
               annotations: []
               typeArguments: []
               type: Implicit
+            typeParameters: []
             visibility: PUBLIC
           type = Implicit,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1223,6 +1230,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
               annotations: []
               typeArguments: []
               type: Explicit
+            typeParameters: []
             visibility: PUBLIC
           type = Explicit
       ]
@@ -1296,6 +1304,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1314,12 +1323,14 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
               annotations: []
               typeArguments: []
               type: Implicit
+            typeParameters: []
             visibility: PUBLIC
           type = Implicit,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1338,6 +1349,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
               annotations: []
               typeArguments: []
               type: Explicit
+            typeParameters: []
             visibility: PUBLIC
           type = Explicit
       ]
@@ -1393,6 +1405,7 @@ KtNameReferenceExpression(745,750): 'named'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1411,12 +1424,14 @@ KtNameReferenceExpression(745,750): 'named'
               annotations: []
               typeArguments: []
               type: Implicit
+            typeParameters: []
             visibility: PUBLIC
           type = Implicit,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1435,6 +1450,7 @@ KtNameReferenceExpression(745,750): 'named'
               annotations: []
               typeArguments: []
               type: Explicit
+            typeParameters: []
             visibility: PUBLIC
           type = Explicit
       ]
@@ -1516,6 +1532,7 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1534,6 +1551,7 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
               annotations: []
               typeArguments: []
               type: Implicit
+            typeParameters: []
             visibility: PUBLIC
           type = Implicit,
         KaExplicitReceiverValue:
@@ -1601,6 +1619,7 @@ KtNameReferenceExpression(800,807): 'unnamed'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1619,6 +1638,7 @@ KtNameReferenceExpression(800,807): 'unnamed'
               annotations: []
               typeArguments: []
               type: Implicit
+            typeParameters: []
             visibility: PUBLIC
           type = Implicit,
         KaExplicitReceiverValue:
@@ -1750,6 +1770,7 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1768,6 +1789,7 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
               annotations: []
               typeArguments: []
               type: Implicit
+            typeParameters: []
             visibility: PUBLIC
           type = Implicit,
         KaExplicitReceiverValue:
@@ -1835,6 +1857,7 @@ KtNameReferenceExpression(869,874): 'named'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1853,6 +1876,7 @@ KtNameReferenceExpression(869,874): 'named'
               annotations: []
               typeArguments: []
               type: Implicit
+            typeParameters: []
             visibility: PUBLIC
           type = Implicit,
         KaExplicitReceiverValue:

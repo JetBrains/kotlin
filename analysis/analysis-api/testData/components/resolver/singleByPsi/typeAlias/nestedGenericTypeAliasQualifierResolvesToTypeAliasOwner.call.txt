@@ -1,0 +1,2 @@
+KtNameReferenceExpression(392,406): 'TypeAliasOwner'
+  null

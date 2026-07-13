@@ -91,6 +91,7 @@ KtThisExpression(37,41): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -109,6 +110,7 @@ KtThisExpression(37,41): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Int
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -120,6 +122,7 @@ KtNameReferenceExpression(37,41): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -138,6 +141,7 @@ KtNameReferenceExpression(37,41): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Int
+        typeParameters: []
         visibility: PUBLIC
     ]
 

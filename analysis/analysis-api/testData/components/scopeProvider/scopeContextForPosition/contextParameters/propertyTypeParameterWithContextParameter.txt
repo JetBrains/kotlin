@@ -122,6 +122,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -141,12 +142,14 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Boolean
+          typeParameters: []
           visibility: PRIVATE
         callableId: /foo
         contextParameters: [
           KaContextParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -164,6 +167,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
         ]
         contextReceivers: [
@@ -177,6 +181,7 @@ scopes:
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -193,6 +198,7 @@ scopes:
           receiverParameter: KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -211,11 +217,13 @@ scopes:
               annotations: []
               typeArguments: []
               type: B
+            typeParameters: []
             visibility: PUBLIC
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: kotlin/Boolean
+          typeParameters: []
           valueParameters: []
           visibility: PUBLIC
         hasBackingField: false
@@ -229,7 +237,6 @@ scopes:
         isExpect: false
         isExtension: true
         isExternal: false
-        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
@@ -238,9 +245,11 @@ scopes:
         modality: FINAL
         name: foo
         origin: SOURCE
+        primaryConstructorParameter: null
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -259,6 +268,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: B
+          typeParameters: []
           visibility: PUBLIC
         returnType: KaUsualClassType:
           annotations: []

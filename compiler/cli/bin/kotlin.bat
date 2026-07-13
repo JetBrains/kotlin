@@ -6,4 +6,6 @@ rem Use of this source code is governed by the Apache 2.0 license that can be fo
 setlocal
 set _KOTLIN_RUNNER=1
 
+echo warning: the 'kotlin' executable is deprecated; use 'kotlinr' instead to avoid ambiguity with the Kotlin toolchain's 'kotlin' command. 1>&2
+
 call %~dps0kotlinc.bat %*

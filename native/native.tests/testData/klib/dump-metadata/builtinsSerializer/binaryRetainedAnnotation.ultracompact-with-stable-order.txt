@@ -1,10 +1,10 @@
-@kotlin/annotation/Retention @kotlin/annotation/Target public final annotation class test/A : kotlin/Annotation
+public final annotation class test/A : kotlin/Annotation
 public constructor test/A.<init>()
 public final enum class test/Enum : kotlin/Enum<test/Enum>
 private constructor test/Enum.<init>()
-@test/A enum entry test/Enum.ENTRY
-@test/A public final class test/Klass : kotlin/Any
-@test/A public constructor test/Klass.<init>()
-@test/A public final fun <@test/A T#0> test/function(@test/A param: kotlin/Unit): @test/A kotlin/Unit
-@test/A public final val test/property: kotlin/Unit
+enum entry test/Enum.ENTRY
+public final class test/Klass : kotlin/Any
+public constructor test/Klass.<init>()
+public final fun <T#0> test/function(@test/A param: kotlin/Unit): kotlin/Unit
+public final val test/property: kotlin/Unit
 public final /* getter */ test/property.<get-property>

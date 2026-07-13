@@ -29,6 +29,7 @@ scopes:
       KaContextParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -46,12 +47,13 @@ scopes:
           annotations: []
           typeArguments: []
           type: one/A
+        typeParameters: []
         visibility: PUBLIC
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -69,11 +71,13 @@ scopes:
         modality: FINAL
         name: p
         origin: SOURCE
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: kotlin/Boolean
+        typeParameters: []
         visibility: PUBLIC
     constructors: 0
 
@@ -119,6 +123,7 @@ scopes:
           KaContextParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -136,10 +141,12 @@ scopes:
               annotations: []
               typeArguments: []
               type: one/A
+            typeParameters: []
             visibility: PUBLIC
           KaContextParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -157,6 +164,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Int
+            typeParameters: []
             visibility: PUBLIC
         ]
         contextReceivers: [
@@ -202,8 +210,8 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -221,11 +229,13 @@ scopes:
             modality: FINAL
             name: p
             origin: SOURCE
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Boolean
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC

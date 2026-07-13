@@ -82,6 +82,7 @@ abstract class PodBuildTask @Inject constructor(
             it.include("**/${pod.get().schemeName}.*/")
             it.include("**/${pod.get().schemeName}/")
             it.exclude("XCBuildData/**")
+            it.exclude("EagerLinkingTBDs/**") // shared dir pruned across pod builds (Xcode 27 eager linking) — not a stable output
         }
 
     @get:Internal

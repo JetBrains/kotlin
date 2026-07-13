@@ -207,13 +207,13 @@ class GradlePluginTests {
         workingDir.resolve("gradle.properties").writeText(
             """
             build.number=1.0
+            kotlinApiVersionForProjectsDependingOnStableStdlib=
             """.trimIndent()
         )
         val root = ProjectBuilder.builder().also {
             it.withProjectDir(workingDir)
         }.build()
         root.extraProperties.set("projectsDependingOnStableStdlib", emptyArray<String>())
-        root.extraProperties.set("kotlinApiVersionForProjectsDependingOnStableStdlib", emptyArray<String>())
         root.tasks.register("mvnInstall")
 
         createKotlinSubproject("kotlin-gradle-plugin-api", root).also {

@@ -1,4 +1,5 @@
-// TARGET_BACKEND: JVM
+// DUMP_IR_DIFFERENCE: JVM
+//   KT-51868, KT-52428, KT-71897: Indy SAM conversion difference
 interface X
 interface Z
 

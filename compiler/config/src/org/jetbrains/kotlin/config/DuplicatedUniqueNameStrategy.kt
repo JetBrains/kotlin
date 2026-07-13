@@ -10,7 +10,7 @@ enum class DuplicatedUniqueNameStrategy(val alias: String) {
     DENY(Aliases.DENY),
     ALLOW_ALL_WITH_WARNING(Aliases.ALLOW_ALL_WITH_WARNING),
     ALLOW_FIRST_WITH_WARNING(Aliases.ALLOW_FIRST_WITH_WARNING),
-    ;
+    ALLOW_ALL(Aliases.ALLOW_ALL);
 
     override fun toString() = alias
 
@@ -18,6 +18,7 @@ enum class DuplicatedUniqueNameStrategy(val alias: String) {
         const val DENY = "deny"
         const val ALLOW_ALL_WITH_WARNING = "allow-all-with-warning"
         const val ALLOW_FIRST_WITH_WARNING = "allow-first-with-warning"
+        const val ALLOW_ALL = "allow-all"
     }
 
     companion object {

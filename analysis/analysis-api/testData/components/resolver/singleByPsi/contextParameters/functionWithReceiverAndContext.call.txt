@@ -7,6 +7,7 @@ KtCallExpression(106,111): 'foo()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -25,6 +26,7 @@ KtCallExpression(106,111): 'foo()'
               annotations: []
               typeArguments: []
               type: kotlin/Int
+            typeParameters: []
             visibility: PUBLIC
           type = kotlin.Int,
         KaImplicitReceiverValue:

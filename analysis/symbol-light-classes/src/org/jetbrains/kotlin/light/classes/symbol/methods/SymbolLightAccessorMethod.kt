@@ -500,7 +500,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 !context.staticsFromCompanion &&
                         context.destinationLightClass.isValueClass &&
                         // Constructor properties are materialized by default
-                        !property.isFromPrimaryConstructor &&
+                        (property as? KaKotlinPropertySymbol)?.primaryConstructorParameter == null &&
                         // Overrides are materialized by default
                         !property.isOverride
 
@@ -603,7 +603,8 @@ internal class SymbolLightAccessorMethod private constructor(
                 property.isOverride -> true
 
                 // Only public properties from the constructor can be exposed as regular accessors
-                else -> !property.isFromPrimaryConstructor || property.visibility == KaSymbolVisibility.PUBLIC
+                else -> (property as? KaKotlinPropertySymbol)?.primaryConstructorParameter == null ||
+                        property.visibility == KaSymbolVisibility.PUBLIC
             }
 
             else -> true

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMMetadataProvider
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
@@ -189,13 +189,13 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         if (existingTask != null) return existingTask
         val swiftPMImportExtension = locateOrRegisterSwiftPMDependenciesExtension()
         val directSwiftPMDependencies = provider { swiftPMImportExtension.swiftPMDependencies }
-        val transitiveSwiftPMDependencies = transitiveSwiftPMDependenciesProvider()
+        val transitiveSwiftPMDependencies = transitiveSwiftPMMetadataProvider()
 
         return registerTask<CheckCocoaPodsHasNoSwiftPMDependencies>(CHECK_SWIFT_PM_DEPENDENCIES_TASK_NAME) { task ->
             task.group = TASK_GROUP
             task.description = "Check for SwiftPM dependencies and fail the build if these are present during syncFramework integration"
             task.directSwiftPMDependencies.set(directSwiftPMDependencies)
-            task.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependencies)
+            task.transitiveSwiftPMMetadata.set(transitiveSwiftPMDependencies)
             task.workspacePath.set(project.providers.environmentVariable("WORKSPACE_DIR"))
             task.gradleProjectPath.set(project.path)
             task.projectPath.set(project.projectDir)

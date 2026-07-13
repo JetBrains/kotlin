@@ -778,6 +778,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaE
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSingleCall {
 	public fun getArgumentMapping ()Ljava/util/Map;
 	public abstract fun getCombinedArgumentMapping ()Ljava/util/Map;
+	public abstract fun getContextArgumentMapping ()Ljava/util/Map;
 	public abstract fun getPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 	public abstract fun getValueArgumentMapping ()Ljava/util/Map;
 }
@@ -794,6 +795,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaI
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
+	public abstract fun getContextArguments ()Ljava/util/List;
 	public abstract fun getDispatchReceiver ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaReceiverValue;
 	public abstract fun getExtensionReceiver ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaReceiverValue;
 	public abstract fun getSignature ()Lorg/jetbrains/kotlin/analysis/api/signatures/KaCallableSignature;
@@ -896,6 +898,7 @@ public final class org/jetbrains/kotlin/analysis/api/session/UseSiteKt {
 public abstract interface class org/jetbrains/kotlin/analysis/api/signatures/KaCallableSignature : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun equals (Ljava/lang/Object;)Z
 	public fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
+	public fun getContextParameters ()Ljava/util/List;
 	public abstract fun getReceiverType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getReturnType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;
@@ -924,7 +927,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaAddi
 	public abstract fun resolveKdocFqName (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/Collection;
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaAnonymousFunctionSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaContextParameterOwnerSymbol {
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaAnonymousFunctionSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public final fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
@@ -954,12 +957,14 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaBackingFieldSy
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public final fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
 	public fun getOrigin ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public abstract fun getOwningProperty ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaKotlinPropertySymbol;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
+	public final fun getTypeParameters ()Ljava/util/List;
 	public final fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public final fun isActual ()Z
 	public final fun isDelegated ()Z
@@ -972,8 +977,10 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaBackingFieldSy
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol : org/jetbrains/kotlin/analysis/api/base/KaContextReceiversOwner, org/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol {
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
+	public abstract fun getContextParameters ()Ljava/util/List;
 	public abstract fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
 	public abstract fun getReturnType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getTypeParameters ()Ljava/util/List;
 	public abstract fun isExtension ()Z
 }
 
@@ -1010,6 +1017,7 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/KaClassKind : java/
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymbol {
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun getClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public abstract fun getTypeParameters ()Ljava/util/List;
 }
 
 public final class org/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbolKt {
@@ -1027,16 +1035,22 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymb
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaConstructorSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaTypeParameterOwnerSymbol {
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaConstructorSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public final fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
 	public abstract fun getContainingClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
 	public final fun isExtension ()Z
 	public abstract fun isPrimary ()Z
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaContextParameterSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaParameterSymbol {
+	public fun <init> ()V
+	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaAnnotatedSymbol {
@@ -1067,11 +1081,13 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaEnum
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaEnumEntrySymbol : org/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
+	public final fun getContextParameters ()Ljava/util/List;
 	public abstract fun getEnumEntryInitializer ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaEnumEntryInitializerSymbol;
 	public abstract fun getInitializer ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaAnonymousObjectSymbol;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
+	public final fun getTypeParameters ()Ljava/util/List;
 	public final fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public final fun isActual ()Z
 	public final fun isDelegated ()Z
@@ -1094,9 +1110,11 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaJavaFieldSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
+	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
+	public final fun getTypeParameters ()Ljava/util/List;
 	public final fun isActual ()Z
 	public final fun isDelegated ()Z
 	public final fun isExpect ()Z
@@ -1105,9 +1123,10 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaJavaFieldSymbo
 	public abstract fun isStatic ()Z
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaKotlinPropertySymbol : org/jetbrains/kotlin/analysis/api/symbols/KaPropertySymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaContextParameterOwnerSymbol {
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaKotlinPropertySymbol : org/jetbrains/kotlin/analysis/api/symbols/KaPropertySymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
+	public abstract fun getPrimaryConstructorParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaValueParameterSymbol;
 	public abstract fun isConst ()Z
 	public abstract fun isLateInit ()Z
 }
@@ -1116,6 +1135,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaLocalVariableS
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public final fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
@@ -1127,7 +1147,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaLocalVariableS
 	public abstract fun isLateInit ()Z
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol, org/jetbrains/kotlin/analysis/api/base/KaContextReceiversOwner, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaTypeParameterOwnerSymbol {
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol, org/jetbrains/kotlin/analysis/api/base/KaContextReceiversOwner, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun getCompanionObject ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;
@@ -1137,7 +1157,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymb
 	public abstract fun isInner ()Z
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaNamedFunctionSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaContextParameterOwnerSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaTypeParameterOwnerSymbol {
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaNamedFunctionSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun isBuiltinFunctionInvoke ()Z
@@ -1160,9 +1180,11 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaPackageSymbol 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaParameterSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol {
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public final fun getCallableId ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
+	public final fun getTypeParameters ()Ljava/util/List;
 	public final fun isActual ()Z
 	public final fun isDelegated ()Z
 	public final fun isExpect ()Z
@@ -1173,8 +1195,10 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaParameterSymbo
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaPropertyAccessorSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol {
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
+	public final fun getContextParameters ()Ljava/util/List;
 	public abstract fun getHasBody ()Z
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
+	public final fun getTypeParameters ()Ljava/util/List;
 	public final fun isActual ()Z
 	public abstract fun isDefault ()Z
 	public fun isExpect ()Z
@@ -1198,7 +1222,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaPropertySetter
 	public final fun getValueParameters ()Ljava/util/List;
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaPropertySymbol : org/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaTypeParameterOwnerSymbol {
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaPropertySymbol : org/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol {
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun getBackingFieldSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaBackingFieldSymbol;
 	public abstract fun getGetter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaPropertyGetterSymbol;
@@ -1219,9 +1243,10 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaReceiverParame
 	public abstract fun getOwningCallableSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaSamConstructorSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaTypeParameterOwnerSymbol {
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaSamConstructorSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
+	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
 	public final fun isExternal ()Z
@@ -1342,6 +1367,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaSyntheticJavaP
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public final fun getBackingFieldSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaBackingFieldSymbol;
+	public final fun getContextParameters ()Ljava/util/List;
 	public abstract fun getGetter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaPropertyGetterSymbol;
 	public final fun getHasBackingField ()Z
 	public final fun getHasGetter ()Z
@@ -1353,7 +1379,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaSyntheticJavaP
 	public final fun isFromPrimaryConstructor ()Z
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaTypeAliasSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaTypeParameterOwnerSymbol {
+public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaTypeAliasSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun getExpandedType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
@@ -1380,6 +1406,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaValueParameter
 	public fun getGeneratedPrimaryConstructorProperty ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaKotlinPropertySymbol;
 	public abstract fun getHasDefaultValue ()Z
 	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
+	public fun getPrimaryConstructorProperty ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaKotlinPropertySymbol;
 	public abstract fun isCrossinline ()Z
 	public abstract fun isImplicitLambdaParameter ()Z
 	public abstract fun isNoinline ()Z
@@ -1426,6 +1453,7 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/SymbolRelationsKt {
 	public static final fun getIntersectionOverriddenSymbols (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Ljava/util/List;
 	public static final fun getSamConstructor (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaSamConstructorSymbol;
 	public static final fun getSealedClassInheritors (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;)Ljava/util/List;
+	public static final fun getTypeParameters (Lorg/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol;)Ljava/util/List;
 	public static final fun isDirectSubClassOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;)Z
 	public static final fun isSubClassOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;)Z
 }

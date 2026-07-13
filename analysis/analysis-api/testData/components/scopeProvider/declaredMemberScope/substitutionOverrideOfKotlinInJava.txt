@@ -48,6 +48,7 @@ KaSyntheticJavaPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /JavaC.prop
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -55,6 +56,7 @@ KaSyntheticJavaPropertySymbol:
         psi: null
     ]
     callableId: /JavaC.getProp
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -72,6 +74,7 @@ KaSyntheticJavaPropertySymbol:
     returnType: KaFlexibleType:
       annotations: []
       type: kotlin/Int!
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -93,7 +96,6 @@ KaSyntheticJavaPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isOverride: false
   isStatic: false
   isVal: true
@@ -126,6 +128,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: JavaC
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -147,8 +150,8 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -166,10 +169,12 @@ KaConstructorSymbol:
       modality: FINAL
       name: integer
       origin: JAVA_SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/Int!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaC

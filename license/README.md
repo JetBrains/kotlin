@@ -306,6 +306,10 @@ any distributions of the tools or libraries:
  - Path: libraries/tools/gradle/fus-statistics-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/fus/internal/ciUtil.kt
       - License: Apache 2 ([license/third_party/gradle_custom_user_plugin_license.txt](third_party/gradle_custom_user_plugin_license.txt))
       - Origin: Gradle, Copyright 2002-2025 Gradle, Inc.
+ 
+ - Path: libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/testing/playwright/PlaywrightTestExecutor.kt
+      - License: Apache 2 ([license/third_party/playwright_license.txt](third_party/playwright_license.txt))
+      - Origin: Playwright, Copyright (c) Microsoft Corporation.
 
 ## Example Code
 

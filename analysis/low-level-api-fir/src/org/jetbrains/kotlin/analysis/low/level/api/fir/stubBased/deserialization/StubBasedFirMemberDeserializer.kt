@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -228,55 +229,21 @@ internal class StubBasedFirMemberDeserializer(
         classSymbol: FirClassSymbol<*>?,
         returnTypeRef: FirTypeRef,
         propertySymbol: FirPropertySymbol,
+        local: StubBasedFirDeserializationContext,
         propertySource: KtSourceElement?,
         propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
-    ): FirPropertyAccessor {
-        val accessor = if (getter?.hasBody() == true) {
-            buildPropertyAccessor {
-                source = KtRealPsiSourceElement(getter)
-                moduleData = c.moduleData
-                origin = initialOrigin
-                this.returnTypeRef = returnTypeRef
-                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                isGetter = true
-                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
-                    getter.visibility,
-                    getter.modality,
-                    getter.visibility.toLazyEffectiveVisibility(classSymbol),
-                ).apply {
-                    isInline = getter.hasModifier(KtTokens.INLINE_KEYWORD)
-                    isExternal = getter.hasModifier(KtTokens.EXTERNAL_KEYWORD)
-                }
-                this.symbol = FirPropertyAccessorSymbol()
-                dispatchReceiverType = c.dispatchReceiver
-                this.propertySymbol = propertySymbol
-            }
-        } else {
-            @OptIn(FirImplementationDetail::class)
-            FirDefaultPropertyGetter(
-                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
-                moduleData = c.moduleData,
-                origin = initialOrigin,
-                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Getter),
-                propertySymbol = propertySymbol,
-                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
-                    visibility = propertyStatus.visibility,
-                    modality = propertyStatus.modality,
-                    lazyEffectiveVisibility = propertyStatus.lazyEffectiveVisibility,
-                ),
-                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
-            )
-        }
-
-        return accessor.apply {
-            if (getter != null) {
-                replaceAnnotations(c.annotationDeserializer.loadAnnotations(getter))
-            }
-
-            replaceDeprecationsProvider(getDeprecationsProviderForStubAccessor(c.session))
-            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
-        }
-    }
+        isStatic: Boolean,
+    ): FirPropertyAccessor = loadPropertyAccessor(
+        psiPropertyAccessor = getter,
+        isGetter = true,
+        classSymbol = classSymbol,
+        returnTypeRef = returnTypeRef,
+        propertySymbol = propertySymbol,
+        local = local,
+        propertySource = propertySource,
+        propertyStatus = propertyStatus,
+        isStatic = isStatic,
+    )
 
     private fun FirContractDescriptionOwner.loadContracts(local: StubBasedFirDeserializationContext) {
         val declaration = (source as? KtRealPsiSourceElement)?.psi as? KtDeclarationWithBody ?: return
@@ -294,52 +261,100 @@ internal class StubBasedFirMemberDeserializer(
         local: StubBasedFirDeserializationContext,
         propertySource: KtSourceElement?,
         propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
+        isStatic: Boolean,
+    ): FirPropertyAccessor = loadPropertyAccessor(
+        psiPropertyAccessor = setter,
+        isGetter = false,
+        classSymbol = classSymbol,
+        returnTypeRef = returnTypeRef,
+        propertySymbol = propertySymbol,
+        local = local,
+        propertySource = propertySource,
+        propertyStatus = propertyStatus,
+        isStatic = isStatic,
+    )
+
+    private fun loadPropertyAccessor(
+        psiPropertyAccessor: KtPropertyAccessor?,
+        isGetter: Boolean,
+        classSymbol: FirClassSymbol<*>?,
+        returnTypeRef: FirTypeRef,
+        propertySymbol: FirPropertySymbol,
+        local: StubBasedFirDeserializationContext,
+        propertySource: KtSourceElement?,
+        propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
+        isStatic: Boolean,
     ): FirPropertyAccessor {
-        val accessor = if (setter?.hasBody() == true) {
+        val accessor = if (psiPropertyAccessor?.hasBody() == true) {
             buildPropertyAccessor {
-                source = KtRealPsiSourceElement(setter)
+                source = KtRealPsiSourceElement(psiPropertyAccessor)
                 moduleData = c.moduleData
                 origin = initialOrigin
-                this.returnTypeRef = FirImplicitUnitTypeRef(source)
+                this.returnTypeRef = if (isGetter) returnTypeRef else FirImplicitUnitTypeRef(source)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                isGetter = false
+                this.isGetter = isGetter
                 status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
-                    setter.visibility,
-                    setter.modality,
-                    setter.visibility.toLazyEffectiveVisibility(classSymbol),
+                    psiPropertyAccessor.visibility,
+                    psiPropertyAccessor.modality,
+                    psiPropertyAccessor.visibility.toLazyEffectiveVisibility(classSymbol),
                 ).apply {
-                    isInline = setter.hasModifier(KtTokens.INLINE_KEYWORD)
-                    isExternal = setter.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+                    isInline = psiPropertyAccessor.hasModifier(KtTokens.INLINE_KEYWORD)
+                    isExternal = psiPropertyAccessor.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+                    this.isStatic = isStatic
                 }
                 this.symbol = FirPropertyAccessorSymbol()
-                dispatchReceiverType = c.dispatchReceiver
+                dispatchReceiverType = runUnless(isStatic) { c.dispatchReceiver }
                 valueParameters += local.memberDeserializer.valueParameters(
-                    setter.valueParameters,
+                    psiPropertyAccessor.valueParameters,
                     symbol
                 )
 
                 this.propertySymbol = propertySymbol
             }
         } else {
+            val fakeKind = if (isGetter) {
+                KtFakeSourceElementKind.DefaultAccessor.Getter
+            } else {
+                KtFakeSourceElementKind.DefaultAccessor.Setter
+            }
+
             @OptIn(FirImplementationDetail::class)
-            FirDefaultPropertySetter(
-                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Setter),
-                moduleData = c.moduleData,
-                origin = initialOrigin,
-                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Setter),
-                propertySymbol = propertySymbol,
-                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
-                    visibility = propertyStatus.visibility,
-                    modality = propertyStatus.modality,
-                    lazyEffectiveVisibility = propertyStatus.lazyEffectiveVisibility,
-                ),
-                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
-            )
+            val status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                visibility = propertyStatus.visibility,
+                modality = propertyStatus.modality,
+                lazyEffectiveVisibility = propertyStatus.lazyEffectiveVisibility,
+            ).apply {
+                this.isStatic = isStatic
+            }
+
+            val source = propertySource?.fakeElement(fakeKind)
+            val propertyTypeRef = returnTypeRef.copyWithNewSourceKind(fakeKind)
+            if (isGetter) {
+                FirDefaultPropertyGetter(
+                    source = source,
+                    moduleData = c.moduleData,
+                    origin = initialOrigin,
+                    propertyTypeRef = propertyTypeRef,
+                    propertySymbol = propertySymbol,
+                    status = status,
+                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
+                )
+            } else {
+                FirDefaultPropertySetter(
+                    source = source,
+                    moduleData = c.moduleData,
+                    origin = initialOrigin,
+                    propertyTypeRef = propertyTypeRef,
+                    propertySymbol = propertySymbol,
+                    status = status,
+                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
+                )
+            }
         }
 
         return accessor.apply {
-            if (setter != null) {
-                replaceAnnotations(c.annotationDeserializer.loadAnnotations(setter))
+            if (psiPropertyAccessor != null) {
+                replaceAnnotations(c.annotationDeserializer.loadAnnotations(psiPropertyAccessor))
             }
 
             replaceDeprecationsProvider(getDeprecationsProviderForStubAccessor(c.session))
@@ -365,6 +380,7 @@ internal class StubBasedFirMemberDeserializer(
 
         val propertyModality = property.modality
         val isVar = property.isVar
+        val isStatic = property.hasModifier(KtTokens.COMPANION_KEYWORD) || property.isFromCompanionBlock
 
         val propertyStub: KotlinPropertyStubImpl = property.compiledStub
 
@@ -377,7 +393,7 @@ internal class StubBasedFirMemberDeserializer(
             name = callableName
             this.isVar = isVar
             this.symbol = symbol
-            dispatchReceiverType = c.dispatchReceiver
+            dispatchReceiverType = runUnless(isStatic) { c.dispatchReceiver }
             val visibility = property.visibility
             val resolvedStatus = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
@@ -390,7 +406,7 @@ internal class StubBasedFirMemberDeserializer(
                 isConst = property.hasModifier(KtTokens.CONST_KEYWORD)
                 isLateInit = property.hasModifier(KtTokens.LATEINIT_KEYWORD)
                 isExternal = property.hasModifier(KtTokens.EXTERNAL_KEYWORD)
-                isStatic = property.hasModifier(KtTokens.COMPANION_KEYWORD) || property.isFromCompanionBlock
+                this.isStatic = isStatic
                 setSpecialFlags(property.modifierList)
             }
 
@@ -414,15 +430,19 @@ internal class StubBasedFirMemberDeserializer(
                 isVar,
                 symbol,
                 status,
-            )
+            ).apply {
+                containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
+            }
 
             this.getter = loadPropertyGetter(
                 getter = property.getter,
                 classSymbol = classSymbol,
                 returnTypeRef = returnTypeRef,
                 propertySymbol = symbol,
+                local = local,
                 propertySource = source,
                 propertyStatus = resolvedStatus,
+                isStatic = isStatic,
             )
 
             val setter = property.setter
@@ -435,6 +455,7 @@ internal class StubBasedFirMemberDeserializer(
                     local = local,
                     propertySource = source,
                     propertyStatus = resolvedStatus,
+                    isStatic = isStatic,
                 )
             } else {
                 null
@@ -469,6 +490,10 @@ internal class StubBasedFirMemberDeserializer(
             if (propertyStub.hasDelegate) {
                 @OptIn(FirImplementationDetail::class)
                 isDelegatedPropertyAttr = true
+            }
+
+            if (isStatic && classSymbol != null) {
+                containingClassForStaticMemberAttr = classSymbol.toLookupTag()
             }
 
             setLazyPublishedVisibility(c.session)
@@ -556,6 +581,7 @@ internal class StubBasedFirMemberDeserializer(
         val symbol = existingSymbol ?: FirNamedFunctionSymbol(callableId)
         val local = c.childContext(function, containingDeclarationSymbol = symbol)
 
+        val isStatic = function.hasModifier(KtTokens.COMPANION_KEYWORD) || function.isFromCompanionBlock
         val simpleFunction = buildNamedFunction {
             moduleData = c.moduleData
             origin = initialOrigin
@@ -578,12 +604,12 @@ internal class StubBasedFirMemberDeserializer(
                 isTailRec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
                 isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
                 isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
-                isStatic = function.hasModifier(KtTokens.COMPANION_KEYWORD) || function.isFromCompanionBlock
+                this.isStatic = isStatic
                 setSpecialFlags(function.modifierList)
             }
             isLocal = false
             this.symbol = symbol
-            dispatchReceiverType = c.dispatchReceiver
+            dispatchReceiverType = runUnless(isStatic) { c.dispatchReceiver }
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             valueParameters += local.memberDeserializer.valueParameters(
@@ -606,6 +632,10 @@ internal class StubBasedFirMemberDeserializer(
         }.apply {
             setLazyPublishedVisibility(c.session)
             loadContracts(local)
+
+            if (isStatic && classSymbol != null) {
+                containingClassForStaticMemberAttr = classSymbol.toLookupTag()
+            }
         }
 
         return simpleFunction

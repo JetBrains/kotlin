@@ -4,6 +4,7 @@ KaReceiverParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -25,4 +26,5 @@ KaReceiverParameterSymbol:
     ]
     typeArguments: []
     type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+  typeParameters: []
   visibility: PUBLIC

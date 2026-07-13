@@ -18,6 +18,7 @@ KaNamedFunctionSymbol:
                 KaReceiverParameterSymbol:
                   annotations: []
                   callableId: null
+                  contextParameters: []
                   contextReceivers: []
                   isActual: false
                   isCompanion: false
@@ -36,6 +37,7 @@ KaNamedFunctionSymbol:
                     annotations: []
                     typeArguments: []
                     type: kotlin/Boolean
+                  typeParameters: []
                   visibility: PUBLIC
                   getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
                   getContainingJvmClassName: ReferenceBooleanReceiverInContractKt
@@ -64,6 +66,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -82,6 +85,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Boolean
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
     getContainingJvmClassName: ReferenceBooleanReceiverInContractKt

@@ -7,6 +7,7 @@ KtNameReferenceExpression(51,57): 'length'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -25,6 +26,7 @@ KtNameReferenceExpression(51,57): 'length'
               annotations: []
               typeArguments: []
               type: kotlin/Any
+            typeParameters: []
             visibility: PUBLIC
           type = kotlin.Any
         type = kotlin.String

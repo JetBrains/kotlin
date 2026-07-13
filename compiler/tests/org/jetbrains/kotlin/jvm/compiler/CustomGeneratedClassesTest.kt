@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.testFramework.BinaryLightVirtualFile
-import junit.framework.TestCase
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
@@ -15,9 +14,9 @@ import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-class CustomGeneratedClassesTest : TestCase() {
+class CustomGeneratedClassesTest {
 
     @Test
     fun testEmulatedScalaStdlibSyntheticMethodLoading() {

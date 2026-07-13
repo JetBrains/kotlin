@@ -1508,7 +1508,11 @@ class LightTreeRawFirDeclarationBuilder(
                     },
                     property,
                     isStatic,
-                )
+                ).also {
+                    if (!isLocal) {
+                        it.initContainingClassAttr()
+                    }
+                }
 
                 if (isLocal) {
                     val delegateBuilder = delegate?.let {

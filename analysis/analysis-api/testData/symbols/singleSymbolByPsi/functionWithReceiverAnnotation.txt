@@ -28,6 +28,7 @@ KaNamedFunctionSymbol:
         psi: KtAnnotationEntry
     ]
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -49,6 +50,7 @@ KaNamedFunctionSymbol:
       ]
       typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Int
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(functionWithReceiverAnnotation.kt)
     getContainingJvmClassName: FunctionWithReceiverAnnotationKt

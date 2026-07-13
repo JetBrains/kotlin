@@ -40,8 +40,8 @@ application {
     mainClass.set("org.jetbrains.kotlin.ide.plugin.dependencies.validator.MainKt")
 }
 
-val projectsDependingOnStableStdlib: Array<String> by rootProject.extra
-val kotlinApiVersionForProjectsDependingOnStableStdlib: String by rootProject.extra
+val projectsDependingOnStableStdlib: Array<String> = CompilerModules.projectsDependingOnStableStdlib
+val kotlinApiVersionForProjectsDependingOnStableStdlib: String = project.providers.gradleProperty("kotlinApiVersionForProjectsDependingOnStableStdlib").get()
 
 tasks.withType<JavaExec> {
     notCompatibleWithConfigurationCache("Uses project in task action")

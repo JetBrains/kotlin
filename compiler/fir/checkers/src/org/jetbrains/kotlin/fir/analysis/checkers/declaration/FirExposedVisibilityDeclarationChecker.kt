@@ -236,6 +236,10 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         val type = when (this) {
             is ConeClassLikeType -> this
             is ConeFlexibleType -> lowerBound as? ConeClassLikeType ?: return null
+            // Type exposure in type parameter bound is reported at the declaration site
+            is ConeDefinitelyNotNullType, is ConeTypeParameterType -> return null
+            // These types are approximated away in public signatures
+            is ConeCapturedType, is ConeIntersectionType -> return null
             else -> return null
         }
 

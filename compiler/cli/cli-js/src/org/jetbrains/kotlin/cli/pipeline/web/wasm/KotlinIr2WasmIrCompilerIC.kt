@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
+import org.jetbrains.kotlin.wasm.config.wasmIcGenerateUnchangedModules
 import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
 import kotlin.collections.mutableSetOf
 import kotlin.collections.set
@@ -198,7 +199,7 @@ fun compileIncrementallyMultimodule(
     val kotlinTestArtifact = artifacts.firstOrNull { it.moduleName == "<kotlin-test>" }
 
     val [toRecompile, toDependency] = artifacts.partition { artifact ->
-        artifact.forceRebuildWasm || artifact.fileArtifacts.any { it.isModified() }
+        configuration.wasmIcGenerateUnchangedModules || artifact.forceRebuildWasm || artifact.fileArtifacts.any { it.isModified() }
     }
 
     val builtInFragments = mutableListOf<WasmIrProgramFragmentsMultimodule>()

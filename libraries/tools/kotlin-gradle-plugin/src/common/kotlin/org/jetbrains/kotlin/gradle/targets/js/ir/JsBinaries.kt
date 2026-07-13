@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
@@ -155,6 +155,15 @@ sealed class JsIrBinary(
             TypeScriptValidationTask.NAME
         )
 
+    protected fun wasmFileFromJsFile(jsFile: Provider<RegularFile>): Provider<RegularFile> {
+        return project.objects.fileProperty().fileProvider(
+            jsFile.map {
+                val file = it.asFile
+                file.resolveSibling(file.nameWithoutExtension + ".wasm")
+            }
+        )
+    }
+
     val target: KotlinJsIrTarget
         get() = compilation.target
 
@@ -204,6 +213,10 @@ interface WasmBinary {
     @InternalKotlinGradlePluginApi
     val wasmBinaryOutputConfigurationName
         get() = compilation.disambiguateName("wasmBinary${name}Output")
+
+    val mainOptimizedFile: Provider<RegularFile>
+
+    val mainWasmFile: Provider<RegularFile>
 }
 
 internal fun TaskProvider<BinaryenExec>.configureOptimizeTask(binary: WasmBinary) {
@@ -307,8 +320,14 @@ class ExecutableWasm(
         }
     }
 
-    val mainOptimizedFile: Provider<RegularFile> = optimizeTask.flatMap {
+    override val mainOptimizedFile: Provider<RegularFile> = optimizeTask.flatMap {
         it.outputDirectory.file(mainFileName.get())
+    }
+
+    override val mainWasmFile: Provider<RegularFile> = if (mode == KotlinJsBinaryMode.PRODUCTION) {
+        wasmFileFromJsFile(mainOptimizedFile)
+    } else {
+        wasmFileFromJsFile(mainFile)
     }
 
     @InternalKotlinGradlePluginApi
@@ -381,6 +400,16 @@ class LibraryWasm(
         binaryenExec.configureOptimizeTask(this)
     }
 
+    override val mainOptimizedFile: Provider<RegularFile> = optimizeTask.flatMap {
+        it.outputDirectory.file(mainFileName.get())
+    }
+
+    override val mainWasmFile: Provider<RegularFile> = if (mode == KotlinJsBinaryMode.PRODUCTION) {
+        wasmFileFromJsFile(mainOptimizedFile)
+    } else {
+        wasmFileFromJsFile(mainFile)
+    }
+
     @InternalKotlinGradlePluginApi
     override val wasmBinaryConfigurationName: String
         get() = super.wasmBinaryConfigurationName
@@ -392,5 +421,6 @@ class LibraryWasm(
     private fun optimizeTaskName(): String =
         "${linkTaskName}Optimize"
 }
+
 
 internal const val COMPILE_SYNC = "compileSync"

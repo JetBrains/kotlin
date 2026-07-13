@@ -31,6 +31,7 @@ import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.*
+import kotlin.sequences.filter
 
 internal fun createSirClassFromKtSymbol(
     ktSymbol: KaNamedClassSymbol,
@@ -147,12 +148,9 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
-        translatedProtocols.filter { superClassDeclaration?.declaresConformance(it) != true }
-    }
-
-    private val translatedProtocols: List<SirProtocol> by lazyWithSessions {
         val isUnavailable = this.isUnavailable
         ktSymbol.superTypes
+            .asSequence()
             .filterIsInstance<KaClassType>()
             .mapNotNull { it.expandedSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
@@ -162,13 +160,12 @@ internal abstract class SirAbstractClassFromKtSymbol(
                     it is SirAvailability.Available && it.visibility > SirVisibility.INTERNAL
                 }
             }
-            .flatMap {
-                it.toSir().allDeclarations.filterIsInstanceAnd<SirProtocol> { isUnavailable || !it.isUnavailable }.also {
-                    it.forEach {
-                        ktSymbol.containingModule.sirModule().updateImportFor(it)
-                    }
-                }
-            }
+            .mapNotNull { it.toSir().primaryDeclaration as SirProtocolFromKtSymbol? }
+            .filter { isUnavailable || !it.isUnavailable }
+            .filter { superClassDeclaration?.declaresConformance(it) != true }
+            .toList()
+            .also { protocols -> protocols.forEach { ktSymbol.containingModule.sirModule().updateImportFor(it) } }
+            .flatMap { listOf(it, it.implementationMarker) }
     }
 
     internal val sealedType: SirScopeDefiningDeclaration? by lazyWithSessions {

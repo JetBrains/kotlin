@@ -1,6 +1,6 @@
-@test/JustEnum @test/EnumArray public final class test/C1 : kotlin/Any
+public final class test/C1 : kotlin/Any
 public constructor test/C1.<init>()
-@test/EnumArray public final class test/C2 : kotlin/Any
+public final class test/C2 : kotlin/Any
 public constructor test/C2.<init>()
 public final annotation class test/EnumArray : kotlin/Annotation
 public constructor test/EnumArray.<init>(enumArray: kotlin/Array<test/Weapon>)

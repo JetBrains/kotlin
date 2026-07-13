@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.utils
 import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.cli.pipeline.web.WebSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.JsSrcFileArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.rebuildCacheForDirtyFiles
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import java.io.ByteArrayOutputStream
-import java.io.File
+import kotlin.io.path.Path
 
 private class TestArtifactCache(val moduleName: String, val binaryAsts: MutableMap<String, ByteArray> = mutableMapOf()) {
     fun fetchArtifacts(): JsModuleArtifact {
@@ -109,7 +110,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val allDependencies = klibEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices)
-            .filterNot { it.libraryFile == library.libraryFile } // Avoid including the library twice.
+            .filterNot { it.path == library.path } // Avoid including the library twice.
 
         recordIncrementalData(
             path,
@@ -150,7 +151,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         orderedLibraries: List<KotlinLibrary>,
         configuration: CompilerConfiguration,
     ) {
-        val canonicalPath = File(path).canonicalPath
+        val canonicalPath = Path(path).canonicalPathString()
         val predefinedModuleCache = predefinedKlibHasIcCache[canonicalPath]
         if (predefinedModuleCache != null) {
             icCache[canonicalPath] = predefinedModuleCache
@@ -158,7 +159,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         }
 
         val currentLib = orderedLibraries.firstOrNull {
-            File(it.libraryFile.path).canonicalPath == canonicalPath
+            it.path.canonicalPathString() == canonicalPath
         } ?: error("Expected library at $canonicalPath")
 
         val [mainModuleIr, rebuiltFiles] = rebuildCacheForDirtyFiles(

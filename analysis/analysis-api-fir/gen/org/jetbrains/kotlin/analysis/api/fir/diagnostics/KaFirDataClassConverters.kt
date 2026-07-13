@@ -1126,6 +1126,12 @@ private fun KaDiagnosticConverterBuilder.addConversions20() {
             token,
         )
     }
+    add(FirJvmErrors.JAVA_CLASS_PROPERTY_REFERENCE.warningFactory) { firDiagnostic ->
+        JavaClassPropertyReferenceWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirWebCommonErrors.NESTED_JS_EXPORT) { firDiagnostic ->
         NestedJsExportImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -1448,6 +1454,12 @@ private fun KaDiagnosticConverterBuilder.addConversions27() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions28() {
+    add(FirErrors.KOTLIN_PACKAGE_USAGE) { firDiagnostic ->
+        KotlinPackageUsageImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION.warningFactory) { firDiagnostic ->
         UnsupportedArrayLiteralOutsideOfAnnotationWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4941,6 +4953,12 @@ private fun KaDiagnosticConverterBuilder.addConversions109() {
             token,
         )
     }
+    add(FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING) { firDiagnostic ->
+        SubclassCantCallCompanionProtectedNonStaticWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE) { firDiagnostic ->
         JavaSamInterfaceConstructorReferenceImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -5176,6 +5194,12 @@ private fun KaDiagnosticConverterBuilder.addConversions115() {
     add(FirErrors.NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE.warningFactory) { firDiagnostic ->
         NonPublicDataCopyCallFromPublicInlineWarningImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INTERFACE_COMPANION_BLOCK_VAR) { firDiagnostic ->
+        InterfaceCompanionBlockVarImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -6574,6 +6598,12 @@ private fun KaDiagnosticConverterBuilder.addConversions144() {
             token,
         )
     }
+    add(FirJvmErrors.JAVA_CLASS_PROPERTY_REFERENCE.errorFactory) { firDiagnostic ->
+        JavaClassPropertyReferenceErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions145() {
@@ -6663,6 +6693,12 @@ private fun KaDiagnosticConverterBuilder.addConversions146() {
     }
     add(FirErrors.ITERATOR_ON_NULLABLE) { firDiagnostic ->
         IteratorOnNullableImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD) { firDiagnostic ->
+        InterfaceCompanionBlockPropertyPrivateFieldImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

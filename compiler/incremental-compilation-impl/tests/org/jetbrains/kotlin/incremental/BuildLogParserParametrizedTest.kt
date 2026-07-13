@@ -17,21 +17,16 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
 
-@RunWith(Parameterized::class)
 class BuildLogParserParametrizedTest {
 
-    @Parameterized.Parameter
-    @JvmField
-    var testDirName: String = ""
-
-    @Test
-    fun testParser() {
+    @ParameterizedTest
+    @MethodSource("data")
+    fun testParser(testDirName: String) {
         fun String.normalizeSeparators() = replace("\r\n", "\n").trim()
 
         val testDir = File(TEST_ROOT, testDirName)
@@ -49,11 +44,11 @@ class BuildLogParserParametrizedTest {
         }
 
         val expectedNormalized = expectedFile.readText().normalizeSeparators()
-        Assert.assertEquals("Parsed content was unexpected: ", expectedNormalized, actualNormalized)
+        assertEquals(expectedNormalized, actualNormalized, "Parsed content was unexpected: ")
 
         // parse expected, dump again and compare (to check that dumped log can be parsed again)
         val reparsedActualNormalized = dumpBuildLog(parseTestBuildLog(expectedFile)).normalizeSeparators()
-        Assert.assertEquals("Reparsed content was unexpected: ", expectedNormalized, reparsedActualNormalized)
+        assertEquals(expectedNormalized, reparsedActualNormalized, "Reparsed content was unexpected: ")
     }
 
     companion object {
@@ -61,12 +56,10 @@ class BuildLogParserParametrizedTest {
         private val LOG_FILE_NAME = "build.log"
         private val EXPECTED_PARSED_LOG_FILE_NAME = "expected.txt"
 
-        @Suppress("unused")
-        @Parameterized.Parameters(name = "{index}: {0}")
         @JvmStatic
-        fun data(): List<Array<String>> {
-            val directories = TEST_ROOT.listFiles().filter { it.isDirectory }
-            return directories.map { arrayOf(it.name) }
+        fun data(): List<String> {
+            val directories = TEST_ROOT.listFiles().orEmpty().filter { it.isDirectory }
+            return directories.map { it.name }
         }
     }
 }

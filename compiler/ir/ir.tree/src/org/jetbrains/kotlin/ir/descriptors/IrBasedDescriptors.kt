@@ -377,7 +377,6 @@ abstract class IrBasedFunctionDescriptor<Function : IrFunction>(owner: Function)
 
 // We make all IR-based function descriptors instances of DescriptorWithContainerSource, and use .outerClassId to
 // check whether declaration is deserialized. See IrInlineCodegen.descriptorIsDeserialized
-@OptIn(K1Deprecation::class)
 open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunctionDescriptor, DescriptorWithContainerSource,
     IrBasedFunctionDescriptor<IrSimpleFunction>(owner) {
 
@@ -783,7 +782,6 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
 
 fun IrEnumEntry.toIrBasedDescriptor() = IrBasedEnumEntryDescriptor(this)
 
-@OptIn(K1Deprecation::class)
 open class IrBasedPropertyDescriptor(owner: IrProperty) :
     PropertyDescriptor, DescriptorWithContainerSource, IrBasedDeclarationDescriptor<IrProperty>(owner) {
     override fun getModality() = owner.modality

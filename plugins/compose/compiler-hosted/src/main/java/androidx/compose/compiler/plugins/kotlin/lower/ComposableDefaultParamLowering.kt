@@ -84,10 +84,11 @@ import org.jetbrains.kotlin.name.Name
  */
 class ComposableDefaultParamLowering(
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
-) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags) {
+) : AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags) {
     private val originalToTransformed = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
     override fun lower(irModule: IrModuleFragment) {

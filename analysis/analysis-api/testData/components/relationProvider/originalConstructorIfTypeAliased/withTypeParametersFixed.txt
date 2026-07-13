@@ -3,6 +3,7 @@ Resolved constructor:
     annotations: []
     callableId: null
     containingClassId: test/MyTypeAlias
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -29,8 +30,8 @@ Resolved constructor:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -48,11 +49,13 @@ Resolved constructor:
         modality: FINAL
         name: t
         origin: TYPEALIASED_CONSTRUCTOR
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: kotlin/String
+        typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
         getContainingJvmClassName: null
@@ -72,6 +75,7 @@ Original constructor if type aliased:
     annotations: []
     callableId: null
     containingClassId: test/MyClass
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -115,8 +119,8 @@ Original constructor if type aliased:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -134,10 +138,12 @@ Original constructor if type aliased:
         modality: FINAL
         name: t
         origin: SOURCE
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaTypeParameterType:
           annotations: []
           type: T
+        typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
         getContainingJvmClassName: test.MyClass

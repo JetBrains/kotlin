@@ -178,15 +178,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         }
         outputs.runPlatformCheckers(diagnosticsCollector)
 
-        val kotlinPackageUsageIsFine = when (configuration.useLightTree) {
-            true -> outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
-            false -> sessionsWithSources.all { (val _ = session, val sources = files) ->
-                checkKotlinPackageUsageForPsi(configuration, sources.asKtFilesList())
-            }
-        }
-
-        if (!kotlinPackageUsageIsFine) return null
-
         val frontendOutput = AllModulesFrontendOutput(outputs)
         return JvmFrontendPipelineArtifact(frontendOutput, configuration, environment, allSources)
     }

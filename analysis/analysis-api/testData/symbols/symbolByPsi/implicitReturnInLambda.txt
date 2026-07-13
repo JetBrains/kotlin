@@ -1,6 +1,7 @@
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -19,6 +20,7 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
@@ -45,12 +47,13 @@ KaAnonymousFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -68,11 +71,13 @@ KaAnonymousFunctionSymbol:
       modality: FINAL
       name: a
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: null
@@ -90,6 +95,7 @@ KaAnonymousFunctionSymbol:
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -117,6 +123,7 @@ KaLocalVariableSymbol:
         type: kotlin/Int
     ]
     type: (kotlin/Int) -> kotlin/Int
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
@@ -127,6 +134,7 @@ KaLocalVariableSymbol:
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -145,6 +153,7 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
@@ -171,12 +180,13 @@ KaAnonymousFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -194,11 +204,13 @@ KaAnonymousFunctionSymbol:
       modality: FINAL
       name: a
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: null
@@ -216,6 +228,7 @@ KaAnonymousFunctionSymbol:
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -243,6 +256,7 @@ KaLocalVariableSymbol:
         type: kotlin/Int
     ]
     type: (kotlin/Int) -> kotlin/Int
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
@@ -253,6 +267,7 @@ KaLocalVariableSymbol:
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -271,6 +286,7 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
@@ -297,12 +313,13 @@ KaAnonymousFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -320,11 +337,13 @@ KaAnonymousFunctionSymbol:
       modality: FINAL
       name: it
       origin: SOURCE_MEMBER_GENERATED
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: null
@@ -413,8 +432,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -432,6 +451,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: lmbd
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -446,6 +466,7 @@ KaNamedFunctionSymbol:
             type: kotlin/Int
         ]
         type: (kotlin/Int) -> kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: ImplicitReturnInLambdaKt

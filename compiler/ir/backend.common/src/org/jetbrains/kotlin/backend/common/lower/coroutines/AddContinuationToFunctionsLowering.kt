@@ -66,7 +66,7 @@ class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendC
 fun transformSuspendFunction(
     context: CommonBackendContext,
     function: IrSimpleFunction,
-    lowerReturnType: (IrSimpleFunction) -> IrType = { defaultLoweredSuspendFunctionReturnType(it, context.irBuiltIns) },
+    lowerReturnType: (IrType) -> IrType = { defaultLoweredSuspendFunctionReturnType(it, context.irBuiltIns) },
 ): IrSimpleFunction {
     val newFunctionWithContinuation = function.getOrCreateFunctionWithContinuationStub(context, lowerReturnType)
     // Using custom mapping because number of parameters doesn't match
@@ -100,7 +100,7 @@ fun transformSuspendFunction(
 
 fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(
     context: CommonBackendContext,
-    lowerReturnType: (IrSimpleFunction) -> IrType = { defaultLoweredSuspendFunctionReturnType(it, context.irBuiltIns) },
+    lowerReturnType: (IrType) -> IrType = { defaultLoweredSuspendFunctionReturnType(it, context.irBuiltIns) },
 ): IrSimpleFunction {
     return this.functionWithContinuations ?: createSuspendFunctionStub(context, lowerReturnType).also {
         functionWithContinuations = it
@@ -110,7 +110,7 @@ fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(
 
 private fun IrSimpleFunction.createSuspendFunctionStub(
     context: CommonBackendContext,
-    lowerReturnType: (IrSimpleFunction) -> IrType,
+    lowerReturnType: (IrType) -> IrType,
 ): IrSimpleFunction {
     require(this.isSuspend) { "$fqNameWhenAvailable should be a suspend function to create version with continuation" }
     return factory.buildFun {
@@ -118,7 +118,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(
         isSuspend = false
         name = this@createSuspendFunctionStub.name
         origin = IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION
-        returnType = lowerReturnType(this@createSuspendFunctionStub)
+        returnType = lowerReturnType(this@createSuspendFunctionStub.returnType)
     }.also { function ->
         function.parent = parent
 
@@ -150,5 +150,5 @@ private fun IrFunction.continuationType(context: CommonBackendContext): IrType {
     return context.symbols.continuationClass.typeWith(returnType)
 }
 
-fun defaultLoweredSuspendFunctionReturnType(function: IrFunction, irBuiltIns: IrBuiltIns): IrType =
-    if (function.returnType.isNullable()) irBuiltIns.anyNType else irBuiltIns.anyType
+fun defaultLoweredSuspendFunctionReturnType(suspendFunReturnType: IrType, irBuiltIns: IrBuiltIns): IrType =
+    if (suspendFunReturnType.isNullable()) irBuiltIns.anyNType else irBuiltIns.anyType

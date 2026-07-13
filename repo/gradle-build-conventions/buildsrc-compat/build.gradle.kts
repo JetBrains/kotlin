@@ -112,6 +112,7 @@ dependencies {
     }
     implementation(libs.gson)
     implementation(project(":d8-configuration"))
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
 
 tasks.register("checkBuild") {

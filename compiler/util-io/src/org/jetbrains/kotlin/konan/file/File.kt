@@ -63,18 +63,6 @@ data class File(internal val javaPath: Path) {
     val listFilesOrEmpty: List<File>
         get() = if (exists) listFiles else emptyList()
 
-    // A fileKey is an object that uniquely identifies the given file.
-    val fileKey: Any
-        get() {
-            // It is not guaranteed that all filesystems have fileKey. If not we fall
-            // back on canonicalPath which can be significantly slower to get.
-            var key = Files.readAttributes(javaPath, BasicFileAttributes::class.java).fileKey()
-            if (key == null) {
-                key = this.canonicalPath
-            }
-            return key
-        }
-
     val size: Long get() = Files.size(javaPath)
 
     fun child(name: String): File = File(this, name)
@@ -215,22 +203,3 @@ fun createTempFile(name: String, suffix: String? = null): File = Files.createTem
 fun createTempDir(name: String): File = Files.createTempDirectory(name).File()
 
 fun bufferedReader(errorStream: InputStream): BufferedReader = BufferedReader(InputStreamReader(errorStream))
-
-// stdlib `use` function adapted for AutoCloseable.
-inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
-    var closed = false
-    try {
-        return block(this)
-    } catch (e: Exception) {
-        closed = true
-        try {
-            this?.close()
-        } catch (closeException: Exception) {
-        }
-        throw e
-    } finally {
-        if (!closed) {
-            this?.close()
-        }
-    }
-}

@@ -3,9 +3,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * kotlinx_serialization_DeserializationStrategy_descriptor_get__reverse_swift(void * self);
+
 void * _Nullable kotlinx_serialization_DeserializationStrategy_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder____reverse_swift(void * self, void * decoder);
 
+void * kotlinx_serialization_KSerializer_descriptor_get__reverse_swift(void * self);
+
+void * kotlinx_serialization_SerialFormat_serializersModule_get__reverse_swift(void * self);
+
+void * kotlinx_serialization_SerializationStrategy_descriptor_get__reverse_swift(void * self);
+
 _Bool kotlinx_serialization_SerializationStrategy_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * encoder, void * _Nullable value);
+
+NSArray<id> * kotlinx_serialization_descriptors_SerialDescriptor_annotations_get__reverse_swift(void * self);
+
+int32_t kotlinx_serialization_descriptors_SerialDescriptor_elementsCount_get__reverse_swift(void * self);
 
 NSArray<id> * kotlinx_serialization_descriptors_SerialDescriptor_getElementAnnotations__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
 
@@ -16,6 +28,14 @@ int32_t kotlinx_serialization_descriptors_SerialDescriptor_getElementIndex__Type
 NSString * kotlinx_serialization_descriptors_SerialDescriptor_getElementName__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
 
 _Bool kotlinx_serialization_descriptors_SerialDescriptor_isElementOptional__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
+
+_Bool kotlinx_serialization_descriptors_SerialDescriptor_isInline_get__reverse_swift(void * self);
+
+_Bool kotlinx_serialization_descriptors_SerialDescriptor_isNullable_get__reverse_swift(void * self);
+
+void * kotlinx_serialization_descriptors_SerialDescriptor_kind_get__reverse_swift(void * self);
+
+NSString * kotlinx_serialization_descriptors_SerialDescriptor_serialName_get__reverse_swift(void * self);
 
 int32_t kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift(void * self);
 
@@ -115,6 +135,8 @@ NSString * kotlinx_serialization_encoding_CompositeDecoder_decodeStringElement__
 
 _Bool kotlinx_serialization_encoding_CompositeDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(void * self, void * descriptor);
 
+void * kotlinx_serialization_encoding_CompositeDecoder_serializersModule_get__reverse_swift(void * self);
+
 _Bool kotlinx_serialization_encoding_CompositeEncoder_encodeBooleanElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Bool____reverse_swift(void * self, void * descriptor, int32_t index, _Bool value);
 
 _Bool kotlinx_serialization_encoding_CompositeEncoder_encodeByteElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Int8____reverse_swift(void * self, void * descriptor, int32_t index, int8_t value);
@@ -136,6 +158,8 @@ _Bool kotlinx_serialization_encoding_CompositeEncoder_encodeShortElement__TypesO
 _Bool kotlinx_serialization_encoding_CompositeEncoder_encodeStringElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_String____reverse_swift(void * self, void * descriptor, int32_t index, NSString * value);
 
 _Bool kotlinx_serialization_encoding_CompositeEncoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(void * self, void * descriptor);
+
+void * kotlinx_serialization_encoding_CompositeEncoder_serializersModule_get__reverse_swift(void * self);
 
 _Bool kotlinx_serialization_encoding_CompositeEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(void * self, void * descriptor, int32_t index);
 
@@ -167,6 +191,8 @@ int16_t kotlinx_serialization_encoding_Decoder_decodeShort__reverse_swift(void *
 
 NSString * kotlinx_serialization_encoding_Decoder_decodeString__reverse_swift(void * self);
 
+void * kotlinx_serialization_encoding_Decoder_serializersModule_get__reverse_swift(void * self);
+
 void * kotlinx_serialization_encoding_Encoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(void * self, void * descriptor, int32_t collectionSize);
 
 void * kotlinx_serialization_encoding_Encoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(void * self, void * descriptor);
@@ -197,6 +223,8 @@ _Bool kotlinx_serialization_encoding_Encoder_encodeShort__TypesOfArguments__Swif
 
 _Bool kotlinx_serialization_encoding_Encoder_encodeString__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * value);
 
+void * kotlinx_serialization_encoding_Encoder_serializersModule_get__reverse_swift(void * self);
+
 void * _Nullable kotlinx_serialization_internal_AbstractCollectionSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder____reverse_swift(void * self, void * decoder);
 
 _Bool kotlinx_serialization_internal_AbstractCollectionSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * encoder, void * _Nullable value);
@@ -209,6 +237,8 @@ void * kotlinx_serialization_internal_GeneratedSerializer_childSerializers__reve
 
 void * kotlinx_serialization_internal_GeneratedSerializer_typeParametersSerializers__reverse_swift(void * self);
 
+void * kotlinx_serialization_internal_MapLikeSerializer_descriptor_get__reverse_swift(void * self);
+
 _Bool kotlinx_serialization_internal_MapLikeSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * encoder, void * _Nullable value);
 
 void * kotlinx_serialization_internal_TaggedDecoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(void * self, void * descriptor);
@@ -219,6 +249,8 @@ _Bool kotlinx_serialization_internal_TaggedDecoder_decodeNotNullMark__reverse_sw
 
 _Bool kotlinx_serialization_internal_TaggedDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(void * self, void * descriptor);
 
+void * kotlinx_serialization_internal_TaggedDecoder_serializersModule_get__reverse_swift(void * self);
+
 void * kotlinx_serialization_internal_TaggedEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(void * self, void * descriptor);
 
 void * kotlinx_serialization_internal_TaggedEncoder_encodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(void * self, void * descriptor);
@@ -226,6 +258,8 @@ void * kotlinx_serialization_internal_TaggedEncoder_encodeInline__TypesOfArgumen
 _Bool kotlinx_serialization_internal_TaggedEncoder_encodeNotNullMark__reverse_swift(void * self);
 
 _Bool kotlinx_serialization_internal_TaggedEncoder_encodeNull__reverse_swift(void * self);
+
+void * kotlinx_serialization_internal_TaggedEncoder_serializersModule_get__reverse_swift(void * self);
 
 _Bool kotlinx_serialization_modules_SerializersModule_dumpTo__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleCollector____reverse_swift(void * self, void * collector);
 
@@ -379,6 +413,8 @@ void * kotlinx_serialization_descriptors_SerialDescriptor__TypesOfArguments__Swi
 
 NSArray<id> * kotlinx_serialization_descriptors_SerialDescriptor_annotations_get(void * self);
 
+NSArray<id> * kotlinx_serialization_descriptors_SerialDescriptor_annotations_get_direct(void * self);
+
 int32_t kotlinx_serialization_descriptors_SerialDescriptor_elementsCount_get(void * self);
 
 NSArray<id> * kotlinx_serialization_descriptors_SerialDescriptor_getElementAnnotations__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
@@ -393,7 +429,11 @@ _Bool kotlinx_serialization_descriptors_SerialDescriptor_isElementOptional__Type
 
 _Bool kotlinx_serialization_descriptors_SerialDescriptor_isInline_get(void * self);
 
+_Bool kotlinx_serialization_descriptors_SerialDescriptor_isInline_get_direct(void * self);
+
 _Bool kotlinx_serialization_descriptors_SerialDescriptor_isNullable_get(void * self);
+
+_Bool kotlinx_serialization_descriptors_SerialDescriptor_isNullable_get_direct(void * self);
 
 void * kotlinx_serialization_descriptors_SerialDescriptor_kind_get(void * self);
 
@@ -625,6 +665,8 @@ uint16_t kotlinx_serialization_encoding_CompositeDecoder_decodeCharElement__Type
 
 int32_t kotlinx_serialization_encoding_CompositeDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * self, void * descriptor);
 
+int32_t kotlinx_serialization_encoding_CompositeDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor___direct(void * self, void * descriptor);
+
 double kotlinx_serialization_encoding_CompositeDecoder_decodeDoubleElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(void * self, void * descriptor, int32_t index);
 
 int32_t kotlinx_serialization_encoding_CompositeDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * self, void * descriptor);
@@ -638,6 +680,8 @@ int32_t kotlinx_serialization_encoding_CompositeDecoder_decodeIntElement__TypesO
 int64_t kotlinx_serialization_encoding_CompositeDecoder_decodeLongElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(void * self, void * descriptor, int32_t index);
 
 _Bool kotlinx_serialization_encoding_CompositeDecoder_decodeSequentially(void * self);
+
+_Bool kotlinx_serialization_encoding_CompositeDecoder_decodeSequentially_direct(void * self);
 
 int16_t kotlinx_serialization_encoding_CompositeDecoder_decodeShortElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(void * self, void * descriptor, int32_t index);
 
@@ -673,6 +717,8 @@ void * kotlinx_serialization_encoding_CompositeEncoder_serializersModule_get(voi
 
 _Bool kotlinx_serialization_encoding_CompositeEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(void * self, void * descriptor, int32_t index);
 
+_Bool kotlinx_serialization_encoding_CompositeEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct(void * self, void * descriptor, int32_t index);
+
 void * kotlinx_serialization_encoding_Decoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * self, void * descriptor);
 
 _Bool kotlinx_serialization_encoding_Decoder_decodeBoolean(void * self);
@@ -705,6 +751,8 @@ void * kotlinx_serialization_encoding_Decoder_serializersModule_get(void * self)
 
 void * kotlinx_serialization_encoding_Encoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(void * self, void * descriptor, int32_t collectionSize);
 
+void * kotlinx_serialization_encoding_Encoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct(void * self, void * descriptor, int32_t collectionSize);
+
 void * kotlinx_serialization_encoding_Encoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * self, void * descriptor);
 
 _Bool kotlinx_serialization_encoding_Encoder_encodeBoolean__TypesOfArguments__Swift_Bool__(void * self, _Bool value);
@@ -726,6 +774,8 @@ _Bool kotlinx_serialization_encoding_Encoder_encodeInt__TypesOfArguments__Swift_
 _Bool kotlinx_serialization_encoding_Encoder_encodeLong__TypesOfArguments__Swift_Int64__(void * self, int64_t value);
 
 _Bool kotlinx_serialization_encoding_Encoder_encodeNotNullMark(void * self);
+
+_Bool kotlinx_serialization_encoding_Encoder_encodeNotNullMark_direct(void * self);
 
 _Bool kotlinx_serialization_encoding_Encoder_encodeNull(void * self);
 
@@ -772,6 +822,8 @@ int32_t kotlinx_serialization_internal_ElementMarker_nextUnmarkedIndex(void * se
 void * kotlinx_serialization_internal_GeneratedSerializer_childSerializers(void * self);
 
 void * kotlinx_serialization_internal_GeneratedSerializer_typeParametersSerializers(void * self);
+
+void * kotlinx_serialization_internal_GeneratedSerializer_typeParametersSerializers_direct(void * self);
 
 void * kotlinx_serialization_internal_MapLikeSerializer_descriptor_get(void * self);
 
@@ -843,6 +895,8 @@ _Bool kotlinx_serialization_internal_TaggedDecoder_endStructure__TypesOfArgument
 
 void * kotlinx_serialization_internal_TaggedDecoder_serializersModule_get(void * self);
 
+void * kotlinx_serialization_internal_TaggedDecoder_serializersModule_get_direct(void * self);
+
 void * kotlinx_serialization_internal_TaggedEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * self, void * descriptor);
 
 void * kotlinx_serialization_internal_TaggedEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor___direct(void * self, void * descriptor);
@@ -902,6 +956,8 @@ _Bool kotlinx_serialization_internal_TaggedEncoder_encodeStringElement__TypesOfA
 _Bool kotlinx_serialization_internal_TaggedEncoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * self, void * descriptor);
 
 void * kotlinx_serialization_internal_TaggedEncoder_serializersModule_get(void * self);
+
+void * kotlinx_serialization_internal_TaggedEncoder_serializersModule_get_direct(void * self);
 
 NSSet<NSString *> * kotlinx_serialization_internal_jsonCachedSerialNames__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * receiver);
 

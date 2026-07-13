@@ -16,6 +16,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: KotlinWasmCompile
     to.includeUnavailableSourcesIntoSourceMap = from.includeUnavailableSourcesIntoSourceMap
     to.irDceDumpDeclarationIrSizesToFile = from.irDceDumpDeclarationIrSizesToFile
     to.irDceDumpReachabilityInfoToFile = from.irDceDumpReachabilityInfoToFile
+    to.regenerateUnchangedModules = from.regenerateUnchangedModules
     @Suppress("DEPRECATION")
     to.wasm = from.wasm
     to.wasmDebug = from.wasmDebug

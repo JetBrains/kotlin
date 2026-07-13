@@ -32,8 +32,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -51,11 +51,13 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: x
       origin: PLUGIN
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: test/FirstTarget
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(customSerlializable.kt)
       getContainingJvmClassName: test.Serializer
@@ -110,8 +112,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -129,11 +131,13 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: x
       origin: PLUGIN
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: test/SecondTarget
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(customSerlializable.kt)
       getContainingJvmClassName: test.Serializer
@@ -188,8 +192,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -207,11 +211,13 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
@@ -324,6 +330,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: test/Serializer
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

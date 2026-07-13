@@ -92,6 +92,7 @@ fun compileWithClang(
     libraries: List<String> = emptyList(),
     additionalClangFlags: List<String> = emptyList(),
     fmodules: Boolean = true,
+    debug: Boolean = true,
 ): TestCompilationResult<out TestCompilationArtifact.Executable> {
     val configurables = testRunSettings.configurables
     val host = testRunSettings.get<KotlinNativeTargets>().hostTarget
@@ -113,7 +114,7 @@ fun compileWithClang(
         )
         addAll(sourceFiles.map { it.absolutePath })
         addAll(includeDirectories.flatMap { listOf("-I", it.absolutePath) })
-        add("-g")
+        if (debug) add("-g")
         if (fmodules) add("-fmodules")
         addAll(frameworkDirectories.flatMap { listOf("-F", it.absolutePath) })
         addAll(libraryDirectories.flatMap { listOf("-L", it.absolutePath) }.toTypedArray())

@@ -6,19 +6,21 @@
 package org.jetbrains.kotlin.spec.consistency
 
 import com.intellij.testFramework.TestDataPath
-import junit.framework.TestCase
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.SpecTestLinkedType
 import org.jetbrains.kotlin.spec.utils.TestArea
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.parseLinkedSpecTest
 import org.jetbrains.kotlin.spec.utils.spec.SpecSentencesStorage
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
 import java.util.stream.Stream
 
 @TestDataPath("\$PROJECT_ROOT/compiler/tests-spec/testData/")
-class SpecTestsConsistencyTest : TestCase() {
+class SpecTestsConsistencyTest {
     companion object {
         private val specSentencesStorage = SpecSentencesStorage()
 
@@ -30,9 +32,9 @@ class SpecTestsConsistencyTest : TestCase() {
                 val testDataPath =
                     "${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testArea.testDataPath}/${SpecTestLinkedType.LINKED.testDataPath}"
 
-                testFiles += File(testDataPath).let { testsDir ->
+                testFiles += ForTestCompileRuntime.transformTestDataPath(testDataPath).let { testsDir ->
                     testsDir.walkTopDown().filter { it.extension == "kt" }.map {
-                        it.relativeTo(File(GeneralConfiguration.SPEC_TESTDATA_PATH)).path.replace("/", "$")
+                        it.relativeTo(ForTestCompileRuntime.transformTestDataPath(GeneralConfiguration.SPEC_TESTDATA_PATH)).path.replace("/", "$")
                     }.toList()
                 }
             }
@@ -58,7 +60,7 @@ class SpecTestsConsistencyTest : TestCase() {
             val paragraphForTestSentences =
                 specSentencesForCurrentTest[sectionsPath] ?: throw Exception("$sectionsPath not found")
             if (paragraphForTestSentences.size < sentenceNumber) {
-                fail("Sentence #$sentenceNumber not found (${file.path})")
+                fail<Nothing>("Sentence #$sentenceNumber not found (${file.path})")
             }
             val expectedSentence = paragraphForTestSentences[sentenceNumber - 1]
             val actualSentence = paragraphSentences[sentenceNumber - 1]

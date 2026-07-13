@@ -9,16 +9,20 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.file.Directory
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinChromiumTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinFirefoxTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWebkitTestRunner
+import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import java.time.Duration
 import kotlin.reflect.KClass
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 class KotlinJsBrowserTestDslTest {
 
@@ -27,7 +31,7 @@ class KotlinJsBrowserTestDslTest {
         val test = configureBrowserTest {
             chromium()
             chromium("custom-chromium") {
-                it.timeout.set(Duration.ofSeconds(30))
+                it.timeout.set(31L.seconds)
                 it.headless.set(false)
                 it.launchArgs.set(listOf("--lang=fi-FI"))
             }
@@ -38,81 +42,106 @@ class KotlinJsBrowserTestDslTest {
 
         val bundle = test.defaultBundleDirectory
         assertEquals(
-            mapOf(
+            expected = mapOf(
                 "chromium" to RunnerDump(
-                    KotlinChromiumTestRunner::class,
-                    Duration.ofSeconds(2),
-                    true,
-                    emptyList(),
-                    bundle
+                    type = KotlinChromiumTestRunner::class,
+                    timeout = 30L.seconds,
+                    headless = true,
+                    launchArgs = emptyList(),
+                    launchEnvironmentVariables = mapOf(),
+                    testsLocation = bundle
                 ),
                 "custom-chromium" to RunnerDump(
-                    KotlinChromiumTestRunner::class,
-                    Duration.ofSeconds(30),
-                    false,
-                    listOf("--lang=fi-FI"),
-                    bundle,
+                    type = KotlinChromiumTestRunner::class,
+                    timeout = 31L.seconds,
+                    headless = false,
+                    launchArgs = listOf("--lang=fi-FI"),
+                    launchEnvironmentVariables = mapOf(),
+                    testsLocation = bundle,
                 ),
                 "firefox" to RunnerDump(
-                    KotlinFirefoxTestRunner::class,
-                    Duration.ofSeconds(2),
-                    true,
-                    emptyList(),
-                    bundle
+                    type = KotlinFirefoxTestRunner::class,
+                    timeout = 30L.seconds,
+                    headless = true,
+                    launchArgs = emptyList(),
+                    launchEnvironmentVariables = mapOf(),
+                    testsLocation = bundle
                 ),
                 "webkit" to RunnerDump(
-                    KotlinWebkitTestRunner::class,
-                    Duration.ofSeconds(2),
-                    true,
-                    emptyList(),
-                    bundle
+                    type = KotlinWebkitTestRunner::class,
+                    timeout = 30L.seconds,
+                    headless = true,
+                    launchArgs = emptyList(),
+                    launchEnvironmentVariables = mapOf(),
+                    testsLocation = bundle
                 ),
                 "extra-webkit" to RunnerDump(
-                    KotlinWebkitTestRunner::class,
-                    Duration.ofSeconds(2),
-                    true,
-                    emptyList(),
-                    bundle
+                    type = KotlinWebkitTestRunner::class,
+                    timeout = 30L.seconds,
+                    headless = true,
+                    launchArgs = emptyList(),
+                    launchEnvironmentVariables = mapOf(),
+                    testsLocation = bundle
                 ),
             ),
-            test.dumpRunners(),
+            actual = test.dumpRunners(),
         )
     }
 
     @Test
     fun `top-level configuration propagates to runners unless overridden`() {
         val test = configureBrowserTest {
-            browserDefaults.apply {
-                timeout.set(Duration.ofSeconds(10))
-                headless.set(false)
-                launchArgs.set(listOf("--global"))
+            timeout.set(10L.seconds)
+            headless.set(false)
+            launchEnvironmentVariables.put("A", "1")
+            // launchArgs is not available on top level
+
+            firefox()
+
+            chromium {
+                it.launchArgs.set(listOf("--global"))
+                // this should override convention,
+                // i.e. it will create new list instead of appending
+                it.launchEnvironmentVariables.put("B", "2")
             }
 
-            chromium()
             webkit("override") {
                 it.headless.set(true)
-                it.timeout.set(Duration.ofSeconds(42))
+                it.timeout.set(42L.seconds)
                 it.launchArgs.set(listOf("--no-sandbox"))
+                it.launchEnvironmentVariables.set(mapOf("C" to "3"))
             }
         }
 
         val bundle = test.defaultBundleDirectory
         assertEquals(
-            mapOf(
+            expected = mapOf(
                 "chromium" to RunnerDump(
-                    KotlinChromiumTestRunner::class,
-                    Duration.ofSeconds(10),
-                    false, listOf("--global"),
-                    bundle
+                    type = KotlinChromiumTestRunner::class,
+                    timeout = 10L.seconds,
+                    headless = false,
+                    launchArgs = listOf("--global"),
+                    launchEnvironmentVariables = mapOf("B" to "2"),
+                    testsLocation = bundle
+                ),
+                "firefox" to RunnerDump(
+                    type = KotlinFirefoxTestRunner::class,
+                    timeout = 10L.seconds,
+                    headless = false,
+                    launchArgs = listOf(),
+                    launchEnvironmentVariables = mapOf("A" to "1"),
+                    testsLocation = bundle
                 ),
                 "override" to RunnerDump(
-                    KotlinWebkitTestRunner::class,
-                    Duration.ofSeconds(42),
-                    true, listOf("--no-sandbox"),
-                    bundle
+                    type = KotlinWebkitTestRunner::class,
+                    timeout = 42L.seconds,
+                    headless = true,
+                    launchArgs = listOf("--no-sandbox"),
+                    launchEnvironmentVariables = mapOf("C" to "3"),
+                    testsLocation = bundle
                 ),
             ),
-            test.dumpRunners(),
+            actual = test.dumpRunners(),
         )
     }
 
@@ -122,8 +151,7 @@ class KotlinJsBrowserTestDslTest {
             webkit()
         }
 
-        val expectedDefault = test.defaultBundleTask.flatMap { it.outputBundleDir }.get()
-        assertEquals(expectedDefault, test.defaultTestsLocation.get().bundleLocation.get())
+        val expectedDefault = test.defaultTestsLocationProvider.flatMap { it.bundleLocation }.get()
         assertEquals(expectedDefault, test.allBrowserRunners.get().getValue("webkit").testsLocation.get().bundleLocation.get())
     }
 
@@ -141,15 +169,36 @@ class KotlinJsBrowserTestDslTest {
         assertEquals(
             mapOf(
                 "repeated" to RunnerDump(
-                    KotlinChromiumTestRunner::class,
-                    Duration.ofSeconds(2),
-                    false,
-                    listOf("--flag"),
-                    test.defaultBundleDirectory,
+                    type = KotlinChromiumTestRunner::class,
+                    timeout = 30L.seconds,
+                    headless = false,
+                    launchArgs = listOf("--flag"),
+                    launchEnvironmentVariables = mapOf(),
+                    testsLocation = test.defaultBundleDirectory,
                 ),
             ),
             test.dumpRunners(),
         )
+    }
+
+    @Test
+    fun `using new test DSL in wasmJs target throws an error`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                @OptIn(ExperimentalWasmDsl::class)
+                wasmJs {
+                    browser {
+                        test {
+                            it.chromium()
+                        }
+                    }
+                }
+            }
+        }
+
+        project.evaluate()
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.NewJsTestDslNotSupportedForWasmError)
     }
 }
 
@@ -175,6 +224,7 @@ internal data class RunnerDump(
     val timeout: Duration,
     val headless: Boolean,
     val launchArgs: List<String>,
+    val launchEnvironmentVariables: Map<String, String>,
     val testsLocation: Directory,
 )
 
@@ -186,8 +236,9 @@ internal fun KotlinJsBrowserTestDsl.dumpRunners(): Map<String, RunnerDump> =
             headless = runner.headless.get(),
             launchArgs = runner.launchArgs.get(),
             testsLocation = runner.testsLocation.get().bundleLocation.get(),
+            launchEnvironmentVariables = runner.launchEnvironmentVariables.get(),
         )
     }
 
 internal val KotlinJsBrowserTestDsl.defaultBundleDirectory: Directory
-    get() = defaultBundleTask.flatMap { it.outputBundleDir }.get()
+    get() = defaultTestsLocationProvider.flatMap { it.bundleLocation }.get()

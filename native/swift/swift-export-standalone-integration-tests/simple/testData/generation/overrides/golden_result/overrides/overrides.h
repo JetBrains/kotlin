@@ -7,6 +7,8 @@ _Bool AbstractBase_abstractFun1__reverse_swift(void * self);
 
 _Bool AbstractBase_abstractFun2__reverse_swift(void * self);
 
+int32_t AbstractBase_abstractVal_get__reverse_swift(void * self);
+
 _Bool AbstractDerived2_abstractFun1__reverse_swift(void * self);
 
 _Bool Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent_____reverse_swift(void * self, NSNumber * _Nullable nullable, void * poly, void * _Nullable nullablePoly);
@@ -23,19 +25,33 @@ void * Child_objectFunc__TypesOfArguments__overrides_Child____reverse_swift(void
 
 void * _Nullable Child_objectOptionalFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
 
+void * _Nullable Child_objectOptionalVar_get__reverse_swift(void * self);
+
+void * Child_objectVar_get__reverse_swift(void * self);
+
 _Bool Child_overrideChainFunc__reverse_swift(void * self);
 
 int32_t Child_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t arg);
 
+int32_t Child_primitiveTypeVar_get__reverse_swift(void * self);
+
 void * Child_subtypeObjectFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
+
+void * Child_subtypeObjectVar_get__reverse_swift(void * self);
 
 void * Child_subtypeOptionalObjectFunc__reverse_swift(void * self);
 
+void * Child_subtypeOptionalObjectVar_get__reverse_swift(void * self);
+
 int32_t Child_subtypeOptionalPrimitiveFunc__reverse_swift(void * self);
+
+int32_t Child_subtypeOptionalPrimitiveVar_get__reverse_swift(void * self);
 
 _Bool OpenDerived1_abstractFun1__reverse_swift(void * self);
 
 _Bool OpenDerived1_abstractFun2__reverse_swift(void * self);
+
+int32_t OpenDerived1_abstractVal_get__reverse_swift(void * self);
 
 _Bool Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child____reverse_swift(void * self, int32_t nullable, void * poly, void * nullablePoly);
 
@@ -57,15 +73,27 @@ void * Parent_objectFunc__TypesOfArguments__overrides_Child____reverse_swift(voi
 
 void * _Nullable Parent_objectOptionalFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
 
+void * _Nullable Parent_objectOptionalVar_get__reverse_swift(void * self);
+
+void * Parent_objectVar_get__reverse_swift(void * self);
+
 _Bool Parent_overrideChainFunc__reverse_swift(void * self);
 
 int32_t Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t arg);
 
+int32_t Parent_primitiveTypeVar_get__reverse_swift(void * self);
+
 void * Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
+
+void * Parent_subtypeObjectVar_get__reverse_swift(void * self);
 
 void * _Nullable Parent_subtypeOptionalObjectFunc__reverse_swift(void * self);
 
+void * _Nullable Parent_subtypeOptionalObjectVar_get__reverse_swift(void * self);
+
 NSNumber * _Nullable Parent_subtypeOptionalPrimitiveFunc__reverse_swift(void * self);
+
+NSNumber * _Nullable Parent_subtypeOptionalPrimitiveVar_get__reverse_swift(void * self);
 
 _Bool AbstractBase_abstractFun1(void * self);
 
@@ -107,7 +135,11 @@ void * _Nullable Child_objectOptionalFunc__TypesOfArguments__overrides_Child___d
 
 void * _Nullable Child_objectOptionalVar_get(void * self);
 
+void * _Nullable Child_objectOptionalVar_get_direct(void * self);
+
 void * Child_objectVar_get(void * self);
+
+void * Child_objectVar_get_direct(void * self);
 
 _Bool Child_overrideChainFunc(void * self);
 
@@ -119,11 +151,15 @@ int32_t Child_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(void * s
 
 int32_t Child_primitiveTypeVar_get(void * self);
 
+int32_t Child_primitiveTypeVar_get_direct(void * self);
+
 void * Child_subtypeObjectFunc__TypesOfArguments__overrides_Child__(void * self, void * arg);
 
 void * Child_subtypeObjectFunc__TypesOfArguments__overrides_Child___direct(void * self, void * arg);
 
 void * Child_subtypeObjectVar_get(void * self);
+
+void * Child_subtypeObjectVar_get_direct(void * self);
 
 void * Child_subtypeOptionalObjectFunc(void * self);
 
@@ -131,11 +167,15 @@ void * Child_subtypeOptionalObjectFunc_direct(void * self);
 
 void * Child_subtypeOptionalObjectVar_get(void * self);
 
+void * Child_subtypeOptionalObjectVar_get_direct(void * self);
+
 int32_t Child_subtypeOptionalPrimitiveFunc(void * self);
 
 int32_t Child_subtypeOptionalPrimitiveFunc_direct(void * self);
 
 int32_t Child_subtypeOptionalPrimitiveVar_get(void * self);
+
+int32_t Child_subtypeOptionalPrimitiveVar_get_direct(void * self);
 
 _Bool GrandChild_finalOverrideHopFunc(void * self);
 
@@ -152,6 +192,8 @@ _Bool OpenDerived1_abstractFun2(void * self);
 _Bool OpenDerived1_abstractFun2_direct(void * self);
 
 int32_t OpenDerived1_abstractVal_get(void * self);
+
+int32_t OpenDerived1_abstractVal_get_direct(void * self);
 
 _Bool Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child__(void * self, int32_t nullable, void * poly, void * nullablePoly);
 
@@ -195,7 +237,11 @@ void * _Nullable Parent_objectOptionalFunc__TypesOfArguments__overrides_Child___
 
 void * _Nullable Parent_objectOptionalVar_get(void * self);
 
+void * _Nullable Parent_objectOptionalVar_get_direct(void * self);
+
 void * Parent_objectVar_get(void * self);
+
+void * Parent_objectVar_get_direct(void * self);
 
 _Bool Parent_overrideChainFunc(void * self);
 
@@ -207,11 +253,15 @@ int32_t Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(void * 
 
 int32_t Parent_primitiveTypeVar_get(void * self);
 
+int32_t Parent_primitiveTypeVar_get_direct(void * self);
+
 void * Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child__(void * self, void * arg);
 
 void * Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child___direct(void * self, void * arg);
 
 void * Parent_subtypeObjectVar_get(void * self);
+
+void * Parent_subtypeObjectVar_get_direct(void * self);
 
 void * _Nullable Parent_subtypeOptionalObjectFunc(void * self);
 
@@ -219,11 +269,15 @@ void * _Nullable Parent_subtypeOptionalObjectFunc_direct(void * self);
 
 void * _Nullable Parent_subtypeOptionalObjectVar_get(void * self);
 
+void * _Nullable Parent_subtypeOptionalObjectVar_get_direct(void * self);
+
 NSNumber * _Nullable Parent_subtypeOptionalPrimitiveFunc(void * self);
 
 NSNumber * _Nullable Parent_subtypeOptionalPrimitiveFunc_direct(void * self);
 
 NSNumber * _Nullable Parent_subtypeOptionalPrimitiveVar_get(void * self);
+
+NSNumber * _Nullable Parent_subtypeOptionalPrimitiveVar_get_direct(void * self);
 
 NSString * Parent_value_get(void * self);
 

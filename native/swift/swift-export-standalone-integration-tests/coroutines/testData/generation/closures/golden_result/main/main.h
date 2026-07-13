@@ -9,6 +9,6 @@ int32_t __root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20
 
 _Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * pointerToBlock, int32_t _1);
 
-_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Error__(void * pointerToBlock, NSError * _1);
+_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(void * pointerToBlock, NSError * _Nullable _1);
 
 NS_ASSUME_NONNULL_END

@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
 import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -95,9 +93,12 @@ abstract class IncrementalCompilerRunner<
         fileLocations: FileLocations?,
         transaction: CompilationTransaction,
         fragmentContext: FragmentContext? = null,
+        compilerGeneratedSyntheticSources: MutableSet<File> = mutableSetOf(),
     ) = IncrementalCompilationContext(
-        pathConverterForSourceFiles = fileLocations?.getRelocatablePathConverterForSourceFiles() ?: BasicFileToPathConverter,
-        pathConverterForOutputFiles = fileLocations?.getRelocatablePathConverterForOutputFiles() ?: BasicFileToPathConverter,
+        pathConverterForSourceFiles = fileLocations?.getRelocatablePathConverterForSourceFiles(compilerGeneratedSyntheticSources)
+            ?: BasicFileToPathConverter,
+        pathConverterForOutputFiles = fileLocations?.getRelocatablePathConverterForOutputFiles(compilerGeneratedSyntheticSources)
+            ?: BasicFileToPathConverter,
         transaction = transaction,
         reporter = reporter,
         trackChangesInLookupCache = shouldTrackChangesInLookupCache,
@@ -105,6 +106,7 @@ abstract class IncrementalCompilerRunner<
         storeFullFqNamesInLookupCache = shouldStoreFullFqNamesInLookupCache,
         icFeatures = icFeatures,
         fragmentContext = fragmentContext,
+        compilerGeneratedSyntheticSources = compilerGeneratedSyntheticSources,
     )
 
     protected abstract val shouldTrackChangesInLookupCache: Boolean
@@ -242,7 +244,7 @@ abstract class IncrementalCompilerRunner<
             val icContext = createIncrementalCompilationContext(
                 fileLocations,
                 transaction,
-                fragmentContext
+                fragmentContext,
             )
             val caches = createCacheManager(icContext, args).also {
                 // this way we make the transaction to be responsible for closing the caches manager
@@ -343,7 +345,10 @@ abstract class IncrementalCompilerRunner<
             reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
             cleanOrCreateDirectories(outputDirsToClean)
         }
-        val icContext = createIncrementalCompilationContext(fileLocations, NonRecoverableCompilationTransaction())
+        val icContext = createIncrementalCompilationContext(
+            fileLocations,
+            NonRecoverableCompilationTransaction(),
+        )
         return createCacheManager(icContext, args).use { caches ->
             if (trackChangedFiles) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
@@ -571,6 +576,7 @@ abstract class IncrementalCompilerRunner<
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
             dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins())
+            dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins())
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
             caches.compilerPluginFilesCache.removeOutputsGeneratedByPlugins()
@@ -609,6 +615,8 @@ abstract class IncrementalCompilerRunner<
                 exitCode = ec
                 compiled
             }
+            icContext.compilerGeneratedSyntheticSources.clear()
+            icContext.compilerGeneratedSyntheticSources.addAll(outputItemsCollector.sourceFileGeneratedForPlugin)
 
             dirtySources.addAll(compiledSources)
             allDirtySources.addAll(dirtySources)
@@ -648,10 +656,7 @@ abstract class IncrementalCompilerRunner<
                 caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
                 caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
                 caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
-                caches.compilerPluginFilesCache.let {
-                    it.recordSourceFilesReferencedByPlugins(outputItemsCollector.sourcesReferencedByCompilerPlugin)
-                    it.recordOutputFilesGeneratedByPlugins(outputItemsCollector.outputsFileGeneratedForPlugin)
-                }
+                caches.recordCompilerPluginFilesCaches(outputItemsCollector)
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
 

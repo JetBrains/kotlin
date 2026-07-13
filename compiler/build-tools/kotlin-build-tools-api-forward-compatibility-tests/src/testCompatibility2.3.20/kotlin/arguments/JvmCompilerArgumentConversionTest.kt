@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.tests.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.AllJvmCompilerArgumentsWithBtaVersionsTest
@@ -140,6 +141,13 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
     fun <T> JvmArgumentConfiguration<T>.testInvalidDirectAssignmentFails() {
         assumeArgumentSupported()
         for (invalidValue in invalidArgumentValues) {
+            assumeTrue(
+                this.argumentKey !in listOf<JvmCompilerArguments.JvmCompilerArgument<*>>(
+                    JvmCompilerArguments.X_FRIEND_PATHS,
+                    JvmCompilerArguments.X_JAVA_SOURCE_ROOTS
+                ),
+                "Some arguments were not checked before 2.4.20"
+            )
             val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
 
             assertThrows<CompilerArgumentsParseException> {

@@ -93,5 +93,13 @@ enum class KotlinReleaseVersion(
     v2_4_20("2.4.20", 2, 4, 20),
     v2_5_0("2.5.0", 2, 5, 0),
     v2_6_0("2.6.0", 2, 6, 0);
+
+    fun toKotlinVersion(): KotlinVersion {
+        return KotlinVersion(
+            major,
+            minor,
+            patch,
+        )
+    }
 }
 

@@ -6,6 +6,7 @@ KaBackingFieldSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -25,6 +26,7 @@ KaBackingFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(accessorField.kt)
   getContainingJvmClassName: AccessorFieldKt

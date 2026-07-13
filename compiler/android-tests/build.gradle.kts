@@ -22,7 +22,12 @@ dependencies {
     testImplementation(project(":compiler:backend"))
 
     testImplementation(testFixtures(project(":compiler:tests-common")))
-    testImplementation(libs.junit4)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
     testImplementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlinx.coroutines.core.jvm)
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
@@ -33,8 +38,6 @@ dependencies {
 
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
-
-    testImplementation(libs.junit.platform.launcher)
 }
 
 sourceSets {
@@ -57,7 +60,10 @@ abstract class JdkHomeArgumentProvider : CommandLineArgumentProvider {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        javaLauncher = JdkMajorVersion.JDK_17_0,
+    ) {
         develocity {
             testRetry.maxRetries.set(0)
         }

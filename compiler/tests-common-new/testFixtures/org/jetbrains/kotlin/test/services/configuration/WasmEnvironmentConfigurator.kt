@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageCo
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
-import java.io.File
 
 abstract class WasmEnvironmentConfigurator(
     testServices: TestServices,
@@ -156,8 +154,7 @@ open class WasmSecondStageEnvironmentConfigurator(
         val klibFriendDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
             .map { it.absolutePath }
         val klibArtifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
-        val mainModule = MainModule.Klib(klibArtifact.outputFile.absolutePath)
-        val mainPath = File(mainModule.libPath).canonicalPath
+        val mainPath = klibArtifact.outputFile.canonicalPath
         configuration.libraries = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath
         configuration.friendLibraries = klibFriendDependencies
         configuration.includes = mainPath

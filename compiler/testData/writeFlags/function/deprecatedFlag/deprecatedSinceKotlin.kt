@@ -8,7 +8,7 @@ fun test1() {}
 @DeprecatedSinceKotlin(warningSince = "1.9")
 fun test2() {}
 
-@Suppress("DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE")
+@Suppress("DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE", "DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS")
 @Deprecated("")
 @DeprecatedSinceKotlin
 fun test3() {}

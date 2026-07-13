@@ -2,6 +2,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: ClassC
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -23,116 +24,8 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotations: []
-        backingFieldSymbol: KaBackingFieldSymbol:
-          annotations: []
-          callableId: null
-          contextReceivers: []
-          isActual: false
-          isCompanion: false
-          isDelegated: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isNotDefault: false
-          isVal: true
-          location: PROPERTY
-          modality: FINAL
-          name: field
-          origin: PROPERTY_BACKING_FIELD
-          owningProperty: KaKotlinPropertySymbol(/ClassC.paramProp)
-          receiverParameter: null
-          returnType: KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: kotlin/String
-          visibility: PRIVATE
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: ClassC
-          getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
-          getContainingJvmClassName: ClassC
-          getContainingModule: KaSourceModule "Sources of main"
-          deprecation: null
-          importableFqName: null
-        callableId: /ClassC.paramProp
-        contextParameters: []
-        contextReceivers: []
-        getter: KaPropertyGetterSymbol:
-          annotations: []
-          callableId: null
-          contextReceivers: []
-          hasStableParameterNames: true
-          isActual: false
-          isCompanion: false
-          isExpect: false
-          isExtension: false
-          isExternal: true
-          isInline: false
-          isNotDefault: false
-          isOverride: false
-          location: PROPERTY
-          modality: FINAL
-          origin: SOURCE
-          receiverParameter: null
-          returnType: KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: kotlin/String
-          valueParameters: []
-          visibility: PUBLIC
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: ClassC
-          getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
-          getContainingJvmClassName: ClassC
-          getContainingModule: KaSourceModule "Sources of main"
-          deprecation: null
-          importableFqName: null
-        hasBackingField: true
-        hasGetter: true
-        hasSetter: false
-        initializer: KaNonConstantInitializerValue(val paramProp: String)
-        isActual: false
-        isCompanion: false
-        isConst: false
-        isDelegated: false
-        isExpect: false
-        isExtension: false
-        isExternal: true
-        isFromPrimaryConstructor: true
-        isLateInit: false
-        isOverride: false
-        isStatic: false
-        isVal: true
-        location: CLASS
-        modality: FINAL
-        name: paramProp
-        origin: SOURCE
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/String
-        setter: null
-        typeParameters: []
-        visibility: PUBLIC
-        getDispatchReceiver(): KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: ClassC
-        getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
-        getContainingJvmClassName: ClassC
-        getContainingModule: KaSourceModule "Sources of main"
-        deprecation: null
-        javaGetterName: getParamProp
-        javaSetterName: null
-        isInline: false
-        importableFqName: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -150,11 +43,13 @@ KaConstructorSymbol:
       modality: FINAL
       name: paramProp
       origin: SOURCE
+      primaryConstructorProperty: KaKotlinPropertySymbol(/ClassC.paramProp)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
       getContainingJvmClassName: ClassC
@@ -173,6 +68,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: ClassC
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -215,6 +111,7 @@ KaClassInitializerSymbol:
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -233,6 +130,7 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
   getContainingJvmClassName: null
@@ -267,6 +165,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -285,6 +184,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: kotlin/String
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
     getContainingJvmClassName: ClassC
@@ -300,8 +200,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -319,11 +219,13 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: regularParam
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
       getContainingJvmClassName: ClassC
@@ -464,6 +366,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -483,6 +386,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
@@ -499,6 +403,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -517,6 +422,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -539,7 +445,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: true
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -548,6 +453,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: baz
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -556,6 +462,7 @@ KaKotlinPropertySymbol:
   setter: KaPropertySetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -572,8 +479,8 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -591,11 +498,13 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
       getContainingJvmClassName: null
@@ -607,12 +516,13 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
+    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -630,11 +540,13 @@ KaKotlinPropertySymbol:
         modality: FINAL
         name: value
         origin: SOURCE
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: kotlin/Int
+        typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
         getContainingJvmClassName: null
@@ -703,6 +615,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -722,6 +635,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
     getContainingJvmClassName: ExternalDeclarationsKt
@@ -734,6 +648,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -752,6 +667,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
@@ -770,7 +686,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: true
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -779,6 +694,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: prop
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -799,6 +715,7 @@ KaKotlinPropertySymbol:
 KaEnumEntrySymbol:
   annotations: []
   callableId: /EnumE.EnumA
+  contextParameters: []
   contextReceivers: []
   initializer: null
   isActual: false
@@ -817,6 +734,7 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: EnumE
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
   getContainingJvmClassName: EnumE
@@ -827,6 +745,7 @@ KaEnumEntrySymbol:
 KaEnumEntrySymbol:
   annotations: []
   callableId: /EnumE.EnumB
+  contextParameters: []
   contextReceivers: []
   initializer: null
   isActual: false
@@ -845,6 +764,7 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: EnumE
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
   getContainingJvmClassName: EnumE
@@ -891,6 +811,7 @@ KaNamedClassSymbol:
 KaEnumEntrySymbol:
   annotations: []
   callableId: /EnumNotExternal.EnumA2
+  contextParameters: []
   contextReceivers: []
   initializer: null
   isActual: false
@@ -909,6 +830,7 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: EnumNotExternal
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
   getContainingJvmClassName: EnumNotExternal
@@ -956,6 +878,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: NotExternalC
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -977,116 +900,8 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotations: []
-        backingFieldSymbol: KaBackingFieldSymbol:
-          annotations: []
-          callableId: null
-          contextReceivers: []
-          isActual: false
-          isCompanion: false
-          isDelegated: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isNotDefault: false
-          isVal: true
-          location: PROPERTY
-          modality: FINAL
-          name: field
-          origin: PROPERTY_BACKING_FIELD
-          owningProperty: KaKotlinPropertySymbol(/NotExternalC.paramProp2)
-          receiverParameter: null
-          returnType: KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: kotlin/String
-          visibility: PRIVATE
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: NotExternalC
-          getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
-          getContainingJvmClassName: NotExternalC
-          getContainingModule: KaSourceModule "Sources of main"
-          deprecation: null
-          importableFqName: null
-        callableId: /NotExternalC.paramProp2
-        contextParameters: []
-        contextReceivers: []
-        getter: KaPropertyGetterSymbol:
-          annotations: []
-          callableId: null
-          contextReceivers: []
-          hasStableParameterNames: true
-          isActual: false
-          isCompanion: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isInline: false
-          isNotDefault: false
-          isOverride: false
-          location: PROPERTY
-          modality: FINAL
-          origin: SOURCE
-          receiverParameter: null
-          returnType: KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: kotlin/String
-          valueParameters: []
-          visibility: PUBLIC
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: NotExternalC
-          getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
-          getContainingJvmClassName: NotExternalC
-          getContainingModule: KaSourceModule "Sources of main"
-          deprecation: null
-          importableFqName: null
-        hasBackingField: true
-        hasGetter: true
-        hasSetter: false
-        initializer: KaNonConstantInitializerValue(external val paramProp2: String)
-        isActual: false
-        isCompanion: false
-        isConst: false
-        isDelegated: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isFromPrimaryConstructor: true
-        isLateInit: false
-        isOverride: false
-        isStatic: false
-        isVal: true
-        location: CLASS
-        modality: FINAL
-        name: paramProp2
-        origin: SOURCE
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/String
-        setter: null
-        typeParameters: []
-        visibility: PUBLIC
-        getDispatchReceiver(): KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: NotExternalC
-        getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
-        getContainingJvmClassName: NotExternalC
-        getContainingModule: KaSourceModule "Sources of main"
-        deprecation: null
-        javaGetterName: getParamProp2
-        javaSetterName: null
-        isInline: false
-        importableFqName: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -1104,11 +919,13 @@ KaConstructorSymbol:
       modality: FINAL
       name: paramProp2
       origin: SOURCE
+      primaryConstructorProperty: KaKotlinPropertySymbol(/NotExternalC.paramProp2)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
       getContainingJvmClassName: NotExternalC
@@ -1127,6 +944,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: NotExternalC
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -1325,6 +1143,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -1344,6 +1163,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
     getContainingJvmClassName: ExternalDeclarationsKt
@@ -1356,6 +1176,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -1374,6 +1195,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
@@ -1392,7 +1214,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: true
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -1401,6 +1222,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: propWithExternalGetter
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1423,6 +1245,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -1442,6 +1265,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
     getContainingJvmClassName: ExternalDeclarationsKt
@@ -1454,6 +1278,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -1472,6 +1297,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
@@ -1490,7 +1316,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: true
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -1499,6 +1324,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: propWithExternalAccessors
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1507,6 +1333,7 @@ KaKotlinPropertySymbol:
   setter: KaPropertySetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -1523,8 +1350,8 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -1542,11 +1369,13 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
       getContainingJvmClassName: null
@@ -1558,12 +1387,13 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
+    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -1581,11 +1411,13 @@ KaKotlinPropertySymbol:
         modality: FINAL
         name: value
         origin: SOURCE
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: kotlin/Int
+        typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(externalDeclarations.kt)
         getContainingJvmClassName: null

@@ -125,7 +125,7 @@ class MavenResolverTest : ResolversTestBase() {
 
         val tCount = transitiveFiles.count()
 
-        assertTrue(tCount > expectedThreshold)
+        assertTrue("expected at least $expectedThreshold artefacts, got $tCount", tCount > expectedThreshold)
     }
 
     fun testSourcesResolution() {
@@ -181,8 +181,7 @@ class MavenResolverTest : ResolversTestBase() {
         assertEquals(
             "ArtifactResolutionException: The following artifacts could not be resolved: com.jetbrains:fake-space-sdk:pom:1.0-dev (absent): " +
                     "Could not transfer artifact com.jetbrains:fake-space-sdk:pom:1.0-dev from/to https___packages.jetbrains.team_maven_p_crl_maven_ (https://packages.jetbrains.team/maven/p/crl/maven/): " +
-                    "authentication failed for https://packages.jetbrains.team/maven/p/crl/maven/com/jetbrains/fake-space-sdk/1.0-dev/fake-space-sdk-1.0-dev.pom, " +
-                    "status: 401 Unauthorized",
+                    "status code: 401, reason phrase: Unauthorized (401)",
             diagnostic.message
         )
         assertNotNull(diagnostic.exception)

@@ -79,7 +79,6 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
 
     if (arguments.eagerLambdaAnalysis) {
         put(LanguageFeature.EagerLambdaAnalysis, LanguageFeature.State.ENABLED)
-        put(LanguageFeature.UnitConversionsOnArbitraryExpressions, LanguageFeature.State.ENABLED)
         put(LanguageFeature.InferThrowableTypeParameterToUpperBound, LanguageFeature.State.ENABLED)
         put(LanguageFeature.CallCompletionRefinementsFor25, LanguageFeature.State.ENABLED)
     }

@@ -31,7 +31,12 @@ sourceSets {
 kotlin {
     compilerOptions {
         optIn.addAll(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
+            "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
             "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
             "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
             "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
         )

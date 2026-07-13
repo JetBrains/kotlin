@@ -455,7 +455,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.isNullableType(considerTypeVariableBounds: Boolean): Boolean {
         require(this is ConeKotlinType)
-        return canBeNull(session, considerTypeVariableBounds)
+        return canBeNull(considerTypeVariableBounds)
     }
 
     override fun KotlinTypeMarker.isNullableType(): Boolean {

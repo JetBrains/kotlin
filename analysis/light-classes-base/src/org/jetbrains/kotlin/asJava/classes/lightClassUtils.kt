@@ -98,8 +98,3 @@ private fun hasParseErrorsAround(psi: PsiElement): Boolean {
 
     return false
 }
-
-fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
-    return KtPsiUtil.getOutermostClassOrObject(classOrObject)
-        ?: throw IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.text)
-}

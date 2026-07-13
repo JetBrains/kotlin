@@ -78,7 +78,7 @@ class ClassCodegen private constructor(
     }
     private val metadataSerializer: MetadataSerializer by lazy {
         context.backendExtension.createSerializer(
-            context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer
+            context, irClass, type, visitor, parentClassCodegen?.metadataSerializer
         )
     }
 
@@ -175,7 +175,7 @@ class ClassCodegen private constructor(
             generateField(field)
         }
         // 4. Generate nested classes at the end, to ensure that when the companion's metadata is serialized
-        //    everything moved to the outer class has already been recorded in `globalSerializationBindings`.
+        //    everything moved to the outer class has already been recorded in the metadata serializer.
         for (declaration in irClass.declarations) {
             if (declaration is IrClass) {
                 getOrCreate(declaration, context, intrinsicExtensions).generate()

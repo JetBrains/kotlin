@@ -6,6 +6,7 @@ KtNameReferenceExpression(245,259): 'propertyMember'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -24,6 +25,7 @@ KtNameReferenceExpression(245,259): 'propertyMember'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -31,6 +33,7 @@ KtNameReferenceExpression(245,259): 'propertyMember'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -49,6 +52,7 @@ KtNameReferenceExpression(245,259): 'propertyMember'
             annotations: []
             typeArguments: []
             type: Base
+          typeParameters: []
           visibility: PUBLIC
         type = Base
       extensionReceiver = null

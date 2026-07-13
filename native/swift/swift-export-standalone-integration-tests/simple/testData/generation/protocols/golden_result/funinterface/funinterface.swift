@@ -118,7 +118,7 @@ extension ExportedKotlinPackages.funinterface {
     public protocol functionalInterfaceWithAlreadyLowercaseLeading: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface._functionalInterfaceWithAlreadyLowercaseLeading {
         func callAsFunction() -> Swift.Int32
     }
-    public final class FunctorClass: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface.FunctionalInterface, ExportedKotlinPackages.funinterface._FunctionalInterface, ExportedKotlinPackages.funinterface.__FunctionalInterface {
+    public final class FunctorClass: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface.FunctionalInterface, ExportedKotlinPackages.funinterface.__FunctionalInterface {
         public init() {
             let __kt = funinterface_FunctorClass_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);

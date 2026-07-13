@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.javac.registerJavac
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.MessageCollectorAccess
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
@@ -39,26 +36,16 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
-import org.jetbrains.kotlin.test.testFramework.FrontendBackendConfiguration
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
-import org.junit.Assert
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.io.File
 import java.io.IOException
 import java.lang.annotation.Retention
 
-abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), FrontendBackendConfiguration {
-    override val useFir: Boolean
-        get() = true
-
-    override val firParser: FirParser
-        get() = FirParser.LightTree
-
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
-
+abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
     protected fun doTestWithJavac(ktFilePath: String) {
         doTest(ktFilePath, true)
     }
@@ -68,7 +55,7 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), Fron
     }
 
     protected open fun doTest(ktFilePath: String, useJavac: Boolean) {
-        Assert.assertTrue(ktFilePath.endsWith(".kt"))
+        assertTrue(ktFilePath.endsWith(".kt"))
         val ktFilePath = ForTestCompileRuntime.transformTestDataPath(ktFilePath).absolutePath
         val ktFile = File(ktFilePath)
         val javaFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".java"))
@@ -78,7 +65,7 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), Fron
         val out = File(tmpdir, "out")
 
         val directives = KotlinTestUtils.parseDirectives(ktFile.readText())
-        if (useFir && directives.contains("IGNORE_FIR")) return
+        if (directives.contains("IGNORE_FIR")) return
 
         val compiledSuccessfully = if (useJavac) {
             compileKotlinWithJava(
@@ -122,7 +109,8 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), Fron
     }
 
     fun updateConfiguration(configuration: CompilerConfiguration) {
-        configureIrFir(configuration)
+        configuration.useLightTree = true
+        configuration.useFir = true
     }
 
     @Throws(IOException::class)

@@ -16,52 +16,101 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CACHE_STRATEGY
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.DO_NOT_USE_GETTERS
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EXCLUDE
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_RANK
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.OF
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ON_CONSTRUCTOR
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ON_PARAM
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.REPLACES
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
-object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    private val implementedKotlinAnnotationsAllowedTargetsMap: Map<ClassId, List<KotlinTarget>> = buildMap {
-        val logTargets = listOf(
-            KotlinTarget.CLASS_ONLY,
-            KotlinTarget.OBJECT,
-            KotlinTarget.ENUM_CLASS,
+object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
+    private class ImplementedAnnotationsInfo(
+        val allowedTargetsMap: Set<KotlinTarget>,
+        val unsupportedArguments: Set<Name> = emptySet(),
+    )
+
+    private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo> = buildMap {
+        val logInfo = ImplementedAnnotationsInfo(
+            allowedTargetsMap = setOf(
+                KotlinTarget.CLASS_ONLY,
+                KotlinTarget.OBJECT,
+                KotlinTarget.ENUM_CLASS,
+            )
         )
-        this[LombokNames.LOG_ID] = logTargets
-        this[LombokNames.SLF4J_ID] = logTargets
-        this[LombokNames.LOG4J_ID] = logTargets
-        this[LombokNames.COMMONS_LOG_ID] = logTargets
-        this[LombokNames.FLOGGER_ID] = logTargets
-        this[LombokNames.JBOSS_LOG_ID] = logTargets
-        this[LombokNames.LOG4J2_ID] = logTargets
-        this[LombokNames.XSLF4J_ID] = logTargets
-        this[LombokNames.TO_STRING_ID] = listOf(
-            KotlinTarget.CLASS_ONLY,
-            KotlinTarget.OBJECT,
-            KotlinTarget.ENUM_CLASS,
-            KotlinTarget.LOCAL_CLASS,
+        this[LombokNames.LOG_ID] = logInfo
+        this[LombokNames.SLF4J_ID] = logInfo
+        this[LombokNames.LOG4J_ID] = logInfo
+        this[LombokNames.COMMONS_LOG_ID] = logInfo
+        this[LombokNames.FLOGGER_ID] = logInfo
+        this[LombokNames.JBOSS_LOG_ID] = logInfo
+        this[LombokNames.LOG4J2_ID] = logInfo
+        this[LombokNames.XSLF4J_ID] = logInfo
+        this[LombokNames.TO_STRING_ID] = ImplementedAnnotationsInfo(
+            allowedTargetsMap = setOf(
+                KotlinTarget.CLASS_ONLY,
+                KotlinTarget.OBJECT,
+                KotlinTarget.ENUM_CLASS,
+                KotlinTarget.LOCAL_CLASS,
+            ),
+            unsupportedArguments = setOf(
+                EXCLUDE, // Don't support because it will soon be marked as deprecated.
+                OF, // Don't support because it will soon be marked as deprecated.
+                DO_NOT_USE_GETTERS, // Irrelevant in Kotlin
+            )
         )
-        this[LombokNames.TO_STRING_INCLUDE_ID] = listOf(
-            KotlinTarget.PROPERTY,
-            //KotlinTarget.FUNCTION, TODO: support later because Lombok also allows it on functions, KT-86021
+        this[LombokNames.TO_STRING_INCLUDE_ID] = ImplementedAnnotationsInfo(
+            allowedTargetsMap = setOf(
+                KotlinTarget.PROPERTY,
+                //KotlinTarget.FUNCTION, TODO: support later because Lombok also allows it on functions, KT-86021
+            )
         )
-        this[LombokNames.TO_STRING_EXCLUDE_ID] = listOf(
-            KotlinTarget.PROPERTY,
+        this[LombokNames.TO_STRING_EXCLUDE_ID] = ImplementedAnnotationsInfo(
+            allowedTargetsMap = setOf(
+                KotlinTarget.PROPERTY,
+            )
         )
-        this[LombokNames.NO_ARGS_CONSTRUCTOR_ID] = listOf(
-            KotlinTarget.CLASS_ONLY, // Objects have empty constructor by default, so doesn't make sense to support the annotation on them.
+        this[LombokNames.NO_ARGS_CONSTRUCTOR_ID] = ImplementedAnnotationsInfo(
+            allowedTargetsMap = setOf(
+                KotlinTarget.CLASS_ONLY, // Objects have empty constructor by default, so doesn't make sense to support the annotation on them.
+            ),
+            unsupportedArguments = setOf(
+                ON_CONSTRUCTOR, // Not yet supported
+            )
         )
-        this[LombokNames.EQUALS_AND_HASH_CODE_ID] = listOf(
-            KotlinTarget.CLASS_ONLY,
-            KotlinTarget.OBJECT,
-            KotlinTarget.ENUM_CLASS,
-            KotlinTarget.LOCAL_CLASS,
+        this[LombokNames.EQUALS_AND_HASH_CODE_ID] = ImplementedAnnotationsInfo(
+            allowedTargetsMap = setOf(
+                KotlinTarget.CLASS_ONLY,
+                KotlinTarget.OBJECT,
+                KotlinTarget.ENUM_CLASS,
+                KotlinTarget.LOCAL_CLASS,
+            ),
+            unsupportedArguments = setOf(
+                EXCLUDE, // Don't support because it will soon be marked as deprecated.
+                OF, // Don't support because it will soon be marked as deprecated.
+                DO_NOT_USE_GETTERS, // Irrelevant in Kotlin
+                CACHE_STRATEGY, // Not yet supported
+                ON_PARAM, // Not yet supported
+            )
         )
-        this[LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID] = listOf(
-            KotlinTarget.PROPERTY,
-            //KotlinTarget.FUNCTION, TODO: support later because Lombok also allows it on functions, KT-86021
+        this[LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID] = ImplementedAnnotationsInfo(
+            allowedTargetsMap = setOf(
+                KotlinTarget.PROPERTY,
+                //KotlinTarget.FUNCTION, TODO: support later because Lombok also allows it on functions, KT-86021
+            ),
+            unsupportedArguments = setOf(
+                REPLACES, // Not yet supported
+                INCLUDE_RANK, // Not yet supported
+            )
         )
-        this[LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID] = listOf(
-            KotlinTarget.PROPERTY,
+        this[LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID] = ImplementedAnnotationsInfo(
+            allowedTargetsMap = setOf(
+                KotlinTarget.PROPERTY,
+            )
         )
     }
 
@@ -69,9 +118,10 @@ object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
     override fun check(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
             val classId = annotation.toAnnotationClassId(context.session) ?: continue
-            val narrowedAllowedTargets = implementedKotlinAnnotationsAllowedTargetsMap[classId]
+            val implementedAnnotationInfo = implementedAnnotationInfos[classId]
 
-            if (narrowedAllowedTargets != null) {
+            if (implementedAnnotationInfo != null) {
+                val (narrowedAllowedTargets = allowedTargetsMap, unsupportedArguments) = implementedAnnotationInfo
                 val defaultTargets = getActualTargetList(declaration).defaultTargets
 
                 if (defaultTargets.none { narrowedAllowedTargets.contains(it) }) {
@@ -82,6 +132,22 @@ object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
                             LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT,
                             defaultTargets.firstOrNull()?.description ?: "unidentified target",
                             narrowedAllowedTargets,
+                        )
+                    }
+                }
+
+                for ([argumentName, argumentExpression] in annotation.argumentMapping.mapping) {
+                    if (argumentName == DO_NOT_USE_GETTERS) {
+                        reporter.reportOn(
+                            argumentExpression.source,
+                            LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT,
+                            context
+                        )
+                    } else if (unsupportedArguments.contains(argumentName)) {
+                        reporter.reportOn(
+                            argumentExpression.source,
+                            LombokFirDiagnostics.ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED,
+                            argumentName,
                         )
                     }
                 }

@@ -864,7 +864,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         additionalAnnotations(
             Enables(LanguageFeature.EagerLambdaAnalysis),
-            Enables(LanguageFeature.UnitConversionsOnArbitraryExpressions),
             Enables(LanguageFeature.InferThrowableTypeParameterToUpperBound),
             Enables(LanguageFeature.CallCompletionRefinementsFor25),
         )

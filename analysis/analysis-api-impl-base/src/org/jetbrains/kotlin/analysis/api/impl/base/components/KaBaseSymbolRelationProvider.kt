@@ -17,7 +17,7 @@ fun <T> T.getDirectlyOverriddenSymbolsForParameter(
 ): Sequence<KaCallableSymbol> where
         T : KaBaseSessionComponent<out KaSession>,
         T : KaSymbolRelationProvider = with(analysisSession) {
-    symbol.generatedPrimaryConstructorProperty?.directlyOverriddenSymbols.orEmpty()
+    symbol.primaryConstructorProperty?.directlyOverriddenSymbols.orEmpty()
 }
 
 @KaImplementationDetail
@@ -26,5 +26,5 @@ fun <T> T.getAllOverriddenSymbolsForParameter(
 ): Sequence<KaCallableSymbol> where
         T : KaBaseSessionComponent<out KaSession>,
         T : KaSymbolRelationProvider = with(analysisSession) {
-    symbol.generatedPrimaryConstructorProperty?.allOverriddenSymbols.orEmpty()
+    symbol.primaryConstructorProperty?.allOverriddenSymbols.orEmpty()
 }

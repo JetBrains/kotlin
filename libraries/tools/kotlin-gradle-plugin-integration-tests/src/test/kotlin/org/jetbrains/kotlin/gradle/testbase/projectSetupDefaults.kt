@@ -158,6 +158,18 @@ internal fun getGroovyRepositoryBlock(
     |                includeModule("google.d8", "v8") 
     |            }
     |        }
+    |        ivy {
+    |            url = uri("https://github.com/bytecodealliance/wasmtime/releases/download")
+    |            patternLayout {
+    |                artifact("v[revision]/[artifact]-v[revision]-[classifier].[ext]")
+    |            }
+    |            metadataSources { 
+    |                artifact() 
+    |            }
+    |            content { 
+    |                includeModule("bytecodealliance.wasmtime", "wasmtime") 
+    |            }
+    |        }
     |        maven {
     |            url = "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
     |        }
@@ -327,6 +339,18 @@ internal fun getKotlinRepositoryBlock(
     |            }
     |            content { 
     |                includeModule("google.d8", "v8") 
+    |            }
+    |        }
+    |        ivy {
+    |            url = uri("https://github.com/bytecodealliance/wasmtime/releases/download")
+    |            patternLayout {
+    |                artifact("v[revision]/[artifact]-v[revision]-[classifier].[ext]")
+    |            }
+    |            metadataSources { 
+    |                artifact() 
+    |            }
+    |            content { 
+    |                includeModule("bytecodealliance.wasmtime", "wasmtime") 
     |            }
     |        }
     |        maven {

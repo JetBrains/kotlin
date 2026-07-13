@@ -1,8 +1,8 @@
 KaValueParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
-  generatedPrimaryConstructorProperty: null
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
@@ -20,11 +20,13 @@ KaValueParameterSymbol:
   modality: FINAL
   name: <destruct>
   origin: SOURCE
+  primaryConstructorProperty: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: X
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(destructuringDeclarationParameterInLambda.kt)
   getContainingJvmClassName: null

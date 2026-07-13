@@ -1,5 +1,5 @@
 warning: the argument '-Xir-produce-klib-dir' is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
-compiler/testData/cli/kotlinPackage.kt:1:1: error: only the Kotlin standard library is allowed to use the 'kotlin' package
+compiler/testData/cli/kotlinPackage.kt:1:1: error: only the Kotlin standard library is allowed to use the 'kotlin' package.
 package kotlin.mylibrary
 ^^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

@@ -8,17 +8,17 @@ package org.jetbrains.kotlin.incremental.snapshots
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter
-import org.junit.After
-import org.junit.Assert.assertArrayEquals
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.properties.Delegates
 
 class FileSnapshotMapTest : TestWithWorkingDir() {
     private var snapshotMap: FileSnapshotMap by Delegates.notNull()
 
-    @Before
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         val caches = File(workingDir, "caches").apply { mkdirs() }
@@ -30,7 +30,7 @@ class FileSnapshotMapTest : TestWithWorkingDir() {
         snapshotMap = FileSnapshotMap(snapshotMapFile, icContext)
     }
 
-    @After
+    @AfterEach
     override fun tearDown() {
         snapshotMap.close()
         super.tearDown()
@@ -48,14 +48,14 @@ class FileSnapshotMapTest : TestWithWorkingDir() {
         val diff1 = snapshotMap.compareAndUpdate(src.filesWithExt("txt"))
 
         assertArrayEquals(
-            "diff1.removed",
+            emptyArray<String>(),
             diff1.removed.toSortedPaths(),
-            emptyArray<String>()
+            "diff1.removed"
         )
         assertArrayEquals(
-            "diff1.newOrModified",
             diff1.modified.toSortedPaths(),
-            listOf(removedTxt, unchangedTxt, changedTxt).toSortedPaths()
+            listOf(removedTxt, unchangedTxt, changedTxt).toSortedPaths(),
+            "diff1.newOrModified"
         )
 
         removedTxt.delete()
@@ -65,14 +65,14 @@ class FileSnapshotMapTest : TestWithWorkingDir() {
 
         val diff2 = snapshotMap.compareAndUpdate(src.filesWithExt("txt"))
         assertArrayEquals(
-            "diff2.removed",
             diff2.removed.toSortedPaths(),
-            listOf(removedTxt).toSortedPaths()
+            listOf(removedTxt).toSortedPaths(),
+            "diff2.removed"
         )
         assertArrayEquals(
-            "diff2.newOrModified",
             diff2.modified.toSortedPaths(),
-            listOf(newTxt, changedTxt).toSortedPaths()
+            listOf(newTxt, changedTxt).toSortedPaths(),
+            "diff2.newOrModified"
         )
     }
 

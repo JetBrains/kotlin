@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.RunAll
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.cmdline.ProjectDescriptor
@@ -19,37 +18,47 @@ import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
+import java.lang.reflect.Method
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import kotlin.io.path.ExperimentalPathApi
+import java.util.*
 import kotlin.io.path.createTempDirectory
 import kotlin.reflect.KFunction1
+import kotlin.reflect.jvm.javaMethod
 
 class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
     private val enableICFixture = EnableICFixture()
     private lateinit var workingDir: File
 
-    @OptIn(ExperimentalPathApi::class)
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         enableICFixture.setUp()
-        workingDir = createTempDirectory("RelocatableJpsCachesTest-" + getTestName(false)).toFile()
+        workingDir = createTempDirectory("RelocatableJpsCachesTest-" + getTestName(testInfo)).toFile()
     }
 
+    @AfterEach
     override fun tearDown() {
         RunAll(
-            ThrowableRunnable { workingDir.deleteRecursively() },
-            ThrowableRunnable { enableICFixture.tearDown() },
-            ThrowableRunnable { super.tearDown() }
+            { workingDir.deleteRecursively() },
+            { enableICFixture.tearDown() },
+            { super.tearDown() }
         ).run()
     }
 
+    @Test
     fun testRelocatableCaches() {
         buildTwiceAndCompare(RelocatableCacheTestCase::testRelocatableCaches)
     }
 
 
+    @Test
     fun testRelocatablePluginClasspath() {
         buildTwiceAndCompare(RelocatableCacheTestCase::testRelocatablePluginClasspath)
     }
@@ -71,11 +80,15 @@ class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
         dirToCopyKotlinCaches: File,
         testMethod: KFunction1<RelocatableCacheTestCase, Unit>
     ) {
-        val testCase = object : RelocatableCacheTestCase(projectWorkingDir, dirToCopyKotlinCaches) {
-            override fun getName() = testMethod.name
-        }
+        val testCase = object : RelocatableCacheTestCase(projectWorkingDir, dirToCopyKotlinCaches) {}
 
-        testCase.exposedPrivateApi.setUp()
+        val testCaseInfo = object : TestInfo {
+            override fun getDisplayName(): String = testMethod.name
+            override fun getTags(): Set<String> = emptySet()
+            override fun getTestClass(): Optional<Class<*>> = Optional.of(testCase::class.java)
+            override fun getTestMethod(): Optional<Method> = Optional.of(testMethod.javaMethod!!)
+        }
+        testCase.exposedPrivateApi.setUp(testCaseInfo)
 
         try {
             testMethod.call(testCase)
@@ -141,7 +154,7 @@ abstract class RelocatableCacheTestCase(
         return projectWorkingDir
     }
 
-    override fun doBuild(descriptor: ProjectDescriptor, scopeBuilder: CompileScopeTestBuilder?): BuildResult =
+    override fun doBuild(descriptor: ProjectDescriptor, scopeBuilder: CompileScopeTestBuilder): BuildResult =
         super.doBuild(descriptor, scopeBuilder).also {
             copyKotlinCaches(descriptor)
         }
@@ -215,7 +228,8 @@ abstract class RelocatableCacheTestCase(
 
     // the famous Public Morozov pattern
     inner class ExposedPrivateApi {
-        fun setUp() {
+        fun setUp(testInfo: TestInfo) {
+            this@RelocatableCacheTestCase.setUp(testInfo)
             this@RelocatableCacheTestCase.setUp()
         }
 

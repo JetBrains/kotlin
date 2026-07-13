@@ -251,3 +251,6 @@ fun IrClass.getAllSuperclasses(): Set<IrClass> {
 
 val IrType.isReifiedTypeParameter: Boolean
     get() = (classifierOrNull as? IrTypeParameterSymbol)?.owner?.isReified == true
+
+val IrType.arguments: List<IrTypeArgument>?
+    get() = (this as? IrSimpleType)?.arguments

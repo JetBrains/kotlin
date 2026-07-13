@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -54,13 +53,13 @@ import kotlin.contracts.contract
 class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
     // ------------------------------------ package fragments ------------------------------------
 
-    internal fun createExternalPackageFragment(fqName: FqName, moduleDescriptor: FirModuleDescriptor): IrExternalPackageFragment {
-        return createExternalPackageFragment(FirPackageFragmentDescriptor(fqName, moduleDescriptor))
-    }
-
-    internal fun createExternalPackageFragment(packageFragmentDescriptor: PackageFragmentDescriptor): IrExternalPackageFragment {
-        val symbol = IrExternalPackageFragmentSymbolImpl(packageFragmentDescriptor)
-        return IrExternalPackageFragmentImpl(symbol, packageFragmentDescriptor.fqName)
+    internal fun createExternalPackageFragment(
+        fqName: FqName,
+        module: IrModuleFragment,
+        createPackageFragmentDescriptor: (FqName, ModuleDescriptor) -> PackageFragmentDescriptor = ::FirPackageFragmentDescriptor,
+    ): IrExternalPackageFragment {
+        val symbol = IrExternalPackageFragmentSymbolImpl(createPackageFragmentDescriptor(fqName, module.descriptor))
+        return IrExternalPackageFragmentImpl(symbol, fqName)
     }
 
     // ------------------------------------ functions ------------------------------------

@@ -290,6 +290,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ParenthesizedPackageQualifierWarning::class
     }
 
+    interface KotlinPackageUsage : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = KotlinPackageUsage::class
+    }
+
     interface UnsupportedArrayLiteralOutsideOfAnnotationError : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UnsupportedArrayLiteralOutsideOfAnnotationError::class
     }
@@ -4773,6 +4777,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CompanionBlockMemberExtension::class
     }
 
+    interface InterfaceCompanionBlockVar : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InterfaceCompanionBlockVar::class
+    }
+
     interface IllegalCompanionBlock : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = IllegalCompanionBlock::class
         val parent: KaSymbol
@@ -4936,6 +4944,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ConflictVersionAndJvmOverloadsAnnotation::class
     }
 
+    interface InterfaceCompanionBlockPropertyPrivateField : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InterfaceCompanionBlockPropertyPrivateField::class
+    }
+
     interface JavaTypeMismatch : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = JavaTypeMismatch::class
         val expectedType: KaType
@@ -4979,6 +4991,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JavaClassOnCompanion::class
         val actualType: KaType
         val expectedType: KaType
+    }
+
+    interface JavaClassPropertyReferenceError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JavaClassPropertyReferenceError::class
+    }
+
+    interface JavaClassPropertyReferenceWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JavaClassPropertyReferenceWarning::class
     }
 
     interface UnexhaustiveWhenBasedOnJavaAnnotations : KaFirDiagnostic<PsiElement> {
@@ -5294,6 +5314,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface SubclassCantCallCompanionProtectedNonStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SubclassCantCallCompanionProtectedNonStatic::class
+    }
+
+    interface SubclassCantCallCompanionProtectedNonStaticWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = SubclassCantCallCompanionProtectedNonStaticWarning::class
     }
 
     interface ConcurrentHashMapContainsOperatorError : KaFirDiagnostic<PsiElement> {

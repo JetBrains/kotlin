@@ -1,6 +1,7 @@
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -19,6 +20,7 @@ KaReceiverParameterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/contracts/ContractBuilder
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(accessorsAllowed.kt)
   getContainingJvmClassName: null
@@ -29,6 +31,7 @@ KaReceiverParameterSymbol:
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -47,6 +50,7 @@ KaReceiverParameterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/contracts/ContractBuilder
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(accessorsAllowed.kt)
   getContainingJvmClassName: null
@@ -57,6 +61,7 @@ KaReceiverParameterSymbol:
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -75,6 +80,7 @@ KaReceiverParameterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/contracts/ContractBuilder
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(accessorsAllowed.kt)
   getContainingJvmClassName: null
@@ -85,6 +91,7 @@ KaReceiverParameterSymbol:
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -103,6 +110,7 @@ KaReceiverParameterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/contracts/ContractBuilder
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(accessorsAllowed.kt)
   getContainingJvmClassName: null

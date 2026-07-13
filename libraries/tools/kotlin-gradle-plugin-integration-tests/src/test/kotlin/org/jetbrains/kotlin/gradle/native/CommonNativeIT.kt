@@ -34,8 +34,8 @@ class CommonNativeIT : KGPBaseTest() {
     fun testCommonWatchos(gradleVersion: GradleVersion) {
         doCommonNativeTest(
             "common-watchos",
-            libTargets = listOf("watchosLibArm32", "watchosLibArm64", "watchosLibX64"),
-            appTargets = listOf("watchosArm32", "watchosArm64", "watchosX64"),
+            libTargets = listOf("watchosLibDeviceArm64", "watchosLibSimulatorArm64", "watchosLibArm64", "watchosLibX64"),
+            appTargets = listOf("watchosDeviceArm64", "watchosSimulatorArm64", "watchosArm64", "watchosX64"),
             gradleVersion
         )
     }

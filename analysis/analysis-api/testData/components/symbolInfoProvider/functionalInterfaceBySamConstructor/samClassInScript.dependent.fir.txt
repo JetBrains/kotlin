@@ -2,6 +2,7 @@ CONSTRUCTOR:
   KaSamConstructorSymbol:
   annotations: []
   callableId: /IntPredicate
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -34,8 +35,8 @@ CONSTRUCTOR:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -53,6 +54,7 @@ CONSTRUCTOR:
       modality: FINAL
       name: function
       origin: SAM_CONSTRUCTOR
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaFunctionType:
         abbreviation: null
@@ -172,6 +174,7 @@ CONSTRUCTOR:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: null

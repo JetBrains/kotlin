@@ -4,6 +4,7 @@ KDocName(8,12): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -22,5 +23,6 @@ KDocName(8,12): 'this'
           annotations: []
           typeArguments: []
           type: AAA
+        typeParameters: []
         visibility: PUBLIC
     ]

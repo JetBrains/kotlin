@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * WARNING TO KOTLIN COMPILER DEVELOPERS:

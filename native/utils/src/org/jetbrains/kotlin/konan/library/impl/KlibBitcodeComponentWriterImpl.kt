@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.library.impl
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeComponentLayout
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
-import kotlin.io.path.Path
 import java.nio.file.Path
 import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectories
@@ -16,15 +15,14 @@ import kotlin.io.path.name
 
 internal class KlibBitcodeComponentWriterImpl(
     private val target: KonanTarget,
-    private val bitcodeFilePaths: Collection<String>,
+    private val bitcodeFilePaths: Collection<Path>,
 ) : KlibComponentWriter {
     override fun writeTo(root: Path) {
         val layout = KlibBitcodeComponentLayout(target, root)
         layout.bitcodeDir.createDirectories()
 
         for (filePath in bitcodeFilePaths) {
-            val file = Path(filePath)
-            file.copyTo(layout.bitcodeDir.resolve(file.name), overwrite = true)
+            filePath.copyTo(layout.bitcodeDir.resolve(filePath.name), overwrite = true)
         }
     }
 }

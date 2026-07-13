@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
@@ -466,6 +467,7 @@ class TowerResolver {
             return candidate.resultingApplicability.shouldStopResolve
         }
 
+        @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
         private fun isPreserveCompatibilityCandidate(candidate: C): Boolean =
             candidate.resultingApplicability == CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY
 

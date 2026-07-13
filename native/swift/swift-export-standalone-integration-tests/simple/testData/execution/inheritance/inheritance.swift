@@ -160,7 +160,136 @@ func swiftSubclassOfKotlinClassConformsToUnrelatedKotlinInterface() throws {
     #expect(callVolume(s: s) == 7)
 }
 
-// Property reverse bridge test (currently disabled — causes crash, likely surfaces an
-// implementation gap in property reverse-bridge wiring; see plan).
-// @Test
-// func swiftCanOverrideKotlinInterfaceProperty() throws { ... }
+@Test
+func swiftInheritsKotlinInterfaceDefault() throws {
+    // Swift inherits a Kotlin class and first-adopts `Defaulter`, without overriding the defaulted
+    // method `describe`. It must inherit Kotlin's default, dispatched non-virtually so it never
+    // recurses through the patched itable. The default's open self-call to `tag()` reaches the Swift override.
+    class MyDefaulter: Base, Defaulter {
+        func tag() -> String { "swift-tag" }
+        // `describe()` intentionally NOT overridden -> inherits the Kotlin default.
+    }
+    let d = MyDefaulter()
+
+    // Direct Swift dispatch: inherited default runs; its open self-call reaches the Swift override.
+    #expect(d.describe() == "default-describe(swift-tag)")
+    #expect(d.tag() == "swift-tag")
+
+    // Kotlin-side dispatch must terminate (no infinite recursion) and yield the same result.
+    #expect(callDefDescribe(d: d) == "default-describe(swift-tag)")
+    #expect(callDefTag(d: d) == "swift-tag")
+}
+
+@Test
+func swiftOverridesKotlinInterfaceDefault() throws {
+    // When Swift DOES override the defaulted method, its override must win both directly and via Kotlin.
+    class MyDefaulter2: Base, Defaulter {
+        func tag() -> String { "t2" }
+        func describe() -> String { "swift-describe(" + tag() + ")" }
+    }
+    let d = MyDefaulter2()
+    #expect(d.describe() == "swift-describe(t2)")
+    #expect(callDefDescribe(d: d) == "swift-describe(t2)")
+}
+
+@Test
+func swiftCanOverrideKotlinInterfaceProperty() throws {
+    // Swift subclass of a Kotlin class implementing a Kotlin interface overrides the interface's
+    // settable property. Kotlin-side interface dispatch (setCount/getCount, typed as Counter) must
+    // reach the Swift accessors via the patched itable — both getter and setter reverse bridges.
+    class SwiftCounter: CounterBase {
+        private var backing: Int32 = 0
+        override var count: Int32 {
+            get { backing }
+            set { backing = newValue * 2 } // observable transform proves the Swift setter ran
+        }
+    }
+    let c = SwiftCounter()
+    setCount(c: c, n: 5)              // Kotlin -> Swift setter
+    #expect(getCount(c: c) == 10)     // Kotlin -> Swift getter
+    #expect(c.count == 10)            // direct Swift dispatch
+
+    // Original Kotlin implementation untouched.
+    let kotlin = CounterBase()
+    setCount(c: kotlin, n: 3)
+    #expect(getCount(c: kotlin) == 3)
+}
+
+@Test
+func swiftCanOverrideKotlinClassProperty() throws {
+    // Swift subclass overrides both a get-only (`val`) and a settable (`var`) property of an open
+    // Kotlin class. Kotlin-side access must reach the Swift accessors via the patched vtable.
+    class SwiftNamed: Named {
+        override var label: String { "swift-label" } // override get-only `val`
+        private var nickBacking = "swift-nick"
+        override var nick: String {                    // override settable `var`
+            get { nickBacking }
+            set { nickBacking = "got:" + newValue }
+        }
+    }
+    let n = SwiftNamed()
+
+    // Direct Swift dispatch
+    #expect(n.label == "swift-label")
+    #expect(n.nick == "swift-nick")
+
+    // Kotlin-side dispatch reaches the Swift accessors
+    #expect(readLabel(n: n) == "swift-label")
+    #expect(readNick(n: n) == "swift-nick")
+    writeNick(n: n, v: "x")
+    #expect(readNick(n: n) == "got:x")
+
+    // Original Kotlin instance untouched
+    let k = Named()
+    #expect(readLabel(n: k) == "kotlin-label")
+    writeNick(n: k, v: "y")
+    #expect(readNick(n: k) == "y")
+}
+
+@Test
+func swiftPropertySuperAndNonOverridden() throws {
+    // Property analog of swiftOverrideCanCallSuperOnKotlinClass / swiftSubclassInheritsNonOverriddenKotlinMethod:
+    // a Swift override reading `super.title` reaches the inherited Kotlin getter via the non-virtual
+    // `_direct` bridge; `rank` is not overridden and must be reachable from Kotlin without recursing.
+    class FancyBook: Book {
+        override var title: String { "fancy-" + super.title }
+        // `rank` intentionally not overridden.
+    }
+    let b = FancyBook()
+
+    #expect(b.title == "fancy-kotlin-title")
+    #expect(readTitle(b: b) == "fancy-kotlin-title")
+    // Inherited, non-overridden property reached through Kotlin must not recurse.
+    #expect(b.rank == 1)
+    #expect(readRank(b: b) == 1)
+
+    #expect(readTitle(b: Book()) == "kotlin-title")
+}
+
+@Test
+func swiftInheritsKotlinInterfaceDefaultProperty() throws {
+    // Swift inherits a Kotlin class and first-adopts `Labeled` without overriding the defaulted
+    // property `display`. It must inherit Kotlin's default (dispatched non-virtually so it never
+    // recurses through the patched itable); the default's open self-call to `base` reaches the Swift override.
+    class MyLabeled: Base, Labeled {
+        var base: String { "swift-base" }
+        // `display` intentionally NOT overridden -> inherits the Kotlin default.
+    }
+    let l = MyLabeled()
+
+    #expect(l.display == "display(swift-base)")
+    #expect(readDisplay(l: l) == "display(swift-base)")
+    #expect(readBase(l: l) == "swift-base")
+}
+
+@Test
+func swiftOverridesKotlinInterfaceDefaultProperty() throws {
+    // When Swift DOES override the defaulted property, its override must win both directly and via Kotlin.
+    class MyLabeled2: Base, Labeled {
+        var base: String { "b2" }
+        var display: String { "swift-display(" + base + ")" }
+    }
+    let l = MyLabeled2()
+    #expect(l.display == "swift-display(b2)")
+    #expect(readDisplay(l: l) == "swift-display(b2)")
+}

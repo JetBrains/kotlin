@@ -9,8 +9,7 @@ plugins {
     id("test-inputs-check-v2")
 }
 
-val compilerModules: Array<String> by rootProject.extra
-val otherCompilerModules = compilerModules.filter { it != path }
+val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }
 
 dependencies {
     testImplementation(kotlinStdlib())

@@ -16,6 +16,7 @@ class Foo {
     companion {
         val static2: Long = 2L
         fun static3() {}
+        var staticVariable = 3.0
     }
 
     fun regular4() {}

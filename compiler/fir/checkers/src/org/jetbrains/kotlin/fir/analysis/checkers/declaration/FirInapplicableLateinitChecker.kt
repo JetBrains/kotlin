@@ -46,7 +46,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
             reporter.reportError(declaration.source, "is not allowed on delegated properties")
         }
 
-        if (declaration.returnTypeRef.coneType.canBeNull(context.session)) {
+        if (declaration.returnTypeRef.coneType.canBeNull()) {
             reporter.reportError(declaration.source, "is not allowed on properties of a type with nullable upper bound")
         }
 

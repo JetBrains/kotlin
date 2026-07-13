@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.abi.tools.impl
 
 import org.jetbrains.kotlin.abi.tools.AbiFilters
 import org.jetbrains.kotlin.abi.tools.impl.filtering.compileMatcher
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import java.nio.file.Files
 
 class FiltersMatcherTests {
 
@@ -288,10 +288,8 @@ class FiltersMatcherTests {
         }
     }
 
-
-    @JvmField
-    @Rule
-    val tempDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tempDir: File
 
     @Test
     fun test() {
@@ -305,7 +303,7 @@ class FiltersMatcherTests {
     }
 
     fun tmpFile(): File {
-        return tempDir.newFile()
+        return Files.createTempFile(tempDir.toPath(), "tmp", null).toFile()
     }
 
     private val root = File("src/test/resources/compiled")

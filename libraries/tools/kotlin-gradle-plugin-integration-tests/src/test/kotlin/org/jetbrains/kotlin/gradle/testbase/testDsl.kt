@@ -17,7 +17,8 @@ import org.gradle.tooling.events.ProgressEvent
 import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -117,7 +118,8 @@ fun KGPBaseTest.project(
     return testProject
 }
 
-private fun gradleDistributionUri(gradleVersion: GradleVersion) = URI("https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip")
+private fun gradleDistributionUri(gradleVersion: GradleVersion) =
+    URI("https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip")
 
 /**
  * Create a new test project with configuring single native target.
@@ -343,7 +345,7 @@ inline fun <reified T> TestProject.buildModel(
     buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
     noinline progressListener: ((ProgressEvent) -> Unit)? = null,
-    noinline builder: (Project) -> T
+    noinline builder: (Project) -> T,
 ) = buildModel(
     tasks = tasks, modelClass = T::class.java, enableGradleDebug, kotlinDaemonDebugPort, enableBuildCacheDebug, enableBuildScan,
     enableOfflineMode, enableGradleDaemonMemoryLimitInMb, enableKotlinDaemonMemoryLimitInMb, buildOptions, environmentVariables,
@@ -363,9 +365,9 @@ fun <T> TestProject.buildModel(
     buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
     progressListener: ((ProgressEvent) -> Unit)? = null,
-    builder: (Project) -> T
+    builder: (Project) -> T,
 ): T {
-    Assumptions.assumeFalse(isWindows, "Building model is not working on windws KT-84353")
+    Assumptions.assumeFalse(isWindows, "Building model is not working on Windows KT-84353")
     val buildParams = commonBuildSetup(
         buildArguments = emptyList(), // it is actually task names, but for build model they passed separately
         buildOptions = buildOptions,
@@ -437,7 +439,7 @@ private fun validateDebuggingSocketIsListeningForTestsWithEnv(
             appendLine()
             appendLine("Environment variables instantiated at:")
             overridingEnvironmentVariablesInstantiationBacktrace?.backtrace()?.lineSequence()?.drop(1)?.forEach {
-                appendLine("  ${it}")
+                appendLine("  $it")
             }
             appendLine()
         }
@@ -787,18 +789,18 @@ private fun TestProject.withBuildSummary(
 }
 
 /**
- * This property is configured to read konan from specific directory.
+ * This property is configured to read konan from the specific directory.
  */
 private const val konanDataDirForIntegrationTests = "konanDataDirForIntegrationTests"
 val konanDir
     get() =
-        System.getProperty(konanDataDirForIntegrationTests)?.let { Paths.get(it) }
+        System.getProperty(konanDataDirForIntegrationTests)?.let { Path(it) }
             ?: error("Please specify a shared konan directory using \"${konanDataDirForIntegrationTests}\" system property")
 
 /**
  * On changing test kit dir location update related location in 'cleanTestKitCache' task.
  */
-internal val testKitDir get() = Paths.get(".").resolve("build").resolve("testKitCache")
+internal val testKitDir: Path get() = Path("./build/testKitCache")
 
 /**
  * Use this directory to store some cross-test information, such as [BuildOptions.customKotlinDaemonRunFilesDirectory]
@@ -807,7 +809,7 @@ internal val testKitDir get() = Paths.get(".").resolve("build").resolve("testKit
  *
  * On changing this directory, update related location in 'cleanTestKitCache' task.
  */
-internal val kgpTestInfraWorkingDirectory get() = Paths.get(".").resolve("build").resolve("kgpTestInfra")
+internal val kgpTestInfraWorkingDirectory: Path get() = Path("./build/kgpTestInfra")
 
 private val hashAlphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 private fun randomHash(length: Int = 15): String {
@@ -920,7 +922,7 @@ internal fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert
     val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
     val pluginsBlockPattern = Regex("plugins\\s*\\{[^}]*}", RegexOption.DOT_MATCHES_ALL)
 
-    val lastImportIndex = importsPattern.findAll(this).map { it.range.last }.maxOrNull()
+    val lastImportIndex = importsPattern.findAll(this).maxOfOrNull { it.range.last }
     val pluginBlockEndIndex = pluginsBlockPattern.find(this)?.range?.last
 
     val insertionIndex = listOfNotNull(lastImportIndex, pluginBlockEndIndex).maxOrNull() ?: return blockToInsert + this
@@ -932,7 +934,7 @@ internal fun String.insertBlockToBuildScriptAfterPluginManagementAndImports(bloc
     val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
     val pluginManagementBlockStartPattern = Regex("pluginManagement\\s*\\{")
 
-    val lastImportIndex = importsPattern.findAll(this).map { it.range.last }.maxOrNull()
+    val lastImportIndex = importsPattern.findAll(this).maxOfOrNull { it.range.last }
     val pluginManagementBlockStartingIndex = pluginManagementBlockStartPattern.find(this)?.range?.last
     val pluginManagementBlockEndIndex = pluginManagementBlockStartingIndex?.let { findMatchingBraceIndex(it) }
     if (pluginManagementBlockEndIndex == -1) throw IllegalStateException("Could not find a matching '}' for plugin management block:\n$this")
@@ -972,7 +974,7 @@ private fun String.findMatchingBraceIndex(openBraceIndex: Int): Int {
 internal fun String.insertBlockToBuildScriptAfterImports(blockToInsert: String): String {
     val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
 
-    val lastImportIndex = importsPattern.findAll(this).map { it.range.last }.maxOrNull() ?: return blockToInsert + this
+    val lastImportIndex = importsPattern.findAll(this).maxOfOrNull { it.range.last } ?: return blockToInsert + this
     return StringBuilder(this).insert(lastImportIndex + 1, "\n$blockToInsert\n").toString()
 }
 
@@ -1175,15 +1177,14 @@ internal fun Path.enableAndroidSdk() {
 internal fun Path.enableCacheRedirector() {
     // Path relative to the current Gradle module project dir
     val redirectorScript =
-        Paths.get("../../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
+        Path("../../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     assert(redirectorScript.exists()) {
         "$redirectorScript does not exist! Please provide correct path to 'cache-redirector.settings.gradle.kts' file."
     }
     val gradleDir = resolve("gradle").also { it.createDirectories() }
     redirectorScript.copyTo(gradleDir.resolve("cache-redirector.settings.gradle.kts"))
 
-    val projectCacheRedirectorStatus = Paths
-        .get("../../../gradle.properties")
+    val projectCacheRedirectorStatus = Path("../../../gradle.properties")
         .readText()
         .lineSequence()
         .first { it.startsWith("cacheRedirectorEnabled") }
@@ -1288,9 +1289,9 @@ sealed interface DependencyManagement {
 }
 
 /**
- * Resolves the temporary local repository path for the test with specified Gradle version.
+ * Resolves the temporary local repository path for the test with the specified Gradle version.
  */
-fun KGPBaseTest.defaultLocalRepo(gradleVersion: GradleVersion) = workingDir.resolve(gradleVersion.version).resolve("repo")
+fun KGPBaseTest.defaultLocalRepo(gradleVersion: GradleVersion): Path = workingDir.resolve(gradleVersion.version).resolve("repo")
 
 // https://developer.android.com/studio/intro/update.html#download-with-gradle
 private fun acceptAndroidSdkLicenses(androidHome: File) {
@@ -1357,8 +1358,6 @@ enum class EnableGradleDebug {
 }
 
 private fun Throwable.backtrace(): String = StringWriter().use {
-    PrintWriter(it).use {
-        this.printStackTrace(it)
-    }
+    PrintWriter(it).use(this::printStackTrace)
     it
 }.toString()

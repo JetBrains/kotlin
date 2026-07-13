@@ -298,6 +298,19 @@ fun Project.standardPublicJars() {
 fun Project.publish(moduleMetadata: Boolean = false, sbom: Boolean = true, configure: MavenPublication.() -> Unit = { }) {
     apply<KotlinBuildPublishingPlugin>()
 
+    tasks.register("writePublishedMark") {
+        dependsOn(tasks.named("publish"))
+        val publishedMarkFile = layout.buildDirectory.file("published.txt")
+        outputs.file(publishedMarkFile)
+        doLast {
+            publishedMarkFile.get().asFile.writeText("")
+        }
+    }
+    val publishedMark = configurations.consumable("publishedMark")
+    artifacts {
+        add(publishedMark.name, tasks.named("writePublishedMark"))
+    }
+
     if (!moduleMetadata) {
         tasks.withType<GenerateModuleMetadata> {
             enabled = false
@@ -333,11 +346,9 @@ fun Project.publishJarsForIde(
     libraryDependencies: List<String> = emptyList(),
     jarTaskConfiguration: Jar.() -> Unit = {},
 ) {
-    val projectsDependingOnStableStdlib: Array<String> by rootProject.extra
-
     for (projectName in projects) {
-        check(projectName in projectsDependingOnStableStdlib) {
-            "`$projectName` is used in IntelliJ Kotlin Plugin, it should be added to `extra[\"projectsDependingOnStableStdlib\"]`"
+        check(projectName in CompilerModules.projectsDependingOnStableStdlib) {
+            "`$projectName` is used in IntelliJ Kotlin Plugin, it should be added to `CompilerModules.projectsDependingOnStableStdlib`"
         }
     }
 

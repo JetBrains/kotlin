@@ -7,14 +7,9 @@ package org.jetbrains.abi.tools.test
 
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.abi.tools.test.api.*
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Assume
-import org.junit.Test
-import java.io.File
-import java.nio.file.Files
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.nio.file.Paths
-import kotlin.test.assertTrue
 
 private fun KlibVerificationTests.checkKlibDump(
     buildResult: BuildResult,

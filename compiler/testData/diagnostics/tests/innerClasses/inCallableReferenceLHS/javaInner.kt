@@ -17,15 +17,15 @@ public class JavaOuter<A> {
 // FILE: main.kt
 
 fun main() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter.JavaInner<!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter<!>.JavaInner::foo
     JavaOuter<Int>.JavaInner<String>::foo
-    JavaOuter<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!><Int, String><!>.JavaInner::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!>JavaOuter<!>.JavaInner<Int, String>::foo
+    JavaOuter<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, String><!>.JavaInner::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter<!>.JavaInner<Int, String>::foo
 
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter.JavaInner<!>::bar
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter<!>.JavaInner::bar
     JavaOuter<Int>.JavaInner<String>::bar
-    JavaOuter<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!><Int, String><!>.JavaInner::bar
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!>JavaOuter<!>.JavaInner<Int, String>::bar
+    JavaOuter<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, String><!>.JavaInner::bar
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter<!>.JavaInner<Int, String>::bar
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration */

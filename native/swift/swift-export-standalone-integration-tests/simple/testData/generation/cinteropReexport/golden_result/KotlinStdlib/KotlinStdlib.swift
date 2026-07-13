@@ -19,7 +19,7 @@ extension ExportedKotlinPackages.kotlinx.cinterop {
     }
     public protocol __ObjCObject: KotlinRuntimeSupport._KotlinBridgeable {
     }
-    open class ObjCObjectBase: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.cinterop.ObjCObject, ExportedKotlinPackages.kotlinx.cinterop._ObjCObject, ExportedKotlinPackages.kotlinx.cinterop.__ObjCObject {
+    open class ObjCObjectBase: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.cinterop.ObjCObject, ExportedKotlinPackages.kotlinx.cinterop.__ObjCObject {
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions

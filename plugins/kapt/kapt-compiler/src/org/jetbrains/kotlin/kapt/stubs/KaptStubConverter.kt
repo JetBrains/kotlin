@@ -28,18 +28,25 @@ import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
+import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.functions.isBuiltin
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.constant.*
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.backend.FirAnnotationSourceElement
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -52,6 +59,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
@@ -69,6 +77,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
@@ -83,6 +92,7 @@ import org.jetbrains.kotlin.kapt.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -176,6 +186,25 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 }
             })
         }
+    }
+
+    private val firJvmTypeMapper: FirJvmTypeMapper? = kaptContext.firSession?.let(::FirJvmTypeMapper)
+
+    private val irTypeSystem = IrTypeSystemContextImpl(kaptContext.irBuiltIns)
+
+    private val legacyFunctionTypeKindProjector: LegacyFunctionTypeKindProjector? =
+        kaptContext.firSession?.let(::LegacyFunctionTypeKindProjector)
+
+    private fun projectLegacyFunctionTypeKindsIfNeeded(
+        typeReference: KtTypeReference?,
+        typeMappingMode: TypeMappingMode,
+    ): JCExpression? {
+        val firType = typeReference?.let(typeReferenceToFirType::get) ?: return null
+        val projectedType = legacyFunctionTypeKindProjector?.projectIfNeeded(firType) ?: return null
+        val typeMapper = firJvmTypeMapper ?: return null
+        val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
+        val asmType = typeMapper.mapType(projectedType, typeMappingMode, signatureWriter)
+        return signatureParser.parseFieldSignature(signatureWriter.makeJavaGenericSignature(), treeMaker.Type(asmType))
     }
 
     fun convert(): List<KaptStub> {
@@ -703,27 +732,37 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         if (!isValidIdentifier(name)) return null
 
         val type = Type.getType(field.desc)
+        val irField = declaration as? IrField
 
         if (!checkIfValidTypeName(containingClass, type)) {
             return null
         }
 
         fun typeFromAsm() = signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type))
+        val fieldTypeReference =
+            (kaptContext.origins[field]?.element as? KtCallableDeclaration)
+                ?.takeIf { it !is KtFunction }
+                ?.typeReference
+
+        val fieldTypeMappingMode = irField?.let {
+            if (it.correspondingPropertySymbol?.owner?.isVar == true) {
+                MethodSignatureMapper.getTypeMappingModeForParameter(irTypeSystem, it, it.type)
+            } else {
+                MethodSignatureMapper.getTypeMappingModeForReturnType(irTypeSystem, it, it.type)
+            }
+        }
 
         // Enum type must be an identifier (Javac requirement)
         val typeExpression = if (isEnum(field.access)) {
             treeMaker.SimpleName(treeMaker.getQualifiedName(type).substringAfterLast('.'))
         } else {
             getNonErrorType(
-                (declaration as? IrField)?.type?.containsErrorTypes() == true,
+                irField?.type?.containsErrorTypes() == true,
                 RETURN_TYPE,
-                ktTypeProvider = {
-                    val fieldOrigin = (kaptContext.origins[field]?.element as? KtCallableDeclaration)
-                        ?.takeIf { it !is KtFunction }
-
-                    fieldOrigin?.typeReference
-                },
-                ifNonError = ::typeFromAsm
+                ktTypeProvider = { fieldTypeReference },
+                ifNonError = {
+                    fieldTypeMappingMode?.let { projectLegacyFunctionTypeKindsIfNeeded(fieldTypeReference, it) } ?: typeFromAsm()
+                }
             )
         }
 
@@ -972,11 +1011,28 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val contextParameters = declaration.parameters.filter { it.kind == IrParameterKind.Context }
         val extensionReceiver = declaration.parameters.find { it.kind == IrParameterKind.ExtensionReceiver }
         val psiElement = kaptContext.origins[method]?.element
+        val returnTypeReference =
+            when (psiElement) {
+                is KtFunction -> psiElement.typeReference
+                is KtProperty -> if (declaration.isGetter) psiElement.typeReference else null
+                is KtPropertyAccessor -> if (declaration.isGetter) psiElement.property.typeReference else null
+                is KtParameter -> if (declaration.isGetter) psiElement.typeReference else null
+                else -> null
+            }
+        val returnTypeMappingMode = MethodSignatureMapper.getTypeMappingModeForReturnType(irTypeSystem, declaration, declaration.returnType)
         val genericSignature = signatureParser.parseMethodSignature(
             method.signature, parameters, exceptionTypes, jcReturnType,
             nonErrorParameterTypeProvider = { index, lazyType ->
-                fun getNonErrorMethodParameterType(type: IrType, ktTypeProvider: () -> KtTypeReference?): JCExpression =
-                    getNonErrorType(type.containsErrorTypes(), METHOD_PARAMETER_TYPE, ktTypeProvider, lazyType)
+                fun getNonErrorMethodParameterType(type: IrType, ktTypeProvider: () -> KtTypeReference?): JCExpression {
+                    val typeReference = ktTypeProvider()
+                    val typeMappingMode = MethodSignatureMapper.getTypeMappingModeForParameter(irTypeSystem, declaration, type)
+                    return getNonErrorType(
+                        type.containsErrorTypes(),
+                        METHOD_PARAMETER_TYPE,
+                        ktTypeProvider = { typeReference },
+                        ifNonError = { projectLegacyFunctionTypeKindsIfNeeded(typeReference, typeMappingMode) ?: lazyType() }
+                    )
+                }
 
                 fun PsiElement.getCallableDeclaration(): KtCallableDeclaration? = when (this) {
                     is KtCallableDeclaration -> if (this is KtFunction) null else this
@@ -1068,16 +1124,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         val returnType = getNonErrorType(
             declaration.returnType.containsErrorTypes(), RETURN_TYPE,
-            ktTypeProvider = {
-                when (psiElement) {
-                    is KtFunction -> psiElement.typeReference
-                    is KtProperty -> if (declaration.isGetter) psiElement.typeReference else null
-                    is KtPropertyAccessor -> if (declaration.isGetter) psiElement.property.typeReference else null
-                    is KtParameter -> if (declaration.isGetter) psiElement.typeReference else null
-                    else -> null
-                }
-            },
-            ifNonError = { genericSignature.returnType }
+            ktTypeProvider = { returnTypeReference },
+            ifNonError = { projectLegacyFunctionTypeKindsIfNeeded(returnTypeReference, returnTypeMappingMode) ?: genericSignature.returnType }
         )
 
         return Pair(genericSignature, returnType)
@@ -1546,6 +1594,23 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                     .mapNotNull { im -> im.importPath?.fqName?.takeIf { it.isOneSegmentFQN() } }
             importsFromRoot.mapTo(mutableSetOf()) { it.asString() }
         }
+}
+
+private class LegacyFunctionTypeKindProjector(private val session: FirSession) : AbstractConeSubstitutor(session.typeContext) {
+    fun projectIfNeeded(type: ConeKotlinType): ConeKotlinType? =
+        substituteOrNull(type)?.takeUnless { it === type }
+
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        val classLikeType = type as? ConeClassLikeType ?: return null
+        val functionTypeKind = classLikeType.functionTypeKind(session) ?: return null
+        if (functionTypeKind.isBuiltin) return null
+
+        val legacySerializationUntil =
+            LanguageVersion.fromVersionString(functionTypeKind.serializeAsFunctionWithAnnotationUntil) ?: return null
+        if (session.languageVersionSettings.languageVersion >= legacySerializationUntil) return null
+
+        return classLikeType.customFunctionTypeToSimpleFunctionType(session)
+    }
 }
 
 private fun Any?.isOfPrimitiveType(): Boolean = when (this) {

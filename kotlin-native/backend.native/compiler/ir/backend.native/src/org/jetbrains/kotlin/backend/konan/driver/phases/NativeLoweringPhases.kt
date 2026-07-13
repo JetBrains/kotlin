@@ -473,7 +473,7 @@ private val typeOperatorPhase = createFileLoweringPhase(
 private val exportedBridgeNonVirtualPhase = createFileLoweringPhase(
         ::ExportedBridgeNonVirtualLowering,
         name = "ExportedBridgeNonVirtual",
-        prerequisite = setOf(coroutinesPhase, postInlinePhase)
+        prerequisite = setOf(postInlinePhase)
 )
 
 private val bridgesPhase = createFileLoweringPhase(
@@ -644,6 +644,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         functionReferencePhase,
         singleAbstractMethodPhase,
         postInlinePhase,
+        exportedBridgeNonVirtualPhase,
         contractsDslRemovePhase,
         annotationImplementationPhase,
         rangeContainsLoweringPhase,
@@ -683,7 +684,6 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         optimizeCastsPhase.takeIf { this.genericSafeCasts },
         typeOperatorPhase,
         builtinOperatorPhase,
-        exportedBridgeNonVirtualPhase,
         bridgesPhase,
         exportInternalAbiPhase.takeIf { this.produce.isCache },
         useInternalAbiPhase,

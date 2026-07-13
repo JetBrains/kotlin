@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.wasm
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibDiagnosticContext
+import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
 import org.jetbrains.kotlin.ir.backend.js.wasm.declarations.WasmKlibExportsChecker
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -19,7 +19,7 @@ object WasmKlibCheckers {
         configuration: CompilerConfiguration,
     ): IrVisitorVoid {
         return object : IrVisitorVoid() {
-            private val diagnosticContext = JsKlibDiagnosticContext(configuration)
+            private val diagnosticContext = CommonKlibDiagnosticContext(configuration)
 
             override fun visitModuleFragment(declaration: IrModuleFragment) {
                 WasmKlibExportsChecker.check(declaration.collectAllExportNames(), this.diagnosticContext, diagnosticReporter)

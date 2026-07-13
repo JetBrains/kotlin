@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.utils.readUnsignedLeb128
@@ -110,10 +109,6 @@ class DeclarationIdMultiTableReader(private val buffer: ReadByteBufferProvider) 
 
 val ByteArray.buffer: ByteBuffer get() = ByteBuffer.wrap(this)
 fun IrArrayReader.toArray(): Array<ByteArray> = Array(this.entryCount()) { i -> this.tableItemBytes(i) }
-
-fun File.javaFile(): java.io.File = java.io.File(path)
-fun File.javaPath(): java.nio.file.Path = java.nio.file.Paths.get(path)
-
 
 /******************************************************************************/
 /** Private utilities.                                                        */

@@ -600,6 +600,9 @@ class CacheMetadata(
         val target: KonanTarget,
         val compilerFingerprint: String,
         val runtimeFingerprint: String?, // only present in caches using the runtime (i.e. for stdlib)
+        // Combined fingerprint of the monolithically cached dependencies (auto-cached external libraries
+        // and IC'ed cinterop libraries) the cache was built against.
+        val dependenciesFingerprint: FingerprintHash?,
 )
 
 object CacheMetadataSerializer {
@@ -612,6 +615,7 @@ object CacheMetadataSerializer {
                 "target" to metadata.target.toString(),
                 "compilerFingerprint" to metadata.compilerFingerprint,
                 metadata.runtimeFingerprint?.let { "runtimeFingerprint" to it },
+                metadata.dependenciesFingerprint?.let { "dependenciesFingerprint" to it.toString() },
         ).forEach { [key, value] ->
             writer.appendLine("$key=$value")
         }
@@ -626,6 +630,7 @@ object CacheMetadataSerializer {
                     target = KonanTarget.predefinedTargets[this["target"] as String]!!,
                     compilerFingerprint = this["compilerFingerprint"] as String,
                     runtimeFingerprint = this["runtimeFingerprint"] as String?,
+                    dependenciesFingerprint = (this["dependenciesFingerprint"] as String?)?.let { FingerprintHash.fromString(it) },
             )
         }
     }

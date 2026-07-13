@@ -13,6 +13,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("native-dependencies")
+    id("test-inputs-check-v2")
 }
 
 val testCppRuntime by configurations.creating {

@@ -2720,7 +2720,7 @@ internal class CodeGeneratorVisitor(
         llvm.irStaticInitializers.forEach {
             val library = it.konanLibrary
             val initializers = libraryToInitializers[library]
-                    ?: error("initializer for not included library ${library?.libraryFile}")
+                    ?: error("initializer for not included library ${library?.path}")
 
             initializers.add(it.runtimeInitializer)
         }
@@ -2754,11 +2754,11 @@ internal class CodeGeneratorVisitor(
             } else {
                 // A cached library.
                 check(initializer == null) {
-                    "found initializer from ${library.libraryFile}, which is not included into compilation"
+                    "found initializer from ${library.path}, which is not included into compilation"
                 }
 
                 val cache = context.config.cachedLibraries.getLibraryCache(library)
-                        ?: error("Library ${library.libraryFile} is expected to be cached")
+                        ?: error("Library ${library.path} is expected to be cached")
 
                 when (cache) {
                     is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
@@ -2767,7 +2767,7 @@ internal class CodeGeneratorVisitor(
                             is DependenciesTracker.DependencyKind.WholeModule -> {
                                 val fileIdProvider: FileIdProvider = context.moduleDeserializerProvider.getDeserializerOrNull(library)
                                         ?.let { FileIdProvider(it) }
-                                        ?: error("Can't find deserializer for ${library.libraryFile}")
+                                        ?: error("Can't find deserializer for ${library.path}")
                                 fileIdProvider.sortedFileIds
                             }
                             is DependenciesTracker.DependencyKind.CertainFiles ->

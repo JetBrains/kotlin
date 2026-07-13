@@ -58,5 +58,6 @@ internal class KlibToolIrLinker(
         klib = klib,
         libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
         allowErrorNodes = true,
+        deserializeTypeAliases = true,
     )
 }

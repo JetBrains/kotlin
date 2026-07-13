@@ -218,15 +218,15 @@ extension ExportedKotlinPackages.kotlin.collections {
     @objc(_ListIterator)
     public protocol _ListIterator: ExportedKotlinPackages.kotlin.collections._Iterator {
     }
-    public protocol __Collection: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __Collection: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Iterable {
     }
     public protocol __Iterable: KotlinRuntimeSupport._KotlinBridgeable {
     }
     public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {
     }
-    public protocol __List: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __List: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Collection {
     }
-    public protocol __ListIterator: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __ListIterator: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Iterator {
     }
 }
 @_cdecl("kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
@@ -248,6 +248,13 @@ package func kotlin_collections_Collection_iterator__reverse_swift(_ `self`: Swi
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
     let _result: any ExportedKotlinPackages.kotlin.collections.Iterator = _self.iterator()
     return _result.__externalRCRef()
+}
+
+@_cdecl("kotlin_collections_Collection_size_get__reverse_swift")
+package func kotlin_collections_Collection_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _result: Swift.Int32 = _self.size
+    return _result
 }
 
 @_cdecl("kotlin_collections_Iterable_iterator__reverse_swift")
@@ -367,6 +374,13 @@ package func kotlin_collections_List_listIterator__reverse_swift(_ `self`: Swift
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: any ExportedKotlinPackages.kotlin.collections.ListIterator = _self.listIterator()
     return _result.__externalRCRef()
+}
+
+@_cdecl("kotlin_collections_List_size_get__reverse_swift")
+package func kotlin_collections_List_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _result: Swift.Int32 = _self.size
+    return _result
 }
 
 @_cdecl("kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")

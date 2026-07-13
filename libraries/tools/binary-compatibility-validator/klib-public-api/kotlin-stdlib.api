@@ -14577,12 +14577,6 @@ final inline fun (kotlin/Long).kotlin/countTrailingZeroBits(): kotlin/Int // kot
 final inline fun <#A: kotlin/Any?> kotlin.wasm.unsafe/withScopedMemoryAllocator(kotlin/Function1<kotlin.wasm.unsafe/MemoryAllocator, #A>): #A // kotlin.wasm.unsafe/withScopedMemoryAllocator|withScopedMemoryAllocator(kotlin.Function1<kotlin.wasm.unsafe.MemoryAllocator,0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final inline fun kotlin/check(kotlin/Boolean, kotlin/Function0<kotlin/String>) // kotlin/check|check(kotlin.Boolean;kotlin.Function0<kotlin.String>){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final inline fun kotlin/error(kotlin/String): kotlin/Nothing // kotlin/error|error(kotlin.String){}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/returnIfSuspended(kotlin/Any?): #A // kotlin.wasm.internal/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
@@ -15912,12 +15906,21 @@ final class kotlin.js/JsNumber : kotlin.js/JsAny // kotlin.js/JsNumber|null[0]
 final class kotlin.js/JsString : kotlin.js/JsAny // kotlin.js/JsString|null[0]
 
 // Targets: [wasmJs]
+final object kotlin.wasm.unsafe/WebAssembly { // kotlin.wasm.unsafe/WebAssembly|null[0]
+    abstract interface Memory : kotlin.js/JsAny // kotlin.wasm.unsafe/WebAssembly.Memory|null[0]
+}
+
+// Targets: [wasmJs]
 final val kotlin.js/length // kotlin.js/length|@kotlin.js.JsArray<*>{}length[0]
     final inline fun (kotlin.js/JsArray<*>).<get-length>(): kotlin/Int // kotlin.js/length.<get-length>|<get-length>@kotlin.js.JsArray<*>(){}[0]
 
 // Targets: [wasmJs]
 final val kotlin.js/thrownValue // kotlin.js/thrownValue|@kotlin.js.JsException{}thrownValue[0]
     final fun (kotlin.js/JsException).<get-thrownValue>(): kotlin.js/JsAny? // kotlin.js/thrownValue.<get-thrownValue>|<get-thrownValue>@kotlin.js.JsException(){}[0]
+
+// Targets: [wasmJs]
+final val kotlin.wasm.unsafe/wasmMemory // kotlin.wasm.unsafe/wasmMemory|{}wasmMemory[0]
+    final fun <get-wasmMemory>(): kotlin.wasm.unsafe/WebAssembly.Memory // kotlin.wasm.unsafe/wasmMemory.<get-wasmMemory>|<get-wasmMemory>(){}[0]
 
 // Targets: [wasmJs]
 final fun (kotlin.js/JsAny).kotlin.js/asJsException(): kotlin.js/JsException // kotlin.js/asJsException|asJsException@kotlin.js.JsAny(){}[0]

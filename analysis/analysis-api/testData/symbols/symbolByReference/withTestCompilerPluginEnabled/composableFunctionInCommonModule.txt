@@ -35,8 +35,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -54,6 +54,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: text
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: [
@@ -67,6 +68,7 @@ KaNamedFunctionSymbol:
             type: kotlin/Unit
         ]
         type: @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(Common.kt)
       getContainingJvmClassName: test.CommonKt

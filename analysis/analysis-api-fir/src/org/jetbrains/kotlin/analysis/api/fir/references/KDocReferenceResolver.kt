@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -385,16 +383,12 @@ internal object KDocReferenceResolver {
 
                     when (declaration) {
                         is KtPrimaryConstructor -> {
-                            if (valueParameter.isPropertyParameter() &&
-                                contextDeclarationHandlingMode == ContextDeclarationHandlingMode.PropertySymbolsForPropertyParameters
-                            ) {
-                                val classParameterProperty =
-                                    declaration.containingClass()?.classSymbol?.declaredMemberScope?.callables?.firstOrNull { callable ->
-                                        callable is KaPropertySymbol && callable.isFromPrimaryConstructor && callable.name == name
-                                    }
-                                addIfNotNull(classParameterProperty)
+                            val valueParameterSymbol = valueParameter.symbol as? KaValueParameterSymbol
+                            val generatedProperty = valueParameterSymbol?.primaryConstructorProperty
+                            if (generatedProperty != null && contextDeclarationHandlingMode == ContextDeclarationHandlingMode.PropertySymbolsForPropertyParameters) {
+                                add(generatedProperty)
                             } else {
-                                add(valueParameter.symbol)
+                                addIfNotNull(valueParameterSymbol)
                             }
                         }
                         else -> add(valueParameter.symbol)

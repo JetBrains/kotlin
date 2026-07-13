@@ -3,6 +3,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -27,6 +28,7 @@ KaKotlinPropertySymbol:
           type: kotlin/String
       ]
       type: kotlin/collections/Set<kotlin/String>
+    typeParameters: []
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
@@ -39,6 +41,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -62,6 +65,7 @@ KaKotlinPropertySymbol:
           type: kotlin/String
       ]
       type: kotlin/collections/Set<kotlin/String>
+    typeParameters: []
     valueParameters: []
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
@@ -80,7 +84,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -89,6 +92,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: lazyProp
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -102,6 +106,7 @@ KaKotlinPropertySymbol:
   setter: KaPropertySetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -118,8 +123,8 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -137,6 +142,7 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: <set-?>
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -147,6 +153,7 @@ KaKotlinPropertySymbol:
             type: kotlin/String
         ]
         type: kotlin/collections/Set<kotlin/String>
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
       getContainingJvmClassName: null
@@ -158,12 +165,13 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
+    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -181,6 +189,7 @@ KaKotlinPropertySymbol:
         modality: FINAL
         name: <set-?>
         origin: SOURCE
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -191,6 +200,7 @@ KaKotlinPropertySymbol:
               type: kotlin/String
           ]
           type: kotlin/collections/Set<kotlin/String>
+        typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
         getContainingJvmClassName: null

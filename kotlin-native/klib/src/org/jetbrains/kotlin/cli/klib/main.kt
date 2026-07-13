@@ -30,10 +30,9 @@ private fun execImpl(output: KlibToolOutput, rawArgs: Array<String>): Int {
             val command = when (args.command) {
                 CliCommand.DUMP_ABI -> DumpAbi(output, args)
                 CliCommand.DUMP_IR -> DumpIr(output, args)
-                CliCommand.DUMP_IR_SIGNATURES -> DumpIrSignatures(output, args)
                 CliCommand.DUMP_IR_INLINABLE_FUNCTIONS -> DumpIrInlinableFunctions(output, args)
+                CliCommand.DUMP_SIGNATURES -> DumpSignatures(output, args)
                 CliCommand.DUMP_METADATA -> DumpMetadata(output, args)
-                CliCommand.DUMP_METADATA_SIGNATURES -> DumpMetadataSignatures(output, args)
                 CliCommand.INFO -> Info(output, args)
             }
 

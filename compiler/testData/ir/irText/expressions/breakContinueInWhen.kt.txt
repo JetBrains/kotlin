@@ -53,7 +53,7 @@ fun testContinueDoWhile() {
     // }    while (less(arg0 = k, arg1 = 10))
   }
   when {
-    EQEQ(arg0 = s, arg1 = "1;2;").not() -> throw AssertionError(p0 = s)
+    EQEQ(arg0 = s, arg1 = "1;2;").not() -> throw AssertionError(message = s)
   }
 }
 

@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm")
     id("project-tests-convention")
     id("java-test-fixtures")
+    id("test-inputs-check-v2")
 }
 
 sourceSets {

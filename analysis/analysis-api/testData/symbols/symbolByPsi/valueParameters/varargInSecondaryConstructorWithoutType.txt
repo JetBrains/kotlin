@@ -2,6 +2,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: Foo
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -23,8 +24,8 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -42,10 +43,12 @@ KaConstructorSymbol:
       modality: FINAL
       name: ints
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(varargInSecondaryConstructorWithoutType.kt)
       getContainingJvmClassName: Foo

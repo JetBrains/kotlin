@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -22,6 +23,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(functionWithContextReceivers.kt)
       getContainingJvmClassName: FunctionWithContextReceiversKt
@@ -31,6 +33,7 @@ KaNamedFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -56,6 +59,7 @@ KaNamedFunctionSymbol:
             type: @R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int
         ]
         type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(functionWithContextReceivers.kt)
       getContainingJvmClassName: FunctionWithContextReceiversKt

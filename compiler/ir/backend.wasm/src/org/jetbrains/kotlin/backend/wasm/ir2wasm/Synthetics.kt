@@ -42,6 +42,7 @@ object Synthetics {
     object Globals {
         val addressesAndLengthsGlobal = FieldGlobalSymbol("addressesAndLengthsGlobal".toSyntheticSignature())
         val stringPoolGlobal = FieldGlobalSymbol("stringPoolGlobal".toSyntheticSignature())
+        val wasmMemoryGlobal = FieldGlobalSymbol("wasmMemoryGlobal".toSyntheticSignature())
     }
 
     // GC TYPES

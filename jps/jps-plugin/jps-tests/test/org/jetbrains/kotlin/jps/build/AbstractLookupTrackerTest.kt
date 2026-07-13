@@ -33,12 +33,16 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import java.io.*
 
 abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
 
     private val sourceToOutputMapping = hashMapOf<File, MutableSet<File>>()
 
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         sourceToOutputMapping.clear()
@@ -119,6 +123,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
     protected open var filterBuiltins = false
     protected open var distinguishPackageAndClassLookups = true
 
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         srcDir = File(workingDir, "src").apply { mkdirs() }
@@ -126,6 +131,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         enableICFixture.setUp()
     }
 
+    @AfterEach
     override fun tearDown() {
         RunAll(
             ThrowableRunnable { enableICFixture.tearDown() },
@@ -140,7 +146,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
     protected open val buildLogFinder: BuildLogFinder
         get() = BuildLogFinder(isGradleEnabled = false)
 
-    fun doTest(path: String) {
+    fun runTest(path: String) {
         val sb = StringBuilder()
         fun StringBuilder.indentln(string: String) {
             appendLine("  $string")

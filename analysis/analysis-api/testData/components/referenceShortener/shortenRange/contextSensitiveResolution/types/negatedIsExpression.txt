@@ -1,0 +1,9 @@
+Before shortening: MyResult.Err
+with default settings:
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[type] MyResult.Err
+with SHORTEN_AND_IMPORT:
+[type] MyResult.Err
+with SHORTEN_AND_STAR_IMPORT:
+[type] MyResult.Err

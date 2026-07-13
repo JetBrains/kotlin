@@ -67,6 +67,7 @@ KaNamedFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -84,6 +85,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: A
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
@@ -141,6 +143,7 @@ KaNamedFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -158,6 +161,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: B
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
@@ -215,6 +219,7 @@ KaNamedFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -232,6 +237,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: A
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
@@ -241,6 +247,7 @@ KaNamedFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -258,6 +265,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: B
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
@@ -321,6 +329,7 @@ KaNamedFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -338,6 +347,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: B
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
@@ -347,6 +357,7 @@ KaNamedFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -364,6 +375,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: A
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt

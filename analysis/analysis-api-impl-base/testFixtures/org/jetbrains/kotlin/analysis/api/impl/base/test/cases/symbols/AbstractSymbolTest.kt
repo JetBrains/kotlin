@@ -105,7 +105,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                         }
                     }
 
-                checkSymbols(symbols, mainFile, testServices)
+                checkSymbols(symbols, mainFile, testServices, disablePsiBasedLogic)
 
                 val pointerWithRenderedSymbol = symbols
                     .asSequence()
@@ -118,6 +118,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                             implicitSymbol to false
                         }
                     }
+                    .sortedByDescending { it.second }
                     .distinctBy { it.first }
                     .map { [symbol, shouldBeRendered] ->
                         PointerWithRenderedSymbol(
@@ -175,13 +176,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     context(_: KaSession)
-    private fun checkSymbols(symbols: List<KaSymbol>, mainFile: KtFile, testServices: TestServices) {
+    private fun checkSymbols(symbols: List<KaSymbol>, mainFile: KtFile, testServices: TestServices, disablePsiBasedLogic: Boolean) {
         val allowedContainingFileSymbols = getAllowedContainingFiles(mainFile, testServices).mapToSetOrEmpty {
             it.takeIf { it.canBeAnalysed() }?.symbol
         }
 
         for (symbol in symbols) {
-            checkSymbol(symbol)
+            checkSymbol(symbol, disablePsiBasedLogic)
 
             if (symbol.origin != KaSymbolOrigin.SOURCE) continue
 
@@ -203,7 +204,37 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     context(_: KaSession)
-    private fun checkSymbol(symbol: KaSymbol) {
+    private fun checkSymbol(symbol: KaSymbol, disablePsiBasedLogic: Boolean) {
+        /**
+         * [KaSymbol] members can rebuild the backingPsi from the FIR symbol
+         * even if the backing PSI was dropped for the containing symbol.
+         * Without dropping the backing PSI again, some checks will never pass.
+         *
+         * E.g., if the backing PSI was dropped for some [KaPropertySymbol], its [KaKotlinPropertySymbol.primaryConstructorParameter]
+         * will still have the backing PSI that was restored from the FIR.
+         * So check like `KaPropertySymbol == KaKotlinPropertySymbol.primaryConstructorParameter.primaryConstructorProperty`
+         * will always fail for nonPsi version as the symbol on the RHS will have some restored PSI, while the LHS symbol has it dropped.
+         */
+        fun <S : KaSymbol> S.dropPsiIfNeeded(): S = also { if (disablePsiBasedLogic) it.dropBackingPsi() }
+
+        when (symbol) {
+            is KaValueParameterSymbol -> {
+                val generatedPropertySymbol = symbol.primaryConstructorProperty
+                if (generatedPropertySymbol != null) {
+                    check(generatedPropertySymbol.primaryConstructorParameter?.dropPsiIfNeeded() == symbol) {
+                        "'primaryConstructorProperty' must be consistent with 'primaryConstructorParameter'"
+                    }
+                }
+            }
+            is KaKotlinPropertySymbol -> {
+                val parameterSymbol = symbol.primaryConstructorParameter
+                if (parameterSymbol != null) {
+                    check(parameterSymbol.primaryConstructorProperty?.dropPsiIfNeeded() == symbol) {
+                        "'primaryConstructorProperty' must be consistent with 'primaryConstructorParameter'"
+                    }
+                }
+            }
+        }
         check(symbol.isDeprecated == (symbol.deprecation != null)) { "'isDeprecated' should be consistent with 'deprecation'" }
     }
 
@@ -532,7 +563,7 @@ private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
         }
 
         if (ktSymbol is KaValueParameterSymbol) {
-            yieldAll(ktSymbol.generatedPrimaryConstructorProperty.withImplicitSymbols())
+            yieldAll(ktSymbol.primaryConstructorProperty.withImplicitSymbols())
         }
     }
 }

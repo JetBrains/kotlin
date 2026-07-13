@@ -16,11 +16,11 @@ kotlin {
     tvosX64("tvosLibX64")
 
     tvosArm64("tvosLibArm64") {
-        println("Configuring ${this.name}")
+        logger.lifecycle("Configuring ${this.name}")
     }
 
     tvosX64("tvosLibX64") {
-        println("Configuring ${this.name}")
+        logger.lifecycle("Configuring ${this.name}")
     }
 
     sourceSets {

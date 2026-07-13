@@ -46,10 +46,11 @@ import org.jetbrains.kotlin.name.Name
  */
 class AdaptedComposableReferenceTypePatcher(
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
-) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
+) : AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags),
     ModuleLoweringPass {
 
     override fun lower(irModule: IrModuleFragment) {

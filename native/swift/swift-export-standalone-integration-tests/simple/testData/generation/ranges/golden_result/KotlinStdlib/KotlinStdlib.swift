@@ -30,6 +30,14 @@ extension ExportedKotlinPackages.kotlin.ranges.ClosedRange where Self : Exported
     }
 }
 extension ExportedKotlinPackages.kotlin.ranges.ClosedRange {
+    public func contains(
+        value: any ExportedKotlinPackages.kotlin.Comparable
+    ) -> Swift.Bool {
+        return kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable___direct(self.__externalRCRef(), value.__externalRCRef())
+    }
+    public func isEmpty() -> Swift.Bool {
+        return kotlin_ranges_ClosedRange_isEmpty_direct(self.__externalRCRef())
+    }
 }
 extension ExportedKotlinPackages.kotlin.Comparable where Self : ExportedKotlinPackages.kotlin.__Comparable {
     public static func <(
@@ -117,9 +125,23 @@ package func kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20Exporte
     return _result
 }
 
+@_cdecl("kotlin_ranges_ClosedRange_endInclusive_get__reverse_swift")
+package func kotlin_ranges_ClosedRange_endInclusive_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
+    let _result: any ExportedKotlinPackages.kotlin.Comparable = _self.endInclusive
+    return _result.__externalRCRef()
+}
+
 @_cdecl("kotlin_ranges_ClosedRange_isEmpty__reverse_swift")
 package func kotlin_ranges_ClosedRange_isEmpty__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
     let _result: Swift.Bool = _self.isEmpty()
     return _result
+}
+
+@_cdecl("kotlin_ranges_ClosedRange_start_get__reverse_swift")
+package func kotlin_ranges_ClosedRange_start_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
+    let _result: any ExportedKotlinPackages.kotlin.Comparable = _self.start
+    return _result.__externalRCRef()
 }

@@ -61,3 +61,50 @@ open class Vehicle {
 
 fun callDescribe(v: Vehicle): String = v.describe()
 fun callWheels(v: Vehicle): Int = v.wheels()
+
+// Defaulted interface methods (methods-only). A Swift class that inherits a Kotlin class and
+// first-adopts this interface, without overriding `describe`, must inherit the Kotlin default —
+// dispatched non-virtually so it never recurses through its patched itable slot. The default's open
+// (virtual) self-call to the abstract `tag()` must still reach the Swift override.
+interface Defaulter {
+    fun tag(): String
+    fun describe(): String = "default-describe(" + tag() + ")"
+}
+
+fun callDefDescribe(d: Defaulter): String = d.describe()
+fun callDefTag(d: Defaulter): String = d.tag()
+
+// --- Properties ---
+
+// Open class with a get-only (`val`) and a settable (`var`) property, both overridable from Swift.
+// Kotlin-side access (readLabel/readNick/writeNick) must reach the Swift accessors via the patched vtable.
+open class Named {
+    open val label: String = "kotlin-label"
+    open var nick: String = "kotlin-nick"
+}
+
+fun readLabel(n: Named): String = n.label
+fun readNick(n: Named): String = n.nick
+fun writeNick(n: Named, v: String) { n.nick = v }
+
+// Property analog of `Vehicle`: a Swift override reading `super.title` must reach the inherited Kotlin
+// getter via the non-virtual `_direct` bridge (no recursion); a non-overridden `rank` reached from
+// Kotlin must also route through the direct bridge instead of looping through its patched slot.
+open class Book {
+    open val title: String = "kotlin-title"
+    open val rank: Int = 1
+}
+
+fun readTitle(b: Book): String = b.title
+fun readRank(b: Book): Int = b.rank
+
+// Defaulted interface property: a Swift conformer inherits the Kotlin default getter (`display`)
+// without reimplementing it — dispatched non-virtually so it never recurses through the patched
+// itable. The default's open self-call to the abstract `base` must reach the Swift override.
+interface Labeled {
+    val base: String
+    val display: String get() = "display(" + base + ")"
+}
+
+fun readDisplay(l: Labeled): String = l.display
+fun readBase(l: Labeled): String = l.base

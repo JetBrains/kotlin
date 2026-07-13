@@ -17,7 +17,7 @@ val rootProperties = java.util.Properties().apply {
     file(kotlin_root).resolve("gradle.properties").inputStream().use { stream -> load(stream) }
 }
 val defaultSnapshotVersion: String by rootProperties
-val kotlinLanguageVersion: String by rootProperties
+val kotlinLanguageVersion: String = project.providers.gradleProperty("kotlinLanguageVersion").get()
 
 val githubRevision = if (isTeamcityBuild) project.property("githubRevision") else "master"
 val artifactsVersion by extra(if (isTeamcityBuild) project.property("deployVersion") as String else defaultSnapshotVersion)

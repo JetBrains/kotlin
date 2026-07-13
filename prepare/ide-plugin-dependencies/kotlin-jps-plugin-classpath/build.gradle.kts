@@ -7,9 +7,9 @@ plugins {
 
 idePluginPublishingLatch {
     @Suppress("UNCHECKED_CAST")
-    val embeddedDependencies = rootProject.extra["kotlinJpsPluginEmbeddedDependencies"] as List<String>
+    val embeddedDependencies = CompilerModules.kotlinJpsPluginEmbeddedDependencies
     @Suppress("UNCHECKED_CAST")
-    val mavenDependencies = rootProject.extra["kotlinJpsPluginMavenDependencies"] as List<String>
+    val mavenDependencies = CompilerModules.kotlinJpsPluginMavenDependencies
     @Suppress("UNCHECKED_CAST")
     val mavenDependenciesLibs = rootProject.extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"] as List<String>
 

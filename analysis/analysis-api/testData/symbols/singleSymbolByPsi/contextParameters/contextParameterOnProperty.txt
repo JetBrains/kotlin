@@ -1,6 +1,7 @@
 KaContextParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -23,6 +24,7 @@ KaContextParameterSymbol:
         type: kotlin/Int
     ]
     type: kotlin/collections/List<kotlin/Int>
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(contextParameterOnProperty.kt)
   getContainingJvmClassName: ContextParameterOnPropertyKt

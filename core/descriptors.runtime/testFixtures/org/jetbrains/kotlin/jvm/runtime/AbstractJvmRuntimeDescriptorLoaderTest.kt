@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.jvm.runtime
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -261,4 +260,4 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
 
 }
 
-private val LOG = Logger.getInstance(KotlinMultiFileTestWithJava::class.java)
+private val LOG = Logger.getInstance(AbstractJvmRuntimeDescriptorLoaderTest::class.java)

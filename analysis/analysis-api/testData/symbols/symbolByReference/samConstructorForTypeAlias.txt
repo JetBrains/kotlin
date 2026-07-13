@@ -1,6 +1,7 @@
 KaSamConstructorSymbol:
   annotations: []
   callableId: /MyTypeAlias
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -22,8 +23,8 @@ KaSamConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -41,6 +42,7 @@ KaSamConstructorSymbol:
       modality: FINAL
       name: function
       origin: SAM_CONSTRUCTOR
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -51,6 +53,7 @@ KaSamConstructorSymbol:
             type: kotlin/Unit
         ]
         type: () -> kotlin/Unit
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(samConstructorForTypeAlias.kt)
       getContainingJvmClassName: SamConstructorForTypeAliasKt

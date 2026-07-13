@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: out kotlin/Any?> /Tag { // /Tag|null[0]
+    final val action // /Tag.action|{}action[0]
+        final fun <get-action>(): kotlin/Function1<#A, kotlin/Unit> // /Tag.action.<get-action>|<get-action>(){}[0]
+    constructor <init>(kotlin/Function1<#A, kotlin/Unit>) // /Tag.<init>|<init>(kotlin.Function1<1:0,kotlin.Unit>){}[0]
+    final fun component1(): kotlin/Function1<#A, kotlin/Unit> // /Tag.component1|component1(){}[0]
+    final fun copy(kotlin/Function1<#A, kotlin/Unit> = ...): /Tag<#A> // /Tag.copy|copy(kotlin.Function1<1:0,kotlin.Unit>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Tag.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Tag.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Tag.toString|toString(){}[0]
+}
+final fun /doAction() // /doAction|doAction(){}[0]
+final fun /getTag(): /Tag<*> // /getTag|getTag(){}[0]

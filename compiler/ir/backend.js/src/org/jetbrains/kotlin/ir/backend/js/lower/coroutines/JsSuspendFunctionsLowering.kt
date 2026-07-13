@@ -343,7 +343,7 @@ open class JsSuspendFunctionsLowering<C : JsCommonBackendContext>(
 
     override fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression {
         val functionReturnType = (delegatingCall as? IrCall)?.symbol?.owner?.let { function ->
-            defaultLoweredSuspendFunctionReturnType(function, context.irBuiltIns)
+            defaultLoweredSuspendFunctionReturnType(function.returnType, context.irBuiltIns)
         } ?: delegatingCall.type
 
         if (!needUnboxingOrUnit(functionReturnType, expectedType)) return delegatingCall

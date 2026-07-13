@@ -69,6 +69,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -88,6 +89,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
+          typeParameters: []
           visibility: PRIVATE
         callableId: null
         contextParameters: []
@@ -95,6 +97,7 @@ scopes:
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -113,6 +116,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
+          typeParameters: []
           valueParameters: []
           visibility: PUBLIC
         hasBackingField: true
@@ -126,7 +130,6 @@ scopes:
         isExpect: false
         isExtension: false
         isExternal: false
-        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
@@ -135,6 +138,7 @@ scopes:
         modality: FINAL
         name: x
         origin: SOURCE
+        primaryConstructorParameter: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -209,8 +213,8 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -228,11 +232,13 @@ scopes:
             modality: FINAL
             name: other
             origin: SUBSTITUTION_OVERRIDE
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: E
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC
@@ -302,8 +308,8 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -321,11 +327,13 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC
@@ -401,6 +409,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -420,6 +429,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
+          typeParameters: []
           visibility: PRIVATE
         callableId: kotlin/Enum.name
         contextParameters: []
@@ -427,6 +437,7 @@ scopes:
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -445,6 +456,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
+          typeParameters: []
           valueParameters: []
           visibility: PUBLIC
         hasBackingField: true
@@ -458,7 +470,6 @@ scopes:
         isExpect: false
         isExtension: false
         isExternal: false
-        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
@@ -467,6 +478,7 @@ scopes:
         modality: FINAL
         name: name
         origin: LIBRARY
+        primaryConstructorParameter: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -480,6 +492,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -499,6 +512,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          typeParameters: []
           visibility: PRIVATE
         callableId: kotlin/Enum.ordinal
         contextParameters: []
@@ -506,6 +520,7 @@ scopes:
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -524,6 +539,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          typeParameters: []
           valueParameters: []
           visibility: PUBLIC
         hasBackingField: true
@@ -537,7 +553,6 @@ scopes:
         isExpect: false
         isExtension: false
         isExternal: false
-        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
@@ -546,6 +561,7 @@ scopes:
         modality: FINAL
         name: ordinal
         origin: LIBRARY
+        primaryConstructorParameter: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -622,6 +638,7 @@ scopes:
         annotations: []
         callableId: null
         containingClassId: null
+        contextParameters: []
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -649,6 +666,7 @@ scopes:
       KaEnumEntrySymbol:
         annotations: []
         callableId: /E.A
+        contextParameters: []
         contextReceivers: []
         initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
         isActual: false
@@ -667,6 +685,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: E
+        typeParameters: []
         visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
@@ -739,8 +758,8 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -758,11 +777,13 @@ scopes:
             modality: FINAL
             name: value
             origin: SOURCE_MEMBER_GENERATED
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/String
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC
@@ -775,6 +796,7 @@ scopes:
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -798,6 +820,7 @@ scopes:
                 type: E
             ]
             type: kotlin/enums/EnumEntries<E>
+          typeParameters: []
           valueParameters: []
           visibility: PUBLIC
         hasBackingField: false
@@ -811,7 +834,6 @@ scopes:
         isExpect: false
         isExtension: false
         isExternal: false
-        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: true
@@ -820,6 +842,7 @@ scopes:
         modality: FINAL
         name: entries
         origin: SOURCE_MEMBER_GENERATED
+        primaryConstructorParameter: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -904,8 +927,8 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -923,11 +946,13 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC
@@ -1000,6 +1025,7 @@ scopes:
         annotations: []
         callableId: null
         containingClassId: kotlin/Enum.Companion
+        contextParameters: []
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false

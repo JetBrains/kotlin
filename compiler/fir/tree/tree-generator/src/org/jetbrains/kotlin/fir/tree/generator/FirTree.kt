@@ -1355,18 +1355,67 @@ object FirTree : AbstractFirTreeBuilder() {
 
         customParentInVisitor = expression
 
+        kDoc = """A class or package qualifier.
+            |
+            |If [qualifierSymbol] is `null`, [this] is a package qualifier, otherwise this is a class qualifier.
+            |
+            |The [coneTypeOrNull] is `Unit` when [qualifierSymbol] is `null` or resolves to a class without companion object.
+            |Otherwise, it's the type of the resolved object or the class' companion object.
+            |
+            |Note that even when the qualifier is **not** used as an expression ([accessedObjectSymbol] is `null`), but the resolved class
+            |has a companion object, the [coneTypeOrNull] is the type of the companion object
+            |This is relied upon by AA & the IDE plugin (mostly in completion) and is difficult to change.
+            |Because this can lead to subtle bugs, the overload of |[org.jetbrains.kotlin.fir.types.resolvedType]
+            |with a [FirResolvedQualifier] receiver requires an opt-in.
+            |
+            |TODO for fixing it: KT-87036.
+        """.trimMargin()
+
         +field("packageFqName", fqNameType)
         +field("relativeClassFqName", fqNameType, nullable = true)
-        +field("classId", classIdType, nullable = true)
-        +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
+        +referencedSymbol("qualifierSymbol", classLikeSymbolType, nullable = true) {
+            kDoc = """If not null, refers to the class or **unexpanded** typealias with the name denoted by the qualifier.
+                |
+                |If it's null, [this] is a package qualifier.
+            """.trimMargin()
+        }
+        +referencedSymbol("accessedObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true) {
+            kDoc = """
+                |### During resolution
+                |
+                |If the [qualifierSymbol] resolves to a named object (or a typealias of that object),
+                |it's the symbol of that named object.
+                | 
+                |If the [qualifierSymbol] resolves to a class with companion object (or a typealias of that class),
+                |it's the symbol of the companion object.
+                |
+                |Otherwise `null`.
+                |
+                |A not-null value indicates that the qualifier _can_ be used as an expression.
+                |
+                |### After resolution
+                |
+                |Same as above but **if and only if** the qualifier is used as an expression.
+            """.trimMargin()
+        }
         +field("explicitParent", resolvedQualifier, nullable = true)
         +field("isNullableLhsForCallableReference", boolean, withReplace = true)
         +field("resolvedLhsTypeForCallableReferenceOrNull", coneKotlinTypeType, nullable = true, withReplace = true)
-        +field("resolvedToCompanionObject", boolean, withReplace = true)
-        +field("canBeValue", boolean, withReplace = true) {
-            kDoc = "If true, the qualifier is resolved to an object or companion object and can be used as an expression."
+        +field("resolvedToCompanionObject", boolean, withReplace = true) {
+            kDoc = """
+                ### During resolution
+                
+                True, if [qualifierSymbol] refers to a class (or typealias of) with a companion object.
+                
+                ### After resolution
+                
+                Same as above **and** the qualifier is used as an expression.
+                
+                Technically this property is redundant because the information can be deduced from the combination of
+                [qualifierSymbol] and [accessedObjectSymbol], but it would require carefully expanding type aliases and comparing
+                symbols.
+                """.trimIndent()
         }
-        +field("isFullyQualified", boolean)
         +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
         +field("resolvedSymbolOrigin", resolvedSymbolOrigin, nullable = true, withReplace = true)
         +typeArguments {
@@ -1629,6 +1678,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val placeholderProjection: Element by element(TypeRefElement) {
         parent(typeProjection)
+        kDoc = "Represents an underscore type argument."
     }
 
     val contractElementDeclaration: Element by element(Contracts) {

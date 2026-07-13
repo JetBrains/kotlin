@@ -25,7 +25,6 @@ class BuilderFactoryForDuplicateClassNameDiagnostics(
     builderFactory: ClassBuilderFactory,
     private val state: GenerationState,
 ) : ClassNameCollectionClassBuilderFactory(builderFactory) {
-
     private val className = ConcurrentHashMap<String, JvmDeclarationOrigin>()
 
     override fun handleClashingNames(internalName: String, origin: JvmDeclarationOrigin) {
@@ -33,10 +32,9 @@ class BuilderFactoryForDuplicateClassNameDiagnostics(
         // Allow clashing classes if they are originated from the same source element. For example, this happens during inlining anonymous
         // objects. In JVM IR, this also happens for anonymous classes in default arguments of tailrec functions, because default arguments
         // are deep-copied (see JvmTailrecLowering).
-        if (origin.originalSourceElement != another.originalSourceElement) {
+        if (origin.declaration?.attributeOwnerId != another.declaration?.attributeOwnerId) {
             state.reportDuplicateClassNameError(origin, internalName, another)
             state.reportDuplicateClassNameError(another, internalName, origin)
         }
     }
-
 }

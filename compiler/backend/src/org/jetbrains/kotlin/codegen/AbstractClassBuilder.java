@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.inline.FileMapping;
 import org.jetbrains.kotlin.codegen.inline.SMAPBuilder;
 import org.jetbrains.kotlin.codegen.inline.SourceMapper;
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.*;
@@ -31,13 +30,11 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.GENERATE_SMAP;
 
 public abstract class AbstractClassBuilder implements ClassBuilder {
-    protected static final MethodVisitor EMPTY_METHOD_VISITOR = new MethodVisitor(Opcodes.API_VERSION) {};
+    private static final MethodVisitor EMPTY_METHOD_VISITOR = new MethodVisitor(Opcodes.API_VERSION) {};
     public static final RecordComponentVisitor EMPTY_RECORD_VISITOR = new RecordComponentVisitor(Opcodes.API_VERSION) {};
-    protected static final FieldVisitor EMPTY_FIELD_VISITOR = new FieldVisitor(Opcodes.API_VERSION) {};
+    private static final FieldVisitor EMPTY_FIELD_VISITOR = new FieldVisitor(Opcodes.API_VERSION) {};
 
     private String thisName;
-
-    private final JvmSerializationBindings serializationBindings = new JvmSerializationBindings();
 
     private String sourceName;
 
@@ -99,12 +96,6 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
             return EMPTY_RECORD_VISITOR;
         }
         return visitor;
-    }
-
-    @Override
-    @NotNull
-    public JvmSerializationBindings getSerializationBindings() {
-        return serializationBindings;
     }
 
     @Override

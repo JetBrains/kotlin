@@ -81,6 +81,7 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(toolsJar())
+    testImplementation(project(":compiler:cli-base"))
     testFixturesApi(libs.junit4)
 
     // Must be kept in sync with ANDROID_API_VERSION in ParcelizeRuntimeClasspathProvider.

@@ -1,0 +1,13 @@
+FILE: samInterfaceWithGeneratedFunction.kt
+    @R|org/jetbrains/kotlin/plugin/sandbox/GenerateSamInterfaceFunction|() public abstract fun interface Foo : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun makeFoo(foo: R|Foo|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/makeFoo|(<L> = SAM(makeFoo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@makeFoo Unit
+        }
+        ))
+    }

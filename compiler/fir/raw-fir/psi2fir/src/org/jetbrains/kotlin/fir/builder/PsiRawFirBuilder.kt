@@ -870,7 +870,9 @@ open class PsiRawFirBuilder(
                         isVar = isVar,
                         propertySymbol = symbol,
                         status = status.copy(isLateInit = false),
-                    )
+                    ).also {
+                        it.initContainingClassAttr()
+                    }
 
                     this.status = status
                     isLocal = this@PsiRawFirBuilder.context.inLocalContext
@@ -2698,7 +2700,9 @@ open class PsiRawFirBuilder(
                                 propertyType,
                                 propertyAnnotations.filter { it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD },
                                 isStatic,
-                            )
+                            ).also {
+                                it.initContainingClassAttr()
+                            }
 
                             getter = this@toFirProperty.getter.toFirPropertyAccessor(
                                 this@toFirProperty,

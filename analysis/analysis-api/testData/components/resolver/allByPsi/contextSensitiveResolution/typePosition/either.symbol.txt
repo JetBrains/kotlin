@@ -391,6 +391,7 @@ KtThisExpression(299,303): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -416,6 +417,7 @@ KtThisExpression(299,303): 'this'
               type: A
           ]
           type: Either<E, A>
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -427,6 +429,7 @@ KtNameReferenceExpression(299,303): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -452,6 +455,7 @@ KtNameReferenceExpression(299,303): 'this'
               type: A
           ]
           type: Either<E, A>
+        typeParameters: []
         visibility: PUBLIC
     ]
 

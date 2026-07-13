@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lightTree.compare
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
-import junit.framework.TestCase
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithTestData
 import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithoutTestData
 import org.jetbrains.kotlin.test.utils.isCustomTestData
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -56,7 +56,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         if (errorCounter > 0) {
             println(differentFiles)
         }
-        TestCase.assertEquals(0, errorCounter)
+        assertEquals(0, errorCounter)
     }
 
     private fun compareAll() {

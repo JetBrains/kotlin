@@ -334,6 +334,11 @@ internal class ParenthesizedPackageQualifierWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ParenthesizedPackageQualifierWarning
 
+internal class KotlinPackageUsageImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.KotlinPackageUsage
+
 internal class UnsupportedArrayLiteralOutsideOfAnnotationErrorImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -5729,6 +5734,11 @@ internal class CompanionBlockMemberExtensionImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionBlockMemberExtension
 
+internal class InterfaceCompanionBlockVarImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InterfaceCompanionBlockVar
+
 internal class IllegalCompanionBlockImpl(
     override val parent: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,
@@ -5929,6 +5939,11 @@ internal class ConflictVersionAndJvmOverloadsAnnotationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConflictVersionAndJvmOverloadsAnnotation
 
+internal class InterfaceCompanionBlockPropertyPrivateFieldImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InterfaceCompanionBlockPropertyPrivateField
+
 internal class JavaTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,
@@ -5980,6 +5995,16 @@ internal class JavaClassOnCompanionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaClassOnCompanion
+
+internal class JavaClassPropertyReferenceErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaClassPropertyReferenceError
+
+internal class JavaClassPropertyReferenceWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaClassPropertyReferenceWarning
 
 internal class UnexhaustiveWhenBasedOnJavaAnnotationsImpl(
     override val subjectType: KaType,
@@ -6365,6 +6390,11 @@ internal class SubclassCantCallCompanionProtectedNonStaticImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SubclassCantCallCompanionProtectedNonStatic
+
+internal class SubclassCantCallCompanionProtectedNonStaticWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SubclassCantCallCompanionProtectedNonStaticWarning
 
 internal class ConcurrentHashMapContainsOperatorErrorImpl(
     firDiagnostic: KtPsiDiagnostic,

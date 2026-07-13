@@ -629,6 +629,7 @@ KtThisExpression(651,655): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -647,6 +648,7 @@ KtThisExpression(651,655): 'this'
           annotations: []
           typeArguments: []
           type: one/MyClass
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -658,6 +660,7 @@ KtNameReferenceExpression(651,655): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -676,6 +679,7 @@ KtNameReferenceExpression(651,655): 'this'
           annotations: []
           typeArguments: []
           type: one/MyClass
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -708,6 +712,7 @@ KtThisExpression(682,691): 'this@anon'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -726,6 +731,7 @@ KtThisExpression(682,691): 'this@anon'
           annotations: []
           typeArguments: []
           type: one/MyClass
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -737,6 +743,7 @@ KtNameReferenceExpression(682,686): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -755,6 +762,7 @@ KtNameReferenceExpression(682,686): 'this'
           annotations: []
           typeArguments: []
           type: one/MyClass
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -991,6 +999,7 @@ KtThisExpression(917,921): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -1009,6 +1018,7 @@ KtThisExpression(917,921): 'this'
           annotations: []
           typeArguments: []
           type: one/MyClass.InnerOuter.InnerNested
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -1020,6 +1030,7 @@ KtNameReferenceExpression(917,921): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -1038,6 +1049,7 @@ KtNameReferenceExpression(917,921): 'this'
           annotations: []
           typeArguments: []
           type: one/MyClass.InnerOuter.InnerNested
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -1070,6 +1082,7 @@ KtThisExpression(948,959): 'this@myWith'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -1088,6 +1101,7 @@ KtThisExpression(948,959): 'this@myWith'
           annotations: []
           typeArguments: []
           type: one/MyClass.InnerOuter.InnerNested
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -1099,6 +1113,7 @@ KtNameReferenceExpression(948,952): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -1117,6 +1132,7 @@ KtNameReferenceExpression(948,952): 'this'
           annotations: []
           typeArguments: []
           type: one/MyClass.InnerOuter.InnerNested
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -1341,6 +1357,7 @@ KtThisExpression(1160,1170): 'this@label'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -1359,6 +1376,7 @@ KtThisExpression(1160,1170): 'this@label'
           annotations: []
           typeArguments: []
           type: one/MyClass.InnerOuter.InnerNested
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -1370,6 +1388,7 @@ KtNameReferenceExpression(1160,1164): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -1388,6 +1407,7 @@ KtNameReferenceExpression(1160,1164): 'this'
           annotations: []
           typeArguments: []
           type: one/MyClass.InnerOuter.InnerNested
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -1564,6 +1584,7 @@ KtThisExpression(1277,1281): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -1581,6 +1602,7 @@ KtThisExpression(1277,1281): 'this'
         returnType: KaTypeParameterType:
           annotations: []
           type: T
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -1592,6 +1614,7 @@ KtNameReferenceExpression(1277,1281): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -1609,5 +1632,6 @@ KtNameReferenceExpression(1277,1281): 'this'
         returnType: KaTypeParameterType:
           annotations: []
           type: T
+        typeParameters: []
         visibility: PUBLIC
     ]

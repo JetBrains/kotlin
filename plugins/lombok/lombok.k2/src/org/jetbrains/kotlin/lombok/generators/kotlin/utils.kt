@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.plugin.createCompanionObject
 import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.processAllClassifiers
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -40,19 +42,25 @@ fun FirPropertySymbol.findAnnotationOnPropertyOrField(classId: ClassId, session:
     getAnnotationByClassId(classId, session) ?: backingFieldSymbol?.getAnnotationByClassId(classId, session)
 
 /**
- * Builds `@JvmStatic` annotation call and returns null if it cannot be resolved (for instance, if stdlib is missing).
+ * Builds `@JvmStatic` annotation call. If `JvmStatic` symbol can't be found (stdlib is missing), then an error reference is generated.
  */
-fun FirCallableSymbol<*>.tryBuildingJvmStaticAnnotationCall(session: FirSession): FirAnnotation? {
+fun FirCallableSymbol<*>.buildJvmStaticAnnotationCallOrError(session: FirSession): FirAnnotation {
+    val jvmStatic = JvmStandardClassIds.Annotations.JvmStatic
+
     return buildAnnotationCall {
-        annotationTypeRef =
-            JvmStandardClassIds.Annotations.JvmStatic.constructClassLikeType().toFirResolvedTypeRef()
-        calleeReference = buildResolvedNamedReference {
-            name = JvmStandardClassIds.Annotations.JvmStatic.shortClassName
-            resolvedSymbol =
-                session.symbolProvider.getClassLikeSymbolByClassId(JvmStandardClassIds.Annotations.JvmStatic)
-                    ?: return null
+        annotationTypeRef = jvmStatic.constructClassLikeType().toFirResolvedTypeRef()
+        calleeReference = session.symbolProvider.getClassLikeSymbolByClassId(jvmStatic)?.let {
+            buildResolvedNamedReference {
+                this@buildAnnotationCall.source = source
+                name = JvmStandardClassIds.Annotations.JvmStatic.shortClassName
+                resolvedSymbol = it
+            }
+        } ?: buildErrorNamedReference {
+            this@buildAnnotationCall.source = source
+            name = jvmStatic.shortClassName
+            diagnostic = ConeUnresolvedSymbolError(jvmStatic)
         }
-        containingDeclarationSymbol = this@tryBuildingJvmStaticAnnotationCall
+        containingDeclarationSymbol = this@buildJvmStaticAnnotationCallOrError
     }
 }
 

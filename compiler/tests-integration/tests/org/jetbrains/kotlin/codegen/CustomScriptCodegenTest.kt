@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.test.FirParser.LightTree
 import org.jetbrains.kotlin.test.FirParser.Psi
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.runners.codegen.TestScriptWithReceivers
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.lang.reflect.Constructor
 import kotlin.reflect.KClass
@@ -27,24 +29,19 @@ import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 @Suppress("JUnitTestCaseWithNoTests")
 class FirLightTreeCustomScriptCodegenTest : CustomScriptCodegenTest() {
-    override val useFir: Boolean
-        get() = true
-
     override val firParser: FirParser
         get() = LightTree
 }
 
 @Suppress("JUnitTestCaseWithNoTests")
 class FirPsiCustomScriptCodegenTest : CustomScriptCodegenTest() {
-    override val useFir: Boolean
-        get() = true
-
     override val firParser: FirParser
         get() = Psi
 }
 
 abstract class CustomScriptCodegenTest : CodegenTestCase() {
-    open fun testAnnotatedDefinition() {
+    @Test
+    fun testAnnotatedDefinition() {
         createScriptTestEnvironment("org.jetbrains.kotlin.codegen.TestScriptWithAnnotatedBaseClass")
         loadScript("val x = 1")
         val res = generateScriptClass()
@@ -75,9 +72,7 @@ abstract class CustomScriptCodegenTest : CodegenTestCase() {
         val configuration = createConfiguration(
             ConfigurationKind.ALL,
             TestJdkKind.MOCK_JDK,
-            additionalDependencies,
-            emptyList(),
-            emptyList()
+            additionalDependencies
         )
 
         if (scriptDefinitions.isNotEmpty()) {

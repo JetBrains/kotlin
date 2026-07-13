@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.addSourcesForDependsOnClosure
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import java.io.File
 
 class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -20,9 +21,7 @@ class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfi
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         configuration.addSourcesForDependsOnClosure(module, testServices)
 
-        val stdlibKlib = System.getProperty("kotlin.stdlib.jklib.for.test")
-            ?: error("kotlin.stdlib.jvm.ir.klib system property is not set")
-        configuration.klibPaths += stdlibKlib
+        configuration.klibPaths += ForTestCompileRuntime.jklibStdlibForTests().path
 
         val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("klib-output")
         val outputFile = File(tempDir, "${module.name}.klib")

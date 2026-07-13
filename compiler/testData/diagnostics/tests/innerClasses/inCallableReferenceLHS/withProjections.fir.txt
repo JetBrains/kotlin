@@ -30,10 +30,10 @@ FILE: withProjections.kt
         public final val refFooOut: R|Outer.Inner<out kotlin/CharSequence, A>.(kotlin/CharSequence) -> kotlin/Unit| = Q|Outer.Inner|<out R|kotlin/CharSequence|>::R|SubstitutionOverride</Outer.Inner.foo: R|kotlin/Unit|>|
             public get(): R|Outer.Inner<out kotlin/CharSequence, A>.(kotlin/CharSequence) -> kotlin/Unit|
 
-        public final val refBarStar: R|kotlin/reflect/KFunction2<Outer.Inner<*, *>, *, kotlin/Unit>| = Q|Outer.Inner|<*>::R|SubstitutionOverride</Outer.Inner.foo: R|kotlin/Unit|>|
-            public get(): R|kotlin/reflect/KFunction2<Outer.Inner<*, *>, *, kotlin/Unit>|
+        public final val refBarStar: R|kotlin/reflect/KFunction2<Outer.Inner<*, A>, *, kotlin/Unit>| = Q|Outer.Inner|<*>::R|SubstitutionOverride</Outer.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|kotlin/reflect/KFunction2<Outer.Inner<*, A>, *, kotlin/Unit>|
 
-        public final val refFooStar: R|kotlin/reflect/KFunction1<Outer.Inner<*, *>, kotlin/Any?>| = Q|Outer.Inner|<*>::R|SubstitutionOverride</Outer.Inner.bar: R|CapturedType(*)|>|
-            public get(): R|kotlin/reflect/KFunction1<Outer.Inner<*, *>, kotlin/Any?>|
+        public final val refFooStar: R|kotlin/reflect/KFunction1<Outer.Inner<*, A>, kotlin/Any?>| = Q|Outer.Inner|<*>::R|SubstitutionOverride</Outer.Inner.bar: R|CapturedType(*)|>|
+            public get(): R|kotlin/reflect/KFunction1<Outer.Inner<*, A>, kotlin/Any?>|
 
     }

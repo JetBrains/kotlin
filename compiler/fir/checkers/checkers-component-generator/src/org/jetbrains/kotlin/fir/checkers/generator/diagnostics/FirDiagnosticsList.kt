@@ -130,6 +130,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val PARENTHESIZED_PACKAGE_QUALIFIER by deprecationError<PsiElement>(
             LanguageFeature.ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier,
         )
+        val KOTLIN_PACKAGE_USAGE by error<PsiElement>()
         val UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION by deprecationError<PsiElement>(
             LanguageFeature.ForbidArrayLiteralsInNonAnnotationContexts,
         )
@@ -2422,7 +2423,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val COMPANION_BLOCKS_AND_EXTENSIONS by object : DiagnosticGroup("Companion Blocks & Extensions") {
-        val COMPANION_BLOCK_MEMBER_EXTENSION by error<PsiElement>()
+        val COMPANION_BLOCK_MEMBER_EXTENSION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val INTERFACE_COMPANION_BLOCK_VAR by error<PsiElement>(PositioningStrategy.VAL_OR_VAR_NODE)
         val ILLEGAL_COMPANION_BLOCK by error<PsiElement> {
             parameter<FirBasedSymbol<*>>("parent")
         }

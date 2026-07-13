@@ -118,11 +118,30 @@ final class ObjectNode {
         myTrace = null;
     }
 
+    @SuppressWarnings({"unused", "WeakerAccess"})
     @TestOnly
     void assertNoReferencesKept(@NotNull Disposable aDisposable) {
         assert getObject() != aDisposable;
         for (ObjectNode node : myChildren.getAllNodes()) {
             node.assertNoReferencesKept(aDisposable);
+        }
+    }
+
+    @SuppressWarnings({"unused", "WeakerAccess"})
+    @TestOnly
+    void assertNoReferencesKept(@NotNull Class<Disposable> disposableClass) {
+        assert getObject().getClass() != disposableClass;
+        for (ObjectNode node : myChildren.getAllNodes()) {
+            node.assertNoReferencesKept(disposableClass);
+        }
+    }
+
+    @SuppressWarnings({"unused", "WeakerAccess"})
+    @TestOnly
+    void assertNoReferencesKept(@NotNull Predicate<Object> predicate) {
+        assert !predicate.test(getObject());
+        for (ObjectNode node : myChildren.getAllNodes()) {
+            node.assertNoReferencesKept(predicate);
         }
     }
 

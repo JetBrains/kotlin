@@ -6,6 +6,7 @@ KtNameReferenceExpression(44,47): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -24,6 +25,7 @@ KtNameReferenceExpression(44,47): 'foo'
             annotations: []
             typeArguments: []
             type: JavaClass
+          typeParameters: []
           visibility: PUBLIC
         type = JavaClass
       extensionReceiver = null

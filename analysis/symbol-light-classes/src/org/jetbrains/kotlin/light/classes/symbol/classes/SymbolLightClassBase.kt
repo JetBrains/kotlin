@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
@@ -116,7 +117,7 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
 
     private val _containingFile: PsiFile? by lazyPub {
         val kotlinOrigin = kotlinOrigin ?: return@lazyPub null
-        val containingClass = isTopLevel.ifFalse { getOutermostClassOrObject(kotlinOrigin).toLightClass() } ?: this
+        val containingClass = isTopLevel.ifFalse { KtPsiUtil.getOutermostClassOrObject(kotlinOrigin).toLightClass() } ?: this
         SymbolFakeFile(kotlinOrigin, containingClass)
     }
 

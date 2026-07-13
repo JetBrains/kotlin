@@ -1,5 +1,5 @@
-@kotlin/annotation/Retention @kotlin/annotation/Target public final annotation class test/Ann : kotlin/Annotation
+public final annotation class test/Ann : kotlin/Annotation
 public constructor test/Ann.<init>(value: kotlin/String)
 public final val test/Ann.value: kotlin/String
 public final /* getter */ test/Ann.value.<get-value>
-public final inline fun <reified @test/Ann T#0> test/foo(): kotlin/Unit
+public final inline fun <reified T#0> test/foo(): kotlin/Unit

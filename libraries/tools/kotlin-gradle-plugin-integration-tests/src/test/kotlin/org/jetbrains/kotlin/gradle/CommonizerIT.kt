@@ -961,10 +961,9 @@ open class CommonizerIT : KGPBaseTest() {
     private fun TestProject.checkCommonizedMetadataBuildOnNonMac() {
         assertEquals(
             """
-            |nonplatform/linux_only_api|linux_only_api(){}[1]
-            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
-            |
-            """.trimMargin(),
+            public final expect fun nonplatform/linux_only_api(): kotlin/Unit
+            public final expect fun nonplatform/sqlite_optimistically_commonized_api(): kotlin/Unit
+            """.trimIndent(),
             dumpKlibMetadataSignatures(
                 nonPlatformCinteropsClasspath("linuxMain").single(),
             )
@@ -978,10 +977,9 @@ open class CommonizerIT : KGPBaseTest() {
         // The behavior of these checks must change when KT-74073 is done.
         assertEquals(
             """
-            |nonplatform/linux_only_api|linux_only_api(){}[1]
-            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
-            |
-            """.trimMargin(),
+            public final expect fun nonplatform/linux_only_api(): kotlin/Unit
+            public final expect fun nonplatform/sqlite_optimistically_commonized_api(): kotlin/Unit
+            """.trimIndent(),
             dumpKlibMetadataSignatures(
                 nonPlatformCinteropsClasspath("nativeMain").single()
             )
@@ -1004,29 +1002,26 @@ open class CommonizerIT : KGPBaseTest() {
     private fun TestProject.checkCommonizedMetadataBuildOnMac() {
         assertEquals(
             """
-            |nonplatform/linux_only_api|linux_only_api(){}[1]
-            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
-            |
-            """.trimMargin(),
+            public final expect fun nonplatform/linux_only_api(): kotlin/Unit
+            public final expect fun nonplatform/sqlite_optimistically_commonized_api(): kotlin/Unit
+            """.trimIndent(),
             dumpKlibMetadataSignatures(
                 nonPlatformCinteropsClasspath("linuxMain").single(),
             )
         )
         assertEquals(
             """
-            |nonplatform/apply_only_api|apply_only_api(){}[1]
-            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
-            |
-            """.trimMargin(),
+            public final expect fun nonplatform/apply_only_api(): kotlin/Unit
+            public final expect fun nonplatform/sqlite_optimistically_commonized_api(): kotlin/Unit
+            """.trimIndent(),
             dumpKlibMetadataSignatures(
                 nonPlatformCinteropsClasspath("appleMain").single(),
             )
         )
         assertEquals(
             """
-            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
-            |
-            """.trimMargin(),
+            public final expect fun nonplatform/sqlite_optimistically_commonized_api(): kotlin/Unit
+            """.trimIndent(),
             dumpKlibMetadataSignatures(
                 nonPlatformCinteropsClasspath("nativeMain").single(),
             )

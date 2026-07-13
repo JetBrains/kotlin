@@ -82,13 +82,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(LIST_TARGETS, arguments.listTargets)
     put(OPTIMIZATION, arguments.optimization)
     put(DEBUG, arguments.debug)
-    // TODO: remove after 1.4 release.
-    @Suppress("DEPRECATION")
-    if (arguments.lightDebugDeprecated) {
-        report(KONAN_ARGUMENT_WARNING,
-                "-Xg0 is now deprecated and skipped by compiler. Light debug information is enabled by default for Darwin platforms." +
-                        " For other targets, please, use `-Xadd-light-debug=enable` instead.")
-    }
     putIfNotNull(LIGHT_DEBUG, when (val it = arguments.lightDebugString) {
         "enable" -> true
         "disable" -> false
@@ -292,18 +285,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             AllocationMode.CUSTOM
         }
     })
-    when (arguments.workerExceptionHandling) {
-        null -> {}
-        "legacy" -> {
-            report(KONAN_ARGUMENT_ERROR, "Legacy exception handling in workers is deprecated")
-        }
-        "use-hook" -> {
-            report(KONAN_ARGUMENT_STRONG_WARNING, "-Xworker-exception-handling is deprecated")
-        }
-        else -> {
-            report(KONAN_ARGUMENT_ERROR, "Unsupported worker exception handling mode ${arguments.workerExceptionHandling}")
-        }
-    }
 
     arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
     putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {

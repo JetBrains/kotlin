@@ -35,12 +35,11 @@ dependencies {
 
     embedded(libs.guava) { isTransitive = false }
     embedded(libs.guava.failureaccess) { isTransitive = false }
-    embedded("org.apache.maven.resolver:maven-resolver-connector-basic:1.9.22")
-    embedded("org.apache.maven.resolver:maven-resolver-transport-file:1.9.22")
-    embedded("org.apache.maven.resolver:maven-resolver-transport-wagon:1.9.22")
-    embedded("org.apache.maven.resolver:maven-resolver-impl:1.9.22")
-    embedded("org.apache.maven:maven-core:3.8.8")
-    embedded("org.apache.maven.wagon:wagon-http:3.5.3")
+    embedded("org.apache.maven.resolver:maven-resolver-connector-basic:1.9.27")
+    embedded("org.apache.maven.resolver:maven-resolver-transport-file:1.9.27")
+    embedded("org.apache.maven.resolver:maven-resolver-transport-http:1.9.27")
+    embedded("org.apache.maven.resolver:maven-resolver-impl:1.9.27")
+    embedded("org.apache.maven:maven-core:3.9.16")
     embedded(libs.apache.commons.io)
 
     testImplementation(libs.junit4)

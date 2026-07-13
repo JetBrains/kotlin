@@ -32,11 +32,15 @@ dependencies {
     testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(project(":compiler:cli-base"))
 }
 
 sourceSets {
     main { none() }
-    test { generatedTestDir() }
+    test {
+        projectDefault()
+        generatedTestDir()
+    }
     testFixtures { projectDefault() }
 }
 

@@ -41,6 +41,12 @@ internal class AllCommonKlibCompilerArgumentsWithBtaVersionsArgumentProvider : A
     }
 }
 
+internal class InvalidArgumentValueCommonKlibCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+        return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.map { Arguments.of(it) }.stream()
+    }
+}
+
 internal class InvalidRawValueCommonKlibCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         return namedInvalidRawValueBtaV2ArgumentConfigurations().map { Arguments.of(it) }.stream()
@@ -108,6 +114,7 @@ private val commonKlibCompilerArguments: List<CommonKlibArgumentTestDescriptor<*
                 testBaseDir.resolve("path/to/generated/src"),
             ).joinToString(",") { it.toFile().absolutePath }
         ),
+        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with,comma"))),
         valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xklib-relative-path-base=$value") },
         setArgumentValue = { value -> (this as CommonKlibBasedArgumentsKlibArguments.Builder)[X_KLIB_RELATIVE_PATH_BASE] = value },

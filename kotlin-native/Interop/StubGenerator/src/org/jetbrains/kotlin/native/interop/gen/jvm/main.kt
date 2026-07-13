@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import java.io.File
 import java.nio.file.*
 import java.util.*
+import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 
 data class InternalInteropOptions(val generated: String, val natives: String?, val manifest: String? = null,
@@ -496,15 +497,15 @@ private fun processCLib(
 
             createInteropLibrary(
                     serializedMetadata = serializedMetadata,
-                    nativeBitcodeFiles = compiledFiles + listOfNotNull(nativeOutputPath),
+                    nativeBitcodeFiles = (compiledFiles + listOfNotNull(nativeOutputPath)).map(::Path),
                     target = tool.target,
                     moduleName = moduleName,
-                    outputPath = outputPath,
+                    outputPath = Path(outputPath),
                     manifest = def.manifestAddendProperties,
                     dependencies = listOf(stdlib) + imports.requiredLibraries.toList(),
                     nopack = nopack,
                     shortName = cinteropArguments.shortModuleName,
-                    staticLibraries = resolveLibraries(staticLibraries, libraryPaths),
+                    staticLibraries = resolveLibraries(staticLibraries, libraryPaths).map(::Path),
                     klibAbiCompatibilityLevel = cinteropArguments.klibAbiCompatibilityLevel,
             )
             return null
@@ -565,7 +566,7 @@ private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments)
             warn("-$KLIB_ABI_COMPATIBILITY_LEVEL $klibAbiCompatibilityLevel will trigger generating KLIB compatible with KLIB ABI version $klibAbiCompatibilityLevel. This is an experimental feature.")
         }
 
-        KlibAbiCompatibilityLevel.ABI_LEVEL_2_4 -> {
+        KlibAbiCompatibilityLevel.ABI_LEVEL_2_4, KlibAbiCompatibilityLevel.ABI_LEVEL_2_5 -> {
             // No specific restrictions for now.
         }
     }

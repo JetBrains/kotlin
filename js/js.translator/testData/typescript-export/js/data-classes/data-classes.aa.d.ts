@@ -6,6 +6,7 @@ declare namespace JS_TESTS {
         function fullNameBasedDestructuring(): string;
         function shortPositionBasedDestructuring(): string;
         function fullPositionBasedDestructuring(): string;
+        function createWithIgnoredPrimaryAndHiddenCopyWithoutSecondary(value?: number): foo.WithIgnoredPrimaryAndHiddenCopyWithoutSecondary;
         class TestDataClass {
             constructor(name: string);
             copy(name?: string): foo.TestDataClass;
@@ -117,7 +118,33 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => WithIgnoredPrimaryAndPropertyAndExposedCopy;
             }
         }
+        class WithIgnoredPropertyAndExposedCopy {
+            constructor(value?: number, hidden?: number);
+            copy(value?: number, hidden?: number): foo.WithIgnoredPropertyAndExposedCopy;
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            toString(): string;
+            get value(): number;
+        }
+        namespace WithIgnoredPropertyAndExposedCopy {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WithIgnoredPropertyAndExposedCopy;
+            }
+        }
+        class WithIgnoredPrimaryAndHiddenCopyWithoutSecondary {
+            private constructor();
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            toString(): string;
+            get value(): number;
+        }
+        namespace WithIgnoredPrimaryAndHiddenCopyWithoutSecondary {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WithIgnoredPrimaryAndHiddenCopyWithoutSecondary;
+            }
+        }
     }
 }
-
 

@@ -184,7 +184,7 @@ public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSy
  * - [KaPropertySymbol], including [KaSyntheticJavaPropertySymbol]: overridden property symbols.
  * - [KaPropertyGetterSymbol]: overridden properties of the containing property, not getter symbols.
  * - [KaPropertySetterSymbol]: overridden mutable properties whose setters are overridden by this setter.
- * - [KaValueParameterSymbol] with [KaValueParameterSymbol.generatedPrimaryConstructorProperty]: overridden symbols of that generated
+ * - [KaValueParameterSymbol] with [KaValueParameterSymbol.primaryConstructorProperty]: overridden symbols of that generated
  *   property.
  * - Other callable kinds: an empty sequence.
  *
@@ -426,3 +426,15 @@ public fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol,
     @OptIn(KaImplementationDetail::class)
     return internals.symbolRelationProvider.hasConflictingSignatureWith(this, other, targetPlatform)
 }
+
+/**
+ * The declaration's type parameters provided it can have them. Otherwise, an empty list.
+ *
+ * See [Generics](https://kotlinlang.org/docs/generics.html)
+ */
+public val KaDeclarationSymbol.typeParameters: List<KaTypeParameterSymbol>
+    get() = when (this) {
+        is KaClassLikeSymbol -> typeParameters
+        is KaCallableSymbol -> typeParameters
+        else -> emptyList()
+    }

@@ -1,6 +1,7 @@
 KaBackingFieldSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -25,6 +26,7 @@ KaBackingFieldSymbol:
         type: kotlin/String
     ]
     type: kotlin/collections/MutableList<kotlin/String>
+  typeParameters: []
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(explicitBackingFieldTopLevel.kt)
   getContainingJvmClassName: one.ExplicitBackingFieldTopLevelKt

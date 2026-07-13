@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.konan.file
 
+import java.nio.file.Path
+import kotlin.io.path.name
+
 val String.isUnixStaticLib
     get() = this.endsWith(".a")
 
 val String.isWindowsStaticLib
     get() = this.endsWith(".lib")
 
-val String.isBitcode
-    get() = this.endsWith(".bc")
+val Path.isBitcode: Boolean
+    get() = name.endsWith(".bc")

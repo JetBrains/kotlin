@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.findKotlinClass
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -67,27 +66,6 @@ class LazyJavaPackageFragment(
     internal fun getSubPackageFqNames(): List<FqName> = subPackages()
 
     internal fun findClassifierByJavaClass(jClass: JavaClass): ClassDescriptor? = scope.javaScope.findClassifierByJavaClass(jClass)
-
-    private val partToFacade by c.storageManager.createLazyValue {
-        val result = hashMapOf<JvmClassName, JvmClassName>()
-        kotlinClasses@ for ([partInternalName, kotlinClass] in binaryClasses) {
-            val partName = JvmClassName.byInternalName(partInternalName)
-            val header = kotlinClass.classHeader
-            when (header.kind) {
-                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-                    result[partName] = JvmClassName.byInternalName(header.multifileClassName ?: continue@kotlinClasses)
-                }
-                KotlinClassHeader.Kind.FILE_FACADE -> {
-                    result[partName] = partName
-                }
-                else -> {
-                }
-            }
-        }
-        result
-    }
-
-    fun getFacadeNameForPartName(partName: JvmClassName): JvmClassName? = partToFacade[partName]
 
     override fun getMemberScope() = scope
 

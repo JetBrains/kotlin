@@ -157,6 +157,7 @@ KtNameReferenceExpression(289,290): 'x'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -175,6 +176,7 @@ KtNameReferenceExpression(289,290): 'x'
               annotations: []
               typeArguments: []
               type: MySealed
+            typeParameters: []
             visibility: PUBLIC
           type = MySealed
         type = MySealed.Left
@@ -215,6 +217,7 @@ KtNameReferenceExpression(307,308): 'y'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -233,6 +236,7 @@ KtNameReferenceExpression(307,308): 'y'
               annotations: []
               typeArguments: []
               type: MySealed
+            typeParameters: []
             visibility: PUBLIC
           type = MySealed
         type = MySealed.Right

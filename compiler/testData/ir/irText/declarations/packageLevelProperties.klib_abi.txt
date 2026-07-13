@@ -1,0 +1,25 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /test1 // /test1|{}test1[0]
+    final fun <get-test1>(): kotlin/Int // /test1.<get-test1>|<get-test1>(){}[0]
+final val /test2 // /test2|{}test2[0]
+    final fun <get-test2>(): kotlin/Int // /test2.<get-test2>|<get-test2>(){}[0]
+final var /test3 // /test3|{}test3[0]
+    final fun <get-test3>(): kotlin/Int // /test3.<get-test3>|<get-test3>(){}[0]
+    final fun <set-test3>(kotlin/Int) // /test3.<set-test3>|<set-test3>(kotlin.Int){}[0]
+final var /test4 // /test4|{}test4[0]
+    final fun <get-test4>(): kotlin/Int // /test4.<get-test4>|<get-test4>(){}[0]
+    final fun <set-test4>(kotlin/Int) // /test4.<set-test4>|<set-test4>(kotlin.Int){}[0]
+final var /test5 // /test5|{}test5[0]
+    final fun <get-test5>(): kotlin/Int // /test5.<get-test5>|<get-test5>(){}[0]
+final val /test6 // /test6|{}test6[0]
+    final fun <get-test6>(): kotlin/Int // /test6.<get-test6>|<get-test6>(){}[0]
+final val /test7 // /test7|{}test7[0]
+    final fun <get-test7>(): kotlin/Int // /test7.<get-test7>|<get-test7>(){}[0]
+final var /test8 // /test8|{}test8[0]
+    final fun <get-test8>(): kotlin/Int // /test8.<get-test8>|<get-test8>(){}[0]
+    final fun <set-test8>(kotlin/Int) // /test8.<set-test8>|<set-test8>(kotlin.Int){}[0]

@@ -111,6 +111,15 @@ typedef struct {
 typedef struct {
   smoke_KNativePtr pinned;
 } smoke_kref_tests_native_CtxClass;
+typedef struct {
+  smoke_KNativePtr pinned;
+} smoke_kref_tests_native_WithCompanionObject;
+typedef struct {
+  smoke_KNativePtr pinned;
+} smoke_kref_tests_native_WithCompanionObject_Companion;
+typedef struct {
+  smoke_KNativePtr pinned;
+} smoke_kref_tests_native_WithCompanionBlock;
 
 
 typedef struct {
@@ -214,6 +223,25 @@ typedef struct {
             smoke_KType* (*_type)(void);
             smoke_kref_tests_native_CtxClass (*CtxClass)();
           } CtxClass;
+          struct {
+            struct {
+              smoke_KType* (*_type)(void);
+              smoke_kref_tests_native_WithCompanionObject_Companion (*_instance)();
+              smoke_KInt (*get_xVal)(smoke_kref_tests_native_WithCompanionObject_Companion thiz);
+              smoke_KInt (*get_xVar)(smoke_kref_tests_native_WithCompanionObject_Companion thiz);
+              void (*set_xVar)(smoke_kref_tests_native_WithCompanionObject_Companion thiz, smoke_KInt set);
+              smoke_KInt (*get_yVal)(smoke_kref_tests_native_WithCompanionObject_Companion thiz);
+              smoke_KInt (*get_yVar)(smoke_kref_tests_native_WithCompanionObject_Companion thiz);
+              void (*set_yVar)(smoke_kref_tests_native_WithCompanionObject_Companion thiz, smoke_KInt value);
+              void (*f)(smoke_kref_tests_native_WithCompanionObject_Companion thiz);
+            } Companion;
+            smoke_KType* (*_type)(void);
+            smoke_kref_tests_native_WithCompanionObject (*WithCompanionObject)();
+          } WithCompanionObject;
+          struct {
+            smoke_KType* (*_type)(void);
+            smoke_kref_tests_native_WithCompanionBlock (*WithCompanionBlock)();
+          } WithCompanionBlock;
           smoke_KDouble (*get_constDouble)();
           smoke_KFloat (*get_constFloat)();
           smoke_KInt (*get_constInt)();

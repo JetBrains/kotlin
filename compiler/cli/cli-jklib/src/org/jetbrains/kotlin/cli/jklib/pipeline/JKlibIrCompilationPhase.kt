@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
+import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
+import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
@@ -23,8 +25,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectFileSearchScope
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ProjectContext
@@ -50,7 +55,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJklibStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -71,6 +75,8 @@ import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageF
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 object JKlibIrCompilationPhase :
@@ -81,11 +87,11 @@ object JKlibIrCompilationPhase :
 
     override fun executePhase(input: JKlibSerializationArtifact): JKlibIrCompilationArtifact {
         val configuration = input.configuration
-        val klib = File(input.outputKlibPath)
+        val klib = Path(input.outputKlibPath)
 
         val projectEnvironment = input.projectEnvironment
 
-        val klibFiles = configuration.getList(JVMConfigurationKeys.KLIB_PATHS) + klib.absolutePath
+        val klibFiles = configuration.getList(JVMConfigurationKeys.KLIB_PATHS) + klib.absolutePathString()
         val projectContext = ProjectContext(projectEnvironment.project, "TopDownAnalyzer for JKlib")
         val storageManager = projectContext.storageManager
         val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
@@ -101,9 +107,9 @@ object JKlibIrCompilationPhase :
         )
 
         val allDescriptors = dependencyDescriptorsByKlib.values + jarDepsModuleDescriptor
-        dependencyDescriptorsByKlib.values.forEach { it.setDependencies(allDescriptors) }
+        allDescriptors.forEach { it.setDependencies(allDescriptors) }
 
-        val mainModule = dependencyDescriptorsByKlib.getValue(sortedDependencies.single { it.libraryFile == klib })
+        val mainModule = dependencyDescriptorsByKlib.getValue(sortedDependencies.single { it.path == klib })
 
         val trace = BindingTraceContext(projectContext.project)
         val mangler = JKlibDescriptorMangler(
@@ -117,6 +123,8 @@ object JKlibIrCompilationPhase :
             configuration = configuration,
             symbolTable = symbolTable,
             descriptorMangler = mangler,
+            typeSystemContextFactory = ::JvmIrTypeSystemContext,
+            externalOverridabilityConditions = listOf(IrJavaIncompatibilityRulesOverridabilityCondition()),
         )
 
         // Deserialize modules
@@ -161,10 +169,6 @@ object JKlibIrCompilationPhase :
             symbolTable,
             irBuiltIns,
             linker = linker,
-            messageCollector = 
-            @OptIn(MessageCollectorAccess::class) /* deprecated in IrPluginContext */ 
-            configuration.messageCollector,
-            
         )
 
         linker.init(null)
@@ -237,9 +241,6 @@ object JKlibIrCompilationPhase :
         )
         moduleClassResolver.compiledCodeResolver = dependenciesContainer.get()
 
-        dependenciesContext.setDependencies(
-            listOf(dependenciesContext.module, builtIns.builtInsModule)
-        )
         dependenciesContext.initializeModuleContents(
             CompositePackageFragmentProvider(
                 listOf(

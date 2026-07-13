@@ -35,8 +35,8 @@ callables: 1
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -54,11 +54,13 @@ callables: 1
         modality: FINAL
         name: value
         origin: PLUGIN
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
     visibility: PUBLIC

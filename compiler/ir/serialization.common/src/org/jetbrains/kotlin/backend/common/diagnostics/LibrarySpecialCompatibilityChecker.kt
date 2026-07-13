@@ -17,7 +17,7 @@ import kotlin.io.path.readBytes
 
 /** See KT-68322 for details. */
 abstract class LibrarySpecialCompatibilityChecker {
-    protected class Version(
+    class Version(
         private val comparableVersion: MavenComparableVersion,
         private val languageVersion: LanguageVersion,
         private val rawVersion: String
@@ -27,7 +27,7 @@ abstract class LibrarySpecialCompatibilityChecker {
         override fun hashCode() = comparableVersion.hashCode()
 
         // TODO (KT-83853): Find a reliable way to detect dev compiler versions.
-        val isDevVersion: Boolean = "-dev-" in rawVersion || rawVersion.endsWith("-SNAPSHOT")
+        val isDevVersion: Boolean = "-dev-" in rawVersion || rawVersion.endsWith("-dev") || rawVersion.endsWith("-SNAPSHOT")
 
         override fun toString() = rawVersion
         fun toComparableVersionString() = comparableVersion.toString()

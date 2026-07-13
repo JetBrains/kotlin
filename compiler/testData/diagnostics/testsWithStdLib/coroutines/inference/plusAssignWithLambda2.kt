@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
-// LATEST_LV_DIFFERENCE
 
 open class A
 
@@ -17,7 +16,7 @@ fun main() {
     var newValue = A()
     newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id { total -> A() }
     newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(fun(total) = A())
-    newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(fun(total): A { return A() })
+    newValue += id(fun(total): A { return A() })
     newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(::foo)
 }
 

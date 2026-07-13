@@ -5,6 +5,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
 
+int32_t kotlin_CharSequence_length_get__reverse_swift(void * self);
+
 void * kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(void * self, int32_t startIndex, int32_t endIndex);
 
 int8_t kotlin_collections_ByteIterator_nextByte__reverse_swift(void * self);

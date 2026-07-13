@@ -159,6 +159,7 @@ KtThisExpression(182,186): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -177,6 +178,7 @@ KtThisExpression(182,186): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Any
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -188,6 +190,7 @@ KtNameReferenceExpression(182,186): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -206,6 +209,7 @@ KtNameReferenceExpression(182,186): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Any
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -258,6 +262,7 @@ KtThisExpression(206,210): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -276,6 +281,7 @@ KtThisExpression(206,210): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Any
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -287,6 +293,7 @@ KtNameReferenceExpression(206,210): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -305,6 +312,7 @@ KtNameReferenceExpression(206,210): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Any
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -388,6 +396,7 @@ KtThisExpression(294,298): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -406,6 +415,7 @@ KtThisExpression(294,298): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Any
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -417,6 +427,7 @@ KtNameReferenceExpression(294,298): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -435,6 +446,7 @@ KtNameReferenceExpression(294,298): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Any
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -487,6 +499,7 @@ KtThisExpression(322,326): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -505,6 +518,7 @@ KtThisExpression(322,326): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Any
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -516,6 +530,7 @@ KtNameReferenceExpression(322,326): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -534,6 +549,7 @@ KtNameReferenceExpression(322,326): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Any
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -603,6 +619,7 @@ KtThisExpression(372,376): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -621,6 +638,7 @@ KtThisExpression(372,376): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Any
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -632,6 +650,7 @@ KtNameReferenceExpression(372,376): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -650,6 +669,7 @@ KtNameReferenceExpression(372,376): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Any
+        typeParameters: []
         visibility: PUBLIC
     ]
 

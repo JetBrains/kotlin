@@ -71,6 +71,7 @@ object ComposeCompilerKey : GeneratedDeclarationKey()
 
 abstract class AbstractComposeLowering(
     val context: IrPluginContext,
+    private val irModule: IrModuleFragment,
     val metrics: ModuleMetrics,
     val stabilityInferencer: StabilityInferencer,
     private val featureFlags: FeatureFlags,
@@ -1245,7 +1246,6 @@ abstract class AbstractComposeLowering(
 
     // Construct a reference to the JVM specific <unsafe-coerce> intrinsic.
     // This code should be kept in sync with the declaration in JvmSymbols.kt.
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? by lazy {
         if (context.platform.isJvm()) {
             context.irFactory.buildFun {
@@ -1253,7 +1253,7 @@ abstract class AbstractComposeLowering(
                 origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             }.apply {
                 parent = createEmptyExternalPackageFragment(
-                    context.moduleDescriptor,
+                    irModule,
                     FqName("kotlin.jvm.internal")
                 )
                 val src = addTypeParameter("T", context.irBuiltIns.anyNType)

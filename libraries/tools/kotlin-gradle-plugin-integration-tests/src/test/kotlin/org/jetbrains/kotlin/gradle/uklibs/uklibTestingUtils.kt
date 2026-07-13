@@ -259,12 +259,7 @@ fun TestProject.includeBuild(
     }
 }
 
-
-fun TestProject.dumpKlibMetadata(klib: File) = dumpKlib(klib, "dump-metadata")
-
-fun TestProject.dumpKlibMetadataSignatures(klib: File) = dumpKlib(klib, "dump-metadata-signatures")
-
-private fun TestProject.dumpKlib(klib: File, dumpMethod: String): String {
+fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
     val dumpName = "dump_${UUID.randomUUID().toString().replace("-", "_")}"
     val outputFile = projectPath.resolve(dumpName).toFile()
     outputFile.createNewFile()
@@ -293,7 +288,7 @@ private fun TestProject.dumpKlib(klib: File, dumpMethod: String): String {
                             null,
                             PrintStream(it),
                             System.err,
-                            arrayOf(dumpMethod, klib.path)
+                            arrayOf("dump-metadata", klib.path, "-dump-metadata-test-mode", "ultracompact-with-stable-order")
                         ) as Int
                         if (result != 0) {
                             error("Couldn't dump metadata klib at ${klib}. Stdout:\n${outputFile.readText()}")

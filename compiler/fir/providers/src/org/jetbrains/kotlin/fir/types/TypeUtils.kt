@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.copyWithNewSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -659,7 +660,7 @@ internal fun ConeKotlinType.captureFromExpressionInternal(): ConeKotlinType? {
                 c,
                 components,
                 capturedUpperBoundArguments?.let(upperBoundForApproximation::withArguments) ?: upperBoundForApproximation
-            ).withNullability(typeToReplace.canBeNull(c.session), c)
+            ).withNullability(typeToReplace.canBeNull(), c)
         } else {
             val capturedArguments = findCorrespondingCapturedArgumentsForType(typeToReplace)
                 ?: return null
@@ -1063,6 +1064,12 @@ fun ConeKotlinType.canBeNull(
         }
     }
 }
+
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.canBeNull(
+    considerTypeVariableBounds: Boolean = true,
+    visited: MutableSet<ConeKotlinType> = mutableSetOf(),
+): Boolean = canBeNull(sessionHolder.session, considerTypeVariableBounds, visited)
 
 private fun FirTypeParameterSymbol.allBoundsAreNullableOrUnresolved(session: FirSession): Boolean {
     for (bound in fir.bounds) {

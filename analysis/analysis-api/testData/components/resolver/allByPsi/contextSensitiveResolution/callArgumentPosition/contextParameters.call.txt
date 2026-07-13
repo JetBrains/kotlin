@@ -341,6 +341,7 @@ KtCallExpression(339,344): 'foo()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -359,6 +360,7 @@ KtCallExpression(339,344): 'foo()'
               annotations: []
               typeArguments: []
               type: MyEnum
+            typeParameters: []
             visibility: PUBLIC
           type = MyEnum
       ]
@@ -391,6 +393,7 @@ KtNameReferenceExpression(339,342): 'foo'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -409,6 +412,7 @@ KtNameReferenceExpression(339,342): 'foo'
               annotations: []
               typeArguments: []
               type: MyEnum
+            typeParameters: []
             visibility: PUBLIC
           type = MyEnum
       ]
@@ -596,6 +600,7 @@ KtCallExpression(403,408): 'foo()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -614,6 +619,7 @@ KtCallExpression(403,408): 'foo()'
               annotations: []
               typeArguments: []
               type: MySealed
+            typeParameters: []
             visibility: PUBLIC
           type = MySealed
       ]
@@ -646,6 +652,7 @@ KtNameReferenceExpression(403,406): 'foo'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -664,6 +671,7 @@ KtNameReferenceExpression(403,406): 'foo'
               annotations: []
               typeArguments: []
               type: MySealed
+            typeParameters: []
             visibility: PUBLIC
           type = MySealed
       ]
@@ -924,6 +932,7 @@ KtDotQualifiedExpression(548,552): '"".a'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -942,6 +951,7 @@ KtDotQualifiedExpression(548,552): '"".a'
               annotations: []
               typeArguments: []
               type: MyEnum
+            typeParameters: []
             visibility: PUBLIC
           type = MyEnum
       ]
@@ -980,6 +990,7 @@ KtNameReferenceExpression(551,552): 'a'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -998,6 +1009,7 @@ KtNameReferenceExpression(551,552): 'a'
               annotations: []
               typeArguments: []
               type: MyEnum
+            typeParameters: []
             visibility: PUBLIC
           type = MyEnum
       ]

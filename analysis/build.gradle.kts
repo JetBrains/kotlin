@@ -8,7 +8,7 @@ tasks.register("analysisApiArtifactTests") {
     group = "verification"
 
     @Suppress("UNCHECKED_CAST")
-    val analysisApiProjects = rootProject.extra["analysisApiArtifacts"] as List<String>
+    val analysisApiProjects = CompilerModules.analysisApiArtifacts
 
     val analysisApiProjectChecks = analysisApiProjects
         .map { "$it:check" }

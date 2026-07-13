@@ -26,6 +26,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.safeCast
 
+@Deprecated("Deprecated. Use K2-based implementation instead.", ReplaceWith("kotlin.script.experimental.jvmhost.jsr223.base.KotlinJsr223JvmInvocableScriptEngine"))
 @Suppress("unused") // used externally (kotlin.script.utils)
 interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
 

@@ -133,7 +133,9 @@ Run the relevant tests after making changes. Slowness is never a reason to skip.
 "KT-XXXXX", where XXXXX is the issue number, is an issue in https://youtrack.jetbrains.com/.
 The direct URL for an issue is `https://youtrack.jetbrains.com/issue/KT-XXXXX`.
 When accessing youtrack.jetbrains.com, never fetch web pages from such URLs directly.
-Use YouTrack MCP if configured. Otherwise, use YouTrack REST API, e.g. with a GET request to
+Use YouTrack MCP if configured.
+Otherwise, use `youtrack-cli` skill if configured.
+Otherwise, use YouTrack REST API, e.g. with a GET request to
 ```text
 https://youtrack.jetbrains.com/api/issues/KT-XXXXX?fields=fields=summary,description,customFields(name,value(name,login,text))
 ```

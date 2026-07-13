@@ -253,7 +253,7 @@ class AppleFrameworkIT : KGPBaseTest() {
         nativeProject("sharedAppleFramework", gradleVersion) {
             buildAndFail(":shared:embedAndSignAppleFrameworkForXcode") {
                 assertOutputContains("Please run the embedAndSignAppleFrameworkForXcode task from Xcode")
-                assertOutputDoesNotContain("ConfigurationCacheProblemsException: Configuration cache problems found in this build")
+                assertConfigurationCacheStored()
             }
         }
     }

@@ -1,0 +1,1 @@
+inline fun inlineFun(block1: () -> Int): Int = block1()

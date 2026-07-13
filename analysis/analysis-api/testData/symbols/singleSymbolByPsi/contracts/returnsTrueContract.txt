@@ -21,8 +21,8 @@ KaNamedFunctionSymbol:
                 KaValueParameterSymbol:
                   annotations: []
                   callableId: null
+                  contextParameters: []
                   contextReceivers: []
-                  generatedPrimaryConstructorProperty: null
                   hasDeclaredDefaultValue: false
                   hasDefaultValue: false
                   isActual: false
@@ -40,11 +40,13 @@ KaNamedFunctionSymbol:
                   modality: FINAL
                   name: foo
                   origin: SOURCE
+                  primaryConstructorProperty: null
                   receiverParameter: null
                   returnType: KaUsualClassType:
                     annotations: []
                     typeArguments: []
                     type: kotlin/Any?
+                  typeParameters: []
                   visibility: PUBLIC
                   getContainingFileSymbol: KaFileSymbol(returnsTrueContract.kt)
                   getContainingJvmClassName: ReturnsTrueContractKt
@@ -81,8 +83,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -100,11 +102,13 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: foo
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(returnsTrueContract.kt)
       getContainingJvmClassName: ReturnsTrueContractKt

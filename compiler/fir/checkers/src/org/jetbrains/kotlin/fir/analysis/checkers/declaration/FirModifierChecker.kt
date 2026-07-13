@@ -175,6 +175,21 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return true
         }
 
+        // possibleParentTargetPredicateMap contains INTERFACE for protected and internal keyword,
+        // but it's only allowed for companion block members
+        if (modifierToken == KtTokens.INTERNAL_KEYWORD &&
+            !(owner is FirCallableDeclaration && owner.isCompanionBlockMember) &&
+            KotlinTarget.INTERFACE in actualParents
+        ) {
+            reporter.reportOn(
+                modifierSource,
+                FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION,
+                modifierToken,
+                actualParents.firstOrThis()
+            )
+            return true
+        }
+
         val deprecatedParents = deprecatedParentTargetMap[modifierToken]
         if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
             reporter.reportOn(

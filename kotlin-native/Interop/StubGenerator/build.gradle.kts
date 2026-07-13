@@ -12,6 +12,7 @@ plugins {
     application
     id("native-dependencies")
     id("project-tests-convention")
+    id("test-inputs-check-v2")
 }
 
 application {
@@ -67,6 +68,10 @@ open class TestArgumentProvider @Inject constructor(
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
+        // konan.home points to the kotlin-native project directory for konan.properties; declare it
+        // as an input so the cache is properly invalidated when it changes.
+        inputs.dir(project(":kotlin-native").isolated.projectDirectory.dir("konan"))
+            .withPathSensitivity(PathSensitivity.RELATIVE)
         // Copy-pasted from Indexer build.gradle.kts.
         dependsOn(nativeDependencies.llvmDependency)
         jvmArgumentProviders.add(objects.newInstance<TestArgumentProvider>().apply {

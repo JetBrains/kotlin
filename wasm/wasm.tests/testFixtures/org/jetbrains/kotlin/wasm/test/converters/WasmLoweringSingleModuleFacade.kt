@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.SingleModuleCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.name.FqName
@@ -62,7 +61,6 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val moduleInfo = inputArtifact.moduleInfo
-        val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)
 
         val testPackage = extractTestPackage(testServices)
         configuration.wasmTestBoxFunctionToExport = FqName.fromSegments(listOfNotNull(testPackage, "box"))
@@ -90,7 +88,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val compiler = SingleModuleCompiler(configuration, irFactory, isWasmStdlib = false)
 
         val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
-            linkIr(moduleInfo, configuration, mainModule)
+            linkIr(moduleInfo, configuration)
         }
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {

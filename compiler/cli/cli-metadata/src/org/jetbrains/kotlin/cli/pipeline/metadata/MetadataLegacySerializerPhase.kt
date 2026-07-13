@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.metadata.AbstractMetadataSerializer.OutputInfo
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.ModuleNameUtil
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
@@ -73,7 +73,7 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
                 }.addMetadataPart(destFile.nameWithoutExtension)
             }
         }
-        val kotlinModuleFile = File(destDir, JvmCodegenUtil.getMappingFileName(JvmCodegenUtil.prepareModuleName(session.moduleData.name)))
+        val kotlinModuleFile = File(destDir, ModuleNameUtil.getMappingFileName(ModuleNameUtil.prepareModuleName(session.moduleData.name)))
         val packageTableBytes = JvmModuleProtoBuf.Module.newBuilder().apply {
             for (table in packageTable.values) {
                 table.addTo(this)

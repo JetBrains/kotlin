@@ -92,3 +92,20 @@ data class WithIgnoredPrimaryAndPropertyAndExposedCopy @JsExport.Ignore construc
         b: String = "Test",
     ) : this(a, b, null)
 }
+
+@JsExport
+data class WithIgnoredPropertyAndExposedCopy(
+    val value: Int = 1,
+    @JsExport.Ignore val hidden: Int = -1,
+)
+
+@JsExport
+@ConsistentCopyVisibility
+data class WithIgnoredPrimaryAndHiddenCopyWithoutSecondary @JsExport.Ignore constructor(
+    val value: Int = 1,
+    @JsExport.Ignore val hidden: Int = -1,
+)
+
+@JsExport
+fun createWithIgnoredPrimaryAndHiddenCopyWithoutSecondary(value: Int = 1): WithIgnoredPrimaryAndHiddenCopyWithoutSecondary =
+    WithIgnoredPrimaryAndHiddenCopyWithoutSecondary(value, -1)

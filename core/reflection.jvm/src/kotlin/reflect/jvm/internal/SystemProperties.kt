@@ -21,13 +21,6 @@ internal var useK1Implementation = runCatching {
 }.getOrNull()?.toBoolean() == true
 
 /**
- * Fake overrides implementation for new kotlin-reflect is in progress. This feature flag turns it on
- */
-internal var newFakeOverridesImplementation = runCatching {
-    System.getProperty("kotlin.reflect.jvm.newFakeOverridesImplementation")
-}.getOrNull()?.toBoolean() == true
-
-/**
  * True if the system property `kotlin.reflect.jvm.loadMetadataDirectly` is set to true.
  *
  * This system property can be used to instruct the kotlin-reflect implementation to avoid using K1 compiler representation unless

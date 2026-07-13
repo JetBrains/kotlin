@@ -856,6 +856,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("JvmOverloadsActualOverrideWithInheritedDefaults.kt")
+    public void testJvmOverloadsActualOverrideWithInheritedDefaults() {
+      run("JvmOverloadsActualOverrideWithInheritedDefaults.kt");
+    }
+
+    @Test
     @TestMetadata("JvmOverloadsActualWithInheritedDefaults.kt")
     public void testJvmOverloadsActualWithInheritedDefaults() {
       run("JvmOverloadsActualWithInheritedDefaults.kt");

@@ -143,9 +143,10 @@ class WebStaticInitializersDeclarationLowering(private val context: JsCommonBack
 
         val hasStaticFieldInitializer = container.declarations.any {
             when (it) {
-                is IrEnumEntry -> it.correspondingField?.isStatic == true && it.initializerExpression != null
-                is IrField -> it.isStatic && it.initializer != null
-                is IrProperty -> it.backingField?.isStatic == true && it.backingField?.initializer != null
+                is IrEnumEntry -> it.correspondingField?.isStatic == true
+                is IrField -> it.isStatic && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
+                        it.correspondingPropertySymbol?.owner?.isLateinit == false
+                is IrProperty -> it.backingField?.isStatic == true && !it.isLateinit
                 else -> false
             }
         }
@@ -239,7 +240,7 @@ class WebStaticInitializersDeclarationLowering(private val context: JsCommonBack
             endOffset = UNDEFINED_OFFSET
             this.origin = origin
             name = Name.identifier(STATIC_INIT_FUNCTION_NAME)
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = DescriptorVisibilities.PUBLIC
             returnType = context.irBuiltIns.unitType
         }
         return initFunction.apply {
@@ -251,7 +252,11 @@ class WebStaticInitializersDeclarationLowering(private val context: JsCommonBack
                     statements += irSetField(null, initCalledVar, irBoolean(true))
                 }
 
-                container.dependencySuperClasses
+                val [dependencySuperInterfaces, dependencySuperClasses] =
+                    container.dependencySuperClasses.partition { it.isInterface }
+
+                // Super class should be initialized before super interfaces, regardless of class placement in the super type list
+                (dependencySuperClasses + dependencySuperInterfaces)
                     .mapNotNull { it.staticInitFunction }
                     .forEach { statements += builder.irCall(it.symbol) }
 

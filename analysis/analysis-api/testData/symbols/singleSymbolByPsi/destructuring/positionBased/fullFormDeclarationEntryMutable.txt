@@ -1,6 +1,7 @@
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -19,6 +20,7 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(fullFormDeclarationEntryMutable.kt)
   getContainingJvmClassName: null

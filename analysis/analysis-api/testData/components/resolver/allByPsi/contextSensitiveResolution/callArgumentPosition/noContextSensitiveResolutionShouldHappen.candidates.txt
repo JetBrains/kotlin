@@ -535,6 +535,7 @@ KtCallExpression(350,356): 'foo(X)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -553,6 +554,7 @@ KtCallExpression(350,356): 'foo(X)'
             annotations: []
             typeArguments: []
             type: B
+          typeParameters: []
           visibility: PUBLIC
         type = B
       signature = KaFunctionSignature:
@@ -611,6 +613,7 @@ KtNameReferenceExpression(350,353): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -629,6 +632,7 @@ KtNameReferenceExpression(350,353): 'foo'
             annotations: []
             typeArguments: []
             type: B
+          typeParameters: []
           visibility: PUBLIC
         type = B
       signature = KaFunctionSignature:
@@ -692,6 +696,7 @@ KtNameReferenceExpression(354,355): 'X'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -710,6 +715,7 @@ KtNameReferenceExpression(354,355): 'X'
             annotations: []
             typeArguments: []
             type: B
+          typeParameters: []
           visibility: PUBLIC
         type = B
       isContextSensitive = false

@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.benchmarks.custom
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertEmpty
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -204,7 +203,7 @@ class LargeClasspathsPerformanceTest : AbstractKotlinCompilerIntegrationTest() {
                     classPaths,
                     expectedFileName = null,
                 )
-                assertEmpty(output)
+                assert(output.isEmpty())
                 assertEquals(ExitCode.OK, exitCode)
             }
 

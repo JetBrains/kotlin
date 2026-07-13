@@ -12,7 +12,6 @@ import kotlin.metadata.KmPackage
 import kotlin.metadata.KmProperty
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.KlibModuleMetadata
-import kotlinx.metadata.klib.annotations
 import kotlinx.metadata.klib.className
 import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.cli.klib.MetadataDumpMode.COMPACT_WITH_STABLE_ORDER
@@ -124,6 +123,7 @@ internal class MetadataDumper(private val output: KlibToolOutput) {
                 .dropSimpleComments()
                 .dropBraces()
                 .dropTrailingCommas()
+                .dropAnnotations()
                 .joinTo(output, separator = "\n")
     }
 
@@ -146,9 +146,25 @@ internal class MetadataDumper(private val output: KlibToolOutput) {
         /**
          * Drop trailing commas, which may remain after enum entries.
          */
-        private fun Sequence<String>.dropTrailingCommas(): Sequence<String> = mapNotNull { line ->
+        private fun Sequence<String>.dropTrailingCommas(): Sequence<String> = map { line ->
             // drop opening and closing braces
             line.removeSuffix(",")
+        }
+
+        /**
+         * Drop annotations.
+         */
+        private fun Sequence<String>.dropAnnotations(): Sequence<String> = map { line ->
+            generateSequence(line) { it.skipAnnotationOnce() }.last()
+        }
+
+        private fun String.skipAnnotationOnce(): String? {
+            if (!startsWith('@')) return null
+
+            val firstWhiteSpaceIndex = indexOfFirst { it.isWhitespace() }
+            if (firstWhiteSpaceIndex == -1) return null
+
+            return substring(firstWhiteSpaceIndex, length).trimStart { it.isWhitespace() }
         }
     }
 }
@@ -275,8 +291,8 @@ private class UltracompactKlibKotlinp : Kotlinp(
         return append("enum entry $fullName")
     }
 
-    override fun getAnnotations(typeParameter: KmTypeParameter): List<KmAnnotation> = typeParameter.annotations
-    override fun getAnnotations(type: KmType): List<KmAnnotation> = type.annotations
+    override fun getAnnotations(typeParameter: KmTypeParameter): List<KmAnnotation> = emptyList() // typeParameter.annotations
+    override fun getAnnotations(type: KmType): List<KmAnnotation> = emptyList() // type.annotations
 
     override fun Printer.appendCompileTimeConstant(property: KmProperty) = append("...")
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.OBJC_RETAIN_AUTORELEASED_RETURN_VALUE
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.library.uniqueName
 
 private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
@@ -235,20 +236,44 @@ internal fun addFunctionsListSymbolForChecker(generationState: NativeGenerationS
             .toList()
 
     val libName = context.config.libraryToCache?.klib?.uniqueName ?: context.config.moduleId
-    staticData.placeGlobalConstArray(libName.knownFunctionsGlobalName, llvm.pointerType, functions, isExported = true)
-    staticData.placeGlobal(libName.knownFunctionsCountGlobalName, llvm.constInt32(functions.size), isExported = true)
+    // The function-list global must be unique per object file. When a per-file cache is produced, every file becomes
+    // a separate object, so the file id has to be a part of the symbol name; otherwise these objects would clash with
+    // a "duplicate symbol" linker error once several of them are linked together.
+    // Note: checking for CacheDeserializationStrategy.MultipleFiles is not needed, as it will split into single files
+    // by TopLevelPhases.kt->runBackend->splitIntoFragments.
+    val cacheKey = (generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)
+            ?.let { perFileCheckerCacheKey(libName, CacheSupport.cacheFileId(it.fqName, it.filePath)) }
+            ?: libName
+
+    staticData.placeGlobalConstArray(cacheKey.knownFunctionsGlobalName, llvm.pointerType, functions, isExported = true)
+    staticData.placeGlobal(cacheKey.knownFunctionsCountGlobalName, llvm.constInt32(functions.size), isExported = true)
 
     if (generationState.config.isFinalBinary) {
-        val libraryNames = generationState.dependenciesTracker.nativeDependenciesToLink
-                .filter { context.config.cachedLibraries.isLibraryCached(it) }
-                .map { it.uniqueName } + listOf(libName)
+        // Reference the function-list globals of exactly the caches that are linked into the binary. This must mirror
+        // the binary selection in [resolveCacheBinaries]: a monolithic cache contributes a single library-keyed global,
+        // while a per-file cache contributes one global per linked file (keyed by [CacheSupport.cacheFileId]).
+        // Note that the dependency kind alone is not enough: a monolithic cache may still be referenced via CertainFiles.
+        val cacheKeys = generationState.dependenciesTracker.allCachedBitcodeDependencies.flatMap { dependency ->
+            val library = dependency.library
+            when (val cache = context.config.cachedLibraries.getLibraryCache(library)) {
+                null -> error("Library ${library.path} is expected to be cached")
 
-        val allFunctionListsArray = llvm.exportedGlobalPointerArray(staticData, libraryNames.map { it.knownFunctionsGlobalName })
-        val allFunctionSizesListsArray = llvm.exportedGlobalPointerArray(staticData, libraryNames.map { it.knownFunctionsCountGlobalName })
+                is CachedLibraries.Cache.Monolithic -> listOf(library.uniqueName)
+
+                is CachedLibraries.Cache.PerFile -> {
+                    (dependency.kind as? DependenciesTracker.DependencyKind.CertainFiles)?.files
+                            ?.map { perFileCheckerCacheKey(library.uniqueName, it.name) }
+                            ?: cache.fileIds.map { perFileCheckerCacheKey(library.uniqueName, it) }
+                }
+            }
+        } + cacheKey
+
+        val allFunctionListsArray = llvm.exportedGlobalPointerArray(staticData, cacheKeys.map { it.knownFunctionsGlobalName })
+        val allFunctionSizesListsArray = llvm.exportedGlobalPointerArray(staticData, cacheKeys.map { it.knownFunctionsCountGlobalName })
 
         staticData.getOrCreateExportedGlobal(llvm.pointerType, functionListGlobal).setInitializer(allFunctionListsArray)
         staticData.getOrCreateExportedGlobal(llvm.pointerType, functionListSizesGlobal).setInitializer(allFunctionSizesListsArray)
-        staticData.getOrCreateExportedGlobal(llvm.int32Type, functionListSizesSizeGlobal).setInitializer(llvm.constInt32(libraryNames.size))
+        staticData.getOrCreateExportedGlobal(llvm.int32Type, functionListSizesSizeGlobal).setInitializer(llvm.constInt32(cacheKeys.size))
     }
     verifyModule(llvm.module)
 }
@@ -259,6 +284,8 @@ private val String.knownFunctionsGlobalName
 
 private val String.knownFunctionsCountGlobalName
     get() = "_Konan_callsCheckerKnownFunctionsCount_${this}"
+
+private fun perFileCheckerCacheKey(libName: String, cacheFileId: String): String = "${libName}_$cacheFileId"
 
 private fun KotlinStaticData.getOrCreateExportedGlobal(type: LLVMTypeRef, name: String) =
         staticData.getGlobal(name) ?: staticData.createGlobal(type, name, isExported = true)

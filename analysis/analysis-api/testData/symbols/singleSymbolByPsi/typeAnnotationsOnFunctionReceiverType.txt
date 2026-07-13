@@ -25,6 +25,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -50,6 +51,7 @@ KaNamedFunctionSymbol:
       ]
       typeArguments: []
       type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionReceiverType.kt)
     getContainingJvmClassName: TypeAnnotationsOnFunctionReceiverTypeKt

@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.lang.jvm.facade.JvmElementProvider
 import com.intellij.openapi.extensions.ExtensionsArea
-import com.intellij.psi.JavaModuleSystem
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
 
+@Suppress("UnstableApiUsage")
 internal object IdeaExtensionPoints {
+    @Suppress("DEPRECATION")
     fun registerVersionSpecificAppExtensionPoints(area: ExtensionsArea) {
-        @Suppress("DEPRECATION")
         CoreApplicationEnvironment.registerExtensionPoint(area, ClsCustomNavigationPolicy.EP_NAME, ClsCustomNavigationPolicy::class.java)
-        CoreApplicationEnvironment.registerExtensionPoint(area, JavaModuleSystem.EP_NAME, JavaModuleSystem::class.java)
+        CoreApplicationEnvironment.registerExtensionPoint(area, com.intellij.psi.JavaModuleSystem.EP_NAME, com.intellij.psi.JavaModuleSystem::class.java)
     }
 
     fun registerVersionSpecificProjectExtensionPoints(area: ExtensionsArea) {

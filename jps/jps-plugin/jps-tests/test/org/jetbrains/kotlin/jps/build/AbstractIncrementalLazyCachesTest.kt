@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -30,6 +29,8 @@ import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.utils.Printer
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import java.io.File
 
 abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() {
@@ -38,20 +39,22 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
 
     private val enableICFixture = EnableICFixture()
 
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         enableICFixture.setUp()
     }
 
+    @AfterEach
     override fun tearDown() {
         RunAll(
-            ThrowableRunnable { enableICFixture.tearDown() },
-            ThrowableRunnable { super.tearDown() }
+            { enableICFixture.tearDown() },
+            { super.tearDown() }
         ).run()
     }
 
-    override fun doTest(testDataPath: String) {
-        super.doTest(testDataPath)
+    override fun runTest(testDataPath: String) {
+        super.runTest(testDataPath)
 
         val actual = dumpKotlinCachesFileNames()
         val expectedFile = File(testDataPath, expectedCachesFileName)

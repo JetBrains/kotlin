@@ -9,8 +9,8 @@ import org.jdom.Element
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.deserializeFacetSettings
 import org.jetbrains.kotlin.config.serializeFacetSettings
-import org.junit.Test
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class FacetSettingsSerializationTest {
 

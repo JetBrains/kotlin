@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.backend.jvm.ModuleMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.BuiltinsSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
+import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -33,17 +33,12 @@ class FirJvmBackendExtension(
     private val actualizedExpectDeclarations: Set<FirDeclaration>?
 ) : JvmBackendExtension {
     override fun createSerializer(
-        context: JvmBackendContext,
-        klass: IrClass,
-        type: Type,
-        bindings: JvmSerializationBindings,
-        parentSerializer: MetadataSerializer?
+        context: JvmBackendContext, klass: IrClass, type: Type, classBuilder: ClassBuilder, parentSerializer: MetadataSerializer?,
     ): MetadataSerializer {
         return makeFirMetadataSerializerForIrClass(
             components.session,
             context,
             klass,
-            bindings,
             components,
             parentSerializer,
             actualizedExpectDeclarations
@@ -63,7 +58,7 @@ class FirJvmBackendExtension(
             val typeApproximator = TypeApproximatorForMetadataSerializer(session)
             val firSerializerExtension = object : FirJvmSerializerExtension(
                 session,
-                JvmSerializationBindings(),
+                emptyMap(),
                 context.state,
                 // annotation can't have local delegated properties, it is safe to pass empty list
                 localDelegatedProperties = emptyList(),

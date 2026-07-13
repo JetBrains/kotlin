@@ -1499,7 +1499,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swi
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization {
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization : java/io/Serializable {
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization$Identifier : org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization {
@@ -2587,19 +2587,11 @@ public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension$Com
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl {
-	public abstract fun getCustomBrowserExecutable ()Lorg/gradle/api/file/RegularFileProperty;
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerTopLevelConfigDsl {
 	public abstract fun getHeadless ()Lorg/gradle/api/provider/Property;
-	public abstract fun getLaunchArgs ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getLaunchEnvironmentVariables ()Lorg/gradle/api/provider/MapProperty;
 	public abstract fun getTestsLocation ()Lorg/gradle/api/provider/Property;
 	public abstract fun getTimeout ()Lorg/gradle/api/provider/Property;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BundleKotlinJsTestsTask : org/gradle/api/Task, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
-	public abstract fun getOutputBundleDir ()Lorg/gradle/api/file/DirectoryProperty;
-	public abstract fun getTestHtmlFile ()Lorg/gradle/api/provider/Provider;
-	public abstract fun getTestsEntryFile ()Lorg/gradle/api/file/RegularFileProperty;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Distribution {
@@ -2619,7 +2611,9 @@ public abstract interface annotation class org/jetbrains/kotlin/gradle/targets/j
 public abstract interface annotation class org/jetbrains/kotlin/gradle/targets/js/dsl/ExperimentalMainFunctionArgumentsDsl : java/lang/annotation/Annotation {
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserTestRunnerDsl : org/gradle/api/Named, org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl {
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserTestRunnerDsl : org/gradle/api/Named, org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerTopLevelConfigDsl {
+	public abstract fun getCustomBrowserExecutable ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getLaunchArgs ()Lorg/gradle/api/provider/ListProperty;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode : java/lang/Enum {
@@ -2637,16 +2631,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Kotli
 	public abstract fun webpackTask (Lorg/gradle/api/Action;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl {
-	public abstract fun browserDefaults (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl;
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerTopLevelConfigDsl {
 	public abstract fun chromium (Ljava/lang/String;)V
 	public abstract fun chromium (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public abstract fun firefox (Ljava/lang/String;)V
 	public abstract fun firefox (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public abstract fun getAllBrowserRunners ()Lorg/gradle/api/provider/Provider;
-	public abstract fun getBrowserDefaults ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl;
-	public abstract fun getDefaultBundleTask ()Lorg/gradle/api/tasks/TaskProvider;
-	public abstract fun getDefaultTestsLocation ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getDefaultTestsLocationProvider ()Lorg/gradle/api/provider/Provider;
 	public abstract fun webkit (Ljava/lang/String;)V
 	public abstract fun webkit (Ljava/lang/String;Lorg/gradle/api/Action;)V
 }
@@ -2738,13 +2729,10 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl$
 	public static fun produceExecutable (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTestDevServerService {
-	public abstract fun use (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTestsLocation {
 	public abstract fun getBundleLocation ()Lorg/gradle/api/provider/Provider;
-	public abstract fun getDevServer ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getTestHtmlFileName ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getUrl ()Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinTargetWithNodeJsDsl {
@@ -2832,6 +2820,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDs
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl : org/jetbrains/kotlin/gradle/plugin/mpp/HasBinaries, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinTargetWithNodeJsDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDsl {
+	public abstract fun wasmtime ()V
+	public abstract fun wasmtime (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun wasmtime (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl$DefaultImpls {
@@ -2845,6 +2836,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTarg
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Lorg/gradle/api/Action;)V
+	public static fun wasmtime (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;)V
+	public static fun wasmtime (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRulesContainer : org/gradle/api/ExtensiblePolymorphicDomainObjectContainer {
@@ -2980,7 +2973,8 @@ public class org/jetbrains/kotlin/gradle/targets/js/ir/Executable : org/jetbrain
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/ExecutableWasm : org/jetbrains/kotlin/gradle/targets/js/ir/Executable, org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;)V
-	public final fun getMainOptimizedFile ()Lorg/gradle/api/provider/Provider;
+	public fun getMainOptimizedFile ()Lorg/gradle/api/provider/Provider;
+	public fun getMainWasmFile ()Lorg/gradle/api/provider/Provider;
 	public fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
 }
 
@@ -3027,6 +3021,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary : org
 	protected final fun get_linkSyncTask ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun setGenerateTs (Z)V
 	protected fun syncInputConfigure (Lorg/jetbrains/kotlin/gradle/targets/js/ir/DefaultIncrementalSyncTask;)V
+	protected final fun wasmFileFromJsFile (Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/provider/Provider;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary$Companion {
@@ -3148,6 +3143,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilati
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrLink : org/jetbrains/kotlin/gradle/tasks/Kotlin2JsCompile, org/jetbrains/kotlin/gradle/plugin/statistics/UsesBuildFusService {
 	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/workers/WorkerExecutor;)V
+	public synthetic fun callCompilerAsync$kotlin_gradle_plugin_common (Lorg/jetbrains/kotlin/cli/common/arguments/CommonCompilerArguments;Lorg/gradle/work/InputChanges;Lorg/jetbrains/kotlin/gradle/tasks/TaskOutputsBackup;)V
 	protected fun cleanOutputsAndLocalState (Ljava/lang/String;)V
 	protected fun contributeAdditionalCompilerArguments (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerArgumentsProducer$ContributeCompilerArgumentsContext;)V
 	public final fun getIncrementalJsIr ()Z
@@ -3241,6 +3237,9 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget
 	public fun produceExecutable ()V
 	public fun useCommonJs ()V
 	public fun useEsModules ()V
+	public fun wasmtime ()V
+	public fun wasmtime (Lkotlin/jvm/functions/Function1;)V
+	public fun wasmtime (Lorg/gradle/api/Action;)V
 	public fun whenBrowserConfigured (Lkotlin/jvm/functions/Function1;)V
 	public fun whenD8Configured (Lkotlin/jvm/functions/Function1;)V
 	public fun whenNodejsConfigured (Lkotlin/jvm/functions/Function1;)V
@@ -3280,6 +3279,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/LibraryConfigurator
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/LibraryWasm : org/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary, org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;)V
+	public fun getMainOptimizedFile ()Lorg/gradle/api/provider/Provider;
+	public fun getMainWasmFile ()Lorg/gradle/api/provider/Provider;
 	public fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
 }
 
@@ -3294,6 +3295,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/OutputGranularityKt
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary {
 	public abstract fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
 	public abstract fun getLinkTask ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getMainOptimizedFile ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getMainWasmFile ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getMode ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
@@ -3429,6 +3432,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsSetupTask
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/nodejs/NpmApiExtension {
 	public abstract fun getAdditionalInstallOutput ()Lorg/gradle/api/file/FileCollection;
 	public abstract fun getEnvironment ()Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;
+	public abstract fun getLockFileNameProvider ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getPackageManager ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmApiExecution;
 	public abstract fun getPostInstallTasks ()Lorg/gradle/api/provider/ListProperty;
@@ -4033,6 +4037,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDepende
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask : org/gradle/api/Task, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+	public abstract fun getFileBasedNpmDependencyLocations ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getNpmDependenciesLockFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getPath ()Ljava/lang/String;
 }
 
@@ -5555,6 +5561,10 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8SetupTask : 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8SetupTask$Companion {
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/targets/wasm/dsl/KotlinWasmtimeDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetDsl {
+	public abstract fun getWasmtimeRunArgs ()Lorg/gradle/api/provider/ListProperty;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsEnvSpec : org/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsEnvSpec {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsEnvSpec$Companion;
 	public fun <init> ()V
@@ -5632,6 +5642,66 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmResolv
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/npm/WasmNpmResolverPlugin$Companion {
 	public final fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
+	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)V
+	public fun getAllowInsecureProtocol ()Z
+	public fun getDir ()Ljava/io/File;
+	public fun getDownload ()Z
+	public fun getDownloadBaseUrl ()Ljava/lang/String;
+	public fun getExecutable ()Ljava/lang/String;
+	public fun getIvyDependency ()Ljava/lang/String;
+	public final fun isWindows ()Z
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeEnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeEnvSpec$Companion;
+	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
+	public final fun getWasmtimeSetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
+	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeEnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
+	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	public final fun getEXTENSION_NAME ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeExec : org/gradle/api/tasks/AbstractExecTask {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeExec$Companion;
+	protected fun exec ()V
+	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getWasmtimeArgs ()Lorg/gradle/api/provider/ListProperty;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeExec$Companion {
+	public final fun register (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
+	public static synthetic fun register$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeExec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimePlugin : org/gradle/api/Plugin {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimePlugin$Companion;
+	public static final field TASKS_GROUP_NAME Ljava/lang/String;
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimePlugin$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
+	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeSetupTask : org/jetbrains/kotlin/gradle/targets/js/AbstractSetupTask {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeSetupTask$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeEnvSpec;)V
+	public fun extract (Ljava/io/File;)V
+	protected fun getArtifactModule ()Ljava/lang/String;
+	protected fun getArtifactName ()Ljava/lang/String;
+	protected fun getArtifactPattern ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeSetupTask$Companion {
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin : org/jetbrains/kotlin/gradle/targets/web/yarn/CommonYarnPlugin {
@@ -5891,7 +5961,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/tasks/CleanDataTask$Companion;
 	public static final field NAME_SUFFIX Ljava/lang/String;
-	public field cleanableStoreProvider Lorg/gradle/api/provider/Provider;
 	public fun <init> ()V
 	public final fun exec ()V
 	public final fun getCleanableStoreProvider ()Lorg/gradle/api/provider/Provider;

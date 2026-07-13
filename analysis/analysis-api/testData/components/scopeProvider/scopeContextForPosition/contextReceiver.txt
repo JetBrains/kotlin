@@ -79,6 +79,7 @@ scopes:
           KaContextParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -96,6 +97,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: Context
+            typeParameters: []
             visibility: PUBLIC
         ]
         contextReceivers: [

@@ -1,5 +1,4 @@
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -9,6 +8,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 // Contains common configuration that should be applied to all projects
@@ -32,6 +32,7 @@ project.checkNoApiDependenciesOnK1Modules()
 project.configureMigratedRootSettings()
 project.configureJsCacheRedirector()
 project.configurePublishingRetry()
+project.exposeCompileAllConfiguration()
 
 // There are problems with common build dir:
 //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location
@@ -56,10 +57,10 @@ fun Project.checkNoApiDependenciesOnK1Modules() {
         val apiConfiguration = configurations.findByName("api") ?: return@afterEvaluate
 
         @Suppress("UNCHECKED_CAST")
-        val fe10CompilerModules = rootProject.extra["fe10CompilerModules"] as Array<String>
+        val fe10CompilerModules = CompilerModules.fe10CompilerModules
 
         @Suppress("UNCHECKED_CAST")
-        val descriptorModules = rootProject.extra["descriptorsCompilerModules"] as Array<String>
+        val descriptorModules = CompilerModules.descriptorsCompilerModules
 
         val k1Modules = (fe10CompilerModules + descriptorModules).toSet()
 
@@ -74,7 +75,7 @@ fun Project.checkNoApiDependenciesOnK1Modules() {
                 "Project '$path' declares `api` dependencies on K1 frontend modules: " +
                         violations.joinToString(prefix = "[", postfix = "]") + ". " +
                         "K1 frontend modules must only be depended on with the `implementation` " +
-                        "configuration (see `fe10CompilerModules` in gradle/compilerModules.gradle.kts)."
+                        "configuration (see `fe10CompilerModules` in repo/kotlin-build-helpers/src/CompilerModules.kt)."
             )
         }
     }
@@ -103,12 +104,11 @@ fun Project.configureJavaCompile() {
     }
 }
 
-val projectsDependingOnStableStdlib: Array<String> by rootProject.extra
-val kotlinApiVersionForProjectsDependingOnStableStdlib: String by rootProject.extra
+val kotlinApiVersionForProjectsDependingOnStableStdlib: Provider<String> = project.providers.gradleProperty("kotlinApiVersionForProjectsDependingOnStableStdlib")
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
-        val kotlinLanguageVersion: String by rootProject.extra
+        val kotlinLanguageVersion: Provider<String> = project.providers.gradleProperty("kotlinLanguageVersion")
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
@@ -136,12 +136,12 @@ fun Project.configureKotlinCompilationOptions() {
                 }
 
                 freeCompilerArgs.addAll(commonCompilerArgs)
-                languageVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
-                apiVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
+                languageVersion.set(kotlinLanguageVersion.map{ KotlinVersion.fromVersion(it) })
+                apiVersion.set(kotlinLanguageVersion.map { KotlinVersion.fromVersion(it) })
                 freeCompilerArgs.add("-Xskip-prerelease-check")
 
-                if (project.path in projectsDependingOnStableStdlib) {
-                    apiVersion.set(KotlinVersion.fromVersion(kotlinApiVersionForProjectsDependingOnStableStdlib))
+                if (project.path in CompilerModules.projectsDependingOnStableStdlib) {
+                    apiVersion.set(kotlinApiVersionForProjectsDependingOnStableStdlib.map { KotlinVersion.fromVersion(it) })
                 }
             }
 
@@ -170,7 +170,20 @@ fun Project.configureKotlinCompilationOptions() {
             }
         }
 
-        val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
+        val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib = listOf(
+            ":analysis:analysis-api-fir",
+            ":analysis:decompiled:light-classes-for-decompiled",
+            ":analysis:symbol-light-classes",
+            ":compiler",
+            ":compiler:backend.js",
+            ":jps:jps-common",
+            ":js:js.tests",
+            ":kotlin-build-common",
+            ":kotlin-gradle-plugin",
+            ":kotlin-scripting-jvm-host-test",
+            ":native:kotlin-klib-commonizer",
+        )
+
 
         tasks.withType<KotlinJvmCompile>().configureEach {
             compilerOptions {
@@ -211,12 +224,8 @@ private fun Project.shouldUseOldJvmDefaultArgument(): Boolean {
     return isOldCompilerVersion
 }
 
-private val kotlinCompilerVersionForGradle = rootProject.extensions
-    .getByType(VersionCatalogsExtension::class.java)
-    .named("libs")
-    .findVersion("kotlin-for-gradle-plugins-compilation")
-    .get()
-    .displayName
+private val libs = project.the<LibrariesForLibs>()
+private val kotlinCompilerVersionForGradle = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
 
 private fun Project.skipArgumentForOlderKotlinCompilerVersion(): Boolean {
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
@@ -345,14 +354,6 @@ fun Project.configureTests() {
             ":kotlin-main-kts",
             ":kotlin-main-kts-test",
             ":kotlin-metadata-jvm",
-            ":kotlin-native:Interop:Indexer",
-            ":kotlin-native:Interop:StubGenerator",
-            ":kotlin-native:Interop:StubGeneratorConsistencyCheck",
-            ":kotlin-native:common:env",
-            ":kotlin-native:common:files",
-            ":kotlin-native:libclangInterop",
-            ":kotlin-native:llvmInterop",
-            ":kotlin-native:tools:kdumputil",
             ":kotlin-power-assert-runtime", // TODO(KTI-3056): 'test-inputs-check' cannot be combined with 'multiplatform' projects
             ":kotlin-scripting-common",
             ":kotlin-scripting-dependencies",
@@ -372,17 +373,10 @@ fun Project.configureTests() {
             ":libraries:tools:abi-validation:abi-tools-api",
             ":libraries:tools:abi-validation:abi-tools-tests",
             ":libraries:tools:abi-validation:kgp-integration-tests",
-            ":libraries:tools:analysis-api-based-klib-reader",
-            ":native:kotlin-native-utils",
-            ":native:native.tests:driver",
-            ":native:native.tests:gc-fuzzing-tests",
-            ":native:native.tests:gc-fuzzing-tests:engine",
-            ":native:objcexport-header-generator",
-            ":native:objcexport-header-generator-analysis-api",
-            ":native:objcexport-header-generator-k1",
 
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
             ":plugins:scripting:scripting-tests",
+            ":repo:auto-code-review", // Runs processes, traverses all repo files. Quick.
             ":repo:artifacts-tests",
             ":repo:codebase-tests",
             ":tools:binary-compatibility-validator",
@@ -449,10 +443,7 @@ fun Project.configureTests() {
     }
     // Aggregate task for build related checks
     tasks.register("checkBuild")
-    val mppProjects: List<String> by rootProject.extra
-    if (path !in mppProjects) {
-        configureTestRetriesForTestTasks()
-    }
+    configureTestRetriesForTestTasks()
 }
 
 // TODO: migrate remaining modules to the new JVM default scheme.
@@ -520,7 +511,7 @@ fun Project.configureMigratedRootSettings() {
                 val isReflect = requested.name == "kotlin-reflect"
                 // More strict check for "compilerModules". We can't apply this check for all modules because it would force to
                 // exclude kotlin-reflect from transitive dependencies of kotlin-poet, ktor, com.android.tools.build:gradle, etc
-                if (project.path in @Suppress("UNCHECKED_CAST") (rootProject.extra["compilerModules"] as Array<String>)) {
+                if (project.path in @Suppress("UNCHECKED_CAST") (CompilerModules.compilerModules)) {
                     val expectedReflectVersion = commonDependencyVersion("org.jetbrains.kotlin", "kotlin-reflect")
                     if (isReflect) {
                         check(requested.version == expectedReflectVersion) {
@@ -553,6 +544,22 @@ fun Project.configureMigratedRootSettings() {
                     }
                 }
             }
+        }
+    }
+}
+
+fun Project.exposeCompileAllConfiguration() {
+    val compileAllConfig = configurations.consumable("compileAll")
+    afterEvaluate {
+        val kotlinCompileToolNames = tasks.withType<KotlinCompileTool>().names
+        val javaCompileNames = tasks.withType<JavaCompile>().names
+        kotlinCompileToolNames.forEach {
+            val task = tasks.named<KotlinCompileTool>(it)
+            artifacts.add(compileAllConfig.name, task.map { it.destinationDirectory }) { builtBy(task) }
+        }
+        javaCompileNames.forEach {
+            val task = tasks.named<JavaCompile>(it)
+            artifacts.add(compileAllConfig.name, task.map { it.destinationDirectory }) { builtBy(task) }
         }
     }
 }

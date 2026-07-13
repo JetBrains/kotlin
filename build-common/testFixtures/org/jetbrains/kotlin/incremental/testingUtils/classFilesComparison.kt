@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.protobuf.ExtensionRegistry
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
-import org.junit.Assert
-import org.junit.Assert.assertNotNull
-import org.junit.ComparisonFailure
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.opentest4j.AssertionFailedError
 import java.io.*
 import java.util.*
 import java.util.zip.CRC32
@@ -59,7 +59,7 @@ fun assertEqualDirectories(
     val actualString = getDirectoryString(actual, changedPaths, filter)
 
     if (DUMP_ALL) {
-        Assert.assertEquals(expectedString, actualString + " ")
+        Assertions.assertEquals(expectedString, actualString + " ")
     }
 
     if (forgiveExtraFiles) {
@@ -75,7 +75,7 @@ fun assertEqualDirectories(
 
     if (expectedString != actualString) {
         val message: String? = null
-        throw ComparisonFailure(
+        throw AssertionFailedError(
             message,
             expectedString.replaceFirst(DIR_ROOT_PLACEHOLDER, expected.absolutePath),
             actualString.replaceFirst(DIR_ROOT_PLACEHOLDER, actual.absolutePath)
@@ -105,7 +105,7 @@ private fun getDirectoryString(
         p.pushIndent()
 
         val listFiles = dir.listFiles()?.filter(predicate)
-        assertNotNull("$dir does not exist", listFiles)
+        assertNotNull(listFiles, "$dir does not exist")
 
         val children = listFiles!!.sortedWith(compareBy({ it.isDirectory }, { it.name }))
         for (child in children) {

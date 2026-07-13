@@ -5,22 +5,23 @@
 
 package org.jetbrains.kotlin.modules;
 
-import junit.framework.TestCase;
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.kotlin.build.JvmSourceRoot;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.jps.build.AbstractKotlinJpsBuildTestCase;
 import org.jetbrains.kotlin.test.TestDataAssertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class KotlinModuleXmlGeneratorTest extends TestCase {
+public class KotlinModuleXmlGeneratorTest {
     private static String getTestDataPath() {
         return AbstractKotlinJpsBuildTestCase.Companion.getTEST_DATA_PATH() + "/modules.xml";
     }
 
+    @Test
     public void testBasic() {
         String actual = new KotlinModuleXmlBuilder().addModule(
                 "name",
@@ -39,6 +40,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         TestDataAssertions.assertEqualsToFile(new File(getTestDataPath() + "/basic.xml"), actual);
     }
 
+    @Test
     public void testFiltered() {
         String actual = new KotlinModuleXmlBuilder().addModule(
                 "name",
@@ -57,6 +59,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         TestDataAssertions.assertEqualsToFile(new File(getTestDataPath() + "/filtered.xml"), actual);
     }
 
+    @Test
     public void testMultiple() {
         KotlinModuleXmlBuilder builder = new KotlinModuleXmlBuilder();
         builder.addModule(
@@ -91,6 +94,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         TestDataAssertions.assertEqualsToFile(new File(getTestDataPath() + "/multiple.xml"), actual);
     }
 
+    @Test
     public void testModularJdkRoot() {
         String actual = new KotlinModuleXmlBuilder().addModule(
                 "name",

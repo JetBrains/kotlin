@@ -28,5 +28,6 @@ public enum class KotlinVersion(
   V2_4("2.4"),
   V2_5("2.5"),
   V2_6("2.6"),
+  V2_7("2.7"),
   ;
 }

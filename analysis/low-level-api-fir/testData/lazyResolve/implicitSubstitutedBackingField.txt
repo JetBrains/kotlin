@@ -10,7 +10,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
         }
 
         public final [ResolvedTo(STATUS)] val prop: R|kotlin/Any?|
-            private final [ResolvedTo(STATUS)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] backing field field: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
 
     }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
         }
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: R|kotlin/Any?|
-            private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] backing field field: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
 
     }
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
         }
 
         public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/Any?|
-            private final [ResolvedTo(CONTRACTS)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] backing field field: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
 
     }
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
         }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Any?|
-            private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
 
     }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
         }
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] val prop: R|kotlin/Any?|
-            private final [ResolvedTo(CONSTANT_EVALUATION)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            private final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
 
     }
@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any?|
-            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
 
     }
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any?|
-            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
 
     }
@@ -167,7 +167,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitSubstitutedBackingField.kt
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any?|
-            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            private final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
 
     }

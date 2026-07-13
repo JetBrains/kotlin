@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -22,6 +23,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(ofOperatorWithContext.kt)
       getContainingJvmClassName: MyList.Companion
@@ -88,8 +90,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -107,10 +109,12 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: vals
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: T1
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(ofOperatorWithContext.kt)
       getContainingJvmClassName: MyList.Companion

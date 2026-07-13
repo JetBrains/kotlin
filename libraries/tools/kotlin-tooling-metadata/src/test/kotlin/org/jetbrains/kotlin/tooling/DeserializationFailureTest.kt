@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.tooling
 
 import org.intellij.lang.annotations.Language
-import org.junit.Test
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 
 class DeserializationFailureTest {
@@ -20,7 +20,7 @@ class DeserializationFailureTest {
             "Expected empty String to produce Failure. Actual: $result"
         )
 
-        assertFailsWith<IllegalArgumentException> { KotlinToolingMetadata.parseJsonOrThrow("") }
+        assertThrows<IllegalArgumentException> { KotlinToolingMetadata.parseJsonOrThrow("") }
     }
 
     @Test
@@ -46,7 +46,7 @@ class DeserializationFailureTest {
             "Expected parsing failure, because of missing pluginVersion. Actual: $result"
         )
 
-        val exception = assertFailsWith<IllegalArgumentException> { KotlinToolingMetadata.parseJsonOrThrow(json) }
+        val exception = assertThrows<IllegalArgumentException> { KotlinToolingMetadata.parseJsonOrThrow(json) }
         assertTrue(
             "buildPluginVersion" in exception.message.orEmpty(),
             "Expected 'buildPluginVersion' mentioned in error message\n${exception.message}"
@@ -66,7 +66,7 @@ class DeserializationFailureTest {
             projectTargets = emptyList()
         ).toJsonString()
 
-        val exception = assertFailsWith<IllegalArgumentException> { KotlinToolingMetadata.parseJsonOrThrow(metadataString) }
+        val exception = assertThrows<IllegalArgumentException> { KotlinToolingMetadata.parseJsonOrThrow(metadataString) }
         assertTrue(
             majorUpgradeVersion.toString() in exception.message.orEmpty(),
             "Expected bad schemaVersion mentioned in error message\n${exception.message}"

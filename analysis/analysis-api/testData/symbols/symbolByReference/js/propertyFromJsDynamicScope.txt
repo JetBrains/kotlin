@@ -16,7 +16,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -25,6 +24,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: dynamicPropertyAccess
   origin: JS_DYNAMIC
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaDynamicType:
     annotations: []

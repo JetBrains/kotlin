@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.abi.tools.tests
 
 import java.io.File
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 
 private val OVERWRITE_EXPECTED_OUTPUT = System.getProperty("overwrite.output")?.toBoolean() ?: false // use -Doverwrite.output=true
 

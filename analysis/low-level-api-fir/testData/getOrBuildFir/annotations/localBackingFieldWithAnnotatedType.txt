@@ -14,7 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] localBackingFieldWithAnnotatedType.kt
             }
 
             public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any|
-                private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Ann|(s = String(str) [evaluated = String(str)])  kotlin/Int| = Int(1)
+                private final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] backing field field: R|@R|Ann|(s = String(str) [evaluated = String(str)])  kotlin/Int| = Int(1)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
         }

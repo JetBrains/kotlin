@@ -1,6 +1,7 @@
 KaJavaFieldSymbol:
   annotations: []
   callableId: /JavaClass.field
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -19,6 +20,7 @@ KaJavaFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -33,6 +35,7 @@ KaJavaFieldSymbol:
 KaJavaFieldSymbol:
   annotations: []
   callableId: /JavaClass.field
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -50,6 +53,7 @@ KaJavaFieldSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/String!
+  typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []

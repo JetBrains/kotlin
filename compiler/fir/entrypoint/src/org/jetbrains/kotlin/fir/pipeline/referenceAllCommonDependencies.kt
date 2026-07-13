@@ -55,8 +55,9 @@ private class Visitor(val session: FirSession) : FirDefaultVisitorVoid() {
     }
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
-        lookupInType(resolvedQualifier.resolvedType)
-        visitElement(resolvedQualifier)
+        resolvedQualifier.qualifierSymbol?.classId?.let(session.symbolProvider::getClassLikeSymbolByClassId)
+        resolvedQualifier.accessedObjectSymbol?.classId?.let(session.symbolProvider::getClassLikeSymbolByClassId)
+        resolvedQualifier.acceptChildren(this)
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {

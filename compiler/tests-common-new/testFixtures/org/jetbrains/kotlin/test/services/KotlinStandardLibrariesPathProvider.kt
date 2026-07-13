@@ -135,9 +135,6 @@ interface KotlinStandardLibrariesPathProvider : TestService {
     fun getRuntimeAndK1ReflectJarClassLoader(): ClassLoader =
         getOrCreateClassLoader(::k1ReflectJarClassLoader, "useK1Implementation")
 
-    fun getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader(): ClassLoader =
-        getOrCreateClassLoader(::reflectWithNewFakeOverridesJarClassLoader, "newFakeOverridesImplementation")
-
     fun getRuntimeAndReflectWithLoadMetadataDirectlyClassLoader(): ClassLoader =
         getOrCreateClassLoader(::reflectWithLoadMetadataDirectlyClassLoader, "loadMetadataDirectly")
 

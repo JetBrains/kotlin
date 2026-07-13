@@ -17,6 +17,7 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
     to.includeUnavailableSourcesIntoSourceMap = from.includeUnavailableSourcesIntoSourceMap
     to.irDceDumpDeclarationIrSizesToFile = from.irDceDumpDeclarationIrSizesToFile
     to.irDceDumpReachabilityInfoToFile = from.irDceDumpReachabilityInfoToFile
+    to.regenerateUnchangedModules = from.regenerateUnchangedModules
     @Suppress("DEPRECATION")
     to.wasm = from.wasm
     to.wasmDebug = from.wasmDebug

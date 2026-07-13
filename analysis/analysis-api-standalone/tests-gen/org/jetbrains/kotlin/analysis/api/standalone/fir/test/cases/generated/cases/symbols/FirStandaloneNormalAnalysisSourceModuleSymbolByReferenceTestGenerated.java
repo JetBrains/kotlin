@@ -75,6 +75,30 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("companionBlockFunctionLibrary.kt")
+  public void testCompanionBlockFunctionLibrary() {
+    run("companionBlockFunctionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockPropertyLibrary.kt")
+  public void testCompanionBlockPropertyLibrary() {
+    run("companionBlockPropertyLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("companionExtensionFunctionLibrary.kt")
+  public void testCompanionExtensionFunctionLibrary() {
+    run("companionExtensionFunctionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("companionExtensionPropertyLibrary.kt")
+  public void testCompanionExtensionPropertyLibrary() {
+    run("companionExtensionPropertyLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("constructorParameterViaTypeAlias.kt")
   public void testConstructorParameterViaTypeAlias() {
     run("constructorParameterViaTypeAlias.kt");
@@ -171,9 +195,21 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("enumEntriesLibrary.kt")
+  public void testEnumEntriesLibrary() {
+    run("enumEntriesLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("enumValueOf.kt")
   public void testEnumValueOf() {
     run("enumValueOf.kt");
+  }
+
+  @Test
+  @TestMetadata("enumValueOfLibrary.kt")
+  public void testEnumValueOfLibrary() {
+    run("enumValueOfLibrary.kt");
   }
 
   @Test

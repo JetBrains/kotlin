@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheti
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintSyntheticPackage
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ValidateLocalSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.DisplayName
@@ -671,6 +673,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                     // umbrella generate should be picked by shared
                     assertExactTasksInGraph(
                         ":$sharedProjectName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":$sharedProjectName:${FingerprintSyntheticPackage.TASK_NAME}",
                         ":$sharedProjectName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":$sharedProjectName:$expectedSharedGenerateUmbrellaPackageTaskName",
                         ":$sharedProjectName:$expectedSharedFetchUmbrellaPackageTaskName",
@@ -793,11 +796,12 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     assertExactTasksInGraph(
                         ":${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":${FingerprintSyntheticPackage.TASK_NAME}",
                         ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)}",
                         ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)}",
                         ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
-                        ":${FetchSyntheticImportProjectPackages.TASK_NAME}"
+                        ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
                     )
                 }
 
@@ -810,15 +814,26 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         )
                     )
 
-                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertEquals(
+                        listOf("2.0.0"),
+                        describeSwiftPackage(projectPath.resolve(".swiftpm-locks/$identifier/swiftImport/subpackages/_"))
+                            .dependencies.mapNotNull {
+                                it.requirement?.range?.map { it.upperBound }
+                            }.flatten(),
+                        "Make sure we regenerated the package with the from constraint",
+                    )
+
+                    // Make sure we refetched
+                    assertTasksExecuted(":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)}")
 
                     assertExactTasksInGraph(
                         ":${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":${FingerprintSyntheticPackage.TASK_NAME}",
                         ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)}",
                         ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)}",
                         ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
-                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}"
+                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                     )
                 }
 
@@ -859,7 +874,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         swiftPMDependencies {
                             swiftPackage(
                                 url = url("https://github.com/RevenueCat/purchases-ios-spm.git"),
-                                version = exact("5.49.0"),
+                                version = exact("5.79.0"),
                                 products = listOf(product("RevenueCat")),
                             )
                         }
@@ -971,6 +986,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":right:syncPersistedPackageResolvedToSynthetic",
                         ":right:fetchSyntheticImportProjectPackages",
                         ":right:syncSyntheticPackageResolvedToPersisted",
+                        ":right:dumpXcodebuildArgsIphonesimulator",
                         ":right:convertSyntheticImportProjectIntoDefFileIphonesimulator",
                         ":right:compileKotlinIosSimulatorArm64",
                         ":right:iosSimulatorArm64MainKlibrary",
@@ -984,6 +1000,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                     assertExactSwiftImportTasksInGraph(
                         ":left:validateLocalSwiftPMDependencies",
                         ":left:computeLocalPackageDependencyInputFiles",
+                        ":left:fingerprintSyntheticPackage",
                         ":left:generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump",
                         ":serializeSwiftPMDependenciesMetadataForLockFiles",
                         ":left:serializeSwiftPMDependenciesMetadataForLockFiles",
@@ -992,6 +1009,8 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":left:iosSimulatorArm64ProcessResources",
                         ":left:syncPersistedPackageResolvedToSynthetic",
                         ":left:fetchSyntheticImportProjectPackages",
+                        ":left:fingerprintXcodebuildIphonesimulator",
+                        ":left:dumpXcodebuildArgsIphonesimulator",
                         ":left:convertSyntheticImportProjectIntoDefFileIphonesimulator",
                         ":left:cinteropSwiftPMImportIosSimulatorArm64",
                         ":left:compileKotlinIosSimulatorArm64",

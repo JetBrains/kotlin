@@ -87,8 +87,8 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -106,11 +106,13 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC
@@ -182,10 +184,12 @@ scopes:
         annotations: []
         backingFieldSymbol: null
         callableId: /JavaClass.value
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: /JavaClass.getValue
+          contextParameters: []
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -203,6 +207,7 @@ scopes:
           returnType: KaFlexibleType:
             annotations: []
             type: kotlin/Int!
+          typeParameters: []
           valueParameters: []
           visibility: PUBLIC
         hasBackingField: true
@@ -215,7 +220,6 @@ scopes:
         isExpect: false
         isExtension: false
         isExternal: false
-        isFromPrimaryConstructor: false
         isOverride: false
         isStatic: false
         isVal: true
@@ -237,6 +241,7 @@ scopes:
         annotations: []
         callableId: null
         containingClassId: JavaClass
+        contextParameters: []
         contextReceivers: []
         hasStableParameterNames: false
         isActual: false
@@ -349,6 +354,7 @@ scopes:
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -367,6 +373,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: JavaClass
+          typeParameters: []
           visibility: PUBLIC
         returnType: KaUsualClassType:
           annotations: []

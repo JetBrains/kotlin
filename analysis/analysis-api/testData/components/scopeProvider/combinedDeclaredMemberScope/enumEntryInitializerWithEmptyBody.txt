@@ -2,6 +2,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: null
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

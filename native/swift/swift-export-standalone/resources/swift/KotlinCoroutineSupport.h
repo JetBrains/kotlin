@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 void *__root___SwiftJob_init_allocate();
 
-void __root___SwiftJob_init_initialize(void *, bool (^)(bool));
+void __root___SwiftJob_init_initialize(void *, void (^)(void));
 
 void __root___SwiftJob_cancelExternally(void *);
 
@@ -17,6 +17,6 @@ void *_kotlin_swift_SwiftFlowIterator_init_allocate();
 
 void _kotlin_swift_SwiftFlowIterator_init_initialize(void * __kt, void * flow);
 
-void __root___SwiftJob_setCallback(void *, bool (^)(bool));
+void __root___SwiftJob_setCallback(void *, void (^)(void));
 
 NS_ASSUME_NONNULL_END

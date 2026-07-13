@@ -1,6 +1,6 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: JVM_IR, NATIVE
-// ^KT-86452
+// IGNORE_BACKEND: JVM_IR
+// ^KT-86452, KT-87390
 
 object O {
     context(s: String, c: Char)
@@ -17,14 +17,31 @@ var O.bar: String
     }
 
 fun box(): String {
+    // Tests on invocation of callables:
     context("O", 'K') {
         val fnRef: () -> String = O::foo
-        if (fnRef() != "OK") return "FAIL 1"
+        fnRef().let { result ->
+            if (result != "OK") return "FAIL 1: $result != \"OK\""
+        }
 
         val propRef = O::bar
-        if (propRef() != "") return "FAIL 2"
+        propRef().let { result ->
+            if (result != "") return "FAIL 2: $result != \"\""
+        }
+
         propRef.set("K")
-        if (propRef() != "OK") return "FAIL 3"
+        propRef().let { result ->
+            if (result != "OK") return "FAIL 3: $result != \"OK\""
+        }
+    }
+
+    // Tests on getting reference name:
+    context("O", 'K') {
+        val fnRef = O::foo
+        if (fnRef.name != "foo") return "FAIL 4: ${fnRef.name} != \"foo\""
+
+        val propRef = O::bar
+        if (propRef.name != "bar") return "FAIL 5: ${propRef.name} != \"bar\""
     }
 
     return "OK"

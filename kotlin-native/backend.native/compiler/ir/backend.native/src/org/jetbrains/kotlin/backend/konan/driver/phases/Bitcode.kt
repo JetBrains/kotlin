@@ -38,15 +38,25 @@ internal data class WriteBitcodeFileInput(
         val outputFile: File,
 ) : LlvmIrHolder
 
+internal data class InsertEntryPointAliasInput(
+        override val llvmModule: LLVMModuleRef,
+        val entryPointName: String,
+) : LlvmIrHolder
+
+internal val InsertEntryPointAliasPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, InsertEntryPointAliasInput>(
+        "InsertEntryPointAlias"
+) { _, (llvmModule, entryPointName) ->
+    // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
+    insertAliasToEntryPoint(llvmModule, entryPointName)
+}
+
 /**
  * Write in-memory LLVM module to filesystem as a bitcode.
  */
 internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, WriteBitcodeFileInput>(
         "WriteBitcodeFile",
         postactions = getDefaultLlvmModuleActions(),
-) { context, (llvmModule, outputFile) ->
-    // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
-    insertAliasToEntryPoint(context, llvmModule)
+) { _, (llvmModule, outputFile) ->
     LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPath)
 }
 
@@ -126,7 +136,7 @@ internal val StackProtectorPhaseInLLVM = optimizationPipelinePass(
         pipeline = ::StackProtectorPipeline
 )
 
-internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
+internal val RemoveRedundantSafepointsPhaseInCompiler = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
         name = "RemoveRedundantSafepoints",
         postactions = getDefaultLlvmModuleActions(),
         op = { context, _ ->
@@ -135,6 +145,11 @@ internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<Bit
                     isSafepointInliningAllowed = context.shouldInlineSafepoints()
             )
         }
+)
+
+internal val RemoveRedundantSafepointsPhaseInLLVM = optimizationPipelinePass(
+        name = "RemoveRedundantSafepoints",
+        pipeline = ::RemoveRedundantSafepointsPipeline
 )
 
 internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
@@ -181,6 +196,11 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
             null -> {}
         }
+        if (!context.config.runLLVMPassesInCompiler) {
+            it.runAndMeasurePhase(RemoveRedundantSafepointsPhaseInLLVM, module)
+        }
     }
-    runAndMeasurePhase(RemoveRedundantSafepointsPhase)
+    if (context.config.runLLVMPassesInCompiler) {
+        runAndMeasurePhase(RemoveRedundantSafepointsPhaseInCompiler)
+    }
 }

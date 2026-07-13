@@ -25,9 +25,9 @@ import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
 import kotlin.test.fail
 
-abstract class AbstractJavaModulesIntegrationTest(
-    private val languageVersion: LanguageVersion,
-) : AbstractKotlinCompilerIntegrationTest() {
+class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
+    private val languageVersion: LanguageVersion = LanguageVersion.LATEST_STABLE
+
     private val jdkHome: File
         get() = KtTestUtil.getJdk11Home()
 
@@ -44,7 +44,8 @@ abstract class AbstractJavaModulesIntegrationTest(
         checkKotlinOutput: (String) -> Unit = this.checkKotlinOutput(name),
     ): File {
         @Suppress("DEPRECATION")
-        val paths = (modulePath + ForTestCompileRuntime.runtimeJarFromDistForTests()).joinToString(separator = File.pathSeparator) { it.path }
+        val paths = (modulePath + ForTestCompileRuntime.runtimeJarFromDistForTests())
+            .joinToString(separator = File.pathSeparator) { it.path }
 
         val kotlinOptions = mutableListOf(
             K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
@@ -132,7 +133,7 @@ abstract class AbstractJavaModulesIntegrationTest(
     fun testAllModulePathAndNamedModule() {
         try {
             module("main", addModules = listOf("ALL-MODULE-PATH"))
-        } catch (e: JavaCompilationError) {
+        } catch (_: JavaCompilationError) {
             // Java compilation should fail, it's expected
         }
     }
@@ -223,7 +224,7 @@ abstract class AbstractJavaModulesIntegrationTest(
     @Test
     fun testAutomaticModuleNames() {
         // This name should be sanitized to just "auto.mat1c.m0d.ule"
-        val m1 = File(tmpdir, ".auto--mat1c-_-!@#\$%^&()m0d_ule--1.0..0-release..jar")
+        val m1 = File(tmpdir, ".auto--mat1c-_-!@#$%^&()m0d_ule--1.0..0-release..jar")
         module("automatic-module1").renameTo(m1)
 
         val m2 = module("automatic-module2", manifest = Manifest().apply {
@@ -240,7 +241,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         val b = module("autoB")
         // Even though we only add autoA to the module graph, autoB should be added as well because autoA, being automatic,
         // transitively requires every other automatic module, and in particular, autoB.
-        // Furthermore, because autoB is automatic, main should read autoB
+        // Furthermore, because autoB is automatic, the main should read autoB
         module("main", listOf(a, b), addModules = listOf("autoA"))
     }
 
@@ -281,7 +282,7 @@ abstract class AbstractJavaModulesIntegrationTest(
 
     @Test
     fun testWithBuildFile() {
-        // This test checks that module path is configured correctly when the compiler is invoked in the '-Xbuild-file' mode. Note that
+        // This test checks that the module path is configured correctly when the compiler is invoked in the '-Xbuild-file' mode. Note that
         // the "'-d' option is ignored" warning in this test is an artifact of the test infrastructure and is not a part of the test.
         val buildFile = AbstractCliTest.replacePathsInBuildXml(
             "-Xbuild-file=${File(testDataDirectory, "build.xml").path}",
@@ -312,8 +313,8 @@ abstract class AbstractJavaModulesIntegrationTest(
     @Test
     fun testDoNotLoadIrrelevantJarsFromUnnamed() {
         // This test checks that we don't load irrelevant .jar files from the JDK distribution when resolving JDK dependencies.
-        // Here we're testing that references to symbols from lib/ant-javafx are unresolved, if that file is present.
-        // The test succeeds though even if the file is absent, because it's not guaranteed to be present in JDK.
+        // Here we're testing that references to symbols from lib/ant-javafx are unresolved if that file is present.
+        // The test succeeds, though, even if the file is absent, because it's not guaranteed to be present in JDK.
         module("main", checkKotlinOutput = {
             assertTrue(it.trimEnd().endsWith("COMPILATION_ERROR"), it)
         })
@@ -337,9 +338,9 @@ abstract class AbstractJavaModulesIntegrationTest(
     @Test
     fun testNoDependencyOnUnnamed() {
         // This is a test on the JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE diagnostic.
-        // Most of the other tests in this class are compiling modules to jars, however here we need to compile the module to a directory.
+        // Most of the other tests in this class are compiling modules to jars; however, here we need to compile the module to a directory.
         // The reason is twofold:
-        // 1) Currently the compiler adds all classpath entries as module path entries as long as we're compiling a named module (i.e. have
+        // 1) Currently, the compiler adds all classpath entries as module path entries as long as we're compiling a named module (i.e. have
         //    `module-info.java` in the sources), see `configureSourceRoots` in `KotlinToJVMBytecodeCompiler.kt`. This is most likely
         //    incorrect.
         // 2) All jars found in the module path which are NOT named modules are loaded as automatic modules, see

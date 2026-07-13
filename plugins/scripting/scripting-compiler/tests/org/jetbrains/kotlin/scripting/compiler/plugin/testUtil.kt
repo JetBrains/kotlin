@@ -17,6 +17,11 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.updateWithCompilerOptions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.fail
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
@@ -24,7 +29,6 @@ import java.io.PrintStream
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
-import kotlin.test.*
 
 const val SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.test.base.compiler.arguments"
 

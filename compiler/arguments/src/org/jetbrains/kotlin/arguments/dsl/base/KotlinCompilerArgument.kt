@@ -57,12 +57,8 @@ data class KotlinCompilerArgument(
     @kotlinx.serialization.Transient
     val compilerName: String? = null,
 
-    @kotlinx.serialization.Transient
-    val isObsolete: Boolean = false,
-
     val deprecatedMessage: String? = null,
 ) : WithKotlinReleaseVersionsMetadata {
-
     // corresponds to [org.jetbrains.kotlin.cli.common.arguments.Argument.Delimiters]
     enum class Delimiter(val constantName: String) {
         Default("default"),

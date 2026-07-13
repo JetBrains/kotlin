@@ -13,11 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -71,6 +67,9 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
 
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { createContextReceivers() }
+
+    override val typeParameters: List<KaTypeParameterSymbol>
+        get() = withValidityAssertion { emptyList() }
 
     override val contextParameters: List<KaContextParameterSymbol>
         get() = withValidityAssertion {

@@ -14,6 +14,7 @@ scopes:
       KaLocalVariableSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -37,6 +38,7 @@ scopes:
               type: kotlin/Int
           ]
           type: kotlin/collections/Iterator<kotlin/Int>
+        typeParameters: []
         visibility: LOCAL
     constructors: 0
 
@@ -53,8 +55,8 @@ scopes:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -72,6 +74,7 @@ scopes:
         modality: FINAL
         name: list
         origin: SOURCE
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -82,6 +85,7 @@ scopes:
               type: kotlin/Int
           ]
           type: kotlin/collections/List<kotlin/Int>
+        typeParameters: []
         visibility: PUBLIC
     constructors: 0
 
@@ -129,8 +133,8 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
@@ -148,6 +152,7 @@ scopes:
             modality: FINAL
             name: list
             origin: SOURCE
+            primaryConstructorProperty: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -158,6 +163,7 @@ scopes:
                   type: kotlin/Int
               ]
               type: kotlin/collections/List<kotlin/Int>
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC

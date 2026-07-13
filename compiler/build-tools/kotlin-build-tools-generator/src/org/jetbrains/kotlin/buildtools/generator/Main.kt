@@ -130,7 +130,7 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
             val output = generator.generateArgumentsForLevel(currentLevel.level, currentLevel.parentName, currentLevel.additionalInterfaces)
             output.generatedFiles.forEach { [path, content] ->
                 val genFile = genDir.resolve(path)
-                GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false)
+                GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false, forbidGenerationOnTeamcity = false)
                 generatedFiles.add(genFile)
             }
             levelsToProcess += currentLevel.level.nestedLevels.flatMap { level ->

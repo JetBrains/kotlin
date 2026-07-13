@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
@@ -892,6 +893,7 @@ internal class KaFirCompilerFacility(
             configuration,
             classBuilderFactory,
             generateDeclaredClassFilter = generateClassFilter,
+            jvmBackendClassResolver = FirJvmBackendClassResolver(fir2IrResult.components),
             diagnosticReporter = diagnosticsCollector,
             compiledCodeProvider = compiledCodeProvider
         )
@@ -1373,10 +1375,6 @@ internal class KaFirCompilerFacility(
     private fun createJvmIrCodegenFactory(configuration: CompilerConfiguration, evaluatorData: JvmEvaluatorData?): JvmIrCodegenFactory {
         val ideCodegenSettings = JvmIrCodegenFactory.IdeCodegenSettings(
             shouldStubAndNotLinkUnboundSymbols = true,
-
-            // Because the file to compile may be contained in a "common" multiplatform module, an `expect` declaration doesn't necessarily
-            // have an obvious associated `actual` symbol. `shouldStubOrphanedExpectSymbols` generates stubs for such `expect` declarations.
-            shouldStubOrphanedExpectSymbols = true,
 
             // Compilation state acts as an in-out container for captured type parameter and local function mappings
             evaluatorData = evaluatorData

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
-import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.BackendKind
@@ -34,7 +33,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPath
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransitive
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
+import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -164,16 +165,44 @@ class IrTextDumpHandler(
 
         @OptIn(InternalSymbolFinderAPI::class)
         return irBuiltIns.symbolFinder.findClass(classId)?.owner
-            ?: assertions.fail { "Can't find a class in external dependencies: $externalClassId" }
+            ?: testInfraError( "Can't find a class in external dependencies: $externalClassId" )
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val actualDump = baseDumper.generateResultingDump().takeIf { it.isNotEmpty() }
-        assertEqualsToDump(getDumpExtension(), actualDump)
+        val moduleStructure = testServices.moduleStructure
+        val actualDump = baseDumper.generateResultingDump()
+        val baseDumpExtension = getBaseDumpExtension()
+        val baseGoldenFile = moduleStructure.originalTestDataFiles.first()
+            .withExtension(baseDumpExtension)
+
+        val hasTargetSpecificDifferenceDirective = validateTargetSpecificDumpFile(
+            testServices, assertions, baseGoldenFile,
+            baseDumpExtension = baseDumpExtension,
+            actualDump,
+            isKotlinLikeDump = false,
+        )
+
+        if (!hasTargetSpecificDifferenceDirective) {
+            checkOneExpectedFile(baseGoldenFile, actualDump)
+        }
+    }
+
+    private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
+        if (actualDump.isNotEmpty()) {
+            assertions.assertEqualsToFile(expectedFile, actualDump)
+        } else {
+            assertions.assertFileDoesntExist(expectedFile, directive)
+        }
+    }
+
+    private fun getBaseDumpExtension(): String {
+        return customExtension ?: (if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION)
     }
 
     private fun getDumpExtension(): String {
-        return customExtension ?: (if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION)
+        return customExtension
+            ?: getTargetSpecificDumpExtension(testServices, getBaseDumpExtension())
+            ?: getBaseDumpExtension()
     }
 }
 

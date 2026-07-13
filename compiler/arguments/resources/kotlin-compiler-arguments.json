@@ -547,7 +547,7 @@
                     "name": "2.5",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.2.20",
-                        "stabilizedVersion": null,
+                        "stabilizedVersion": "2.5.0",
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
@@ -556,6 +556,15 @@
                     "name": "2.6",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.4.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "2.7",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
                         "stabilizedVersion": null,
                         "deprecatedVersion": null,
                         "removedVersion": null
@@ -1511,6 +1520,15 @@
                     "name": "allow-first-with-warning",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.1.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "allow-all",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.4.20",
                         "stabilizedVersion": null,
                         "deprecatedVersion": null,
                         "removedVersion": null
@@ -12376,6 +12394,51 @@
                                                 "deprecatedMessage": "Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly."
                                             },
                                             {
+                                                "name": "Xwasm-IC-generate-unchanged-modules",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Regenerate unchanged modules in multimodule IC.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.4.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "deprecatedMessage": null
+                                            },
+                                            {
                                                 "name": "Xwasm-debug-friendly",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -14420,6 +14483,51 @@
                                                     }
                                                 },
                                                 "deprecatedMessage": "Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly."
+                                            },
+                                            {
+                                                "name": "Xwasm-IC-generate-unchanged-modules",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Regenerate unchanged modules in multimodule IC.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.4.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "deprecatedMessage": null
                                             },
                                             {
                                                 "name": "Xwasm-debug-friendly",
@@ -16497,7 +16605,7 @@
                                             "introducedVersion": "1.5.20",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": "1.5.20",
-                                            "removedVersion": null
+                                            "removedVersion": "2.4.20"
                                         },
                                         "argumentType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -16510,7 +16618,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "deprecatedMessage": "Use '-Xadd-light-debug=enable' instead."
+                                        "deprecatedMessage": "Light debug information is enabled by default for Darwin platforms. For other targets use '-Xadd-light-debug=enable' instead."
                                     },
                                     {
                                         "name": "Xgc",
@@ -17936,7 +18044,7 @@
                                         "releaseVersionsMetadata": {
                                             "introducedVersion": "1.6.0",
                                             "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
+                                            "deprecatedVersion": "2.4.20",
                                             "removedVersion": null
                                         },
                                         "argumentType": {
@@ -18483,7 +18591,7 @@
                                             "introducedVersion": "1.5.20",
                                             "stabilizedVersion": "1.5.20",
                                             "deprecatedVersion": "2.0.20",
-                                            "removedVersion": null
+                                            "removedVersion": "2.4.20"
                                         },
                                         "argumentType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
@@ -18894,7 +19002,7 @@
                                             "introducedVersion": "1.5.20",
                                             "stabilizedVersion": "1.5.20",
                                             "deprecatedVersion": "1.9.20",
-                                            "removedVersion": null
+                                            "removedVersion": "2.4.20"
                                         },
                                         "argumentType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",

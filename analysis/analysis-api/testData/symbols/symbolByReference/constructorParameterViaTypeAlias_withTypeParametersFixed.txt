@@ -1,8 +1,8 @@
 KaValueParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
-  generatedPrimaryConstructorProperty: null
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
@@ -20,11 +20,13 @@ KaValueParameterSymbol:
   modality: FINAL
   name: param
   origin: TYPEALIASED_CONSTRUCTOR
+  primaryConstructorProperty: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/String
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(constructorParameterViaTypeAlias_withTypeParametersFixed.kt)
   getContainingJvmClassName: null

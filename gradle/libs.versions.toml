@@ -3,7 +3,7 @@ kotlin-release = "2.4.0"
 dexMemberList = "4.1.1"
 dokka = "2.2.0"
 gradle-custom-user-data = "2.4.0"
-develocity = "4.2.2"
+develocity = "4.3.3"
 develocity-plugin-adapter = "1.2.1"
 gradle-plugin-publish = "2.1.1"
 # The version for foojay should be synced with the version in repo/gradle-settings-conventions/settings.gradle.kts
@@ -12,7 +12,9 @@ gradle-toolchains-foojay-resolver = "1.0.0"
 guava = "33.3.1-jre"
 failureaccess = "1.0.2"
 javaDiffUtils = "4.12"
-kotlinx-serialization = "1.7.3"
+kotlinx-serialization = "1.9.0"
+kotlinx-serialization-min = "1.7.3"
+kotlinx-schema = "0.5.0"
 # Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA. IntelliJ IDEA uses 1.6 since 2022.3
 # Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
 # Should be synchronized with 'analysis-api-kotlinx-coroutines'
@@ -50,7 +52,7 @@ diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
 auto-value-annotations = "1.11.0" # Used in opentelemetry-api
 fastutil = "8.5.14-jb1"
-rwmutex-idea = "0.0.7"
+rwmutex-idea = "0.0.10"
 # Wasm specific
 wasmedge = "0.16.3"
 wasmtime = "44.0.1"
@@ -72,7 +74,7 @@ commons-io = "2.18.0"
 commons-lang = "3.18.0"
 commons-text = "1.10.0"
 dataframe-dev = "1.0.0-dev-10669"
-org-jetbrains-syntax-api = "0.3.340"
+org-jetbrains-syntax-api = "0.3.376"
 org-jetbrains-annotations = "26.0.2"
 schema-kenerator = "2.1.2"
 kotlinpoet = "2.2.0"
@@ -93,7 +95,7 @@ bytebuddy = "1.18.9"
 playwright = "1.60.0"
 
 analysis-api-kotlin = "2.3.21"
-analysis-api-kotlinx-coroutines = "1.8.0-intellij-13" # Should be synchronized with 'kotlinx-coroutines'
+analysis-api-kotlinx-coroutines = "1.10.2-intellij-1" # Should be synchronized with 'kotlinx-coroutines'
 
 [libraries]
 kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }
@@ -116,8 +118,10 @@ gradle-toolchainsFoojayResolver-gradlePlugin = { module = "org.gradle.toolchains
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
+kotlinx-schema-generator-json = { module = "org.jetbrains.kotlinx:kotlinx-schema-generator-json", version.ref = "kotlinx-schema" }
 kotlinx-benchmark-runtime = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinx-benchmark" }
 shadow-gradlePlugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
@@ -225,13 +229,13 @@ bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", vers
 
 gradlePlugin-gradle-node = { module = "com.github.node-gradle.node:com.github.node-gradle.node.gradle.plugin", version.ref = "gradle-node-plugin" }
 
-playwrigt = { module = "com.microsoft.playwright:playwright", version.ref = "playwright" }
+playwright = { module = "com.microsoft.playwright:playwright", version.ref = "playwright" }
 
 analysis-api-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "analysis-api-kotlin" }
 analysis-api-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "analysis-api-kotlin" }
 analysis-api-kotlin-metadata-jvm = { module = "org.jetbrains.kotlin:kotlin-metadata-jvm", version.ref = "analysis-api-kotlin" }
-analysis-api-intellij-patched-kotlinx-coroutines-core-jvm = { module = "com.intellij.platform:kotlinx-coroutines-core-jvm", version.ref = "analysis-api-kotlinx-coroutines" }
-analysis-api-intellij-patched-kotlinx-coroutines-debug = { module = "com.intellij.platform:kotlinx-coroutines-debug", version.ref = "analysis-api-kotlinx-coroutines" }
+analysis-api-intellij-patched-kotlinx-coroutines-core-jvm = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "analysis-api-kotlinx-coroutines" }
+analysis-api-intellij-patched-kotlinx-coroutines-debug = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-debug", version.ref = "analysis-api-kotlinx-coroutines" }
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }

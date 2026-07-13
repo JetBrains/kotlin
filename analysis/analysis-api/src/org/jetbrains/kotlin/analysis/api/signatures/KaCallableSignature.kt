@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -55,9 +55,8 @@ public sealed interface KaCallableSignature<out S : KaCallableSymbol> : KaLifeti
     public val callableId: CallableId? get() = withValidityAssertion { symbol.callableId }
 
     /**
-     * The use-site-substituted [context parameters][org.jetbrains.kotlin.analysis.api.symbols.contextParameters].
+     * The use-site-substituted [context parameters][KaCallableSymbol.contextParameters].
      */
-    @KaExperimentalApi
     public val contextParameters: List<KaVariableSignature<KaContextParameterSymbol>> get() = withValidityAssertion { emptyList() }
 
     /**

@@ -1521,7 +1521,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(resolvedQualifier: FirResolvedQualifier) {
         resolved {
-            val symbol = resolvedQualifier.symbol
+            val symbol = resolvedQualifier.qualifierSymbol
             if (symbol != null) {
                 symbolRef(symbol) {
                     fqn(resolvedQualifier.classId?.relativeClassName ?: FqName("<???>"))

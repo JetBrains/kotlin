@@ -705,7 +705,7 @@ Map<KonanTarget, File> createConfigurations(List<File> bundles) {
         throw new IllegalArgumentException("Bundle archives are missing for $missingBundles")
     }
     result.each { target, file ->
-        if (!file.name.contains(kotlinBuildProperties.kotlinVersion.get())) {
+        if (!file.name.contains(BuildPropertiesKt.getKotlinBuildProperties(project).kotlinVersion.get())) {
             throw new IllegalArgumentException("Incorrect version specified for the publish: ${file.name}")
         }
     }

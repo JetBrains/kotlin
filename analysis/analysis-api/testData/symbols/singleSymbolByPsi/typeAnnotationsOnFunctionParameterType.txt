@@ -32,8 +32,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -51,6 +51,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: para
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: [
@@ -63,6 +64,7 @@ KaNamedFunctionSymbol:
         ]
         typeArguments: []
         type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionParameterType.kt)
       getContainingJvmClassName: TypeAnnotationsOnFunctionParameterTypeKt

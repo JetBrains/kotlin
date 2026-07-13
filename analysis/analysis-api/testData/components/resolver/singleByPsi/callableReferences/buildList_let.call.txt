@@ -6,6 +6,7 @@ KtCallableReferenceExpression(246,251): '::add'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -29,6 +30,7 @@ KtCallableReferenceExpression(246,251): '::add'
                 type: PartData
             ]
             type: kotlin/collections/MutableList<PartData>
+          typeParameters: []
           visibility: PUBLIC
         type = kotlin.collections.MutableList<PartData>
       extensionReceiver = null

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import org.junit.Assert
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -156,7 +155,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
 
         JarFile(jarFile).use {
             val mainClassAttr = it.manifest.mainAttributes.getValue("Main-Class")
-            Assert.assertEquals(expectedMainClass, mainClassAttr)
+            assertEquals(expectedMainClass, mainClassAttr)
         }
     }
 

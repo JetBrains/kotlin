@@ -2359,6 +2359,152 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/companionExtensionAndBlock")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionExtensionAndBlock {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/companionExtensionAndBlock/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionExtensionAndBlock() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/companionExtensionAndBlock"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "withTestCompilerPluginEnabled");
+    }
+
+    @Test
+    @TestMetadata("companionBlockFunction.kt")
+    public void testCompanionBlockFunction() {
+      run("companionBlockFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockFunctionLibrary.kt")
+    public void testCompanionBlockFunctionLibrary() {
+      run("companionBlockFunctionLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockFunctionReceiver.kt")
+    public void testCompanionBlockFunctionReceiver() {
+      run("companionBlockFunctionReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockFunctionReceiverLibrary.kt")
+    public void testCompanionBlockFunctionReceiverLibrary() {
+      run("companionBlockFunctionReceiverLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockProperty.kt")
+    public void testCompanionBlockProperty() {
+      run("companionBlockProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockPropertyLibrary.kt")
+    public void testCompanionBlockPropertyLibrary() {
+      run("companionBlockPropertyLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockPropertyReceiver.kt")
+    public void testCompanionBlockPropertyReceiver() {
+      run("companionBlockPropertyReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockPropertyReceiverLibrary.kt")
+    public void testCompanionBlockPropertyReceiverLibrary() {
+      run("companionBlockPropertyReceiverLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockPropertyWithQualifier.kt")
+    public void testCompanionBlockPropertyWithQualifier() {
+      run("companionBlockPropertyWithQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockVariable.kt")
+    public void testCompanionBlockVariable() {
+      run("companionBlockVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockVariableLibrary.kt")
+    public void testCompanionBlockVariableLibrary() {
+      run("companionBlockVariableLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockVariableLibraryWithQualifier.kt")
+    public void testCompanionBlockVariableLibraryWithQualifier() {
+      run("companionBlockVariableLibraryWithQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionFunction.kt")
+    public void testCompanionExtensionFunction() {
+      run("companionExtensionFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionFunctionLibrary.kt")
+    public void testCompanionExtensionFunctionLibrary() {
+      run("companionExtensionFunctionLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionFunctionReceiver.kt")
+    public void testCompanionExtensionFunctionReceiver() {
+      run("companionExtensionFunctionReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionFunctionReceiverLibrary.kt")
+    public void testCompanionExtensionFunctionReceiverLibrary() {
+      run("companionExtensionFunctionReceiverLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionProperty.kt")
+    public void testCompanionExtensionProperty() {
+      run("companionExtensionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionPropertyLibrary.kt")
+    public void testCompanionExtensionPropertyLibrary() {
+      run("companionExtensionPropertyLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionPropertyReceiver.kt")
+    public void testCompanionExtensionPropertyReceiver() {
+      run("companionExtensionPropertyReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionPropertyReceiverLibrary.kt")
+    public void testCompanionExtensionPropertyReceiverLibrary() {
+      run("companionExtensionPropertyReceiverLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionVariable.kt")
+    public void testCompanionExtensionVariable() {
+      run("companionExtensionVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionVariableLibrary.kt")
+    public void testCompanionExtensionVariableLibrary() {
+      run("companionExtensionVariableLibrary.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/constructorDelegatingReference")
   @TestDataPath("$PROJECT_ROOT")
   public class ConstructorDelegatingReference {
@@ -5966,6 +6112,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
     }
 
     @Test
+    @TestMetadata("nestedClassQualifierResolvesToOwner.kt")
+    public void testNestedClassQualifierResolvesToOwner() {
+      run("nestedClassQualifierResolvesToOwner.kt");
+    }
+
+    @Test
     @TestMetadata("nullSafeCallExpression.kt")
     public void testNullSafeCallExpression() {
       run("nullSafeCallExpression.kt");
@@ -6007,6 +6159,42 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
     @Test
     public void testAllFilesPresentInTypeAlias() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "withTestCompilerPluginEnabled");
+    }
+
+    @Test
+    @TestMetadata("libraryNestedTypeAliasQualifierResolvesToTypeAliasOwner.kt")
+    public void testLibraryNestedTypeAliasQualifierResolvesToTypeAliasOwner() {
+      run("libraryNestedTypeAliasQualifierResolvesToTypeAliasOwner.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedGenericTypeAliasQualifierResolvesToTypeAliasOwner.kt")
+    public void testNestedGenericTypeAliasQualifierResolvesToTypeAliasOwner() {
+      run("nestedGenericTypeAliasQualifierResolvesToTypeAliasOwner.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedTypeAliasChainQualifierResolvesToTypeAliasOwner.kt")
+    public void testNestedTypeAliasChainQualifierResolvesToTypeAliasOwner() {
+      run("nestedTypeAliasChainQualifierResolvesToTypeAliasOwner.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedTypeAliasOuterQualifierResolvesToOuterOwner.kt")
+    public void testNestedTypeAliasOuterQualifierResolvesToOuterOwner() {
+      run("nestedTypeAliasOuterQualifierResolvesToOuterOwner.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedTypeAliasQualifierResolvesToNestedTypeAliasOwner.kt")
+    public void testNestedTypeAliasQualifierResolvesToNestedTypeAliasOwner() {
+      run("nestedTypeAliasQualifierResolvesToNestedTypeAliasOwner.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedTypeAliasQualifierResolvesToTypeAliasOwner.kt")
+    public void testNestedTypeAliasQualifierResolvesToTypeAliasOwner() {
+      run("nestedTypeAliasQualifierResolvesToTypeAliasOwner.kt");
     }
 
     @Test
@@ -6761,6 +6949,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
     @TestMetadata("ClassReferenceInIncorrectWhenClause.kt")
     public void testClassReferenceInIncorrectWhenClause() {
       run("ClassReferenceInIncorrectWhenClause.kt");
+    }
+
+    @Test
+    @TestMetadata("ClassWithCompanion.kt")
+    public void testClassWithCompanion() {
+      run("ClassWithCompanion.kt");
     }
 
     @Test

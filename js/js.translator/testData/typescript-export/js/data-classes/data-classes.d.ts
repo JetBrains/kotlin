@@ -117,5 +117,33 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => WithIgnoredPrimaryAndPropertyAndExposedCopy;
             }
         }
+        class WithIgnoredPropertyAndExposedCopy {
+            constructor(value?: number, hidden?: number);
+            get value(): number;
+            copy(value?: number, hidden?: number): foo.WithIgnoredPropertyAndExposedCopy;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+        }
+        namespace WithIgnoredPropertyAndExposedCopy {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WithIgnoredPropertyAndExposedCopy;
+            }
+        }
+        class WithIgnoredPrimaryAndHiddenCopyWithoutSecondary {
+            private constructor();
+            get value(): number;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+        }
+        namespace WithIgnoredPrimaryAndHiddenCopyWithoutSecondary {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WithIgnoredPrimaryAndHiddenCopyWithoutSecondary;
+            }
+        }
+        function createWithIgnoredPrimaryAndHiddenCopyWithoutSecondary(value?: number): foo.WithIgnoredPrimaryAndHiddenCopyWithoutSecondary;
     }
 }

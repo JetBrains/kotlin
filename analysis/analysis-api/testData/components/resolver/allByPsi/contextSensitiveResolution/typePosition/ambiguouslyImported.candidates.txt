@@ -166,6 +166,7 @@ KtNameReferenceExpression(238,239): 'y'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -184,6 +185,7 @@ KtNameReferenceExpression(238,239): 'y'
               annotations: []
               typeArguments: []
               type: MySealed
+            typeParameters: []
             visibility: PUBLIC
           type = MySealed
         type = MySealed.Right

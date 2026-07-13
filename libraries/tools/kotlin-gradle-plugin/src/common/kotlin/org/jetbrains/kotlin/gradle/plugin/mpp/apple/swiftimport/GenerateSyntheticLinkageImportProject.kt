@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.ListProperty
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
@@ -25,23 +25,32 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.io.File
 import java.io.Serializable
 import javax.inject.Inject
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.map
+import kotlin.collections.mapNotNull
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), UsesBuildFusService {
 
     @get:Input
-    protected abstract val directlyImportedDependencies: SetProperty<SwiftPMDependency>
+    protected abstract val directSwiftPMDependencies: SetProperty<SwiftPMDependency>
 
     @get:Input
-    abstract val dependencyIdentifierToImportedSwiftPMDependencies: Property<TransitiveSwiftPMDependencies>
-
-    @get:Internal
-    val projectDirectory = project.layout.projectDirectory
+    abstract val transitiveSwiftPMMetadata: Property<TransitiveSwiftPMMetadata>
 
     @get:Internal
     val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty().convention(
         project.layout.buildDirectory.dir("kotlin/swiftImport")
     )
+
+    @get:InputFile
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val syntheticPackageFingerprint: RegularFileProperty
+
+    @get:Internal
+    abstract val coordinationService: Property<SwiftImportFingerprintedCoordinationService>
 
     @get:OutputFiles
     protected val projectRootTrackedFiles
@@ -92,20 +101,15 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
     @get:Input
     val buildingFromXcode: Property<Boolean> = project.objects.property(Boolean::class.java).convention(true)
 
-    enum class SyntheticProductType : Serializable {
-        DYNAMIC,
-        INFERRED,
-    }
-
     @get:Inject
-    protected abstract val execOps: ExecOperations
+    abstract val fs: FileSystemOperations
 
     fun configureWithExtension(swiftPMImportExtension: SwiftPMImportExtension) {
         iosDeploymentVersion.set(swiftPMImportExtension.iosMinimumDeploymentTarget)
         macosDeploymentVersion.set(swiftPMImportExtension.macosMinimumDeploymentTarget)
         watchosDeploymentVersion.set(swiftPMImportExtension.watchosMinimumDeploymentTarget)
         tvosDeploymentVersion.set(swiftPMImportExtension.tvosMinimumDeploymentTarget)
-        directlyImportedDependencies.set(swiftPMImportExtension.swiftPMDependencies)
+        directSwiftPMDependencies.set(swiftPMImportExtension.swiftPMDependencies)
     }
 
     /**
@@ -113,7 +117,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
      * `dependencyIdentifierToImportedSwiftPMDependencies`.
      */
     fun useOnlyTransitiveImportedDependencies() {
-        directlyImportedDependencies.set(emptySet())
+        directSwiftPMDependencies.set(emptySet())
     }
 
     @TaskAction
@@ -121,12 +125,70 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         buildFusService.orNull?.reportFusMetrics {
             it.report(
                 BooleanMetrics.KMP_SWIFT_PM_IMPORT_HAS_TRANSITIVE_DEPENDENCIES_FROM_MODULAR_DEPENDENCIES,
-                dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys.any { it.isModular }
+                transitiveSwiftPMMetadata.get().metadataByDependencyIdentifier.keys.any { it.isModular }
             )
         }
 
+        if (!syntheticPackageFingerprint.isPresent) {
+            runPackageGeneration(
+                syntheticImportProjectRoot.get().asFile
+            )
+            return
+        } else {
+            val claim = coordinationService.get().claimOrJoinPackageGeneration(
+                packageHash = syntheticPackageFingerprint.get().asFile.readText().trim().split("\n")[1]
+            )
+
+            when (claim) {
+                is CoordinationClaim.Existing -> {
+                    coordinationService.get().awaitPackageGeneration(claim.bucket)
+                }
+
+                is CoordinationClaim.Owner -> runOwnerPackageGeneration(
+                    claim.bucket
+                )
+            }
+            syncFromOwner(
+                claim.bucket.ownerSyntheticPackageRoot,
+                syntheticImportProjectRoot.get().asFile,
+            )
+
+        }
+    }
+
+    private fun syncFromOwner(
+        source: File,
+        destination: File,
+    ) {
+        require(source.isDirectory) {
+            "Expected shared synthetic package root is missing: $source"
+        }
+        fs.sync {
+            it.from(source)
+            it.into(destination)
+        }
+    }
+
+    private fun runOwnerPackageGeneration(
+        bucket: GeneratePackageBucket,
+    ) {
+        try {
+            runPackageGeneration(
+                bucket.ownerSyntheticPackageRoot
+            )
+            coordinationService.get().markPackageGenerationCompleted(bucket)
+        } catch (failure: Throwable) {
+            coordinationService.get().markPackageGenerationFailed(bucket, failure)
+            throw failure
+        }
+    }
+
+    private fun runPackageGeneration(
+        syntheticImportProjectRoot: File,
+    ) {
+
         failOnNonIdempotentChangesIfNeeded {
-            val packageRoot = syntheticImportProjectRoot.get().asFile.normalizedAbsoluteFile()
+            val packageRoot = syntheticImportProjectRoot.normalizedAbsoluteFile()
             val binaryTarget = if (xcframeworkPath.isPresent) BinaryTarget(
                 name = xcframeworkPath.get().nameWithoutExtension,
                 relativePath = xcframeworkPath.get().toRelativeString(packageRoot)
@@ -137,8 +199,8 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                         identifier = SYNTHETIC_IMPORT_DYLIB,
                         packageRoot = packageRoot.resolve("${SUBPACKAGES}/${SYNTHETIC_IMPORT_DYLIB}"),
                         syntheticProductType = SyntheticProductType.DYNAMIC,
-                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
-                        transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
+                        directlyImportedSwiftPMDependencies = directSwiftPMDependencies.get(),
+                        transitiveSyntheticPackages = transitiveSwiftPMMetadata.get().metadataByDependencyIdentifier.keys,
                         transitiveSyntheticPackagesPath = "..",
                         binaryTarget = null,
                     )
@@ -147,7 +209,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                         packageRoot = packageRoot,
                         syntheticProductType = SyntheticProductType.INFERRED,
                         // Leave only version constraints - SwiftPM doesn't pick it up from subproject dependency when product is not consumed explicitly from the package
-                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get().mapNotNull {
+                        directlyImportedSwiftPMDependencies = directSwiftPMDependencies.get().mapNotNull {
                             val remoteDependency = when (it) {
                                 is SwiftPMDependency.Local -> return@mapNotNull null
                                 is SwiftPMDependency.Remote -> it
@@ -164,14 +226,14 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                         identifier = packageIdentifier.get(),
                         packageRoot = packageRoot,
                         syntheticProductType = SyntheticProductType.INFERRED,
-                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
-                        transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
+                        directlyImportedSwiftPMDependencies = directSwiftPMDependencies.get(),
+                        transitiveSyntheticPackages = transitiveSwiftPMMetadata.get().metadataByDependencyIdentifier.keys,
                         transitiveSyntheticPackagesPath = SUBPACKAGES,
                         binaryTarget = binaryTarget,
                     )
                 }
             }
-            dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.forEach { (dependencyIdentifier, swiftPMDependencies) ->
+            transitiveSwiftPMMetadata.get().metadataByDependencyIdentifier.forEach { (dependencyIdentifier, swiftPMDependencies) ->
                 generatePackageManifest(
                     identifier = dependencyIdentifier.identifier,
                     packageRoot = packageRoot.resolve("${SUBPACKAGES}/${dependencyIdentifier.identifier}"),
@@ -297,7 +359,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                     val deploymentTarget = explicitOrMaximumDeploymentTarget(
                         macosDeploymentVersion,
                         MACOS_DEPLOYMENT_TARGET_DEFAULT,
-                        dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.macosDeploymentVersion },
+                        transitiveSwiftPMMetadata.get().metadataByDependencyIdentifier.values.mapNotNull { it.macosDeploymentVersion },
                     )
                     ".macOS(\"${deploymentTarget}\")"
                 }
@@ -305,7 +367,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                     val deploymentTarget = explicitOrMaximumDeploymentTarget(
                         iosDeploymentVersion,
                         IOS_DEPLOYMENT_TARGET_DEFAULT,
-                        dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.iosDeploymentVersion },
+                        transitiveSwiftPMMetadata.get().metadataByDependencyIdentifier.values.mapNotNull { it.iosDeploymentVersion },
                     )
                     ".iOS(\"${deploymentTarget}\")"
                 }
@@ -313,7 +375,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                     val deploymentTarget = explicitOrMaximumDeploymentTarget(
                         tvosDeploymentVersion,
                         TVOS_DEPLOYMENT_TARGET_DEFAULT,
-                        dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.tvosDeploymentVersion },
+                        transitiveSwiftPMMetadata.get().metadataByDependencyIdentifier.values.mapNotNull { it.tvosDeploymentVersion },
                     )
                     ".tvOS(\"${deploymentTarget}\")"
                 }
@@ -321,7 +383,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                     val deploymentTarget = explicitOrMaximumDeploymentTarget(
                         watchosDeploymentVersion,
                         WATCHOS_DEPLOYMENT_TARGET_DEFAULT,
-                        dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.watchosDeploymentVersion },
+                        transitiveSwiftPMMetadata.get().metadataByDependencyIdentifier.values.mapNotNull { it.watchosDeploymentVersion },
                     )
                     ".watchOS(\"${deploymentTarget}\")"
                 }
@@ -360,6 +422,14 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         packageRoot.resolve(objcHeader).also {
             it.parentFile.mkdirs()
         }.writeText("")
+
+        val moduleMap = "Sources/${identifier}/include/module.modulemap"
+        packageRoot.resolve(moduleMap).also {
+            it.parentFile.mkdirs()
+        }.writeText(
+            ""
+        )
+
     }
 
     /**
@@ -392,6 +462,11 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
     }
 
     companion object {
+
+        enum class SyntheticProductType : Serializable {
+            DYNAMIC,
+            INFERRED,
+        }
         const val TASK_NAME = "generateSyntheticLinkageSwiftPMImportProject"
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "KotlinMultiplatformLinkedPackage"
         const val SYNTHETIC_IMPORT_DYLIB = "KotlinMultiplatformLinkedPackageDylib"

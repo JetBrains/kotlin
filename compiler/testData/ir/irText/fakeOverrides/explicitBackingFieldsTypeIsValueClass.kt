@@ -1,9 +1,13 @@
 // SKIP_KT_DUMP
-// IGNORE_BACKEND: JVM_IR, JKLIB
+// WORKS_WHEN_VALUE_CLASS
+// WITH_STDLIB
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM: class V has extra JvmInline annotation
 // LANGUAGE: +ExplicitBackingFields
 
 interface I
 
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class V(val x: Int) : I  {
     constructor() : this(42) {}
 }

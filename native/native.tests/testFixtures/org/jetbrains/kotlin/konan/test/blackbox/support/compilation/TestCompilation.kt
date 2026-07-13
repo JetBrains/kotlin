@@ -91,6 +91,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             add("-enable-assertions")
 
         add(irValidationCompilerOptions)
+        add("-Xallow-kotlin-package")
 
         threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }

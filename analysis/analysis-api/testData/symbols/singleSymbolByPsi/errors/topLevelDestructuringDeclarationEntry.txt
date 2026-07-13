@@ -1,6 +1,7 @@
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -18,6 +19,7 @@ KaLocalVariableSymbol:
   returnType: KaErrorType:
     annotations: []
     type: ERROR_TYPE
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(topLevelDestructuringDeclarationEntry.kt)
   getContainingJvmClassName: null

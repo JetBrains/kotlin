@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -364,6 +365,19 @@ class MemoizedInlineClassReplacements(
         name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
     }
 
+    private fun IrConstructor.replaceCopiedDefaultValuesWithStubsFrom(source: IrConstructor) {
+        for ([sourceParameter, replacementParameter] in source.parameters.zip(parameters)) {
+            val sourceDefault = sourceParameter.defaultValue ?: continue
+            // The replacement can be requested from another file before the source default expression is lowered.
+            // Keep the parameter defaultable, but do not keep the early deep copy made by copyFunctionSignatureFrom.
+            replacementParameter.defaultValue = factory.createExpressionBody(
+                IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, replacementParameter.type, "Default Stub").apply {
+                    attributeOwnerId = sourceDefault.expression
+                }
+            )
+        }
+    }
+
     // When we expose regular class constructors, we add another constructor with BoxingMarker parameter
     // to be called from Kotlin, while original constructor is to be called from Java.
     fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? {
@@ -395,6 +409,7 @@ class MemoizedInlineClassReplacements(
                 }
             }
             copyFunctionSignatureFrom(constructor)
+            replaceCopiedDefaultValuesWithStubsFrom(constructor)
             annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
             body = constructor.body?.patchDeclarationParents(this)
 

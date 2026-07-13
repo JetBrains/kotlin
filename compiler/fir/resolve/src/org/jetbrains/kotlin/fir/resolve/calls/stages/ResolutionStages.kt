@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 
@@ -104,7 +105,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         val resolvedQualifier = extensionReceiver.expression as? FirResolvedQualifier
             ?: error("Candidate for companion extension has non-qualifier extension receiver")
 
-        val receiverClassSymbol = resolvedQualifier.symbol?.fullyExpandedClass()
+        val receiverClassSymbol = resolvedQualifier.qualifierSymbol?.fullyExpandedClass()
 
         if (receiverClassSymbol == null) {
             sink.reportDiagnostic(ReceiverIsNotAClass)
@@ -205,7 +206,7 @@ object CheckDispatchReceiver : ResolutionStage() {
 
         if (smartcastedReceiver != null &&
             !smartcastedReceiver.isStable &&
-            (isCandidateFromUnstableSmartcast || (isReceiverNullable && !smartcastedReceiver.smartcastType.coneType.canBeNull(candidate.callInfo.session)))
+            (isCandidateFromUnstableSmartcast || (isReceiverNullable && !smartcastedReceiver.smartcastType.coneType.canBeNull()))
         ) {
             val dispatchReceiverType = (candidate.symbol as? FirCallableSymbol<*>)?.dispatchReceiverType?.let {
                 context.session.typeApproximator.approximateToSuperType(
@@ -860,8 +861,8 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
                     if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) check(atom in candidate.postponedAtoms)
 
                     sink.yieldDiagnostic(UnsuccessfulCallableReferenceArgument)
-                } else when (applicability) {
-                    CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY ->
+                } else @OptIn(OnlyForDefaultLanguageFeatureDisabled::class) when (applicability) {
+                    CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY /* DisableCompatibilityModeForNewInference, PrioritizedEnumEntries */ ->
                         sink.reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
                     else -> {
                     }
@@ -980,9 +981,6 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                         emptyIntersectionTypeInfo.casingTypes.toList() as List<ConeKotlinType>,
                         variableWithConstraints.typeVariable.asCone(),
                         emptyIntersectionTypeInfo.kind,
-                        isError = context.session.languageVersionSettings.supportsFeature(
-                            LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
-                        )
                     )
                 )
             }

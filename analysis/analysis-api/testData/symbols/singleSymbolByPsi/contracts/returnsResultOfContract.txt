@@ -14,8 +14,8 @@ KaNamedFunctionSymbol:
             KaValueParameterSymbol:
               annotations: []
               callableId: null
+              contextParameters: []
               contextReceivers: []
-              generatedPrimaryConstructorProperty: null
               hasDeclaredDefaultValue: false
               hasDefaultValue: false
               isActual: false
@@ -33,6 +33,7 @@ KaNamedFunctionSymbol:
               modality: FINAL
               name: block
               origin: SOURCE
+              primaryConstructorProperty: null
               receiverParameter: null
               returnType: KaFunctionType:
                 annotations: []
@@ -45,6 +46,7 @@ KaNamedFunctionSymbol:
                     type: R
                 ]
                 type: (T) -> R
+              typeParameters: []
               visibility: PUBLIC
               getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
               getContainingJvmClassName: ReturnsResultOfContractKt
@@ -59,8 +61,8 @@ KaNamedFunctionSymbol:
             KaValueParameterSymbol:
               annotations: []
               callableId: null
+              contextParameters: []
               contextReceivers: []
-              generatedPrimaryConstructorProperty: null
               hasDeclaredDefaultValue: false
               hasDefaultValue: false
               isActual: false
@@ -78,6 +80,7 @@ KaNamedFunctionSymbol:
               modality: FINAL
               name: block
               origin: SOURCE
+              primaryConstructorProperty: null
               receiverParameter: null
               returnType: KaFunctionType:
                 annotations: []
@@ -90,6 +93,7 @@ KaNamedFunctionSymbol:
                     type: R
                 ]
                 type: (T) -> R
+              typeParameters: []
               visibility: PUBLIC
               getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
               getContainingJvmClassName: ReturnsResultOfContractKt
@@ -118,6 +122,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -135,6 +140,7 @@ KaNamedFunctionSymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: T
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
     getContainingJvmClassName: ReturnsResultOfContractKt
@@ -184,8 +190,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -203,6 +209,7 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: block
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -215,6 +222,7 @@ KaNamedFunctionSymbol:
             type: R
         ]
         type: (T) -> R
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
       getContainingJvmClassName: ReturnsResultOfContractKt

@@ -29,9 +29,14 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.ScriptTemplateDefinition
@@ -65,8 +70,8 @@ class ScriptGenTest : CodegenTestCase() {
             )
     }
 
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun setUp() {
         additionalDependencies =
             System.getenv("PROJECT_CLASSES_DIRS")?.split(File.pathSeparator)?.map { File(it) }
                 ?: listOf(
@@ -80,6 +85,10 @@ class ScriptGenTest : CodegenTestCase() {
                         ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")
     }
 
+    override val firParser: FirParser
+        get() = FirParser.Psi
+
+    @Test
     fun testLanguage(): Unit = muteTest {
         setUpEnvironment("scriptCustom/fib.lang.kts")
 
@@ -91,6 +100,7 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(8, result.get(script))
     }
 
+    @Test
     fun testLanguageWithPackage(): Unit = muteTest {
         setUpEnvironment("scriptCustom/fibwp.lang.kts")
 
@@ -102,6 +112,7 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(8, result.get(script))
     }
 
+    @Test
     fun testDependentScripts(): Unit = muteTest {
         setUpEnvironment(listOf("scriptCustom/fibwp.lang.kts", "scriptCustom/fibwprunner.kts"))
 
@@ -118,6 +129,7 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(8, resultMethod.invoke(script))
     }
 
+    @Test
     fun testScriptWhereMethodHasClosure(): Unit = muteTest {
         setUpEnvironment("scriptCustom/methodWithClosure.lang.kts")
 
@@ -129,6 +141,7 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(239, invoke as Int / 2)
     }
 
+    @Test
     fun testNameSanitation() {
         setUpEnvironment("scriptCustom/1#@2.kts")
 
@@ -142,7 +155,7 @@ class ScriptGenTest : CodegenTestCase() {
 
     private fun setUpEnvironment(sourcePaths: List<String>) {
         val configuration = createConfiguration(
-            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, additionalDependencies, emptyList(), emptyList()
+            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, additionalDependencies
         ).apply {
             @OptIn(MessageCollectorAccess::class) // write access
             messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)

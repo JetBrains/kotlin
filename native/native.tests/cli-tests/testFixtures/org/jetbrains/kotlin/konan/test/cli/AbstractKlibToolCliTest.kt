@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.cli
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.RegularKotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.copyNativeHomeProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.invokeKlibTool
@@ -19,9 +20,10 @@ abstract class AbstractKlibToolCliTest : AbstractCliTest() {
     }
 
     fun doKlibToolTest(fileName: String) {
-        val actual = invokeKlibTool(kotlinNativeClassLoader, args = readArgs(fileName, tmpdir.path)).second
+        val filePath = ForTestCompileRuntime.transformTestDataPath(fileName).absolutePath
+        val actual = invokeKlibTool(kotlinNativeClassLoader, args = readArgs(filePath, tmpdir.path)).second
 
-        val outFile = File(fileName.replaceFirst("\\.args$".toRegex(), ".out"))
+        val outFile = File(filePath.replaceFirst("\\.args$".toRegex(), ".out"))
         assertEqualsToFile(outFile, actual)
     }
 }

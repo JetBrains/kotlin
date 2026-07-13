@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.utils.checkRules
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 
 class CliDiagnosticTest {
     @Test
@@ -42,7 +42,7 @@ class CliDiagnosticTest {
             errors.checkRules("language/API version correctness", message, 0)
         }
         if (errors.isNotEmpty()) {
-            Assert.fail(
+            fail(
                 errors.joinToString(
                     "\n\n",
                     postfix = "\n\nSee https://youtrack.jetbrains.com/articles/KT-A-610 for the style guide.\n\n"

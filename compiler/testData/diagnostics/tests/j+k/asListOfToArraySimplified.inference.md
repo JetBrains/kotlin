@@ -66,14 +66,10 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
     1. `TypeVariable(T) == kotlin/String?`
 5. Combine `TypeVariable(T) == kotlin/String?` with `TypeVariable(T) <: TypeVariable(F)!`
     1. `kotlin/String? <: TypeVariable(F)`
-6. Combine `TypeVariable(T) == kotlin/String?` with `ft<TypeVariable(T) & Any, TypeVariable(T)?> <: TypeVariable(F)`
-    1. `kotlin/String! <: TypeVariable(F)`
-7. Combine `TypeVariable(F) <: kotlin/String!` with `kotlin/String! <: TypeVariable(F)`
-    1. `TypeVariable(F) == kotlin/String!`
 
 ##### Call Completion:
 
-1. Choose `TypeVariable(F)` with `Readiness(
+1. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -89,7 +85,7 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-    1. `TypeVariable(T)` is `Readiness(
+    1. `TypeVariable(F)` is `Readiness(
        	 true ALLOWED
        	 true HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -102,15 +98,21 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	 true HAS_PROPER_EQUALITY_CONSTRAINT
+       	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-2. `TypeVariable(F) == kotlin/String!` _from Fix variable F_
-3. Combine `ft<TypeVariable(T) & Any, TypeVariable(T)?> <: TypeVariable(F)` with `TypeVariable(F) == kotlin/String!`
+2. `TypeVariable(T) == kotlin/String?` _from Fix variable T_
+3. Combine `TypeVariable(T) == kotlin/String?` with `TypeVariable(T) <: TypeVariable(F)!`
+    1. `kotlin/String? <: TypeVariable(F)`
+4. Combine `TypeVariable(T) == kotlin/String?` with `ft<TypeVariable(T) & Any, TypeVariable(T)?> <: TypeVariable(F)`
+    1. `kotlin/String! <: TypeVariable(F)`
+5. Combine `TypeVariable(F) <: kotlin/String!` with `kotlin/String! <: TypeVariable(F)`
+    1. `TypeVariable(F) == kotlin/String!`
+6. Combine `ft<TypeVariable(T) & Any, TypeVariable(T)?> <: TypeVariable(F)` with `TypeVariable(F) == kotlin/String!`
     1. `TypeVariable(T) <: kotlin/String?`
-4. Combine `TypeVariable(F) == kotlin/String!` with `TypeVariable(T) <: TypeVariable(F)!`
+7. Combine `TypeVariable(F) == kotlin/String!` with `TypeVariable(T) <: TypeVariable(F)!`
     1. `TypeVariable(T) <: kotlin/String!`
-5. Choose `TypeVariable(T)` with `Readiness(
+8. Choose `TypeVariable(F)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -126,4 +128,3 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-6. `TypeVariable(T) == kotlin/String?` _from Fix variable T_

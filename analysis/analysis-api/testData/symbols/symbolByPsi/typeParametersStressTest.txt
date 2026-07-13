@@ -107,6 +107,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -125,6 +126,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: B
+    typeParameters: []
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
     getContainingJvmClassName: TypeParametersStressTestKt
@@ -137,6 +139,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -153,6 +156,7 @@ KaKotlinPropertySymbol:
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -170,6 +174,7 @@ KaKotlinPropertySymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: B
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingJvmClassName: TypeParametersStressTestKt
@@ -179,6 +184,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: B
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
@@ -197,7 +203,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: true
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -206,9 +211,11 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: topLevelProperty
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -226,6 +233,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: B
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
     getContainingJvmClassName: TypeParametersStressTestKt
@@ -309,6 +317,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: TopLevelClass
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -376,8 +385,8 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -395,10 +404,12 @@ KaConstructorSymbol:
       modality: FINAL
       name: arg
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: D
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingJvmClassName: TopLevelClass
@@ -1191,6 +1202,7 @@ KaNamedFunctionSymbol:
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -1209,6 +1221,7 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: null

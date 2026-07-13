@@ -58,16 +58,10 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.model.*
-import org.jetbrains.kotlin.test.services.BatchingPackageInserter
-import org.jetbrains.kotlin.test.services.IrCheckersDisabledByTestDirectives
-import org.jetbrains.kotlin.test.services.IrCheckersEnabledByTestDirectives
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.test.services.addAnnotations
-import org.jetbrains.kotlin.test.services.child
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
-import org.jetbrains.kotlin.test.services.packageFqNameForKLib
 import java.io.File
 
 internal open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(parentDisposable = null) {
@@ -545,6 +539,7 @@ private class ExtTestDataFileSettings(
 private typealias SharedModuleGenerator = (sharedModulesDir: File) -> TestModule.Shared?
 private typealias SharedModuleCache = (moduleName: String, generator: SharedModuleGenerator) -> TestModule.Shared?
 
+@OptIn(ObsoleteTestInfrastructure::class)
 private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : TestDisposable(parentDisposable) {
     private val psiFactory = createPsiFactory(parentDisposable = this)
 
@@ -594,7 +589,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             filesAndModules.parsedFiles.forEach { [extTestFile, psiFile] -> extTestFile.text = psiFile.text }
 
             // Transform internal model into Kotlin/Native test infrastructure test model.
-            fun transformDependency(extTestModule: KotlinBaseTest.TestModule): String =
+            fun transformDependency(extTestModule: LegacyTestModule): String =
                 if (extTestModule is ExtTestModule && extTestModule.isSupport && supportModule != null) {
                     // Is support module is met across dependencies, then return new (unique) name for it.
                     supportModule.name
@@ -682,7 +677,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         dependencies: List<String>,
         friends: List<String>,
         dependsOn: List<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
-    ) : KotlinBaseTest.TestModule(name, dependencies, friends, dependsOn) {
+    ) : LegacyTestModule(name, dependencies, friends, dependsOn) {
         val files = mutableListOf<ExtTestFile>()
         val directivesBuilder = RegisteredDirectivesParser(DirectivesContainer.Empty, JUnit5Assertions)
 

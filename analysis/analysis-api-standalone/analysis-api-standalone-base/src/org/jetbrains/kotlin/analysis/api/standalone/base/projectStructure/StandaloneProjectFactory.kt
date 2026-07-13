@@ -13,13 +13,11 @@ import com.intellij.core.CorePackageIndex
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.smartPointers.PsiClassReferenceTypePointerFactory
@@ -29,11 +27,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
-import com.intellij.util.messages.ListenerDescriptor
+import com.intellij.util.messages.impl.PluginListenerDescriptor
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityChecker
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
@@ -100,8 +97,8 @@ object StandaloneProjectFactory {
             override fun createProject(parent: PicoContainer, parentDisposable: Disposable): MockProject {
                 return object : MockProject(parent, parentDisposable) {
                     @Suppress("UnstableApiUsage")
-                    override fun createListener(descriptor: ListenerDescriptor): Any {
-                        val listenerClass = loadClass<Any>(descriptor.listenerClassName, descriptor.pluginDescriptor)
+                    override fun createListener(descriptor: PluginListenerDescriptor): Any {
+                        val listenerClass = loadClass<Any>(descriptor.descriptor.listenerClassName, descriptor.pluginDescriptor)
                         val listener = listenerClass.getDeclaredConstructor(Project::class.java).newInstance(this)
                         return listener
                     }
@@ -363,33 +360,34 @@ object StandaloneProjectFactory {
         }
     }
 
+    @OptIn(KaImplementationDetail::class)
     fun createLibraryModuleSearchScope(
         binaryRoots: Collection<Path>,
         binaryVirtualFiles: Collection<VirtualFile>,
         environment: CoreApplicationEnvironment,
         project: Project,
-    ): GlobalSearchScope {
-        return if (binaryVirtualFiles.any { it.toNioPathOrNull() == null }) {
-            // I.e., in-memory file system
-            // Fall back: file-based search scope
-            @Suppress("DEPRECATION")
-            createSearchScopeByLibraryRoots(
-                binaryRoots,
-                binaryVirtualFiles,
-                environment,
-                project,
-            )
-        } else {
-            // Optimization: Trie-based search scope
-            @Suppress("DEPRECATION")
-            createTrieBasedSearchScopeByLibraryRoots(
-                binaryRoots,
-                binaryVirtualFiles,
-                environment,
-                project,
-            )
-        }
-    }
+    ): GlobalSearchScope =
+        createLibraryModuleSearchScope(
+            binaryRoots,
+            binaryVirtualFiles,
+            LibraryScopeConstructionMode.ParentTraversal,
+            environment,
+            project,
+        )
+
+    /**
+     * Builds the content search scope for a library module from its [binaryRoots] and [binaryVirtualFiles], using the
+     * given [mode] to choose how containment in the scope is determined.
+     */
+    @KaImplementationDetail
+    fun createLibraryModuleSearchScope(
+        binaryRoots: Collection<Path>,
+        binaryVirtualFiles: Collection<VirtualFile>,
+        mode: LibraryScopeConstructionMode,
+        environment: CoreApplicationEnvironment,
+        project: Project,
+    ): GlobalSearchScope =
+        createLibrarySearchScope(binaryRoots, binaryVirtualFiles, mode, environment, project)
 
     @Deprecated(
         "This function will become private. Use `createLibraryModuleSearchScope` instead.",
@@ -400,25 +398,8 @@ object StandaloneProjectFactory {
         binaryVirtualFiles: Collection<VirtualFile>,
         environment: CoreApplicationEnvironment,
         project: Project,
-    ): GlobalSearchScope {
-        @OptIn(KaImplementationDetail::class)
-        val virtualFileUrls = buildSet {
-            for (root in getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles) {
-                LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)
-                    .mapTo(this) { it.url }
-            }
-        }
-
-        return object : GlobalSearchScope(project) {
-            override fun contains(file: VirtualFile): Boolean = file.url in virtualFileUrls
-
-            override fun isSearchInModuleContent(aModule: Module): Boolean = false
-
-            override fun isSearchInLibraries(): Boolean = true
-
-            override fun toString(): String = virtualFileUrls.toString()
-        }
-    }
+    ): GlobalSearchScope =
+        createEnumerationLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
 
     @Deprecated(
         "This function will become private. Use `createLibraryModuleSearchScope` instead.",
@@ -429,54 +410,8 @@ object StandaloneProjectFactory {
         binaryVirtualFiles: Collection<VirtualFile>,
         environment: CoreApplicationEnvironment,
         project: Project,
-    ): GlobalSearchScope {
-        val virtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
-        return LibraryRootsSearchScope(virtualFiles, project)
-    }
-
-    private class SimpleTrie(paths: List<String>) {
-        class TrieNode {
-            var isTerminal: Boolean = false
-        }
-
-        val root = TrieNode()
-
-        private val m = mutableMapOf<Pair<TrieNode, String>, TrieNode>().apply {
-            paths.forEach { path ->
-                var p = root
-                for (d in path.trim('/').split('/')) {
-                    p = getOrPut(Pair(p, d)) { TrieNode() }
-                }
-                p.isTerminal = true
-            }
-        }
-
-        fun contains(s: String): Boolean {
-            var p = root
-            for (d in s.trim('/').split('/')) {
-                p = m.get(Pair(p, d))?.also {
-                    if (it.isTerminal)
-                        return true
-                } ?: return false
-            }
-            return false
-        }
-    }
-
-    private class LibraryRootsSearchScope(
-        roots: List<VirtualFile>,
-        project: Project,
-    ) : GlobalSearchScope(project) {
-        val trie: SimpleTrie = SimpleTrie(roots.map { it.path })
-
-        override fun contains(file: VirtualFile): Boolean {
-            return trie.contains(file.path)
-        }
-
-        override fun isSearchInModuleContent(aModule: Module): Boolean = false
-
-        override fun isSearchInLibraries(): Boolean = true
-    }
+    ): GlobalSearchScope =
+        createTrieLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
 
     fun getVirtualFilesForLibraryRoots(
         roots: Collection<Path>,

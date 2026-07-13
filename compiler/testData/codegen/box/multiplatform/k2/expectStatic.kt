@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects, +CompanionBlocksAndExtensions
-// IGNORE_HMPP: JS_IR
 
 // MODULE: common
 // FILE: common.kt

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFile.Companion.fromSources
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -14,7 +15,7 @@ import java.io.File
 
 @JvmInline
 value class KotlinLibraryFile(val path: String) {
-    constructor(lib: KotlinLibrary) : this(lib.libraryFile.canonicalPath)
+    constructor(lib: KotlinLibrary) : this(lib.path.canonicalPathString())
 
     fun toProtoStream(out: CodedOutputStream) = out.writeStringNoTag(path)
 

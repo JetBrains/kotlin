@@ -4,6 +4,7 @@ KaJavaFieldSymbol:
       psi: null
   ]
   callableId: /JavaClass.field
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -24,6 +25,7 @@ KaJavaFieldSymbol:
         psi: null
     ]
     type: @R|Anno1|()  kotlin/String!
+  typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []

@@ -12,8 +12,7 @@ plugins {
     //id("test-inputs-check")
 }
 
-val compilerModules: Array<String> by rootProject.extra
-val otherCompilerModules = compilerModules.filter { it != path }
+val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }
 
 val antLauncherJar by configurations.creating
 

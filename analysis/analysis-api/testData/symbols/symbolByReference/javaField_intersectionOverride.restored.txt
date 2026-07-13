@@ -1,6 +1,7 @@
 KaJavaFieldSymbol:
   annotations: []
   callableId: /Config.minValue
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -18,6 +19,7 @@ KaJavaFieldSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: T!
+  typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []

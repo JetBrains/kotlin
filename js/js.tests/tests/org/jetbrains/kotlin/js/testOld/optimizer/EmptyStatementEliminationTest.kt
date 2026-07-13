@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.testOld.optimizer
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class EmptyStatementEliminationTest : BasicOptimizerTest("empty-statement-elimination") {
     @Test fun emptyIfConditionPreserved() = box()

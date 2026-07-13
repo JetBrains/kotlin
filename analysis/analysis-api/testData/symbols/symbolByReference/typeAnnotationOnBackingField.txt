@@ -1,6 +1,7 @@
 KaBackingFieldSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -27,6 +28,7 @@ KaBackingFieldSymbol:
     ]
     typeArguments: []
     type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+  typeParameters: []
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(typeAnnotationOnBackingField.kt)
   getContainingJvmClassName: TypeAnnotationOnBackingFieldKt

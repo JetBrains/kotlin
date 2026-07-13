@@ -12,8 +12,11 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.konan.config.emitLazyObjcHeaderFile
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
-import org.jetbrains.kotlin.konan.file.File
+import java.nio.file.Path
 import java.util.*
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.exists
 
 internal fun isOneStageCompilation(arguments: K2NativeCompilerArguments): Boolean {
     val producingBinary = arguments.produce != "library"
@@ -35,22 +38,22 @@ internal fun prepareKlibArgumentsForOneStage(
 
 internal fun adjustConfigurationForSecondStage(
     configuration: CompilerConfiguration,
-    intermediateKLib: File
+    intermediateKLib: Path
 ) {
     // For the second stage, remove already compiled source files from the configuration.
     configuration.contentRoots = listOf()
     // Frontend version must not be passed to 2nd stage (same as Gradle plugin does when calling CLI compiler), since there are no sources anymore
     configuration.useFir = false
     // For the second stage, provide just compiled intermediate KLib as "-Xinclude=" param.
-    require(intermediateKLib.exists) { "Intermediate KLib $intermediateKLib must have been created by successful first compilation stage" }
+    require(intermediateKLib.exists()) { "Intermediate KLib $intermediateKLib must have been created by successful first compilation stage" }
     // We need to remove this flag, as it would otherwise override header written previously.
     // Unfortunately, there is no way to remove the flag, so empty string is put instead
     configuration.emitLazyObjcHeaderFile?.let { configuration.emitLazyObjcHeaderFile = "" }
-    configuration.konanIncludedLibraries += listOf(intermediateKLib.absolutePath)
+    configuration.konanIncludedLibraries += listOf(intermediateKLib.absolutePathString())
 }
 
-internal fun createIntermediateKlib(): File =
-    File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
-        require(!it.exists) { "Collision writing intermediate KLib $it" }
-        it.deleteOnExit()
+internal fun createIntermediateKlib(): Path =
+    Path(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
+        require(!it.exists()) { "Collision writing intermediate KLib $it" }
+        it.toFile().deleteOnExit()
     }

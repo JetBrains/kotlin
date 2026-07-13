@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
@@ -41,19 +38,9 @@ import org.jetbrains.kotlin.backend.jvm.ir.isRawType as isRawTypeImpl
 import org.jetbrains.kotlin.ir.types.isKClass as isKClassImpl
 import org.jetbrains.kotlin.ir.util.isSuspendFunction as isSuspendFunctionImpl
 
-open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBase(), TypeMappingContext<JvmSignatureWriter> {
+open class IrTypeMapper(val context: JvmBackendContext) : KotlinTypeMapperBase(), TypeMappingContext<JvmSignatureWriter> {
     override val typeSystem: IrTypeSystemContext = context.typeSystem
     override val typeContext: TypeSystemCommonBackendContextForTypeMapping = IrTypeCheckerContextForTypeMapping(context)
-
-    override fun mapClass(classifier: ClassifierDescriptor): Type =
-        when (classifier) {
-            is ClassDescriptor ->
-                mapClass(context.referenceClass(classifier).owner)
-            is TypeParameterDescriptor ->
-                mapType(context.referenceTypeParameter(classifier).defaultType)
-            else ->
-                error("Unknown descriptor: $classifier")
-        }
 
     override fun mapTypeCommon(type: KotlinTypeMarker, mode: TypeMappingMode): Type =
         mapType(type as IrType, mode)

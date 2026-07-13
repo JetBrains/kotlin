@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.preprocessors.JsExportBoxPreprocessor
 import org.jetbrains.kotlin.js.test.runners.commonConfigurationForJsTest
 import org.jetbrains.kotlin.js.test.runners.configureJsBoxHandlers
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
+import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -80,6 +82,11 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithT
             // Suppress failed tests having `// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: X.Y.Z`,
             // where `X.Y.Z` matches to `customJsCompilerSettings.version`
             ::CustomKlibCompilerSecondStageTestSuppressor.bind(customJsCompilerSettings.defaultLanguageVersion),
+        )
+
+        useAdditionalSourceProviders(
+            ::JsAdditionalSourceProvider,
+            ::CoroutineHelpersSourceFilesProvider,
         )
     }
 }

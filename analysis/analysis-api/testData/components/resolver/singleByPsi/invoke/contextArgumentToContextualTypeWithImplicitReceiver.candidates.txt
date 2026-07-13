@@ -15,6 +15,7 @@ KtCallExpression(78,85): 'block()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -33,6 +34,7 @@ KtCallExpression(78,85): 'block()'
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          typeParameters: []
           visibility: PUBLIC
         type = kotlin.Int
       signature = KaFunctionSignature:

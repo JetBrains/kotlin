@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -92,7 +91,6 @@ class WasmLoweringFacade(
             PhaseConfig()
         }
 
-        val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)
         with(configuration) {
             phaseConfig = phaseConfigToConfigure
             outputName = WASM_BASE_FILE_NAME
@@ -114,7 +112,7 @@ class WasmLoweringFacade(
         }
 
         val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
-            linkIr(moduleInfo, configuration, mainModule)
+            linkIr(moduleInfo, configuration)
         }
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {

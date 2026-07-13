@@ -44,8 +44,8 @@ FUNCTION:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -63,6 +63,7 @@ FUNCTION:
       modality: FINAL
       name: a
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         abbreviation: null
@@ -79,6 +80,7 @@ FUNCTION:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(alreadyOperator.kt)
       getContainingJvmClassName: A

@@ -82,7 +82,11 @@ object LombokConfigNames {
     val DO_NOT_USE_GETTERS = Name.identifier("doNotUseGetters")
     val ONLY_EXPLICITLY_INCLUDED = Name.identifier("onlyExplicitlyIncluded")
     val EXCLUDE = Name.identifier("exclude")
+    val ON_CONSTRUCTOR = Name.identifier("onConstructor")
     val OF = Name.identifier("of")
+    val CACHE_STRATEGY = Name.identifier("cacheStrategy")
+    val ON_PARAM = Name.identifier("onParam")
+    val REPLACES = Name.identifier("replaces")
     val INCLUDE_NAME = Name.identifier("name")
     val INCLUDE_RANK = Name.identifier("rank")
 

@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.cli.klib
 
-import org.jetbrains.kotlin.backend.common.IrSignaturesExtractor
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
 import org.jetbrains.kotlin.ir.util.render
 
 internal class IrSignaturesRenderer(private val output: Appendable, private val individualSignatureRenderer: IdSignatureRenderer) {
 
-    fun render(signatures: IrSignaturesExtractor.ExtractedSignatures) {
+    fun render(signatures: ExtractedSignatures) {
         header("Declared signatures: ${signatures.declaredSignatures.size}")
         sortedSignatures(signatures.declaredSignatures)
         blankLine()

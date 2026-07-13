@@ -1,7 +1,5 @@
-// IGNORE_BACKEND: JS_IR, WASM_JS
-
-// KT-61141: throws kotlin.Exception instead of java.lang.Exception
-// IGNORE_BACKEND: NATIVE
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM throws java.lang.Exception instead of kotlin.Exception
 
 fun <T> magic(): T = throw Exception()
 

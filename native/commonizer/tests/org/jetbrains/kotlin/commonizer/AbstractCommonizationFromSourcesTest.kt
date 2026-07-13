@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatformUnspecifiedTarget
 import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.lowercaseFirstLetter
 import org.jetbrains.kotlin.test.testFramework.runWithDisposable
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -58,7 +58,8 @@ abstract class AbstractCommonizationFromSourcesTest {
             this::class.java.simpleName.substringBefore("FromSources").substringBefore("Test"),
             true
         )
-        val testDir = KtUsefulTestCase.getTestDirectoryName(testInfo.testMethod.getOrNull()!!.name)
+        val testName = getTestName(testInfo.testMethod.getOrNull()!!.name, true)
+        val testDir = testName.replace("_.*".toRegex(), "")
 
         return ForTestCompileRuntime.transformTestDataPath("native/commonizer/testData")
             .resolve(testCaseDir)

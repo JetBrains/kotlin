@@ -448,9 +448,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(resolvedQualifier) {
-            isMutable("packageFqName", "relativeClassFqName", "isNullableLhsForCallableReference")
-            defaultClassIdFromRelativeClassName()
-            additionalImports(regularClass)
         }
 
         impl(resolvedReifiedParameterReference)
@@ -729,7 +726,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(errorResolvedQualifier) {
-            defaultClassIdFromRelativeClassName()
         }
 
         noImpl(userTypeRef)
@@ -822,17 +818,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         ) {
             optInToInternals()
-        }
-    }
-
-    private fun ImplementationContext.defaultClassIdFromRelativeClassName() {
-        default("classId") {
-            value = """
-                |relativeClassFqName?.let {
-                |    ClassId(packageFqName, it, isLocal = false)
-                |}
-                """.trimMargin()
-            withGetter = true
         }
     }
 }

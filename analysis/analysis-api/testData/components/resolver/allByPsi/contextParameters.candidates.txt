@@ -1046,6 +1046,7 @@ KtCallExpression(488,499): 'funMember()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1064,6 +1065,7 @@ KtCallExpression(488,499): 'funMember()'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1071,6 +1073,7 @@ KtCallExpression(488,499): 'funMember()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1089,6 +1092,7 @@ KtCallExpression(488,499): 'funMember()'
             annotations: []
             typeArguments: []
             type: Base
+          typeParameters: []
           visibility: PUBLIC
         type = Base
       extensionReceiver = null
@@ -1120,6 +1124,7 @@ KtNameReferenceExpression(488,497): 'funMember'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1138,6 +1143,7 @@ KtNameReferenceExpression(488,497): 'funMember'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1145,6 +1151,7 @@ KtNameReferenceExpression(488,497): 'funMember'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1163,6 +1170,7 @@ KtNameReferenceExpression(488,497): 'funMember'
             annotations: []
             typeArguments: []
             type: Base
+          typeParameters: []
           visibility: PUBLIC
         type = Base
       extensionReceiver = null
@@ -1196,6 +1204,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1214,6 +1223,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1221,6 +1231,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1239,6 +1250,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
             annotations: []
             typeArguments: []
             type: Base
+          typeParameters: []
           visibility: PUBLIC
         type = Base
       extensionReceiver = null
@@ -1456,6 +1468,7 @@ KtCallExpression(611,629): 'funMember(a = A())'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1474,6 +1487,7 @@ KtCallExpression(611,629): 'funMember(a = A())'
             annotations: []
             typeArguments: []
             type: Base
+          typeParameters: []
           visibility: PUBLIC
         type = Base
       extensionReceiver = null
@@ -1518,6 +1532,7 @@ KtNameReferenceExpression(611,620): 'funMember'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1536,6 +1551,7 @@ KtNameReferenceExpression(611,620): 'funMember'
             annotations: []
             typeArguments: []
             type: Base
+          typeParameters: []
           visibility: PUBLIC
         type = Base
       extensionReceiver = null

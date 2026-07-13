@@ -23,7 +23,15 @@ class ScriptCompilationConfigurationProviderOverDefinitionProvider(private val p
         provider.getDefaultDefinition().compilationConfiguration.asSuccess()
 }
 
+class SingleScriptCompilationConfigurationProvider(private val scriptCompilationConfiguration: ScriptCompilationConfiguration) : ScriptCompilationConfigurationProvider {
+    override fun isScript(source: SourceCode): Boolean = true
 
+    override fun findBaseCompilationConfiguration(source: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+        scriptCompilationConfiguration.asSuccess()
+
+    override fun getDefaultCompilationConfiguration(): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+        scriptCompilationConfiguration.asSuccess()
+}
 
 fun ScriptingHostConfiguration.withCompilationConfigurationProvider(
     implementation : ScriptCompilationConfigurationProvider

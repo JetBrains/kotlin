@@ -15,17 +15,16 @@ import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.BackendInput
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.IdeCodegenSettings
+import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.createFreeFakeLambdaDescriptor
 import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
-import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.serialization.JvmSignatureSerializer
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
@@ -41,27 +40,15 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.isExpect
-import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -87,17 +74,17 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
-import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K1JvmSerializationBindings.*
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.SerializerExtension
 import org.jetbrains.kotlin.serialization.VersionRequirementUtils
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -162,7 +149,7 @@ class K1JvmIrCodegenFactory(
 
         // Built-ins deduplication must be enabled immediately so that there is no chance for duplicate built-in symbols to occur. For
         // example, the creation of `IrPluginContextImpl` might already lead to duplicate built-in symbols via `BuiltinSymbolsBase`.
-        if (symbolTable is SymbolTableWithBuiltInsDeduplication) {
+        if (symbolTable is K1SymbolTableWithBuiltInsDeduplication) {
             symbolTable.bindBuiltIns(psi2irContext.moduleDescriptor.builtIns)
         }
 
@@ -196,8 +183,6 @@ class K1JvmIrCodegenFactory(
             symbolTable,
             psi2irContext.irBuiltIns,
             irProvider,
-            @OptIn(MessageCollectorAccess::class) // deprecated in IrPluginContext
-            configuration.messageCollector,
             diagnosticReporter
         )
         for (extension in configuration.filteredExtensions) {
@@ -244,10 +229,6 @@ class K1JvmIrCodegenFactory(
         // We need to compile all files we reference in Klibs
         irModuleFragment.files.addAll(dependencies.flatMap { it.files })
 
-        if (ideCodegenSettings.shouldStubOrphanedExpectSymbols) {
-            irModuleFragment.stubOrphanedExpectSymbols(stubGenerator)
-        }
-
         if (!configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT) && files.none { it.isScript() }) {
             if (bindingContext !is CleanableBindingContext) {
                 error("BindingContext should be cleanable in JVM IR to avoid leaking memory: $bindingContext")
@@ -260,7 +241,7 @@ class K1JvmIrCodegenFactory(
             symbolTable,
             irProviders,
             debuggerExtensions = null,
-            K1JvmBackendExtension,
+            K1JvmBackendExtension(),
             pluginContext,
         )
     }
@@ -279,140 +260,16 @@ class K1JvmIrCodegenFactory(
         get() = this.getCompilerExtensions(IrGenerationExtension)
 }
 
-/**
- * Replaces `expect` symbols for which no `actual` counterpart exists with an `actual` stub in all files of the [IrModuleFragment]. The
- * implementation keeps track of generated stubs and only generates a single stub for each unique `expect` symbol.
- *
- * [stubOrphanedExpectSymbols] is used by the IDE bytecode tool window to allow compiling source files with `expect` declarations for which
- * the compiled module has no `actual` declaration. (The `actual` declaration would be defined in a module dependent on the compiled
- * module, but choosing this module is non-trivial due to possibly multiple implementations of the same `expect` symbol. In addition, when
- * generating bytecode for a single source file, the number of source files to compile should be kept low. Stubbing helps with that.)
- */
-private fun IrModuleFragment.stubOrphanedExpectSymbols(stubGenerator: DeclarationStubGenerator) {
-    val transformer = StubOrphanedExpectSymbolTransformer(stubGenerator)
-    files.forEach(transformer::visitFile)
-}
+private class K1JvmBackendExtension : JvmBackendExtension {
+    private val globalSerializationBindings = K1JvmSerializationBindings()
+    private val serializationBindings = HashMap<ClassBuilder, K1JvmSerializationBindings>()
 
-private class StubOrphanedExpectSymbolTransformer(val stubGenerator: DeclarationStubGenerator) : ExpectSymbolTransformer() {
-
-    private val stubbedClasses = mutableMapOf<ClassDescriptor, IrClassSymbol>()
-    private val stubbedProperties = mutableMapOf<PropertyDescriptor, ActualPropertyResult>()
-    private val stubbedConstructors = mutableMapOf<ClassConstructorDescriptor, IrConstructorSymbol>()
-    private val stubbedFunctions = mutableMapOf<FunctionDescriptor, IrSimpleFunctionSymbol>()
-
-    override fun getActualClass(descriptor: ClassDescriptor): IrClassSymbol? {
-        if (!descriptor.isOrphanedExpect()) return null
-
-        return stubbedClasses.getOrPut(descriptor) {
-            stubGenerator.generateClassStub(FakeActualClassDescriptor(descriptor)).symbol
-        }
-    }
-
-    override fun getActualProperty(descriptor: PropertyDescriptor): ActualPropertyResult? {
-        if (!descriptor.isOrphanedExpect()) return null
-
-        return stubbedProperties.getOrPut(descriptor) {
-            val irProperty =
-                stubGenerator.generatePropertyStub(FakeActualPropertyDescriptor(descriptor)).apply { ensureClassParent(descriptor) }
-            val irGetter = descriptor.getter?.let(::getActualFunction)
-            val irSetter = descriptor.setter?.let(::getActualFunction)
-            ActualPropertyResult(irProperty.symbol, irGetter, irSetter)
-        }
-    }
-
-    override fun getActualConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol? {
-        if (!descriptor.isOrphanedExpect()) return null
-
-        return stubbedConstructors.getOrPut(descriptor) {
-            stubGenerator.generateConstructorStub(FakeActualClassConstructorDescriptor(descriptor)).symbol
-        }
-    }
-
-    override fun getActualFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol? {
-        if (!descriptor.isOrphanedExpect()) return null
-
-        return stubbedFunctions.getOrPut(descriptor) {
-            stubGenerator
-                .generateFunctionStub(FakeActualFunctionDescriptor(descriptor), createPropertyIfNeeded = false)
-                .apply { ensureClassParent(descriptor) }
-                .symbol
-        }
-    }
-
-    /**
-     * Property getters and setters are not marked as `isExpect` even if the corresponding property is. However, we still need to stub such
-     * getters and setters, so [isTargetDeclaration] allows it.
-     */
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override fun isTargetDeclaration(declaration: IrDeclaration): Boolean =
-        super.isTargetDeclaration(declaration) ||
-                declaration is IrSimpleFunction && declaration.correspondingPropertySymbol?.owner?.isExpect == true
-
-    /**
-     * If an `actual` symbol exists, we shouldn't stub the `expect` symbol. This will be performed by
-     * [org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationsRemoveLowering] during lowering.
-     */
-    @OptIn(K1Deprecation::class)
-    private fun MemberDescriptor.isOrphanedExpect(): Boolean = findCompatibleActualsForExpected(module).isEmpty()
-
-    /**
-     * [descriptor] should be the original descriptor, because the copied `actual` descriptor has no source.
-     */
-    private fun IrDeclaration.ensureClassParent(descriptor: MemberDescriptor) {
-        if (parent !is IrClass) {
-            parent = stubGenerator.generateOrGetFacadeClass(descriptor) ?: return
-        }
-    }
-
-}
-
-private class FakeActualClassDescriptor(original: ClassDescriptor) : ClassDescriptor by original {
-    override fun isActual(): Boolean = true
-    override fun isExpect(): Boolean = false
-
-    override fun getSource(): SourceElement = SourceElement.NO_SOURCE
-    override fun getOriginal(): ClassDescriptor = this
-}
-
-private class FakeActualPropertyDescriptor(original: PropertyDescriptor) : PropertyDescriptor by original {
-    override fun isActual(): Boolean = true
-    override fun isExpect(): Boolean = false
-
-    override fun getSource(): SourceElement = SourceElement.NO_SOURCE
-    override fun getOriginal(): PropertyDescriptor = this
-}
-
-private class FakeActualClassConstructorDescriptor(original: ClassConstructorDescriptor) : ClassConstructorDescriptor by original {
-    override fun isActual(): Boolean = true
-    override fun isExpect(): Boolean = false
-
-    override fun getSource(): SourceElement = SourceElement.NO_SOURCE
-    override fun getOriginal(): ClassConstructorDescriptor = this
-}
-
-private class FakeActualFunctionDescriptor(original: FunctionDescriptor) : FunctionDescriptor by original {
-    override fun isActual(): Boolean = true
-    override fun isExpect(): Boolean = false
-
-    // `actual` functions are stubbed without providing a body. Hence, they may not be inlined, even if the `expect` function is marked as
-    // `inline`. Given that inlining requires meaningful bodies (assuming the generated bytecode is of interest), it does not suffice to
-    // just supply an empty body stub.
-    override fun isInline(): Boolean = false
-
-    override fun getSource(): SourceElement = SourceElement.NO_SOURCE
-    override fun getOriginal(): FunctionDescriptor = this
-}
-
-private object K1JvmBackendExtension : JvmBackendExtension {
     override fun createSerializer(
-        context: JvmBackendContext,
-        klass: IrClass,
-        type: Type,
-        bindings: JvmSerializationBindings,
-        parentSerializer: MetadataSerializer?
-    ): MetadataSerializer {
-        return DescriptorMetadataSerializer(context, klass, type, bindings, parentSerializer)
-    }
+        context: JvmBackendContext, klass: IrClass, type: Type, classBuilder: ClassBuilder, parentSerializer: MetadataSerializer?,
+    ): MetadataSerializer = DescriptorMetadataSerializer(
+        context, klass, type, serializationBindings.getOrPut(classBuilder) { K1JvmSerializationBindings() },
+        globalSerializationBindings, parentSerializer,
+    )
 
     override fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer = object : ModuleMetadataSerializer {
         override fun serializeOptionalAnnotationClass(
@@ -430,10 +287,17 @@ private class DescriptorMetadataSerializer(
     private val context: JvmBackendContext,
     private val irClass: IrClass,
     private val type: Type,
-    private val serializationBindings: JvmSerializationBindings,
+    private val serializationBindings: K1JvmSerializationBindings,
+    private val globalSerializationBindings: K1JvmSerializationBindings,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
-    private val serializerExtension = JvmSerializerExtension(serializationBindings, context.state, context.defaultTypeMapper)
+    @OptIn(K1Deprecation::class)
+    private val typeApproximator =
+        TypeApproximator(context.state.module.builtIns, context.state.config.languageVersionSettings)
+
+    private val serializerExtension = JvmSerializerExtension(
+        serializationBindings, globalSerializationBindings, context.state, context.defaultTypeMapper, typeApproximator,
+    )
 
     @OptIn(K1Deprecation::class)
     private val serializer: DescriptorSerializer? = run {
@@ -459,7 +323,7 @@ private class DescriptorMetadataSerializer(
     override fun serialize(metadata: MetadataSource, containingFile: MetadataSource.File?): Pair<MessageLite, JvmStringTable>? {
         val localDelegatedProperties = irClass.localDelegatedProperties
         if (localDelegatedProperties != null && localDelegatedProperties.isNotEmpty()) {
-            context.state.localDelegatedProperties.put(
+            serializerExtension.localDelegatedProperties.put(
                 // key for local delegated properties metadata in interfaces depends on jvmDefaultMode
                 if (irClass.isInterface && !context.config.jvmDefaultMode.isEnabled) context.defaultTypeMapper.mapClass(
                     context.cachedDeclarations.getDefaultImplsClass(irClass)
@@ -478,9 +342,9 @@ private class DescriptorMetadataSerializer(
                     serializerExtension.serializeJvmPackage(this, type)
                 }.build()
             is DescriptorMetadataSource.Function -> {
-                val withTypeParameters = createFreeFakeLambdaDescriptor(metadata.descriptor, context.state.typeApproximator)
-                serializationBindings.get(JvmSerializationBindings.METHOD_FOR_FUNCTION, metadata.descriptor)?.let {
-                    serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, withTypeParameters, it)
+                val withTypeParameters = createFreeFakeLambdaDescriptor(metadata.descriptor, typeApproximator)
+                serializationBindings.get(METHOD_FOR_FUNCTION, metadata.descriptor)?.let {
+                    serializationBindings.put(METHOD_FOR_FUNCTION, withTypeParameters, it)
                 }
                 serializer!!.functionProto(withTypeParameters)?.build()
             }
@@ -494,32 +358,33 @@ private class DescriptorMetadataSerializer(
         val descriptor = (metadata as DescriptorMetadataSource.Property).descriptor
         val slice = when (origin) {
             JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
-                JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY
+                SYNTHETIC_METHOD_FOR_PROPERTY
             IrDeclarationOrigin.PROPERTY_DELEGATE ->
-                JvmSerializationBindings.DELEGATE_METHOD_FOR_PROPERTY
+                DELEGATE_METHOD_FOR_PROPERTY
             else -> throw IllegalStateException("invalid origin $origin for property-related method $signature")
         }
-        context.state.globalSerializationBindings.put(slice, descriptor, signature)
+        globalSerializationBindings.put(slice, descriptor, signature)
     }
 
     override fun bindMethodMetadata(metadata: MetadataSource.Function, signature: Method) {
         val descriptor = (metadata as DescriptorMetadataSource.Function).descriptor
-        serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, descriptor, signature)
+        serializationBindings.put(METHOD_FOR_FUNCTION, descriptor, signature)
     }
 
     override fun bindFieldMetadata(metadata: MetadataSource.Property, signature: Pair<Type, String>) {
         val descriptor = (metadata as DescriptorMetadataSource.Property).descriptor
-        context.state.globalSerializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, signature)
+        globalSerializationBindings.put(FIELD_FOR_PROPERTY, descriptor, signature)
     }
 }
 
 private class JvmSerializerExtension(
-    private val bindings: JvmSerializationBindings,
+    private val bindings: K1JvmSerializationBindings,
+    private val globalBindings: K1JvmSerializationBindings,
     state: GenerationState,
     private val typeMapper: KotlinTypeMapperBase,
+    private val approximator: TypeApproximator,
 ) : SerializerExtension() {
-    private val globalBindings = state.globalSerializationBindings
-    override val stringTable = JvmCodegenStringTable(typeMapper)
+    override val stringTable = K1JvmCodegenStringTable(typeMapper)
     private val useTypeTable = state.config.useTypeTableInSerializer
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
@@ -529,10 +394,9 @@ private class JvmSerializerExtension(
     private val functionsWithInlineClassReturnTypesMangled = state.config.functionsWithInlineClassReturnTypesMangled
     override val metadataVersion = state.config.metadataVersion
     private val jvmDefaultMode = state.config.jvmDefaultMode
-    private val approximator = state.typeApproximator
     private val useOldManglingScheme = state.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
     private val signatureSerializer = JvmSignatureSerializerImpl(stringTable)
-    private val localDelegatedProperties = state.localDelegatedProperties
+    internal val localDelegatedProperties: MutableMap<Type, List<VariableDescriptorWithAccessors>> = mutableMapOf()
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
 
@@ -547,7 +411,9 @@ private class JvmSerializerExtension(
         }
         //TODO: support local delegated properties in new defaults scheme
         val containerAsmType =
-            if (DescriptorUtils.isInterface(descriptor) && !jvmDefaultMode.isEnabled) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
+            if (DescriptorUtils.isInterface(descriptor) && !jvmDefaultMode.isEnabled)
+                Type.getObjectType(typeMapper.mapClass(descriptor).internalName + JvmAbi.DEFAULT_IMPLS_SUFFIX)
+            else typeMapper.mapClass(descriptor)
         writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable)
         writeVersionRequirementForJvmDefaultIfNeeded(descriptor, proto, versionRequirementTable)
 
@@ -902,5 +768,14 @@ abstract class ExpectSymbolTransformer : IrVisitorVoid() {
         if (!isTargetDeclaration(oldSymbol.owner)) return
 
         expression.symbol = getActualClass(oldSymbol.descriptor) ?: return
+    }
+}
+
+internal fun KotlinTypeMapperBase.mapClass(classifier: ClassifierDescriptor): Type {
+    this as IrTypeMapper
+    return when (classifier) {
+        is ClassDescriptor -> mapClass(context.referenceClass(classifier).owner)
+        is TypeParameterDescriptor -> mapType(context.referenceTypeParameter(classifier).defaultType)
+        else -> error("Unknown descriptor: $classifier")
     }
 }

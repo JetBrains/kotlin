@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.cli
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.bc.K2Native
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.copyNativeHomeProperty
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -21,7 +22,7 @@ abstract class AbstractNativeCliTest : AbstractCliTest() {
     }
 
     private fun isTestDisabled(fileName: String): Boolean {
-        val directivesFile = File(fileName.replaceFirst("\\.args$".toRegex(), ".dirs"))
+        val directivesFile = ForTestCompileRuntime.transformTestDataPath(fileName.replaceFirst("\\.args$".toRegex(), ".dirs"))
         if (!directivesFile.exists()) return false
 
         val family = HostManager.host.family

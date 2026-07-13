@@ -16,16 +16,10 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-sealed class MainModule {
-    class SourceFiles(val files: List<KtFile>) : MainModule()
-    class Klib(val libPath: String) : MainModule()
-}
-
 class ModulesStructure(
-    val mainModule: MainModule,
+    val mainModulePath: String,
     val compilerConfiguration: CompilerConfiguration,
     val klibs: LoadedKlibs,
 ) {

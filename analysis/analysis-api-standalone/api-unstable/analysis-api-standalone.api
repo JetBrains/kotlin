@@ -27,6 +27,33 @@ public final class org/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalys
 	public static final fun disposeGlobalStandaloneApplicationServices ()V
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/analysis/api/standalone/StandaloneWorkaroundApi : java/lang/annotation/Annotation {
+}
+
+public abstract class org/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode {
+}
+
+public final class org/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode$Enumeration : org/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode$Enumeration;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode$ParentTraversal : org/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode$ParentTraversal;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode$Trie : org/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode$Trie;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaLibraryModuleBuilderKt {
 	public static final fun buildKtLibraryModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KaModuleContainerBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
 }
@@ -45,8 +72,10 @@ public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaMod
 	public final fun addModule (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
 	public final fun build ()Lorg/jetbrains/kotlin/analysis/project/structure/builder/KaModuleContainer;
 	public final fun getCoreApplicationEnvironment ()Lcom/intellij/core/CoreApplicationEnvironment;
+	public final fun getLibraryScopeConstructionMode ()Lorg/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode;
 	public final fun getPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
 	public final fun getProject ()Lcom/intellij/openapi/project/Project;
+	public final fun setLibraryScopeConstructionMode (Lorg/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode;)V
 	public final fun setPlatform (Lorg/jetbrains/kotlin/platform/TargetPlatform;)V
 }
 
@@ -71,7 +100,9 @@ public abstract class org/jetbrains/kotlin/analysis/project/structure/builder/Kt
 	protected final fun getBinaryRoots ()Ljava/util/List;
 	protected final fun getBinaryVirtualFiles ()Ljava/util/List;
 	public final fun getContentScope ()Lcom/intellij/psi/search/GlobalSearchScope;
+	public final fun getLibraryScopeConstructionMode ()Lorg/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode;
 	public final fun setContentScope (Lcom/intellij/psi/search/GlobalSearchScope;)V
+	public final fun setLibraryScopeConstructionMode (Lorg/jetbrains/kotlin/analysis/api/standalone/projectStructure/StandaloneLibraryScopeConstructionMode;)V
 }
 
 public class org/jetbrains/kotlin/analysis/project/structure/builder/KtLibraryModuleBuilder : org/jetbrains/kotlin/analysis/project/structure/builder/KtBinaryModuleBuilder {

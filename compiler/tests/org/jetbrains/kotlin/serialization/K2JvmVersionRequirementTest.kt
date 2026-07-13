@@ -22,20 +22,16 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
-import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.testFramework.FrontendBackendConfiguration
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
 
-open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendConfiguration {
-    override val useFir: Boolean
-        get() = true
-
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
-
+open class K2JvmVersionRequirementTest : TestCaseWithTmpdir() {
     private fun doTest(
         expectedVersionRequirement: VersionRequirement.Version,
         expectedLevel: DeprecationLevel,
@@ -145,8 +141,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
                         analysisFlags.toMap() + mapOf(AnalysisFlags.explicitApiVersion to true),
                         specificFeatures
                     )
-                }.also {
-                    configureIrFir(it)
+                    useFir = true
                 },
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
@@ -159,9 +154,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
             @OptIn(CoreEnvironmentDeprecation::class)
             KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
-                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir).also {
-                    configureIrFir(it)
-                },
+                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
         ).moduleDescriptor

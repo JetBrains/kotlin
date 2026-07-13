@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool FunctionalInterfaceWithSuspendFunction_emit__reverse_swift(void * self, void * continuation, void * exception, void * cancellation);
+
 _Bool FunctionalInterfaceWithSuspendFunction_emit(void * self, _Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
 void * __root___Foo_init_allocate();
@@ -61,7 +63,7 @@ _Bool main_internal_functional_type_caller_SwiftU2EInt64__TypesOfArguments__Swif
 
 _Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * pointerToBlock, int32_t _1);
 
-_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Error__(void * pointerToBlock, NSError * _1);
+_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(void * pointerToBlock, NSError * _Nullable _1);
 
 _Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock, _Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 

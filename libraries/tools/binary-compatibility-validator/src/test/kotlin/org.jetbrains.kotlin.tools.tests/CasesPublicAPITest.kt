@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.tools.tests
 
-import kotlinx.validation.api.*
-import org.junit.*
-import org.junit.rules.TestName
+import kotlinx.validation.api.filterOutNonPublic
+import kotlinx.validation.api.loadApiFromJvmClasses
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 
 class CasesPublicAPITest {
@@ -21,34 +23,38 @@ class CasesPublicAPITest {
         val baseOutputPath = File("src/test/kotlin/cases")
     }
 
-    @[Rule JvmField]
-    val testName = TestName()
+    private lateinit var testMethodName: String
 
-    @Test fun companions() { snapshotAPIAndCompare(testName.methodName) }
+    @BeforeEach
+    fun captureTestName(testInfo: TestInfo) {
+        testMethodName = testInfo.testMethod.get().name
+    }
 
-    @Test fun default() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun companions() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun inline() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun default() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun interfaces() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun inline() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun internal() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun interfaces() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun java() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun internal() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun localClasses() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun java() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun nestedClasses() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun localClasses() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun private() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun nestedClasses() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun protected() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun private() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun public() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun protected() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun special() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun public() { snapshotAPIAndCompare(testMethodName) }
 
-    @Test fun whenMappings() { snapshotAPIAndCompare(testName.methodName) }
+    @Test fun special() { snapshotAPIAndCompare(testMethodName) }
+
+    @Test fun whenMappings() { snapshotAPIAndCompare(testMethodName) }
 
 
     private fun snapshotAPIAndCompare(testClassRelativePath: String) {
@@ -60,7 +66,7 @@ class CasesPublicAPITest {
 
         val api = testClassStreams.loadApiFromJvmClasses().filterOutNonPublic()
 
-        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
+        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testMethodName + ".txt")
 
         api.dumpAndCompareWith(target)
     }

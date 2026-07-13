@@ -175,7 +175,6 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
                 testBaseDir.resolve("path/to/friend2").toFile().absolutePath,
                 testBaseDir.resolve("path/to/friend3").toFile().absolutePath,
             ),
-            arrayOf(testBaseDir.resolve("path/with,comma").toFile().absolutePath)
         ),
         argumentRawValues = listOf(
             arrayOf(
@@ -184,6 +183,7 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
                 testBaseDir.resolve("path/to/friend3").toFile().absolutePath,
             ).joinToString(",")
         ),
+        invalidArgumentValues = listOf(arrayOf(testBaseDir.resolve("path/with,comma").toFile().absolutePath)),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xfriend-paths=$value") },
     ),
@@ -312,7 +312,6 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
                 testBaseDir.resolve("path/to/java/src2").toFile().absolutePath,
                 testBaseDir.resolve("path/to/java/src3").toFile().absolutePath,
             ),
-            arrayOf(testBaseDir.resolve("path/with,comma").toFile().absolutePath)
         ),
         argumentRawValues = listOf(
             arrayOf(
@@ -321,6 +320,7 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
                 testBaseDir.resolve("path/to/java/src3").toFile().absolutePath,
             ).joinToString(",")
         ),
+        invalidArgumentValues = listOf(arrayOf(testBaseDir.resolve("path/with,comma").toFile().absolutePath)),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xjava-source-roots=$value") },
     ),

@@ -30,11 +30,8 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclaration
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.isForeignValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -443,7 +440,7 @@ internal class KaFirSymbolRelationProvider(
         forAccessorSymbol: (KaPropertyAccessorSymbol) -> Sequence<KaCallableSymbol>,
         fallback: (KaCallableSymbol) -> Sequence<KaCallableSymbol>,
     ): Sequence<KaCallableSymbol> = when (this) {
-        is KaValueParameterSymbol -> this.generatedPrimaryConstructorProperty?.let(fallback).orEmpty()
+        is KaValueParameterSymbol -> this.primaryConstructorProperty?.let(fallback).orEmpty()
         is KaPropertyAccessorSymbol -> forAccessorSymbol(this)
         is KaNamedFunctionSymbol -> getSyntheticJavaPropertyAccessor(this)?.let(forAccessorSymbol) ?: fallback(this)
         else -> fallback(this)
@@ -596,7 +593,7 @@ internal class KaFirSymbolRelationProvider(
                 }
             }
             is KaTypeParameterSymbol -> {
-                val actualParent = containingDeclaration(this) as? KaTypeParameterOwnerSymbol ?: return emptyList()
+                val actualParent = containingDeclaration(this) ?: return emptyList()
                 val actualIndex = actualParent.typeParameters.indexOf(this).takeIf { it >= 0 } ?: return emptyList()
                 return getExpectsForActualParent(actualParent) { expectParent ->
                     /** See [org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility.TypeParameterNames] */
@@ -604,7 +601,7 @@ internal class KaFirSymbolRelationProvider(
                 }
             }
             is KaContextParameterSymbol -> {
-                val actualParent = containingDeclaration(this) as? KaContextParameterOwnerSymbol ?: return emptyList()
+                val actualParent = containingDeclaration(this) as? KaCallableSymbol ?: return emptyList()
                 val actualIndex = actualParent.contextParameters.indexOf(this).takeIf { it >= 0 } ?: return emptyList()
                 return getExpectsForActualParent(actualParent) { expectParent ->
                     /** See [org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility.ContextParameterNames] */

@@ -41,6 +41,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
                 "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
                 "-opt-in", "kotlin.native.internal.InternalForKotlinNative",
                 "-opt-in", "kotlin.experimental.ExperimentalObjCRefinement",
+                "-XXLanguage:+CompanionBlocksAndExtensions",
                 "-Xbinary=cInterfaceMode=v1",
             )),
             nominalPackageName = PackageName(moduleName),

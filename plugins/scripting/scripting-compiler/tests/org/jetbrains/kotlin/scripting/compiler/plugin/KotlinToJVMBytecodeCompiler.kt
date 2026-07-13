@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase.getSourceFiles
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase.writeOutputsIfNeeded
-import org.jetbrains.kotlin.codegen.JvmBackendClassResolverForModuleWithDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.K1JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LOOKUP_TRACKER
@@ -128,7 +128,7 @@ internal object KotlinToJVMBytecodeCompiler {
                 codegenFactory.normalFactory,
                 backendInput,
                 diagnosticsReporter,
-                JvmBackendClassResolverForModuleWithDependencies(moduleDescriptor),
+                K1JvmBackendClassResolverForModuleWithDependencies(moduleDescriptor),
             )
         }
 

@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.testFederation.TestFederationInferAffectedDomainsTask
 
 buildscript {
@@ -74,7 +73,6 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     id("project-tests-convention") apply false
     id("test-federation-convention") apply false
-    id("test-data-manager-root")
     id("nodejs-configuration") apply false
 }
 
@@ -84,7 +82,6 @@ findProperty("deployVersion")?.let {
     assert(findProperty("build.number") != null) { "`build.number` parameter is expected to be explicitly set with the `deployVersion`" }
 }
 
-val kotlinLanguageVersion: String by extra
 val kotlinApiVersionForModulesUsedInIDE: String by extra
 
 extra["kotlin_root"] = rootDir
@@ -110,7 +107,6 @@ rootProject.apply {
     from(rootProject.file("gradle/versions.gradle.kts"))
     from(rootProject.file("gradle/checkArtifacts.gradle.kts"))
     from(rootProject.file("gradle/checkCacheability.gradle.kts"))
-    from(rootProject.file("gradle/compilerModules.gradle.kts"))
 }
 
 pluginManager.apply("nodejs-configuration")
@@ -149,22 +145,6 @@ val mppProjects by extra {
     listOf(
         ":kotlin-stdlib",
         ":kotlin-test",
-    )
-}
-
-val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
-    listOf(
-        ":analysis:analysis-api-fir",
-        ":analysis:decompiled:light-classes-for-decompiled",
-        ":analysis:symbol-light-classes",
-        ":compiler",
-        ":compiler:backend.js",
-        ":jps:jps-common",
-        ":js:js.tests",
-        ":kotlin-build-common",
-        ":kotlin-gradle-plugin",
-        ":kotlin-scripting-jvm-host-test",
-        ":native:kotlin-klib-commonizer",
     )
 }
 
@@ -213,7 +193,7 @@ val dist = tasks.register("dist") {
     dependsOn(":kotlin-compiler:dist")
 }
 
-tasks.register("createIdeaHomeForTests") {
+val createIdeaHomeForTests = tasks.register("createIdeaHomeForTests") {
     val ideaBuildNumberFileForTests = ideaBuildNumberFileForTests()
     val intellijSdkVersion = kotlinBuildProperties.versionsProperty("intellijSdk").get()
     outputs.dir(ideaHomePathForTests())
@@ -224,9 +204,29 @@ tasks.register("createIdeaHomeForTests") {
         }
     }
 }
+val ideaHomeForTests = configurations.consumable("ideaHomeForTests")
+artifacts {
+    add(ideaHomeForTests.name, createIdeaHomeForTests)
+}
+
+val publishedMark: NamedDomainObjectProvider<DependencyScopeConfiguration> = configurations.dependencyScope("publishedMark")
+val publishedMarkElements: NamedDomainObjectProvider<ResolvableConfiguration> = configurations.resolvable("publishedMarkClasspath").apply {
+    configure { extendsFrom(publishedMark) }
+}
+val localPublishedMark: NamedDomainObjectProvider<DependencyScopeConfiguration> = configurations.dependencyScope("localPublishedMark")
+val localPublishedMarkElements: NamedDomainObjectProvider<ResolvableConfiguration> = configurations.resolvable("localPublishedMarkClasspath").apply {
+    configure { extendsFrom(publishedMark) }
+}
+dependencies {
+    allprojects.forEach { p ->
+        add(publishedMark.name, project(p.path, configuration = "publishedMark"))
+        add(localPublishedMark.name, project(p.path, configuration = "localPublishedMark"))
+    }
+}
 
 tasks {
     register("compileAll") {
+        doNotTrackState("This is just a lifecycle task to compile all, we don't want to hash the inputs.")
         /*
          * Build cache tests don't work properly with KMP projects,
          * so such projects are temporarily excluded from them (KTI-2822)
@@ -237,14 +237,16 @@ tasks {
             ":plugins:plugin-sandbox:plugin-annotations",
             ":kotlin-power-assert-runtime",
         )
-        allprojects
+        val projectsToRun = allprojects
             .filter {
                 excludedNativePrefixes.none(it.path::startsWith) || kotlinBuildProperties.isKotlinNativeEnabled.get()
-            }
-            .forEach {
-                dependsOn(it.tasks.withType<KotlinCompilationTask<*>>())
-                dependsOn(it.tasks.withType<JavaCompile>())
-            }
+            }.map { it.path }
+        val conf: FileCollection = configurations.detachedConfiguration(
+            *projectsToRun.map {
+                this.project.dependencies.project(it, configuration = "compileAll")
+            }.toTypedArray()
+        ).incoming.artifactView { lenient(true) }.files
+        inputs.files(conf).withNormalizer(ClasspathNormalizer::class.java)
     }
 
     named<Delete>("clean") {
@@ -306,7 +308,6 @@ tasks {
             ":compiler:container:test",
             ":compiler:tests-java8:test",
             ":compiler:tests-spec:test",
-            ":compiler:tests-against-klib:test"
         )
     }
 
@@ -417,6 +418,7 @@ tasks {
         // see comments on the task in kotlin-scripting-jvm-host-test
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
+        dependsOn(":kotlin-scripting-jsr223-test:test")
     }
 
     testLifecycleTask("scriptingTest") {
@@ -454,7 +456,6 @@ tasks {
         dependsOn("toolsTest")
         dependsOn("examplesTest")
         dependsOn(":kotlin-build-common:test")
-        dependsOn(":kotlin-build-common:testJUnit5")
         dependsOn(":core:descriptors.runtime:test")
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
@@ -551,6 +552,7 @@ tasks {
     }
 
     testLifecycleTask("codebaseTests") {
+        dependsOn(":repo:auto-code-review:test")
         dependsOn(":repo:codebase-tests:test")
     }
 
@@ -601,13 +603,13 @@ tasks {
 
     registerSpecialPublishingTasks(
         nameSuffix = "IdeArtifacts",
-        artifactProjectList = @Suppress("UNCHECKED_CAST") (rootProject.extra["compilerArtifactsForIde"] as List<String>),
+        artifactProjectList = @Suppress("UNCHECKED_CAST") (CompilerModules.compilerArtifactsForIde),
         latch = Project::idePluginPublishingLatch
     )
 
     registerSpecialPublishingTasks(
         nameSuffix = "AnalysisApiArtifacts",
-        artifactProjectList = @Suppress("UNCHECKED_CAST") (rootProject.extra["analysisApiArtifacts"] as List<String>),
+        artifactProjectList = @Suppress("UNCHECKED_CAST") (CompilerModules.analysisApiArtifacts),
         latch = Project::analysisApiPublishingLatch
     )
 
@@ -615,6 +617,9 @@ tasks {
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
         commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests")
+        inputs.files(localPublishedMarkElements.get().incoming.artifactView { lenient(true) }.files)
+            .withPathSensitivity(PathSensitivity.NONE)
+            .withPropertyName("localPublishedMarks")
         doFirst {
             environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
         }
@@ -638,17 +643,12 @@ tasks {
 
     // 'mvnPublish' is required for local bootstrap
     if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-        val localPublishTask = register("publish") {
+        register("publish") {
             group = "publishing"
+            inputs.files(publishedMarkElements.get().incoming.artifactView { lenient(true) }.files)
+                .withPathSensitivity(PathSensitivity.NONE)
+                .withPropertyName("publishedMarks")
             finalizedBy(mvnPublishTask)
-        }
-
-        subprojects {
-            tasks.configureEach {
-                if (name == "publish") {
-                    localPublishTask.get().dependsOn(this)
-                }
-            }
         }
     }
 

@@ -63,7 +63,6 @@ import org.jetbrains.kotlin.types.model.isNullableType
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.getChildren
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -1111,16 +1110,8 @@ fun FirBasedSymbol<*>?.isExpect(): Boolean {
     }
 }
 
-context(context: SessionHolder)
 fun FirResolvedQualifier.resolvedSymbolOrCompanionSymbol(): FirClassLikeSymbol<*>? {
-    return symbol?.applyIf(resolvedToCompanionObject) {
-        fullyExpandedClass()?.resolvedCompanionObjectSymbol
-    }
-}
-
-context(context: SessionHolder)
-fun FirResolvedQualifier.resolvedCompanionSymbol(): FirClassLikeSymbol<*>? {
-    return symbol.takeIf { resolvedToCompanionObject }?.fullyExpandedClass()?.resolvedCompanionObjectSymbol
+    return if (resolvedToCompanionObject) accessedObjectSymbol else qualifierSymbol
 }
 
 context(context: CheckerContext)

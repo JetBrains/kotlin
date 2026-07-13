@@ -88,6 +88,7 @@ KtThisExpression(51,55): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -106,6 +107,7 @@ KtThisExpression(51,55): 'this'
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -117,6 +119,7 @@ KtNameReferenceExpression(51,55): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -135,6 +138,7 @@ KtNameReferenceExpression(51,55): 'this'
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -291,6 +295,7 @@ KtThisExpression(143,147): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -309,6 +314,7 @@ KtThisExpression(143,147): 'this'
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -320,6 +326,7 @@ KtNameReferenceExpression(143,147): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -338,6 +345,7 @@ KtNameReferenceExpression(143,147): 'this'
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -494,6 +502,7 @@ KtThisExpression(234,238): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -512,6 +521,7 @@ KtThisExpression(234,238): 'this'
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -523,6 +533,7 @@ KtNameReferenceExpression(234,238): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -541,6 +552,7 @@ KtNameReferenceExpression(234,238): 'this'
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -697,6 +709,7 @@ KtThisExpression(325,329): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -715,6 +728,7 @@ KtThisExpression(325,329): 'this'
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -726,6 +740,7 @@ KtNameReferenceExpression(325,329): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -744,6 +759,7 @@ KtNameReferenceExpression(325,329): 'this'
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -900,6 +916,7 @@ KtThisExpression(416,420): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -918,6 +935,7 @@ KtThisExpression(416,420): 'this'
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -929,6 +947,7 @@ KtNameReferenceExpression(416,420): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -947,6 +966,7 @@ KtNameReferenceExpression(416,420): 'this'
           annotations: []
           typeArguments: []
           type: Test
+        typeParameters: []
         visibility: PUBLIC
     ]
 

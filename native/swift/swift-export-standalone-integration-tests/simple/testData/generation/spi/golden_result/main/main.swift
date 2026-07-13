@@ -29,7 +29,7 @@ public protocol _MyInterface {
 public protocol __MyInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
 @_spi(InternalLibApi)
-public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibInterface, lib._InternalLibInterface, lib.__InternalLibInterface {
+public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibInterface, lib.__InternalLibInterface {
     @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
     public var experimentalProp: Swift.String {
         @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
@@ -104,7 +104,7 @@ public final class MyOptInClass: KotlinRuntime.KotlinBase {
     }
 }
 @_spi(InterfaceOptInOne) @_spi(OpenClassOptIn)
-public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib._InterfaceOne, lib.__InterfaceOne {
+public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib.__InterfaceOne {
     @_spi(InterfaceOptInOne) @_spi(OpenClassOptIn)
     public override init() {
         let __kt = __root___MySubClass_init_allocate()
@@ -119,7 +119,7 @@ public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib._InterfaceOn
     }
 }
 @_spi(InterfaceOptInTwo)
-public final class MySubInterface: KotlinRuntime.KotlinBase, lib.InterfaceTwo, lib._InterfaceTwo, lib.__InterfaceTwo {
+public final class MySubInterface: KotlinRuntime.KotlinBase, lib.InterfaceTwo, lib.__InterfaceTwo {
     @_spi(InterfaceOptInTwo)
     public init() {
         let __kt = __root___MySubInterface_init_allocate()
@@ -276,9 +276,37 @@ package func MyInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPoin
     return { _result; return true }()
 }
 
+@_cdecl("MyInterface_foo_get__reverse_swift")
+package func MyInterface_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _result: Swift.String = _self.foo
+    return _result
+}
+
+@_cdecl("MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift")
+package func MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _result: Swift.Void = { _self.foo = newValue }()
+    return { _result; return true }()
+}
+
 @_cdecl("MyInterface_optInFun__reverse_swift")
 package func MyInterface_optInFun__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
     let _result: Swift.Void = _self.optInFun()
+    return { _result; return true }()
+}
+
+@_cdecl("MyInterface_optInProp_get__reverse_swift")
+package func MyInterface_optInProp_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _result: Swift.String = _self.optInProp
+    return _result
+}
+
+@_cdecl("MyInterface_optInProp_set__TypesOfArguments__Swift_String____reverse_swift")
+package func MyInterface_optInProp_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _result: Swift.Void = { _self.optInProp = newValue }()
     return { _result; return true }()
 }

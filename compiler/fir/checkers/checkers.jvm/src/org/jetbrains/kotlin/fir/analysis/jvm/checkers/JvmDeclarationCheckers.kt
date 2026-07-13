@@ -57,6 +57,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirJvmFieldApplicabilityChecker,
             FirJvmSyntheticApplicabilityChecker,
             FirPropertyJavaNullabilityWarningChecker,
+            FirJvmCompanionBlockPropertyChecker,
         )
 
     override val functionCheckers: Set<FirFunctionChecker>

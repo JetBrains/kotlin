@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLPartialBodyElementMapper
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.bodyBlock
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
@@ -22,9 +23,11 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -104,6 +107,22 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
                         ^g R|<local>/e|.R|/myMap|<R|T|, R|kotlin/Int|>(::R|SubstitutionOverride</G.f: R|kotlin/Int|>|)
                     """.trimIndent(),
                 renderTarget(lastFirElement),
+            )
+        }
+    }
+
+    @Test
+    fun rootCompilerPluginAnnotation(ktFile: KtFile, testServices: TestServices) {
+        withResolutionFacade(ktFile) { resolutionFacade ->
+            val pluginAnnotations = resolutionFacade.useSiteFirSession.registeredPluginAnnotations
+            val assertions = testServices.assertions
+            assertions.assertTrue(pluginAnnotations is LLFirIdeRegisteredPluginAnnotations) {
+                "The IDE implementation is expected"
+            }
+
+            assertions.assertEquals(
+                expected = emptySet<FqName>(),
+                actual = pluginAnnotations.getAnnotationsWithMetaAnnotation(FqName.ROOT),
             )
         }
     }

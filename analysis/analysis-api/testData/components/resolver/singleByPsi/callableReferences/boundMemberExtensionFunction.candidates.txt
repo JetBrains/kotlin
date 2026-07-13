@@ -6,6 +6,7 @@ KtCallableReferenceExpression(230,238): 'Bar::foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -24,6 +25,7 @@ KtCallableReferenceExpression(230,238): 'Bar::foo'
             annotations: []
             typeArguments: []
             type: Foo
+          typeParameters: []
           visibility: PUBLIC
         type = Foo
       extensionReceiver = null

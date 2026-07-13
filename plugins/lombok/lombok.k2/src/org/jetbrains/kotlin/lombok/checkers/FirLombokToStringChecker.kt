@@ -5,31 +5,26 @@
 
 package org.jetbrains.kotlin.lombok.checkers
 
-import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.builtins.StandardNames.TO_STRING_NAME
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
-import org.jetbrains.kotlin.lombok.config.CallSuperMode
-import org.jetbrains.kotlin.lombok.config.LombokConfigNames.DO_NOT_USE_GETTERS
+import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.lombokService
-import org.jetbrains.kotlin.lombok.generators.ToStringGenerator
+import org.jetbrains.kotlin.lombok.generators.isToString
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
-import org.jetbrains.kotlin.lombok.generators.isToString
-import org.jetbrains.kotlin.lombok.LombokNames
-import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
+    private val functionNames = setOf(TO_STRING_NAME)
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val toStringAnnInfo = context.session.lombokService.getToString(declaration.symbol) ?: return
@@ -37,7 +32,7 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) 
 
         val declaredMemberScope = context.session.declaredMemberScope(declaration.symbol, memberRequiredPhase = null)
         var hasConflict = false
-        declaredMemberScope.processFunctionsByName(ToStringGenerator.TO_STRING_NAME) {
+        declaredMemberScope.processFunctionsByName(TO_STRING_NAME) {
             hasConflict = hasConflict || it.isRelevantForConflictsCheck && !it.origin.isToString && it.valueParameterSymbols.isEmpty()
         }
         if (hasConflict) {
@@ -47,32 +42,12 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) 
             reporter.reportOn(source, LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS, context)
         }
 
-        if ((toStringAnnInfo.callSuper ?: context.session.lombokService.config.toStringCallSuper) == CallSuperMode.Warn &&
-            declaration.hasNonAnyClassSupertype(context.session)
-        ) {
-            /**
-             * Mirrors Lombok Java behaviour: when `lombok.toString.callSuper=warn` is set and a `@ToString`-annotated
-             * class has a non-trivial superclass (i.e. not just `kotlin.Any`/`java.lang.Object`), emits a warning
-             * because `toString()` is generated without calling the superclass implementation.
-             */
-            reporter.reportOn(
-                source,
-                LombokFirDiagnostics.CALL_SUPER_NOT_CALLED,
-                ToStringGenerator.TO_STRING_NAME.asString(),
-                LombokNames.TO_STRING.shortName(),
-                context,
-            )
-        }
-
-        /**
-         * The `doNotUseGetters` flag is a Java-only concept. In Kotlin, properties are always accessed
-         * through a unified property mechanism — there is no distinction between backing-field access
-         * and a getter call. Warn so users know the parameter has no effect.
-         */
-        if (toStringAnnInfo.doNotUseGetters != null) {
-            val argSource = toStringAnnInfo.annotation.findArgumentByName(DO_NOT_USE_GETTERS, returnFirstWhenNotFound = false)!!.source
-            reporter.reportOn(argSource, LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT, context)
-        }
+        checkCallSuper(
+            toStringAnnInfo.callSuper ?: context.session.lombokService.config.toStringCallSuper,
+            toStringAnnInfo,
+            declaration,
+            functionNames,
+        )
 
         /**
          * Mirrors Lombok Java behaviour: "Having both @ToString.Exclude and @ToString.Include on a member
@@ -85,14 +60,8 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) 
             property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, context.session)
                 ?: return@processAllProperties
             val includeSource = includeAnnotation.source ?: return@processAllProperties
-            reporter.reportOn(includeSource, LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE, LombokNames.TO_STRING.shortName(), context)
-        }
-    }
 
-    private fun FirRegularClass.hasNonAnyClassSupertype(session: FirSession): Boolean {
-        return superTypeRefs.any { ref ->
-            val symbol = ref.toRegularClassSymbol(session) ?: return@any false
-            symbol.classKind != ClassKind.INTERFACE && symbol.classId != StandardClassIds.Any
+            reporter.reportOn(includeSource, LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE, LombokNames.TO_STRING.shortName(), context)
         }
     }
 }

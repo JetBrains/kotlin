@@ -88,7 +88,6 @@ public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> 
      * The list of [context parameters](https://github.com/Kotlin/KEEP/issues/367) for this symbol access.
      * The list is available if the callable is declared with context parameters.
      */
-    @KaExperimentalApi
     public val contextArguments: List<KaReceiverValue>
 
     /**

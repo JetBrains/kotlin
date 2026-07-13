@@ -1,6 +1,7 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI, NATIVE
 //   non-jvm backends are ignored because of KT-66432
 // ISSUE: KT-65415, KT-66432
+// ALLOW_KOTLIN_PACKAGE
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR, NATIVE
 // ^^^ IrClassSymbolImpl is already bound. Signature: kotlin.internal/IntrinsicConstEvaluation|null[0]. Owner: CLASS ANNOTATION_CLASS name:IntrinsicConstEvaluation modality:OPEN visibility:public superTypes:[kotlin.Annotation]
 

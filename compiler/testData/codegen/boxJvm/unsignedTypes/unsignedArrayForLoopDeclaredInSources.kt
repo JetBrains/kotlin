@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // PREFER_IN_TEST_OVER_STDLIB
+// ALLOW_KOTLIN_PACKAGE
 
 // FILE: declarations.kt
 package kotlin

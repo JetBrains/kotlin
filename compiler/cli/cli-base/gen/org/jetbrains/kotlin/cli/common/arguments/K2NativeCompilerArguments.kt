@@ -308,18 +308,6 @@ This library must be one of the ones passed with '-library'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @all:Deprecated("Use '-Xadd-light-debug=enable' instead.")
-    @Argument(
-        value = "-Xg0",
-        description = "Add light debug information.",
-        deprecatedVersion = "1.5.20",
-    )
-    var lightDebugDeprecated: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-Xgc",
         valueDescription = "<gc>",
@@ -652,10 +640,12 @@ This library must be one of the ones passed with '-library'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @all:Deprecated("")
     @Argument(
         value = "-Xworker-exception-handling",
         valueDescription = "<mode>",
         description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.",
+        deprecatedVersion = "2.4.20",
     )
     var workerExceptionHandling: String? = null
         set(value) {
@@ -789,20 +779,6 @@ This library must be one of the ones passed with '-library'.""",
             field = value
         }
 
-    @all:Deprecated("")
-    @Argument(
-        value = "-library-version",
-        shortName = "-lv",
-        valueDescription = "<version>",
-        description = "The library version.",
-        deprecatedVersion = "2.0.20",
-    )
-    var libraryVersion: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
     @Argument(
         value = "-linker-option",
         valueDescription = "<arg>",
@@ -893,18 +869,6 @@ This library must be one of the ones passed with '-library'.""",
         description = "Don't link the libraries from dist/klib automatically.",
     )
     var nodefaultlibs: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @all:Deprecated("The dist no longer has any endorsed libraries.")
-    @Argument(
-        value = "-no-endorsed-libs",
-        description = "Don't link endorsed libraries from the dist automatically.",
-        deprecatedVersion = "1.9.20",
-    )
-    var noendorsedlibs: Boolean = false
         set(value) {
             checkFrozen()
             field = value

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 enum class KlibAbiCompatibilityLevel(val major: Int, val minor: Int) {
     ABI_LEVEL_2_3(2, 3),
     ABI_LEVEL_2_4(2, 4),
+    ABI_LEVEL_2_5(2, 5),
     ;
 
     override fun toString() = "$major.$minor"
@@ -23,6 +24,6 @@ enum class KlibAbiCompatibilityLevel(val major: Int, val minor: Int) {
         if (ordinal > 0) KlibAbiCompatibilityLevel.entries[ordinal - 1] else null
 
     companion object {
-        val LATEST_STABLE = ABI_LEVEL_2_4
+        val LATEST_STABLE = ABI_LEVEL_2_5
     }
 }

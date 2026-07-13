@@ -219,8 +219,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: true
       hasDefaultValue: true
       isActual: false
@@ -238,16 +238,18 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: first
       origin: LIBRARY
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: A
+      typeParameters: []
       visibility: PUBLIC
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: true
       hasDefaultValue: true
       isActual: false
@@ -265,10 +267,12 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: second
       origin: LIBRARY
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: B
+      typeParameters: []
       visibility: PUBLIC
   ]
   visibility: PUBLIC
@@ -306,8 +310,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -325,11 +329,13 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: LIBRARY
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
+      typeParameters: []
       visibility: PUBLIC
   ]
   visibility: PUBLIC
@@ -370,6 +376,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -388,6 +395,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: A
+    typeParameters: []
     visibility: PRIVATE
   callableId: kotlin/Pair.first
   contextParameters: []
@@ -395,6 +403,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -412,6 +421,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: A
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
   hasBackingField: true
@@ -425,7 +435,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -434,6 +443,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: first
   origin: LIBRARY
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -446,6 +456,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -464,6 +475,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: B
+    typeParameters: []
     visibility: PRIVATE
   callableId: kotlin/Pair.second
   contextParameters: []
@@ -471,6 +483,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -488,6 +501,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: B
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
   hasBackingField: true
@@ -501,7 +515,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -510,6 +523,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: second
   origin: LIBRARY
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []

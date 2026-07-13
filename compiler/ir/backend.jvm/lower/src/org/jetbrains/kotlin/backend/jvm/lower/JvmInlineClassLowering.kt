@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -244,49 +246,47 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
         val replacement = context.inlineClassReplacements.getReplacementFunction(function) ?: return super.visitFunctionAccess(expression)
+        return when (replacement) {
+            is IrConstructor -> {
+                checkNonExposedConstructor(replacement)
 
-        if (replacement is IrConstructor) {
-            checkNonExposedConstructor(replacement)
-
-            return when (expression) {
-                is IrDelegatingConstructorCall ->
-                    IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                        expression.startOffset, expression.endOffset, expression.type, replacement.symbol, expression.typeArguments.size
-                    ).apply {
-                        buildReplacement(expression)
-                        arguments.add(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType))
-                    }
-                is IrEnumConstructorCall ->
-                    IrEnumConstructorCallImpl(
-                        expression.startOffset, expression.endOffset, expression.type, replacement.symbol, expression.typeArguments.size
-                    ).apply {
-                        buildReplacement(expression)
-                        arguments.add(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType))
-                    }
-                else ->
-                    IrConstructorCallImpl.fromSymbolOwner(
-                        expression.startOffset, expression.endOffset, expression.type, replacement.symbol, expression.origin
-                    ).apply {
-                        buildReplacement(expression)
-                        arguments.add(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType))
-                    }
+                when (expression) {
+                    is IrDelegatingConstructorCall ->
+                        IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                            expression.startOffset, expression.endOffset, expression.type, replacement.symbol, expression.typeArguments.size
+                        ).apply {
+                            buildReplacement(expression)
+                            arguments.add(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType))
+                        }
+                    is IrEnumConstructorCall ->
+                        IrEnumConstructorCallImpl(
+                            expression.startOffset, expression.endOffset, expression.type, replacement.symbol, expression.typeArguments.size
+                        ).apply {
+                            buildReplacement(expression)
+                            arguments.add(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType))
+                        }
+                    else ->
+                        IrConstructorCallImpl.fromSymbolOwner(
+                            expression.startOffset, expression.endOffset, expression.type, replacement.symbol, expression.origin
+                        ).apply {
+                            buildReplacement(expression)
+                            arguments.add(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType))
+                        }
+                }
             }
-        }
-
-        require(replacement is IrSimpleFunction) {
-            "Expected ${function.render()} to be replaced by simple function, but got ${replacement.render()}"
-        }
-
-        return IrCallImpl(
-            startOffset = expression.startOffset,
-            endOffset = expression.endOffset,
-            type = function.returnType.substitute(expression.typeSubstitutionMap),
-            symbol = replacement.symbol,
-            typeArgumentsCount = replacement.typeParameters.size,
-            origin = expression.origin,
-            superQualifierSymbol = (expression as? IrCall)?.superQualifierSymbol
-        ).apply {
-            buildReplacement(expression)
+            is IrSimpleFunction -> {
+                IrCallImpl(
+                    startOffset = expression.startOffset,
+                    endOffset = expression.endOffset,
+                    type = function.returnType.substitute(expression.typeSubstitutionMap),
+                    symbol = replacement.symbol,
+                    typeArgumentsCount = replacement.typeParameters.size,
+                    origin = expression.origin,
+                    superQualifierSymbol = (expression as? IrCall)?.superQualifierSymbol
+                ).apply {
+                    buildReplacement(expression)
+                }
+            }
         }
     }
 
@@ -727,61 +727,59 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             return null
         }
 
-        val replacement = replacements.getReplacementFunction(function)
-
-        if (replacement == null) {
-            if (function is IrConstructor) {
-                val constructorReplacement = replacements.getReplacementForRegularClassConstructor(function)
-                if (constructorReplacement != null) {
-                    addBindingsFor(function, constructorReplacement)
-                    return transformFlattenedConstructor(function, constructorReplacement)
+        return when (val replacement = replacements.getReplacementFunction(function)) {
+            null -> {
+                if (function is IrConstructor) {
+                    val constructorReplacement = replacements.getReplacementForRegularClassConstructor(function)
+                    if (constructorReplacement != null) {
+                        addBindingsFor(function, constructorReplacement)
+                        return transformFlattenedConstructor(function, constructorReplacement)
+                    }
+                }
+                function.transformChildrenVoid()
+                // Non-mangled functions can override mangled functions under some conditions, e.g., a function
+                // `fun f(): Nothing` can override a function `fun f(): UInt`. The former is not mangled, while
+                // the latter is.
+                //
+                // This is a potential problem for bridge generation, where we have to ensure that the overridden
+                // symbols are always up to date. Right now they might not be since we lower each file independently
+                // and since deserialized declarations are not mangled at all.
+                if (function is IrSimpleFunction) {
+                    function.overriddenSymbols = replacements.replaceOverriddenSymbols(function)
+                }
+                null
+            }
+            is IrConstructor -> {
+                require(function is IrConstructor) {
+                    "Expected ${replacement.render()} to be a replacement of constructor, but got ${function.render()}"
+                }
+                addBindingsFor(function, replacement)
+                val declarations = transformFlattenedConstructor(function, replacement)
+                declarations + if (function.shouldBeExposed()) {
+                    listOfNotNull(
+                        createExposedConstructor(replacement, function),
+                        createExposedNoArgConstructor(replacement, function),
+                    )
+                } else {
+                    emptyList()
                 }
             }
-            function.transformChildrenVoid()
-            // Non-mangled functions can override mangled functions under some conditions, e.g., a function
-            // `fun f(): Nothing` can override a function `fun f(): UInt`. The former is not mangled, while
-            // the latter is.
-            //
-            // This is a potential problem for bridge generation, where we have to ensure that the overridden
-            // symbols are always up to date. Right now they might not be since we lower each file independently
-            // and since deserialized declarations are not mangled at all.
-            if (function is IrSimpleFunction) {
-                function.overriddenSymbols = replacements.replaceOverriddenSymbols(function)
-            }
-            return null
-        } else if (replacement is IrConstructor) {
-            require(function is IrConstructor) {
-                "Expected ${replacement.render()} to be a replacement of constructor, but got ${function.render()}"
-            }
-            addBindingsFor(function, replacement)
-            val declarations = transformFlattenedConstructor(function, replacement)
-            return declarations + if (function.shouldBeExposed()) {
-                listOfNotNull(
-                    createExposedConstructor(replacement, function),
-                    createExposedNoArgConstructor(replacement, function),
-                )
-            } else {
-                emptyList()
-            }
-        }
+            is IrSimpleFunction -> {
+                if (function is IrSimpleFunction && function.overriddenSymbols.any { it.owner.parentAsClass.isFun }) {
+                    // If fun interface methods are already mangled, do not mangle them twice.
+                    val suffix = function.hashSuffix()
+                    if (suffix != null && function.name.asString().endsWith(suffix)) {
+                        function.transformChildrenVoid()
+                        return null
+                    }
+                }
 
-        require(replacement is IrSimpleFunction) {
-            "Expected ${function.render()} to be replaced by simple function, but got ${replacement.render()}"
-        }
-
-        if (function is IrSimpleFunction && function.overriddenSymbols.any { it.owner.parentAsClass.isFun }) {
-            // If fun interface methods are already mangled, do not mangle them twice.
-            val suffix = function.hashSuffix()
-            if (suffix != null && function.name.asString().endsWith(suffix)) {
-                function.transformChildrenVoid()
-                return null
+                addBindingsFor(function, replacement)
+                when (function) {
+                    is IrSimpleFunction -> transformSimpleFunctionFlat(function, replacement)
+                    is IrConstructor -> transformSecondaryConstructorFlat(function, replacement)
+                }
             }
-        }
-
-        addBindingsFor(function, replacement)
-        return when (function) {
-            is IrSimpleFunction -> transformSimpleFunctionFlat(function, replacement)
-            is IrConstructor -> transformSecondaryConstructorFlat(function, replacement)
         }
     }
 
@@ -791,7 +789,32 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                 parameters.any { it.type.isInlineClassType() } &&
                 !constructedClass.isInlineClass
 
+    // Copy real defaults only when lowering the non-exposed constructor itself, fixing up the stub.
+    private fun IrConstructor.copyDefaultValuesFromOriginalConstructorReplacingStubs(original: IrConstructor) {
+        val typeParameterSubstitution = original.typeParameters.zip(typeParameters).toMap()
+        val valueParameterSubstitution = original.parameters.zip(parameters).associate { [originalParameter, replacementParameter] ->
+            originalParameter.symbol to replacementParameter
+        }
+
+        for ([originalParameter, replacementParameter] in original.parameters.zip(parameters)) {
+            val originalDefault = originalParameter.defaultValue
+            replacementParameter.defaultValue = if (originalDefault == null) {
+                null
+            } else {
+                factory.createExpressionBody(
+                    startOffset = originalDefault.startOffset,
+                    endOffset = originalDefault.endOffset,
+                    expression = originalDefault.expression.deepCopyWithSymbols(
+                        initialParent = this,
+                        createTypeRemapper = { IrTypeParameterRemapper(typeParameterSubstitution) },
+                    ).transform(DefaultValueParameterRemapper, valueParameterSubstitution),
+                )
+            }
+        }
+    }
+
     private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration> {
+        replacement.copyDefaultValuesFromOriginalConstructorReplacingStubs(function)
         replacement.parameters.forEach {
             it.defaultValue?.patchDeclarationParents(replacement)
             it.transformChildrenVoid()
@@ -960,5 +983,12 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         val replacement = getReflectionReplacement() ?: return super.visitRawFunctionReference(expression)
         expression.symbol = replacement.symbol
         return super.visitRawFunctionReference(expression)
+    }
+}
+
+private object DefaultValueParameterRemapper : IrTransformer<Map<IrValueParameterSymbol, IrValueParameter>>() {
+    override fun visitGetValue(expression: IrGetValue, data: Map<IrValueParameterSymbol, IrValueParameter>): IrExpression {
+        val newParameter = data[expression.symbol] ?: return expression
+        return IrGetValueImpl(expression.startOffset, expression.endOffset, newParameter.type, newParameter.symbol, expression.origin)
     }
 }

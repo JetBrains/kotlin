@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: JVM_IR, NATIVE
+// IGNORE_BACKEND: JVM_IR
 
 // This test is essentially the same one as initializersInheritanceMultipleSupertypes,
 // but with different super type kinds order (interface, class, interface)
@@ -59,11 +59,11 @@ fun box(): String {
     if (Foo.fooProp2 != "foo2") return "FAIL: fooProp2=${Foo.fooProp2}"
 
     // Order: superclass, then superinterfaces (declaration order), then Foo itself.
-    if (initOrder != "IF2 BAR1 BAR2 IF1 FOO1 FOO2 ") return "FAIL: initOrder=$initOrder"
+    if (initOrder != "BAR1 BAR2 IF2 IF1 FOO1 FOO2 ") return "FAIL: initOrder=$initOrder"
 
     // Accessing companion members again must not re-run any initializer.
     if (Foo.fooProp2 != "foo2") return "FAIL: fooProp2 (second access)=${Foo.fooProp2}"
-    if (initOrder != "IF2 BAR1 BAR2 IF1 FOO1 FOO2 ") return "FAIL: initOrder after re-access=$initOrder"
+    if (initOrder != "BAR1 BAR2 IF2 IF1 FOO1 FOO2 ") return "FAIL: initOrder after re-access=$initOrder"
 
     return "OK"
 }

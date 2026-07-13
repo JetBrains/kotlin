@@ -85,12 +85,14 @@ class KeyInfo(
  */
 class DurableFunctionKeyTransformer(
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
 ) : DurableKeyTransformer(
     DurableKeyVisitor(),
     context,
+    irModule,
     stabilityInferencer,
     metrics,
     featureFlags,

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 // it returns true if call has no dispatch receiver (e.g. resulting descriptor is top-level function or local variable)
 // or call receiver is effectively `this` instance (explicitly or implicitly) of resulting descriptor
@@ -133,6 +134,7 @@ fun ResolvedCall<*>.hasInferredReturnType(): Boolean {
     return !returnType.contains { ErrorUtils.isUninferredTypeVariable(it) }
 }
 
+@OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
 @K1Deprecation
 fun CandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) {
     CandidateApplicability.RESOLVED,

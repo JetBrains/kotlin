@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.isUnit
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.library.newCompanionInitializationEnabled
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 private var IrClass.objectClassInstanceFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
@@ -77,11 +79,18 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
                             declaration
                     )
                 }
-                declaration.declarations.singleOrNull { (it as? IrClass)?.isCompanion == true }?.let {
-                    processObjectClass(
-                            it as IrClass,
-                            declaration
-                    )
+                val companionIndex = declaration.declarations.indexOfFirst { (it as? IrClass)?.isCompanion == true }
+                if (companionIndex != -1) {
+                    val companionDeclaration = declaration.declarations[companionIndex] as IrClass
+                    val addAtIndex = if (declaration.konanLibrary?.newCompanionInitializationEnabled == true) {
+                        // With the initialization order, the `companion object` and `companion` blocks should be initialized
+                        // following the program order. So, the field holding `companion object` instance should be placed
+                        // next to the `companion object` to preserve the program order.
+                        companionIndex + 1
+                    } else {
+                        -1
+                    }
+                    processObjectClass(companionDeclaration, declaration, addAtIndex)
                 }
                 return declaration
             }
@@ -106,11 +115,16 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
 
     fun processObjectClass(
             declaration: IrClass,
-            classToAdd: IrClass
+            classToAdd: IrClass,
+            addAtIndex: Int = -1,
     ) {
         val function = context.getObjectClassInstanceFunction(declaration)
         val property = function.correspondingPropertySymbol!!.owner
-        classToAdd.declarations.add(property)
+        if (addAtIndex == -1) {
+            classToAdd.declarations.add(property)
+        } else {
+            classToAdd.declarations.add(addAtIndex, property)
+        }
 
         property.addBackingField {
             isFinal = true

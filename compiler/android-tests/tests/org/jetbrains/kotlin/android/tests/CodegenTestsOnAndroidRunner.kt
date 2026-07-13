@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.android.tests
 
 import com.intellij.util.PlatformUtils
-import junit.framework.TestCase
-import junit.framework.TestSuite
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -20,7 +18,11 @@ import org.jetbrains.kotlin.android.tests.gradle.GradleRunner
 import org.jetbrains.kotlin.android.tests.run.ProcessFailedException
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.DynamicContainer
+import org.junit.jupiter.api.DynamicNode
+import org.junit.jupiter.api.DynamicTest
 import java.util.Base64
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
@@ -33,8 +35,8 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    private suspend fun runTestsInEmulator(): TestSuite {
-        val rootSuite = TestSuite("Root")
+    private suspend fun runTestsInEmulator(): List<DynamicNode> {
+        val allTests = mutableListOf<DynamicNode>()
 
         val emulatorType = detectArch()
         println("Using $emulatorType emulator!")
@@ -60,9 +62,8 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                     for (flavor in flavorsToRun) {
                         installAndroidDebugTestWithRetry(gradleRunner, emulator, flavor)
                         val className = flavor.capitalizeAsciiOnly()
-                        runTestsOnEmulator(emulator, className, TestSuite(className)).apply {
-                            rootSuite.addTest(this)
-                        }
+                        val dynamicTests = runTestsOnEmulator(emulator, className)
+                        allTests.add(DynamicContainer.dynamicContainer(className, dynamicTests))
                     }
                 } finally {
                     withContext(NonCancellable) {
@@ -80,25 +81,25 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             }
         }
 
-        return rootSuite
+        return allTests
     }
 
-    private fun processReport(rootSuite: TestSuite, resultOutput: String, suiteName: String) {
+    private fun processReport(resultOutput: String, suiteName: String): List<DynamicTest> {
         try {
             val testCases = parseInstrumentationOutput(resultOutput)
-            testCases.forEach { rootSuite.addTest(it) }
-            Assert.assertNotEquals("There is no test results in report for $suiteName", 0, testCases.size.toLong())
+            assertNotEquals(0L, testCases.size.toLong(), "There is no test results in report for $suiteName")
+            return testCases
         } catch (e: Throwable) {
             throw RuntimeException("Can't parse test results for $suiteName\n$resultOutput", e)
         }
     }
 
-    private fun parseInstrumentationOutput(output: String): List<TestCase> {
+    private fun parseInstrumentationOutput(output: String): List<DynamicTest> {
         val casePrefix = "KOTLIN_BOX_CASE|"
         val markerPrefix = casePrefix.substringBefore('|')
         val statusFail = "FAIL"
         val lines = extractResultSection(output)
-        val testCases = arrayListOf<TestCase>()
+        val dynamicTests = arrayListOf<DynamicTest>()
         val logicalLines = arrayListOf<String>()
         var pendingLine: StringBuilder? = null
 
@@ -141,17 +142,14 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                 null
             }
 
-            testCases.add(object : TestCase(testName) {
-                @Throws(Throwable::class)
-                override fun runTest() {
-                    if (failureText != null) {
-                        Assert.fail(failureText)
-                    }
+            dynamicTests.add(DynamicTest.dynamicTest(testName) {
+                if (failureText != null) {
+                    fail(failureText)
                 }
             })
         }
 
-        return testCases
+        return dynamicTests
     }
 
     private fun extractResultSection(output: String): List<String> {
@@ -220,12 +218,11 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    private suspend fun runTestsOnEmulator(emulator: Emulator, className: String, suite: TestSuite): TestSuite {
+    private suspend fun runTestsOnEmulator(emulator: Emulator, className: String): List<DynamicTest> {
         val platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea")
         try {
             val resultOutput = emulator.runTestsViaInstrumentation("org.jetbrains.kotlin.android.tests.$className")
-            processReport(suite, resultOutput, className)
-            return suite
+            return processReport(resultOutput, className)
         } finally {
             if (platformPrefixProperty != null) {
                 System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, platformPrefixProperty)
@@ -233,7 +230,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                 System.clearProperty(PlatformUtils.PLATFORM_PREFIX_KEY)
             }
         }
-
     }
 
     companion object {
@@ -244,8 +240,8 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         )
 
         @JvmStatic
-        fun runTestsInEmulator(pathManager: PathManager): TestSuite {
-            val result: TestSuite
+        fun runTestsInEmulator(pathManager: PathManager): List<DynamicNode> {
+            val result: List<DynamicNode>
             runBlocking {
                 result = CodegenTestsOnAndroidRunner(pathManager).runTestsInEmulator()
             }

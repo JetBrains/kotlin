@@ -7,7 +7,11 @@ extension ExportedKotlinPackages.weird {
     open class A: KotlinRuntime.KotlinBase {
         open var bar: Swift.Int32 {
             get {
-                return weird_A_bar_get(self.__externalRCRef())
+                if Self.self == ExportedKotlinPackages.weird.A.self {
+                    return weird_A_bar_get(self.__externalRCRef())
+                } else {
+                    return weird_A_bar_get_direct(self.__externalRCRef())
+                }
             }
         }
         public init() throws {
@@ -69,6 +73,13 @@ extension ExportedKotlinPackages.weird {
         }
     }
 }
+@_cdecl("weird_A_bar_get__reverse_swift")
+package func weird_A_bar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = ExportedKotlinPackages.weird.A.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.bar
+    return _result
+}
+
 @_cdecl("weird_A_throws__reverse_swift")
 package func weird_A_throws__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = ExportedKotlinPackages.weird.A.__createClassWrapper(externalRCRef: `self`)!

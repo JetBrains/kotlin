@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesC
 import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesComponentLayout
 import org.jetbrains.kotlin.library.KlibLayoutReader
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
+import kotlin.io.path.absolute
 import kotlin.io.path.listDirectoryEntries
 
 internal class KlibNativeIncludedBinariesComponentImpl(
     private val layoutReader: KlibLayoutReader<KlibNativeIncludedBinariesComponentLayout>
 ) : KlibNativeIncludedBinariesComponent {
-    override val nativeIncludedBinaryFilePaths: List<String> by lazy {
+    override val nativeIncludedBinaryFilePaths: List<Path> by lazy {
         layoutReader.readExtractingToTemp(KlibNativeIncludedBinariesComponentLayout::nativeIncludedBinariesDir)
             .listDirectoryEntries()
-            .map(Path::absolutePathString)
+            .map(Path::absolute)
     }
 }

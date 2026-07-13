@@ -462,6 +462,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     }
 
     @Test
+    @TestMetadata("companionVariable.kt")
+    public void testCompanionVariable() {
+      run("companionVariable.kt");
+    }
+
+    @Test
     @TestMetadata("mixOfRegularAndStaticMethods.kt")
     public void testMixOfRegularAndStaticMethods() {
       run("mixOfRegularAndStaticMethods.kt");

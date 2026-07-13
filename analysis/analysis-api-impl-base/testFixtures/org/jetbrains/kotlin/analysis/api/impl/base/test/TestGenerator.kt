@@ -113,6 +113,9 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
                         // For some platforms, `Cloneable` is unresolved and the test cannot be compiled to a library. We could place these
                         // tests under `withErrors`, but it'd split the test data, which is undesirable.
                         add("cloneable")
+
+                        // Companion blocks aren't supported yet
+                        add("companionExtensionAndBlock")
                     }
 
                     else -> {}

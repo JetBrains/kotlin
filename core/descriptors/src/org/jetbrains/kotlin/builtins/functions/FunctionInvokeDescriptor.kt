@@ -46,18 +46,6 @@ class FunctionInvokeDescriptor private constructor(
         this.setHasStableParameterNames(false)
     }
 
-    /**
-     * Returns true if this `invoke` has so much parameters that it makes sense to wrap them into array and make this function have a single
-     * `vararg Any?` parameter in the binaries, on platforms where function types are represented as separate classes (JVM, Native).
-     *
-     * For example, on JVM there are 23 function classes with the fixed number of parameters (`Function0` ... `Function22`), and another
-     * class representing the function with big arity, with a variable number of parameters (`FunctionN`). Whenever `invoke` of a function
-     * type with big arity is called, the JVM back-end wraps all arguments into an array and passes it to `FunctionN.invoke`.
-     */
-    @get:JvmName("hasBigArity")
-    val hasBigArity: Boolean
-        get() = valueParameters.size >= BuiltInFunctionArity.BIG_ARITY
-
     override fun doSubstitute(configuration: CopyConfiguration): FunctionDescriptor? {
         val substituted = super.doSubstitute(configuration) as FunctionInvokeDescriptor? ?: return null
         if (substituted.valueParameters.none { it.type.extractParameterNameFromFunctionTypeArgument() != null }) return substituted

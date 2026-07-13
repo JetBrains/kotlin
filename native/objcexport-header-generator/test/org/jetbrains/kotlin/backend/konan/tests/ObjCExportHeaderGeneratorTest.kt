@@ -430,7 +430,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
 
     @Test
     fun `test - functionWithReservedMethodName`() {
-        doTest(headersTestDataDir.resolve("functionWithReservedMethodName"))
+        doTest(headersTestDataDir.resolve("functionWithReservedMethodName"), Configuration(frameworkName = "Shared"))
     }
 
     @Test
@@ -704,6 +704,22 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - extensions mangling`() {
         doTest(headersTestDataDir.resolve("extensionsMangling"))
+    }
+
+    @Test
+    fun `test - function parameters mangling`() {
+        doTest(headersTestDataDir.resolve("functionParametersMangling"))
+    }
+
+    @Test
+    fun `test - properties with reserved names`() {
+        doTest(headersTestDataDir.resolve("propertiesWithReservedNames"))
+    }
+
+    @Test
+    @TodoAnalysisApi
+    fun `test - conflict upon mangling a property or a method should be handled by the manglers`() {
+        doTest(headersTestDataDir.resolve("conflictUponManglingPropertyOrMethod"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

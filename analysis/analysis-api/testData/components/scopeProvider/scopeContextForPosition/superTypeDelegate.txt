@@ -8,8 +8,8 @@ scopes:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
@@ -27,11 +27,13 @@ scopes:
         modality: FINAL
         name: base
         origin: SOURCE
+        primaryConstructorProperty: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: test/Base
+        typeParameters: []
         visibility: PUBLIC
     constructors: 0
 

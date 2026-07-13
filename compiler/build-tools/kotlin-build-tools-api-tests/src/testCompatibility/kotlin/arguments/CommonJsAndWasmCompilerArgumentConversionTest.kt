@@ -8,26 +8,13 @@ package org.jetbrains.kotlin.buildtools.tests.arguments
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.AllCommonJsAndWasmCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_LINKING
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_LINKING
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.InvalidArgumentValueCommonJsAndWasmCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.InvalidRawValueCommonJsAndWasmCompilerArgumentsBtaV2StrategyAgnosticTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.NullableCommonJsAndWasmCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.*
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LinkableModule
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jsProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.wasmProject
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 
@@ -110,35 +97,12 @@ internal class CommonJsAndWasmCompilerArgumentConversionTest : BaseCompilationTe
         )
     }
 
-    // Kept @Disabled because the JS/Wasm SearchPathType arguments do not reject a path containing File.pathSeparator (KT-87212).
-    // The current buggy behavior is pinned by testPathSeparatorInValueCurrentlyAccepted below; once the
-    // validation is added, that test will fail - then enable this test and delete it.
-    @Disabled("KT-87212: enable once File.pathSeparator validation is added for JS/Wasm SearchPathType arguments")
     @InvalidArgumentValueCommonJsAndWasmCompilerArgumentsWithBtaVersionsTest
     @DisplayName("BTA argument with non-existent argument value fails conversion")
     fun <T> CommonJsAndWasmArgumentConfiguration<T>.testInvalidArgumentConversionFails() {
         assumeArgumentSupported()
         for (invalidValue in invalidArgumentValues) {
             assertThrows<CompilerArgumentsParseException> {
-                buildArguments {
-                    setArgument(this, invalidValue)
-                }
-            }
-        }
-    }
-
-    // Exact mirror of the @Disabled testInvalidArgumentConversionFails above,
-    // but asserting the current buggy behavior: the conversion does NOT reject a path containing
-    // File.pathSeparator. Runs only for the three SearchPathType arguments that have invalidArgumentValues.
-    @InvalidArgumentValueCommonJsAndWasmCompilerArgumentsWithBtaVersionsTest
-    @DisplayName("KNOWN BUG (KT-87212): a path containing File.pathSeparator is silently accepted, not rejected")
-    fun <T> CommonJsAndWasmArgumentConfiguration<T>.testPathSeparatorInvalidValuesAccepted() {
-        assumeArgumentSupported()
-        for (invalidValue in invalidArgumentValues) {
-            // BUG: once File.pathSeparator validation is added there, this will throw CompilerArgumentsParseException
-            // and this assertion will fail - the signal to delete this test and enable
-            // testInvalidArgumentConversionFails above (remove its @Disabled).
-            assertDoesNotThrow {
                 buildArguments {
                     setArgument(this, invalidValue)
                 }

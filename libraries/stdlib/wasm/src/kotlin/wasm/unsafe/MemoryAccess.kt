@@ -5,8 +5,7 @@
 
 package kotlin.wasm.unsafe
 
-import kotlin.wasm.internal.WasmOp
-import kotlin.wasm.internal.implementedAsIntrinsic
+import kotlin.wasm.internal.*
 
 /**
  * Linear memory pointer type.
@@ -32,46 +31,34 @@ public value class Pointer public constructor(public val address: UInt) {
         Pointer(address - other)
 
     /** Load a Byte (8 bit) value */
-    @WasmOp(WasmOp.I32_LOAD8_S)
     public fun loadByte(): Byte =
-        implementedAsIntrinsic
+        wasm_i32_load8_s(address.toInt())
 
     /** Load a Short (16 bit) value */
-    @WasmOp(WasmOp.I32_LOAD16_S)
     public fun loadShort(): Short =
-        implementedAsIntrinsic
+        wasm_i32_load16_s(address.toInt())
 
     /** Load an Int (32 bit) value */
-    @WasmOp(WasmOp.I32_LOAD)
     public fun loadInt(): Int =
-        implementedAsIntrinsic
+        wasm_i32_load(address.toInt())
 
     /** Load a Long (64 bit) value */
-    @WasmOp(WasmOp.I64_LOAD)
     public fun loadLong(): Long =
-        implementedAsIntrinsic
+        wasm_i64_load(address.toInt())
 
     /** Store a Byte (8 bit) [value] */
-    @Suppress("UNUSED_PARAMETER")
-    @WasmOp(WasmOp.I32_STORE8)
     public fun storeByte(value: Byte): Unit =
-        implementedAsIntrinsic
+        wasm_i32_store8(address.toInt(), value)
 
     /** Store a Short (16 bit) [value] */
-    @Suppress("UNUSED_PARAMETER")
-    @WasmOp(WasmOp.I32_STORE16)
     public fun storeShort(value: Short): Unit =
-        implementedAsIntrinsic
+        wasm_i32_store16(address.toInt(), value)
 
     /** Store an Int (32 bit) [value] */
-    @Suppress("UNUSED_PARAMETER")
-    @WasmOp(WasmOp.I32_STORE)
     public fun storeInt(value: Int): Unit =
-        implementedAsIntrinsic
+        wasm_i32_store(address.toInt(), value)
 
     /** Store a Long (64 bit) [value] */
-    @Suppress("UNUSED_PARAMETER")
-    @WasmOp(WasmOp.I64_STORE)
     public fun storeLong(value: Long): Unit =
-        implementedAsIntrinsic
+        wasm_i64_store(address.toInt(), value)
 }

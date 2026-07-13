@@ -145,6 +145,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -163,6 +164,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: dependency/api/FakeI
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: dependency.api.ExtensionKt
@@ -211,6 +213,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -229,6 +232,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: dependency/api/InternalFakeI
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: dependency.api.ExtensionKt
@@ -277,6 +281,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -295,6 +300,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: dependency/api/PrivateFakeI
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: dependency.api.ExtensionKt
@@ -463,6 +469,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -481,6 +488,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: dependency/api/I
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(I.kt)
     getContainingJvmClassName: dependency.api.IKt
@@ -529,6 +537,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -547,6 +556,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: dependency/api/InternalI
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(I.kt)
     getContainingJvmClassName: dependency.api.IKt
@@ -595,6 +605,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -613,6 +624,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: dependency/api/PrivateI
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(I.kt)
     getContainingJvmClassName: dependency.api.IKt
@@ -781,6 +793,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -799,6 +812,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: dependency/api/C1
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(C1.kt)
     getContainingJvmClassName: dependency.api.C1Kt
@@ -847,6 +861,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -865,6 +880,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: dependency/api/InternalC1
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(C1.kt)
     getContainingJvmClassName: dependency.api.C1Kt
@@ -913,6 +929,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -931,6 +948,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: dependency/api/PrivateC1
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(C1.kt)
     getContainingJvmClassName: dependency.api.C1Kt

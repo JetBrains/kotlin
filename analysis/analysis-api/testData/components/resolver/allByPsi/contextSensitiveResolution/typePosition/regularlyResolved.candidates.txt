@@ -154,6 +154,7 @@ KtNameReferenceExpression(284,285): 'z'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -172,6 +173,7 @@ KtNameReferenceExpression(284,285): 'z'
               annotations: []
               typeArguments: []
               type: MySealed
+            typeParameters: []
             visibility: PUBLIC
           type = MySealed
         type = it(Left & MySealed)
@@ -212,6 +214,7 @@ KtNameReferenceExpression(302,303): 'y'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -230,6 +233,7 @@ KtNameReferenceExpression(302,303): 'y'
               annotations: []
               typeArguments: []
               type: MySealed
+            typeParameters: []
             visibility: PUBLIC
           type = MySealed
         type = MySealed.Right

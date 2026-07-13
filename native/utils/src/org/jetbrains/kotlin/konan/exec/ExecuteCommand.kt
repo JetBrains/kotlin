@@ -29,8 +29,7 @@ open class Command(
     val redirectInputFile: File? = null,
     /**
      * Working directory for the spawned process. When `null`, the current process working directory is inherited.
-     * Useful to reference inputs by their (whitespace-free) base name when the containing directory path may
-     * contain spaces that some tools (e.g. `ar -M` scripts) cannot represent. See [ProcessBuilder.directory].
+     * See [ProcessBuilder.directory].
      */
     val workingDirectory: File? = null,
 ) {

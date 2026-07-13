@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.internals
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.ClassId
@@ -56,7 +55,6 @@ public interface KaInternalsSymbolProvider {
 
     public fun symbol(script: KtScript): KaScriptSymbol
 
-    @KaExperimentalApi
     public fun symbol(contextReceiver: KtContextReceiver): KaContextParameterSymbol
 
     public fun findPackage(fqName: FqName): KaPackageSymbol?

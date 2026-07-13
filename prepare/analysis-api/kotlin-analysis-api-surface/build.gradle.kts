@@ -9,8 +9,8 @@ plugins {
     id("analysis-api-artifact")
 }
 
-val analysisApiSurfaceDependencies: List<String> by rootProject.extra
-val analysisApiSurfaceModules: Array<String> by rootProject.extra
+val analysisApiSurfaceDependencies: List<String> = CompilerModules.analysisApiSurfaceDependencies
+val analysisApiSurfaceModules: Array<String> = CompilerModules.analysisApiSurfaceModules
 
 dependencies {
     api(project(":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components"))

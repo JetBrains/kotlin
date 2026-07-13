@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineFactory
 
+@Deprecated("Deprecated. Use K2-based implementation instead.", ReplaceWith("kotlin.script.experimental.jvmhost.jsr223.base.KotlinJsr223JvmScriptEngineFactoryBase"))
 abstract class KotlinJsr223JvmScriptEngineFactoryBase : ScriptEngineFactory {
 
     override fun getLanguageName(): String = "kotlin"

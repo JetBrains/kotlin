@@ -51,6 +51,8 @@ internal abstract class DefaultCompilerDiagnosticsProblemsReporter @Inject const
 
         try {
             problems.reporter.report(problemId) {
+                // Fixed by KT-87509
+                @Suppress("DEPRECATION")
                 it
                     .contextualLabel(severity.toDisplayName())
                     .details(message)

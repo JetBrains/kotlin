@@ -1,1 +1,12 @@
 @Param @ParameterPropertyAndField @Everything prop: kotlin.Int
+
+@Property
+@PropertyAndField
+@ParameterPropertyAndField
+@Everything
+@kotlin.Deprecated(message = "Obsolete")
+var prop: kotlin.Int
+  @Get
+  @Everything
+  @kotlin.Deprecated(message = "Obsolete")
+  get()

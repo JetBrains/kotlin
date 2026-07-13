@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
+import kotlin.io.path.absolute
 import kotlin.io.path.createDirectories
 
 /**
@@ -52,7 +52,7 @@ internal sealed class KlibIrComponentWriterImpl : KlibComponentWriter {
     private inline fun List<SerializedIrFile>.serializeNonNullableEntities(
         accessor: (SerializedIrFile) -> ByteArray,
         destination: () -> Path,
-    ): Unit = IrArrayWriter(map { accessor(it) }, false).writeIntoFile(destination().absolutePathString())
+    ): Unit = IrArrayWriter(map { accessor(it) }, false).writeIntoFile(destination().absolute())
 
     private inline fun List<SerializedIrFile>.serializeNullableEntries(
         accessor: (SerializedIrFile) -> ByteArray?,
@@ -71,6 +71,6 @@ internal sealed class KlibIrComponentWriterImpl : KlibComponentWriter {
                     "\nOnly ${nonNullEntries.size} out of $size serialized IR files have non-nullable values."
         }
 
-        IrArrayWriter(nonNullEntries, false).writeIntoFile(destination().absolutePathString())
+        IrArrayWriter(nonNullEntries, false).writeIntoFile(destination().absolute())
     }
 }

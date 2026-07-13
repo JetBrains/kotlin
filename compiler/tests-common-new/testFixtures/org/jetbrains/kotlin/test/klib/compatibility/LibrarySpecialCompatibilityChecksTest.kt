@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibili
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.io.unzipTo
@@ -18,7 +19,10 @@ import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.api.parallel.Isolated
 import java.nio.file.Files.createTempDirectory
@@ -57,12 +61,18 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
      * when exporting a klib to the previous ABI version, we may use a 2.X compiler while the previous ABI version is 2.(X − 2).
      * Since this is only a temporary situation (the ABI version is usually bumped shortly after the language version),
      * we simply ignore these tests when this happens.
+     *
+     * The same is true for bumping the language version, which happens with a lag after bumping the compiler version.
      */
     @BeforeEach
-    fun assumeAbiAndLanguageAligned() {
+    fun assumeCompilerVersionAlignedWithAbiAndLanguageVersions() {
         Assumptions.assumeTrue(
-            LanguageVersion.LATEST_STABLE.major == KotlinAbiVersion.CURRENT.major && LanguageVersion.LATEST_STABLE.minor == KotlinAbiVersion.CURRENT.minor,
-            "ABI and language basic versions are not aligned"
+            KotlinVersion.CURRENT.major == LanguageVersion.LATEST_STABLE.major && KotlinVersion.CURRENT.minor == LanguageVersion.LATEST_STABLE.minor,
+            "The compiler and LV versions are not aligned"
+        )
+        Assumptions.assumeTrue(
+            KotlinVersion.CURRENT.major == KotlinAbiVersion.CURRENT.major && KotlinVersion.CURRENT.minor == KotlinAbiVersion.CURRENT.minor,
+            "The compiler and ABI versions are not aligned"
         )
     }
 
@@ -116,9 +126,32 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
 
     @Test
     fun testEitherVersionIsMissing() {
-        listOf(
+        // TODO (KT-83853): Use KotlinToolingVersion here!
+        fun getKotlinVersion(rawKotlinVersion: String): KotlinVersion {
+            val versionNumbers = rawKotlinVersion.substringBefore('-').split('.').map { it.toInt() }
+
+            return when (versionNumbers.size) {
+                2 -> KotlinVersion(versionNumbers[0], versionNumbers[1])
+                3 -> KotlinVersion(versionNumbers[0], versionNumbers[1], versionNumbers[2])
+                else -> fail { "Malformed Kotlin version: $$rawKotlinVersion" }
+            }
+        }
+
+        val compilerVersionUsedToBuildOriginalLibrary: KotlinVersion = KlibLoader { libraryPaths(originalLibraryPath) }.load().run {
+            assertFalse(hasProblems)
+            assertEquals(1, librariesStdlibFirst.size)
+
+            val compilerVersionInManifest = librariesStdlibFirst.single().versions.compilerVersion
+                ?: fail { "No compiler version in manifest of the library: $originalLibraryPath" }
+
+            getKotlinVersion(compilerVersionInManifest)
+        }
+
+        val currentCompilerVersion: KotlinVersion? = KotlinCompilerVersion.getVersion()?.let(::getKotlinVersion)
+
+        listOfNotNull(
             TestVersion(2, 0, 0) to null,
-            null to TestVersion(2, 0, 0),
+            (null to TestVersion(2, 0, 0)).takeIf { compilerVersionUsedToBuildOriginalLibrary == currentCompilerVersion },
         ).forEach { [libraryVersion, compilerVersion] ->
             compileDummyLibrary(
                 libraryVersion = libraryVersion,

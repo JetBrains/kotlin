@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.jvm.abi
 
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.incremental.isClassFile
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 
 abstract class AbstractJvmAbiContentTest : BaseJvmAbiTest() {
-    fun doTest(path: String) {
-        val testDir = File(path)
+    fun runTest(path: String) {
+        val testDir = ForTestCompileRuntime.transformTestDataPath(path)
         val compilation = Compilation(testDir, name = null).also { make(it) }
 
         val classToBytecode = hashMapOf<File, String>()

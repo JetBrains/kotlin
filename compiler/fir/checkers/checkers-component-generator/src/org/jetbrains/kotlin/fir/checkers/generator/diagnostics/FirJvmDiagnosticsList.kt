@@ -80,6 +80,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
 
         val CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION by warning<PsiElement>()
+
+        val INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
     }
 
     val TYPES by object : DiagnosticGroup("Types") {
@@ -117,6 +119,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
         }
+        val JAVA_CLASS_PROPERTY_REFERENCE by deprecationError<PsiElement>(
+            featureForError = ForbidJavaClassPropertyReferences,
+            positioningStrategy = PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED,
+        )
 
         val UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<ConeKotlinType>("subjectType")
@@ -282,6 +288,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
         val JVM_SYNTHETIC_ON_DELEGATE by error<KtAnnotationEntry>()
         val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+        val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR by error<PsiElement>()
         val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR by error<PsiElement>(PositioningStrategy.SPREAD_OPERATOR)
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()

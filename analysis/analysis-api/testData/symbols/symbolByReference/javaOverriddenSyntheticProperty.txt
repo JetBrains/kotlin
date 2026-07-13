@@ -2,6 +2,7 @@ KaSyntheticJavaPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /JavaClass.foo
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -9,6 +10,7 @@ KaSyntheticJavaPropertySymbol:
         psi: null
     ]
     callableId: /JavaClass.getFoo
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -25,6 +27,7 @@ KaSyntheticJavaPropertySymbol:
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -43,6 +46,7 @@ KaSyntheticJavaPropertySymbol:
         annotations: []
         typeArguments: []
         type: @EnhancedNullability kotlin/String
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
@@ -53,6 +57,7 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -74,7 +79,6 @@ KaSyntheticJavaPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isOverride: false
   isStatic: false
   isVal: true
@@ -87,6 +91,7 @@ KaSyntheticJavaPropertySymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -105,6 +110,7 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: @EnhancedNullability kotlin/String
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: JavaClass

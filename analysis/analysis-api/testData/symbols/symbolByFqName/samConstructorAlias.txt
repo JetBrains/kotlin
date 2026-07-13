@@ -1,0 +1,73 @@
+KaSamConstructorSymbol:
+  annotations: []
+  callableId: test/MyAlias
+  contextParameters: []
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: MyAlias
+  origin: SAM_CONSTRUCTOR
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: {test/MyAlias=} test/A
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: function
+      origin: SAM_CONSTRUCTOR
+      primaryConstructorProperty: null
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+        ]
+        type: (kotlin/Int) -> kotlin/Int
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(samConstructorAlias.kt)
+      getContainingJvmClassName: test.SamConstructorAliasKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(samConstructorAlias.kt)
+  getContainingJvmClassName: test.SamConstructorAliasKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: test.MyAlias

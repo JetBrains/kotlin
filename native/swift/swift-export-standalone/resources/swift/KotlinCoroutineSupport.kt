@@ -13,13 +13,12 @@ import kotlin.plus
 import platform.Foundation.NSError
 
 @OptIn(InternalCoroutinesApi::class)
-fun Job.alsoCancel(another: Job) {
+private fun Job.invokeOnCancelling(block: (CancellationException) -> Unit) {
     // It is necessary to forward cancellation as soon as it is triggered to make it visible before the job completes,
     // hence onCancelling=true
     this.invokeOnCompletion(onCancelling = true) {
-        if (it is CancellationException) {
-            another.cancel(it)
-        }
+        if (it !is CancellationException) return@invokeOnCompletion
+        block(it)
     }
 }
 
@@ -27,38 +26,29 @@ fun Job.alsoCancel(another: Job) {
  * A Swift.Task-based Job.
  *
  * This type is a manually bridged counterpart to KotlinTask type in Swift
- *
- * @property backingJob the job this class delegates Job conformance to.
- * @property cancellationCallback callback used to control or query the external cancellation state.
- *  Accepts Boolean that indicates if the external work shall be cancelled.
- *  Returns Boolean indicating if the external work was already cancelled before the call.
- *
  */
 @OptIn(InternalCoroutinesApi::class, kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
-class SwiftJob private constructor(
-    private val backingJob: Job,
-    private val _cancellationCallback: AtomicReference<(Boolean) -> Boolean>,
-) : Job by backingJob {
-    var cancellationCallback: (Boolean) -> Boolean
-        get() = _cancellationCallback.load()
-        set(value) { _cancellationCallback.store(value) }
+class SwiftJob private constructor() : Job by Job() {
 
-    constructor(cancellationCallback: (Boolean) -> Boolean = { it }) : this(backingJob = Job(), _cancellationCallback = AtomicReference(cancellationCallback))
-    constructor(parentJob: Job) : this(backingJob = Job(parentJob), _cancellationCallback = AtomicReference({ it }))
-
-    init {
-        if (cancellationCallback(false)) {
-            cancelExternally()
-        }
+    constructor(cancellationCallback: () -> Unit) : this() {
+        setCallback(cancellationCallback)
     }
 
-    override fun cancel(cause: CancellationException?) {
-        backingJob.cancel(cause)
-        cancellationCallback(true)
+    fun setCallback(cancellationCallback: () -> Unit) {
+        invokeOnCancelling { cancellationCallback() }
+    }
+
+    constructor(kotlinJob: Job) : this() {
+        setKotlinJob(kotlinJob)
+    }
+
+    fun setKotlinJob(kotlinJob: Job) {
+        invokeOnCancelling(kotlinJob::cancel)
+        kotlinJob.invokeOnCancelling(this::cancel)
     }
 
     fun cancelExternally() {
-        backingJob.cancel(CancellationException("Hosting Swift.Task was cancelled externally."))
+        cancel(CancellationException("Hosting Swift.Task was cancelled externally."))
     }
 }
 
@@ -77,26 +67,19 @@ public fun <T> swiftCoroutine(
         } catch (error: Throwable) {
             exception(error)
         }
-    }.invokeOnCompletion(onCancelling = true) {
-        if (it !is CancellationException) return@invokeOnCompletion
-        cancellation.cancel(it)
-    }
+    }.let(cancellation::setKotlinJob)
 }
 
 public suspend fun <T> suspendSwiftCoroutine(
-    block: ((T) -> Unit, (NSError) -> Unit, SwiftJob) -> Unit
+    block: ((T) -> Unit, (NSError?) -> Unit, SwiftJob) -> Unit
 ): T {
-    val cancellation = SwiftJob()
-    coroutineContext[Job]?.let {
-        cancellation.alsoCancel(it)
-        it.alsoCancel(cancellation)
-    }
-    return suspendCancellableCoroutine { cont ->
+    val cancellation = SwiftJob(coroutineContext.job)
+    return suspendCoroutine { cont ->
         val continuation: (T) -> Unit = { _result ->
-            if (cont.isActive) cont.resumeWith(kotlin.Result.success(_result))
+            cont.resume(_result)
         }
-        val exception: (NSError) -> Unit = { _error ->
-            if (cont.isActive) cont.resumeWith(kotlin.Result.failure(SwiftException(_error)))
+        val exception: (NSError?) -> Unit = { _error ->
+            cont.resumeWithException(_error?.let(::SwiftException) ?: CancellationException("Cancelled using CancellationError in Swift"))
         }
         block(continuation, exception, cancellation)
     }
@@ -111,7 +94,7 @@ public fun __root___SwiftJob_init_allocate(): kotlin.native.internal.NativePtr {
 @ExportedBridge("__root___SwiftJob_init_initialize")
 public fun __root___SwiftJob_init_initialize(__kt: kotlin.native.internal.NativePtr, _block: kotlin.native.internal.NativePtr): Unit {
     val instance = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val block = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(_block)
+    val block = convertBlockPtrToKotlinFunction<()->Unit>(_block)
     kotlin.native.internal.initInstance(instance, SwiftJob(cancellationCallback = block))
 }
 
@@ -124,8 +107,8 @@ public fun __root___SwiftJob_cancelExternally(self: kotlin.native.internal.Nativ
 @ExportedBridge("__root___SwiftJob_setCallback")
 public fun __root___SwiftJob_setCallback(self: kotlin.native.internal.NativePtr, _block: kotlin.native.internal.NativePtr): Unit {
     val instance = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SwiftJob
-    val block = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(_block)
-    instance.cancellationCallback = block
+    val block = convertBlockPtrToKotlinFunction<()->Unit>(_block)
+    instance.setCallback(block)
 }
 
 /**

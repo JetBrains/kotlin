@@ -61,7 +61,7 @@ abstract class AbstractKDocProviderTest : AbstractAnalysisApiBasedTest() {
                             val symbol = declaration.symbol
                             appendLine(symbol.renderKDoc())
                             if (symbol is KaValueParameterSymbol) {
-                                symbol.generatedPrimaryConstructorProperty?.let { property ->
+                                symbol.primaryConstructorProperty?.let { property ->
                                     property.getter?.let { appendLine(it.renderKDoc()) }
                                     property.setter?.let { appendLine(it.renderKDoc()) }
                                 }

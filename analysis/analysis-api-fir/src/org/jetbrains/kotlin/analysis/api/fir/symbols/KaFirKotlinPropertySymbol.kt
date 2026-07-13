@@ -369,12 +369,25 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
             firSymbol.getKtConstantInitializer(builder)
         }
 
+    @Deprecated(
+        "Use `KaKotlinProperty.primaryConstructorParameter` instead.",
+        ReplaceWith("primaryConstructorParameter != null")
+    )
     override val isFromPrimaryConstructor: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null)
                 false
             else
                 firSymbol.fir.fromPrimaryConstructor == true
+        }
+
+    override val primaryConstructorParameter: KaValueParameterSymbol?
+        get() = withValidityAssertion {
+            if (backingPsi != null) {
+                return null
+            }
+            val firValueParameter = firSymbol.correspondingValueParameterFromPrimaryConstructor ?: return@withValidityAssertion null
+            return KaFirValueParameterSymbol(firValueParameter, analysisSession)
         }
 
     override val isExternal: Boolean
@@ -517,8 +530,21 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
                 ?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer(builder)
         }
 
+    @Deprecated(
+        "Use `correspondingPrimaryConstructorParameter` instead.",
+        replaceWith = ReplaceWith("correspondingPrimaryConstructorParameter != null")
+    )
     override val isFromPrimaryConstructor: Boolean
         get() = withValidityAssertion { true }
+
+    override val primaryConstructorParameter: KaValueParameterSymbol?
+        get() = withValidityAssertion {
+            if (backingPsi != null) {
+                return KaFirValueParameterSymbol(backingPsi, analysisSession)
+            }
+            val firValueParameter = firSymbol.correspondingValueParameterFromPrimaryConstructor ?: return@withValidityAssertion null
+            return KaFirValueParameterSymbol(firValueParameter, analysisSession)
+        }
 
     override val isExternal: Boolean
         get() = withValidityAssertion {
@@ -624,8 +650,15 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
             backingPsi?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer(builder)
         }
 
+    @Deprecated(
+        "Use `correspondingPrimaryConstructorParameter` instead.",
+        replaceWith = ReplaceWith("correspondingPrimaryConstructorParameter != null")
+    )
     override val isFromPrimaryConstructor: Boolean
         get() = withValidityAssertion { false }
+
+    override val primaryConstructorParameter: KaValueParameterSymbol?
+        get() = withValidityAssertion { null }
 
     override val isExternal: Boolean
         get() = withValidityAssertion { false }

@@ -37,8 +37,8 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
     protected open fun suspendFunctionReturnTypeAtCallSite(expression: IrCall, newFun: IrSimpleFunction): IrType =
         newFun.returnType
 
-    protected open fun loweredSuspendFunctionReturnType(function: IrSimpleFunction): IrType =
-        defaultLoweredSuspendFunctionReturnType(function, context.irBuiltIns)
+    protected open fun loweredSuspendFunctionReturnType(suspendFunReturnType: IrType): IrType =
+        defaultLoweredSuspendFunctionReturnType(suspendFunReturnType, context.irBuiltIns)
 
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, withLocalDeclarations = true)

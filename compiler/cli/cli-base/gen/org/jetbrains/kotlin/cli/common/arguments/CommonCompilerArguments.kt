@@ -442,7 +442,6 @@ Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20
         description = "Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.",
     )
     @Enables(LanguageFeature.EagerLambdaAnalysis)
-    @Enables(LanguageFeature.UnitConversionsOnArbitraryExpressions)
     @Enables(LanguageFeature.InferThrowableTypeParameterToUpperBound)
     @Enables(LanguageFeature.CallCompletionRefinementsFor25)
     var eagerLambdaAnalysis: Boolean = false
@@ -1085,19 +1084,6 @@ Warning: This feature is not yet production-ready.""",
         deprecatedVersion = "2.4.20",
     )
     var useFirLT: Boolean = true
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @all:Deprecated("Compiler flag -Xuse-k2 is no more supported. Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier.")
-    @Argument(
-        value = "-Xuse-k2",
-        description = "Compile using the K2 compiler pipeline.",
-        isObsolete = true,
-        deprecatedVersion = "1.9.0",
-    )
-    var useK2: Boolean = false
         set(value) {
             checkFrozen()
             field = value

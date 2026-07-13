@@ -90,6 +90,7 @@ dependencies {
 
 optInToExperimentalCompilerApi()
 optInToK1Deprecation()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }

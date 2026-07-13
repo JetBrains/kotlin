@@ -4,16 +4,13 @@
  */
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.TestDataFile
-import junit.framework.TestCase
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.TestsCompiletimeError
-import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
-import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
@@ -23,22 +20,32 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
+import org.jetbrains.kotlin.config.useFir
+import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
+import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
 import org.jetbrains.kotlin.utils.rethrow
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.io.IOException
 import java.lang.reflect.Method
 import java.net.MalformedURLException
 import java.net.URL
-import java.net.URLClassLoader
 import kotlin.script.experimental.api.valueOrNull
 
-abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
+abstract class CodegenTestCase {
+    protected val testRootDisposable: Disposable = Disposer.newDisposable()
+    protected lateinit var testInfo: TestInfo
+
     @JvmField
     protected var myEnvironment: KotlinCoreEnvironment? = null
 
@@ -57,44 +64,39 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
 
     protected var configurationKind: ConfigurationKind = ConfigurationKind.JDK_ONLY
 
-    protected fun createEnvironmentWithMockJdkAndIdeaAnnotations(
-        configurationKind: ConfigurationKind,
-        vararg javaSourceRoots: File
-    ) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(
-            configurationKind,
-            mutableListOf(),
-            TestJdkKind.MOCK_JDK,
-            *javaSourceRoots
-        )
+    protected fun createConfiguration(
+        kind: ConfigurationKind,
+        jdkKind: TestJdkKind,
+        classpath: List<File>,
+    ): CompilerConfiguration {
+        val configuration = KotlinTestUtils.newConfiguration(kind, jdkKind, classpath, emptyList())
+        updateConfiguration(configuration)
+        return configuration
     }
 
-    protected fun createEnvironmentWithMockJdkAndIdeaAnnotations(
-        configurationKind: ConfigurationKind,
-        testFilesWithConfigurationDirectives: List<TestFile>,
-        testJdkKind: TestJdkKind,
-        vararg javaSourceRoots: File
-    ) {
+    protected fun createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind: ConfigurationKind) {
         checkTestInfrastructure(myEnvironment == null) { "must not set up myEnvironment twice" }
-
         val configuration = createConfiguration(
             configurationKind,
-            testJdkKind,
-            mutableListOf<File>(KtTestUtil.getAnnotationsJar()),
-            javaSourceRoots.toList(),
-            testFilesWithConfigurationDirectives
+            TestJdkKind.MOCK_JDK,
+            mutableListOf(getAnnotationsJar())
         )
-
         @OptIn(CoreEnvironmentDeprecation::class)
         myEnvironment = createForTests(
-            testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
+            this.testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
-
         setupEnvironment(myEnvironment!!)
     }
 
-    @Throws(Exception::class)
-    override fun tearDown() {
+    protected open fun setupEnvironment(environment: KotlinCoreEnvironment) {}
+
+    @BeforeEach
+    fun setUp(testInfo: TestInfo) {
+        this.testInfo = testInfo
+    }
+
+    @AfterEach
+    open fun tearDown() {
         myFiles = null
         myEnvironment = null
         classFileFactory = null
@@ -104,7 +106,7 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
             initializedClassLoader = null
         }
 
-        super.tearDown()
+        disposeRootDisposable(testRootDisposable)
     }
 
     protected fun loadText(text: String) {
@@ -140,7 +142,7 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
     }
 
     protected fun loadFile() {
-        loadFile(this.prefix + "/" + getTestName(true) + ".kt")
+        loadFile(this.prefix + "/" + getTestName(testInfo) + ".kt")
     }
 
     protected open val prefix: String
@@ -148,14 +150,14 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
             throw UnsupportedOperationException()
         }
 
-    protected fun generateAndCreateClassLoader(reportProblems: Boolean): GeneratedClassLoader {
+    protected fun generateAndCreateClassLoader(): GeneratedClassLoader {
         if (initializedClassLoader != null) {
             testInfraError("Double initialization of class loader in same test")
         }
 
         initializedClassLoader = createClassLoader()
 
-        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), reportProblems)) {
+        if (!CodegenTestUtil.verifyAllFilesWithAsm(/* factory = */ generateClassesInFile(), /* reportProblems = */ true)) {
             testInfraError("Verification failed: see exceptions above")
         }
 
@@ -220,17 +222,13 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
 
     protected fun generateClass(name: String): Class<*> {
         try {
-            return generateAndCreateClassLoader(true).loadClass(name)
+            return generateAndCreateClassLoader().loadClass(name)
         } catch (_: ClassNotFoundException) {
             testInfraError("No class file was generated for: $name")
         }
     }
 
     protected fun generateClassesInFile(): ClassFileFactory {
-        return generateClassesInFile(true)
-    }
-
-    private fun generateClassesInFile(reportProblems: Boolean): ClassFileFactory {
         if (classFileFactory != null) return classFileFactory!!
 
         try {
@@ -247,18 +245,12 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
                 D8Checker.check(classFileFactory)
             }
         } catch (e: TestsCompiletimeError) {
-            if (reportProblems) {
-                e.original.printStackTrace()
-                generateInstructionsAsText()
-                System.err.println("See exceptions above")
-            } else {
-                System.err.println("Compilation failure")
-            }
+            e.original.printStackTrace()
+            generateInstructionsAsText()
+            System.err.println("See exceptions above")
             throw e
         } catch (e: Throwable) {
-            if (reportProblems) {
-                generateInstructionsAsText()
-            }
+            generateInstructionsAsText()
             throw TestsCompilerError(e)
         }
         return classFileFactory!!
@@ -293,118 +285,21 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
         return CodegenTestUtil.findDeclaredMethodByName(generateFacadeClass(), name)
     }
 
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
+    protected open fun updateConfiguration(configuration: CompilerConfiguration) {
         setCustomDefaultJvmTarget(configuration)
-        configureIrFir(configuration)
-    }
-
-    protected fun compile(files: List<TestFile>, reportProblems: Boolean = true) {
-        val javaSourceDir: File? = writeJavaFiles(files)
-
-        configurationKind = extractConfigurationKind(files)
-
-        val configuration = createConfiguration(
-            configurationKind, getTestJdkKind(files),
-            mutableListOf(KtTestUtil.getAnnotationsJar()),
-            arrayOf(javaSourceDir).filterNotNull(),
-            files
-        )
-
-        @OptIn(CoreEnvironmentDeprecation::class)
-        myEnvironment = createForTests(
-            testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
-        ).also { environment ->
-            setupEnvironment(environment)
-
-            myFiles = loadMultiFiles(files, environment.project)
-        }
-
-        generateClassesInFile(reportProblems)
-
-        val compileJavaFiles = javaSourceDir != null && javaClassesOutputDirectory == null
-        javaClassesOutputDirectory = null
-
-        // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
-        if (compileJavaFiles) {
-            val kotlinOut = createTempDirectory(toString())
-            classFileFactory!!.writeAllTo(kotlinOut)
-            javaClassesOutputDirectory = createTempDirectory("java-classes")
-            val javacOptions = extractJavacOptions(
-                files,
-                configuration[JVMConfigurationKeys.JVM_TARGET],
-                configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
-            )
-            val isJava9Module = false // No Java modules in legacy tests
-            val finalJavacOptions = CodegenTestUtil.prepareJavacOptions(
-                listOf(kotlinOut.path), javacOptions, javaClassesOutputDirectory!!, isJava9Module
-            )
-
-            compileJavaFiles(
-                CodegenTestUtil.findJavaSourcesInDirectory(javaSourceDir).map { pathname -> File(pathname) },
-                finalJavacOptions
-            ).assertSuccessful()
+        configuration.useFir = true
+        when (firParser) {
+            FirParser.LightTree -> configuration.useLightTree = true
+            FirParser.Psi -> {}
         }
     }
 
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
-
-    override fun doTest(filePath: String) {
-        val file = File(filePath)
-
-        val expectedText = KtTestUtil.doLoadFile(file)
-        val testFiles = createTestFilesFromFile(file, expectedText)
-
-        try {
-            doMultiFileTest(file, testFiles)
-        } catch (e: Exception) {
-            throw rethrow(e)
-        }
-    }
-
-    override fun createTestFilesFromFile(file: File, expectedText: String): List<TestFile> {
-        @OptIn(ObsoleteTestInfrastructure::class)
-        return TestFiles.createTestFiles(
-            file.getName(),
-            expectedText,
-            object : TestFiles.TestFileFactoryNoModules<TestFile>() {
-                override fun create(
-                    fileName: String,
-                    text: String,
-                    directives: Directives
-                ): TestFile {
-                    return TestFile(fileName, text, directives)
-                }
-            },
-            false,
-            parseDirectivesPerFiles()
-        )
-    }
-
-    protected fun printReport(wholeFile: File) {
-        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(
-            backend, wholeFile, *InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES
-        )
-        if (!isIgnored) {
-            println(generateToText())
-        }
-    }
+    protected abstract val firParser: FirParser
 
     companion object {
         private const val DEFAULT_TEST_FILE_NAME = "a_test"
         private val DEFAULT_JVM_TARGET: String? = System.getProperty("kotlin.test.default.jvm.target")
 
-        private fun loadMultiFiles(files: List<TestFile>, project: Project): CodegenTestFiles {
-            val ktFiles = files.sorted().filter { file ->
-                file.name.endsWith(".kt") || file.name.endsWith(".kts")
-            }.map { file ->
-                // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
-                val content = CheckerTestUtil.parseDiagnosedRanges(file.content, ArrayList(0), null)
-                KtTestUtil.createFile(file.name, content, project)
-            }
-
-            return CodegenTestFiles.create(ktFiles)
-        }
 
         private fun setCustomDefaultJvmTarget(configuration: CompilerConfiguration) {
             if (DEFAULT_JVM_TARGET != null) {
@@ -422,76 +317,6 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
                     // in compiler/tests-different-jdk/build.gradle.kts
                     configuration.put(JVMConfigurationKeys.JVM_TARGET, customDefaultTarget)
                 }
-            }
-        }
-
-        private fun extractJavacOptions(
-            files: List<TestFile>,
-            kotlinTarget: JvmTarget?,
-            isJvmPreviewEnabled: Boolean
-        ): List<String> {
-            val javacOptions = files.flatMapTo(mutableListOf()) { file ->
-                InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:")
-            }
-
-            if (kotlinTarget != null) {
-                if (isJvmPreviewEnabled) {
-                    javacOptions.add("--release")
-                    javacOptions.add(kotlinTarget.description)
-                    javacOptions.add("--enable-preview")
-                } else {
-                    javacOptions.add("-source")
-                    javacOptions.add(kotlinTarget.description)
-                    javacOptions.add("-target")
-                    javacOptions.add(kotlinTarget.description)
-                }
-            }
-
-            return javacOptions
-        }
-
-        private fun createTempDirectory(prefix: String?): File {
-            try {
-                return KtTestUtil.tmpDir(prefix)
-            } catch (e: IOException) {
-                throw rethrow(e)
-            }
-        }
-
-        private fun writeJavaFiles(files: List<TestFile>): File? {
-            val javaFiles = files.filter { file -> file.name.endsWith(".java") }
-            if (javaFiles.isEmpty()) return null
-
-            val dir: File = createTempDirectory("java-files")
-
-            for (testFile in javaFiles) {
-                val file = File(dir, testFile.name)
-                KtTestUtil.mkdirs(file.getParentFile())
-                file.writeText(testFile.content, Charsets.UTF_8)
-            }
-
-            return dir
-        }
-
-        @JvmStatic
-        protected fun callBoxMethodAndCheckResult(classLoader: URLClassLoader?, method: Method, unexpectedBehaviour: Boolean) {
-            val savedClassLoader = Thread.currentThread().getContextClassLoader()
-            if (savedClassLoader !== classLoader) {
-                // otherwise the test infrastructure used in the test may conflict with the one from the context classloader
-                Thread.currentThread().setContextClassLoader(classLoader)
-            }
-            var result: String?
-            try {
-                result = runBoxMethod(method)
-            } finally {
-                if (savedClassLoader !== classLoader) {
-                    Thread.currentThread().setContextClassLoader(savedClassLoader)
-                }
-            }
-            if (unexpectedBehaviour) {
-                assertNotSame("OK", result)
-            } else {
-                TestCase.assertEquals("OK", result)
             }
         }
     }

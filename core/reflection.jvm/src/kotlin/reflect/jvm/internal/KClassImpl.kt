@@ -28,11 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
-import org.jetbrains.kotlin.descriptors.runtime.structure.Java16SealedRecordLoader
-import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
-import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
-import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
-import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
+import org.jetbrains.kotlin.descriptors.runtime.structure.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -41,7 +37,6 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -49,10 +44,10 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.compact
 import java.io.Serializable
-import java.lang.Deprecated as JavaLangDeprecated
 import java.lang.reflect.Constructor
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference.NO_RECEIVER
 import kotlin.jvm.internal.KotlinGenericDeclaration
@@ -69,6 +64,7 @@ import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 import org.jetbrains.kotlin.descriptors.ClassKind as DescriptorClassKind
 import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
+import java.lang.Deprecated as JavaLangDeprecated
 
 internal class KClassImpl<T : Any>(
     override val jClass: Class<T>,
@@ -445,13 +441,29 @@ internal class KClassImpl<T : Any>(
                     Number::class.java.isAssignableFrom(jClass)
         }
 
+        val declaredMemberNames: Set<String> by ReflectProperties.lazySoft(::computeDeclaredMemberNames)
+
+        private val declaredMembersByName: ConcurrentHashMap<String, Collection<ReflectKCallable<*>>>
+                by ReflectProperties.lazySoft { ConcurrentHashMap() }
+
+        private val allMembersByName: ConcurrentHashMap<String, Collection<ReflectKCallable<*>>>
+                by ReflectProperties.lazySoft { ConcurrentHashMap() }
+
+        private val fakeOverrideMembersByName: ConcurrentHashMap<String, MembersJavaSignatureMap>
+                by ReflectProperties.lazySoft { ConcurrentHashMap() }
+
+        fun getDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> =
+            declaredMembersByName.getOrPut(name) { computeDeclaredMembersByName(name) }
+
+        fun getMembersByName(name: String): Collection<ReflectKCallable<*>> =
+            allMembersByName.getOrPut(name) { computeMembersByName(name) }
+
+        fun getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap =
+            fakeOverrideMembersByName.getOrPut(name) { computeFakeOverrideMembersForName(this@KClassImpl, name) }
+
         val declaredMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::computeDeclaredMembers)
 
         val allMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::computeAllMembers)
-
-        val fakeOverrideMembers: MembersJavaSignatureMap by ReflectProperties.lazySoft {
-            computeFakeOverrideMembers(this@KClassImpl, declaredMembers)
-        }
     }
 
     val data = lazy(PUBLICATION) { Data() }
@@ -478,6 +490,8 @@ internal class KClassImpl<T : Any>(
     internal val staticScope: MemberScope get() = descriptor.staticScope
 
     override val members: Collection<KCallable<*>> get() = data.value.allMembers
+
+    internal fun getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap = data.value.getFakeOverrideMembersByName(name)
 
     val isComplicatedBuiltinSubclass: Boolean get() = data.value.isComplicatedBuiltinSubclass
 

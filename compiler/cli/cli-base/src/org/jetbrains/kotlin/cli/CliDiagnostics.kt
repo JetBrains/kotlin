@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.strongWarningWithoutSource
 object CliDiagnostics : KtDiagnosticsContainer() {
     val COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val DEPRECATED_CLI_ARG: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val REMOVED_CLI_ARG: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val REDUNDANT_CLI_ARG: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val CLI_ARG_DISABLES_STABLE_FEATURE: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val CLASSPATH_RESOLUTION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
@@ -63,6 +64,7 @@ object CliDiagnostics : KtDiagnosticsContainer() {
         override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("CLI") { map ->
             map.put(COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, MESSAGE_PLACEHOLDER)
             map.put(DEPRECATED_CLI_ARG, MESSAGE_PLACEHOLDER)
+            map.put(REMOVED_CLI_ARG, MESSAGE_PLACEHOLDER)
             map.put(REDUNDANT_CLI_ARG, MESSAGE_PLACEHOLDER)
             map.put(CLI_ARG_DISABLES_STABLE_FEATURE, MESSAGE_PLACEHOLDER)
             map.put(CLASSPATH_RESOLUTION_WARNING, MESSAGE_PLACEHOLDER)

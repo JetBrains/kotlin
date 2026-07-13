@@ -25,20 +25,20 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
                 ?: return KlibToolArgumentsParserResult.Error
 
         val parsedOptions: Map<CliOption, List<String>> = parseOptions(rawArgs.drop(2).toTypedArray<String>())
-            ?.entries
-            ?.map { [option, values] ->
-                val knownOption = CliOption.parseOrNull(option)
-                if (knownOption == null) {
-                    output.logError("Unknown option: $option")
-                    return KlibToolArgumentsParserResult.Error
-                }
-                if (command !in knownOption.applicableTo) {
-                    output.logError("Option $option is not applicable to command $command")
-                    return KlibToolArgumentsParserResult.Error
-                }
-                knownOption to values
-            }?.toMap()
-            ?: return KlibToolArgumentsParserResult.Error
+                ?.entries
+                ?.map { [option, values] ->
+                    val knownOption = CliOption.parseOrNull(option)
+                    if (knownOption == null) {
+                        output.logError("Unknown option: $option")
+                        return KlibToolArgumentsParserResult.Error
+                    }
+                    if (command !in knownOption.applicableTo) {
+                        output.logError("Option $option is not applicable to command $command")
+                        return KlibToolArgumentsParserResult.Error
+                    }
+                    knownOption to values
+                }?.toMap()
+                ?: return KlibToolArgumentsParserResult.Error
 
         val signatureVersion = parsedOptions[CliOption.SIGNATURE_VERSION]?.last()?.let { rawSignatureVersion ->
             rawSignatureVersion.toIntOrNull()?.let(::KotlinIrSignatureVersion) ?: run {
@@ -166,14 +166,6 @@ internal enum class CliCommand(val description: String) {
             """.trimIndent()
     ),
 
-    DUMP_IR_SIGNATURES(
-            description = """
-                Dump IR signatures of all non-private declarations in the library and all non-private
-                declarations consumed by this library (as two separate lists). This command relies
-                purely on the data in IR.
-            """.trimIndent()
-    ),
-
     DUMP_IR_INLINABLE_FUNCTIONS(
             description = """
                 Dump the intermediate representation (IR) of inlinable functions in the library.
@@ -181,21 +173,18 @@ internal enum class CliCommand(val description: String) {
             """.trimIndent()
     ),
 
+    DUMP_SIGNATURES(
+            description = """
+                Dump signatures of all non-private declarations in the library and all non-private
+                declarations consumed by this library (as two separate lists). For regular libraries,
+                this command relies on the data in IR. For C-interop libraries, it uses the metadata.
+            """.trimIndent()
+    ),
+
     DUMP_METADATA(
             description = """
                 Dump the metadata of all declarations in the library.
                 The output of this command intended to be used for debugging purposes only.
-            """.trimIndent()
-    ),
-
-    DUMP_METADATA_SIGNATURES(
-            description = """
-                Dump IR signatures of all non-private declarations in the library. Note, that this command
-                renders the signatures based on the library metadata. This is different from
-                "dump-ir-signatures", which renders signatures based on the IR. On practice,
-                in most cases there is no difference between output of these two commands. However,
-                if IR transforming compiler plugins (such as Compose) were used during compilation
-                of the library, there would be different signatures for patched declarations.
             """.trimIndent()
     ),
     ;
@@ -220,13 +209,13 @@ private enum class CliOption(val isPrivate: Boolean = false) {
                 that is supported in the library is used.
             """.trimIndent()
 
-        override val applicableTo get() = setOf(CliCommand.DUMP_ABI, CliCommand.DUMP_IR_SIGNATURES, CliCommand.DUMP_METADATA_SIGNATURES)
+        override val applicableTo get() = setOf(CliCommand.DUMP_ABI, CliCommand.DUMP_SIGNATURES)
     },
 
     ONLY_TOP_LEVEL_SIGNATURES {
         override val hintOnValues = "{true|false}"
         override val description = "Dump IR signatures of only top-level declarations."
-        override val applicableTo get() = setOf(CliCommand.DUMP_IR_SIGNATURES)
+        override val applicableTo get() = setOf(CliCommand.DUMP_SIGNATURES)
     },
 
     RELATIVE_PATH_BASE {

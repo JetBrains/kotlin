@@ -13,8 +13,11 @@ import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
+import org.jetbrains.kotlin.arguments.dsl.types.PathListType
+import org.jetbrains.kotlin.arguments.dsl.types.SearchPathType
 import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
+import java.io.File
 import kotlin.reflect.KType
 import kotlin.reflect.full.allSupertypes
 
@@ -26,7 +29,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
     val name: String,
     val description: String,
     val valueType: T,
-    val delimiter: String?,
+    val delimiter: CodeBlock?,
     val introducedSinceVersion: KotlinReleaseVersion,
     val deprecatedSinceVersion: KotlinReleaseVersion?,
     val removedSinceVersion: KotlinReleaseVersion?,
@@ -41,7 +44,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         name = origin.name,
         description = origin.description.current,
         valueType = BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType(origin.argumentType),
-        delimiter = origin.delimiter?.toDelimiterString(),
+        delimiter = origin.toDelimiterBlock(),
         introducedSinceVersion = origin.releaseVersionsMetadata.introducedVersion,
         deprecatedSinceVersion = origin.releaseVersionsMetadata.deprecatedVersion,
         removedSinceVersion = origin.releaseVersionsMetadata.removedVersion,
@@ -65,7 +68,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         name = name,
         description = description,
         valueType = valueType,
-        delimiter = delimiter,
+        delimiter = delimiter?.let { CodeBlock.of(it) },
         introducedSinceVersion = introducedSinceVersion,
         deprecatedSinceVersion = deprecatedSinceVersion,
         removedSinceVersion = removedSinceVersion,
@@ -181,11 +184,22 @@ class CustomCompilerArgumentFactory(
         BtaCompilerArgument.CustomCompilerArgument(origin, valueType, defaultValue)
 }
 
-private fun KotlinCompilerArgument.Delimiter.toDelimiterString(): String? =
-    when (this) {
-        KotlinCompilerArgument.Delimiter.Default -> ","
-        KotlinCompilerArgument.Delimiter.None -> null
-        KotlinCompilerArgument.Delimiter.PathSeparator -> $$"${File.pathSeparator}"
-        KotlinCompilerArgument.Delimiter.Space -> " "
-        KotlinCompilerArgument.Delimiter.Semicolon -> ";"
+@OptIn(ExperimentalArgumentApi::class)
+private fun KotlinCompilerArgument.toDelimiterBlock(): CodeBlock? =
+    when (argumentType) {
+        is SearchPathType -> {
+            CodeBlock.of($$"\"${%T.pathSeparator}\"", File::class)
+        }
+        is PathListType -> {
+            when (delimiter) {
+                null, KotlinCompilerArgument.Delimiter.Default -> CodeBlock.of("%S", ",")
+                KotlinCompilerArgument.Delimiter.None -> null
+                KotlinCompilerArgument.Delimiter.PathSeparator -> CodeBlock.of($$"\"${%T.pathSeparator}\"", File::class)
+                KotlinCompilerArgument.Delimiter.Space -> CodeBlock.of("%S", " ")
+                KotlinCompilerArgument.Delimiter.Semicolon -> CodeBlock.of("%S", ";")
+            }
+        }
+        else -> {
+            null
+        }
     }

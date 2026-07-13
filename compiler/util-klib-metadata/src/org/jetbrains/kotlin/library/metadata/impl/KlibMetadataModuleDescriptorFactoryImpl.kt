@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.parentOrNull
@@ -48,9 +48,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         lookupTracker: LookupTracker
     ): ModuleDescriptorImpl {
 
-        val libraryProto = parseModuleHeader(library.metadata.moduleHeaderData)
-
-        val moduleName = Name.special(libraryProto.moduleName)
+        val moduleName = Name.special("<${library.uniqueName}>")
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
 
         val moduleDescriptor = if (builtIns != null)

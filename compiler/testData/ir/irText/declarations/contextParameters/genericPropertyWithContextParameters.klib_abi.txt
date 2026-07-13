@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /C { // /C|null[0]
+    final var ctx // /C.ctx|(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}ctx[0]
+        final fun <#A2: kotlin/Any?, #B2: kotlin/Any?> (context(#A2, #B2)).<get-ctx>(): #A2 // /C.ctx.<get-ctx>|<get-ctx>(0:0;0:1)(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+        final fun <#A2: kotlin/Any?, #B2: kotlin/Any?> (context(#A2, #B2)).<set-ctx>(#A2) // /C.ctx.<set-ctx>|<set-ctx>(0:0;0:1)(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+}

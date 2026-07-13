@@ -1,6 +1,7 @@
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -19,6 +20,7 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: MyClass
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(lateinitVariable.kt)
   getContainingJvmClassName: null

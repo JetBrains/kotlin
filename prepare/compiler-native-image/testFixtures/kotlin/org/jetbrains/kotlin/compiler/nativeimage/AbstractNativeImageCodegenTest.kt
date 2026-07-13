@@ -9,17 +9,13 @@ import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_TAIL_CALL_OPTIMIZATION
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_TYPE
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_TYPE_WITH_EXACT
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.INFERENCE_HELPERS
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.WITH_COROUTINES
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
@@ -28,6 +24,7 @@ import org.jetbrains.kotlin.test.preprocessors.JvmInlineSourceTransformer
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.io.TempDir
@@ -205,8 +202,13 @@ abstract class AbstractNativeImageCodegenTest {
         private val HELPERS_IMPORT = Regex("""(?m)^import helpers\.""")
         private val LOADED_PLUGINS = Regex("""(?i)loading bundled compiler plugin '([^']+)'""")
 
-        private fun prepareSource(source: String): String =
-            clearTextFromDiagnosticMarkup(JvmInlineSourceTransformer.computeModifier(BACKEND).invoke(source))
+        private fun prepareSource(source: String): String {
+            val transformers = listOf(
+                JvmInlineSourceTransformer.computeModifier(BACKEND),
+                ReplacingSourceTransformer("BACKEND_UNDER_TEST", "\"$BACKEND\""),
+            )
+            return clearTextFromDiagnosticMarkup(transformers.fold(source) { acc, transformer -> transformer.invokeForTestFile(acc) })
+        }
 
         private fun parseDirectives(source: String): RegisteredDirectives {
             val parser = RegisteredDirectivesParser(DIRECTIVES_CONTAINER, JUnit5Assertions)

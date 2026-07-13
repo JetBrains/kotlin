@@ -242,7 +242,7 @@ private class CollectionLiteralResolutionStrategyThroughCompanion(context: Resol
     CollectionLiteralResolutionStrategy(context) {
 
     private fun FirCallableSymbol<*>.isVisible(receiver: FirResolvedQualifier): Boolean {
-        val staticQualifierClassForCallable = runIf(isStatic) { (receiver.symbol as? FirRegularClassSymbol)?.fir }
+        val staticQualifierClassForCallable = runIf(isStatic) { (receiver.qualifierSymbol as? FirRegularClassSymbol)?.fir }
         return context.session.visibilityChecker.isVisible(
             fir,
             context.session,

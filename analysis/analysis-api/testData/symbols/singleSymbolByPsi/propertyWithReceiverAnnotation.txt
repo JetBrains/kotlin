@@ -3,6 +3,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -22,6 +23,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Boolean
+    typeParameters: []
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)
     getContainingJvmClassName: PropertyWithReceiverAnnotationKt
@@ -34,6 +36,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -53,6 +56,7 @@ KaKotlinPropertySymbol:
           psi: KtAnnotationEntry
       ]
       callableId: null
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -74,6 +78,7 @@ KaKotlinPropertySymbol:
         ]
         typeArguments: []
         type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)
       getContainingJvmClassName: PropertyWithReceiverAnnotationKt
@@ -84,6 +89,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Boolean
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)
@@ -102,7 +108,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: true
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -111,12 +116,14 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: prop
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: KaReceiverParameterSymbol:
     annotations: [
       ReceiverAnnotation()
         psi: KtAnnotationEntry
     ]
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -138,6 +145,7 @@ KaKotlinPropertySymbol:
       ]
       typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)
     getContainingJvmClassName: PropertyWithReceiverAnnotationKt

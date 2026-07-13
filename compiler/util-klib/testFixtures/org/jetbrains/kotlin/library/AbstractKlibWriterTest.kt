@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.unzipTo
-import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.io.unzipTo
 import org.jetbrains.kotlin.library.AbstractKlibWriterTest.Parameters
 import org.jetbrains.kotlin.library.AbstractKlibWriterTest.Parameters.KlibDependency
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.*
-import java.io.File
 import java.nio.file.Files.createTempDirectory
+import java.nio.file.Path
 import java.util.*
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.pathString
 
 abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters: () -> P) {
     open class Parameters {
@@ -34,14 +36,15 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         class KlibDependency(val uniqueName: String, val path: String)
     }
 
-    protected lateinit var tmpDir: File
+    protected lateinit var tmpDir: Path
 
     @BeforeEach
     fun setup(info: TestInfo) {
-        tmpDir = createTempDirectory(info.testClass.get().simpleName + "-" + info.testMethod.get().name).toRealPath().toFile()
+        tmpDir = createTempDirectory(info.testClass.get().simpleName + "-" + info.testMethod.get().name).toRealPath()
     }
 
     @AfterEach
+    @OptIn(ExperimentalPathApi::class)
     fun tearDown() {
         tmpDir.deleteRecursively()
     }
@@ -146,9 +149,9 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         }
     }
 
-    protected abstract fun writeKlib(parameters: P): File
+    protected abstract fun writeKlib(parameters: P): Path
 
-    private fun File.unpackIfNecessary(parameters: P): File {
+    private fun Path.unpackIfNecessary(parameters: P): Path {
         if (parameters.nopack) return this
 
         return createNewKlibDir().also { unzippedDir -> this.unzipTo(unzippedDir) }
@@ -160,7 +163,7 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
     context(properties: Properties)
     protected open fun customizeManifestForMockKlib(parameters: P) = Unit
 
-    protected fun createNewKlibDir(): File = tmpDir.resolve(UUID.randomUUID().toString()).apply(File::mkdirs)
+    protected fun createNewKlibDir(): Path = tmpDir.resolve(UUID.randomUUID().toString()).apply(Path::createDirectories)
 
     protected fun mockKlibDependency(uniqueName: String): KlibDependency = KlibDependency(
         uniqueName = uniqueName,
@@ -170,14 +173,6 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
                 builtInsPlatform = BuiltInsPlatform.COMMON,
                 versioning = KotlinLibraryVersioning(null, null, null)
             )
-        }.path
+        }.pathString
     )
-
-    companion object {
-        private fun File.toKlibFile() = KlibFile(absolutePath)
-
-        private fun File.unzipTo(destinationDirectory: File) {
-            toKlibFile().unzipTo(destinationDirectory.toKlibFile())
-        }
-    }
 }

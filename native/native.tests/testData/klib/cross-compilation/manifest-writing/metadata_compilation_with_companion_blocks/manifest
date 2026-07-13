@@ -7,5 +7,4 @@ language_features = +CompanionBlocksAndExtensions
 metadata_version = <value sanitized for test data stability>
 native_targets = <test-run-target>
 new_companion_initialization = true
-poisoning_language_features = +CompanionBlocksAndExtensions
 unique_name = stub

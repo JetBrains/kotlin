@@ -13,13 +13,12 @@ import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.uniqueName
 
@@ -34,7 +33,7 @@ private class LibraryHashComputer {
 }
 
 private fun LibraryHashComputer.digestLibrary(library: KotlinLibrary) =
-        update(SerializedKlibFingerprint(library.libraryFile.javaFile()).klibFingerprint)
+        update(SerializedKlibFingerprint(library.path.toFile()).klibFingerprint)
 
 private fun getArtifactName(target: KonanTarget, baseName: String, kind: CompilerOutputKind) =
         "${kind.prefix(target)}$baseName${kind.suffix(target)}"
@@ -72,9 +71,20 @@ class CachedLibraries(
             Kind.HEADER -> CompilerOutputKind.HEADER_CACHE
         }
 
+        // Returns null when the metadata file is absent, which is the case for caches produced by compilers older than 2.2.20 (KT-87202).
+        protected fun readMetadataOrNull(directory: File): CacheMetadata? {
+            val metadataFile = directory.child(METADATA_FILE_NAME)
+            if (!metadataFile.exists) return null
+            return metadataFile.bufferedReader().use {
+                CacheMetadataSerializer.deserialize(it)
+            }
+        }
+
         class Monolithic(target: KonanTarget, kind: Kind, path: String)
             : Cache(target, kind, path, File(path).parentFile.parentFile.absolutePath)
         {
+            fun getMetadataOrNull(): CacheMetadata? = readMetadataOrNull(File(rootDirectory))
+
             override fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency> {
                 val directory = File(path).absoluteFile.parentFile
                 val data = directory.child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
@@ -113,6 +123,8 @@ class CachedLibraries(
         {
             private val existingFileDirs = if (complete) fileDirs else fileDirs.filter { it.exists }
 
+            val fileIds: List<String> get() = existingFileDirs.map { it.name }
+
             private val perFileBitcodeDependencies by lazy {
                 existingFileDirs.associate {
                     val data = it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
@@ -129,9 +141,7 @@ class CachedLibraries(
                         it.absolutePath
                     }
 
-            fun getMetadata(file: String) = File(path).child(file).child(METADATA_FILE_NAME).bufferedReader().use {
-                CacheMetadataSerializer.deserialize(it)
-            }
+            fun getMetadataOrNull(file: String): CacheMetadata? = readMetadataOrNull(File(path).child(file))
 
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()
 
@@ -227,7 +237,7 @@ class CachedLibraries(
             File(explicitPath).trySelectCacheFor(library)
                     ?: error("No cache found for library ${library.path} at $explicitPath")
         } else {
-            val libraryPath = library.libraryFile.canonicalPath
+            val libraryPath = library.path.canonicalPathString()
             library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }
                     ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.canonicalPath) } }
                             ?.let {
@@ -282,6 +292,17 @@ class CachedLibraries(
                     hashComputer.digest()
                 }
 
+        fun computeDependenciesFingerprint(
+                dependencies: List<KotlinLibrary>,
+                librariesHashes: MutableMap<String, FingerprintHash>,
+        ): FingerprintHash {
+            val hashComputer = LibraryHashComputer()
+            dependencies.sortedBy { it.uniqueName }.forEach {
+                hashComputer.update(computeLibraryHash(it, librariesHashes))
+            }
+            return hashComputer.digest()
+        }
+
         fun computeLibraryCacheDirectory(
                 baseCacheDirectory: File,
                 library: KotlinLibrary,
@@ -289,14 +310,8 @@ class CachedLibraries(
                 librariesHashes: MutableMap<String, FingerprintHash>,
         ): File {
             val dependencies = library.getAllTransitiveDependencies(allLibraries)
-            val hashComputer = LibraryHashComputer()
-            hashComputer.update(computeLibraryHash(library, librariesHashes))
-            dependencies.sortedBy { it.uniqueName }.forEach {
-                hashComputer.update(computeLibraryHash(it, librariesHashes))
-            }
-
-            val hashString = hashComputer.digest().toString()
-            return baseCacheDirectory.child(library.uniqueName).child(hashString)
+            val fingerprintHash = computeDependenciesFingerprint(listOf(library) + dependencies, librariesHashes)
+            return baseCacheDirectory.child(library.uniqueName).child(fingerprintHash.toString())
         }
 
         const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"

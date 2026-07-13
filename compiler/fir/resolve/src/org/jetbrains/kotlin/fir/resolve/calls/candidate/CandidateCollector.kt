@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 open class CandidateCollector(
     val components: BodyResolveComponents,
@@ -65,6 +66,7 @@ open class CandidateCollector(
                 dropOldCandidates()
             }
 
+            @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
             if (currentApplicability == CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY &&
                 applicability > currentApplicability
             ) {
@@ -82,7 +84,6 @@ open class CandidateCollector(
          *   to fix the KT-65218, which provoked by different stdlib declarations order in CLI compilation mode and AA mode (see
          *   the issue for more details)
          */
-        @OptIn(ApplicabilityDetail::class)
         if ((applicability == currentApplicability && group == bestGroup) || currentApplicability < CandidateApplicability.RESOLVED_LOW_PRIORITY) {
             candidates.add(candidate)
         }

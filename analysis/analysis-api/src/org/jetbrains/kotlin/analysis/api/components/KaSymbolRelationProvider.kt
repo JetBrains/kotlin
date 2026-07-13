@@ -156,7 +156,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * - [KaPropertySymbol], including [KaSyntheticJavaPropertySymbol]: overridden property symbols.
      * - [KaPropertyGetterSymbol]: overridden properties of the containing property, not getter symbols.
      * - [KaPropertySetterSymbol]: overridden mutable properties whose setters are overridden by this setter.
-     * - [KaValueParameterSymbol] with [KaValueParameterSymbol.generatedPrimaryConstructorProperty]: overridden symbols of that generated
+     * - [KaValueParameterSymbol] with [KaValueParameterSymbol.primaryConstructorProperty]: overridden symbols of that generated
      *   property.
      * - Other callable kinds: an empty sequence.
      *
@@ -669,7 +669,7 @@ public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSy
  * - [KaPropertySymbol], including [KaSyntheticJavaPropertySymbol]: overridden property symbols.
  * - [KaPropertyGetterSymbol]: overridden properties of the containing property, not getter symbols.
  * - [KaPropertySetterSymbol]: overridden mutable properties whose setters are overridden by this setter.
- * - [KaValueParameterSymbol] with [KaValueParameterSymbol.generatedPrimaryConstructorProperty]: overridden symbols of that generated
+ * - [KaValueParameterSymbol] with [KaValueParameterSymbol.primaryConstructorProperty]: overridden symbols of that generated
  *   property.
  * - Other callable kinds: an empty sequence.
  *

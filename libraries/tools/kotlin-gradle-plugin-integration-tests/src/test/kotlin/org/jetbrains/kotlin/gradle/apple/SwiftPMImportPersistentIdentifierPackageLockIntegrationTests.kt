@@ -12,8 +12,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheti
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintSyntheticPackage
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintXcodeBuild
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ValidateLocalSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
@@ -817,6 +822,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertExactTasksInGraph(
                         ":$sharedProjectName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":$sharedProjectName:${FingerprintSyntheticPackage.TASK_NAME}",
                         ":$sharedProjectName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":$sharedProjectName:${
                             GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(
@@ -850,7 +856,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = sharedProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = sharedProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = swiftPMFingerprintCheckoutDir(sharedProject.projectPath, projectPath).resolve("checkouts"),
                         expectedPins = listOf(
                             sharedRepo to "1.0.0",
                         ),
@@ -861,6 +867,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 build(":${FetchSyntheticImportProjectPackages.TASK_NAME}") {
 
                     assertExactTasksInGraph(
+                        ":${FingerprintSyntheticPackage.TASK_NAME}",
                         ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
                         ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}"
@@ -937,6 +944,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertExactSwiftImportTasksInGraph(
                         ":$projectWithoutDepsName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":$projectWithoutDepsName:${FingerprintSyntheticPackage.TASK_NAME}",
                         ":$projectWithoutDepsName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":$projectWithoutDepsName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                         ":$projectWithoutDepsName:${
@@ -950,6 +958,8 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ":$projectWithoutDepsName:validateLocalSwiftPMDependencies",
                         ":$projectWithoutDepsName:computeLocalPackageDependencyInputFiles",
                         ":$projectWithoutDepsName:compileKotlinIosSimulatorArm64",
+                        ":$projectWithoutDepsName:${lowerCamelCaseName(FingerprintXcodeBuild.TASK_NAME, "Iphonesimulator")}",
+                        ":$projectWithoutDepsName:${lowerCamelCaseName(DumpXcodeBuildArgs.TASK_NAME, "Iphonesimulator")}",
                         ":$projectWithoutDepsName:convertSyntheticImportProjectIntoDefFileIphonesimulator",
                         ":$projectWithoutDepsName:iosSimulatorArm64MainKlibrary",
                         ":$projectWithoutDepsName:compileTestKotlinIosSimulatorArm64",
@@ -961,6 +971,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertExactSwiftImportTasksInGraph(
                         ":$projectWithDepsName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":$projectWithDepsName:${FingerprintSyntheticPackage.TASK_NAME}",
                         ":$projectWithDepsName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":$projectWithDepsName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                         depsGenerateUmbrellaTask,
@@ -970,6 +981,8 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ":$projectWithDepsName:validateLocalSwiftPMDependencies",
                         ":$projectWithDepsName:computeLocalPackageDependencyInputFiles",
                         ":$projectWithDepsName:compileKotlinIosSimulatorArm64",
+                        ":$projectWithDepsName:${lowerCamelCaseName(FingerprintXcodeBuild.TASK_NAME, "Iphonesimulator")}",
+                        ":$projectWithDepsName:${lowerCamelCaseName(DumpXcodeBuildArgs.TASK_NAME, "Iphonesimulator")}",
                         ":$projectWithDepsName:convertSyntheticImportProjectIntoDefFileIphonesimulator",
                         ":$projectWithDepsName:cinteropSwiftPMImportIosSimulatorArm64",
                         ":$projectWithDepsName:iosSimulatorArm64MainKlibrary",

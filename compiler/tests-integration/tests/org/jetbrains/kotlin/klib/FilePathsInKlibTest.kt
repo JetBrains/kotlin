@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.Directives
-import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
+import org.jetbrains.kotlin.test.LegacyTestFile
 import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -62,22 +62,22 @@ class FilePathsInKlibTest {
         return result
     }
 
-    private fun createTestFiles(): List<TestFile> {
+    private fun createTestFiles(): List<LegacyTestFile> {
         val file = File(TEST_DATA_FILE)
 
         return TestFiles.createTestFiles(
             file.getName(),
             KtTestUtil.doLoadFile(file),
-            object : TestFiles.TestFileFactoryNoModules<TestFile>() {
-                override fun create(fileName: String, text: String, directives: Directives): TestFile =
-                    TestFile(fileName, text, directives)
+            object : TestFiles.TestFileFactoryNoModules<LegacyTestFile>() {
+                override fun create(fileName: String, text: String, directives: Directives): LegacyTestFile =
+                    LegacyTestFile(fileName, text, directives)
             },
             false,
             false,
         )
     }
 
-    private fun compileJsKlib(testFiles: List<TestFile>, extraArgs: List<String>, workingDir: File): File {
+    private fun compileJsKlib(testFiles: List<LegacyTestFile>, extraArgs: List<String>, workingDir: File): File {
         for (testFile in testFiles) {
             val file = File(workingDir, testFile.name).also { it.parentFile.let { p -> if (!p.exists()) p.mkdirs() } }
             file.writeText(testFile.content)

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileInputStream
 import java.util.zip.ZipInputStream

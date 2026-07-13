@@ -12,8 +12,10 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
@@ -51,10 +53,6 @@ abstract class BaseNpmExtension internal constructor(
         requireConfigured().asNpmEnvironment
     }
 
-    override val additionalInstallOutput: FileCollection = project.objects.fileCollection().from(
-        nodeJsRoot.rootPackageDirectory.map { it.file("package-lock.json") }
-    )
-
     override val preInstallTasks: ListProperty<TaskProvider<*>> = project.objects.listProperty(TaskProvider::class.java)
 
     override val postInstallTasks: ListProperty<TaskProvider<*>> = project.objects.listProperty(TaskProvider::class.java)
@@ -62,8 +60,24 @@ abstract class BaseNpmExtension internal constructor(
     val command: org.gradle.api.provider.Property<String> = project.objects.property(String::class.java)
         .convention("npm")
 
-    val lockFileName: org.gradle.api.provider.Property<String> = project.objects.property(String::class.java)
-        .convention(LockCopyTask.PACKAGE_LOCK)
+    /**
+     * The name of the npm lock file to use for storing and restoring dependencies.
+     *
+     * Defaults to [LockCopyTask.PACKAGE_LOCK].
+     */
+    val lockFileName: org.gradle.api.provider.Property<String> =
+        project.objects.property(String::class.java)
+            .convention(LockCopyTask.PACKAGE_LOCK)
+
+    @InternalKotlinGradlePluginApi
+    final override val lockFileNameProvider: Provider<String>
+        get() = lockFileName
+
+    override val additionalInstallOutput: FileCollection =
+        project.objects.fileCollection().from(
+            nodeJsRoot.rootPackageDirectory.zip(lockFileName) { dir, name -> dir.file(name) }
+        )
+
     val lockFileDirectory: DirectoryProperty = project.objects.directoryProperty()
         .convention(project.layout.projectDirectory.dir(LockCopyTask.KOTLIN_JS_STORE))
 

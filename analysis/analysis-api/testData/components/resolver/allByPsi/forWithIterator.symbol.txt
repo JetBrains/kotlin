@@ -178,6 +178,7 @@ KtThisExpression(147,160): 'this@iterator'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -196,6 +197,7 @@ KtThisExpression(147,160): 'this@iterator'
           annotations: []
           typeArguments: []
           type: f/IntProgression
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -207,6 +209,7 @@ KtNameReferenceExpression(147,151): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -225,6 +228,7 @@ KtNameReferenceExpression(147,151): 'this'
           annotations: []
           typeArguments: []
           type: f/IntProgression
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -290,6 +294,7 @@ KtThisExpression(207,220): 'this@iterator'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -308,6 +313,7 @@ KtThisExpression(207,220): 'this@iterator'
           annotations: []
           typeArguments: []
           type: f/IntProgression
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -319,6 +325,7 @@ KtNameReferenceExpression(207,211): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -337,6 +344,7 @@ KtNameReferenceExpression(207,211): 'this'
           annotations: []
           typeArguments: []
           type: f/IntProgression
+        typeParameters: []
         visibility: PUBLIC
     ]
 

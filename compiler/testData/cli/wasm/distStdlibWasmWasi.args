@@ -1,0 +1,17 @@
+$TESTDATA_DIR$/distStdlibMain.kt
+-Xwasm-target=wasm-wasi
+-libraries
+$DIST_STDLIB_WASM_WASI$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+---
+-Xinclude=$TEMP_DIR$/out.klib
+-Xwasm-target=wasm-wasi
+-libraries
+$DIST_STDLIB_WASM_WASI$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

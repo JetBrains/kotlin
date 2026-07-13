@@ -7,6 +7,7 @@ KtNameReferenceExpression(248,251): 'add'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -30,6 +31,7 @@ KtNameReferenceExpression(248,251): 'add'
                 type: kotlin/String
             ]
             type: test/Target<kotlin/String>
+          typeParameters: []
           visibility: PUBLIC
         type = test.Target<kotlin.String>
       extensionReceiver = null

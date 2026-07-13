@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
-import org.jetbrains.kotlin.ir.util.varargElementType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
@@ -82,7 +81,7 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode, us
 
     override fun isUnit(type: KotlinType) = type.isUnit()
 
-    final override fun isVararg(valueParameter: ParameterDescriptor) = valueParameter.varargElementType != null
+    final override fun isVararg(valueParameter: ParameterDescriptor) = (valueParameter as? ValueParameterDescriptor)?.varargElementType != null
 
     final override fun getValueParameterType(valueParameter: ParameterDescriptor): KotlinType =
         valueParameter.type

@@ -1,6 +1,7 @@
 KaEnumEntrySymbol:
   annotations: []
   callableId: kotlin/LazyThreadSafetyMode.SYNCHRONIZED
+  contextParameters: []
   contextReceivers: []
   initializer: null
   isActual: false
@@ -19,6 +20,7 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: kotlin/LazyThreadSafetyMode
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.LazyThreadSafetyMode

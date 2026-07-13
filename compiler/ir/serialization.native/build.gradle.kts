@@ -15,6 +15,7 @@ dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.serialization.common"))
 
+    implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:cli-base"))
     implementation(project(":native:native.config"))
     runtimeOnly(project(":native:frontend.native"))

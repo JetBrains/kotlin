@@ -7,4 +7,4 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final static [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val [ResolvedTo(RAW_FIR)] R|Foo|.static1: R|kotlin/Int|
-    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

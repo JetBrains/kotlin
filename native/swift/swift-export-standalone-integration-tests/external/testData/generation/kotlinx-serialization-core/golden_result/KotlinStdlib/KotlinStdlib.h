@@ -5,6 +5,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
 
+int32_t kotlin_CharSequence_length_get__reverse_swift(void * self);
+
 void * kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(void * self, int32_t startIndex, int32_t endIndex);
 
 int8_t kotlin_Number_toByte__reverse_swift(void * self);
@@ -20,6 +22,10 @@ int32_t kotlin_Number_toInt__reverse_swift(void * self);
 int64_t kotlin_Number_toLong__reverse_swift(void * self);
 
 int16_t kotlin_Number_toShort__reverse_swift(void * self);
+
+void * _Nullable kotlin_Throwable_cause_get__reverse_swift(void * self);
+
+NSString * _Nullable kotlin_Throwable_message_get__reverse_swift(void * self);
 
 NSString * kotlin_Throwable_toString__reverse_swift(void * self);
 
@@ -1001,6 +1007,8 @@ NSString * kotlin_String_toString(void * self);
 
 void * _Nullable kotlin_Throwable_cause_get(void * self);
 
+void * _Nullable kotlin_Throwable_cause_get_direct(void * self);
+
 void * kotlin_Throwable_getStackTrace(void * self);
 
 void * kotlin_Throwable_init_allocate();
@@ -1014,6 +1022,8 @@ _Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRaw
 _Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 NSString * _Nullable kotlin_Throwable_message_get(void * self);
+
+NSString * _Nullable kotlin_Throwable_message_get_direct(void * self);
 
 _Bool kotlin_Throwable_printStackTrace(void * self);
 

@@ -35,8 +35,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -54,11 +54,13 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: foo
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Any
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(invalidContractParameterPassedToReturns.kt)
       getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
@@ -68,8 +70,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -87,11 +89,13 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: bar
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(invalidContractParameterPassedToReturns.kt)
       getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt

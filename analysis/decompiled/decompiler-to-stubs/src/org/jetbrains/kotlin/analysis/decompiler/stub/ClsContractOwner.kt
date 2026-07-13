@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.receiverType
+import org.jetbrains.kotlin.metadata.deserialization.receiverOrCompanionExtensionReceiverType
 
 sealed class ClsContractOwner {
     abstract val contract: ProtoBuf.Contract
@@ -22,7 +22,8 @@ sealed class ClsContractOwner {
         override val contract: ProtoBuf.Contract
             get() = functionProto.contract
 
-        override fun receiverType(typeTable: TypeTable): ProtoBuf.Type? = functionProto.receiverType(typeTable)
+        override fun receiverType(typeTable: TypeTable): ProtoBuf.Type? =
+            functionProto.receiverOrCompanionExtensionReceiverType(typeTable)
 
         override val valueParameterCount: Int
             get() = functionProto.valueParameterCount
@@ -38,7 +39,8 @@ sealed class ClsContractOwner {
         override val contract: ProtoBuf.Contract
             get() = if (isGetter) propertyProto.getterContract!! else propertyProto.setterContract!!
 
-        override fun receiverType(typeTable: TypeTable): ProtoBuf.Type? = propertyProto.receiverType(typeTable)
+        override fun receiverType(typeTable: TypeTable): ProtoBuf.Type? =
+            propertyProto.receiverOrCompanionExtensionReceiverType(typeTable)
 
         override val valueParameterCount: Int
             get() = if (isGetter) 0 else 1

@@ -25,9 +25,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.params)
-    runtimeOnly(libs.junit.vintage.engine)
-    testFixturesImplementation(libs.junit4)
-    testImplementation(libs.junit4)
 }
 
 sourceSets {
@@ -41,13 +38,6 @@ testsJar()
 val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateFeatureInteractionSpecTestDataKt", testSourceSet)
 
 val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt", testSourceSet)
-
-val specConsistencyTests by task<Test> {
-    filter {
-        includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
-    }
-    useJUnitPlatform()
-}
 
 projectTests {
     testData(isolated, "testData")
@@ -63,6 +53,12 @@ projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
         filter {
             excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
+        }
+    }
+
+    testTask(taskName = "specConsistencyTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+        filter {
+            includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
         }
     }
 

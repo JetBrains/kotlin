@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -41,7 +40,6 @@ public interface KaPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCa
      * The list of [context parameters](https://github.com/Kotlin/KEEP/issues/367) for this symbol access.
      * The list is available if the callable is declared with context parameters.
      */
-    @KaExperimentalApi
     public val contextArguments: List<KaReceiverValue>
 }
 

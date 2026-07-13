@@ -8,10 +8,12 @@ STEP 0:
 STEP 1:
     modifications:
         U : file1.1.kt -> file1.kt
-    modified cache: file1.kt, file2.kt
+    modified cache: file2.kt
+    unchanged cache: file1.kt
 
 // file1.kt: typealias A targets back to Dog
 STEP 2:
     modifications:
         U : file1.kt -> file1.kt
-    modified cache: file1.kt, file2.kt
+    modified cache: file2.kt
+    unchanged cache: file1.kt

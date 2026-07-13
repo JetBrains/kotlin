@@ -3,6 +3,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -21,6 +22,7 @@ KaKotlinPropertySymbol:
     returnType: KaFlexibleType:
       annotations: []
       type: java/util/function/Function<kotlin/String!, ft<T & Any, T?>>!
+    typeParameters: []
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
@@ -41,6 +43,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -58,6 +61,7 @@ KaKotlinPropertySymbol:
     returnType: KaFlexibleType:
       annotations: []
       type: java/util/function/Function<kotlin/String!, ft<T & Any, T?>>!
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -84,7 +88,6 @@ KaKotlinPropertySymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -93,6 +96,7 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: propertyWithFlexibleDnnImplicitType
   origin: SOURCE
+  primaryConstructorParameter: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []

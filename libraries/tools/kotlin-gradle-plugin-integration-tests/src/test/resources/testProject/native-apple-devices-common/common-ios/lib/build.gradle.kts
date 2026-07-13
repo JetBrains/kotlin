@@ -16,11 +16,11 @@ kotlin {
     iosArm64("iosLibArm64")
 
     iosX64("iosLibX64") {
-        println("Configuring ${this.name}")
+        logger.lifecycle("Configuring ${this.name}")
     }
 
     iosArm64("iosLibArm64") {
-        println("Configuring ${this.name}")
+        logger.lifecycle("Configuring ${this.name}")
     }
 
     sourceSets {

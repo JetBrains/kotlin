@@ -31,8 +31,8 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -50,10 +50,12 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: x
       origin: SOURCE
+      primaryConstructorProperty: null
       receiverParameter: null
       returnType: KaDefinitelyNotNullType:
         annotations: []
         type: T1 & Any
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(KotlinInterface.kt)
       getContainingJvmClassName: KotlinInterface

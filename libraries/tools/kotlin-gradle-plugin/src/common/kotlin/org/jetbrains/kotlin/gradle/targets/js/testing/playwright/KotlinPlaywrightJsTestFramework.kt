@@ -12,26 +12,28 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.mapProperty
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.utils.asPathOrNull
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.property
 import java.net.URI
+import java.nio.file.Path
 import java.time.Duration
 import javax.inject.Inject
 import kotlin.time.toKotlinDuration
@@ -54,6 +56,9 @@ internal class KotlinPlaywrightJsTestFramework(
 
         @get:Nested
         val webkitRunners: ListProperty<WebkitRunnerInput> = objects.listProperty()
+
+        @get:InputDirectory
+        val playwrightBrowsersDirectory: DirectoryProperty = objects.directoryProperty()
     }
 
     /**
@@ -68,10 +73,10 @@ internal class KotlinPlaywrightJsTestFramework(
         abstract val name: Property<String>
 
         @get:Input
-        val timeout: Property<Duration> = objects.property<Duration>().convention(Duration.ofMinutes(1))
+        val timeout: Property<Duration> = objects.property<Duration>()
 
         @get:Input
-        val headless: Property<Boolean> = objects.property<Boolean>().convention(true)
+        val headless: Property<Boolean> = objects.property<Boolean>()
 
         @get:Input
         val launchArgs: ListProperty<String> = objects.listProperty()
@@ -94,10 +99,19 @@ internal class KotlinPlaywrightJsTestFramework(
     override val settingsState: String = "playwright"
 
     override val workingDir: DirectoryProperty = objects.directoryProperty()
-    override val executable: Property<String> = objects.property()
+
+    @Transient
+    private val nodeJs = compilation.project.kotlinNodeJsEnvSpec
+
+    override val executable: Property<String> = objects.property(nodeJs.executable)
 
     @get:Internal
-    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf()
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
+        NpmPackageVersion("playwright-core", "1.60.0")
+    )
+
+    @get:Internal
+    internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty().convention(compilation.npmToolingDir())
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
 
@@ -120,30 +134,39 @@ internal class KotlinPlaywrightJsTestFramework(
             exclude = task.excludePatterns,
         ).toList()
 
+        val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
+
         val pwRunners = buildList {
             frameworkTaskInputs.chromiumRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, cliArgs))
+                add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, browsersDirectory, cliArgs))
             }
             frameworkTaskInputs.firefoxRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, cliArgs))
+                add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, browsersDirectory, cliArgs))
             }
             frameworkTaskInputs.webkitRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, cliArgs))
+                add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, browsersDirectory, cliArgs))
             }
         }
+
+        val npmToolingEnv = npmToolingEnvDir.getFile()
+        val modules = NpmProjectModules(npmToolingEnv)
 
         return PwExecutionSpec(
             createClient = { processor, logger -> TCServiceMessagesClient(processor, clientSettings, logger) },
             runners = pwRunners,
+            nodeExecutable = executable.get(),
+            playwrightCli = modules.require("playwright-core/cli.js"),
         )
     }
 
     private fun BrowserRunnerInput.createPwRunnerSpec(
         kind: PwBrowserKind,
+        browsersDirectory: Path,
         cliArgs: List<String>,
     ): PwRunnerSpec = PwRunnerSpec(
         name = name.get(),
         browserKind = kind,
+        browsersDirectory = browsersDirectory,
         testsLocation = testsLocation.get(),
         buildTestsExecutionerUrl = { baseUrl -> buildRunnerUrl(baseUrl, cliArgs) },
         timeout = timeout.get().toKotlinDuration(),
@@ -154,13 +177,13 @@ internal class KotlinPlaywrightJsTestFramework(
         customBrowserExecutable = customBrowserExecutable.asPathOrNull
     )
 
-    private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: String, cliArgs: List<String>): String {
+    private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>): URI {
         val runnerConfig = KotlinBrowserRunnerConfig(
             timeout = timeout.get(),
             testsFinishedMarker = finishMarker.get(),
             kotlinTestCliArguments = cliArgs
         )
-        return runnerConfig.buildUrlWithConfigState(URI(baseUrl)).toString()
+        return runnerConfig.buildUrlWithConfigState(baseUrl)
     }
 
     companion object {

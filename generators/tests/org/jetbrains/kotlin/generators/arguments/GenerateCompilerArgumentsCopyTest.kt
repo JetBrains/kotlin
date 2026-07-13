@@ -5,18 +5,22 @@
 
 package org.jetbrains.kotlin.generators.arguments
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import java.lang.reflect.Modifier
 import kotlin.reflect.jvm.javaField
 import kotlin.test.assertContentEquals
 
-class GenerateCompilerArgumentsCopyTest : TestCase() {
+class GenerateCompilerArgumentsCopyTest {
+    @Test
     fun testCompilerArgumentsCopyFunctionsAreUpToDate() {
         generateCompilerArgumentsCopy(::getPrinterForTests)
         generateConfigureLanguageFeatures(::getPrinterForTests)
     }
 
+    @Test
     fun testCopyDoesNotCopyTransientFields() {
         val a = K2JVMCompilerArguments()
         a.errors = ArgumentParseErrors()
@@ -31,6 +35,7 @@ class GenerateCompilerArgumentsCopyTest : TestCase() {
         assertEquals("my module name", b.moduleName)
     }
 
+    @Test
     fun testCopyDuplicatesArray() {
         val a = K2JVMCompilerArguments()
         a.additionalJavaModules = arrayOf("xxx")
@@ -39,12 +44,13 @@ class GenerateCompilerArgumentsCopyTest : TestCase() {
         copyK2JVMCompilerArguments(a, b)
 
         assertContentEquals(a.additionalJavaModules, b.additionalJavaModules)
-        assertNotSame(a.additionalJavaModules, b.additionalJavaModules)
+        Assertions.assertNotSame(a.additionalJavaModules, b.additionalJavaModules)
 
         b.additionalJavaModules[0] = "yyy"
         assertEquals("xxx", a.additionalJavaModules[0])
     }
 
+    @Test
     fun testCollectPropertiesDoesNotReturnTransient() {
         val errorProperty = CommonToolArguments::errors
         assertTrue(Modifier.isTransient(errorProperty.javaField!!.modifiers))

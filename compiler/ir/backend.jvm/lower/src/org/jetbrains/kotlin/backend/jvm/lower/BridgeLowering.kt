@@ -214,6 +214,19 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         if (!irFunction.isFakeOverride || irFunction.modality == Modality.FINAL)
             blacklist += targetMethod
 
+        // Do not generate bridge methods for exposed methods, since we already generate bridges for
+        // their mangled counterparts. Generating both bridges will lead to declaration clash.
+        //
+        // However, if the exposed methods have separate signature to bridges, we need to generate bridges.
+        // For example, when the bridge is using Any?, but the exposed method uses String.
+        if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
+            val bridgeTargetFunctions = irClass.functions.mapNotNull { it.asBridgeTargetOrNull()?.function }.toSet()
+
+            if (irClass.hasNonExposedBridgeTargetCounterpart(irFunction, bridgeTargetFunctions)) {
+                return
+            }
+        }
+
         // Generate special bridges, but only in classes
         var bridgeTarget = irFunction
         if (specialBridge != null) {
@@ -322,12 +335,6 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             // for abstract methods overriding a special bridge for which we do not create a bridge due to,
             // e.g., signature clashes.
             return
-        } else if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
-            val bridgeTargetFunctions = irClass.functions.mapNotNull { it.asBridgeTargetOrNull()?.function }.toSet()
-
-            if (irClass.hasNonExposedBridgeTargetCounterpart(irFunction, bridgeTargetFunctions)) {
-                return
-            }
         }
 
         // For concrete fake overrides, some bridges may be inherited from the super-classes. Specifically, bridges for all
@@ -373,11 +380,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             .forEach { irClass.addBridge(it, bridgeTarget) }
     }
 
-    // Do not generate bridge methods for exposed methods, since we already generate bridges for
-    // their mangled counterparts. Generating both bridges will lead to declaration clash.
-    //
-    // However, if the exposed methods have separate signature to bridges, we need to generate bridges.
-    // For example, when the bridge is using Any?, but the exposed method uses String.
+    // Checks whether an exposed method has a non-exposed counterpart that should own bridge generation.
     private fun IrClass.hasNonExposedBridgeTargetCounterpart(
         irFunction: IrSimpleFunction,
         bridgeTargetFunctions: Set<IrSimpleFunction>,

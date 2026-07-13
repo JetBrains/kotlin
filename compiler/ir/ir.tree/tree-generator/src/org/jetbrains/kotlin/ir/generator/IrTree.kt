@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.ir.generator.model.Element.Category.*
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.MutableList
 import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.Var
+import org.jetbrains.kotlin.ir.generator.model.MapField
 import org.jetbrains.kotlin.ir.generator.model.SimpleField
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.name.FqName
@@ -748,10 +749,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(type<AnnotationMarker>())
 
         +referencedSymbol("classSymbol", classSymbol, mutable = false)
-        +field("argumentMapping", StandardTypes.map.withArgs(type<Name>(), expression.copy(nullable = true)), mutable = false) {
-            // TODO KT-55928 remove when we migrate from `arguments`
-            deepCopyExcludeFromApply = true
-        }
+        +mapField("argumentMapping", type<Name>(), expression.copy(nullable = true), mutability = MapField.Mutability.ImmutableMap)
         +referencedSymbol("symbol", type = constructorSymbol) {
             optInAnnotation = deprecatedCompilerApi.withArgument("deprecatedSince", "org.jetbrains.kotlin.CompilerVersionOfApiDeprecation._2_4_20")
         }

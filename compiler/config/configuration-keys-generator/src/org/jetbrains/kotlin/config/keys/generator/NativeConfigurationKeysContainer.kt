@@ -32,6 +32,7 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val CACHED_LIBRARIES by key<Map<String, String>>("Mapping from library paths to cache paths.")
     val FILES_TO_CACHE by key<List<String>>("Which files should be compiled to cache.")
     val MAKE_PER_FILE_CACHE by key<Boolean>()
+    val CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT by key<String>("Combined fingerprint of external cached dependencies of the library being cached.")
     val FRAMEWORK_IMPORT_HEADERS by key<List<String>>()
     val KONAN_FRIEND_LIBRARIES by key<List<String>>()
     val KONAN_REFINES_MODULES by key<List<String>>()

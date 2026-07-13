@@ -7,13 +7,27 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.utils.contentEquals
+import org.jetbrains.kotlin.gradle.utils.`is`
+
 import org.jetbrains.kotlin.gradle.utils.contentEqualsIgnoringLineEndings
 import java.io.File
 import javax.inject.Inject
@@ -26,33 +40,48 @@ internal abstract class SyncPackageResolvedTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val sourceFile: RegularFileProperty
 
+    @get:Optional
     @get:OutputFile
     abstract val destinationFile: RegularFileProperty
+
+    @get:Internal
+    abstract val syntheticPackagesRoot: DirectoryProperty
+
+    @get:Optional
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val packageFingerprint: RegularFileProperty
+
 
     @get:Inject
     abstract val fs: FileSystemOperations
 
     @TaskAction
     fun sync() {
-        if (!sourceFile.isPresent) return
+        val fingerprintedPackageResolved = packageFingerprint.orNull?.asFile
+            ?.readText()
+            ?.trim()
+            ?.let { fingerprint ->
+                syntheticPackagesRoot.get().asFile
+                    .resolve(fingerprint.split("\n")[1])
+                    .resolve("Package.resolved")
+            }
 
-        val src = sourceFile.get().asFile
-        val dest = destinationFile.get().asFile
+        val src = sourceFile.orNull?.asFile ?: fingerprintedPackageResolved ?: return
+
+        val dest = when {
+            sourceFile.isPresent && fingerprintedPackageResolved != null -> fingerprintedPackageResolved
+            destinationFile.isPresent -> destinationFile.get().asFile
+            else -> return
+        }
 
         if (!src.exists()) {
-            if (dest.exists()) {
-                dest.delete()
-            }
+            if (dest.exists()) dest.delete()
             return
         }
 
-        if (hasSameContent(src, dest)) return
-
-        if (!dest.parentFile.exists()) dest.parentFile.mkdirs()
-
         copySwiftLockFile(fs, src, dest)
     }
-
     companion object {
         const val TASK_NAME = "syncPersistedPackageResolved"
         const val SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME = "syncSyntheticPackageResolvedToPersisted"
@@ -61,11 +90,15 @@ internal abstract class SyncPackageResolvedTask : DefaultTask() {
 }
 
 
-private fun copySwiftLockFile(
+internal fun copySwiftLockFile(
     fs: FileSystemOperations,
     src: File,
     dest: File,
 ) {
+    if (hasSameContent(src, dest)) return
+
+    if (!dest.parentFile.exists()) dest.parentFile.mkdirs()
+
     fs.copy { spec ->
         spec.from(src)
         spec.into(dest.parentFile)
@@ -131,7 +164,6 @@ internal abstract class SwiftPMLockTaskAggregationBuildService : BuildService<Bu
 
         return projectPaths
     }
-
 
     companion object {
         private const val SERVICE_NAME = "swiftPmLockTaskAggregationService"

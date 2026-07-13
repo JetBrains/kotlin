@@ -6,6 +6,7 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -26,6 +27,7 @@ KaContextParameterSymbol:
     ]
     typeArguments: []
     type: @R|Anno|()  kotlin/String
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(annotatedContextParameterOnProperty2.kt)
   getContainingJvmClassName: AnnotatedContextParameterOnProperty2Kt

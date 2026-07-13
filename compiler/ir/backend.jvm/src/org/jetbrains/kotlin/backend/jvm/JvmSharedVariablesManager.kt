@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -26,13 +25,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class JvmSharedVariablesManager(
-    module: ModuleDescriptor,
     val symbols: JvmSymbols,
     val irBuiltIns: IrBuiltIns,
+    irModule: IrModuleFragment,
     irFactory: IrFactory,
 ) : SharedVariablesManager() {
     private val jvmInternalPackage = createEmptyExternalPackageFragment(
-        module, FqName("kotlin.jvm.internal")
+        irModule, FqName("kotlin.jvm.internal")
     )
 
     private val refNamespaceClass = irFactory.addClass(jvmInternalPackage) {

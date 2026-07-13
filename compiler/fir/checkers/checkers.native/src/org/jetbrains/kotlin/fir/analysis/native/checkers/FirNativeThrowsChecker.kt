@@ -185,7 +185,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
         }
 
         if (this is FirResolvedQualifier) {
-            symbol?.let { symbol ->
+            qualifierSymbol?.let { symbol ->
                 if (symbol is FirTypeAliasSymbol && symbol.resolvedExpandedTypeRef.coneType.hasError()) {
                     return true
                 }

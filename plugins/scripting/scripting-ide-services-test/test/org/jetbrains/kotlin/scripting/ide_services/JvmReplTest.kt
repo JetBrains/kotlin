@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.scripting.ide_services
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.scripting.ide_services.test_util.*
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
@@ -27,7 +29,8 @@ import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 // Adapted form GenericReplTest
 
 // Artificial split into several testsuites, to speed up parallel testing
-class JvmIdeServicesTest : TestCase() {
+class JvmIdeServicesTest {
+    @Test
     fun testReplBasics() {
         JvmTestRepl()
             .use { repl ->
@@ -37,7 +40,7 @@ class JvmIdeServicesTest : TestCase() {
                         "val x ="
                     )
                 )
-                assertTrue("Unexpected check results: $res1", res1.isIncomplete())
+                assertTrue(res1.isIncomplete(), "Unexpected check results: $res1")
 
                 assertEvalResult(
                     repl,
@@ -58,19 +61,21 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
+    @Test
     fun testReplErrors() {
         JvmTestRepl()
             .use { repl ->
                 repl.compileAndEval(repl.nextCodeLine("val x = 10"))
 
                 val res = repl.compileAndEval(repl.nextCodeLine("java.util.fish"))
-                assertTrue("Expected compile error", res.first.isError())
+                assertTrue(res.first.isError(), "Expected compile error")
 
                 val result = repl.compileAndEval(repl.nextCodeLine("x"))
-                assertEquals(res.second.toString(), 10, (result.second?.result as ResultValue.Value?)?.value)
+                assertEquals(10, (result.second?.result as ResultValue.Value?)?.value, res.second.toString())
             }
     }
 
+    @Test
     fun testReplErrorsWithLocations() {
         JvmTestRepl()
             .use { repl ->
@@ -102,6 +107,7 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
+    @Test
     fun testReplErrorsAndWarningsWithLocations() {
         JvmTestRepl()
             .use { repl ->
@@ -133,11 +139,12 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
+    @Test
     fun testReplSyntaxErrorsChecked() {
         JvmTestRepl()
             .use { repl ->
                 val res = repl.compileAndEval(repl.nextCodeLine("data class Q(val x: Int, val: String)"))
-                assertTrue("Expected compile error", res.first.isError())
+                assertTrue(res.first.isError(), "Expected compile error")
             }
     }
 
@@ -159,6 +166,7 @@ class JvmIdeServicesTest : TestCase() {
         }
     }
 
+    @Test
     fun testCompletion() = JvmTestRepl().use { repl ->
         repl.compileAndEval(
             repl.nextCodeLine(
@@ -189,6 +197,7 @@ class JvmIdeServicesTest : TestCase() {
         checkContains(completionList1.valueOrThrow(), setOf("prop_x", "prop_y", "pro", "println(Double)"))
     }
 
+    @Test
     fun testPackageCompletion() = JvmTestRepl().use { repl ->
         val codeLine1 = repl.nextCodeLine(
             """
@@ -201,6 +210,7 @@ class JvmIdeServicesTest : TestCase() {
         checkDoesntContain(completionList1.valueOrThrow(), setOf("xval"))
     }
 
+    @Test
     fun testFileCompletion() = JvmTestRepl().use { repl ->
         val codeLine1 = repl.nextCodeLine(
             """
@@ -209,10 +219,11 @@ class JvmIdeServicesTest : TestCase() {
         )
         val completionList1 = repl.complete(codeLine1, 13)
         val files = File(".").listFiles()?.map { it.name }
-        assertFalse("There should be files in current dir", files.isNullOrEmpty())
+        assertFalse(files.isNullOrEmpty(), "There should be files in current dir")
         checkContains(completionList1.valueOrThrow(), files!!.toSet())
     }
 
+    @Test
     fun testReplCodeFormat() {
         JvmTestRepl()
             .use { repl ->
@@ -220,10 +231,11 @@ class JvmIdeServicesTest : TestCase() {
                     SourceCodeTestImpl(0, "val l1 = 1\r\nl1\r\n")
                 val res = repl.compile(codeLine0)
 
-                assertTrue("Unexpected compile result: $res", res is ResultWithDiagnostics.Success<*>)
+                assertTrue(res is ResultWithDiagnostics.Success<*>, "Unexpected compile result: $res")
             }
     }
 
+    @Test
     fun testRepPackage() {
         JvmTestRepl()
             .use { repl ->
@@ -241,6 +253,7 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
+    @Test
     fun testReplResultFieldWithFunction() {
         JvmTestRepl()
             .use { repl ->
@@ -260,6 +273,7 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
+    @Test
     fun testReplResultField() {
         JvmTestRepl()
             .use { repl ->
@@ -276,6 +290,7 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
+    @Test
     fun testDependency() {
         val resolver = ScriptDependenciesResolver()
 
@@ -326,6 +341,7 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
+    @Test
     fun testAnonymousObjectReflection() {
         JvmTestRepl()
             .use { repl ->
@@ -369,7 +385,8 @@ class JvmIdeServicesTest : TestCase() {
     }
 }
 
-class LegacyReplTestLong1 : TestCase() {
+class LegacyReplTestLong1 {
+    @Test
     fun test256Evals() {
         JvmTestRepl()
             .use { repl ->
@@ -396,12 +413,13 @@ class LegacyReplTestLong1 : TestCase() {
                         "x$evals"
                     )
                 )
-                assertEquals(evaluated.toString(), evals, (evaluated?.result as ResultValue.Value?)?.value)
+                assertEquals(evals, (evaluated?.result as ResultValue.Value?)?.value, evaluated.toString())
             }
     }
 }
 
-class LegacyReplTestLong2 : TestCase() {
+class LegacyReplTestLong2 {
+    @Test
     fun testReplSlowdownKt22740() {
         JvmTestRepl()
             .use { repl ->

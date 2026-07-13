@@ -23,6 +23,16 @@ public fun kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse(sel
     return _result
 }
 
+@ImportedBridge("kotlin_CharSequence_length_get__reverse_swift")
+internal external fun kotlin_CharSequence_length_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(kotlin.CharSequence::class, "<get-length>")
+public fun kotlin_CharSequence_length_get__reverse(self: kotlin.CharSequence): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlin_CharSequence_length_get__reverse_swift(__self)
+    return _result
+}
+
 @ImportedBridge("kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")
 internal external fun kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, startIndex: Int, endIndex: Int): kotlin.native.internal.NativePtr
 

@@ -2,6 +2,7 @@ KaConstructorSymbol:
   annotations: []
   callableId: null
   containingClassId: Foo
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -23,128 +24,8 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotations: []
-        backingFieldSymbol: KaBackingFieldSymbol:
-          annotations: []
-          callableId: null
-          contextReceivers: []
-          isActual: false
-          isCompanion: false
-          isDelegated: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isNotDefault: false
-          isVal: true
-          location: PROPERTY
-          modality: FINAL
-          name: field
-          origin: PROPERTY_BACKING_FIELD
-          owningProperty: KaKotlinPropertySymbol(/Foo.ints)
-          receiverParameter: null
-          returnType: KaUsualClassType:
-            annotations: []
-            typeArguments: [
-              out KaErrorType:
-                annotations: []
-                type: ERROR_TYPE
-            ]
-            type: kotlin/Array<out ERROR CLASS: Incomplete code>
-          visibility: PRIVATE
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: Foo
-          getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
-          getContainingJvmClassName: Foo
-          getContainingModule: KaSourceModule "Sources of main"
-          deprecation: null
-          importableFqName: null
-        callableId: /Foo.ints
-        contextParameters: []
-        contextReceivers: []
-        getter: KaPropertyGetterSymbol:
-          annotations: []
-          callableId: null
-          contextReceivers: []
-          hasStableParameterNames: true
-          isActual: false
-          isCompanion: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isInline: false
-          isNotDefault: false
-          isOverride: false
-          location: PROPERTY
-          modality: FINAL
-          origin: SOURCE
-          receiverParameter: null
-          returnType: KaUsualClassType:
-            annotations: []
-            typeArguments: [
-              out KaErrorType:
-                annotations: []
-                type: ERROR_TYPE
-            ]
-            type: kotlin/Array<out ERROR CLASS: Incomplete code>
-          valueParameters: []
-          visibility: PUBLIC
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: Foo
-          getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
-          getContainingJvmClassName: Foo
-          getContainingModule: KaSourceModule "Sources of main"
-          deprecation: null
-          importableFqName: null
-        hasBackingField: true
-        hasGetter: true
-        hasSetter: false
-        initializer: KaNonConstantInitializerValue(vararg val ints: )
-        isActual: false
-        isCompanion: false
-        isConst: false
-        isDelegated: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isFromPrimaryConstructor: true
-        isLateInit: false
-        isOverride: false
-        isStatic: false
-        isVal: true
-        location: CLASS
-        modality: FINAL
-        name: ints
-        origin: SOURCE
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: [
-            out KaErrorType:
-              annotations: []
-              type: ERROR_TYPE
-          ]
-          type: kotlin/Array<out ERROR CLASS: Incomplete code>
-        setter: null
-        typeParameters: []
-        visibility: PUBLIC
-        getDispatchReceiver(): KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: Foo
-        getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
-        getContainingJvmClassName: Foo
-        getContainingModule: KaSourceModule "Sources of main"
-        deprecation: null
-        javaGetterName: getInts
-        javaSetterName: null
-        isInline: false
-        importableFqName: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
@@ -162,10 +43,12 @@ KaConstructorSymbol:
       modality: FINAL
       name: ints
       origin: SOURCE
+      primaryConstructorProperty: KaKotlinPropertySymbol(/Foo.ints)
       receiverParameter: null
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
       getContainingJvmClassName: Foo

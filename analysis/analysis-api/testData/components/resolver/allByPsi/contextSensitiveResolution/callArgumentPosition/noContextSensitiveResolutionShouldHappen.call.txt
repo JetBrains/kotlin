@@ -587,6 +587,7 @@ KtNameReferenceExpression(354,355): 'X'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -605,6 +606,7 @@ KtNameReferenceExpression(354,355): 'X'
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
         isContextSensitive = false

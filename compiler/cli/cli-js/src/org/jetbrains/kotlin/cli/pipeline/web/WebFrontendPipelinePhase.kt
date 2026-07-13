@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -34,10 +35,9 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.KlibIcData
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -67,16 +67,8 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         val klibs = loadWebKlibs(configuration, configuration.platformChecker)
 
-        val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
-        val moduleStructure = ModulesStructure(
-            mainModule = mainModule,
-            compilerConfiguration = configuration,
-            klibs = klibs,
-        )
-
         val extensionStorage = configuration.extensionsStorage ?: error("Extensions storage is not registered")
 
-        val kotlinPackageUsageIsFine: Boolean
         val analyzedOutput = if (configuration.useLightTree) {
             val groupedSources =
                 collectSources(
@@ -96,11 +88,12 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             }
 
             compileModulesToAnalyzedFirWithLightTree(
-                moduleStructure = moduleStructure,
-                groupedSources = groupedSources,
+                configuration = configuration,
+                resolvedLibraries = klibs.all,
                 // TODO: Only pass groupedSources, because
                 //  we will need to have them separated again
                 //  in createSessionsForLegacyMppProject anyway
+                groupedSources = groupedSources,
                 ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
                 libraries = libraries,
                 friendLibraries = friendLibraries,
@@ -109,9 +102,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 extensionStorage = extensionStorage,
                 useWasmPlatform = isWasm,
-            ).also {
-                kotlinPackageUsageIsFine = it.outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
-            }
+            )
         } else {
             val sourceFiles = environmentForJS.getSourceFiles()
             if (
@@ -125,9 +116,9 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 return null
             }
 
-            kotlinPackageUsageIsFine = checkKotlinPackageUsageForPsi(configuration, sourceFiles)
             compileModuleToAnalyzedFirWithPsi(
-                moduleStructure = moduleStructure,
+                configuration = configuration,
+                resolvedLibraries = klibs.all,
                 ktFiles = sourceFiles,
                 libraries = libraries,
                 friendLibraries = friendLibraries,
@@ -138,18 +129,17 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             )
         }
 
-        if (!kotlinPackageUsageIsFine) return null
-
         return WebFrontendPipelineArtifact(
             analyzedOutput,
             configuration,
-            moduleStructure,
+            klibs.all,
             hasErrors = configuration.hasMessageCollectorErrors() || diagnosticsCollector.hasErrors,
         )
     }
 
     private fun compileModuleToAnalyzedFirWithPsi(
-        moduleStructure: ModulesStructure,
+        configuration: CompilerConfiguration,
+        resolvedLibraries: List<KotlinLibrary>,
         ktFiles: List<KtFile>,
         libraries: List<String>,
         friendLibraries: List<String>,
@@ -162,7 +152,8 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             SyntaxErrorReporter.reportSyntaxErrors(ktFile, diagnosticsReporter)
         }
         val output = compileModuleToAnalyzedFir(
-            moduleStructure,
+            configuration,
+            resolvedLibraries,
             ktFiles,
             libraries,
             friendLibraries,
@@ -180,7 +171,8 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
     }
 
     private fun compileModulesToAnalyzedFirWithLightTree(
-        moduleStructure: ModulesStructure,
+        configuration: CompilerConfiguration,
+        resolvedLibraries: List<KotlinLibrary>,
         groupedSources: GroupedKtSources,
         ktSourceFiles: List<KtSourceFile>,
         libraries: List<String>,
@@ -192,7 +184,8 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         useWasmPlatform: Boolean,
     ): AllModulesFrontendOutput {
         val output = compileModuleToAnalyzedFir(
-            moduleStructure,
+            configuration,
+            resolvedLibraries,
             ktSourceFiles,
             libraries,
             friendLibraries,
@@ -210,7 +203,8 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
     }
 
     private inline fun <F> compileModuleToAnalyzedFir(
-        moduleStructure: ModulesStructure,
+        configuration: CompilerConfiguration,
+        resolvedLibraries: List<KotlinLibrary>,
         files: List<F>,
         libraries: List<String>,
         friendLibraries: List<String>,
@@ -225,7 +219,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         @Suppress("UNCHECKED_CAST")
         val extensionRegistrars = extensionStorage[FirExtensionRegistrarAdapter] as List<FirExtensionRegistrar>
 
-        val mainModuleName = moduleStructure.compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)!!
+        val mainModuleName = configuration.moduleName!!
         val escapedMainModuleName = Name.special("<$mainModuleName>")
         val dependencyList = DependencyListForCliModule.build(escapedMainModuleName) {
             dependencies(libraries)
@@ -235,16 +229,16 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         val sessionsWithSources = if (useWasmPlatform) {
             prepareWasmSessions(
-                files, moduleStructure.compilerConfiguration, escapedMainModuleName,
-                moduleStructure.klibs.all, dependencyList, extensionRegistrars,
+                files, configuration, escapedMainModuleName,
+                resolvedLibraries, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
                 icData = incrementalDataProvider?.let(::KlibIcData),
             )
         } else {
             prepareJsSessions(
-                files, moduleStructure.compilerConfiguration, escapedMainModuleName,
-                moduleStructure.klibs.all, dependencyList, extensionRegistrars,
+                files, configuration, escapedMainModuleName,
+                resolvedLibraries, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
                 icData = incrementalDataProvider?.let(::KlibIcData),

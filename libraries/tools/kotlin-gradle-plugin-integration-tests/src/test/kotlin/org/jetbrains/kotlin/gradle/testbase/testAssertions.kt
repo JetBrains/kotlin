@@ -17,10 +17,28 @@ import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
+/**
+ * @param stripBrowserVersionInfoFromTestCaseNames Some test executor implementations include browser version info in test case names,
+ * which can make test results difficult to compare. Example:
+ *
+ * ```xml
+ * <testcase name="test[wasmJs, browser, ChromeHeadless150.0.0.0, MacOS10.15.7]" classname="PrintTest" time="..." />
+ * ```
+ *
+ * If [stripBrowserVersionInfoFromTestCaseNames] is true, this function will strip the browser version info from test case names as
+ * follows:
+ *
+ * ```xml
+ * <testcase name="test[wasmJs, browser]" classname="PrintTest" time="..." />
+ * ```
+ *
+ * In cases where browser info is more predictable, leave this parameter as false.
+ */
 fun GradleProject.assertTestResults(
     expectedTestReport: Path,
     vararg testReportNames: String,
     subprojectName: String? = null,
+    stripBrowserVersionInfoFromTestCaseNames: Boolean = false,
     cleanupStdOut: (String) -> String = { it }
 ) {
     val buildDirLocation = if (subprojectName != null) { projectPath.resolve(subprojectName) } else projectPath
@@ -28,7 +46,7 @@ fun GradleProject.assertTestResults(
 
     assertDirectoriesExist(*testReportDirs.toTypedArray())
 
-    val actualTestResults = readAndCleanupTestResults(testReportDirs, projectPath, cleanupStdOut)
+    val actualTestResults = readAndCleanupTestResults(testReportDirs, projectPath, stripBrowserVersionInfoFromTestCaseNames, cleanupStdOut)
     val expectedTestResults = prettyPrintXml(expectedTestReport.readText())
 
     assertEquals(expectedTestResults, actualTestResults)
@@ -37,6 +55,7 @@ fun GradleProject.assertTestResults(
 internal fun readAndCleanupTestResults(
     testReportDirs: List<Path>,
     projectPath: Path,
+    stripBrowserVersionInfoFromTestCaseNames: Boolean,
     cleanupStdOut: (String) -> String = { it }
 ): String {
     val files = testReportDirs
@@ -74,7 +93,8 @@ internal fun readAndCleanupTestResults(
         e.attributes.forEach {
             if (it.name in skipAttrs) {
                 it.value = "..."
-            } else if (it.name == "name" &&
+            } else if (stripBrowserVersionInfoFromTestCaseNames &&
+                it.name == "name" &&
                 e.name == "testcase" &&
                 it.value.contains(browserTestRegex)
             ) {

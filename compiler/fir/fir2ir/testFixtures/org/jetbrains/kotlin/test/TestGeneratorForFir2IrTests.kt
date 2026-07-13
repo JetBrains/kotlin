@@ -56,11 +56,6 @@ fun main(args: Array<String>) {
                 model("boxJvm/reflection")
             }
 
-            testClass<AbstractNewReflectionFakeOverridesImplementationTest> {
-                model("box/reflection")
-                model("boxJvm/reflection")
-            }
-
             testClass<AbstractReflectionLoadMetadataDirectlyTest> {
                 model("box/reflection")
                 model("boxJvm/reflection")
@@ -105,6 +100,10 @@ fun main(args: Array<String>) {
                 model("debug/localVariables")
             }
 
+            testClass<AbstractLocalVariableTableTest> {
+                model("checkLocalVariablesTable")
+            }
+
             testClass<AbstractFirPsiLocalVariableTest> {
                 model("debug/localVariables")
             }
@@ -127,6 +126,14 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirScriptCodegenTest> {
                 model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractWriteSignatureTest> {
+                model("writeSignature")
+            }
+
+            testClass<AbstractWriteFlagsTest> {
+                model("writeFlags")
             }
         }
 

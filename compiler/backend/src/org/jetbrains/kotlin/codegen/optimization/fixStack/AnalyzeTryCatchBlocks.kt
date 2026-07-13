@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.inline.isCatchStoreInstruction
 import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.hasOpcode
@@ -28,7 +27,6 @@ import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
-import java.util.*
 
 private class DecompiledTryDescriptor(val tryStartLabel: LabelNode) {
     // Only used for assertions

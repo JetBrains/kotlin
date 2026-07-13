@@ -1,6 +1,7 @@
 KaContextParameterSymbol:
   annotations: []
   callableId: null
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -18,6 +19,7 @@ KaContextParameterSymbol:
     annotations: []
     typeArguments: []
     type: Clazz
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(contextParameterOnErrorPrimaryConstructor.kt)
   getContainingJvmClassName: Clazz

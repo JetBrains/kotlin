@@ -1,0 +1,7 @@
+warning: the argument '-Xuse-k2' was removed in Kotlin 2.2.0. It has no effect.
+warning: the argument '-output' was removed in Kotlin 2.2.0. It has no effect.
+warning: the argument '-Xvalue-classes' was removed in Kotlin 2.4.20. It has no effect.
+warning: the argument '-Xg0' was removed in Kotlin 2.4.20. It has no effect.
+warning: the argument '-no-endorsed-libs' was removed in Kotlin 2.4.20. It has no effect.
+warning: the argument '-library-version' was removed in Kotlin 2.4.20. It has no effect.
+OK

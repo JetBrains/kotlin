@@ -35,6 +35,7 @@ dependencies {
 }
 
 val agentJar by task<ShadowJar> {
+    archiveClassifier = "agent"
     from(sourceSets.main.map { it.output })
     configurations = project.configurations.runtimeClasspath.map { listOf(it) }
     manifest {

@@ -18,7 +18,7 @@ extension ExportedKotlinPackages.list2 {
     @objc(_MyList)
     public protocol _MyList: ExportedKotlinPackages.kotlin.collections._List {
     }
-    public protocol __MyList: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __MyList: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__List {
     }
     public static func testListOptAny(
         l: any ExportedKotlinPackages.list2.MyList

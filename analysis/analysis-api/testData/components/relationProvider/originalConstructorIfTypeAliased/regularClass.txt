@@ -3,6 +3,7 @@ Resolved constructor:
     annotations: []
     callableId: null
     containingClassId: test/MyClass
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false

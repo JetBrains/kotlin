@@ -410,7 +410,7 @@ public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase {
         return OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(self.__externalRCRef())
     }
 }
-public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, main._OUTSIDE_PROTO, main.__OUTSIDE_PROTO {
+public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, main.__OUTSIDE_PROTO {
     public static var shared: main.OBJECT_WITH_INTERFACE_INHERITANCE {
         get {
             return main.OBJECT_WITH_INTERFACE_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_INTERFACE_INHERITANCE_get())

@@ -68,3 +68,18 @@ class WithDoNotUseGettersTrue(val x: Int)
 
 @EqualsAndHashCode(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
 class WithDoNotUseGettersFalse(val x: Int)
+
+@EqualsAndHashCode(
+    exclude = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
+    of = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
+    doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>,
+    cacheStrategy = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>EqualsAndHashCode.CacheStrategy.LAZY<!>,
+    onParam = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
+)
+class UnsupportedArguments(
+    @EqualsAndHashCode.Include(
+        replaces = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>"something"<!>,
+        rank = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>42<!>
+    )
+    val x: Int
+)

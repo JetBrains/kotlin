@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import org.jetbrains.kotlin.stats.ModulesReportsData
 import org.jetbrains.kotlin.stats.StatsCalculator
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertEmpty
 import org.jetbrains.kotlin.util.UnitStats
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -69,7 +68,7 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                             expectedFileName = null,
                             compiler = compiler,
                         )
-                        assertEmpty(output)
+                        assert(output.isEmpty())
                         assertEquals(ExitCode.OK, exitCode)
                     }
 
@@ -86,7 +85,7 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                             additionalSources = kotlinFiles.drop(1).map { it.name },
                             compiler = compiler,
                         )
-                        assertEmpty(output)
+                        assert(output.isEmpty())
                         assertEquals(ExitCode.OK, exitCode)
                     }
 
@@ -104,7 +103,7 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                                 expectedFileName = null,
                                 compiler = compiler,
                             )
-                            assertEmpty(output)
+                            assert(output.isEmpty())
                             assertEquals(ExitCode.OK, exitCode)
                             aggregatedStats[kotlinFile.name] = compiler.defaultPerformanceManager.unitStats
                         }

@@ -9,7 +9,7 @@ public protocol _Semaphore {
 }
 public protocol __Semaphore: KotlinRuntimeSupport._KotlinBridgeable {
 }
-public final class ClassA: KotlinRuntime.KotlinBase, main.Semaphore, main._Semaphore, main.__Semaphore {
+public final class ClassA: KotlinRuntime.KotlinBase, main.Semaphore, main.__Semaphore {
     public init() {
         let __kt = __root___ClassA_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
