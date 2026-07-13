@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.CallToPotentiallyHiddenSymbolResult.VisibleWithDeprecation
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.*
@@ -38,7 +39,10 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
@@ -141,6 +145,8 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
 
         val firTypeScope = declaration.unsubstitutedScope()
 
+        recordSubtypeEdgesThroughJavaClasses(declaration)
+
         // Types from substitution overrides may not be compatible with the types before substitution due to variance.
         // For example, there is `Enum<E>::getDeclaringClass()` that returns `Class<E>`, and we may create a SO
         // `MyEnum::getDeclaringClass()` returning `Class<MyEnum>`, but `Class<T>` is invariant w.r.t. `T`.
@@ -163,6 +169,28 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
 
         firTypeScope.processAllProperties(::checkMember)
         firTypeScope.processAllFunctions(::checkMember)
+    }
+
+    /**
+     * KT-11196: Under K2 the class hierarchy is recorded in IC's `subtypesMap` from Kotlin protos, which only carry
+     * direct supertypes. A Java class in the middle of a hierarchy (`A(kotlin) <- B(java) <- C(kotlin)`) therefore
+     * leaves the `A <- B` edge unrecorded, so a change to `A` never propagates to `C`. Here we report the outgoing
+     * supertype edges of every Java class in [declaration]'s hierarchy, so IC can traverse through the Java
+     * intermediary in `withSubtypes` (the Kotlin edges are already covered by the protos). No-op outside IC.
+     */
+    @OptIn(ClassIdBasedLocality::class)
+    context(context: CheckerContext)
+    private fun recordSubtypeEdgesThroughJavaClasses(declaration: FirClass) {
+        val subtypeTracker = context.session.subtypeTracker ?: return
+        val session = context.session
+        for (superType in lookupSuperTypes(declaration, lookupInterfaces = true, deep = true, useSiteSession = session, substituteTypes = false)) {
+            val javaSymbol = superType.toRegularClassSymbol(session)?.takeIf { it.isJavaOrEnhancement } ?: continue
+            for (directSuperType in lookupSuperTypes(javaSymbol, lookupInterfaces = true, deep = false, useSiteSession = session)) {
+                val superClassId = directSuperType.classId
+                if (superClassId.isLocal || superClassId in StandardClassIds.allBuiltinTypes) continue
+                subtypeTracker.report(superClassId, javaSymbol.classId)
+            }
+        }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

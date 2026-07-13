@@ -267,6 +267,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 configuration.enumWhenTracker,
                 configuration.importTracker,
                 configuration.fileMappingTracker,
+                configuration.subtypeTracker,
             )
             registerCliCompilerOnlyResolveComponents()
 

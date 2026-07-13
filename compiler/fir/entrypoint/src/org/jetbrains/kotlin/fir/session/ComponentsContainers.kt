@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
@@ -208,6 +209,7 @@ fun FirSession.registerResolveComponents(
     enumWhenTracker: EnumWhenTracker? = null,
     importTracker: ImportTracker? = null,
     fileMappingTracker: ICFileMappingTracker? = null,
+    subtypeTracker: SubtypeTracker? = null,
 ) {
     register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
@@ -232,6 +234,12 @@ fun FirSession.registerResolveComponents(
         register(
             FirImportTrackerComponent::class,
             IncrementalPassThroughImportTrackerComponent(importTracker)
+        )
+    }
+    if (subtypeTracker != null) {
+        register(
+            FirSubtypeTrackerComponent::class,
+            IncrementalPassThroughSubtypeTrackerComponent(subtypeTracker)
         )
     }
     register(FirExpectActualMatchingContextFactory::class, FirExpectActualMatchingContextImpl.Factory)

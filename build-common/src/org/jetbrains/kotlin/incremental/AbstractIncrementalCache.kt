@@ -182,6 +182,23 @@ abstract class AbstractIncrementalCache<ClassName>(
         supertypesMap[child] = parents
     }
 
+    /**
+     * Records subtype edges computed by the frontend (via [org.jetbrains.kotlin.incremental.components.SubtypeTracker])
+     * into [subtypesMap], in addition to the edges recovered from Kotlin protos in [recordClassHierarchyData].
+     *
+     * This is needed for edges that cross a Java class (`A(kotlin) <- B(java) <- C(kotlin)`): under K2 the Java class'
+     * `extends A` is not present in any proto, so `A <- B` would otherwise be missing and `withSubtypes(A)` could not
+     * reach `C`. See KT-11196.
+     */
+    fun recordFrontendReportedSubtypes(subtypeEdges: Map<FqName, Collection<FqName>>) {
+        for (entry in subtypeEdges.entries) {
+            val supertype = entry.key
+            for (subtype in entry.value) {
+                subtypesMap.append(supertype, subtype)
+            }
+        }
+    }
+
     protected fun removeAllFromClassStorage(
         removedClasses: Collection<FqName>,
         changesCollector: ChangesCollector,

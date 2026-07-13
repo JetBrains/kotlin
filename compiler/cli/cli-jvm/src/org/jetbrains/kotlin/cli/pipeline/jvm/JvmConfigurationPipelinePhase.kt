@@ -125,6 +125,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         inlineConstTracker = services[InlineConstTracker::class.java]
         enumWhenTracker = services[EnumWhenTracker::class.java]
         fileMappingTracker = services[ICFileMappingTracker::class.java]
+        subtypeTracker = services[SubtypeTracker::class.java]
         incrementalCompilationComponents = services[IncrementalCompilationComponents::class.java]
     }
 

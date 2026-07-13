@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -54,6 +55,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val IMPORT_TRACKER = CompilerConfigurationKey.create<ImportTracker>("IMPORT_TRACKER")
+
+    @JvmField
+    val SUBTYPE_TRACKER = CompilerConfigurationKey.create<SubtypeTracker>("SUBTYPE_TRACKER")
 
     @JvmField
     val METADATA_VERSION = CompilerConfigurationKey.create<BinaryVersion>("METADATA_VERSION")
@@ -177,6 +181,10 @@ var CompilerConfiguration.enumWhenTracker: EnumWhenTracker?
 var CompilerConfiguration.importTracker: ImportTracker?
     get() = get(CommonConfigurationKeys.IMPORT_TRACKER)
     set(value) { putIfNotNull(CommonConfigurationKeys.IMPORT_TRACKER, value) }
+
+var CompilerConfiguration.subtypeTracker: SubtypeTracker?
+    get() = get(CommonConfigurationKeys.SUBTYPE_TRACKER)
+    set(value) { putIfNotNull(CommonConfigurationKeys.SUBTYPE_TRACKER, value) }
 
 var CompilerConfiguration.metadataVersion: BinaryVersion?
     get() = get(CommonConfigurationKeys.METADATA_VERSION)

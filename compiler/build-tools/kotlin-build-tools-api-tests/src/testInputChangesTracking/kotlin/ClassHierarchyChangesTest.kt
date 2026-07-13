@@ -67,4 +67,27 @@ class ClassHierarchyChangesTest : BaseCompilationTest() {
             }
         }
     }
+
+    // Sibling of KT-11196, same root cause (subtypesMap blind to Java intermediaries under K2): adding an abstract
+    // member to `A` must make the concrete `C` (which inherits it through the Java class `B`) abstract-incomplete.
+    // Fixed by recording the Java-crossing supertype edge so `withSubtypes(A)` reaches `C`.
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-11196 (sibling): abstract member added to A through Java B must make C abstract-incomplete")
+    @TestMetadata("ic-scenarios/kt-11196-abstract")
+    fun testAbstractMemberAddedThroughJavaIntermediaryIsDetected(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = module("ic-scenarios/kt-11196-abstract")
+
+            // Add abstract A.bar(); C (concrete, via abstract Java B) no longer implements all abstract members.
+            module.replaceFileWithVersion("A.kt", "add-abstract")
+
+            module.compile {
+                expectFail()
+                assertLogContainsPatterns(
+                    LogLevel.ERROR,
+                    "(?s).*is not abstract and does not implement abstract (base class )?member.*".toRegex()
+                )
+            }
+        }
+    }
 }

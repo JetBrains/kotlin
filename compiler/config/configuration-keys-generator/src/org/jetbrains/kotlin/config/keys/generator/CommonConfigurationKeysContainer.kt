@@ -33,6 +33,7 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val FILE_MAPPING_TRACKER by key<ICFileMappingTracker>(throwOnNull = false)
     val ENUM_WHEN_TRACKER by key<EnumWhenTracker>(throwOnNull = false)
     val IMPORT_TRACKER by key<ImportTracker>(throwOnNull = false)
+    val SUBTYPE_TRACKER by key<SubtypeTracker>(throwOnNull = false)
     val METADATA_VERSION by key<BinaryVersion>()
     val USE_FIR by key<Boolean>()
     val USE_LIGHT_TREE by key<Boolean>()

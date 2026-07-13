@@ -78,14 +78,17 @@ abstract class IncrementalJvmCompilerRunnerBase(
         messageCollector,
     )
 
-    private val subtypeTracker = if (generateCompilerRefIndex) SubtypeTrackerImpl() else null
+    // Always created: besides feeding the compiler reference index (when enabled), it carries class-hierarchy edges
+    // reported by the frontend into `subtypesMap` — notably edges crossing a Java class, which are invisible to the
+    // proto-based hierarchy recording under K2 (see `recordFrontendReportedSubtypes` / KT-11196).
+    private val subtypeTracker = SubtypeTrackerImpl()
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
         IncrementalJvmCachesManager(
             icContext = icContext,
             outputDir = args.destination?.let { File(it) },
             cachesRootDir = cacheDirectory,
-            subtypeTracker = subtypeTracker ?: SubtypeTracker.DoNothing,
+            subtypeTracker = subtypeTracker,
         )
 
     override fun updateCaches(
@@ -99,6 +102,9 @@ abstract class IncrementalJvmCompilerRunnerBase(
             @OptIn(K1Deprecation::class)
             services[JavaClassesTracker::class.java] as? JavaClassesTrackerImpl
         )
+        // Fold in class-hierarchy edges reported by the frontend (notably edges crossing a Java class, which the
+        // proto-based recording in `updateIncrementalCache` cannot see under K2) so `withSubtypes` can use them. KT-11196.
+        caches.platformCache.recordFrontendReportedSubtypes(subtypeTracker.subtypeMap)
     }
 
     override fun destinationDir(args: K2JVMCompilerArguments): File =
@@ -187,6 +193,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
             javaInteropCoordinator.makeJavaClassesTracker(caches.platformCache)?.let {
                 register(JavaClassesTracker::class.java, it)
             }
+            register(SubtypeTracker::class.java, subtypeTracker)
         }
 
     override fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: K2JVMCompilerArguments) {
@@ -256,7 +263,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         lookupsFile.appendBytes(lookupData.lookups)
         fileIdsToPathsFile.appendBytes(lookupData.fileIdsToPaths)
 
-        val subtypes = subtypeTracker?.subtypeMap ?: emptyMap()
+        val subtypes = subtypeTracker.subtypeMap
         subtypesFile.appendBytes(serializer.serializeSubtypes(subtypes))
 
         reporter.info { "Compiler Reference Index data saved to ${lookupsFile.path}, ${fileIdsToPathsFile.path}, ${subtypesFile.path}" }
