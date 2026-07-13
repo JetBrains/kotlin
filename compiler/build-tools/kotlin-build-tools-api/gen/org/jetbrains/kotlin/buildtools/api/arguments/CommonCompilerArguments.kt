@@ -834,12 +834,14 @@ public interface CommonCompilerArguments : CommonToolArguments {
 
     /**
      * Compile using frontend IR internal incremental compilation.
-     * Warning: This feature is not yet production-ready.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_USE_FIR_IC: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_IC", KotlinReleaseVersion(1, 7, 0))
 

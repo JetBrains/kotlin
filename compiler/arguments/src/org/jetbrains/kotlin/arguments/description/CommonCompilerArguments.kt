@@ -625,12 +625,18 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     compilerArgument {
         name = "Xuse-fir-ic"
         compilerName = "useFirIC"
-        description =
-            "Compile using frontend IR internal incremental compilation.\nWarning: This feature is not yet production-ready.".asReleaseDependent()
+        val introducedVersion = KotlinReleaseVersion.v1_7_0
+        val deprecatedVersion = KotlinReleaseVersion.v2_5_0 // Preparation for KT-75879
+        val commonDescriptionPart = "Compile using frontend IR internal incremental compilation."
+        description = ReleaseDependent(
+            commonDescriptionPart,
+            introducedVersion..deprecatedVersion.previous!! to "$commonDescriptionPart\nWarning: This feature is not yet production-ready.",
+        )
         valueType = BooleanType.defaultFalse
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_7_0,
+            introducedVersion = introducedVersion,
+            deprecatedVersion = deprecatedVersion,
         )
     }
 

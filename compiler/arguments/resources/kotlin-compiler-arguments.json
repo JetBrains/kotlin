@@ -6399,8 +6399,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Compile using frontend IR internal incremental compilation.\nWarning: This feature is not yet production-ready.",
-                            "valueInVersions": []
+                            "current": "Compile using frontend IR internal incremental compilation.",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "1.7.0",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "Compile using frontend IR internal incremental compilation.\nWarning: This feature is not yet production-ready."
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
@@ -6423,7 +6429,7 @@
                         "releaseVersionsMetadata": {
                             "introducedVersion": "1.7.0",
                             "stabilizedVersion": null,
-                            "deprecatedVersion": null,
+                            "deprecatedVersion": "2.5.0",
                             "removedVersion": null
                         },
                         "argumentType": {

@@ -265,7 +265,7 @@ where advanced options include:
                              Enable experimental frontend IR checkers that are not yet ready for production.
                              The option is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
-                             Warning: This feature is not yet production-ready.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
                              The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.
   -Xverbose-phases           Be verbose while performing the given backend phases.

@@ -116,6 +116,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.unrestrictedBuilderInference = from.unrestrictedBuilderInference
     @Suppress("DEPRECATION")
     to.useFirExperimentalCheckers = from.useFirExperimentalCheckers
+    @Suppress("DEPRECATION")
     to.useFirIC = from.useFirIC
     @Suppress("DEPRECATION")
     to.useFirLT = from.useFirLT
