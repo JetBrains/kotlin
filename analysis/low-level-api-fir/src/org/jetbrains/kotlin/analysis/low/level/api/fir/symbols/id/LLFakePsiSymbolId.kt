@@ -54,7 +54,10 @@ internal class LLFakePsiSymbolId<S : FirBasedSymbol<*>>(
 
     // TODO (marco): The equality/hash code implementation of `KtFakePsiSourceElement` might not be bulletproof, so we should double-check
     //  them. This is the same as with `LLRealPsiSymbolId`.
-    override fun equals(other: Any?): Boolean = other is LLFakePsiSymbolId<*> && sourceElement == other.sourceElement
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+                other is LLFakePsiSymbolId<*> &&
+                sourceElement == other.sourceElement
 
     override fun hashCode(): Int = sourceElement.hashCode()
 }

@@ -26,7 +26,10 @@ internal class LLNonRestorableRealPsiSymbolId<S : FirBasedSymbol<*>>(private val
         _symbol = symbol
     }
 
-    override fun equals(other: Any?): Boolean = other is LLNonRestorableRealPsiSymbolId<*> && psi == other.psi
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+                other is LLNonRestorableRealPsiSymbolId<*> &&
+                psi == other.psi
 
     override fun hashCode(): Int = psi.hashCode()
 }
