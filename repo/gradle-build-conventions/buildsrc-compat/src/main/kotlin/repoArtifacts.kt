@@ -335,7 +335,7 @@ fun Project.analysisApiPublishingLatch(block: () -> Unit) {
 }
 
 private fun Project.specialPublishingLatch(latchPropertyName: String, block: () -> Unit) {
-    val shouldActivate = rootProject.findProperty(latchPropertyName)?.toString()?.toBoolean() == true
+    val shouldActivate = project.kotlinBuildProperties.booleanProperty(latchPropertyName).getOrElse(false)
     if (shouldActivate) {
         block()
     }
