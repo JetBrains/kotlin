@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.native.firSerializerBase
 
 object NativeMetadataSerializationPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeSerializationArtifact>(
     name = "NativeMetadataSerializationPhase",
-    preActions = setOf(PerformanceNotifications.KlibWritingStarted),
-    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = setOf(PerformanceNotifications.KlibIrWritingStarted),
+    postActions = setOf(PerformanceNotifications.KlibIrWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFrontendArtifact): NativeSerializationArtifact {
         val (frontendOutput, configuration, phaseContext) = input
