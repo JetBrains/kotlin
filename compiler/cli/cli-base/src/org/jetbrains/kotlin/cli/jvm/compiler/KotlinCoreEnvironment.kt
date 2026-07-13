@@ -730,7 +730,7 @@ class KotlinCoreEnvironment private constructor(
                 application.registerService(KotlinBinaryClassCache::class.java, KotlinBinaryClassCache())
                 application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
                 application.registerService(TransactionGuard::class.java, TransactionGuardImpl::class.java)
-                application.registerService(VirtualFileSetFactory::class.java, getCompactVirtualFileSetFactory())
+                application.registerService(VirtualFileSetFactory::class.java, KotlinCoreVirtualFileSetFactory)
                 application.registerService(InternalPersistentJavaLanguageLevelReaderService::class.java, InternalPersistentJavaLanguageLevelReaderService.DefaultImpl())
             }
         }
