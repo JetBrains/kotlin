@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -123,7 +121,7 @@ class ConeEffectExtractor(
             }
 
             ContractsDslNames.RETURNS_RESULT_OF -> {
-                if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED
+                if (session.languageVersionSettings.rvcEnabledOrStable()
                     && LanguageFeature.AllowReturnsResultOfContract.isEnabled()
                 ) {
                     val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(LAMBDA_ARGUMENT_NAME)

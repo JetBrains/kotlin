@@ -1,14 +1,14 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // OPT_IN: kotlin.contracts.ExperimentalContracts
-// LANGUAGE: -ReturnValueCheckerIsStable
+// LANGUAGE: +ReturnValueCheckerIsStable
 
 import kotlin.contracts.*
 
 inline fun <T, R> T.myLet(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        <!ERROR_IN_CONTRACT_DESCRIPTION("requires language features '-Xallow-returns-result-of', '-Xreturn-value-checker' to be enabled")!>returnsResultOf(block)<!>
+        returnsResultOf(block)
     }
     return block(this)
 }

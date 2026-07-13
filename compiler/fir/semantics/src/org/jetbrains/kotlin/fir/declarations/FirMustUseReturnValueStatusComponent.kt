@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.fir.FirSession
@@ -228,3 +230,5 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
 }
 
 val FirSession.mustUseReturnValueStatusComponent: FirMustUseReturnValueStatusComponent by FirSession.sessionComponentAccessor()
+
+fun LanguageVersionSettings.rvcEnabledOrStable(): Boolean = this.supportsFeature(LanguageFeature.ReturnValueCheckerIsStable) || this.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED
