@@ -2741,6 +2741,18 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("compilationErrorK2.args")
+    public void testCompilationErrorK2() {
+      run("compilationErrorK2.args");
+    }
+
+    @Test
+    @TestMetadata("createMetadata.args")
+    public void testCreateMetadata() {
+      run("createMetadata.args");
+    }
+
+    @Test
     @TestMetadata("distStdlibWasmJs.args")
     public void testDistStdlibWasmJs() {
       run("distStdlibWasmJs.args");
@@ -2753,9 +2765,33 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("emptySources.args")
+    public void testEmptySources() {
+      run("emptySources.args");
+    }
+
+    @Test
     @TestMetadata("exportKDoc.args")
     public void testExportKDoc() {
       run("exportKDoc.args");
+    }
+
+    @Test
+    @TestMetadata("firMpp.args")
+    public void testFirMpp() {
+      run("firMpp.args");
+    }
+
+    @Test
+    @TestMetadata("generateWat.args")
+    public void testGenerateWat() {
+      run("generateWat.args");
+    }
+
+    @Test
+    @TestMetadata("invalidKlibAbiVersionFormat.args")
+    public void testInvalidKlibAbiVersionFormat() {
+      run("invalidKlibAbiVersionFormat.args");
     }
 
     @Test
@@ -2768,6 +2804,18 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("klibMetadataVersionOverrideFlag.args")
     public void testKlibMetadataVersionOverrideFlag() {
       run("klibMetadataVersionOverrideFlag.args");
+    }
+
+    @Test
+    @TestMetadata("languageVersion.args")
+    public void testLanguageVersion() {
+      run("languageVersion.args");
+    }
+
+    @Test
+    @TestMetadata("libraryDirNotFound.args")
+    public void testLibraryDirNotFound() {
+      run("libraryDirNotFound.args");
     }
 
     @Test
@@ -2795,6 +2843,24 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("sourceMap.args")
+    public void testSourceMap() {
+      run("sourceMap.args");
+    }
+
+    @Test
+    @TestMetadata("syntaxError.args")
+    public void testSyntaxError() {
+      run("syntaxError.args");
+    }
+
+    @Test
+    @TestMetadata("unknownFriendLibraries.args")
+    public void testUnknownFriendLibraries() {
+      run("unknownFriendLibraries.args");
+    }
+
+    @Test
     @TestMetadata("unknownWasmTarget.args")
     public void testUnknownWasmTarget() {
       run("unknownWasmTarget.args");
@@ -2810,6 +2876,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("wasmHelp.args")
     public void testWasmHelp() {
       run("wasmHelp.args");
+    }
+
+    @Test
+    @TestMetadata("withLib.args")
+    public void testWithLib() {
+      run("withLib.args");
     }
   }
 

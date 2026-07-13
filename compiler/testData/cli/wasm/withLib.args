@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/withLib.kt
+-libraries
+$STDLIB_WASM_JS$:$TESTDATA_DIR$/lib/LibraryExample.klib
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
