@@ -314,7 +314,7 @@ internal class DumpMetadata(output: KlibToolOutput, args: ParsedArguments) : Kli
     }
 }
 
-internal class DumpIrSignatures(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
+internal class DumpSignatures(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
     override fun execute() {
         if (!args.signatureVersion.checkSupportedInLibrary(args.library)) return
 

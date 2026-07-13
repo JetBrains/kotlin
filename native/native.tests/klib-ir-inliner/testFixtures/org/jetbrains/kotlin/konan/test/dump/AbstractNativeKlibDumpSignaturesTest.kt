@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 import java.io.File
 
-abstract class AbstractNativeKlibDumpIrSignaturesTest : AbstractKlibToolDumpTest() {
+abstract class AbstractNativeKlibDumpSignaturesTest : AbstractKlibToolDumpTest() {
     override fun getDumpHandlers(): List<Constructor<AbstractKlibToolDumpHandler>> =
         KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.flatMap { signatureVersion ->
             listOf(
