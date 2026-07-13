@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -56,6 +57,14 @@ internal class JvmPropertiesLowering(
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
+        if (expression.type.isUnit()) {
+            return backendContext.createIrBuilder(
+                currentScope!!.scope.scopeOwnerSymbol,
+                expression.startOffset,
+                expression.endOffset
+            ).irUnit()
+        }
+
         val simpleFunction = expression.symbol.owner
         val property = simpleFunction.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
         expression.transformChildrenVoid()
