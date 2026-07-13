@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.impl.hasTypeOf
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -130,10 +131,10 @@ class FirSamResolver(
             // Precompute the constructor for the base type to avoid deadlocks in the IDE.
             firClassOrTypeAlias.symbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()
                 ?.fullyExpandedType()?.lookupTag?.toSymbol()
-                ?.let { samConstructorsCache.getValue(it, this) }
+                ?.let { samConstructorsCache.getValue(it.symbolId, this) }
         }
 
-        return samConstructorsCache.getValue(firClassOrTypeAlias.symbol, this)?.fir
+        return samConstructorsCache.getValue(firClassOrTypeAlias.symbol.symbolId, this)?.fir
     }
 
     /**
@@ -465,9 +466,19 @@ private fun FirNamedFunction.getFunctionTypeForAbstractMethod(session: FirSessio
 }
 
 class FirSamConstructorStorage(session: FirSession) : FirSessionComponent {
-    val samConstructors: FirCache<FirClassLikeSymbol<*>, FirNamedFunctionSymbol?, FirSamResolver> =
-        session.firCachesFactory.createCache { classSymbol, samResolver ->
-            when (classSymbol) {
+    val samConstructors: FirCache<FirSymbolId<FirClassLikeSymbol<*>>, FirNamedFunctionSymbol?, FirSamResolver> =
+        session.firCachesFactory.createCache { symbolId, samResolver ->
+            // TODO (marco): Sanity-check that the created SAM constructor has no back reference. Otherwise, it would keep its own class
+            //  alive strongly. Furthermore, think about whether it's better to have a weak class symbol key or the symbol ID key. In
+            //  particular, it would be good to throw away the SAM constructor once its owning class has been collected. But we need to
+            //  carefully think about whether this is legal. Can there be any issues with duplicate SAM constructor symbols? For example,
+            //  the value parameter symbol of the SAM constructor function symbol would need a back reference to the SAM constructor, as we
+            //  otherwise might get duplicate symbols this way.
+            //  ---
+            //  Note: in the case of compiler plugins, we want to avoid generating declarations multiple times for simplicity, so we use
+            //  symbol IDs to guarantee uniqueness. But in the case of simpler declarations like SAM constructors, it might be fine to
+            //  recreate them as long as the owning class hasn't been collected.
+            when (val classSymbol = symbolId.symbol) {
                 is FirRegularClassSymbol -> samResolver.buildSamConstructorForRegularClass(classSymbol)
                 is FirTypeAliasSymbol -> samResolver.buildSamConstructorForTypeAlias(classSymbol)
                 is FirAnonymousObjectSymbol -> null

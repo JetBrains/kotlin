@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -176,7 +177,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
     ): CallableStorage? {
         val extensionsByCallableName = groupExtensionsByName(classSymbol) { getCallableNamesForClass(it, generationContext) }
         if (extensionsByCallableName.isEmpty() && !scopeForGeneratedClass) return null
-        return callableStorageByClass.getValue(classSymbol, extensionsByCallableName)
+        return callableStorageByClass.getValue(classSymbol.symbolId, extensionsByCallableName)
     }
 
     internal fun getClassifierStorage(
@@ -185,19 +186,19 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
     ): ClassifierStorage? {
         val extensionsByClassifierName = groupExtensionsByName(classSymbol) { getNestedClassifiersNames(it, generationContext) }
         if (extensionsByClassifierName.isEmpty()) return null
-        return classifierStorageByClass.getValue(classSymbol, extensionsByClassifierName)
+        return classifierStorageByClass.getValue(classSymbol.symbolId, extensionsByClassifierName)
     }
 
     private typealias ExtensionsByName = Map<Name, List<FirDeclarationGenerationExtension>>
 
-    private val callableStorageByClass: FirCache<FirClassSymbol<*>, CallableStorage, ExtensionsByName> =
-        cachesFactory.createCache { classSymbol, extensionsMap ->
-            CallableStorage(cachesFactory, classSymbol, extensionsMap)
+    private val callableStorageByClass: FirCache<FirSymbolId<FirClassSymbol<*>>, CallableStorage, ExtensionsByName> =
+        cachesFactory.createCache { classSymbolId, extensionsMap ->
+            CallableStorage(cachesFactory, classSymbolId, extensionsMap)
         }
 
-    private val classifierStorageByClass: FirCache<FirClassSymbol<*>, ClassifierStorage, ExtensionsByName> =
-        cachesFactory.createCache { classSymbol, extensionsMap ->
-            ClassifierStorage(cachesFactory, classSymbol, extensionsMap)
+    private val classifierStorageByClass: FirCache<FirSymbolId<FirClassSymbol<*>>, ClassifierStorage, ExtensionsByName> =
+        cachesFactory.createCache { classSymbolId, extensionsMap ->
+            ClassifierStorage(cachesFactory, classSymbolId, extensionsMap)
         }
 
     /**
@@ -211,7 +212,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
      */
     internal class CallableStorage(
         cachesFactory: FirCachesFactory,
-        val classSymbol: FirClassSymbol<*>,
+        private val classSymbolId: FirSymbolId<FirClassSymbol<*>>,
         private val extensionsByCallableName: Map<Name, List<FirDeclarationGenerationExtension>>
     ) {
         val functionCache: FirCache<Name, List<FirNamedFunctionSymbol>, MemberGenerationContext> =
@@ -225,6 +226,9 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
 
         val allCallableNames: Set<Name>
             get() = extensionsByCallableName.keys
+
+        private val classSymbol: FirClassSymbol<*>
+            get() = classSymbolId.symbol
 
         private fun generateMemberFunctions(name: Name, generationContext: MemberGenerationContext): List<FirNamedFunctionSymbol> {
             if (name == SpecialNames.INIT) return emptyList()
@@ -264,7 +268,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
      */
     internal class ClassifierStorage(
         cachesFactory: FirCachesFactory,
-        private val classSymbol: FirClassSymbol<*>,
+        private val classSymbolId: FirSymbolId<FirClassSymbol<*>>,
         private val extensionsByClassifierName: Map<Name, List<FirDeclarationGenerationExtension>>
     ) {
         val classifiersCache: FirCache<Name, FirRegularClassSymbol?, NestedClassGenerationContext> =
@@ -274,6 +278,8 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             get() = extensionsByClassifierName.keys
 
         private fun generateNestedClassifier(name: Name, generationContext: NestedClassGenerationContext): FirRegularClassSymbol? {
+            val classSymbol = classSymbolId.symbol
+
             if (classSymbol is FirRegularClassSymbol) {
                 val companion = classSymbol.companionObjectSymbol
                 if (companion != null && companion.origin.generated && companion.classId.shortClassName == name) {

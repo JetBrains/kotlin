@@ -17,13 +17,22 @@ import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import kotlin.time.Duration.Companion.seconds
 
 @ThreadSafeMutableState
 class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSessionComponent {
+    // TODO (marco): NOTE: The cache is recomputable, since we can just compute the corresponding supertypes again, so we can discard/limit
+    //  cache entries. Also note that the cache does not contain any strong symbol references since cone types don't reference symbols
+    //  strongly.
+    // TODO (marco): Restore the previous settings of `initialCapacity = 1000` and `loadFactor = 0.5`? The current cache with suggested
+    //  limits doesn't support this.
+    // TODO (marco): The cache probably isn't optimal. Should we define a maximum size?
     private val cache =
-        session.firCachesFactory.createCache<ConeClassLikeLookupTag, Map<ConeClassLikeLookupTag, List<ConeClassLikeType>>?, TypeCheckerState>(
-            initialCapacity = 1000,
-            loadFactor = 0.5f
+        session.firCachesFactory.createCacheWithSuggestedLimits<ConeClassLikeLookupTag, Map<ConeClassLikeLookupTag, List<ConeClassLikeType>>?, TypeCheckerState>(
+//            initialCapacity = 1000,
+//            loadFactor = 0.5f
+            expirationAfterAccess = 10.seconds,
+//            valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
         ) { lookupTag, typeCheckerState ->
             computeSupertypesMap(lookupTag, typeCheckerState)
         }

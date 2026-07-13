@@ -73,7 +73,7 @@ class FirTypeIntersectionScopeContext(
                 @Suppress("UNCHECKED_CAST")
                 context.intersectionOverrideStorage.getOrCompute(
                     context.dispatchReceiverType,
-                    keySymbol,
+                    keySymbol.symbolId,
                     this,
                 ).member as D
             }
@@ -204,7 +204,7 @@ class FirTypeIntersectionScopeContext(
      * @see FirIntersectionOverrideStorage.getIfComputed
      */
     fun getIntersectionOverrideIfComputed(symbol: FirCallableSymbol<*>): MemberWithBaseScope<FirCallableSymbol<*>>? =
-        intersectionOverrideStorage.getIfComputed(dispatchReceiverType, symbol)
+        intersectionOverrideStorage.getIfComputed(dispatchReceiverType, symbol.symbolId)
 
     private fun MemberWithBaseScope<*>.isVisible(): Boolean {
         // Checking for private is not enough because package-private declarations can be hidden, too, if they're in a different package.
@@ -531,8 +531,16 @@ private fun intersectReturnTypes(overrides: Collection<FirCallableSymbol<*>>, se
 private fun <D : FirCallableSymbol<*>> D.withScope(baseScope: FirTypeScope) = MemberWithBaseScope(this, baseScope)
 
 typealias FirIntersectionOverrideCache =
-        FirCache<FirCallableSymbol<*>, MemberWithBaseScope<FirCallableSymbol<*>>, ResultOfIntersection.NonTrivial<*>>
+        FirCache<FirSymbolId<FirCallableSymbol<*>>, MemberWithBaseScope<FirCallableSymbol<*>>, ResultOfIntersection.NonTrivial<*>>
 
+// TODO (marco): Do the intersection override symbols need to be unique or can we throw them away with the original callable symbol?
+//  Probably not?
+// TODO (marco): Does the `MemberWithBaseScope` (which keeps around the type scope of the key) reference too many other parts strongly?
+//  If so, we should probably make intersection overrides source-based so that they can be weakly referenced. Or can we reference them
+//  weakly anyway, since they should have no children that would need back references? And if they need back references, we can add them,
+//  no?
+//  CONCLUSION: Making intersection overrides weakly cached is probably a good idea.
+//  ALTERNATIVE: Can we extract the base scope from the cache? Or maybe a symbol ID to the symbols that induce the base scope?
 /**
  * A storage for computed intersection overrides based on [non-trivial intersection results][ResultOfIntersection.NonTrivial].
  *
@@ -547,6 +555,10 @@ typealias FirIntersectionOverrideCache =
 class FirIntersectionOverrideStorage(val session: FirSession) : FirSessionComponent {
     private val cachesFactory = session.firCachesFactory
 
+    // TODO (marco): NOTE: `ConeKotlinType` may contain lookup tags with fixed symbols. However, these lookup tags reference symbol IDs, so
+    //  the cone type would effectively be a symbol ID key. Hence, we need no explicit symbol ID here.
+    //  This should rather be documented somewhere else, e.g. in the cache (key) section of `FirSymbolId`'s KDoc, since it is relevant for
+    //  ALL `ConeKotlinType` keys.
     private val cacheByScope: FirCache<ConeKotlinType, FirIntersectionOverrideCache, Nothing?> =
         cachesFactory.createCache { _ ->
             cachesFactory.createCache { _, result ->
@@ -555,19 +567,19 @@ class FirIntersectionOverrideStorage(val session: FirSession) : FirSessionCompon
         }
 
     /**
-     * Returns the intersection override for [symbol] in the scope of [dispatchReceiverType], computing and caching it on first request.
+     * Returns the intersection override for [symbolId] in the scope of [dispatchReceiverType], computing and caching it on first request.
      *
      * The inner cache is created lazily here, on the first actually materialized override for that scope.
      */
     fun getOrCompute(
         dispatchReceiverType: ConeKotlinType,
-        symbol: FirCallableSymbol<*>,
+        symbolId: FirSymbolId<FirCallableSymbol<*>>,
         result: ResultOfIntersection.NonTrivial<*>,
     ): MemberWithBaseScope<FirCallableSymbol<*>> =
-        cacheByScope.getValue(dispatchReceiverType).getValue(symbol, result)
+        cacheByScope.getValue(dispatchReceiverType).getValue(symbolId, result)
 
     /**
-     * Returns the already-computed intersection override for [symbol] in the scope of [dispatchReceiverType], or `null` if none has been
+     * Returns the already-computed intersection override for [symbolId] in the scope of [dispatchReceiverType], or `null` if none has been
      * computed yet.
      *
      * The function consciously avoids creating the inner cache. Dispatch receiver types that never materialize an intersection override
@@ -576,9 +588,9 @@ class FirIntersectionOverrideStorage(val session: FirSession) : FirSessionCompon
      */
     fun getIfComputed(
         dispatchReceiverType: ConeKotlinType,
-        symbol: FirCallableSymbol<*>,
+        symbolId: FirSymbolId<FirCallableSymbol<*>>,
     ): MemberWithBaseScope<FirCallableSymbol<*>>? =
-        cacheByScope.getValueIfComputed(dispatchReceiverType)?.getValueIfComputed(symbol)
+        cacheByScope.getValueIfComputed(dispatchReceiverType)?.getValueIfComputed(symbolId)
 }
 
 private val FirSession.intersectionOverrideStorage: FirIntersectionOverrideStorage by FirSession.sessionComponentAccessor()

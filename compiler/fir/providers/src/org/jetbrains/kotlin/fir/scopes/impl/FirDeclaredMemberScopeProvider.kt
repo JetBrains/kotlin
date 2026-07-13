@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirNameAwareCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.name.ClassId
@@ -39,20 +40,22 @@ import kotlin.time.Duration.Companion.seconds
  */
 @ThreadSafeMutableState
 class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessionComponent {
-    private val declaredMemberCache: FirCache<FirClass, FirContainingNamesAwareScope, DeclaredMemberScopeContext> =
+    private val declaredMemberCache: FirCache<FirSymbolId<FirClassSymbol<FirClass>>, FirContainingNamesAwareScope, DeclaredMemberScopeContext> =
         useSiteSession.firCachesFactory.createCacheWithSuggestedLimits(
             expirationAfterAccess = 5.seconds,
             valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
-        ) { klass, context ->
-            createDeclaredMemberScope(klass = klass, existingNamesForLazyNestedClassifierScope = context.existingNames)
+        ) { symbolId, context ->
+            // The `symbol` should be trivially alive since the symbol's class is on the stack at this point (we get the symbol ID from the
+            // `FirClass`).
+            createDeclaredMemberScope(klass = symbolId.symbol.fir, existingNamesForLazyNestedClassifierScope = context.existingNames)
         }
 
-    private val nestedClassifierCache: FirCache<FirClass, FirNestedClassifierScope?, Nothing?> =
+    private val nestedClassifierCache: FirCache<FirSymbolId<FirClassSymbol<FirClass>>, FirNestedClassifierScope?, Nothing?> =
         useSiteSession.firCachesFactory.createCacheWithSuggestedLimits(
             expirationAfterAccess = 5.seconds,
             valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
-        ) { klass, _ ->
-            createNestedClassifierScope(klass)
+        ) { symbolId, _ ->
+            createNestedClassifierScope(symbolId.symbol.fir)
         }
 
     fun declaredMemberScope(
@@ -66,7 +69,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
         }
 
         return declaredMemberCache.getValue(
-            klass,
+            klass.symbol.symbolId,
             DeclaredMemberScopeContext(
                 useLazyNestedClassifierScope,
                 existingNames,
@@ -113,7 +116,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
     }
 
     fun nestedClassifierScope(klass: FirClass): FirNestedClassifierScope? {
-        return nestedClassifierCache.getValue(klass)
+        return nestedClassifierCache.getValue(klass.symbol.symbolId)
     }
 
     private fun createNestedClassifierScope(klass: FirClass): FirNestedClassifierScope? {

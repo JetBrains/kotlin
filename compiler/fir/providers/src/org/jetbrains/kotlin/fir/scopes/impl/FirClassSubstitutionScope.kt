@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -50,7 +51,7 @@ class FirClassSubstitutionScope(
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
-            val function = substitutionOverrideCache.overridesForFunctions.getValue(original, this)
+            val function = substitutionOverrideCache.overridesForFunctions.getValue(original.symbolId, this)
             processor(function)
         }
 
@@ -65,7 +66,7 @@ class FirClassSubstitutionScope(
             functionSymbol,
             processor,
             FirTypeScope::processDirectOverriddenFunctionsWithBaseScope,
-        ) { it in substitutionOverrideCache.overridesForFunctions }
+        ) { it.symbolId in substitutionOverrideCache.overridesForFunctions }
 
     private inline fun <reified D : FirCallableSymbol<*>> processDirectOverriddenWithBaseScope(
         callableSymbol: D,
@@ -89,7 +90,7 @@ class FirClassSubstitutionScope(
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return useSiteMemberScope.processPropertiesByName(name) process@{ original ->
             val symbol = if (original is FirPropertySymbol || original is FirFieldSymbol) {
-                substitutionOverrideCache.overridesForVariables.getValue(original, this)
+                substitutionOverrideCache.overridesForVariables.getValue(original.symbolId, this)
             } else {
                 original
             }
@@ -103,7 +104,7 @@ class FirClassSubstitutionScope(
     ): ProcessorAction =
         processDirectOverriddenWithBaseScope(
             propertySymbol, processor, FirTypeScope::processDirectOverriddenPropertiesWithBaseScope,
-        ) { it in substitutionOverrideCache.overridesForVariables }
+        ) { it.symbolId in substitutionOverrideCache.overridesForVariables }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         useSiteMemberScope.processClassifiersByNameWithSubstitution(name) { symbol, substitutor ->
@@ -374,7 +375,7 @@ class FirClassSubstitutionScope(
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         useSiteMemberScope.processDeclaredConstructors process@{ original ->
-            val constructor = substitutionOverrideCache.overridesForConstructors.getValue(original, this)
+            val constructor = substitutionOverrideCache.overridesForConstructors.getValue(original.symbolId, this)
             processor(constructor)
         }
     }
@@ -417,13 +418,13 @@ class FirSubstitutionOverrideStorage(val session: FirSession) : FirSessionCompon
         cachesFactory.createCache { _ -> SubstitutionOverrideCache(session.firCachesFactory) }
 
     class SubstitutionOverrideCache(cachesFactory: FirCachesFactory) {
-        val overridesForFunctions: FirCache<FirNamedFunctionSymbol, FirNamedFunctionSymbol, FirClassSubstitutionScope> =
-            cachesFactory.createCache { original, scope -> scope.createSubstitutionOverrideFunction(original) }
-        val overridesForConstructors: FirCache<FirConstructorSymbol, FirConstructorSymbol, FirClassSubstitutionScope> =
-            cachesFactory.createCache { original, scope -> scope.createSubstitutionOverrideConstructor(original) }
-        val overridesForVariables: FirCache<FirVariableSymbol<*>, FirVariableSymbol<*>, FirClassSubstitutionScope> =
-            cachesFactory.createCache { original, scope ->
-                when (original) {
+        val overridesForFunctions: FirCache<FirSymbolId<FirNamedFunctionSymbol>, FirNamedFunctionSymbol, FirClassSubstitutionScope> =
+            cachesFactory.createCache { originalId, scope -> scope.createSubstitutionOverrideFunction(originalId.symbol) }
+        val overridesForConstructors: FirCache<FirSymbolId<FirConstructorSymbol>, FirConstructorSymbol, FirClassSubstitutionScope> =
+            cachesFactory.createCache { originalId, scope -> scope.createSubstitutionOverrideConstructor(originalId.symbol) }
+        val overridesForVariables: FirCache<FirSymbolId<FirVariableSymbol<*>>, FirVariableSymbol<*>, FirClassSubstitutionScope> =
+            cachesFactory.createCache { originalId, scope ->
+                when (val original = originalId.symbol) {
                     is FirPropertySymbol -> scope.createSubstitutionOverrideProperty(original)
                     is FirFieldSymbol -> scope.createSubstitutionOverrideField(original)
                     else -> errorWithAttachment("symbol ${original::class.java} is not overridable") {
