@@ -464,7 +464,8 @@ def kotlin_object_type_summary(lldb_val, _):
 
     if lldb_val.unsigned == 0:
         return _NULL
-    return _render_object(lldb_val.unsigned)
+    summary = _render_object(lldb_val.unsigned)
+    return "\"\"" if summary == "" else summary
 
 
 def _select_provider(lldb_val, tip, internal_dict):
