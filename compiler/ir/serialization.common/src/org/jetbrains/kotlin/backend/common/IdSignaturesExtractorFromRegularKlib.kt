@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as Pro
  * Note: [extractOnlyTopLevelPublicSignatures] is written in way to do even lesser amount of IO reads. So, it's
  * supposed to be even more robust than [extractAllPublicSignatures].
  */
-class IrSignaturesExtractor(library: KotlinLibrary) {
+class IdSignaturesExtractorFromRegularKlib(library: KotlinLibrary) {
     private val interner = IrInterningService()
     private val ir = library.irOrFail
 
@@ -64,7 +64,7 @@ class IrSignaturesExtractor(library: KotlinLibrary) {
         val importedSignatures: Set<IdSignature>,
     )
 
-    private inner class IrSignatureExtractorFromFile(
+    private inner class IdSignatureExtractorFromIrFile(
         private val fileIndex: Int,
     ) {
         private val fileProto = ProtoFile.parseFrom(ir.irFile(fileIndex).codedInputStream, extensionRegistryLite)
@@ -222,7 +222,7 @@ class IrSignaturesExtractor(library: KotlinLibrary) {
         val ownDeclarationSignatures: MutableSet<IdSignature> = hashSetOf()
 
         for (fileIndex in 0 until ir.irFileCount) {
-            val extractorFromFile = IrSignatureExtractorFromFile(fileIndex)
+            val extractorFromFile = IdSignatureExtractorFromIrFile(fileIndex)
             allKnownSignatures += extractorFromFile.extractSignaturesOfAllKnownPublicDeclarations()
             ownDeclarationSignatures += extractorFromFile.extractSignaturesOfOwnPublicDeclarations()
         }
@@ -248,7 +248,7 @@ class IrSignaturesExtractor(library: KotlinLibrary) {
         val ownDeclarationSignatures: MutableSet<IdSignature> = hashSetOf()
 
         for (fileIndex in 0 until ir.irFileCount) {
-            val extractorFromFile = IrSignatureExtractorFromFile(fileIndex)
+            val extractorFromFile = IdSignatureExtractorFromIrFile(fileIndex)
             extractorFromFile.extractSignaturesOfAllKnownPublicDeclarations().forEach {
                 allKnownSignatures += it.topLevelSignature()
             }
