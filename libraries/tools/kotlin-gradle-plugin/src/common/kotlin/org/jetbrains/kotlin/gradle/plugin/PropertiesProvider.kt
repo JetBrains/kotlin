@@ -460,13 +460,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProvider(KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
 
     val runKotlinJsCompilerViaBuildToolsApi: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_JS_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
+        get() = booleanProvider(KOTLIN_JS_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(false)
 
     val runKotlinWasmCompilerViaBuildToolsApi: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_WASM_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
+        get() = booleanProvider(KOTLIN_WASM_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(false)
 
     val runKotlinMetadataCompilerViaBuildToolsApi: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
+        get() = booleanProvider(KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(false)
 
     val generateCompilerRefIndex: Provider<Boolean>
         get() = booleanProvider(KOTLIN_GENERATE_COMPILER_REF_INDEX).orElse(false)
