@@ -32,7 +32,13 @@ kotlin.target.compilations.all {
     }
 }
 
-tasks.withType<Test>().configureEach {
+kotlin.target.compilations.getByName("main").compileTaskProvider.configure {
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.testFederation.InternalTestFederationApi")
+    }
+}
+
+tasks.test.configure {
     useJUnitPlatform()
 
     /* Used by the TestFederationFunctionalTest and 'PseudoTest' for testing the test federations behavior */
@@ -42,10 +48,6 @@ tasks.withType<Test>().configureEach {
             "Disabled" -> SmokeTestConfig.Disabled
             else -> error("Unknown _PSEUDO_TEST_ configuration")
         }
-    }
-
-    testLogging {
-        events("passed", "skipped", "failed")
     }
 }
 
