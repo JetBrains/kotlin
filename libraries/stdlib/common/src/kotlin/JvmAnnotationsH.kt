@@ -266,3 +266,6 @@ public expect annotation class JvmSerializableLambda()
     CLASS,
 )
 public expect annotation class JvmExposeBoxed(val jvmName: String = "")
+
+@Target(CLASS)
+public annotation class JvmMultiFieldValueClass

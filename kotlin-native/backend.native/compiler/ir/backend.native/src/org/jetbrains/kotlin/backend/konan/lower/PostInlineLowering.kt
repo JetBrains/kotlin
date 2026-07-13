@@ -120,6 +120,10 @@ internal class PostInlineLowering(val context: NativeLoweringContext) : BodyLowe
                     }
                 }
 
+                if (symbols.asserts.contains(expression.symbol) && !context.config.assertsEnabled) {
+                    return data.at(expression).irComposite {}
+                }
+
                 return expression
             }
 
