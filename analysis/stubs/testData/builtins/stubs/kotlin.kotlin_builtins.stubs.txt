@@ -6386,7 +6386,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: [ version -> "2.2" ]
+        valueArguments: [ version -> "2.3" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

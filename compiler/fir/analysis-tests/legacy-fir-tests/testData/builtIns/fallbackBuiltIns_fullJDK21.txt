@@ -958,7 +958,7 @@ public abstract interface Function<out R> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FUNCTION)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(2.2)) public final annotation class IgnorableReturnValue : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FUNCTION)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(2.3)) public final annotation class IgnorableReturnValue : R|kotlin/Annotation| {
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
