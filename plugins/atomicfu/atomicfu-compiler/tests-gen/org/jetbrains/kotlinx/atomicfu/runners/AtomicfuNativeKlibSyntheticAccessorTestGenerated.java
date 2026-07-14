@@ -248,6 +248,38 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   }
 
   @Nested
+  @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/companion_blocks")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("klibIrInliner")
+  @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+  @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
+  @UseExtTestCaseGroupProvider()
+  @Tag("atomicfu-native")
+  @EnforcedHostTarget()
+  public class Companion_blocks {
+    private void run(String fileName) {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/companion_blocks/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanion_blocks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/companion_blocks"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockProperties.kt")
+    public void testCompanionBlockProperties() {
+      run("CompanionBlockProperties.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionExtensionProperties.kt")
+    public void testCompanionExtensionProperties() {
+      run("CompanionExtensionProperties.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
