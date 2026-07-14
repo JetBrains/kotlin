@@ -1,0 +1,20 @@
+@kotlin.Metadata
+public final class ComanionTracesKt {
+    // source: 'ComanionTraces.kt'
+    private synthetic final static field a: java.util.concurrent.atomic.AtomicInteger
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getA(): java.util.concurrent.atomic.AtomicInteger
+    private final static method test(): void
+    public final static method testExtensionTrace(): void
+}
+
+@kotlin.Metadata
+public final class TraceTest {
+    // source: 'ComanionTraces.kt'
+    private synthetic final static field a1: java.util.concurrent.atomic.AtomicInteger
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getA1(): java.util.concurrent.atomic.AtomicInteger
+    public final static method testCompanionTrace(): void
+}
