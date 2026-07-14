@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowerin
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
-import org.jetbrains.kotlin.backend.common.lower.coroutines.defaultLoweredSuspendFunctionReturnType
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.ir.IrElement
@@ -145,7 +144,7 @@ open class JsSuspendFunctionsLowering<C : JsCommonBackendContext>(
             // This is done solely to improve the debugging experience. Otherwise, a breakpoint set to the closing brace of the function
             // cannot be hit.
             val tempVar = scope.createTemporaryVariable(
-                generateDelegatedCall(irFunction.returnType, returnValue),
+                irExpression = returnValue,
                 irType = context.irBuiltIns.anyType,
             )
             statements[statements.lastIndex] = tempVar
@@ -333,36 +332,8 @@ open class JsSuspendFunctionsLowering<C : JsCommonBackendContext>(
         rootLoop.transformChildrenVoid(dispatchPointTransformer)
     }
 
-    private fun needUnboxingOrUnit(fromType: IrType, toType: IrType): Boolean {
-        val icUtils = context.inlineClassesUtils
-
-        return (icUtils.getInlinedClass(fromType) == null && icUtils.getInlinedClass(toType) != null) ||
-                (fromType.isUnit() && !toType.isUnit())
-    }
-
-    override fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression {
-        val functionReturnType = (delegatingCall as? IrCall)?.symbol?.owner?.let { function ->
-            defaultLoweredSuspendFunctionReturnType(function.returnType, context.irBuiltIns)
-        } ?: delegatingCall.type
-
-        if (!needUnboxingOrUnit(functionReturnType, expectedType)) return delegatingCall
-
-        return irComposite(resultType = expectedType) {
-            val tmp = createTmpVariable(delegatingCall, irType = functionReturnType)
-            val coroutineSuspended = irCall(this@JsSuspendFunctionsLowering.context.symbols.coroutineSuspendedGetter)
-            val condition = irEqeqeq(irGet(tmp), coroutineSuspended)
-            +irIfThen(context.irBuiltIns.unitType, condition, irReturn(irGet(tmp)))
-            +irImplicitCast(irGet(tmp), expectedType)
-        }
-    }
-
-    override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
-        val call = irCall(invokeSuspendFunction.symbol).apply {
-            arguments[0] = receiver
-        }
-        val functionReturnType = scope.scopeOwnerSymbol.assertedCast<IrSimpleFunctionSymbol> { "Expected function symbol" }.owner.returnType
-        +irReturn(generateDelegatedCall(functionReturnType, call))
-    }
+    override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) =
+        +irReturn(irCall(invokeSuspendFunction.symbol).apply { arguments[0] = receiver })
 }
 
 internal sealed class SuspendFunctionKind {
