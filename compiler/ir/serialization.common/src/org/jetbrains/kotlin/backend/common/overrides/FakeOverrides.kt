@@ -41,6 +41,14 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+class FakeOverrideGlobalDeclarationTable(mangler: KotlinMangler.IrMangler) :
+    GlobalDeclarationTable(mangler)
+
+open class FakeOverrideDeclarationTable(
+    mangler: KotlinMangler.IrMangler,
+    globalDeclarationTable: FakeOverrideGlobalDeclarationTable = FakeOverrideGlobalDeclarationTable(mangler)
+) : DeclarationTable<FakeOverrideGlobalDeclarationTable>(globalDeclarationTable)
+
 interface FakeOverrideClassFilter {
     fun needToConstructFakeOverrides(clazz: IrClass): Boolean
 }
@@ -278,7 +286,7 @@ class IrLinkerFakeOverrideProvider(
     private val friendModules: Map<String, Collection<String>>,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
-    private val fakeOverrideDeclarationTable: DeclarationTable<*> = DeclarationTable.Default(GlobalDeclarationTable(mangler)),
+    private val fakeOverrideDeclarationTable: DeclarationTable<*> = FakeOverrideDeclarationTable(mangler),
     private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
     private val isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { false },
 ) {

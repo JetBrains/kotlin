@@ -1,0 +1,28 @@
+class KotlinSub : JavaClass {
+  constructor() /* primary */ {
+    super/*JavaClass*/()
+    /* <init>() */
+
+  }
+
+  override fun testConcreteMap(map: HashMap<String, String>) {
+    super<JavaClass>.testConcreteMap(map = map)
+  }
+
+  override fun testInterfaceMap(map: Map<String, String>) {
+    super<JavaClass>.testInterfaceMap(map = map)
+  }
+
+  override fun testObject(o: Any) {
+    super<JavaClass>.testObject(o = o)
+  }
+
+  override fun testPrimitiveArray(arr: IntArray) {
+    super<JavaClass>.testPrimitiveArray(arr = arr)
+  }
+
+  override fun testString(s: String) {
+    super<JavaClass>.testString(s = s)
+  }
+
+}

@@ -1,0 +1,16 @@
+FILE fqName:<root> fileName:/primitiveUsage.kt
+  FUN name:testPrimitiveCalls visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:a type:kotlin.Int [val]
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          ARG <this>: CONST Int type=kotlin.Int value=1
+          ARG other: CONST Int type=kotlin.Int value=2
+      VAR name:b type:kotlin.Boolean [val]
+        CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+          ARG <this>: CONST Boolean type=kotlin.Boolean value=true
+  FUN name:testPrimitiveReferences visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:plusRef type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> [val]
+        FUNCTION_REFERENCE 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.reflect.KFunction2<kotlin.Int, @[ParameterName(name = "other")] kotlin.Int, kotlin.Int> origin=null reflectionTarget=<same>
+      VAR name:notRef type:kotlin.Function1<kotlin.Boolean, kotlin.Boolean> [val]
+        FUNCTION_REFERENCE 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.reflect.KFunction1<kotlin.Boolean, kotlin.Boolean> origin=null reflectionTarget=<same>

@@ -29,7 +29,26 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
+import org.jetbrains.kotlin.ir.overrides.MemberWithOriginal
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.isBoolean
+import org.jetbrains.kotlin.ir.types.isInt
+import org.jetbrains.kotlin.ir.types.isArray
+import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -82,7 +101,7 @@ class JKlibIrLinker(
     )
 
     override fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext =
-        typeSystemContextFactory(irBuiltIns)
+        J2clIrTypeSystemContext(typeSystemContextFactory(irBuiltIns))
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
@@ -258,9 +277,37 @@ class JKlibIrLinker(
             super.declareIrSymbol(symbol)
         }
     }
+
+    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
+        super.postProcess(irBuiltIns, inOrAfterLinkageStep)
+        if (inOrAfterLinkageStep) {
+            clearFakeOverrideFields()
+        }
+    }
+
+    private fun clearFakeOverrideFields() {
+        val visitor = object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitProperty(declaration: IrProperty) {
+                if (declaration.isFakeOverride && declaration.getter == null) {
+                    declaration.backingField = null
+                }
+                super.visitProperty(declaration)
+            }
+        }
+
+        deserializersForModules.values.forEach { deserializer ->
+            deserializer.moduleFragment.acceptVoid(visitor)
+        }
+    }
 }
 
 private fun DeclarationDescriptor.isCleanDescriptor(): Boolean {
     if (this is PropertyAccessorDescriptor) return correspondingProperty.isCleanDescriptor()
     return this is DeserializedDescriptor
 }
+
+

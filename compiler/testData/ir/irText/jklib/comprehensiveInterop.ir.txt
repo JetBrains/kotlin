@@ -1,0 +1,65 @@
+FILE fqName:<root> fileName:/main.kt
+  CLASS CLASS name:KotlinSub modality:FINAL visibility:public superTypes:[<root>.JavaClass]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.KotlinSub
+    CONSTRUCTOR visibility:public returnType:<root>.KotlinSub [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JavaClass'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinSub modality:FINAL visibility:public superTypes:[<root>.JavaClass]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaClass
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaClass
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.JavaClass
+    FUN name:testConcreteMap visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinSub
+      VALUE_PARAMETER kind:Regular name:map index:1 type:java.util.HashMap<kotlin.String, kotlin.String>
+      overridden:
+        public open fun testConcreteMap (map: @[FlexibleNullability] java.util.HashMap<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.JavaClass
+      BLOCK_BODY
+        CALL 'public open fun testConcreteMap (map: @[FlexibleNullability] java.util.HashMap<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.JavaClass' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaClass modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.KotlinSub declared in <root>.KotlinSub.testConcreteMap' type=<root>.KotlinSub origin=IMPLICIT_ARGUMENT
+          ARG map: GET_VAR 'map: java.util.HashMap<kotlin.String, kotlin.String> declared in <root>.KotlinSub.testConcreteMap' type=java.util.HashMap<kotlin.String, kotlin.String> origin=null
+    FUN name:testInterfaceMap visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinSub
+      VALUE_PARAMETER kind:Regular name:map index:1 type:kotlin.collections.Map<kotlin.String, kotlin.String>
+      overridden:
+        public open fun testInterfaceMap (map: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.JavaClass
+      BLOCK_BODY
+        CALL 'public open fun testInterfaceMap (map: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.JavaClass' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaClass modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.KotlinSub declared in <root>.KotlinSub.testInterfaceMap' type=<root>.KotlinSub origin=IMPLICIT_ARGUMENT
+          ARG map: GET_VAR 'map: kotlin.collections.Map<kotlin.String, kotlin.String> declared in <root>.KotlinSub.testInterfaceMap' type=kotlin.collections.Map<kotlin.String, kotlin.String> origin=null
+    FUN name:testObject visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinSub
+      VALUE_PARAMETER kind:Regular name:o index:1 type:kotlin.Any
+      overridden:
+        public open fun testObject (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.JavaClass
+      BLOCK_BODY
+        CALL 'public open fun testObject (o: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.JavaClass' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaClass modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.KotlinSub declared in <root>.KotlinSub.testObject' type=<root>.KotlinSub origin=IMPLICIT_ARGUMENT
+          ARG o: GET_VAR 'o: kotlin.Any declared in <root>.KotlinSub.testObject' type=kotlin.Any origin=null
+    FUN name:testPrimitiveArray visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinSub
+      VALUE_PARAMETER kind:Regular name:arr index:1 type:kotlin.IntArray
+      overridden:
+        public open fun testPrimitiveArray (arr: @[FlexibleNullability] kotlin.IntArray?): kotlin.Unit declared in <root>.JavaClass
+      BLOCK_BODY
+        CALL 'public open fun testPrimitiveArray (arr: @[FlexibleNullability] kotlin.IntArray?): kotlin.Unit declared in <root>.JavaClass' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaClass modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.KotlinSub declared in <root>.KotlinSub.testPrimitiveArray' type=<root>.KotlinSub origin=IMPLICIT_ARGUMENT
+          ARG arr: GET_VAR 'arr: kotlin.IntArray declared in <root>.KotlinSub.testPrimitiveArray' type=kotlin.IntArray origin=null
+    FUN name:testString visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinSub
+      VALUE_PARAMETER kind:Regular name:s index:1 type:kotlin.String
+      overridden:
+        public open fun testString (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.JavaClass
+      BLOCK_BODY
+        CALL 'public open fun testString (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.JavaClass' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaClass modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.KotlinSub declared in <root>.KotlinSub.testString' type=<root>.KotlinSub origin=IMPLICIT_ARGUMENT
+          ARG s: GET_VAR 's: kotlin.String declared in <root>.KotlinSub.testString' type=kotlin.String origin=null
