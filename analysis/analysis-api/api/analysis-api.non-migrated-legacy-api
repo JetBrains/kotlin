@@ -34,6 +34,5 @@ KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.scopeContext(KtEle
 KaSubstitutorProvider: org.jetbrains.kotlin.analysis.api.components.KaSubstitutorBuilder
 KaSubstitutorProvider: org.jetbrains.kotlin.analysis.api.components.buildSubstitutor(KaSubstitutorBuilder.() -> Unit)
 KaSubstitutorProvider: org.jetbrains.kotlin.analysis.api.components.buildSubstitutor(KaSubstitutorBuilder.() -> Unit)
-KaSymbolRelationProvider: org.jetbrains.kotlin.analysis.api.components.containingModule
 KaTypeInformationProvider: org.jetbrains.kotlin.analysis.api.components.isClassType(ClassId)
 KaTypeProvider: org.jetbrains.kotlin.analysis.api.components.collectImplicitReceiverTypes(KtElement)

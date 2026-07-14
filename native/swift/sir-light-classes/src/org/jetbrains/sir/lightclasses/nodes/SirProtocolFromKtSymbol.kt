@@ -6,17 +6,12 @@
 package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
-import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
-import org.jetbrains.kotlin.sir.builder.buildGetterCopy
-import org.jetbrains.kotlin.sir.builder.buildSetterCopy
-import org.jetbrains.kotlin.sir.builder.buildTypealias
-import org.jetbrains.kotlin.sir.builder.buildVariableCopy
+import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinImplementationMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinMarkerProtocol

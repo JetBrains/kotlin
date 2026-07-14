@@ -54,6 +54,17 @@ public val KaSymbol.containingFile: KaFileSymbol?
         return internals.symbolRelationProvider.containingFile(this)
     }
 
+
+/**
+ * The [KaModule] which contains this symbol.
+ */
+context(session: KaSession)
+public val KaSymbol.containingModule: KaModule
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.symbolRelationProvider.containingModule(this)
+    }
+
 /**
  * The associated [KaSamConstructorSymbol] if this [KaClassLikeSymbol] is a
  * [functional interface type (SAM)](https://kotlinlang.org/docs/fun-interfaces.html).

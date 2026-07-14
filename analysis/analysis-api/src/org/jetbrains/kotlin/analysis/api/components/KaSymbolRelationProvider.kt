@@ -500,6 +500,13 @@ public val KaSymbol.containingFile: KaFileSymbol?
 /**
  * The [KaModule] which contains this symbol.
  */
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.containingModule",
+        "org.jetbrains.kotlin.analysis.api.symbols.containingModule",
+    ),
+)
 context(session: KaSession)
 public val KaSymbol.containingModule: KaModule
     get() = with(session) { containingModule }
