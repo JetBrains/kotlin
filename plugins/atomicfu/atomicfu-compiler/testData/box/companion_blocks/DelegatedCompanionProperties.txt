@@ -1,0 +1,28 @@
+@kotlin.Metadata
+public final class DelegatedCompanionPropertiesKt {
+    // source: 'DelegatedCompanionProperties.kt'
+    private synthetic final static field tA: java.util.concurrent.atomic.AtomicInteger
+    private synthetic volatile static field tD$volatile: int
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getTA(): java.util.concurrent.atomic.AtomicInteger
+    private final static method getTD(): int
+    private final static method getTdA(): int
+    private final static method setTD(p0: int): void
+    private final static method setTdA(p0: int): void
+    private final static method testDelegates(): void
+}
+
+@kotlin.Metadata
+final class DelegatedProperties {
+    // source: 'DelegatedCompanionProperties.kt'
+    private synthetic final static field a: java.util.concurrent.atomic.AtomicInteger
+    private synthetic volatile static field d$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final static method getA(): java.util.concurrent.atomic.AtomicInteger
+    public final static method getD(): int
+    public final static method getDA(): int
+    public final static method setD(p0: int): void
+    public final static method setDA(p0: int): void
+}
