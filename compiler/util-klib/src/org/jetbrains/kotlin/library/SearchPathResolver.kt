@@ -108,9 +108,9 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     override val logger: Logger
 ) : SearchPathResolver<L> {
 
-    private val distHead: File? get() = distributionKlib?.File()?.child("common")
+    private val distHead: File? get() = distributionKlib?.let(::File)?.child("common")
     open val distPlatformHead: File? = null
-    private val currentDirHead: File? get() = if (!skipCurrentDir) File.userDir else null
+    private val currentDirHead: File? get() = if (!skipCurrentDir) USER_DIR else null
 
     abstract fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean = false): List<L>
 
@@ -258,6 +258,11 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         }
 
         return result
+    }
+
+    companion object {
+        private val USER_DIR: File
+            get() = File(System.getProperty("user.dir"))
     }
 }
 

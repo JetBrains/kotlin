@@ -56,7 +56,7 @@ class KonanLibraryProperResolver(
         }.load().librariesStdlibFirst
 
     override val distPlatformHead: File?
-        get() = distributionKlib?.File()?.child("platform")?.child(target.visibleName)
+        get() = distributionKlib?.let(::File)?.child("platform")?.child(target.visibleName)
 
     override fun libraryMatch(candidate: KotlinLibrary, unresolved: UnresolvedLibrary): Boolean {
         val resolverTarget = this.target
