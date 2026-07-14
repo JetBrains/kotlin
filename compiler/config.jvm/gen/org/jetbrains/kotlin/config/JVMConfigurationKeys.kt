@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.config
  */
 
 import java.io.File
+import org.jetbrains.kotlin.incremental.components.JvmMetadataTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 
@@ -178,6 +179,9 @@ object JVMConfigurationKeys {
     // Path to outputs of common fragments metadata for KMP JVM IC
     @JvmField
     val COMMON_FRAGMENTS_OUTPUT_DIR = CompilerConfigurationKey.create<File>("COMMON_FRAGMENTS_OUTPUT_DIR")
+
+    @JvmField
+    val METADATA_TRACKER = CompilerConfigurationKey.create<JvmMetadataTracker>("METADATA_TRACKER")
 
 }
 
@@ -372,4 +376,8 @@ var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
 var CompilerConfiguration.commonFragmentsOutputDir: File?
     get() = get(JVMConfigurationKeys.COMMON_FRAGMENTS_OUTPUT_DIR)
     set(value) { putIfNotNull(JVMConfigurationKeys.COMMON_FRAGMENTS_OUTPUT_DIR, value) }
+
+var CompilerConfiguration.metadataTracker: JvmMetadataTracker?
+    get() = get(JVMConfigurationKeys.METADATA_TRACKER)
+    set(value) { putIfNotNull(JVMConfigurationKeys.METADATA_TRACKER, value) }
 

@@ -351,7 +351,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     ) {
         super.updateCaches(dirtyFilesHolder, jpsIncrementalCache, files, changesCollector, environment)
 
-        updateIncrementalCache(files, jpsIncrementalCache as IncrementalJvmCache, changesCollector, null)
+        updateIncrementalCache(files, jpsIncrementalCache as IncrementalJvmCache, changesCollector, null, null)
     }
 
     override val globalLookupCacheId: String
