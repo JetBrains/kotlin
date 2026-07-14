@@ -1,7 +1,7 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ConcreteSelfReferencing::class, "14f_bounded_type23ConcreteSelfReferencingC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SelfReferencing::class, "14f_bounded_type15SelfReferencingC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(MyComparable::class, "_MyComparable")
+@file:kotlin.native.internal.objc.BindClassToObjCName(MyComparable::class, "_f_bounded_type_MyComparable")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

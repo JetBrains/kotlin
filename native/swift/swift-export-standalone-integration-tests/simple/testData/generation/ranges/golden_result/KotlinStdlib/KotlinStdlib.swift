@@ -92,7 +92,7 @@ extension ExportedKotlinPackages.kotlin {
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Int32
     }
-    @objc(_Comparable)
+    @objc(_ExportedKotlinPackages_kotlin_Comparable)
     public protocol _Comparable {
     }
     public protocol __Comparable: KotlinRuntimeSupport._KotlinBridgeable {
@@ -111,7 +111,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
         ) -> Swift.Bool
         func isEmpty() -> Swift.Bool
     }
-    @objc(_ClosedRange)
+    @objc(_ExportedKotlinPackages_kotlin_ranges_ClosedRange)
     public protocol _ClosedRange {
     }
     public protocol __ClosedRange: KotlinRuntimeSupport._KotlinBridgeable {

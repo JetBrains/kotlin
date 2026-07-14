@@ -32,16 +32,16 @@ public protocol OverloadedInterface: KotlinRuntime.KotlinBase, main._OverloadedI
         times: Swift.Int32
     ) -> Swift.String
 }
-@objc(_Boxed)
+@objc(_main_Boxed)
 public protocol _Boxed {
 }
-@objc(_Defaulter)
+@objc(_main_Defaulter)
 public protocol _Defaulter {
 }
-@objc(_Greeter)
+@objc(_main_Greeter)
 public protocol _Greeter {
 }
-@objc(_OverloadedInterface)
+@objc(_main_OverloadedInterface)
 public protocol _OverloadedInterface {
 }
 public protocol __Boxed: KotlinRuntimeSupport._KotlinBridgeable {

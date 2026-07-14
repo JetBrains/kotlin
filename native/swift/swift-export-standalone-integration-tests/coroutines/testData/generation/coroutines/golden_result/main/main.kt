@@ -1,6 +1,6 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(FunctionalInterfaceWithSuspendFunction::class, "_FunctionalInterfaceWithSuspendFunction")
+@file:kotlin.native.internal.objc.BindClassToObjCName(FunctionalInterfaceWithSuspendFunction::class, "_main_FunctionalInterfaceWithSuspendFunction")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

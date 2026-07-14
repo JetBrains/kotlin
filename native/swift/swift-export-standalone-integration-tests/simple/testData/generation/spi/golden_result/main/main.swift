@@ -25,7 +25,7 @@ public protocol MyInterface: KotlinRuntime.KotlinBase, main._MyInterface {
     @_spi(MyOptInApi)
     func optInFunWithDefault() -> Swift.Void
 }
-@objc(_MyInterface)
+@objc(_main_MyInterface)
 public protocol _MyInterface {
 }
 public protocol __MyInterface: KotlinRuntimeSupport._KotlinBridgeable {

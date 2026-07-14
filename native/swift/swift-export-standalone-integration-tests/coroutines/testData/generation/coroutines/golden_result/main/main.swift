@@ -9,7 +9,7 @@ public typealias AliasedFunctionType = (Swift.Float) -> Swift.Int32
 public protocol FunctionalInterfaceWithSuspendFunction: KotlinRuntime.KotlinBase, main._FunctionalInterfaceWithSuspendFunction {
     func emit() async throws -> Swift.Void
 }
-@objc(_FunctionalInterfaceWithSuspendFunction)
+@objc(_main_FunctionalInterfaceWithSuspendFunction)
 public protocol _FunctionalInterfaceWithSuspendFunction {
 }
 public protocol __FunctionalInterfaceWithSuspendFunction: KotlinRuntimeSupport._KotlinBridgeable {

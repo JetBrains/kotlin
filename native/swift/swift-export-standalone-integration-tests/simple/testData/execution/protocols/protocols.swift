@@ -135,3 +135,9 @@ func testExistentialInheritsExportedSuperInterface() throws {
     #expect(x.ping() == 42)
     #expect(x is InhBarWithIface)
 }
+
+@Test
+func testDuplicateMyInterfaceName() throws {
+    #expect(returnMyClassBAsMyInterfaceA() is MyClassA)
+    #expect(!(returnMyClassBAsMyInterfaceB() is MyClassA))
+}

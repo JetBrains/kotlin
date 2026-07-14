@@ -8,7 +8,7 @@ import KotlinxCoroutinesCore
 public protocol _ExportedKotlinPackages_namespace_I1_I2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.namespace.I1, flow_overrides.__ExportedKotlinPackages_namespace_I1_I2 {
     func sealedType() -> ExportedKotlinPackages.namespace.I1_SealedType
 }
-@objc(__ExportedKotlinPackages_namespace_I1_I2)
+@objc(_flow_overrides__ExportedKotlinPackages_namespace_I1_I2)
 public protocol __ExportedKotlinPackages_namespace_I1_I2: ExportedKotlinPackages.namespace._I1 {
 }
 public protocol ___ExportedKotlinPackages_namespace_I1_I2: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.namespace.__I1 {
@@ -65,7 +65,7 @@ extension ExportedKotlinPackages.namespace {
     public protocol I1: KotlinRuntime.KotlinBase, ExportedKotlinPackages.namespace._I1 {
         func sealedType() -> ExportedKotlinPackages.namespace.I1_SealedType
     }
-    @objc(_I1)
+    @objc(_ExportedKotlinPackages_namespace_I1)
     public protocol _I1 {
     }
     public protocol __I1: KotlinRuntimeSupport._KotlinBridgeable {

@@ -12,7 +12,7 @@ public protocol Bar: KotlinRuntime.KotlinBase, main._Bar {
     /// A function inside an interface
     func foo() -> Swift.Void
 }
-@objc(_Bar)
+@objc(_main_Bar)
 public protocol _Bar {
 }
 public protocol __Bar: KotlinRuntimeSupport._KotlinBridgeable {

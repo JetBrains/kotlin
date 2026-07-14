@@ -60,13 +60,13 @@ public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase, main._InterfaceW
 }
 public protocol Job: KotlinRuntime.KotlinBase, main._Job {
 }
-@objc(_CompletableJob)
+@objc(_main_CompletableJob)
 public protocol _CompletableJob: main._Job {
 }
-@objc(_InterfaceWithFactory)
+@objc(_main_InterfaceWithFactory)
 public protocol _InterfaceWithFactory {
 }
-@objc(_Job)
+@objc(_main_Job)
 public protocol _Job {
 }
 public protocol __CompletableJob: KotlinRuntimeSupport._KotlinBridgeable, main.__Job {

@@ -122,7 +122,7 @@ extension ExportedKotlinPackages.kotlin {
             endIndex: Swift.Int32
         ) -> any ExportedKotlinPackages.kotlin.CharSequence
     }
-    @objc(_CharSequence)
+    @objc(_ExportedKotlinPackages_kotlin_CharSequence)
     public protocol _CharSequence {
     }
     public protocol __CharSequence: KotlinRuntimeSupport._KotlinBridgeable {
@@ -238,7 +238,7 @@ extension ExportedKotlinPackages.kotlin.text {
             endIndex: Swift.Int32
         ) -> any ExportedKotlinPackages.kotlin.text.Appendable
     }
-    @objc(_Appendable)
+    @objc(_ExportedKotlinPackages_kotlin_text_Appendable)
     public protocol _Appendable {
     }
     public protocol __Appendable: KotlinRuntimeSupport._KotlinBridgeable {

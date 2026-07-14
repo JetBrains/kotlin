@@ -34,25 +34,25 @@ public protocol Processor: KotlinRuntime.KotlinBase, main._Processor {
 public protocol Producer: KotlinRuntime.KotlinBase, main._Producer {
     func produce() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
 }
-@objc(_A)
+@objc(_main_A)
 public protocol _A {
 }
-@objc(_AFactory)
+@objc(_main_AFactory)
 public protocol _AFactory {
 }
-@objc(_B)
+@objc(_main_B)
 public protocol _B {
 }
-@objc(_Consumer)
+@objc(_main_Consumer)
 public protocol _Consumer {
 }
-@objc(_ConsumerProducer)
+@objc(_main_ConsumerProducer)
 public protocol _ConsumerProducer: main._Consumer, main._Producer {
 }
-@objc(_Processor)
+@objc(_main_Processor)
 public protocol _Processor {
 }
-@objc(_Producer)
+@objc(_main_Producer)
 public protocol _Producer {
 }
 public protocol __A: KotlinRuntimeSupport._KotlinBridgeable {

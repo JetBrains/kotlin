@@ -329,16 +329,16 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     public protocol SealedInterfaceB: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceB {
         func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType
     }
-    @objc(_InterfaceC)
+    @objc(_ExportedKotlinPackages_org_kotlin_foo_InterfaceC)
     public protocol _InterfaceC: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
     }
-    @objc(_QueryResult)
+    @objc(_ExportedKotlinPackages_org_kotlin_foo_QueryResult)
     public protocol _QueryResult {
     }
-    @objc(_SealedInterfaceA)
+    @objc(_ExportedKotlinPackages_org_kotlin_foo_SealedInterfaceA)
     public protocol _SealedInterfaceA {
     }
-    @objc(_SealedInterfaceB)
+    @objc(_ExportedKotlinPackages_org_kotlin_foo_SealedInterfaceB)
     public protocol _SealedInterfaceB: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
     }
     public protocol __InterfaceC: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {

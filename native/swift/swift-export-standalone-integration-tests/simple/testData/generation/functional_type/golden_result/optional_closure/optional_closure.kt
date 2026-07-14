@@ -1,5 +1,5 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
-@file:kotlin.native.internal.objc.BindClassToObjCName(MyInterface::class, "_MyInterface")
+@file:kotlin.native.internal.objc.BindClassToObjCName(MyInterface::class, "_optional_closure_MyInterface")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*

@@ -4,7 +4,7 @@ import KotlinRuntimeSupport
 
 public protocol Foo: KotlinRuntime.KotlinBase, SetExport._Foo {
 }
-@objc(_Foo)
+@objc(_SetExport_Foo)
 public protocol _Foo {
 }
 public protocol __Foo: KotlinRuntimeSupport._KotlinBridgeable {

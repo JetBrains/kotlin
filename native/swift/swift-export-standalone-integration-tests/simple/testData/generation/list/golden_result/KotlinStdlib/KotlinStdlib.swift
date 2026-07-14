@@ -234,19 +234,19 @@ extension ExportedKotlinPackages.kotlin.collections {
         func previous() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         func previousIndex() -> Swift.Int32
     }
-    @objc(_Collection)
+    @objc(_ExportedKotlinPackages_kotlin_collections_Collection)
     public protocol _Collection: ExportedKotlinPackages.kotlin.collections._Iterable {
     }
-    @objc(_Iterable)
+    @objc(_ExportedKotlinPackages_kotlin_collections_Iterable)
     public protocol _Iterable {
     }
-    @objc(_Iterator)
+    @objc(_ExportedKotlinPackages_kotlin_collections_Iterator)
     public protocol _Iterator {
     }
-    @objc(_List)
+    @objc(_ExportedKotlinPackages_kotlin_collections_List)
     public protocol _List: ExportedKotlinPackages.kotlin.collections._Collection {
     }
-    @objc(_ListIterator)
+    @objc(_ExportedKotlinPackages_kotlin_collections_ListIterator)
     public protocol _ListIterator: ExportedKotlinPackages.kotlin.collections._Iterator {
     }
     public protocol __Collection: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Iterable {
