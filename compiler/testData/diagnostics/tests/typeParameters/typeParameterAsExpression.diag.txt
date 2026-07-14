@@ -1,0 +1,23 @@
+/typeParameterAsExpression.kt:6:15: error: None of the following candidates is applicable:
+
+T:
+  Type parameter 'T' is not an expression.
+
+T:
+  Type parameter 'T' is not an expression.
+
+/typeParameterAsExpression.kt:12:6: error: Conflicting declarations:
+T
+T
+
+/typeParameterAsExpression.kt:12:9: error: Conflicting declarations:
+T
+T
+
+/typeParameterAsExpression.kt:13:5: error: None of the following candidates is applicable:
+
+T:
+  Type parameter 'T' is not an expression.
+
+T:
+  Type parameter 'T' is not an expression.
