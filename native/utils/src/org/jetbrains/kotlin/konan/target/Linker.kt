@@ -20,8 +20,15 @@ import org.jetbrains.kotlin.konan.TempFiles
 import java.lang.ProcessBuilder
 import java.lang.ProcessBuilder.Redirect
 import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.file.*
+import org.jetbrains.kotlin.konan.file.isUnixStaticLib
+import org.jetbrains.kotlin.konan.file.isWindowsStaticLib
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 import kotlin.io.path.writeLines
 
 typealias ObjectFile = String
@@ -186,7 +193,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
             if (optimize) +linkerOptimizationFlags
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
-            if (dynamic) +"-Wl,-soname,${File(executable).name}"
+            if (dynamic) +"-Wl,-soname,${Path(executable).name}"
             +linkerKonanFlags
             +staticLibraries
             +dynamicLibraries
@@ -204,7 +211,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
     private val dsymutil = "$absoluteTargetToolchain/bin/dsymutil"
 
     private val compilerRtDir: String? by lazy {
-        val dir = File("$absoluteTargetToolchain/lib/clang/").listFiles.firstOrNull()?.absolutePath
+        val dir = Path("$absoluteTargetToolchain/lib/clang/").listDirectoryEntries().firstOrNull()?.absolutePathString()
         if (dir != null) "$dir/lib/darwin/" else null
     }
 
@@ -377,7 +384,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
              * llvm-dsym doesn't have such a option, so we ignore annoying warning manually.
              */
             val errorStream = process.errorStream
-            val outputStream = bufferedReader(errorStream)
+            val outputStream = BufferedReader(InputStreamReader(errorStream))
             while (true) {
                 val line = outputStream.readLine() ?: break
                 if (!line.contains("warning: could not find object file symbol for symbol _main"))
@@ -406,10 +413,10 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             "Dynamic compiler rt librares are unsupported"
         }
         // Flexibility required in upgrade from LLVM-11 to LLVM-16
-        val clangdir = File("$absoluteLlvmHome/lib/clang/").listFiles.firstOrNull()?.absolutePath ?: return null
-        val libdir = File("$clangdir/lib/").listFiles.firstOrNull()?.absolutePath ?: return null
-        val llvm11lib = File("$libdir/libclang_rt.$libraryName-x86_64.a")
-        return if (llvm11lib.exists) llvm11lib.absolutePath else "$libdir/libclang_rt.$libraryName.a"
+        val clangdir = Path("$absoluteLlvmHome/lib/clang/").listDirectoryEntries().firstOrNull()?.absolutePathString() ?: return null
+        val libdir = Path("$clangdir/lib/").listDirectoryEntries().firstOrNull()?.absolutePathString() ?: return null
+        val llvm11lib = Path("$libdir/libclang_rt.$libraryName-x86_64.a")
+        return if (llvm11lib.exists()) llvm11lib.absolutePathString() else "$libdir/libclang_rt.$libraryName.a"
     }
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
@@ -490,7 +497,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
             KonanTarget.MINGW_X64 -> "x86_64"
             else -> error("$target is not supported.")
         }
-        val dir = File("$absoluteLlvmHome/lib/clang/").listFiles.firstOrNull()?.absolutePath
+        val dir = Path("$absoluteLlvmHome/lib/clang/").listDirectoryEntries().firstOrNull()?.absolutePathString()
         return if (dir != null) "$dir/lib/windows/libclang_rt.$libraryName-$targetSuffix.a" else null
     }
 
