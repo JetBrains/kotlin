@@ -24,3 +24,10 @@ fun Path.fileKey(): Any {
     return readAttributes<BasicFileAttributes>().fileKey() ?: canonicalPathString()
 }
 
+/**
+ * Registers the file or (empty) directory to be deleted when the JVM terminates.
+ * Note: Files (or directories) are deleted in the reverse order that they are registered.
+ */
+fun Path.deleteOnExit() {
+    toFile().deleteOnExit()
+}

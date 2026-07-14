@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.io.ZipFileSystemAccessor
+import org.jetbrains.kotlin.io.deleteOnExit
 import java.io.IOException
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
@@ -106,12 +107,12 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
 
             Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
                 override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                    file.toFile().deleteOnExit()
+                    file.deleteOnExit()
                     return FileVisitResult.CONTINUE
                 }
 
                 override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
-                    dir.toFile().deleteOnExit()
+                    dir.deleteOnExit()
                     return FileVisitResult.CONTINUE
                 }
             })
