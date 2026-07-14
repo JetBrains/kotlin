@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.storage.StorageManager
+import java.nio.file.Path
 
 interface KlibResolvedModuleDescriptorsFactory {
 
@@ -34,6 +35,33 @@ interface KlibResolvedModuleDescriptorsFactory {
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors
+
+    /**
+     * A duplicate of [createResolved], which accepts [java.nio.file.Path] instead of [org.jetbrains.kotlin.konan.file.File].
+     *
+     * FYI: No much attention to naming of this function, anyway it's going to be removed soon as a part of K1.
+     */
+    fun createResolved2(
+        resolvedLibraries: KotlinLibraryResolveResult,
+        storageManager: StorageManager,
+        builtIns: KotlinBuiltIns?,
+        languageVersionSettings: LanguageVersionSettings,
+        friendModuleFiles: Set<Path>,
+        refinesModuleFiles: Set<Path>,
+        includedLibraryFiles: Set<Path>,
+        additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
+        isForMetadataCompilation: Boolean,
+    ): KotlinResolvedModuleDescriptors = createResolved(
+        resolvedLibraries = resolvedLibraries,
+        storageManager = storageManager,
+        builtIns = builtIns,
+        languageVersionSettings = languageVersionSettings,
+        friendModuleFiles = friendModuleFiles.mapTo(hashSetOf()) { File(it) },
+        refinesModuleFiles = refinesModuleFiles.mapTo(hashSetOf()) { File(it) },
+        includedLibraryFiles = includedLibraryFiles.mapTo(hashSetOf()) { File(it) },
+        additionalDependencyModules = additionalDependencyModules,
+        isForMetadataCompilation = isForMetadataCompilation,
+    )
 }
 
 class KotlinResolvedModuleDescriptors(

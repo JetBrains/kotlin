@@ -551,7 +551,7 @@ class CacheBuilder(
             konanLibraries = libraries
             val generateTestRunner = this@CacheBuilder.generateTestRunner
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
-                konanFriendLibraries = config.friendModuleFiles.map { it.absolutePath }
+                konanFriendLibraries = config.friendModuleFiles.map { it.absolutePathString() }
                 this.generateTestRunner = generateTestRunner
                 konanIncludedLibraries = listOf(libraryPath)
                 configuration.testDumpOutputPath?.let { testDumpOutputPath = it }
