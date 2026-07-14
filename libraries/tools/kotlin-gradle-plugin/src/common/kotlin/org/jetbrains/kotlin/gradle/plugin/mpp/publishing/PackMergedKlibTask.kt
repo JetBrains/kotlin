@@ -19,6 +19,7 @@ import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.internal.artifacts.transform.UnzipTransform
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -56,8 +57,11 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDep
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizedOutputDirectory
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
+import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
 private const val PACK_KAR_TASK_NAME = "packKar"
@@ -69,6 +73,7 @@ internal const val KAR_ARTIFACT_TYPE = "kar"
  */
 internal val karStateAttribute = Attribute.of("org.jetbrains.kotlin.karState", String::class.java)
 internal val karStatePacked = "packed"
+internal val karStateUnpacked = "unpacked"
 internal val karStateProcessed = "processed"
 
 /**
@@ -142,6 +147,21 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
         }
     }
 
+    /* Include all cinterops */
+    extension.awaitTargets().filterIsInstance<KotlinNativeTarget>().forEach { target ->
+        target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.forEach { cinterop ->
+            val outputFile = tasks.named<CInteropProcess>(cinterop.interopProcessingTaskName).flatMap { cinteropTask ->
+                cinteropTask.outputFileProvider
+            }
+
+            packTask.configure { zip ->
+                zip.into("cinterops/${target.mergedKlibPlatformPath}/${outputFile.get().name}") { spec ->
+                    spec.from(outputFile)
+                }
+            }
+        }
+    }
+
     val psmTask = project.locateOrRegisterGenerateProjectStructureMetadataTask()
     packTask.configure { zip ->
         zip.into("metadata") { spec ->
@@ -185,11 +205,20 @@ internal fun Project.configureKarKlibTransformation() {
 }
 
 private fun KotlinTarget.registerUnpackMergedKlibTransform(platformPath: String) {
+    project.dependencies.registerTransform(UnzipTransform::class.java) { spec ->
+        spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, KAR_ARTIFACT_TYPE)
+        spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, KAR_ARTIFACT_TYPE)
+
+        spec.from.attribute(karStateAttribute, karStatePacked)
+        spec.to.attribute(karStateAttribute, karStateUnpacked)
+    }
+
+
     project.dependencies.registerTransform(KarToPlatformKlibTransformation::class.java) { spec ->
         spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, KAR_ARTIFACT_TYPE)
         spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, "klib")
 
-        spec.from.attribute(karStateAttribute, karStatePacked)
+        spec.from.attribute(karStateAttribute, karStateUnpacked)
         spec.to.attribute(karStateAttribute, karStateProcessed)
 
         /* Disambiguate the per-target transform registrations by the same attributes the consumer requests */
@@ -246,14 +275,16 @@ internal abstract class KarToPlatformKlibTransformation @Inject constructor(
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
-        val mergedKlib = inputArtifact.get().asFile
-        val platformPath = parameters.platformPath.get()
+        val karDirectory = inputArtifact.get().asFile
+        val platformKlib = karDirectory.resolve(parameters.platformPath.get())
+        val platformTargetKlibFile = outputs.dir(platformKlib.name)
+        platformKlib.copyRecursively(platformTargetKlibFile)
 
-        val outputFile = outputs.file(
-            "${mergedKlib.nameWithoutExtension}-${platformPath.substringAfter('/').replace('/', '-')}.klib"
-        )
-
-        copyZipFilePartially(mergedKlib, outputFile, platformPath + "/")
+        val cinteropsDirectory = karDirectory.resolve("cinterops").resolve(parameters.platformPath.get())
+        cinteropsDirectory.listFiles().orEmpty().forEach { cinteropKlib ->
+            val cinteropTargetKlibFile = outputs.dir(cinteropKlib.name)
+            cinteropKlib.copyRecursively(cinteropTargetKlibFile)
+        }
     }
 }
 
