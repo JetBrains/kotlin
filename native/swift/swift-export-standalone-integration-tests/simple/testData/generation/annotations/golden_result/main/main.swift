@@ -41,22 +41,22 @@ public protocol SwiftInterfaceC: KotlinRuntime.KotlinBase, main._SwiftInterfaceC
         swiftParamD: Swift.String
     ) -> Swift.Void
 }
-@objc(_DeprecatedInterface)
+@objc(_main_DeprecatedInterface)
 public protocol _DeprecatedInterface {
 }
-@objc(_InterfaceWithDeprecatedMembers)
+@objc(_main_InterfaceWithDeprecatedMembers)
 public protocol _InterfaceWithDeprecatedMembers {
 }
-@objc(_NonDeprecatedInterface)
+@objc(_main_NonDeprecatedInterface)
 public protocol _NonDeprecatedInterface {
 }
-@objc(_SomeInterface)
+@objc(_main_SomeInterface)
 public protocol _SomeInterface {
 }
-@objc(_SubDeprecatedInterface)
+@objc(_main_SubDeprecatedInterface)
 public protocol _SubDeprecatedInterface: main._DeprecatedInterface {
 }
-@objc(_SwiftInterfaceC)
+@objc(_main_SwiftInterfaceC)
 public protocol _SwiftInterfaceC {
 }
 @available(*, unavailable, message: "Obsoleted")

@@ -4,10 +4,10 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(GreeterBase::class, "4main11GreeterBaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Overloaded::class, "4main10OverloadedC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ThrowingMembers::class, "4main15ThrowingMembersC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Boxed::class, "_Boxed")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Defaulter::class, "_Defaulter")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Greeter::class, "_Greeter")
-@file:kotlin.native.internal.objc.BindClassToObjCName(OverloadedInterface::class, "_OverloadedInterface")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Boxed::class, "_main_Boxed")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Defaulter::class, "_main_Defaulter")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Greeter::class, "_main_Greeter")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OverloadedInterface::class, "_main_OverloadedInterface")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

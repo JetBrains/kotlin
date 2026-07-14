@@ -40,13 +40,13 @@ public protocol InternalLibInterface: KotlinRuntime.KotlinBase, lib._InternalLib
     @_spi(InternalLibApi)
     func internalFun() -> Swift.Void
 }
-@objc(_InterfaceOne)
+@objc(_lib_InterfaceOne)
 public protocol _InterfaceOne {
 }
-@objc(_InterfaceTwo)
+@objc(_lib_InterfaceTwo)
 public protocol _InterfaceTwo {
 }
-@objc(_InternalLibInterface)
+@objc(_lib_InternalLibInterface)
 public protocol _InternalLibInterface {
 }
 @_spi(InterfaceOptInOne)

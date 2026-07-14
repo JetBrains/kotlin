@@ -5,7 +5,7 @@ import KotlinRuntimeSupport
 
 public protocol INTERFACE: KotlinRuntime.KotlinBase, main._INTERFACE {
 }
-@objc(_INTERFACE)
+@objc(_main_INTERFACE)
 public protocol _INTERFACE {
 }
 public protocol __INTERFACE: KotlinRuntimeSupport._KotlinBridgeable {

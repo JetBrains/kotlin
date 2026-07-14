@@ -7,7 +7,7 @@ public protocol MyComparable: KotlinRuntime.KotlinBase, f_bounded_type._MyCompar
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Int32
 }
-@objc(_MyComparable)
+@objc(_f_bounded_type_MyComparable)
 public protocol _MyComparable {
 }
 public protocol __MyComparable: KotlinRuntimeSupport._KotlinBridgeable {

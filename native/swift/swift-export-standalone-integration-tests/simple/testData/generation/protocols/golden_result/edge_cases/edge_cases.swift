@@ -41,16 +41,16 @@ public protocol SomeInterface: KotlinRuntime.KotlinBase, edge_cases._SomeInterfa
         value: Swift.Int32
     ) -> Swift.Void
 }
-@objc(_Baz)
+@objc(_edge_cases_Baz)
 public protocol _Baz {
 }
-@objc(_InterfaceA)
+@objc(_edge_cases_InterfaceA)
 public protocol _InterfaceA {
 }
-@objc(_InterfaceB)
+@objc(_edge_cases_InterfaceB)
 public protocol _InterfaceB: edge_cases._InterfaceA {
 }
-@objc(_SomeInterface)
+@objc(_edge_cases_SomeInterface)
 public protocol _SomeInterface {
 }
 public protocol __Baz: KotlinRuntimeSupport._KotlinBridgeable {
@@ -225,10 +225,10 @@ extension ExportedKotlinPackages.conflictingTypealiases {
     }
     public protocol Foo: KotlinRuntime.KotlinBase, ExportedKotlinPackages.conflictingTypealiases._Foo {
     }
-    @objc(_Bar)
+    @objc(_ExportedKotlinPackages_conflictingTypealiases_Bar)
     public protocol _Bar: ExportedKotlinPackages.conflictingTypealiases._Foo {
     }
-    @objc(_Foo)
+    @objc(_ExportedKotlinPackages_conflictingTypealiases_Foo)
     public protocol _Foo {
     }
     public protocol __Bar: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.conflictingTypealiases.__Foo {

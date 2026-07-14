@@ -13,10 +13,10 @@ public protocol AsyncGreeter: KotlinRuntime.KotlinBase, main._AsyncGreeter {
     ) async throws -> Swift.String
     func salutation() async throws -> Swift.String
 }
-@objc(_AsyncDefaulter)
+@objc(_main_AsyncDefaulter)
 public protocol _AsyncDefaulter {
 }
-@objc(_AsyncGreeter)
+@objc(_main_AsyncGreeter)
 public protocol _AsyncGreeter {
 }
 public protocol __AsyncDefaulter: KotlinRuntimeSupport._KotlinBridgeable {

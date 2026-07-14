@@ -6,7 +6,7 @@ import KotlinRuntimeSupport
 extension ExportedKotlinPackages.kotlin {
     public protocol Annotation: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin._Annotation {
     }
-    @objc(_Annotation)
+    @objc(_ExportedKotlinPackages_kotlin_Annotation)
     public protocol _Annotation {
     }
     public protocol __Annotation: KotlinRuntimeSupport._KotlinBridgeable {
@@ -23,7 +23,7 @@ extension ExportedKotlinPackages.kotlin {
             endIndex: Swift.Int32
         ) -> any ExportedKotlinPackages.kotlin.CharSequence
     }
-    @objc(_CharSequence)
+    @objc(_ExportedKotlinPackages_kotlin_CharSequence)
     public protocol _CharSequence {
     }
     public protocol __CharSequence: KotlinRuntimeSupport._KotlinBridgeable {
@@ -6729,7 +6729,7 @@ extension ExportedKotlinPackages.kotlin.collections {
     public protocol Iterable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterable {
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
     }
-    @objc(_Iterable)
+    @objc(_ExportedKotlinPackages_kotlin_collections_Iterable)
     public protocol _Iterable {
     }
     public protocol __Iterable: KotlinRuntimeSupport._KotlinBridgeable {
@@ -6738,7 +6738,7 @@ extension ExportedKotlinPackages.kotlin.collections {
         func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         func hasNext() -> Swift.Bool
     }
-    @objc(_Iterator)
+    @objc(_ExportedKotlinPackages_kotlin_collections_Iterator)
     public protocol _Iterator {
     }
     public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {

@@ -7,7 +7,7 @@ public protocol MyInterface: KotlinRuntime.KotlinBase, optional_closure._MyInter
         arg: (() -> Swift.Void)?
     ) -> Swift.Void
 }
-@objc(_MyInterface)
+@objc(_optional_closure_MyInterface)
 public protocol _MyInterface {
 }
 public protocol __MyInterface: KotlinRuntimeSupport._KotlinBridgeable {

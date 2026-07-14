@@ -1,7 +1,7 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Base::class, "8override4BaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Sub::class, "8override3SubC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(P::class, "_P")
+@file:kotlin.native.internal.objc.BindClassToObjCName(P::class, "_override_P")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

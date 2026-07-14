@@ -5,7 +5,7 @@ import KotlinRuntimeSupport
 
 public protocol _ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate: KotlinRuntime.KotlinBase, dependency.__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate {
 }
-@objc(__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate)
+@objc(_dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate)
 public protocol __ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate {
 }
 public protocol ___ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate: KotlinRuntimeSupport._KotlinBridgeable {
@@ -49,10 +49,10 @@ extension ExportedKotlinPackages.datetime {
     }
     public protocol DateTimeFormatBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.datetime._DateTimeFormatBuilder {
     }
-    @objc(_DateTimeFormat)
+    @objc(_ExportedKotlinPackages_datetime_DateTimeFormat)
     public protocol _DateTimeFormat {
     }
-    @objc(_DateTimeFormatBuilder)
+    @objc(_ExportedKotlinPackages_datetime_DateTimeFormatBuilder)
     public protocol _DateTimeFormatBuilder {
     }
     public protocol __DateTimeFormat: KotlinRuntimeSupport._KotlinBridgeable {

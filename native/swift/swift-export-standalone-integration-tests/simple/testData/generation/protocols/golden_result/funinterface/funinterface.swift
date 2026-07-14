@@ -100,24 +100,24 @@ extension ExportedKotlinPackages.funinterface {
     public protocol _123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface.__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
         func callAsFunction() -> Swift.Int32
     }
-    @objc(_FunctionalInterface)
+    @objc(_ExportedKotlinPackages_funinterface_FunctionalInterface)
     public protocol _FunctionalInterface {
     }
     public protocol _FunctionalInterfaceWithLeadingUnderscore: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface.__FunctionalInterfaceWithLeadingUnderscore {
         func callAsFunction() -> Swift.Int32
     }
-    @objc(_XMLFunctionalInterfaceWithLeadingAbbreviation)
+    @objc(_ExportedKotlinPackages_funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation)
     public protocol _XMLFunctionalInterfaceWithLeadingAbbreviation {
     }
-    @objc(__123FunctionalInterfaceWithLeadingNumbers)
+    @objc(_ExportedKotlinPackages_funinterface__123FunctionalInterfaceWithLeadingNumbers)
     public protocol __123FunctionalInterfaceWithLeadingNumbers {
     }
-    @objc(__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation)
+    @objc(_ExportedKotlinPackages_funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation)
     public protocol __123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
     }
     public protocol __FunctionalInterface: KotlinRuntimeSupport._KotlinBridgeable {
     }
-    @objc(__FunctionalInterfaceWithLeadingUnderscore)
+    @objc(_ExportedKotlinPackages_funinterface__FunctionalInterfaceWithLeadingUnderscore)
     public protocol __FunctionalInterfaceWithLeadingUnderscore {
     }
     public protocol __XMLFunctionalInterfaceWithLeadingAbbreviation: KotlinRuntimeSupport._KotlinBridgeable {
@@ -130,7 +130,7 @@ extension ExportedKotlinPackages.funinterface {
     }
     public protocol __functionalInterfaceWithAlreadyLowercaseLeading: KotlinRuntimeSupport._KotlinBridgeable {
     }
-    @objc(_functionalInterfaceWithAlreadyLowercaseLeading)
+    @objc(_ExportedKotlinPackages_funinterface_functionalInterfaceWithAlreadyLowercaseLeading)
     public protocol _functionalInterfaceWithAlreadyLowercaseLeading {
     }
     public protocol functionalInterfaceWithAlreadyLowercaseLeading: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface._functionalInterfaceWithAlreadyLowercaseLeading {

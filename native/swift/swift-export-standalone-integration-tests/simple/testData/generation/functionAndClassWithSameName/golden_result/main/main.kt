@@ -5,9 +5,9 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(ClassWithFactoryWithoutParameters::class, "4main33ClassWithFactoryWithoutParametersC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ObjectWithFactory::class, "4main17ObjectWithFactoryC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(UtcOffset::class, "4main9UtcOffsetC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(CompletableJob::class, "_CompletableJob")
-@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceWithFactory::class, "_InterfaceWithFactory")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Job::class, "_Job")
+@file:kotlin.native.internal.objc.BindClassToObjCName(CompletableJob::class, "_main_CompletableJob")
+@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceWithFactory::class, "_main_InterfaceWithFactory")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Job::class, "_main_Job")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*

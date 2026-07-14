@@ -1,5 +1,5 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "_Bar")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "_MapExport_Bar")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*

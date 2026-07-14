@@ -1,10 +1,10 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.Flow::class, "_Flow")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.FlowCollector::class, "_FlowCollector")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.MutableSharedFlow::class, "_MutableSharedFlow")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.MutableStateFlow::class, "_MutableStateFlow")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.SharedFlow::class, "_SharedFlow")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.StateFlow::class, "_StateFlow")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.Flow::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_Flow")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.FlowCollector::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.MutableSharedFlow::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_MutableSharedFlow")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.MutableStateFlow::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_MutableStateFlow")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.SharedFlow::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_SharedFlow")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.StateFlow::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_StateFlow")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

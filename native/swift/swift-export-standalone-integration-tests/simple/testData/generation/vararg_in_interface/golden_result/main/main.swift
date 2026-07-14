@@ -8,14 +8,14 @@ public protocol Driver: KotlinRuntime.KotlinBase, main._Driver {
         listener: any main._Driver_Listener
     ) -> Swift.Void
 }
-@objc(_Driver)
+@objc(_main_Driver)
 public protocol _Driver {
 }
 public protocol _Driver_Listener: KotlinRuntime.KotlinBase, main.__Driver_Listener {
 }
 public protocol __Driver: KotlinRuntimeSupport._KotlinBridgeable {
 }
-@objc(__Driver_Listener)
+@objc(_main__Driver_Listener)
 public protocol __Driver_Listener {
 }
 public protocol ___Driver_Listener: KotlinRuntimeSupport._KotlinBridgeable {
