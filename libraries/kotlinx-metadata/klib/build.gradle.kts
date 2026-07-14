@@ -37,12 +37,15 @@ dependencies {
     embedded(project(":kotlin-util-klib"))
     embedded(project(":kotlin-util-io"))
     embedded(protobufLite())
-    testImplementation(kotlinTest("junit"))
-    testImplementation(libs.junit4)
+    testImplementation(kotlinTest("junit5"))
 }
 
 if (deployVersion != null) {
     publish()
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 runtimeJarWithRelocation {
