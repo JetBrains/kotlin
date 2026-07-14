@@ -1,6 +1,6 @@
 # Java-Direct: Iteration Results Log
 
-**Current status**: `:compiler:java-direct:test` full suite green, 2838/2838 (100%). No known won't-fix.
+**Current status**: `:compiler:java-direct:test` full suite green, 2839/2839 (100%). No known won't-fix.
 
 **Last archived**: `implDocs/archive/ITERATION_RESULTS_2026_07_13.md` (entries through 2026-07-13).
 
@@ -35,6 +35,21 @@ This log is read into the agent's context every session, so **entries must stay 
 ---
 
 <!-- Add new entries below, newest first. -->
+
+### 2026-07-14 — Skip inaccessible inherited nested classes (IJ-FP regression: `testIntellij_exceptionAnalyzer`)
+- **Change**: `walkSupertypeClassIds` accepted the first inherited nested class of a matching simple
+  name regardless of accessibility, so a package-private nested type in a supertype from another
+  package (e.g. `SimpleColoredComponent.TextRenderer`) wrongly shadowed a same-named top-level class,
+  producing a spurious `RETURN_TYPE_MISMATCH`. Now filtered by JLS 6.6/8.2 accessibility: `private`
+  never inherited, package-private only within the declaring package; inaccessible matches expand
+  deeper instead of resolving. Visibility read cycle-safely via new `FirJavaClass.nonEnhancedVisibility`
+  (from `originalStatus`, no lazy `status`) surfaced through `FirBackedJavaClassAdapter.visibility`.
+- **Files**: `resolution/JavaInheritedClassResolver.kt`, `resolution/FirBackedJavaClassAdapter.kt`,
+  `fir-jvm/.../FirJavaClass.kt` (+`nonEnhancedVisibility`); test
+  `codegen/box/javaDirect/packagePrivateInheritedNestedClassNotVisibleAcrossPackages.kt`.
+- **Tests**: box 1179/1179, phased 1513/1513 (0 FAILED); `IntelliJFullPipelineTestsGenerated.testIntellij_exceptionAnalyzer`
+  green under java-direct; PSI + CompileKotlinAgainstKotlin gates green (shared `FirJavaClass` edit).
+- **Result**: regression fixed.
 
 ### 2026-07-13 — Memoize `JavaClassOverAst.supertypes` (IJ-FP regression)
 - **Change**: `supertypes` was a recomputing `get()` that returned fresh `JavaClassifierTypeOverAst`

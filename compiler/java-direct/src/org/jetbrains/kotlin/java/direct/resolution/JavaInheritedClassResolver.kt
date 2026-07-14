@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.java.direct.resolution
 
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.splitCanonicalFqName
 import org.jetbrains.kotlin.name.ClassId
@@ -87,10 +89,13 @@ private fun walkSupertypeClassIds(simpleName: String, initialAncestorIds: List<C
             if (!visited.add(ancestorId)) continue
 
             val innerClassId = ancestorId.createNestedClassId(Name.identifier(simpleName))
-            if (tryResolveInherited(innerClassId)) {
+            if (tryResolveInherited(innerClassId) && isInheritedNestedClassAccessible(innerClassId)) {
                 if (foundClassId != null && foundClassId != innerClassId) return null
                 foundClassId = innerClassId
             } else {
+                // Also expand past an existing-but-inaccessible match: a member that is not
+                // inherited (private, or package-private from another package) is not in scope, so
+                // an accessible same-named nested class deeper in the hierarchy must still be found.
                 // Expand even when a sibling ancestor at this level already matched, so a
                 // conflicting deeper match is still detected as ambiguous.
                 nextLevelIds.addAll(directSupertypeClassIds(ancestorId))
@@ -100,6 +105,27 @@ private fun walkSupertypeClassIds(simpleName: String, initialAncestorIds: List<C
         currentLevelIds = nextLevelIds
     }
     return foundClassId
+}
+
+/**
+ * JLS 6.6 accessibility of an inherited nested class from the file being resolved. An inaccessible
+ * nested class is not inherited (JLS 8.2), so it is not in scope and must not shadow a same-named
+ * top-level or same-package class:
+ *  - `private` — never inherited;
+ *  - package-private — inherited only within the declaring package;
+ *  - `public` / `protected` (the reference site is always a subtype here) / Kotlin `internal`
+ *    (public in bytecode) — in scope.
+ *
+ * Defaults to accessible when the nested class cannot be materialised.
+ */
+context(c: JavaResolutionContext)
+private fun isInheritedNestedClassAccessible(innerClassId: ClassId): Boolean {
+    val nestedClass = classifierAdapterFor(innerClassId) ?: return true
+    return when (nestedClass.visibility) {
+        Visibilities.Private -> false
+        JavaVisibilities.PackageVisibility -> innerClassId.packageFqName == c.packageFqName
+        else -> true
+    }
 }
 
 internal fun fqNameInPackageToClassId(fqName: FqName, packageFqName: FqName): ClassId {

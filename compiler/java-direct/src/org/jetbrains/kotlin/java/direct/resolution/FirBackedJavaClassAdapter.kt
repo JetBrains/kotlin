@@ -113,8 +113,16 @@ internal class FirBackedJavaClassAdapter(
         get() = false
     override val isFinal: Boolean
         get() = false
+
+    /**
+     * Real declared visibility — required to apply JLS accessibility when deciding whether an
+     * inherited nested class is in scope.
+     */
     override val visibility: Visibility
-        get() = Visibilities.Public
+        get() {
+            val fir = firRegularClass ?: return Visibilities.Public
+            return if (fir is FirJavaClass) fir.nonEnhancedVisibility else fir.status.visibility
+        }
 
     /**
      * Resolved supertype chain, mirroring `FirJavaElementFinder.resolveSupertypesOnAir`: prefer
