@@ -20,8 +20,8 @@ fun testCompanionBlock() {
     assertTrue(Outer.b.compareAndSet(null, "value"))
     assertEquals("value", Outer.b.value)
 
-    //assertEquals(0, Outer.arr[0].value)
-    //assertEquals(1, Outer.arr[0].incrementAndGet())
+    assertEquals(0, Outer.arr[0].value)
+    assertEquals(1, Outer.arr[0].incrementAndGet())
 }
 
 fun box(): String {

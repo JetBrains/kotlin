@@ -24,6 +24,7 @@ import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicHandlerType
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.VolatilePropertyReference
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.atomicfuRender
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer.Companion.VOLATILE
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.hasStaticBackingField
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
 
 abstract class AbstractAtomicfuIrBuilder(
@@ -191,7 +192,7 @@ abstract class AbstractAtomicfuIrBuilder(
             atomicArrayField,
             atomicfuProperty.visibility,
             isVar = false,
-            isStatic = parentContainer is IrFile,
+            isStatic = parentContainer is IrFile || atomicfuProperty.hasStaticBackingField,
             parentContainer
         )
         return AtomicArray(atomicArrayProperty)
