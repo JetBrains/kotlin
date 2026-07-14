@@ -7,7 +7,7 @@
 value class Some(val x: Int) {
     constructor(
         x: String,
-        <!INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER!>@IntroducedAt("1")<!> y: Int = 1
+        @IntroducedAt("1") y: Int = 1
     ) : this(x.length + y)
 }
 
