@@ -5,13 +5,15 @@
 
 package kotlin.script.experimental.test
 
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
 import kotlin.contracts.ExperimentalContracts
-import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asSuccess
+import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
 
 @ExperimentalContracts
@@ -29,6 +31,7 @@ class ResolversTest : ResolversTestBase() {
 
     private fun getNonExistingFile() = withTempFile { it }.also { assertFalse(it.exists()) }
 
+    @Test
     fun testFileSystemResolver() {
         withTempFile { file ->
 
@@ -45,6 +48,7 @@ class ResolversTest : ResolversTestBase() {
         }
     }
 
+    @Test
     fun testFileSystemResolverFail() {
         val file = getNonExistingFile()
 
@@ -61,16 +65,19 @@ class ResolversTest : ResolversTestBase() {
         resolver.assertNotResolve(3, file.path)
     }
 
+    @Test
     fun testFileSystemAcceptsLinuxPath() {
         val resolver = FileSystemDependenciesResolver()
         resolver.assertAcceptsArtifact("/usr/local/bin/temp")
     }
 
+    @Test
     fun testFileSystemAcceptsWindowsPath() {
         val resolver = FileSystemDependenciesResolver()
         resolver.assertAcceptsArtifact("C:\\temp\\myfile")
     }
 
+    @Test
     fun testFileSystemNotAcceptsMavenPath() {
         val resolver = FileSystemDependenciesResolver()
         resolver.assertNotAcceptsArtifact("  ")
@@ -111,6 +118,7 @@ class ResolversTest : ResolversTestBase() {
         }
     }
 
+    @Test
     fun testCompoundResolver() {
         val file1 = getNonExistingFile()
         val file2 = getNonExistingFile()
