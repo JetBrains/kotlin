@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.generators.model.methods
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.MethodGenerator
-import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.MethodModel
-import org.jetbrains.kotlin.generators.model.TestInfraRevision
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.getFilePath
 import org.jetbrains.kotlin.utils.Printer
@@ -20,7 +18,6 @@ import java.util.regex.Pattern
  * Default model for the test method.
  */
 data class SimpleTestMethodModel(
-    private val testInfraRevision: TestInfraRevision,
     private val rootDir: File,
     val file: File,
     private val filenamePattern: Pattern,
@@ -63,14 +60,11 @@ data class SimpleTestMethodModel(
 
         override fun generateBody(method: SimpleTestMethodModel, p: Printer) {
             val file = method.file
-            when (method.testInfraRevision) {
-                TestInfraRevision.StandardJUnit5 if file.isFile -> {
-                    p.println(RunTestWithDirectoryPrefixMethodModel.METHOD_NAME, "(\"", file.name, "\");")
-                }
-                else -> {
-                    val filePath = file.getFilePath() + if (file.isDirectory) "/" else ""
-                    p.println(DEFAULT_RUN_TEST_METHOD_NAME, "(\"", filePath, "\");")
-                }
+            if (file.isFile) {
+                p.println(RunTestWithDirectoryPrefixMethodModel.METHOD_NAME, "(\"", file.name, "\");")
+            } else {
+                val filePath = file.getFilePath() + if (file.isDirectory) "/" else ""
+                p.println(DEFAULT_RUN_TEST_METHOD_NAME, "(\"", filePath, "\");")
             }
         }
     }
