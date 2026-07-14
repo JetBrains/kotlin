@@ -265,7 +265,7 @@ class Fir2IrLazyProperty(
                 typeOrigin,
             )
 
-            fir.receiverParameter?.let {
+            fir.receiverParameter?.takeUnless { fir.isCompanionExtension }?.let {
                 this += accessor.declareThisReceiverParameter(
                     thisType = it.typeRef.toIrType(typeOrigin),
                     thisOrigin = accessor.origin,
