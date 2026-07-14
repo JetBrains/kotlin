@@ -4724,10 +4724,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
     }
 
-    interface InvalidVersioningOnNonfinalFunction : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidVersioningOnNonfinalFunction::class
-    }
-
     interface InvalidVersioningOnNonfinalClass : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvalidVersioningOnNonfinalClass::class
     }

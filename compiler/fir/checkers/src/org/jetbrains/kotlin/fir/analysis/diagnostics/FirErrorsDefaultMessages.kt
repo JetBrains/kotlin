@@ -498,7 +498,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_ANNOTATION_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_LOCAL_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NONFINAL_CLASS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NONFINAL_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NON_OPTIONAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER
@@ -3933,10 +3932,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INVALID_VERSIONING_ON_NON_OPTIONAL,
             "'@IntroducedAt' annotation can only be added to parameters with default values."
-        )
-        map.put(
-            INVALID_VERSIONING_ON_NONFINAL_FUNCTION,
-            "'@IntroducedAt' annotation cannot be used in non-final methods."
         )
         map.put(
             INVALID_VERSIONING_ON_NONFINAL_CLASS,

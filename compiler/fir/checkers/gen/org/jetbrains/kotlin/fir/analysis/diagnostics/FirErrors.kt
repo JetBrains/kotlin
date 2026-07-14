@@ -1117,7 +1117,6 @@ object FirErrors : KtDiagnosticsContainer() {
 
     // Version Overloads
     val INVALID_VERSIONING_ON_NON_OPTIONAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_NON_OPTIONAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val INVALID_VERSIONING_ON_NONFINAL_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_NONFINAL_FUNCTION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INVALID_VERSIONING_ON_NONFINAL_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_NONFINAL_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INVALID_VERSIONING_ON_LOCAL_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_LOCAL_FUNCTION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INVALID_VERSIONING_ON_ANNOTATION_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_ANNOTATION_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

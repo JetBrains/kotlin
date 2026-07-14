@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -18,12 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isCopyMethod
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.correspondingProperty
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.getStringArgument
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
@@ -86,12 +80,6 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
         // check the requirements for a declaration with some @IntroducedAt
         val containingClassSymbol = declaration.getContainingClassSymbol()
         when {
-            !declaration.isFinal ->
-                reporter.reportOn(
-                    declaration.source,
-                    FirErrors.INVALID_VERSIONING_ON_NONFINAL_FUNCTION,
-                    SourceElementPositioningStrategies.DECLARATION_NAME
-                )
             declaration.isLocal ->
                 reporter.reportOn(
                     declaration.source,
