@@ -8,14 +8,27 @@ RUN apt-get update \
     && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG=en_US.utf8
 
-ENV QT_QPA_PLATFORM=offscreen
-
 RUN apt-get install -y git \
     && apt-get install -y curl \
     && apt-get install -y zip zstd \
     && apt-get install -y clang \
     && apt-get install -y libnspr4 \
     && apt-get install -y libatomic1 # native library for nodejs
+
+RUN apt-get update && apt-get install -y \
+    libgl1 \
+    libgl1-mesa-glx \
+    libpulse0 \
+    libx11-6 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrender1 \
+    libxtst6
 
 RUN rm -rf /var/lib/apt/lists/*
 
