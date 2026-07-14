@@ -21,7 +21,7 @@ class AnalysisApiLegacyCallableDumpTest : AbstractAnalysisApiCodebaseDumpFileCom
                 "src/org/jetbrains/kotlin/analysis/api/components",
                 "src/org/jetbrains/kotlin/analysis/api/KaSession.kt",
             ),
-            "api/analysis-api.legacy-component-callables",
+            "api/analysis-api.non-migrated-legacy-api",
         ),
     )
 
