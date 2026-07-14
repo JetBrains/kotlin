@@ -111,18 +111,6 @@ Q|JavaClass|.transform#(R|<local>/s|)
 ### Call 4
 
 ```
-eatString#(Q|JavaClass|.R|/JavaClass.transform|<R|kotlin/String?|>(R|<local>/s|))
-```
-
-#### Candidate 1: `FirNamedFunctionSymbol /eatString` --- `fun eatString(s: String): Unit`
-##### Resolution Stages > CheckArguments:
-
-1. `kotlin/String? <: kotlin/String` _from Argument Q|JavaClass|.R|/JavaClass.transform|<R|kotlin/String?|>(R|<local>/s|)_
-2. __NewConstraintError: `kotlin/String? <: kotlin/String`__
-
-### Call 5
-
-```
 Q|JavaClass|.transform#(R|<local>/s|)
 ```
 
@@ -156,19 +144,7 @@ Q|JavaClass|.transform#(R|<local>/s|)
    )`
 2. `TypeVariable(T) == kotlin/String?` _from Fix variable T_
 
-### Call 6
-
-```
-eatString#(R|<local>/res|)
-```
-
-#### Candidate 1: `FirNamedFunctionSymbol /eatString` --- `fun eatString(s: String): Unit`
-##### Resolution Stages > CheckArguments:
-
-1. `kotlin/String? <: kotlin/String` _from Argument R|<local>/res|_
-2. __NewConstraintError: `kotlin/String? <: kotlin/String`__
-
-### Call 7
+### Call 5
 
 ```
 Q|JavaClass|.transformNotNull#(R|<local>/s|)
@@ -211,7 +187,7 @@ Q|JavaClass|.transformNotNull#(R|<local>/s|)
    )`
 2. `TypeVariable(T) == kotlin/String?` _from Fix variable T_
 
-### Call 8
+### Call 6
 
 ```
 Q|JavaClass|.transformNotNull#(R|<local>/s|)
@@ -247,7 +223,7 @@ Q|JavaClass|.transformNotNull#(R|<local>/s|)
    )`
 2. `TypeVariable(T) == kotlin/String?` _from Fix variable T_
 
-### Call 9
+### Call 7
 
 ```
 Q|JavaClass|.transform#(R|<local>/arg|)
@@ -283,7 +259,7 @@ Q|JavaClass|.transform#(R|<local>/arg|)
    )`
 2. `TypeVariable(T) == R?` _from Fix variable T_
 
-### Call 10
+### Call 8
 
 ```
 Q|JavaClass|.consumeWithBounds#<R|kotlin/String|, >(R|<local>/s|)
@@ -360,7 +336,4 @@ Q|JavaClass|.consumeWithBounds#<R|kotlin/String|, >(R|<local>/s|)
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-5. `kotlin/String! <: TypeVariable(U)` _from SimpleConstraintSystemConstraintPosition_
-6. Combine `TypeVariable(U) <: kotlin/String!` with `kotlin/String! <: TypeVariable(U)`
-    1. `TypeVariable(U) == kotlin/String!`
-7. `TypeVariable(U) == kotlin/String?` _from Fix variable U_
+5. `TypeVariable(U) == kotlin/String?` _from Fix variable U_

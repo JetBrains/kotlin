@@ -339,14 +339,6 @@ bar#(R?C|/foo|(R|<local>/derived|, String(), foo@fun <anonymous>(it: R|kotlin/St
 2. Combine `kotlin/String <: TypeVariable(R2)` with `TypeVariable(R2) <: kotlin/String`
     1. `TypeVariable(R2) == kotlin/String`
 
-#### Candidate 2: `FirNamedFunctionSymbol /bar` --- `@JvmName(name = String(bar2) [evaluated = String(bar2)]) fun bar(x: Out<Base, Int>): Unit`
-##### Resolution Stages > CheckArguments:
-
-1. `Out<Base, TypeVariable(R2)> <: Out<Base, kotlin/Int>` _from Argument R?C|/foo|(R|<local>/derived|, String(), foo <anonymous>(it: R|kotlin/String|): <implicit> <inline=Unknown>  {↩    R|<local>/base|↩}↩, foo <anonymous>(it: R|kotlin/String|): <implicit> <inline=Unknown>  {↩    String()↩}↩)_
-    1. `TypeVariable(R2) <: kotlin/Int`
-2. __NewConstraintError: `kotlin/String <: kotlin/Int`__
-
-#### Candidate 1: `FirNamedFunctionSymbol /bar` --- `fun bar(x: Out<Base, String>): Unit`
 ##### Call Completion:
 
 1. Choose `TypeVariable(R2)` with `Readiness(

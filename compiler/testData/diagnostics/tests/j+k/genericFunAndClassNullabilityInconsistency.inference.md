@@ -65,10 +65,7 @@ R|<local>/k|.foo#(R?C|/JavaBox.JavaBox|(Null(null)))
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `kotlin/String <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
-3. Combine `TypeVariable(T) <: kotlin/String` with `kotlin/String <: TypeVariable(T)`
-    1. `TypeVariable(T) == kotlin/String`
-4. `TypeVariable(T) == kotlin/Nothing?` _from Fix variable T_
+2. `TypeVariable(T) == kotlin/Nothing?` _from Fix variable T_
 
 ### Call 3
 
@@ -116,16 +113,6 @@ foo2#<R|kotlin/String|>(R?C|/JavaBox.JavaBox|(Null(null)))
 
 1. New `TypeVariable(S)` for `FirNamedFunctionSymbol /foo2`s parameter 0
 2. `TypeVariable(S) == kotlin/String` _from TypeParameter R|kotlin/String|_
-
-##### Resolution Stages > CheckArguments:
-
-1. `JavaBox<TypeVariable(T)> <: JavaBox<out TypeVariable(S)>` _from Argument R?C|/JavaBox.JavaBox|(Null(null))_
-    1. `TypeVariable(T) <: TypeVariable(S)`
-2. Combine `TypeVariable(T) <: TypeVariable(S)` with `TypeVariable(S) == kotlin/String`
-    1. `TypeVariable(T) <: kotlin/String`
-3. Combine `kotlin/Nothing? <: TypeVariable(T)` with `TypeVariable(T) <: TypeVariable(S)`
-    1. `kotlin/Nothing? <: TypeVariable(S)`
-4. __NewConstraintError: `kotlin/Nothing? <: kotlin/String`__
 
 ##### Call Completion:
 
@@ -245,7 +232,4 @@ foo3#(R?C|/JavaBox.JavaBox|(Null(null)))
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `kotlin/String <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
-3. Combine `TypeVariable(T) <: kotlin/String` with `kotlin/String <: TypeVariable(T)`
-    1. `TypeVariable(T) == kotlin/String`
-4. `TypeVariable(T) == kotlin/Nothing?` _from Fix variable T_
+2. `TypeVariable(T) == kotlin/Nothing?` _from Fix variable T_

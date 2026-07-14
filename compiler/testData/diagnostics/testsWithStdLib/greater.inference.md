@@ -143,37 +143,35 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-2. `kotlin/Long <: TypeVariable(S)` _from SimpleConstraintSystemConstraintPosition_
-3. Combine `TypeVariable(S) <: kotlin/Long` with `kotlin/Long <: TypeVariable(S)`
-    1. `TypeVariable(S) == kotlin/Long`
-4. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: TypeVariable(T)?`
+2. `TypeVariable(S) == kotlin/Long` _from Fix variable S_
+3. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: TypeVariable(T)?`
     1. `kotlin/Long <: TypeVariable(T)`
-5. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
+4. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
     1. `TypeVariable(T) <: kotlin/Long`
-6. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
+5. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
     1. `TypeVariable(S) <: kotlin/Long?`
-7. Combine `kotlin/Long <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
+6. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(S) & Any>`
     1. `TypeVariable(T) <: kotlin/Comparable<kotlin/Long>`
-8. Combine `kotlin/Long <: TypeVariable(T)` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
+7. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
     1. `TypeVariable(S) <: kotlin/Comparable<kotlin/Long>?`
-9. Combine `kotlin/Long <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Long`
+8. Combine `kotlin/Long <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Long`
     1. `TypeVariable(T) == kotlin/Long`
-10. Choose `TypeVariable(T)` with `Readiness(
-    	 true ALLOWED
-    	 true HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false REIFIED
-    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-    	 true HAS_PROPER_EQUALITY_CONSTRAINT
-    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-    )`
+9. Choose `TypeVariable(T)` with `Readiness(
+   	 true ALLOWED
+   	 true HAS_PROPER_CONSTRAINTS
+   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
+   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+   	 true HAS_PROPER_EQUALITY_CONSTRAINT
+   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+   )`
 
 ### Call 4
 
@@ -272,12 +270,11 @@ R|<local>/countExpr|.greater#(String(0))
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-7. `it(kotlin/Long & kotlin/String) <: TypeVariable(S)` _from SimpleConstraintSystemConstraintPosition_
-8. Combine `it(kotlin/Long & kotlin/String) <: TypeVariable(S)` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
+7. __InferredEmptyIntersectionWarning__
+8. `TypeVariable(S) == it(kotlin/Long & kotlin/String)` _from Fix variable S_
+9. Combine `TypeVariable(S) == it(kotlin/Long & kotlin/String)` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
     1. `TypeVariable(S) <: kotlin/Long?`
     2. `TypeVariable(S) <: kotlin/Comparable<it(kotlin/Long & kotlin/String)>?`
-9. __InferredEmptyIntersectionWarning__
-10. `TypeVariable(S) == it(kotlin/Long & kotlin/String)` _from Fix variable S_
 
 ### Call 5
 

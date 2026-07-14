@@ -324,5 +324,4 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )`
-11. `it(M & Z?) <: TypeVariable(R)` _from SimpleConstraintSystemConstraintPosition_
-12. `TypeVariable(R) == it(M & Z?)` _from Fix variable R_
+11. `TypeVariable(R) == it(M & Z?)` _from Fix variable R_

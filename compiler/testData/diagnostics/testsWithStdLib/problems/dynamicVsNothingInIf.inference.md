@@ -11,13 +11,6 @@ IllegalStateException#(String(Something is not defined.))
 
 1. `kotlin/String <: kotlin/String!` _from Argument String(Something is not defined.)_
 
-#### Candidate 2: `FirConstructorSymbol java/lang/IllegalStateException.IllegalStateException` --- `constructor(p0: Throwable!): {kotlin/IllegalStateException=} IllegalStateException`
-##### Resolution Stages > CheckArguments:
-
-1. `kotlin/String <: kotlin/Throwable!` _from Argument String(Something is not defined.)_
-2. __NewConstraintError: `kotlin/String <: kotlin/Throwable!`__
-
-#### Candidate 1: `FirConstructorSymbol java/lang/IllegalStateException.IllegalStateException` --- `constructor(p0: String!): {kotlin/IllegalStateException=} IllegalStateException`
 ##### Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `{kotlin/IllegalStateException=} java/lang/IllegalStateException <: kotlin/Throwable` _from ExpectedType for some call_
@@ -124,12 +117,10 @@ when () {
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-2. `dynamic <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
-3. Combine `TypeVariable(T) <: dynamic` with `dynamic <: TypeVariable(T)`
-    1. `TypeVariable(T) == dynamic`
-4. Combine `TypeVariable(T) == dynamic` with `TypeVariable(T) <: TypeVariable(K)`
+2. `TypeVariable(T) == dynamic` _from Fix variable T_
+3. Combine `TypeVariable(T) == dynamic` with `TypeVariable(T) <: TypeVariable(K)`
     1. `dynamic <: TypeVariable(K)`
-5. Choose `TypeVariable(K)` with `Readiness(
+4. Choose `TypeVariable(K)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -145,7 +136,7 @@ when () {
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-6. `TypeVariable(K) == dynamic` _from Fix variable K_
+5. `TypeVariable(K) == dynamic` _from Fix variable K_
 
 ### Call 4
 

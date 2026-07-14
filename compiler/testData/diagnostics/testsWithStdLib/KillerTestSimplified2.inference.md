@@ -2368,10 +2368,7 @@ bar#(R|<local>/generic|, R|<local>/first|, R|<local>/second|, R|<local>/third|, 
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )`
-48. `Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, Td, Te, Tf> <: TypeVariable(U0)` _from SimpleConstraintSystemConstraintPosition_
-49. Combine `TypeVariable(U0) <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, Td, Te, Tf>` with `Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, Td, Te, Tf> <: TypeVariable(U0)`
-    1. `TypeVariable(U0) == Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, Td, Te, Tf>`
-50. `TypeVariable(U0) == T0` _from Fix variable U0_
+48. `TypeVariable(U0) == T0` _from Fix variable U0_
 
 ### Call 2
 
