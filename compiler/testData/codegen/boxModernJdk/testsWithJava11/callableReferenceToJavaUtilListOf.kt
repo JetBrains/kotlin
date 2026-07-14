@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// LANGUAGE: +CompanionBlocks +CompanionExtensions +CollectionLiterals
+// LANGUAGE: +CompanionBlocks +CollectionLiterals
 
 fun take0(foo: Function0<List<Int>>) { }
 fun <T> take1(foo: Function1<T, List<Int>>) { }

@@ -7,5 +7,4 @@ out
 -libraries
 $STDLIB_JS$
 
--Xcompanion-blocks
--Xcompanion-extensions
+-Xcompanion-blocks-and-extensions

@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// LANGUAGE: +CompanionBlocks +CompanionExtensions
+// LANGUAGE: +CompanionBlocks
 
 import kotlin.test.assertEquals
 import kotlin.reflect.jvm.isAccessible

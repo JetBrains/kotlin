@@ -1,5 +1,5 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
-// ^ On Native `CompanionBlocksAndExtensions` language feature enables the JVM-like initialization.
+// LANGUAGE: +CompanionBlocks
+// ^ On Native `CompanionBlocks` language feature enables the JVM-like initialization.
 //   See nativeCompanionInitOrderLegacy for Native behavior without the language feature.
 // ISSUE: KT-87516 [K/JS, K/Wasm] Companion objects coming from super interfaces are not initialized
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI

@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocks +CompanionExtensions
+// LANGUAGE: +CompanionBlocks
 
 class Vector(val x: Double, val y: Double) {
     companion {

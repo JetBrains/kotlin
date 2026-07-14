@@ -1,6 +1,6 @@
 // See companionInitOrderWithSuperclass and companionInitOrderWithSuperinterface for the common treatment.
 // TARGET_BACKEND: NATIVE
-// LANGUAGE: -CompanionBlocksAndExtensions
+// LANGUAGE: -CompanionBlocks -CompanionExtensions
 // Without this language feature, the initialization order on Native does not include recursive initialization of superclasses and superinterfaces.
 
 var l = ""

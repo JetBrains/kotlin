@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocks +CompanionExtensions
+// LANGUAGE: +CompanionBlocks
 // FILE: test.kt
 
 // Single companion block: several initializers, including a multi-statement one.

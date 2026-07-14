@@ -211,7 +211,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     fun testWithEnabledCompanionBlockFeature(testInfo: TestInfo) {
         doManifestTest(
             testInfo,
-            "-Xcompanion-blocks", "-Xcompanion-extensions",
+            "-Xcompanion-blocks-and-extensions",
         )
     }
 
