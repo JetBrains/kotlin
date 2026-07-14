@@ -137,7 +137,7 @@ class ObjCInteropFacade(
             ) =
                 invokeCInterop(
                     classLoader,
-                    expectedArtifact.klibFile,
+                    expectedArtifact.klibFile.toPath(),
                     args.toTypedArray()
                 )
 

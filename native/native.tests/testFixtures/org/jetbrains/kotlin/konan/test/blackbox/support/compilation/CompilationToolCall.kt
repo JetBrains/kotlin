@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.RegularKotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
@@ -22,11 +23,14 @@ import org.junit.jupiter.api.Assumptions
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.pathString
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
-import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 data class CompilationToolCallResult(
     val exitCode: ExitCode,
@@ -124,13 +128,13 @@ fun callCompilerWithoutOutputInterceptor(
 @OptIn(ExperimentalTime::class)
 fun invokeCInterop(
     kotlinNativeClassLoader: ClassLoader,
-    outputLib: File,
+    outputLib: Path,
     args: Array<String>
 ): CompilationToolCallResult {
-    val buildDir = KonanFile("${outputLib.canonicalPath}-build")
-    val generatedDir = KonanFile(buildDir, "kotlin")
-    val nativesDir = KonanFile(buildDir, "natives")
-    val manifest = KonanFile(buildDir, "manifest.properties")
+    val buildDir = Path("${outputLib.canonicalPathString()}-build")
+    val generatedDir = buildDir.resolve("kotlin")
+    val nativesDir = buildDir.resolve("natives")
+    val manifest = buildDir.resolve("manifest.properties")
     val cstubsName = "cstubs"
 
     val interopClass = Class.forName("org.jetbrains.kotlin.native.interop.gen.jvm.Interop", true, kotlinNativeClassLoader)
@@ -145,7 +149,7 @@ fun invokeCInterop(
                 "native",
                 args,
                 false,
-                generatedDir.absolutePath, nativesDir.absolutePath, manifest.path, cstubsName // args for InternalInteropOptions()
+                generatedDir.absolutePathString(), nativesDir.absolutePathString(), manifest.pathString, cstubsName // args for InternalInteropOptions()
             )
         }
     return when {
