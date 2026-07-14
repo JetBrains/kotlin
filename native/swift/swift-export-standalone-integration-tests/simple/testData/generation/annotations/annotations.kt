@@ -141,6 +141,14 @@ class normalChildT : normalT() {
     override var removedP: Int
         @Deprecated("Removed", level = DeprecationLevel.HIDDEN) get() = 42
         @Deprecated("Removed", level = DeprecationLevel.HIDDEN) set(new) {}
+
+    var removedSetter: Int
+        get() = 53
+        @Deprecated("Removed", level = DeprecationLevel.HIDDEN) set(new) {}
+
+    var String.removedSetterExt: Int
+        get() = 64
+        @Deprecated("Removed", level = DeprecationLevel.HIDDEN) set(new) {}
 }
 
 @Deprecated("Deprecated")

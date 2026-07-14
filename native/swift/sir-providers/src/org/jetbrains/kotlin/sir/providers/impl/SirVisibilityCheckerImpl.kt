@@ -106,7 +106,7 @@ public class SirVisibilityCheckerImpl(
                 }
             }
             is KaVariableSymbol -> {
-                if (ktSymbol.hasHiddenAccessors)
+                if (ktSymbol.hasHiddenGetter)
                     return@withSessions SirAvailability.Hidden("Property declaration has hidden accessors")
                 else
                     SirVisibility.PUBLIC
@@ -191,10 +191,8 @@ public class SirVisibilityCheckerImpl(
             ?: SirAvailability.Unavailable("Type is not a declaration")
     }
 
-    private val KaVariableSymbol.hasHiddenAccessors
-        get() = (this as? KaPropertySymbol)?.let {
-            it.getter?.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN || it.setter?.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN
-        } == true
+    private val KaVariableSymbol.hasHiddenGetter
+        get() = (this as? KaPropertySymbol)?.getter?.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN
 
     private fun KaClassSymbol.hasHiddenAncestors(): Boolean = sirSession.withSessions {
         generateSequence(this@hasHiddenAncestors) { symbol ->

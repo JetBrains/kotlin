@@ -1410,6 +1410,21 @@ public fun normalChildT_removedF(self: kotlin.native.internal.NativePtr): Boolea
     return run { _result; true }
 }
 
+@ExportedBridge("normalChildT_removedSetterExt_get__TypesOfArgumentsE__Swift_String__")
+public fun normalChildT_removedSetterExt_get__TypesOfArgumentsE__Swift_String__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalChildT
+    val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
+    val _result = run { __self.run { __receiver.removedSetterExt } }
+    return _result
+}
+
+@ExportedBridge("normalChildT_removedSetter_get")
+public fun normalChildT_removedSetter_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalChildT
+    val _result = run { __self.removedSetter }
+    return _result
+}
+
 @ExportedBridge("normalChildT_removedV_get")
 public fun normalChildT_removedV_get(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalChildT
