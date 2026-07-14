@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
@@ -66,7 +66,15 @@ enum class DirtyFileState(val str: String) {
     REMOVED_FILE("removed file")
 }
 
+interface ICCacheInvalidatingKeys {
+    val stringKeys: List<CompilerConfigurationKey<String>>
+    val booleanKeys: List<CompilerConfigurationKey<Boolean>>
+    val enumKeys: List<CompilerConfigurationKey<Enum<*>>>
+}
+
 interface PlatformDependentICContext {
+    fun getCacheInvalidatingKeys(): ICCacheInvalidatingKeys
+
     fun createIrFactory(): IrFactory
 
     fun createBackendContext(
@@ -130,7 +138,11 @@ class CacheUpdater(
     private val irInterner = IrInterningService()
 
     private val cacheRootDir = run {
-        val configHash = icHasher.calculateConfigHash(compilerConfiguration, artifactConfiguration)
+        val configHash = icHasher.calculateConfigHash(
+            invalidatingKeys = icContext.getCacheInvalidatingKeys(),
+            config = compilerConfiguration,
+            artifactConfiguration = artifactConfiguration
+        )
         File(cacheDir, "version.${configHash.hash.lowBytes.toString(Character.MAX_RADIX)}")
     }
 
