@@ -96,7 +96,7 @@ class JvmAtomicfuIrBuilder(
             atomicArrayField,
             atomicfuProperty.visibility,
             isVar = false,
-            isStatic = parentContainer is IrFile,
+            isStatic = parentContainer is IrFile || atomicfuProperty.backingField?.isStatic == true,
             parentContainer
         )
         return BoxedAtomic(atomicArrayProperty)

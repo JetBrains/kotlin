@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public final class CompanionExtensionPropertiesKt {
+    // source: 'CompanionExtensionProperties.kt'
+    private synthetic final static field cA: java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static field cB: java.util.concurrent.atomic.AtomicReference
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getCA(): java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static method getCB(): java.util.concurrent.atomic.AtomicReference
+    public final static method testCompanionExt(): void
+}
+
+@kotlin.Metadata
+public final class Outer {
+    // source: 'CompanionExtensionProperties.kt'
+    public method <init>(): void
+}

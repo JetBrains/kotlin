@@ -1,0 +1,19 @@
+@kotlin.Metadata
+public final class CompanionBlockPropertiesKt {
+    // source: 'CompanionBlockProperties.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method testCompanionBlock(): void
+}
+
+@kotlin.Metadata
+final class Outer {
+    // source: 'CompanionBlockProperties.kt'
+    private synthetic final static field arr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static field b: java.util.concurrent.atomic.AtomicReference
+    private synthetic final static field i: java.util.concurrent.atomic.AtomicInteger
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final method getArr$main(): java.util.concurrent.atomic.AtomicIntegerArray
+    public synthetic final static method getB$main(): java.util.concurrent.atomic.AtomicReference
+    public synthetic final static method getI$main(): java.util.concurrent.atomic.AtomicInteger
+}

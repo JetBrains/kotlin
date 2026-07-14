@@ -180,10 +180,11 @@ class AtomicfuJvmIrTransformer(
         parentContainer: IrDeclarationContainer
     ): AtomicHandler<IrProperty>? {
         val isTopLevel = parentContainer is IrFile || (parentContainer is IrClass && parentContainer.kind == ClassKind.OBJECT)
+        val isStatic = atomicfuProperty.backingField?.isStatic == true
         with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
             return when {
                 atomicfuProperty.isNotDelegatedAtomic() -> {
-                    if (isTopLevel) {
+                    if (isTopLevel || isStatic) {
                         buildBoxedAtomic(atomicfuProperty, parentContainer)
                     } else {
                         buildAtomicFieldUpdater(atomicfuProperty, parentContainer as IrClass)
