@@ -21,6 +21,8 @@ import java.lang.ProcessBuilder
 import java.lang.ProcessBuilder.Redirect
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.*
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.writeLines
 
 typealias ObjectFile = String
 typealias ExecutableFile = String
@@ -71,7 +73,7 @@ private fun llvmArStaticLibraryCommands(
 private fun responseFileArg(tempFiles: TempFiles, responseFilePrefix: String, paths: List<String>): String {
     val responseFile = tempFiles.create(responseFilePrefix, ".rsp")
     responseFile.writeLines(paths.map { "\"$it\"" })
-    return "@${responseFile.absolutePath}"
+    return "@${responseFile.absolutePathString()}"
 }
 
 class LinkerArguments(
@@ -268,14 +270,14 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             staticLibraries
         else tempFiles.create("libraries").let { librariesListFile ->
             librariesListFile.writeLines(staticLibraries)
-            listOf("-filelist", librariesListFile.absolutePath)
+            listOf("-filelist", librariesListFile.absolutePathString())
         }
 
         val dynamicLibrariesArgs = if (dynamicLibraries.isEmpty())
             dynamicLibraries
         else tempFiles.create("dynamic").let { dynamicLibrariesListFile ->
             dynamicLibrariesListFile.writeLines(dynamicLibraries)
-            listOf("-filelist", dynamicLibrariesListFile.absolutePath)
+            listOf("-filelist", dynamicLibrariesListFile.absolutePathString())
         }
 
         if (kind == LinkerOutputKind.STATIC_LIBRARY) {

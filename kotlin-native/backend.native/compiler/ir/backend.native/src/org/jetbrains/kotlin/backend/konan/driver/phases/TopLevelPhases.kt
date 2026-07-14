@@ -45,7 +45,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-private fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc").javaFile()
+private fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc").toFile()
 
 internal fun PhaseEngine<NativeBackendPhaseContext>.runFrontend(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val languageVersion = config.languageVersionSettings.languageVersion
@@ -200,7 +200,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                     val bitcodeFile = tempFiles.createBitcodeFile(generationState.llvmModuleName)
                     val cExportFiles = if (config.produceCInterface) {
                         CExportFiles(
-                                cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
+                                cppAdapter = tempFiles.create("api", ".cpp").toFile(),
                                 bitcodeAdapter = tempFiles.createBitcodeFile("api"),
                                 header = outputFiles.cAdapterHeader.javaFile(),
                                 def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.javaFile() else null,
@@ -426,7 +426,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
 ) {
-    val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
+    val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").toFile()
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
     val linkerOutputKind = determineLinkerOutput(context)
     val [linkerInput, cacheBinaries] = run {
@@ -436,7 +436,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
                 compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
-                val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").javaFile()
+                val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").toFile()
                 runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
                 // Static caches are linked into binary, so we don't need to pass them.
                 prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)

@@ -52,6 +52,7 @@ import java.io.File
 import java.nio.file.*
 import java.util.*
 import kotlin.io.path.Path
+import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 
 data class InternalInteropOptions(val generated: String, val natives: String?, val manifest: String? = null,
@@ -394,7 +395,7 @@ private fun processCLib(
         val driverOptions = StubIrDriver.DriverOptions(
                 entryPoint,
                 moduleName,
-                File(outCFile.absolutePath),
+                File(outCFile.absolutePathString()),
                 outKtFileCreator,
                 cinteropArguments.dumpBridges ?: false,
         )
@@ -442,7 +443,7 @@ private fun processCLib(
             KotlinPlatform.JVM -> {
                 val outOFile = tempFiles.create(libName,".o")
                 val compilerCmd = arrayOf(compiler, *compilerArgs,
-                        "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
+                        "-c", outCFile.absolutePathString(), "-o", outOFile.absolutePathString())
                 runCmd(compilerCmd, verbose)
                 val linkerOpts =
                         def.config.linkerOpts.toTypedArray() +
@@ -450,10 +451,10 @@ private fun processCLib(
                                 additionalLinkerOpts
                 val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
                 val linkerCmd = arrayOf(linker,
-                        outOFile.absolutePath, "-shared", "-o", outLib.absolutePath,
+                        outOFile.absolutePathString(), "-shared", "-o", outLib.absolutePath,
                         *linkerOpts)
                 runCmd(linkerCmd, verbose)
-                outOFile.absolutePath
+                outOFile.absolutePathString()
             }
             KotlinPlatform.NATIVE if configuration.cCallMode == CCallMode.DIRECT -> {
                 // Don't generate the bitcode (and don't pack it into the resulting klib),
@@ -467,7 +468,7 @@ private fun processCLib(
                 // The source file is passed in via stdin to ensure the output library is deterministic.
                 val compilerCmd = arrayOf(compiler, *compilerArgs,
                         "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
-                runCmd(compilerCmd, verbose, redirectInputFile = File(outCFile.absolutePath))
+                runCmd(compilerCmd, verbose, redirectInputFile = outCFile.absolute().toFile())
                 outLib.absolutePath
             }
         }
