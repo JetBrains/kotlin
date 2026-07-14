@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.io.canonicalPathString
+import org.jetbrains.kotlin.io.listDirectoryEntriesIfDirectoryExists
 import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -26,7 +27,6 @@ import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.bufferedReader
 import kotlin.io.path.exists
-import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.readBytes
 import kotlin.io.path.readLines
@@ -322,8 +322,6 @@ class CachedLibraries(
             val fingerprintHash = computeDependenciesFingerprint(listOf(library) + dependencies, librariesHashes)
             return baseCacheDirectory.resolve(library.uniqueName).resolve(fingerprintHash.toString())
         }
-
-        private fun Path.listDirectoryEntriesIfDirectoryExists(): List<Path> = if (exists()) listDirectoryEntries() else emptyList()
 
         const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"
         const val PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME = "bin"

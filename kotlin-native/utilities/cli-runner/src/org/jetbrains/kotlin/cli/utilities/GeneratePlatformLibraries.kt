@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.konan.util.PlatformLibsInfo
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.interop.gen.jvm.parseKeyValuePairs
 import org.jetbrains.kotlin.native.interop.tool.SHORT_MODULE_NAME
+import org.jetbrains.kotlin.io.listDirectoryEntriesIfDirectoryExists
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
@@ -34,7 +34,6 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.forEachLine
-import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 
 // TODO: We definitely need to unify logging in different parts of the compiler.
@@ -324,7 +323,7 @@ private fun buildCache(
         konanDataDir: String?,
 ): Unit = with(cacheInfo) {
     val libraryCacheDir = getLibraryCacheDir(def.name, target, cacheDirectory, cacheKind)
-    if (libraryCacheDir.listDirectoryEntries().isNotEmpty() && !rebuild) {
+    if (libraryCacheDir.listDirectoryEntriesIfDirectoryExists().isNotEmpty() && !rebuild) {
         logger.verbose("Skip precompiling ${def.name} as it's already precompiled")
         return
     }
@@ -401,7 +400,7 @@ private fun generatePlatformLibraries(
     // Build dependencies graph.
     val defFiles = mutableMapOf<String, DefFile>()
     val dependsRegex = Regex("^depends = (.*)")
-    inputDirectory.listDirectoryEntries().filter { it.extension == "def" }.forEach { file ->
+    inputDirectory.listDirectoryEntriesIfDirectoryExists().filter { it.extension == "def" }.forEach { file ->
         val name = file.name.split(".").also { assert(it.size == 2) }[0]
         val def = defFiles.getOrPut(name) {
             DefFile(name, mutableListOf())

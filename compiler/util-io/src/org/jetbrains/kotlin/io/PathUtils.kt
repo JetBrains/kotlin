@@ -12,6 +12,7 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.readAttributes
 
 /**
@@ -55,3 +56,9 @@ fun Path.deleteOnExitRecursively() {
         }
     })
 }
+
+/**
+ * A safe version of [Path.listDirectoryEntries] that does not fail and returns `false` if the directory
+ * represented by the extension receiver does not exist.
+ */
+fun Path.listDirectoryEntriesIfDirectoryExists(): List<Path> = if (exists()) listDirectoryEntries() else emptyList()
