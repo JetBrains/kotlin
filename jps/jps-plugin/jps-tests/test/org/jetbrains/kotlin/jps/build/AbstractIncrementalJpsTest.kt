@@ -10,7 +10,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.TestLoggerFactory
-import com.intellij.testFramework.UsefulTestCase
 import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
@@ -51,6 +50,7 @@ import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameLinesWithFile
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.jupiter.api.AfterEach
@@ -234,7 +234,7 @@ abstract class AbstractIncrementalJpsTest(
 
         val initBuildLogFile = File(testDataDir, "init-build.log")
         if (initBuildLogFile.exists()) {
-            UsefulTestCase.assertSameLinesWithFile(initBuildLogFile.absolutePath, makeResult.log)
+            assertSameLinesWithFile(initBuildLogFile.absolutePath, makeResult.log)
         } else {
             assertFalse(makeResult.makeFailed, "Initial make failed:\n$makeResult")
         }

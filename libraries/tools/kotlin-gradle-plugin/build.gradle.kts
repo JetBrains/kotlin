@@ -280,7 +280,7 @@ dependencies {
     testImplementation(libs.lincheck)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(libs.slf4j.api)
-
+    testRuntimeOnly(libs.apache.commons.compress) // is required for `TarArchiveOutputStream` in `NativeVersionValueSourceTest`
 }
 
 optInToK1Deprecation()

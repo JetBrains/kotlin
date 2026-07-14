@@ -18,32 +18,11 @@
 
 package org.jetbrains.kotlin.library.abi.parser
 
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertNotNull
-import kotlin.test.assertFailsWith
-import org.jetbrains.kotlin.library.abi.AbiClass
-import org.jetbrains.kotlin.library.abi.AbiClassKind
-import org.jetbrains.kotlin.library.abi.AbiCompoundName
-import org.jetbrains.kotlin.library.abi.AbiEnumEntry
-import org.jetbrains.kotlin.library.abi.AbiFunction
-import org.jetbrains.kotlin.library.abi.AbiModality
-import org.jetbrains.kotlin.library.abi.AbiProperty
-import org.jetbrains.kotlin.library.abi.AbiQualifiedName
-import org.jetbrains.kotlin.library.abi.AbiSignatureVersion
-import org.jetbrains.kotlin.library.abi.AbiTypeArgument
-import org.jetbrains.kotlin.library.abi.AbiValueParameter
-import org.jetbrains.kotlin.library.abi.AbiValueParameterKind
-import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
-import org.jetbrains.kotlin.library.abi.LibraryAbi
-import org.junit.Ignore
+import org.jetbrains.kotlin.library.abi.*
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertIterableEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.assertThrows
 import java.text.ParseException
-import kotlin.toString
+import kotlin.test.assertFailsWith
 
 class KlibDumpParserTest {
 

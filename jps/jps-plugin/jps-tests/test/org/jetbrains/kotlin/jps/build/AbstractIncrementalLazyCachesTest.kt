@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.incremental.testingUtils.ModifyContent
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameLinesWithFile
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -58,7 +59,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
 
         val actual = dumpKotlinCachesFileNames()
         val expectedFile = File(testDataPath, expectedCachesFileName)
-        UsefulTestCase.assertSameLinesWithFile(expectedFile.canonicalPath, actual)
+        assertSameLinesWithFile(expectedFile.canonicalPath, actual)
     }
 
     override fun performAdditionalModifications(modifications: List<Modification>) {

@@ -11,7 +11,6 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.LightVirtualFile
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.jps.ModuleChunk
@@ -54,7 +53,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameElements
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameLinesWithFile
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.Printer
@@ -396,8 +397,8 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         // Check that outputs are located properly
         val facadeWithA = findFileInOutputDir(findModule("module1"), "test/AKt.class")
         val facadeWithB = findFileInOutputDir(findModule("module2"), "test/BKt.class")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB")
+        assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA")
+        assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB")
 
 
         if (IncrementalCompilation.isEnabledForJvm()) {
@@ -420,8 +421,8 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         // Check that outputs are located properly
         val facadeWithA = findFileInOutputDir(findModule("module1"), "test/AKt.class")
         val facadeWithB = findFileInOutputDir(findModule("module2"), "test/BKt.class")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "funA", "getA")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "funB", "getB", "setB")
+        assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "funA", "getA")
+        assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "funB", "getB", "setB")
 
         if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(createTouchAction("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
@@ -539,7 +540,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val p = Printer(sb, "  ")
         outputDir.printFilesRecursively(p)
 
-        UsefulTestCase.assertSameLinesWithFile(expectedOutputFile.canonicalPath, sb.toString(), true)
+        assertSameLinesWithFile(expectedOutputFile.canonicalPath, sb.toString(), true)
     }
 
     private fun File.printFilesRecursively(p: Printer) {
@@ -1088,7 +1089,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         TestDataAssertions.assertEqualsToFile(expectedFile, actualErrors)
     }
 
-    private fun getCurrentTestDataRoot() = File(TEST_DATA_PATH + "general/" + getTestName(testInfo.testMethod.get().name, false))
+    private fun getCurrentTestDataRoot() = File(TEST_DATA_PATH + "general/" + KtUsefulTestCase.getTestName(testInfo.testMethod.get().name, false))
 
     private fun buildCustom(
             canceledStatus: CanceledStatus,
