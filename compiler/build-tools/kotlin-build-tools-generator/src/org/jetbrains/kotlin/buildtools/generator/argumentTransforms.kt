@@ -93,7 +93,11 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
                 warningSince = KotlinReleaseVersion.v2_4_0,
                 errorSince = KotlinReleaseVersion.v2_5_0
             ) // configured explicitly when instantiating operations
-            drop("Xlegacy-metadata-jar-k2")
+            restrict(
+                "Xlegacy-metadata-jar-k2",
+                warningSince = KotlinReleaseVersion.v2_5_0,
+                errorSince = KotlinReleaseVersion.v2_6_0
+            ) // unsupported in BTA, we produce only metadata klib
         }
     })
     put(actualJvmCompilerArguments.name, buildMap {

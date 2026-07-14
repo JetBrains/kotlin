@@ -155,6 +155,7 @@ internal class MetadataArgumentsImpl(
     val args = compilerArgs as K2MetadataCompilerArguments
     val castedDefaults = defaultArgs as K2MetadataCompilerArguments
     if (args.destination != castedDefaults.destination) _restrictedArgViolations.add(RestrictedArgViolation.Error("Argument '-d' is not supported in the Build Tools API. The destination is configured via the destination parameter of metadataKlibCompilationOperationBuilder."))
+    if (args.legacyMetadataJar != castedDefaults.legacyMetadataJar) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-Xlegacy-metadata-jar-k2' is not supported in the Build Tools API. This warning will become an error starting from Kotlin 2.6.0."))
   }
 
   /**

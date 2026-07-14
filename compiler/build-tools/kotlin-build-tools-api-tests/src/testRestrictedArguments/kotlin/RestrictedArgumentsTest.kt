@@ -108,6 +108,19 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("-Xlegacy-metadata-jar-k2 reports restricted usage")
+    fun testLegacyMetadataJar(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        metadataProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            module.checkRestrictedArgument(
+                "-Xlegacy-metadata-jar-k2",
+                errorSince = KotlinReleaseVersion.v2_6_0,
+                configuredArgs = listOf("-Xlegacy-metadata-jar-k2")
+            )
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-include-runtime emits a warning")
     fun testIncludeRuntimeWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
