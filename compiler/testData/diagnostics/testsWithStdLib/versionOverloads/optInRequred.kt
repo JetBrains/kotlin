@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// WITH_STDLIB
 
 class C {
     fun foo(
