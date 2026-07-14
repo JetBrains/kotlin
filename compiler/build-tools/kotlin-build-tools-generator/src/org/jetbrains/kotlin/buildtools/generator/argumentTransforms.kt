@@ -89,7 +89,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
         with(actualMetadataArguments) {
             restrict(
                 "d",
-                reason = "The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder.",
+                reason = "The destination is configured via the destination parameter of metadataKlibCompilationOperationBuilder.",
                 warningSince = KotlinReleaseVersion.v2_4_0,
                 errorSince = KotlinReleaseVersion.v2_5_0
             ) // configured explicitly when instantiating operations
