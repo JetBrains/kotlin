@@ -100,7 +100,10 @@ internal class CompositeMetadataArtifactImpl(
             }.toSet()
 
             cinteropLibraryNames.map { cinteropLibraryName ->
-                CInteropMetadataBinaryImpl(this, cinteropLibraryName, artifactFile)
+                CInteropMetadataBinaryImpl(
+                    this, cinteropLibraryName, artifactFile,
+                    metadataRootDirectory = if (isMKlib) "metadata/" else ""
+                )
             }
         }
 
@@ -156,6 +159,7 @@ internal class CompositeMetadataArtifactImpl(
         override val containingSourceSetContent: CompositeMetadataArtifactContent.SourceSetContent,
         override val cinteropLibraryName: String,
         private val artifactFile: ArtifactFile,
+        private val metadataRootDirectory: String,
     ) : CompositeMetadataArtifactContent.CInteropMetadataBinary {
 
         override val archiveExtension: String
@@ -184,8 +188,9 @@ internal class CompositeMetadataArtifactImpl(
             }
 
             val sourceSetName = containingSourceSetContent.sourceSetName
-            val cinteropMetadataDirectory = kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
-                ?: error("Missing CInteropMetadataDirectory for SourceSet $sourceSetName")
+            val cinteropMetadataDirectory =
+                metadataRootDirectory + (kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
+                    ?: error("Missing CInteropMetadataDirectory for SourceSet $sourceSetName"))
             val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(cinteropMetadataDirectory)
 
             val libraryPath = "$cinteropMetadataDirectoryPath$cinteropLibraryName/"

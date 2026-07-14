@@ -151,7 +151,7 @@ object KotlinUsages {
     }
 
     private class KotlinCinteropCompatibility : AttributeCompatibilityRule<Usage> {
-        private val compatibleProducerValues = setOf(KOTLIN_API, JAVA_API, JAVA_RUNTIME)
+        private val compatibleProducerValues = setOf(KOTLIN_API + MERGED_KLIB_USAGE_SUFFIX, KOTLIN_API, JAVA_API, JAVA_RUNTIME)
         override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
             if (consumerValue?.name == KOTLIN_CINTEROP && producerValue?.name in compatibleProducerValues) {
                 compatible()
@@ -165,6 +165,7 @@ object KotlinUsages {
                 val candidateNames = getCandidateNames()
                 when {
                     KOTLIN_CINTEROP in candidateNames -> chooseCandidateByName(KOTLIN_CINTEROP)
+                    KOTLIN_API + MERGED_KLIB_USAGE_SUFFIX in candidateNames -> chooseCandidateByName(KOTLIN_API)
                     KOTLIN_API in candidateNames -> chooseCandidateByName(KOTLIN_API)
                     JAVA_API in candidateNames -> chooseCandidateByName(JAVA_API)
                     else -> Unit

@@ -21,6 +21,7 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
@@ -45,7 +46,9 @@ internal fun KotlinTargetSoftwareComponent(
     kotlinComponent: KotlinTargetComponent,
 ): KotlinTargetSoftwareComponent {
     // val adhocVariant = softwareComponentFactory.adhoc(kotlinComponent.name)
-    val adhocVariant = target.project.multiplatformExtension.publishing.adhocSoftwareComponent
+
+    val adhocVariant = target.project.multiplatformExtensionOrNull?.publishing?.adhocSoftwareComponent
+        ?: (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java).adhoc(kotlinComponent.name)
 
     /* Launch configuration */
     target.project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
