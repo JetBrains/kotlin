@@ -202,13 +202,15 @@ private fun KType.isNullabilityFlexible(): Boolean =
  * - K1: TypeParameterUpperBoundEraser
  * - K2: getProjectionForRawType, eraseToUpperBound
  */
-private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursionForDebug: KType = this): KType {
+private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(
+    seedTypeOfTheRecursionForDebug: KType = this, replaceArgumentsWithStarProjections: Boolean = false,
+): KType {
     val type = generateSequence(this) { (it.classifier as? KTypeParameter)?.upperBounds?.firstOrNull() }.last()
-    with(type) {
+    with(type as AbstractKType) {
         val arguments = arguments
         if (arguments.isEmpty()) return type
         val parameters = with(ReflectTypeSystemContext) {
-            val classifier = (type as AbstractKType).typeConstructor()
+            val classifier = type.typeConstructor()
             List(classifier.parametersCount()) { classifier.getParameter(it) as KTypeParameter }
         }
         check(parameters.size == arguments.size) {
@@ -216,20 +218,26 @@ private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursi
         }
 
         val newLowerBoundArguments = parameters.map { parameter ->
-            val firstUpperBound = parameter.upperBounds.firstOrNull() ?: error(
-                "Error inside type '$seedTypeOfTheRecursionForDebug'. " +
-                        "Parameter '$parameter' has no upper bounds. " +
-                        "There must always be at least the default 'Any?' upper bound"
-            )
-            val newType = firstUpperBound.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursionForDebug)
-            KTypeProjection.invariant(newType)
+            if (replaceArgumentsWithStarProjections) {
+                KTypeProjection.STAR
+            } else {
+                val firstUpperBound = parameter.upperBounds.firstOrNull() ?: error(
+                    "Error inside type '$seedTypeOfTheRecursionForDebug'. " +
+                            "Parameter '$parameter' has no upper bounds. " +
+                            "There must always be at least the default 'Any?' upper bound"
+                )
+                val newType = firstUpperBound.eraseToUpperBoundsAndMakeItRawRecursively(
+                    seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections = true,
+                )
+                KTypeProjection.invariant(newType)
+            }
         }
 
         val classifier =
             classifier ?: error("Error inside type '$seedTypeOfTheRecursionForDebug'. The current type '$type' is not denotable")
         val lower = classifier.createTypeImpl(arguments = newLowerBoundArguments, nullable = isMarkedNullable)
-        val upper = classifier.createTypeImpl(arguments = List(parameters.size) { KTypeProjection.STAR }, nullable = isMarkedNullable)
-        return createPlatformKType(lower, upper, isRawType = true)
+        val upper = classifier.createTypeImpl(arguments = List(parameters.size) { KTypeProjection.STAR }, nullable = true)
+        return createPlatformKType(lower, upper, isRawType = !replaceArgumentsWithStarProjections)
     }
 }
 
