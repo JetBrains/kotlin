@@ -1,6 +1,7 @@
 // ISSUE: KT-60832, KT-65779
 // DONT_TARGET_EXACT_BACKEND: JVM, JVM_IR, NATIVE, WASM_WASI
-// IGNORE_BACKEND: WASM_JS
+// WASM_IGNORE_FOR: mode=regular
+// In both single-module and multi-module Wasm mode, the different modules individually don't have conflicting exports, so the test only fails for monolith
 // KT-65779: SyntaxError: Identifier 'bar' has already been declared
 
 // MODULE: m1
