@@ -10,6 +10,12 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+@Deprecated(
+    "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882." +
+            "\nPlease use java.nio.file.Path instead.",
+    level = DeprecationLevel.ERROR
+)
+@Suppress("DEPRECATION_ERROR")
 data class File(internal val javaPath: Path) {
     constructor(parent: File, child: String) : this(parent.javaPath.resolve(child))
     constructor(parent: File, child: File) : this(parent.javaPath.resolve(child.javaPath))

@@ -32,21 +32,21 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 // TODO: eliminate Native specifics.
 class KlibResolvedModuleDescriptorsFactoryImpl(
     override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
 ) : KlibResolvedModuleDescriptorsFactory {
 
+    @Suppress("DEPRECATION_ERROR")
     override fun createResolved(
         resolvedLibraries: KotlinLibraryResolveResult,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        friendModuleFiles: Set<KlibFile>,
-        refinesModuleFiles: Set<KlibFile>,
-        includedLibraryFiles: Set<KlibFile>,
+        friendModuleFiles: Set<org.jetbrains.kotlin.konan.file.File>,
+        refinesModuleFiles: Set<org.jetbrains.kotlin.konan.file.File>,
+        includedLibraryFiles: Set<org.jetbrains.kotlin.konan.file.File>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors {
@@ -71,7 +71,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
 
-                val libraryFile = KlibFile(library.path)
+                val libraryFile = org.jetbrains.kotlin.konan.file.File(library.path)
 
                 if (refinesModuleFiles.contains(libraryFile))
                     refinesModuleDescriptors.add(moduleDescriptor)
