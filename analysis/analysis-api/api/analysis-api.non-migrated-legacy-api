@@ -31,8 +31,5 @@ KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImp
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.compositeScope((KaScopeKind) -> Boolean)
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.importingScopeContext
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.scopeContext(KtElement)
-KaSubstitutorProvider: org.jetbrains.kotlin.analysis.api.components.KaSubstitutorBuilder
-KaSubstitutorProvider: org.jetbrains.kotlin.analysis.api.components.buildSubstitutor(KaSubstitutorBuilder.() -> Unit)
-KaSubstitutorProvider: org.jetbrains.kotlin.analysis.api.components.buildSubstitutor(KaSubstitutorBuilder.() -> Unit)
 KaTypeInformationProvider: org.jetbrains.kotlin.analysis.api.components.isClassType(ClassId)
 KaTypeProvider: org.jetbrains.kotlin.analysis.api.components.collectImplicitReceiverTypes(KtElement)

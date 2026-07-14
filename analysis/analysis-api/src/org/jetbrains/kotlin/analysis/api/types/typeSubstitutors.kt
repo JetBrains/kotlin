@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -26,6 +25,16 @@ context(session: KaSession)
 public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor {
     @OptIn(KaImplementationDetail::class)
     return internals.substitutorProvider.createSubstitutor(mappings)
+}
+
+/**
+ * Builds a new [KaSubstitutor] from substitutions specified inside [build].
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitutor {
+    @OptIn(KaImplementationDetail::class)
+    return internals.substitutorProvider.buildSubstitutor(build)
 }
 
 /**

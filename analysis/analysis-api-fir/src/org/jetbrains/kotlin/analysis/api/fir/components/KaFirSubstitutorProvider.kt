@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirGenericSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirSubstitutorBuilder
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
@@ -105,6 +106,9 @@ internal class KaFirSubstitutorProvider(
         }
     }
 
+    override fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitutor = withValidityAssertion {
+        createSubstitutor(KaFirSubstitutorBuilder(token).apply(build).mappings)
+    }
 
     override fun createSubtypingUnificationSubstitutor(
         leftTypesToRightTypes: List<Pair<KaType, KaType>>,

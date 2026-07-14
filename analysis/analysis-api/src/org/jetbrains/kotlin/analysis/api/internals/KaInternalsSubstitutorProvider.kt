@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutorBuilder
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaUnificationSubstitutorPolicy
 
@@ -19,6 +20,8 @@ import org.jetbrains.kotlin.analysis.api.types.KaUnificationSubstitutorPolicy
 @OptIn(KaExperimentalApi::class)
 public interface KaInternalsSubstitutorProvider {
     public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor
+
+    public fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitutor
 
     public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor?
 
