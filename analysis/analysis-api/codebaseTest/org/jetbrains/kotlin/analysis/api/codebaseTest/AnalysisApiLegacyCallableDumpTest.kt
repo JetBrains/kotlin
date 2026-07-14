@@ -41,12 +41,9 @@ class AnalysisApiLegacyCallableDumpTest : AbstractAnalysisApiCodebaseDumpFileCom
     private fun isToBeMigrated(declaration: KtDeclaration): Boolean = when {
         declaration.hasDeprecatedAnnotation() -> false
         !declaration.isPubliclyVisible -> false
-        declaration is KtClassOrObject -> {
-            !declaration.hasAnnotation("KaObsoleteComponentApi") &&
-                    !declaration.hasAnnotation(IMPLEMENTATION_DETAIL) &&
-                    !declaration.isSessionComponent
-        }
-
+        declaration.hasAnnotation("KaObsoleteComponentApi") -> false
+        declaration.hasAnnotation(IMPLEMENTATION_DETAIL) -> false
+        declaration is KtClassOrObject && declaration.isSessionComponent -> false
         else -> true
     }
 

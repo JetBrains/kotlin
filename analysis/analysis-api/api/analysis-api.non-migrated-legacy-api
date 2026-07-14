@@ -19,10 +19,6 @@ KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ThisLabelToSh
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.TypeToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings(KtFile, TextRange, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement(KtElement, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
-KaResolver: org.jetbrains.kotlin.analysis.api.components.resolveToCall()
-KaResolver: org.jetbrains.kotlin.analysis.api.components.resolveToCallCandidates()
-KaResolver: org.jetbrains.kotlin.analysis.api.components.resolveToSymbol()
-KaResolver: org.jetbrains.kotlin.analysis.api.components.resolveToSymbols()
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiver
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeImplicitArgumentValue
@@ -39,15 +35,5 @@ KaSubstitutorProvider: org.jetbrains.kotlin.analysis.api.components.KaSubstituto
 KaSubstitutorProvider: org.jetbrains.kotlin.analysis.api.components.buildSubstitutor(KaSubstitutorBuilder.() -> Unit)
 KaSubstitutorProvider: org.jetbrains.kotlin.analysis.api.components.buildSubstitutor(KaSubstitutorBuilder.() -> Unit)
 KaSymbolRelationProvider: org.jetbrains.kotlin.analysis.api.components.containingModule
-KaTypeCreator: org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
-KaTypeCreator: org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
-KaTypeCreator: org.jetbrains.kotlin.analysis.api.components.KaTypeBuilder
-KaTypeCreator: org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
-KaTypeCreator: org.jetbrains.kotlin.analysis.api.components.buildArrayType(KaType, KaArrayTypeBuilder.() -> Unit)
-KaTypeCreator: org.jetbrains.kotlin.analysis.api.components.buildClassType(ClassId, KaClassTypeBuilder.() -> Unit)
-KaTypeCreator: org.jetbrains.kotlin.analysis.api.components.buildClassType(KaClassLikeSymbol, KaClassTypeBuilder.() -> Unit)
-KaTypeCreator: org.jetbrains.kotlin.analysis.api.components.buildStarTypeProjection()
-KaTypeCreator: org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType(KaTypeParameterSymbol, KaTypeParameterTypeBuilder.() -> Unit)
-KaTypeCreator: org.jetbrains.kotlin.analysis.api.components.buildVarargArrayType(KaType)
 KaTypeInformationProvider: org.jetbrains.kotlin.analysis.api.components.isClassType(ClassId)
 KaTypeProvider: org.jetbrains.kotlin.analysis.api.components.collectImplicitReceiverTypes(KtElement)
