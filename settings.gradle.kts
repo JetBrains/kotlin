@@ -215,7 +215,6 @@ include(
     ":compiler:tests-common",
     ":compiler:tests-integration",
     ":compiler:tests-mutes",
-    ":compiler:tests-mutes:mutes-junit4",
     ":compiler:tests-mutes:mutes-junit5",
     ":compiler:jklib.tests",
     ":js:js.ast",
