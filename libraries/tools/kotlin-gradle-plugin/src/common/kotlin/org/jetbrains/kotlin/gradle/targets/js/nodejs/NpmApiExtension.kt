@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 
 /**
@@ -38,6 +40,17 @@ interface NpmApiExtension<out Env : PackageManagerEnvironment, out NpmApi : NpmA
     val preInstallTasks: ListProperty<TaskProvider<*>>
 
     val postInstallTasks: ListProperty<TaskProvider<*>>
+
+    /**
+     * _This is an internal Kotlin Gradle plugin utility and should not be used in build scripts or by plugin authors._
+     *
+     * The name of the lock file to use for the package manager.
+     * This is only required because [org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension]
+     * has not been migrated to the Provider API yet.
+     * It can be removed when Yarn is removed KT-84662.
+     */
+    @InternalKotlinGradlePluginApi
+    val lockFileNameProvider: Provider<String>
 }
 
 @Deprecated("No longer used. Scheduled for removal in Kotlin 2.3.", ReplaceWith("NpmApiExtension<*, *>"))

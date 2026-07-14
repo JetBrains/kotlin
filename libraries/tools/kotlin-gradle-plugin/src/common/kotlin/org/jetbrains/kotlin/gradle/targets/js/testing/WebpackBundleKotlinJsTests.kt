@@ -31,17 +31,17 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
+import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackRunner
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsRoot
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
@@ -151,7 +151,7 @@ constructor(
             mode = KotlinWebpackConfig.Mode.DEVELOPMENT,
             entry = testsEntryFile.get().asFile,
             output = KotlinWebpackOutput(
-                clean = true, // cleans webpack output dir, useful for up-to-date safety 
+                clean = true, // cleans webpack output dir, useful for up-to-date safety
             ),
             outputPath = outputDir,
             outputFileName = "tests.bundle.js",
@@ -222,7 +222,7 @@ internal fun KotlinJsIrCompilation.locateOrRegisterBrowserTestBundleTask(
         val task = this
         val compilation = this@locateOrRegisterBrowserTestBundleTask
 
-        val nodeJsRoot = compilation.nodeJsRoot
+        val nodeJsRoot = compilation.nodeJsRoot()
         val nodeJsEnvSpec = compilation.nodeJsEnvSpec
 
         task.versions.value(nodeJsRoot.versions).disallowChanges()
@@ -237,7 +237,8 @@ internal fun KotlinJsIrCompilation.locateOrRegisterBrowserTestBundleTask(
         if (compilation.isWasm) {
             task.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
         }
-        task.npmToolingEnvDir.fileProvider(compilation.npmToolingDir).disallowChanges()
+        task.npmToolingEnvDir.set(compilation.npmToolingDir())
+        task.npmToolingEnvDir.disallowChanges()
 
         val binary = compilation.binaries.getIrBinaries(
             KotlinJsBinaryMode.DEVELOPMENT

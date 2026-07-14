@@ -12,6 +12,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInternal
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import java.io.File
 
 data class NpmDependency(
@@ -72,8 +73,8 @@ internal fun directoryNpmDependency(
 fun String.isFileVersion() =
     startsWith(NPM_DEP_FILE_VERSION_PREFIX)
 
-internal fun fileVersion(directory: File): String =
-    "$NPM_DEP_FILE_VERSION_PREFIX${directory.absolutePath}"
+private fun fileVersion(directory: File): String =
+    "$NPM_DEP_FILE_VERSION_PREFIX${directory.normalizedAbsoluteFile()}"
 
 internal fun moduleName(directory: File): String {
     val packageJson = directory.resolve(PACKAGE_JSON)

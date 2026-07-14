@@ -14,15 +14,12 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -116,6 +113,11 @@ abstract class BaseNodeJsRootExtension internal constructor(
 
     lateinit var resolver: KotlinRootNpmResolver
 
+    /**
+     * Root directory for the root npm project.
+     * Nested inside the Gradle project's root `build/` directory.
+     * Contains subdirectories of npm workspaces for each Kotlin compilation.
+     */
     val rootPackageDirectory: Provider<Directory> = project.layout.buildDirectory.dir(rootDir)
 
     val projectPackagesDirectory: Provider<Directory>
@@ -160,9 +162,3 @@ abstract class BaseNodeJsRootExtension internal constructor(
         return nodeJs().env.get()
     }
 }
-
-internal val KotlinJsIrCompilation.nodeJsRoot: BaseNodeJsRootExtension
-    get() = webTargetVariant(
-        { NodeJsRootPlugin.apply(project.rootProject) },
-        { WasmNodeJsRootPlugin.apply(project.rootProject) }
-    )

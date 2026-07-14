@@ -11,9 +11,11 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
@@ -117,6 +119,10 @@ abstract class BaseYarnRootExtension internal constructor(
      */
     @Deprecated("Updated to use the Provider API. Use `lockFileNameProperty` instead. Scheduled for removal in 2.7.0.")
     var lockFileName: String by LegacyProperty(lockFileNameProperty)
+
+    @InternalKotlinGradlePluginApi
+    final override val lockFileNameProvider: Provider<String>
+        get() = lockFileNameProperty
 
     val lockFileDirectoryProperty: DirectoryProperty =
         objects.directoryProperty()
