@@ -91,7 +91,7 @@ yarn = "1.22.22"
 bouncycastle = "1.84"
 kotlin-before-bta-v2 = "2.2.21"
 bytebuddy = "1.18.9"
-playwright = "1.60.0"
+playwright = "1.61.0"
 
 analysis-api-kotlin = "2.3.21"
 analysis-api-kotlinx-coroutines = "1.8.0-intellij-13" # Should be synchronized with 'kotlinx-coroutines'
