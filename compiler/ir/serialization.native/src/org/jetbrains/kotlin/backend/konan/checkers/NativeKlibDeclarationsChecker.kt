@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js.checkers
+package org.jetbrains.kotlin.backend.konan.checkers
 
 import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 
-interface JsKlibModuleChecker<E : IrModuleFragment> {
-    fun check(module: E, context: CommonKlibDiagnosticContext, reporter: IrDiagnosticReporter)
+interface NativeKlibExpressionsChecker<D : IrExpression> {
+    fun check(expression: D, context: CommonKlibDiagnosticContext, reporter: IrDiagnosticReporter)
 }

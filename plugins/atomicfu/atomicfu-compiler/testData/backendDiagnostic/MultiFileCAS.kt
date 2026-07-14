@@ -1,9 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82637
 // TARGET_BACKEND: NATIVE
-
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE&&mode=TWO_STAGE_MULTI_MODULE
-// ^^^ Unmute it when KT-82637 is fixed.
-// The test works in the one-stage mode though, because the per-file cache is not applied to the module there: KT-77365.
+// DIAGNOSTICS: -NOTHING_TO_INLINE
 
 // DISABLE_IR_VISIBILITY_CHECKS: NATIVE
 // ^^^ Because AtomicFU plugin generates an IR property reference node that refers to a private property, KT-85180.
@@ -27,11 +25,11 @@ internal inline fun kotlinx.atomicfu.AtomicInt.casPlus1() { while (!compareAndSe
 fun box(): String {
     val foo = Foo()
 
-    foo.bar()
-    val resultAfterBar = foo.a.value
+    foo.<!LEAKED_VOLATILE_FIELD!>bar()<!>
+    val resultAfterBar = foo.<!LEAKED_VOLATILE_FIELD!>a<!>.value
 
-    foo.baz()
-    val resultAfterBaz = foo.a.value
+    foo.<!LEAKED_VOLATILE_FIELD!>baz()<!>
+    val resultAfterBaz = foo.<!LEAKED_VOLATILE_FIELD!>a<!>.value
 
     return if (resultAfterBar != 1 || resultAfterBaz != 2) "FAIL: $resultAfterBar, $resultAfterBaz" else "OK"
 }

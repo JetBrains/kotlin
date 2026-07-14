@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.ir.backend.js.checkers.declarations
 
 import com.intellij.util.containers.without
+import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.checkers.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.name
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.name.FqName
@@ -21,7 +21,7 @@ object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
 
     override fun check(
         module: IrModuleFragment,
-        context: JsKlibDiagnosticContext,
+        context: CommonKlibDiagnosticContext,
         reporter: IrDiagnosticReporter
     ) {
         val possibleFinalArtifactToIrFile = hashMapOf<FinalArtifactParameters, MutableList<FinalArtifactValuableParameters>>()

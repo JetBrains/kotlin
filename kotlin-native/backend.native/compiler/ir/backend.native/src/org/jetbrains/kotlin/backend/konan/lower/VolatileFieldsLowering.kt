@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
@@ -209,20 +208,6 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     IntrinsicType.GET_AND_ADD_FIELD to ::getAndAddFunction,
             )
 
-            private val IrBlock.singleExpressionOrNull get() = statements.singleOrNull() as? IrExpression
-
-            private tailrec fun getConstPropertyReference(expression: IrExpression?, expectedReturn: IrReturnableBlockSymbol?) : IrRichPropertyReference? {
-                return when {
-                    expression == null -> null
-                    expectedReturn == null && expression is IrRichPropertyReference -> expression
-                    expectedReturn == null && expression is IrReturnableBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expression.symbol)
-                    expression is IrReturn && expression.returnTargetSymbol == expectedReturn -> getConstPropertyReference(expression.value, null)
-                    expression is IrBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expectedReturn)
-                    expression is IrTypeOperatorCall && expression.operator == IrTypeOperator.IMPLICIT_CAST -> getConstPropertyReference(expression.argument, expectedReturn)
-                    else -> null
-                }
-            }
-
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
                 val intrinsicType = tryGetIntrinsicType(expression).takeIf {
@@ -230,7 +215,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                 } ?: return expression
                 builder.at(expression)
                 val extensionReceiver = expression.arguments[expression.symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }]
-                val reference = getConstPropertyReference(extensionReceiver, null)
+                val reference = getSinglePropertyReference(extensionReceiver, null)
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = (reference.reflectionTargetSymbol as? IrPropertySymbol)?.owner
                 val backingField = property?.backingField
