@@ -183,6 +183,9 @@ object JVMConfigurationKeys {
     @JvmField
     val METADATA_TRACKER = CompilerConfigurationKey.create<JvmMetadataTracker>("METADATA_TRACKER")
 
+    @JvmField
+    val USE_CLASSPATH_METADATA = CompilerConfigurationKey.create<Boolean>("USE_CLASSPATH_METADATA")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -380,4 +383,8 @@ var CompilerConfiguration.commonFragmentsOutputDir: File?
 var CompilerConfiguration.metadataTracker: JvmMetadataTracker?
     get() = get(JVMConfigurationKeys.METADATA_TRACKER)
     set(value) { putIfNotNull(JVMConfigurationKeys.METADATA_TRACKER, value) }
+
+var CompilerConfiguration.useClasspathMetadata: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_CLASSPATH_METADATA)
+    set(value) { put(JVMConfigurationKeys.USE_CLASSPATH_METADATA, value) }
 

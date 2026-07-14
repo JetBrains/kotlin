@@ -9544,6 +9544,51 @@
                                 "deprecatedMessage": null
                             },
                             {
+                                "name": "Xuse-classpath-metadata",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Use classpath metadata for incremental compilation.\nThis is used solely for incremental compilation and should not be used directly.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.5.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "deprecatedMessage": null
+                            },
+                            {
                                 "name": "Xuse-fast-jar-file-system",
                                 "shortName": null,
                                 "deprecatedName": null,
