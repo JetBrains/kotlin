@@ -121,18 +121,18 @@ abstract class AbstractAtomicfuIrBuilder(
     protected fun irVolatileField(
         name: String,
         valueType: IrType,
-        annotations: List<IrAnnotation>,
+        originalField: IrField,
         parentContainer: IrDeclarationContainer,
     ): IrField {
         return context.irFactory.buildField {
             this.name = Name.identifier(name + VOLATILE)
             this.type = valueType
             isFinal = false
-            isStatic = parentContainer is IrFile
+            isStatic = parentContainer is IrFile || originalField.isStatic
             visibility = DescriptorVisibilities.PRIVATE
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
         }.apply {
-            this.annotations = annotations + atomicfuSymbols.volatileAnnotation
+            this.annotations = originalField.annotations + atomicfuSymbols.volatileAnnotation
             this.parent = parentContainer
         }
     }
@@ -147,7 +147,7 @@ abstract class AbstractAtomicfuIrBuilder(
         return buildAndInitializeNewField(atomicfuField, parentContainer) { atomicFactoryCall: IrExpression? ->
             val valueType = atomicfuSymbols.atomicToPrimitiveType(atomicfuField.type as IrSimpleType)
             val initValue = atomicFactoryCall?.getAtomicFactoryValueArgument()
-            buildVolatileFieldOfType(atomicfuProperty.name.asString(), valueType, atomicfuField.annotations, initValue, parentContainer)
+            buildVolatileFieldOfType(atomicfuProperty.name.asString(), valueType, atomicfuField, initValue, parentContainer)
         }
     }
 
@@ -161,7 +161,7 @@ abstract class AbstractAtomicfuIrBuilder(
     abstract fun buildVolatileFieldOfType(
         name: String,
         valueType: IrType,
-        annotations: List<IrAnnotation>,
+        originalField: IrField,
         initExpr: IrExpression?,
         parentContainer: IrDeclarationContainer,
     ): IrField

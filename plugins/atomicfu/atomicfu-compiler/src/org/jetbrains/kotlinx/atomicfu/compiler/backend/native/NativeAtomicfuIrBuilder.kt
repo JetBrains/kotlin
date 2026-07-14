@@ -90,12 +90,12 @@ class NativeAtomicfuIrBuilder(
     override fun buildVolatileFieldOfType(
         name: String,
         valueType: IrType,
-        annotations: List<IrAnnotation>,
+        originalField: IrField,
         initExpr: IrExpression?,
         parentContainer: IrDeclarationContainer
     ): IrField =
         // On K/N a volatile Boolean field is generated instead of an AtomicBoolean property
-        irVolatileField(name, valueType, annotations, parentContainer).apply {
+        irVolatileField(name, valueType, originalField, parentContainer).apply {
             if (initExpr != null) {
                 this.initializer = context.irFactory.createExpressionBody(initExpr)
             }

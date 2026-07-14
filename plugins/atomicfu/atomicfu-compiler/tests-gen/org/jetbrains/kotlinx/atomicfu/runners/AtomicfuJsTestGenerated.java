@@ -254,6 +254,12 @@ public class AtomicfuJsTestGenerated extends AbstractAtomicfuJsTest {
     public void testCompanionExtensionProperties() {
       run("CompanionExtensionProperties.kt");
     }
+
+    @Test
+    @TestMetadata("DelegatedCompanionProperties.kt")
+    public void testDelegatedCompanionProperties() {
+      run("DelegatedCompanionProperties.kt");
+    }
   }
 
   @Nested
