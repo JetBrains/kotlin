@@ -586,10 +586,14 @@ class ExpressionCodegen(
         fun IrFunction.returnTypeMayBeInferred(): Boolean =
             this is IrSimpleFunction && (returnType.isTypeParameter() || allOverridden().any { it.returnType.isTypeParameter() })
 
+        fun IrFunction.isSuspendFunctionOrDefaultStubReturningUnit(): Boolean =
+            this is IrSimpleFunction && isSuspend &&
+                    ((attributeOwnerId as? IrFunction)?.returnType ?: returnType).isUnit()
+
         return when {
             expression.type.isUnit() &&
                     irFunction.shouldContainSuspendMarkers() &&
-                    callee.suspendFunctionOriginal().returnTypeMayBeInferred() -> {
+                    (callee.suspendFunctionOriginal().returnTypeMayBeInferred() || callee.isSuspendFunctionOrDefaultStubReturningUnit()) -> {
                 // In some cases of Unit functions with tail-call of another function, we shall overwrite the return value
                 //  with Unit because:
                 // 1. NewInference allows casting `() -> T` to `() -> Unit`, so we cannot trust return lambda types;
@@ -599,6 +603,8 @@ class ExpressionCodegen(
                 //  b) suspend fun foo(f: suspend () -> Unit) { return f() }
                 // Note that in (2a) it would be incorrect to return non-Unit from `foo` or fail
                 // with CHECKCAST even if `f()` actually returned non-Unit value.
+                // 3. Any suspend method can be resumed with an incorrectly typed value by using unsafe cast of a continuation
+                //    to another generic type, e.g. to Continuation<Any>
                 //
                 // This is especially important for calls of suspend functions, but is also used for other cases when Unit
                 // functions are generated to non-void bytecode methods. Note that `shouldContainSuspendMarkers()` and
