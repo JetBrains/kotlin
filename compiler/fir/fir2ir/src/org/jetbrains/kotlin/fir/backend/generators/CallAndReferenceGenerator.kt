@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
+import org.jetbrains.kotlin.fir.resolve.calls.stages.supportsNumericClassConversionFrom
+import org.jetbrains.kotlin.fir.resolve.calls.stages.supportsNumericClassConversionTo
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
@@ -1174,6 +1176,8 @@ class CallAndReferenceGenerator(
 
         return irArgument
             .applyImplicitIntegerCoercionIfNeeded(argument, parameter)
+            .applyBuiltinToNumericClassCoercionIfNeeded(argument, parameter)
+            .applyNumericClassToBuiltinCoercionIfNeeded(argument, parameter)
     }
 
     private fun IrExpression.applyImplicitIntegerCoercionIfNeeded(
@@ -1242,6 +1246,38 @@ class CallAndReferenceGenerator(
             }
             else -> this
         }
+    }
+
+    private fun IrExpression.applyBuiltinToNumericClassCoercionIfNeeded(
+        argument: FirExpression,
+        parameter: FirValueParameter?,
+    ): IrExpression {
+        if (parameter == null) return this
+
+        val expectedTypeSymbol = parameter.returnTypeRef.coneType.toSymbol(session) ?: return this
+        if (!expectedTypeSymbol.supportsNumericClassConversionFrom(argument.resolvedType, session)) return this
+
+        val [firSymbol, irSymbol] = builtins.getCinteropConvertFunctionOver(argument.resolvedType) ?: return this
+
+        return IrCallImpl(startOffset, endOffset, firSymbol.resolvedReturnType.toIrType(), irSymbol)
+            .apply { arguments[0] = this@applyBuiltinToNumericClassCoercionIfNeeded }
+            .applyTypeArguments(
+                typeArguments = listOf(parameter.returnTypeRef.coneType),
+                typeParameters = firSymbol.typeParameterSymbols.map { it.fir },
+            )
+    }
+
+    private fun IrExpression.applyNumericClassToBuiltinCoercionIfNeeded(
+        argument: FirExpression,
+        parameter: FirValueParameter?,
+    ): IrExpression {
+        val parameterType = parameter?.returnTypeRef?.coneType ?: return this
+        if (argument.resolvedType.toSymbol(session)?.supportsNumericClassConversionTo(parameterType, session) != true) return this
+
+        val [firSymbol, irFunction] = builtins.getMemberConvertionFunction(argument.resolvedType, parameterType) ?: return this
+
+        return IrCallImpl(startOffset, endOffset, firSymbol.fir.returnTypeRef.toIrType(), irFunction)
+            .apply { arguments[0] = this@applyNumericClassToBuiltinCoercionIfNeeded }
     }
 
     private fun FirQualifiedAccessExpression.findIrDispatchReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =

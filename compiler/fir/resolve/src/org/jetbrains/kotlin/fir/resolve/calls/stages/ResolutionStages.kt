@@ -820,6 +820,9 @@ internal fun Candidate.shouldHaveLowPriorityDueToSAM(bodyResolveComponents: Body
     }
 }
 
+internal fun Candidate.shouldHaveLowPriorityDueToNumericClassConversion(): Boolean =
+    usesNumericClassConversion
+
 private fun Candidate.isJavaApplicableCandidate(): Boolean {
     val symbol = symbol as? FirFunctionSymbol ?: return false
     if (symbol.isJavaOrEnhancement) return true
