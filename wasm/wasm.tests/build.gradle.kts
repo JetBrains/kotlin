@@ -186,7 +186,6 @@ dependencies {
     testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
-    testFixturesImplementation(libs.junit4)
     testImplementation(project(":wasm:wasm.frontend"))
     testRuntimeOnly(libs.junit.jupiter.engine)
 

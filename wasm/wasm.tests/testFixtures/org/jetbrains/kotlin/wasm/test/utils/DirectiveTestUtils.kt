@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerBase
 import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
-import org.junit.Assert.*
-import org.junit.runners.model.MultipleFailureException
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.function.Executable
 
 object DirectiveTestUtils {
 
@@ -85,7 +86,11 @@ object DirectiveTestUtils {
         val scopeFunction = WasmIrCheckUtils.getDefinedFunction(module, scopeFunctionName)
         val actualCount = WasmIrCheckUtils.countInstOperator(scopeFunction, operator)
 
-        assertEquals("Count mismatch for instruction `$instruction` in function `$scopeFunctionName`", expectedCount, actualCount)
+        assertEquals(
+            expectedCount,
+            actualCount,
+            "Count mismatch for instruction `$instruction` in function `$scopeFunctionName`"
+        )
     }
 
     private val LOCAL_IN_FUNCTION = createSimpleDirectiveHandler("WASM_CHECK_LOCAL_IN_FUNCTION") { module, arguments ->
@@ -113,9 +118,9 @@ object DirectiveTestUtils {
         val local = locals.find { it.name == localName }
 
         if (expectExists)
-            assertNotNull("Local variable `$localName` *not* found in function `${scopeFunction.name}`", local)
+            assertNotNull(local, "Local variable `$localName` *not* found in function `${scopeFunction.name}`")
         else
-            assertNull("Local variable `$localName` found in function `${scopeFunction.name}`", local)
+            assertNull(local, "Local variable `$localName` found in function `${scopeFunction.name}`")
     }
 
     private fun checkFunctionContainsNoCalls(module: WasmModule, functionName: String, exceptFunctionNames: Set<String>) {
@@ -123,7 +128,7 @@ object DirectiveTestUtils {
         val counter = WasmIrCheckUtils.countCalls(module, function, exceptFunctionNames)
 
         val errorMessage = "$functionName contains calls"
-        assertEquals(errorMessage, 0, counter)
+        assertEquals(0, counter, errorMessage)
     }
 
     private fun checkCalledInScope(
@@ -132,7 +137,7 @@ object DirectiveTestUtils {
         scopeFunctionName: String,
     ) {
         val errorMessage = "`$functionName` is not called inside `$scopeFunctionName`"
-        assertTrue(errorMessage, isCalledInScope(module, functionName, scopeFunctionName))
+        assertTrue(isCalledInScope(module, functionName, scopeFunctionName), errorMessage)
     }
 
     private fun checkInstructionInScope(
@@ -142,7 +147,7 @@ object DirectiveTestUtils {
     ) {
         val operator = WasmOp.entries.find { it.mnemonic == instructionName }!!
         val errorMessage = "Instruction `$instructionName` does not appear inside `$scopeFunctionName`"
-        assertTrue(errorMessage, isInstructionInScope(module, operator, scopeFunctionName))
+        assertTrue(isInstructionInScope(module, operator, scopeFunctionName), errorMessage)
     }
 
     private fun checkNotCalledInScope(
@@ -151,7 +156,7 @@ object DirectiveTestUtils {
         scopeFunctionName: String,
     ) {
         val errorMessage = "`$functionName` is called inside `$scopeFunctionName`"
-        assertFalse(errorMessage, isCalledInScope(module, functionName, scopeFunctionName))
+        assertFalse(isCalledInScope(module, functionName, scopeFunctionName), errorMessage)
     }
 
     private fun checkInstructionNotInScope(
@@ -161,7 +166,7 @@ object DirectiveTestUtils {
     ) {
         val operator = WasmOp.entries.find { it.mnemonic == instructionName }!!
         val errorMessage = "Instruction `$instructionName` appears inside `$scopeFunctionName`"
-        assertFalse(errorMessage, isInstructionInScope(module, operator, scopeFunctionName))
+        assertFalse(isInstructionInScope(module, operator, scopeFunctionName), errorMessage)
     }
 
     private fun isCalledInScope(
@@ -201,11 +206,12 @@ object DirectiveTestUtils {
         sourceCode: String,
         targetBackend: TargetBackend,
     ) {
-        val assertionErrors = mutableListOf<Throwable>()
-        for (handler in DIRECTIVE_HANDLERS) {
-            handler.process(module, sourceCode, targetBackend, assertionErrors)
-        }
-        MultipleFailureException.assertEmpty(assertionErrors)
+        assertAll(
+            DIRECTIVE_HANDLERS.map { handler -> Executable {
+                    handler.process(module, sourceCode, targetBackend)
+                }
+            }
+        )
     }
 
     private abstract class DirectiveHandler(directive: String) {
@@ -245,7 +251,6 @@ object DirectiveTestUtils {
             module: WasmModule,
             sourceCode: String,
             targetBackend: TargetBackend,
-            assertionErrors: MutableList<Throwable>,
         ) {
             val directiveEntries = findLinesWithPrefixesRemoved(sourceCode, directive)
             for (directiveEntry in directiveEntries) {
@@ -256,12 +261,7 @@ object DirectiveTestUtils {
                 ) {
                     continue
                 }
-
-                try {
-                    processEntry(module, arguments)
-                } catch (e: AssertionError) {
-                    assertionErrors.add(e)
-                }
+                processEntry(module, arguments)
             }
         }
 
