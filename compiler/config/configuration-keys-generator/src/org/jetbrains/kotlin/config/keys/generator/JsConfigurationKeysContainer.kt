@@ -112,8 +112,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val MINIMIZED_MEMBER_NAMES by key<Boolean>()
     val CALL_MAIN by key<Boolean>("Specify whether the 'main' function should be called upon execution.", defaultValue = "true")
     val IC_CACHE_DIRECTORY by key<String>(throwOnNull = false)
-    val IC_CACHE_READ_ONLY by key<Boolean>()
-    val PRESERVE_IC_ORDER by key<Boolean>()
     val IC_FILES_TO_LOAD by key<Set<String>>(throwOnNull = false)
     val ADDITIONAL_EXPORTED_DECLARATION_NAMES by key<Set<FqName>>()
 }
