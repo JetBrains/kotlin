@@ -19,12 +19,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.konan.config.konanHome
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
+import kotlin.io.path.Path
+import kotlin.io.path.readLines
 
 /**
  * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
@@ -131,7 +132,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             val depsPath = config.readSerializedDependencies
             val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult(emptyList(), emptyList(), emptyList()).also {
                 config.configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "No backend dependencies provided.")
-            } else DependenciesTrackingResult.deserialize(depsPath, File(depsPath).readStrings(), config)
+            } else DependenciesTrackingResult.deserialize(depsPath, Path(depsPath).readLines(), config)
             engine.runBitcodeBackend(context, dependencies)
         } finally {
             llvmModule?.let { LLVMDisposeModule(it) }

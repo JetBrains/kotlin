@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
 
 /**
@@ -82,7 +83,7 @@ internal fun produceCStubs(generationState: NativeGenerationState) {
             generationState.diagnosticReporter,
             generationState.inVerbosePhase
     ).forEach {
-        parseAndLinkBitcodeFile(generationState, generationState.llvm.module, it.absolutePath)
+        parseAndLinkBitcodeFile(generationState, generationState.llvm.module, it.absolutePathString())
     }
 }
 

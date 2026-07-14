@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.render
+import kotlin.io.path.appendLines
+import kotlin.io.path.createFile
+import kotlin.io.path.exists
 
 internal class TestsDumper(private val context: Context) : FileLoweringPass {
     private val symbols = context.symbols
@@ -84,8 +87,8 @@ internal class TestsDumper(private val context: Context) : FileLoweringPass {
         if (testCasesToDump.isEmpty())
             return
 
-        if (!testDumpFile.exists)
-            testDumpFile.createNew()
+        if (!testDumpFile.exists())
+            testDumpFile.createFile()
         testDumpFile.appendLines(
                 testCasesToDump.flatMap { [suiteName, functionNames] -> functionNames.asSequence().map { "$suiteName:$it" } }
         )

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.konan.library.javaFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
@@ -83,7 +82,7 @@ internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<NativeBacken
         "CreateTestBundlePhase",
 ) { context, input ->
     val config = context.config
-    val output = OutputFiles(config.outputPath, config.target, config.produce).mainFile.javaFile().toPath()
+    val output = OutputFiles(config.outputPath, config.target, config.produce).mainFile
     createTestBundle(config, input.moduleDescriptor, output)
 }
 

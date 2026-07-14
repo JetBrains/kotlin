@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
 import org.jetbrains.kotlin.konan.config.preLinkCaches
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.isDirectory
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 data class FileWithFqName(val filePath: String, val fqName: String)
@@ -67,9 +67,9 @@ class CacheSupport(
         private val configuration: CompilerConfiguration,
         private val resolvedLibraries: KotlinLibraryResolveResult,
         ignoreCacheReason: String?,
-        systemCacheDirectory: File,
-        autoCacheDirectory: File,
-        incrementalCacheDirectory: File?,
+        systemCacheDirectory: Path,
+        autoCacheDirectory: Path,
+        incrementalCacheDirectory: Path?,
         target: KonanTarget,
         val produce: CompilerOutputKind
 ) {
@@ -80,13 +80,13 @@ class CacheSupport(
 
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
             .map {
-                File(it).takeIf { it.isDirectory }
+                Path(it).takeIf { it.isDirectory() }
                         ?: configuration.reportCompilationErrorAndThrow("auto cacheable root $it is not found or is not a directory")
             }
 
     private val implicitCacheDirectories = buildList {
         configuration[NativeConfigurationKeys.CACHE_DIRECTORIES]!!.forEach {
-            add(File(it).takeIf { it.isDirectory }
+            add(Path(it).takeIf { it.isDirectory() }
                     ?: configuration.reportCompilationErrorAndThrow("cache directory $it is not found or is not a directory"))
         }
         systemCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || incrementalCacheDirectory != null }?.let { add(it) }
@@ -99,17 +99,17 @@ class CacheSupport(
         // Put the resulting library in the first cache directory.
         val cacheDirectory = implicitCacheDirectories.firstOrNull() ?: return null
         val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
-        val baseLibraryCacheDirectory = cacheDirectory.child(
+        val baseLibraryCacheDirectory = cacheDirectory.resolve(
                 if (singleFileStrategy == null)
                     CachedLibraries.getCachedLibraryName(libraryToCache.klib)
                 else
                     CachedLibraries.getPerFileCachedLibraryName(libraryToCache.klib)
         )
         val singleFilePath = singleFileStrategy?.filePath
-                ?: return baseLibraryCacheDirectory.absolutePath
+                ?: return baseLibraryCacheDirectory.absolutePathString()
 
-        val fileCacheDirectory = baseLibraryCacheDirectory.child(cacheFileId(singleFileStrategy.fqName, singleFilePath))
-        return fileCacheDirectory.absolutePath
+        val fileCacheDirectory = baseLibraryCacheDirectory.resolve(cacheFileId(singleFileStrategy.fqName, singleFilePath))
+        return fileCacheDirectory.absolutePathString()
     }
 
     internal val cachedLibraries: CachedLibraries = run {
