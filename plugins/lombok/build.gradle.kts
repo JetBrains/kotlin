@@ -78,8 +78,6 @@ dependencies {
 
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testFixturesApi(libs.junit4)
-
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly(toolsJar())

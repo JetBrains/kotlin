@@ -17,7 +17,6 @@ dependencies {
     testImplementation(project(":compiler:fir:fir2ir", "testsJarConfig"))
     testRuntimeOnly(testFixtures(project(":compiler:fir:fir2ir")))
 
-    testImplementation(libs.junit4)
     testImplementation(libs.junit.platform.suite)
     testImplementation(kotlinStdlib())
     testImplementation(project(":libraries:tools:abi-comparator"))

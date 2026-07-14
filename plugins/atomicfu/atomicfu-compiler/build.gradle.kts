@@ -96,7 +96,6 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
 
     testImplementation(testFixtures(project(":js:js.tests")))
-    testImplementation(libs.junit4)
     testImplementation(kotlinTest())
 
     // Dependencies for Kotlin/Native test infra:

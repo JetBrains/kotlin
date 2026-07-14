@@ -49,7 +49,6 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
-    testFixturesApi(libs.junit4)
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 

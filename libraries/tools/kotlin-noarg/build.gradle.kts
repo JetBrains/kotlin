@@ -12,7 +12,6 @@ dependencies {
     commonImplementation(project(":kotlin-allopen"))
 
     testImplementation(gradleApi())
-    testImplementation(libs.junit4)
 }
 
 gradlePlugin {

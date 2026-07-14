@@ -18,7 +18,6 @@ dependencies {
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.benchmark.runtime)
 
-    testFixturesApi(libs.junit4)
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesApi(libs.junit.platform.launcher)
