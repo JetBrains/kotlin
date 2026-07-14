@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformT
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.incremental.clearJarCaches
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import java.util.concurrent.*
 
@@ -112,4 +113,18 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             file.delete()
         }
     }
+
+    companion object {
+        internal fun getBtaApiVersion(): BtaApiVersion = try {
+            BtaApiVersion.Exact(KotlinToolingVersion(KotlinToolchains.getVersion()))
+        } catch (_: NoSuchMethodError) {
+            BtaApiVersion.Before2_4_20
+        }
+    }
 }
+
+internal sealed interface BtaApiVersion {
+    object Before2_4_20 : BtaApiVersion
+    class Exact(val version: KotlinToolingVersion) : BtaApiVersion
+}
+
