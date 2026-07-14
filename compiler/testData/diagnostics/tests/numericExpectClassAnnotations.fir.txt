@@ -1,0 +1,159 @@
+FILE: Stdlib.kt
+    package kotlin
+
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|]) public final annotation class NumericClass : R|kotlin/Annotation| {
+        public constructor(vararg actualizations: R|kotlin/Array<out kotlin/reflect/KClass<*>>|): R|kotlin/NumericClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val actualizations: R|kotlin/Array<out kotlin/reflect/KClass<*>>| = R|<local>/actualizations|
+            public get(): R|kotlin/Array<out kotlin/reflect/KClass<*>>|
+
+    }
+FILE: Cinterop.kt
+    package kotlinx.cinterop
+
+    public final inline fun <reified R : R|kotlin/Any|> R|kotlin/Int|.convert(): R|R| {
+        ^convert R|kotlin/TODO|()
+    }
+FILE: Main.kt
+    @R|kotlin/NumericClass|(actualizations = vararg(<getClass>(Q|kotlin/Long|)) [evaluated = vararg(<getClass>(Q|kotlin/Long|))]) public final expect class NSInteger : R|kotlin/Any| {
+        public final expect fun toByte(): R|kotlin/Byte|
+
+        public final expect fun toShort(): R|kotlin/Short|
+
+        public final expect fun toInt(): R|kotlin/Int|
+
+        public final expect fun toLong(): R|kotlin/Long|
+
+        public final expect fun toFloat(): R|kotlin/Float|
+
+        public final expect fun toDouble(): R|kotlin/Double|
+
+    }
+    public final fun acceptNSInteger(num: R|NSInteger|): R|kotlin/Unit| {
+    }
+    public final expect fun getNSInteger(): R|NSInteger|
+    public sealed class OverloadVariant : R|kotlin/Any| {
+        protected constructor(): R|OverloadVariant| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final data object NSInteger : R|OverloadVariant| {
+            private constructor(): R|OverloadVariant.NSInteger| {
+                super<R|OverloadVariant|>()
+            }
+
+        }
+
+        public final data object Long : R|OverloadVariant| {
+            private constructor(): R|OverloadVariant.Long| {
+                super<R|OverloadVariant|>()
+            }
+
+        }
+
+        public final data object Int : R|OverloadVariant| {
+            private constructor(): R|OverloadVariant.Int| {
+                super<R|OverloadVariant|>()
+            }
+
+        }
+
+    }
+    public final fun acceptNSIntegerOrInt(num: R|NSInteger|): R|OverloadVariant.NSInteger| {
+        ^acceptNSIntegerOrInt Q|OverloadVariant.NSInteger|
+    }
+    public final fun acceptNSIntegerOrInt(num: R|kotlin/Int|): R|OverloadVariant.Int| {
+        ^acceptNSIntegerOrInt Q|OverloadVariant.Int|
+    }
+    public final fun acceptLongOrInt(num: R|kotlin/Long|): R|OverloadVariant.Long| {
+        ^acceptLongOrInt Q|OverloadVariant.Long|
+    }
+    public final fun acceptLongOrInt(num: R|kotlin/Int|): R|OverloadVariant.Int| {
+        ^acceptLongOrInt Q|OverloadVariant.Int|
+    }
+    public final fun R|kotlin/Long|.callOverLongOrInt(): R|OverloadVariant.Long| {
+        ^callOverLongOrInt Q|OverloadVariant.Long|
+    }
+    public final fun R|kotlin/Int|.callOverLongOrInt(): R|OverloadVariant.Int| {
+        ^callOverLongOrInt Q|OverloadVariant.Int|
+    }
+    public final fun acceptULong(num: R|kotlin/ULong|): R|kotlin/Unit| {
+    }
+    public final fun acceptLong(num: R|kotlin/Long|): R|kotlin/Unit| {
+    }
+    public final fun acceptInt(num: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    @R|kotlin/NumericClass|(actualizations = vararg(<getClass>(Q|kotlin/UInt|)) [evaluated = vararg(<getClass>(Q|kotlin/UInt|))]) public final expect value class SizeT : R|kotlin/Any| {
+        public final expect fun toByte(): R|kotlin/Byte|
+
+        public final expect fun toShort(): R|kotlin/Short|
+
+        public final expect fun toInt(): R|kotlin/Int|
+
+        public final expect fun toLong(): R|kotlin/Long|
+
+        public final expect fun toFloat(): R|kotlin/Float|
+
+        public final expect fun toDouble(): R|kotlin/Double|
+
+        public final expect fun toUByte(): R|kotlin/UByte|
+
+        public final expect fun toUShort(): R|kotlin/UShort|
+
+        public final expect fun toUInt(): R|kotlin/UInt|
+
+        public final expect fun toULong(): R|kotlin/ULong|
+
+    }
+    public final fun acceptSizeT(num: R|SizeT|): R|kotlin/Unit| {
+    }
+    public final expect fun getSizeT(): R|SizeT|
+    public final fun produceNSInteger(): R|NSInteger| {
+        ^produceNSInteger Int(30)
+    }
+    public final fun requestConversionDuringImplicitTypes1(): R|kotlin/Unit| {
+        ^requestConversionDuringImplicitTypes1 R|/acceptNSInteger<Inapplicable(INAPPLICABLE): /acceptNSInteger>#|(Int(30))
+    }
+    public final fun requestConversionDuringImplicitTypes2(): R|kotlin/Unit| {
+        ^requestConversionDuringImplicitTypes2 R|/acceptSizeT<Inapplicable(INAPPLICABLE): /acceptSizeT>#|(UInt(30))
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/acceptNSInteger|(NumericConversion<NSInteger>(Int(10)))
+        R|/acceptNSInteger|(NumericConversion<NSInteger>(Long(1000000000000)))
+        R|/acceptNSInteger<Inapplicable(INAPPLICABLE): /acceptNSInteger>#|(UInt(30))
+        lval _ignore1: R|OverloadVariant.Int| = R|/acceptNSIntegerOrInt|(Int(20))
+        lval _ignore2: R|OverloadVariant.Long| = R|/acceptLongOrInt|(NumericConversion<kotlin/Long>(R|/getNSInteger|()))
+        lval _ignore3: R|OverloadVariant.Int| = R|/getNSInteger|().R|/callOverLongOrInt<Candidate is inapplicable because of receiver type mismatch: /callOverLongOrInt>#|()
+        lval _ignore4: R|OverloadVariant.Long| = <Ambiguity: acceptNSIntegerOrInt, [/acceptNSIntegerOrInt, /acceptNSIntegerOrInt]>#(Int(0).R|kotlinx/cinterop/convert|<<ERROR TYPE REF: Cannot infer argument for type parameter R>>())
+        R|/acceptLong|(NumericConversion<kotlin/Long>(R|/getNSInteger|()))
+        R|/acceptULong<Inapplicable(INAPPLICABLE): /acceptULong>#|(R|/getNSInteger|())
+        R|/acceptInt<Inapplicable(INAPPLICABLE): /acceptInt>#|(R|/getNSInteger|())
+        R|/acceptSizeT|(NumericConversion<SizeT>(UInt(30)))
+        R|/acceptSizeT<Inapplicable(INAPPLICABLE): /acceptSizeT>#|(Int(30))
+        R|/acceptULong|(NumericConversion<kotlin/ULong>(R|/getSizeT|()))
+        R|/acceptLong<Inapplicable(INAPPLICABLE): /acceptLong>#|(R|/getSizeT|())
+        lvar a: R|NSInteger| = Int(10)
+        R|/acceptNSInteger|(R|<local>/a|)
+        R|/acceptLong|(NumericConversion<kotlin/Long>(R|<local>/a|))
+        R|/acceptInt<Inapplicable(INAPPLICABLE): /acceptInt>#|(R|<local>/a|)
+        R|<local>/a| = Int(20)
+        R|/acceptNSInteger|(R|<local>/a|)
+        R|/acceptLong<Inapplicable(INAPPLICABLE): /acceptLong>#|(R|<local>/a|)
+        R|/acceptInt|(R|<local>/a|)
+        lvar b: R|kotlin/Long| = R|/getNSInteger|()
+        R|/acceptLong|(R|<local>/b|)
+        R|/acceptNSInteger|(NumericConversion<NSInteger>(R|<local>/b|))
+        R|<local>/b| = R|/getNSInteger|()
+        R|/acceptLong|(R|<local>/b|)
+        R|/acceptNSInteger|(R|<local>/b|)
+        lvar c: R|kotlin/ULong| = R|/getSizeT|()
+        R|/acceptULong|(R|<local>/c|)
+        R|/acceptSizeT<Inapplicable(INAPPLICABLE): /acceptSizeT>#|(R|<local>/c|)
+        R|<local>/c| = R|/getSizeT|()
+        R|/acceptULong|(R|<local>/c|)
+        R|/acceptSizeT|(R|<local>/c|)
+        R|/acceptNSInteger|(R|/produceNSInteger|())
+        R|/acceptNSInteger<Inapplicable(INAPPLICABLE): /acceptNSInteger>#|(R|/id|<R|kotlin/Int|>(Int(1)))
+    }

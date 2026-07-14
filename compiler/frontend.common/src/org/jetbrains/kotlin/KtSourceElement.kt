@@ -861,6 +861,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object SamConversion : KtFakeSourceElementKind()
 
     /**
+     * When an object of a builtin numeric type is implicitly converted to or from a custom numeric expect class marked with
+     * [org.jetbrains.kotlin.name.StandardClassIds.Annotations.NumericClass].
+     */
+    object NumericClassConversion : KtFakeSourceElementKind()
+
+    /**
      * When a value of one function type is converted to another function type, the expression is wrapped in an extra node
      */
     object FunctionTypeConversion : KtFakeSourceElementKind()
