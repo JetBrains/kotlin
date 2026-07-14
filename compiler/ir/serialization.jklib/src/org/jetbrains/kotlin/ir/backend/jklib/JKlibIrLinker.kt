@@ -28,8 +28,13 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -256,6 +261,32 @@ class JKlibIrLinker(
             }
 
             super.declareIrSymbol(symbol)
+        }
+    }
+
+    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
+        super.postProcess(irBuiltIns, inOrAfterLinkageStep)
+        if (inOrAfterLinkageStep) {
+            clearFakeOverrideFields()
+        }
+    }
+
+    private fun clearFakeOverrideFields() {
+        val visitor = object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitProperty(declaration: IrProperty) {
+                if (declaration.isFakeOverride && declaration.getter == null) {
+                    declaration.backingField = null
+                }
+                super.visitProperty(declaration)
+            }
+        }
+
+        deserializersForModules.values.forEach { deserializer ->
+            deserializer.moduleFragment.acceptVoid(visitor)
         }
     }
 }
