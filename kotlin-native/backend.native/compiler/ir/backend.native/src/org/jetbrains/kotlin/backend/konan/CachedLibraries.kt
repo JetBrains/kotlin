@@ -130,8 +130,13 @@ class CachedLibraries(
                         it.absolutePath
                     }
 
-            fun getMetadata(file: String) = File(path).child(file).child(METADATA_FILE_NAME).bufferedReader().use {
-                CacheMetadataSerializer.deserialize(it)
+            // Returns null when the metadata file is absent, which is the case for caches produced by compilers older than 2.2.20 (KT-87202).
+            fun getMetadataOrNull(file: String): CacheMetadata? {
+                val metadataFile = File(path).child(file).child(METADATA_FILE_NAME)
+                if (!metadataFile.exists) return null
+                return metadataFile.bufferedReader().use {
+                    CacheMetadataSerializer.deserialize(it)
+                }
             }
 
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()
@@ -283,6 +288,17 @@ class CachedLibraries(
                     hashComputer.digest()
                 }
 
+        fun computeDependenciesFingerprint(
+                dependencies: List<KotlinLibrary>,
+                librariesHashes: MutableMap<String, FingerprintHash>,
+        ): FingerprintHash {
+            val hashComputer = LibraryHashComputer()
+            dependencies.sortedBy { it.uniqueName }.forEach {
+                hashComputer.update(computeLibraryHash(it, librariesHashes))
+            }
+            return hashComputer.digest()
+        }
+
         fun computeLibraryCacheDirectory(
                 baseCacheDirectory: File,
                 library: KotlinLibrary,
@@ -290,14 +306,8 @@ class CachedLibraries(
                 librariesHashes: MutableMap<String, FingerprintHash>,
         ): File {
             val dependencies = library.getAllTransitiveDependencies(allLibraries)
-            val hashComputer = LibraryHashComputer()
-            hashComputer.update(computeLibraryHash(library, librariesHashes))
-            dependencies.sortedBy { it.uniqueName }.forEach {
-                hashComputer.update(computeLibraryHash(it, librariesHashes))
-            }
-
-            val hashString = hashComputer.digest().toString()
-            return baseCacheDirectory.child(library.uniqueName).child(hashString)
+            val fingerprintHash = computeDependenciesFingerprint(listOf(library) + dependencies, librariesHashes)
+            return baseCacheDirectory.child(library.uniqueName).child(fingerprintHash.toString())
         }
 
         const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"
