@@ -349,7 +349,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
          *   but worked to some extent in some scenarios while the proper implementation is in development. It should be removed
          *   together with `if()` in the lambda below once we will get the full support of IC for KMP.
          */
-        val isKmpCompilationWithLegacyIC = configuration.hmppModuleStructure?.incrementalDependencies?.isEmpty() == true
+        //TODO TEMPORARY
+        val isKmpCompilationWithLegacyIC = false //configuration.hmppModuleStructure?.incrementalDependencies?.isEmpty() == true
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
