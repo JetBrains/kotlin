@@ -152,7 +152,7 @@ internal class KotlinPlaywrightJsTestFramework(
         val modules = NpmProjectModules(npmToolingEnv)
 
         return PwExecutionSpec(
-            createClient = { processor, logger -> TCServiceMessagesClient(processor, clientSettings, logger) },
+            createClient = { processor, logger -> PlaywrightTCServiceMessagesClient(processor, clientSettings, logger) },
             runners = pwRunners,
             nodeExecutable = executable.get(),
             playwrightCli = modules.require("playwright-core/cli.js"),

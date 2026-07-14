@@ -229,8 +229,8 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                             <results>
                               <testsuite name="jsBrowserTest.chromium.FailingTest" tests="2" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
                                 <properties />
-                                <testcase name="passing[js, browser]" classname="jsBrowserTest.chromium.FailingTest" time="..." />
-                                <testcase name="failing[js, browser]" classname="jsBrowserTest.chromium.FailingTest" time="...">
+                                <testcase name="passing[js, browser, chromium]" classname="jsBrowserTest.chromium.FailingTest" time="..." />
+                                <testcase name="failing[js, browser, chromium]" classname="jsBrowserTest.chromium.FailingTest" time="...">
                                   <failure message="..." type="AssertionError">...</failure>
                                 </testcase>
                                 <system-out>PASSED marker</system-out>
@@ -317,13 +317,13 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                             <results>
                               <testsuite name="jsBrowserTest.first.DummyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
                                 <properties />
-                                <testcase name="dummy[js, browser]" classname="jsBrowserTest.first.DummyTest" time="..." />
+                                <testcase name="dummy[js, browser, first]" classname="jsBrowserTest.first.DummyTest" time="..." />
                                 <system-out>dummy test</system-out>
                                 <system-err />
                               </testsuite>
                               <testsuite name="jsBrowserTest.second.DummyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
                                 <properties />
-                                <testcase name="dummy[js, browser]" classname="jsBrowserTest.second.DummyTest" time="..." />
+                                <testcase name="dummy[js, browser, second]" classname="jsBrowserTest.second.DummyTest" time="..." />
                                 <system-out>dummy test</system-out>
                                 <system-err />
                               </testsuite>
