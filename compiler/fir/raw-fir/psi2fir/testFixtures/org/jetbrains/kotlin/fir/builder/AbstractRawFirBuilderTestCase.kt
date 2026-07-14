@@ -43,8 +43,8 @@ import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
-import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import java.io.File
 import kotlin.reflect.full.memberProperties
@@ -82,7 +82,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
         val expectedFile = File(expectedPath)
         val annotations = firFile.collectAnnotations()
         if (annotations.isEmpty()) {
-            JUnit4Assertions.assertFileDoesntExist(expectedFile) {
+            JUnit5Assertions.assertFileDoesntExist(expectedFile) {
                 "No annotations found, but $expectedFile exists"
             }
 

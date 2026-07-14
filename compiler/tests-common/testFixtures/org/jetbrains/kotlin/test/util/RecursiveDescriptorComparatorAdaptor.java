@@ -20,11 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.test.Assertions;
+import org.jetbrains.kotlin.test.services.JUnit5Assertions;
 
 import java.io.File;
 
 public class RecursiveDescriptorComparatorAdaptor {
-    private static final Assertions assertions = JUnit4Assertions.INSTANCE;
+    private static final Assertions assertions = JUnit5Assertions.INSTANCE;
 
     public static void compareDescriptors(
             @NotNull DeclarationDescriptor expected,

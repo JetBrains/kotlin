@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.backend.handlers.JvmNewKotlinReflectCompatibilityCheck
 import org.jetbrains.kotlin.test.compileJavaFiles
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
-import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -178,8 +178,8 @@ class ReflectionIntegrationTest {
         )
         val k1ReflectDump = k1ReflectDumpResult.getOrThrow()
         val newReflectDump = newReflectDumpResult.getOrThrow()
-        JUnit4Assertions.assertEquals(k1ReflectDump, newReflectDump)
-        JUnit4Assertions.assertEqualsToFile(
+        JUnit5Assertions.assertEquals(k1ReflectDump, newReflectDump)
+        JUnit5Assertions.assertEqualsToFile(
             KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/builtin-classes.txt"), k1ReflectDump,
         )
     }

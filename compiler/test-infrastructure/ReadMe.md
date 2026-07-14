@@ -126,7 +126,7 @@ Here are some existing services which are useful in a wide range of different te
 - [SourceFileProvider](testFixtures/org/jetbrains/kotlin/test/services/SourceFileProvider.kt) retrieves content of test files from test modules
 - [KotlinTestInfo](testFixtures/org/jetbrains/kotlin/test/services/KotlinTestInfo.kt) contains info about test (test name, test class, etc)
 - [ArtifactsProvider](testFixtures/org/jetbrains/kotlin/test/services/ArtifactsProvider.kt) caches and provides artifacts of modules analyzed by facade steps
-- [Assertions](testFixtures/org/jetbrains/kotlin/test/services/Assertions.kt) contains utility assertions methods. This service is needed to abstract assertions infrastructure from any existing test framework (most commonly used assertions implementation is [JUnit5Assertions](../tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/JUnit5Assertions.kt))
+- [Assertions](testFixtures/org/jetbrains/kotlin/test/services/Assertions.kt) contains utility assertions methods. This service is needed to abstract assertions infrastructure from any existing test framework (most commonly used assertions implementation is [JUnit5Assertions](testFixtures/org/jetbrains/kotlin/test/services/JUnit5Assertions.kt))
 - [CompilerConfigurationProvider](../tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/CompilerConfigurationProvider.kt) provider of compiler configuration for different modules (additional info below)
 - [TemporaryDirectoryManager](testFixtures/org/jetbrains/kotlin/test/services/TemporaryDirectoryManager.kt) can create temporary directories for test purposes (e.g. directory to write generated .class files)
 

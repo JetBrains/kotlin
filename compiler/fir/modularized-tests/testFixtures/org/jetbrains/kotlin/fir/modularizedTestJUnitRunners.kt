@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertEquals
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir

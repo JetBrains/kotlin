@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
-import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -83,7 +83,7 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
                 result.assertSuccessful()
             } else {
                 val errors = if (result is JavaCompilationResult.Failure) result.diagnostics else ""
-                JUnit4Assertions.assertEqualsToFile(javaErrorFile, errors)
+                JUnit5Assertions.assertEqualsToFile(javaErrorFile, errors)
             }
             result == JavaCompilationResult.Success
         }
