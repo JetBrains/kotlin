@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MERGED_KLIB_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.utils.checksumString
 import org.jetbrains.kotlin.gradle.utils.copyPartially
 import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
@@ -40,7 +41,11 @@ internal class CompositeMetadataArtifactImpl(
 
         /* Creating SourceSet instances eagerly, as they will only lazily access files */
         private val sourceSetsImpl = kotlinProjectStructureMetadata.sourceSetNames.associateWith { sourceSetName ->
-            SourceSetContentImpl(this, sourceSetName, ArtifactFile(hostSpecificArtifactFilesBySourceSetName[sourceSetName] ?: primaryArtifactFile))
+            SourceSetContentImpl(
+                this,
+                sourceSetName,
+                ArtifactFile(hostSpecificArtifactFilesBySourceSetName[sourceSetName] ?: primaryArtifactFile)
+            )
         }
 
         override val sourceSets: List<CompositeMetadataArtifactContent.SourceSetContent> =
@@ -63,8 +68,11 @@ internal class CompositeMetadataArtifactImpl(
     private inner class SourceSetContentImpl(
         override val containingArtifactContent: CompositeMetadataArtifactContent,
         override val sourceSetName: String,
-        private val artifactFile: ArtifactFile
+        private val artifactFile: ArtifactFile,
     ) : CompositeMetadataArtifactContent.SourceSetContent, Closeable {
+        private val isMKlib = artifactFile.file.extension == MERGED_KLIB_ARTIFACT_TYPE
+
+        val sourceSetPath = if (isMKlib) "metadata/$sourceSetName" else sourceSetName
 
         override val metadataBinary: CompositeMetadataArtifactContent.MetadataBinary? by lazy {
             /*
@@ -74,12 +82,15 @@ internal class CompositeMetadataArtifactImpl(
 
             In this case, return null
              */
-            if (artifactFile.containsKlibDirectory(sourceSetName)) MetadataBinaryImpl(this, artifactFile) else null
+
+            if (artifactFile.containsKlibDirectory(sourceSetPath)) MetadataBinaryImpl(this, artifactFile, sourceSetPath) else null
         }
 
         override val cinteropMetadataBinaries: List<CompositeMetadataArtifactContent.CInteropMetadataBinary> by lazy {
-            val cinteropMetadataDirectory = kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
-                ?: return@lazy emptyList()
+            val cinteropMetadataDirectory = (kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
+                ?: return@lazy emptyList())
+                .let { originalDir -> if (isMKlib) "metadata/$originalDir" else originalDir }
+
 
             val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(cinteropMetadataDirectory)
             val cinteropEntries = artifactFile.zip.listDescendants(cinteropMetadataDirectoryPath)
@@ -100,7 +111,8 @@ internal class CompositeMetadataArtifactImpl(
 
     private inner class MetadataBinaryImpl(
         override val containingSourceSetContent: CompositeMetadataArtifactContent.SourceSetContent,
-        private val artifactFile: ArtifactFile
+        private val artifactFile: ArtifactFile,
+        private val sourceSetPath: String,
     ) : CompositeMetadataArtifactContent.MetadataBinary {
 
         override val archiveExtension: String
@@ -131,7 +143,7 @@ internal class CompositeMetadataArtifactImpl(
                 "Expected file.extension == '$archiveExtension'. Found ${file.extension}"
             }
 
-            val libraryPath = "${containingSourceSetContent.sourceSetName}/"
+            val libraryPath = "$sourceSetPath/"
             if (!artifactFile.containsKlibDirectory(libraryPath)) return false
             file.parentFile.mkdirs()
             artifactFile.zip.copyPartially(file, libraryPath)
@@ -189,7 +201,7 @@ internal class CompositeMetadataArtifactImpl(
      * Interface to the underlying [zip][file] that only opens the file lazily and keeps references to
      * all [entries] and infers all potential directory paths (see [directoryPaths] and [containsKlibDirectory])
      */
-    private class ArtifactFile(private val file: File) : Closeable {
+    private class ArtifactFile(internal val file: File) : Closeable {
 
         private var isClosed = false
 

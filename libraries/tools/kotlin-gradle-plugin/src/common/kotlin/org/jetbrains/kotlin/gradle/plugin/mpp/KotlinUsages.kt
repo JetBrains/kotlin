@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.attributeValueByName
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MERGED_KLIB_USAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 
 object KotlinUsages {
@@ -174,7 +175,12 @@ object KotlinUsages {
 
     private class KotlinMetadataDisambiguation : AttributeDisambiguationRule<Usage> {
         override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
-            val commonCandidateList = listOf(KOTLIN_METADATA, KOTLIN_API, *javaUsagesForKotlinMetadataConsumers.toTypedArray())
+            val commonCandidateList = listOf(
+                KOTLIN_METADATA + MERGED_KLIB_USAGE_SUFFIX,
+                KOTLIN_METADATA,
+                KOTLIN_API,
+                *javaUsagesForKotlinMetadataConsumers.toTypedArray()
+            )
             if (consumerValue?.name == KOTLIN_METADATA) {
                 // Prefer Kotlin metadata, but if there's no such variant then accept 'kotlin-api' or the Java usages
                 // (see the compatibility rule):

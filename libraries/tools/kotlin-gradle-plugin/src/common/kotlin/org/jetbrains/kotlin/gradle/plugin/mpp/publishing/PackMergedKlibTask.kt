@@ -15,13 +15,13 @@ import org.gradle.api.artifacts.transform.TransformSpec
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeCompatibilityRule
+import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.CompatibilityCheckDetails
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.RelativePath
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -30,6 +30,10 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.artifacts.metadataFragmentIdentifier
+import org.jetbrains.kotlin.gradle.artifacts.metadataPublishedArtifacts
+import org.jetbrains.kotlin.gradle.artifacts.publishedMetadataCompilations
+import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -38,18 +42,28 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataTransformAction
+import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerCompositeMetadataJarBundling.cinteropMetadataDirectoryPath
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizedOutputDirectory
+import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
-import org.jetbrains.kotlin.util.suffixIfNot
+import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 import javax.inject.Inject
 
 private const val PACK_MERGED_KLIB_TASK_NAME = "packMergedKlibTask"
-
 internal const val MERGED_KLIB_ARTIFACT_TYPE = "mklib"
 internal const val MERGED_KLIB_USAGE_SUFFIX = "-merged"
 
@@ -91,7 +105,7 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
         }
     }
 
-    tasks.register(PACK_MERGED_KLIB_TASK_NAME, Zip::class.java) { zip ->
+    val packTask = tasks.register(PACK_MERGED_KLIB_TASK_NAME, Zip::class.java) { zip ->
         compileKlibTasks.forEach { (target, compileTaskProvider) ->
             val compileTask = compileTaskProvider?.get() ?: return@forEach
             val platformPath = target.mergedKlibPlatformPath ?: return@forEach
@@ -110,10 +124,46 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
         zip.archiveFileName.set("merged-klib.$MERGED_KLIB_ARTIFACT_TYPE")
     }
 
+    /* Include all metadata compile klibs */
+    val metadataTarget = extension.metadataTarget
+    metadataTarget.publishedMetadataCompilations().forEach { compilation ->
+        packTask.configure { zip ->
+            zip.into("metadata/${compilation.metadataFragmentIdentifier}") { spec ->
+                spec.from(compilation.metadataPublishedArtifacts)
+            }
+        }
 
+        if (compilation is KotlinSharedNativeCompilation) run {
+            // duplicated from 'includeCommonizedCInteropMetadata' (deduplicate later)
+            val commonizerTask = commonizeCInteropTask()?.get() ?: return@run
+            val commonizerDependencyToken = CInteropCommonizerDependent.from(compilation) ?: return@run
+            val outputDirectory = commonizerTask.commonizedOutputDirectory(commonizerDependencyToken) ?: return@run
+
+            packTask.configure { zip ->
+                zip.into("metadata/${cinteropMetadataDirectoryPath(compilation.defaultSourceSet.name)}") { spec ->
+                    spec.from(outputDirectory)
+                }
+            }
+        }
+    }
+
+    val psmTask = project.locateOrRegisterGenerateProjectStructureMetadataTask()
+    packTask.configure { zip ->
+        zip.into("metadata") { spec ->
+            spec.from(psmTask)
+        }
+    }
+
+    project.configurations.getByName(metadataTarget.internal.apiElementsConfigurationName).apply {
+        outgoing.artifact(packTask)
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA + MERGED_KLIB_USAGE_SUFFIX))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+    }
 
     configureMergedKlibTransformation()
+    configureTransformActionFromMklibToPsm()
 }
+
 
 internal val Project.packMergedKlibTask: TaskProvider<Task>
     get() = tasks.named(PACK_MERGED_KLIB_TASK_NAME)
@@ -138,13 +188,13 @@ internal fun Project.configureMergedKlibTransformation() {
 
     multiplatformExtension.targets.configureEach { target ->
         val platformPath = target.mergedKlibPlatformPath ?: return@configureEach
-        registerUnpackMergedKlibTransform(target, platformPath)
-        requestUnpackedMergedKlibs(target)
+        target.registerUnpackMergedKlibTransform(platformPath)
+        target.requestUnpackedMergedKlibs()
     }
 }
 
-private fun Project.registerUnpackMergedKlibTransform(target: KotlinTarget, platformPath: String) {
-    dependencies.registerTransform(UnpackMergedKlibTransform::class.java) { spec ->
+private fun KotlinTarget.registerUnpackMergedKlibTransform(platformPath: String) {
+    project.dependencies.registerTransform(UnpackMergedKlibTransform::class.java) { spec ->
         spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, MERGED_KLIB_ARTIFACT_TYPE)
         spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, "klib")
 
@@ -152,12 +202,12 @@ private fun Project.registerUnpackMergedKlibTransform(target: KotlinTarget, plat
         spec.to.attribute(mergedKlibStateAttribute, mergedKlibStateUnpacked)
 
         /* Disambiguate the per-target transform registrations by the same attributes the consumer requests */
-        spec.attributeForBothEnds(KotlinPlatformType.attribute, target.platformType)
-        if (target is KotlinNativeTarget) {
-            spec.attributeForBothEnds(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
+        spec.attributeForBothEnds(KotlinPlatformType.attribute, this.platformType)
+        if (this is KotlinNativeTarget) {
+            spec.attributeForBothEnds(KotlinNativeTarget.konanTargetAttribute, this.konanTarget.name)
         }
-        if (target is KotlinJsIrTarget) {
-            when (target.wasmTargetType) {
+        if (this is KotlinJsIrTarget) {
+            when (wasmTargetType) {
                 KotlinWasmTargetType.JS -> KotlinWasmTargetAttribute.js
                 KotlinWasmTargetType.WASI -> KotlinWasmTargetAttribute.wasi
                 null -> null
@@ -175,14 +225,12 @@ private fun <T : Any> TransformSpec<*>.attributeForBothEnds(attribute: Attribute
     to.attribute(attribute, value)
 }
 
-private fun Project.requestUnpackedMergedKlibs(target: KotlinTarget) {
-    target.compilations.configureEach { compilation ->
+private fun KotlinTarget.requestUnpackedMergedKlibs() {
+    compilations.configureEach { compilation ->
         val configurations = compilation.internal.configurations
         configurations.compileDependencyConfiguration
             .attributes.attribute(mergedKlibStateAttribute, mergedKlibStateUnpacked)
         configurations.runtimeDependencyConfiguration
-            ?.attributes?.attribute(mergedKlibStateAttribute, mergedKlibStateUnpacked)
-        configurations.hostSpecificMetadataConfiguration
             ?.attributes?.attribute(mergedKlibStateAttribute, mergedKlibStateUnpacked)
     }
 }
@@ -194,8 +242,8 @@ private fun Project.requestUnpackedMergedKlibs(target: KotlinTarget) {
  */
 internal class MergedKlibUsageCompatibilityRule : AttributeCompatibilityRule<Usage> {
     override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
-        val consumerUsage = consumerValue?.name ?: return@with
-        val producerUsage = producerValue?.name ?: return@with
+        val consumerUsage = consumerValue.name ?: return@with
+        val producerUsage = producerValue.name ?: return@with
         if (producerUsage == consumerUsage + MERGED_KLIB_USAGE_SUFFIX) compatible()
 
         /*
@@ -238,5 +286,23 @@ internal abstract class UnpackMergedKlibTransform @Inject constructor(
         )
 
         copyZipFilePartially(mergedKlib, outputFile, platformPath + "/")
+    }
+}
+
+private fun Project.configureTransformActionFromMklibToPsm() {
+    dependencies.registerTransformForArtifactType(
+        ProjectStructureMetadataTransformAction::class.java,
+        fromArtifactType = MERGED_KLIB_ARTIFACT_TYPE,
+        toArtifactType = KotlinUsages.KOTLIN_PSM_METADATA
+    ) { transform ->
+        transform.parameters { params ->
+            params.psmPath.set("metadata/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")
+        }
+        transform.from.apply {
+            attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA + MERGED_KLIB_USAGE_SUFFIX))
+        }
+        transform.to.apply {
+            attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
+        }
     }
 }

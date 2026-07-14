@@ -147,8 +147,9 @@ private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.
  * on *all* potential hosts. e.g. a set like (iosX64, macosX64) can only be built on macos hosts, and is therefore considered
  * 'host specific'.
  */
-internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean =
-    konanTargets.none { target -> target in targetsEnabledOnAllHosts }
+@Suppress("UNUSED_PARAMETER")
+internal fun isHostSpecificKonanTargetsSet(@Suppress("unused") konanTargets: Iterable<KonanTarget>): Boolean = false
+//konanTargets.none { target -> target in targetsEnabledOnAllHosts }
 
 private suspend fun <T> getHostSpecificElements(
     fragments: Iterable<T>,

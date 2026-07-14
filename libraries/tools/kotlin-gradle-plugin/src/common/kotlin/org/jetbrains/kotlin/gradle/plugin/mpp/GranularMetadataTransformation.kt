@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetVisibilityProvider.PlatformCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvedConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KotlinProjectCoordinatesData
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MERGED_KLIB_USAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.consumeRootModuleCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -166,7 +167,11 @@ internal class GranularMetadataTransformation(
         @get:Internal
         val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
     ) {
-        constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
+        constructor(
+            project: Project,
+            kotlinSourceSet: KotlinSourceSet,
+            transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true,
+        ) : this(
             build = project.currentBuild,
             sourceSetName = kotlinSourceSet.name,
             resolvedMetadataConfiguration = LazyResolvedConfigurationWithArtifacts(kotlinSourceSet.internal.resolvableMetadataConfiguration),
@@ -450,7 +455,7 @@ internal class GranularMetadataTransformation(
 
     private fun SourceSetVisibilityResult.getMetadataProviderForVisibleSourceSets(
         dependency: ResolvedDependencyResult,
-        projectStructureMetadata: KotlinProjectStructureMetadata
+        projectStructureMetadata: KotlinProjectStructureMetadata,
     ): MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider? {
         val module = dependency.selected
         val moduleId = module.id
@@ -604,7 +609,12 @@ internal val AttributeContainer.containsMultiplatformAttributes: Boolean
 private val AttributeContainer.containsCompositeMetadataJarAttributes: Boolean
     get() {
         val usageAttribute = keySet().find { it.name == Usage.USAGE_ATTRIBUTE.name } ?: return false
-        if (getAttribute(usageAttribute).toString() != KotlinUsages.KOTLIN_METADATA) return false
+
+        if (getAttribute(usageAttribute).toString() !in listOf(
+                KotlinUsages.KOTLIN_METADATA,
+                KotlinUsages.KOTLIN_METADATA + MERGED_KLIB_USAGE_SUFFIX
+            )
+        ) return false
 
         val platformType = keySet().find { it.name == KotlinPlatformType.attribute.name } ?: return false
         return getAttribute(platformType).toString() == KotlinPlatformType.common.name
