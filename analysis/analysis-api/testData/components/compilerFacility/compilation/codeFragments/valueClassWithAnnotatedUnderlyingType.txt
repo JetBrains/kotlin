@@ -1,0 +1,4 @@
+CODE_COMPILATION_EXCEPTION:
+Backend Internal error: Exception during IR lowering
+File being compiled: /fragment.kt
+The root cause java.lang.IllegalStateException was thrown at: org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator.applyCallArguments(CallAndReferenceGenerator.kt:1593)
