@@ -48,7 +48,7 @@ tasks.compileTestKotlin {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0))
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0))
 
     testGenerator("org.jetbrains.kotlin.analysis.stubs.TestGeneratorKt")
 

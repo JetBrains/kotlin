@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
  * Example:
  * ```
  * projectTests {
- *     testTask(jUnitMode = JUnitMode.JUnit5) {
+ *     testTask {
  *         @OptIn(KotlinCompilerDistUsage::class)
  *         withDist()  // only this task declares dist as an input
  *     }

@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.implementation
-
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -98,7 +96,7 @@ dependencies {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 1024) {
+    testTask(maxHeapSizeMb = 1024) {
         workingDir = rootDir
         jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
         environment("CI", kotlinBuildProperties.isTeamcityBuild.get())

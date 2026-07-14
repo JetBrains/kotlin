@@ -63,7 +63,7 @@ tasks.test {
 }
 
 projectTests {
-    testTask(taskName = "testOriginal", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit5) {
+    testTask(taskName = "testOriginal", skipInLocalBuild = false) {
         group = "verification"
         testClassesDirs = testOriginalSourceSet.output.classesDirs
         classpath = testOriginalSourceSet.runtimeClasspath
@@ -74,7 +74,7 @@ projectTests {
         dependsOn(compilingSourceSet.output)
     }
 
-    testTask(taskName = "testEmbeddable", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit5) {
+    testTask(taskName = "testEmbeddable", skipInLocalBuild = false) {
         group = "verification"
         testClassesDirs = testEmbeddableSourceSet.output.classesDirs
         classpath = testEmbeddableSourceSet.runtimeClasspath

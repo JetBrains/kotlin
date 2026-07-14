@@ -113,7 +113,7 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         systemProperty("kotlin.main.kts.compiled.scripts.cache.dir", "build/main.kts.compiled.cache")
         // MavenDependenciesResolver() tries to load from mavenLocal folder, so this file moves mavenLocal inside build folder.
         addFileProperty(project.layout.projectDirectory.file("test-maven-settings.xml"), "org.apache.maven.user-settings")

@@ -87,7 +87,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         addDirectoryProperty("wabt.bin.path") {
             fileProvider(unzipWabt.map { it.destinationDir.resolve("bin") })
         }

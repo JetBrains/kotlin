@@ -60,7 +60,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         dependsOn(":kotlin-compiler:distKotlinc")
         workingDir = rootDir
         doFirst {
@@ -70,7 +70,7 @@ projectTests {
 
     // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
     // To make it work, the dependencies to the intellij sdk should be eliminated
-    testTask("embeddableTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+    testTask("embeddableTest", skipInLocalBuild = false) {
         workingDir = rootDir
         dependsOn(embeddableTestRuntime)
         classpath = embeddableTestRuntime

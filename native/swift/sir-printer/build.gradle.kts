@@ -36,7 +36,7 @@ sourceSets {
 projectTests {
     testData(isolated, "testData")
 
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }
 
 publish()

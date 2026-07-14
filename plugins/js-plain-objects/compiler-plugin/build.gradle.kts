@@ -69,7 +69,7 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         addClasspathProperty(jsoIrRuntimeForTests, "jso.runtime.path")
     }

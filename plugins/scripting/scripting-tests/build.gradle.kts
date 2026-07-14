@@ -54,7 +54,7 @@ tasks.register<JavaExec>("runK2ExampleRepl") {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         workingDir = rootDir
     }
 

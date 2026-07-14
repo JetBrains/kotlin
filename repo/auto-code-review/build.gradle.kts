@@ -65,7 +65,7 @@ tasks.register<CodeReviewTask>("reviewCode") {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, javaLauncher = jdkVersion) {
+    testTask(javaLauncher = jdkVersion) {
         systemProperty("kotlin.repo.auto-code-review.rootDir", rootDir.absolutePath)
 
         // One of the tests traverses all files in the repo. And the tests are fairly quick.

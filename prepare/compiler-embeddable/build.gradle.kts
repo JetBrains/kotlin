@@ -66,7 +66,7 @@ publish {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         dependsOn(runtimeJar)
         val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
         val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }

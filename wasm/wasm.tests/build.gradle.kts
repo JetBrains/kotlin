@@ -392,7 +392,6 @@ projectTests {
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
         testTask(
             taskName = taskName,
-            jUnitMode = JUnitMode.JUnit5,
             skipInLocalBuild = skipInLocalBuild,
             maxHeapSizeMb = 6144
         ) {

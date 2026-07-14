@@ -48,7 +48,7 @@ projectTests {
     withTestJar()
     withMockJdkAnnotationsJar()
 
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_1_8)) {
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_1_8)) {
         addClasspathProperty(dataframeRuntimeClasspath, "kotlin.dataframe.plugin.test.classpath")
     }
 
