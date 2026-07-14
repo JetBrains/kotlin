@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -22,10 +23,38 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import java.io.File
 
+private object JsICCacheInvalidatingKeys : ICCacheInvalidatingKeys {
+    override val stringKeys: List<CompilerConfigurationKey<String>>
+        get() = listOf(
+            JSConfigurationKeys.SOURCE_MAP_PREFIX,
+            JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS
+        )
+
+    override val booleanKeys: List<CompilerConfigurationKey<Boolean>>
+        get() = listOf(
+            JSConfigurationKeys.SOURCE_MAP,
+            JSConfigurationKeys.USE_ES6_CLASSES,
+            JSConfigurationKeys.GENERATE_POLYFILLS,
+            JSConfigurationKeys.GENERATE_DTS,
+            JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION,
+            JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS,
+            JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT,
+            JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR,
+            JSConfigurationKeys.OPTIMIZE_GENERATED_JS,
+        )
+
+    override val enumKeys: List<CompilerConfigurationKey<Enum<*>>>
+        get() = listOf(
+            JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES,
+            JSConfigurationKeys.SOURCEMAP_NAMES_POLICY,
+        )
+}
+
 class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDependentICContext {
+    override fun getCacheInvalidatingKeys(): ICCacheInvalidatingKeys =
+        JsICCacheInvalidatingKeys
 
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForJsIC(WholeWorldStageController())
