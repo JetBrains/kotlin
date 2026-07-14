@@ -191,6 +191,24 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("jvmDependenciesInCommonClasspath_dir.args")
+    public void testJvmDependenciesInCommonClasspath_dir() {
+      run("jvmDependenciesInCommonClasspath_dir.args");
+    }
+
+    @Test
+    @TestMetadata("jvmDependenciesInCommonClasspath_friends.args")
+    public void testJvmDependenciesInCommonClasspath_friends() {
+      run("jvmDependenciesInCommonClasspath_friends.args");
+    }
+
+    @Test
+    @TestMetadata("jvmDependenciesInCommonClasspath_jar.args")
+    public void testJvmDependenciesInCommonClasspath_jar() {
+      run("jvmDependenciesInCommonClasspath_jar.args");
+    }
+
+    @Test
     @TestMetadata("missingFragment.args")
     public void testMissingFragment() {
       run("missingFragment.args");
