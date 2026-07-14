@@ -107,7 +107,7 @@ internal class KotlinPlaywrightJsTestFramework(
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
-        NpmPackageVersion("playwright-core", "1.60.0")
+        NpmPackageVersion("playwright-core", PLAYWRIGHT_VERSION)
     )
 
     @get:Internal

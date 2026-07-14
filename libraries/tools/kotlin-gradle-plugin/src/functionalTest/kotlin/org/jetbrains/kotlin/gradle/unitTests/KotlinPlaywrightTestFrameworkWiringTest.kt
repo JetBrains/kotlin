@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERSION
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import java.io.File
 import java.net.URI
 import java.time.Duration
-import kotlin.io.path.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -36,7 +36,6 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.seconds
 
 class KotlinPlaywrightTestFrameworkWiringTest {
 
@@ -133,7 +132,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             setOf<RequiredKotlinJsDependency>(
                 NpmPackageVersion(
                     name = "playwright-core",
-                    version = "1.60.0",
+                    version = PLAYWRIGHT_VERSION,
                 ),
             ).prettyPrinted,
             framework.requiredNpmDependencies.prettyPrinted
