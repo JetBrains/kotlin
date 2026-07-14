@@ -1,8 +1,6 @@
 // ISSUE: KT-87269
 // DUMP_IR
 
-// CODE_COMPILATION_EXCEPTION
-
 // MODULE: common
 // MODULE_KIND: Source
 // FILE: source.kt
