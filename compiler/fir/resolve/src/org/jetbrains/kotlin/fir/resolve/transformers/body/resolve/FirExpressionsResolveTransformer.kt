@@ -719,10 +719,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (!shouldUseNbd) return super.transformComponentCall(componentCall, data)
 
         return transformPropertyAccessExpression(buildPropertyAccessExpression {
-            source = componentCall.source
+            source = componentCall.source?.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring)
             explicitReceiver = componentCall.explicitReceiver
             calleeReference = buildSimpleNamedReference {
-                this.source = componentCall.calleeReference.source
+                this.source = componentCall.calleeReference.source?.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring)
                 name = componentCall.initializerName
             }
             annotations.addAll(componentCall.annotations)

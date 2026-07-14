@@ -5,7 +5,7 @@
 value class FullMoneyMismatch(val amount: Int, val currency: String)
 
  fun main() {
-     val (<!OTHER_ERROR_WITH_REASON!>missing<!>) = FullMoneyMismatch(10, "EUR")
+     val (<!UNRESOLVED_REFERENCE!>missing<!>) = FullMoneyMismatch(10, "EUR")
  }
 
 /* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, integerLiteral, localProperty,
