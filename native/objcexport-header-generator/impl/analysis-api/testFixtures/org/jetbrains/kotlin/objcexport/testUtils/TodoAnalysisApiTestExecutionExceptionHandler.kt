@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.objcexport.testUtils
 
 import org.jetbrains.kotlin.backend.konan.testUtils.TodoAnalysisApi
-import org.junit.AssumptionViolatedException
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestExecutionExceptionHandler
@@ -30,7 +30,7 @@ internal class TodoAnalysisApiTestExecutionExceptionHandler : TestExecutionExcep
             val message = "Test is marked as 'Todo' for Analysis Api"
             if (!kifLocal) {
                 throwable.printStackTrace(System.err)
-                throw AssumptionViolatedException(message, throwable)
+                Assumptions.abort(message)
             } else {
                 context.publishReportEntry(message)
                 System.err.println(message)
