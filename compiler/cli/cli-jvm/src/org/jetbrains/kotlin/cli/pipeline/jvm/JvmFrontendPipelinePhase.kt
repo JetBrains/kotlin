@@ -355,7 +355,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
         val javaDirectFacade =
-            if (configuration.useJavaDirect) {
+            if (true /*configuration.useJavaDirect*/) {
                 createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment, librariesScope)
             } else AbstractProjectEnvironment::getFirJavaFacade
         val javaDirectBinaryClassFinderInputs =
