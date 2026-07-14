@@ -21,15 +21,19 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
 
-internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: String, artifactNameAppendix: String): TaskProvider<Jar> =
-    sourcesJarTask(
-        project = compilation.target.project,
-        sourceSets = compilation.target.project.future {
-            compilation.internal.awaitAllKotlinSourceSets().associate { it.name to it.defaultImpl.allKotlin }
-        },
-        componentName = componentName,
-        artifactNameAppendix = artifactNameAppendix
-    )
+internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: String, artifactNameAppendix: String): TaskProvider<Jar> {
+    return if (compilation is KotlinMetadataCompilation<*>) {
+        sourcesJarTask(
+            project = compilation.target.project,
+            sourceSets = compilation.target.project.future {
+                compilation.internal.awaitAllKotlinSourceSets().associate { it.name to it.defaultImpl.allKotlin }
+            },
+            componentName = componentName,
+            artifactNameAppendix = artifactNameAppendix
+        )
+    } else emptySourcesJarTask(compilation.target.project, componentName)
+}
+
 
 private fun sourcesJarTask(
     project: Project,
@@ -44,6 +48,15 @@ private fun sourcesJarTask(
         sourceSets = sourceSets,
         artifactNameAppendix = artifactNameAppendix
     )
+
+private fun emptySourcesJarTask(
+    project: Project,
+    componentName: String,
+): TaskProvider<Jar> {
+    val taskName = lowerCamelCaseName(componentName, "sourcesJar")
+    project.locateTask<Jar>(taskName)?.let { return it }
+    return project.registerTask(taskName)
+}
 
 internal fun sourcesJarTaskNamed(
     taskName: String,
