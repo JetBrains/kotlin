@@ -12,12 +12,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 object JavaClasses {
-    val Object = DummyJavaClass("Object", javaLangName("Object"), numberOfTypeParameters = 0)
-    val Iterable = DummyJavaClass("Iterable", javaLangName("Iterable"), numberOfTypeParameters = 1)
-    val Collection = DummyJavaClass("Collection", javaUtilName("Collection"), numberOfTypeParameters = 1)
-    val Map = DummyJavaClass("Map", javaUtilName("Map"), numberOfTypeParameters = 2)
-    val Table = DummyJavaClass("Table", LombokNames.TABLE, numberOfTypeParameters = 3)
-
+    val Object = DummyJavaClass(javaLangName("Object"), numberOfTypeParameters = 0)
+    val Iterable = DummyJavaClass(javaLangName("Iterable"), numberOfTypeParameters = 1)
+    val Collection = DummyJavaClass(javaUtilName("Collection"), numberOfTypeParameters = 1)
+    val Map = DummyJavaClass(javaUtilName("Map"), numberOfTypeParameters = 2)
+    val Table = DummyJavaClass(LombokNames.TABLE, numberOfTypeParameters = 3)
 
     private fun javaUtilName(name: String): FqName {
         return FqName.fromSegments(listOf("java", "util", name))
@@ -28,8 +27,8 @@ object JavaClasses {
     }
 }
 
-class DummyJavaClass(name: String, override val fqName: FqName, numberOfTypeParameters: Int) : JavaClass {
-    override val name: Name = Name.identifier(name)
+class DummyJavaClass(override val fqName: FqName, numberOfTypeParameters: Int) : JavaClass {
+    override val name: Name = fqName.shortName()
 
     override val isFromSource: Boolean
         get() = shouldNotBeCalled()

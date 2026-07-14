@@ -6,14 +6,8 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
@@ -25,12 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
@@ -38,8 +27,6 @@ import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.plugin.createCompanionObject
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
@@ -62,20 +49,18 @@ import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.LombokNames.TABLE
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.AbstractBuilder
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Singular
 import org.jetbrains.kotlin.lombok.config.LombokService
 import org.jetbrains.kotlin.lombok.config.lombokService
-import org.jetbrains.kotlin.lombok.java.*
-import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCallOrError
 import org.jetbrains.kotlin.lombok.generators.kotlin.createConstructorIfGeneratedCompanion
 import org.jetbrains.kotlin.lombok.generators.kotlin.isCompanionNeeded
 import org.jetbrains.kotlin.lombok.generators.kotlin.needsConstructorIfGeneratedCompanion
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.lombok.java.*
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -626,6 +611,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
     }
 
+    private enum class SingularCollectionType {
+        Iterable,
+        Collection,
+        Map,
+        Table,
+    }
+
     private fun MutableMap<Name, FirNamedFunctionSymbol>.addMethodsForSingularFields(
         builder: AbstractBuilder,
         singular: Singular,
@@ -633,59 +625,59 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
     ) {
-        val fieldJavaTypeRef = item.returnTypeRef as? FirJavaTypeRef ?: return
-        val javaClassifierType = fieldJavaTypeRef.type as? JavaClassifierType ?: return
-        val typeName = (javaClassifierType.classifier as? JavaClass)?.fqName?.asString() ?: return
+        val typeRef = item.returnTypeRef
+
+        val typeName = when (typeRef) {
+            is FirJavaTypeRef -> ((typeRef.type as? JavaClassifierType)?.classifier as? JavaClass)?.fqName?.asString()
+            is FirResolvedTypeRef -> typeRef.coneType.classId?.asFqNameString()
+            else -> return
+        }
 
         val nameInSingularForm = (singular.singularName ?: item.name.identifier.singularForm)?.let(Name::identifier) ?: return
 
         val valueParameters: List<ConeLombokValueParameter>
-
-        val fallbackParameterType = DummyJavaClassType.ObjectType.takeIf { javaClassifierType.isRaw }
-        val source = builderSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
-
-        val baseType: DummyJavaClass
-        val typeArguments: List<JavaType?>
+        val collectionType: SingularCollectionType
+        val typeArgumentRefs: List<FirTypeRef>
 
         when (typeName) {
             in LombokNames.SUPPORTED_COLLECTIONS -> {
-                val parameterType = javaClassifierType.parameterType(0) ?: fallbackParameterType ?: return
+                val parameterTypeRef = typeRef.parameterType(0) ?: return
                 valueParameters = listOf(
-                    ConeLombokValueParameter(nameInSingularForm, parameterType.toRef(source))
+                    ConeLombokValueParameter(nameInSingularForm, parameterTypeRef)
                 )
 
-                baseType = when (typeName) {
-                    in LombokNames.SUPPORTED_GUAVA_COLLECTIONS -> JavaClasses.Iterable
-                    else -> JavaClasses.Collection
+                collectionType = when (typeName) {
+                    in LombokNames.SUPPORTED_GUAVA_COLLECTIONS -> SingularCollectionType.Iterable
+                    else -> SingularCollectionType.Collection
                 }
-                typeArguments = listOf(parameterType)
+                typeArgumentRefs = listOf(parameterTypeRef)
             }
 
             in LombokNames.SUPPORTED_MAPS -> {
-                val keyType = javaClassifierType.parameterType(0) ?: fallbackParameterType ?: return
-                val valueType = javaClassifierType.parameterType(1) ?: fallbackParameterType ?: return
+                val keyTypeRef = typeRef.parameterType(0) ?: return
+                val valueTypeRef = typeRef.parameterType(1) ?: return
                 valueParameters = listOf(
-                    ConeLombokValueParameter(Name.identifier("key"), keyType.toRef(source)),
-                    ConeLombokValueParameter(Name.identifier("value"), valueType.toRef(source)),
+                    ConeLombokValueParameter(Name.identifier("key"), keyTypeRef),
+                    ConeLombokValueParameter(Name.identifier("value"), valueTypeRef),
                 )
 
-                baseType = JavaClasses.Map
-                typeArguments = listOf(keyType, valueType)
+                collectionType = SingularCollectionType.Map
+                typeArgumentRefs = listOf(keyTypeRef, valueTypeRef)
             }
 
             in LombokNames.SUPPORTED_TABLES -> {
-                val rowKeyType = javaClassifierType.parameterType(0) ?: fallbackParameterType ?: return
-                val columnKeyType = javaClassifierType.parameterType(1) ?: fallbackParameterType ?: return
-                val valueType = javaClassifierType.parameterType(2) ?: fallbackParameterType ?: return
+                val rowKeyTypeRef = typeRef.parameterType(0) ?: return
+                val columnKeyTypeRef = typeRef.parameterType(1) ?: return
+                val valueType = typeRef.parameterType(2) ?: return
 
                 valueParameters = listOf(
-                    ConeLombokValueParameter(Name.identifier("rowKey"), rowKeyType.toRef(source)),
-                    ConeLombokValueParameter(Name.identifier("columnKey"), columnKeyType.toRef(source)),
-                    ConeLombokValueParameter(Name.identifier("value"), valueType.toRef(source)),
+                    ConeLombokValueParameter(Name.identifier("rowKey"), rowKeyTypeRef),
+                    ConeLombokValueParameter(Name.identifier("columnKey"), columnKeyTypeRef),
+                    ConeLombokValueParameter(Name.identifier("value"), valueType),
                 )
 
-                baseType = JavaClasses.Table
-                typeArguments = listOf(rowKeyType, columnKeyType, valueType)
+                collectionType = SingularCollectionType.Table
+                typeArgumentRefs = listOf(rowKeyTypeRef, columnKeyTypeRef, valueType)
             }
 
             else -> return
@@ -704,15 +696,35 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             ).symbol
         }
 
-        addIfNonClashing(item.name.toMethodName(builder), existingFunctionNames) {
-            // Lombok uses runtime checks instead of @Nullable/@NotNull annotations.
-            // We include these annotations to enable static analysis and improve the developer experience.
-            val annotations = listOf(
-                if (singular.allowNull) NullabilityJavaAnnotation.Nullable else NullabilityJavaAnnotation.NotNull
-            )
-            val addMultipleParameterType = DummyJavaClassType(baseType, typeArguments, annotations).toRef(source)
+        addIfNonClashing(item.name.toMethodName(builder), existingFunctionNames) { name ->
+            val addMultipleParameterType: FirTypeRef = if (builderSymbol.hasJavaOrigin) {
+                // Lombok uses runtime checks instead of @Nullable/@NotNull annotations.
+                // We include these annotations to enable static analysis and improve the developer experience.
+                val annotations = listOf(
+                    if (singular.allowNull) NullabilityJavaAnnotation.Nullable else NullabilityJavaAnnotation.NotNull
+                )
+                val baseType = when (collectionType) {
+                    SingularCollectionType.Iterable -> JavaClasses.Iterable
+                    SingularCollectionType.Collection -> JavaClasses.Collection
+                    SingularCollectionType.Map -> JavaClasses.Map
+                    SingularCollectionType.Table -> JavaClasses.Table
+                }
+                DummyJavaClassType(baseType, typeArgumentRefs.map { (it as FirJavaTypeRef).type }, annotations).toRef(source = null)
+            } else {
+                val baseType = when (collectionType) {
+                    SingularCollectionType.Iterable -> StandardClassIds.Iterable
+                    SingularCollectionType.Collection -> StandardClassIds.Collection
+                    SingularCollectionType.Map -> StandardClassIds.Map
+                    SingularCollectionType.Table -> ClassId.topLevel(TABLE)
+                }
+                baseType.constructClassLikeType(
+                    typeArgumentRefs.map { (it as FirResolvedTypeRef).coneType }.toTypedArray(),
+                    isMarkedNullable = singular.allowNull,
+                ).toFirResolvedTypeRef()
+            }
+
             builderSymbol.createJavaMethod(
-                name = it,
+                name = name,
                 valueParameters = listOf(ConeLombokValueParameter(item.name, addMultipleParameterType)),
                 returnTypeRef = builderType,
                 modality = Modality.OPEN,
@@ -970,8 +982,22 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     private val String.singularForm: String?
         get() = StringUtil.unpluralize(this)
 
-    private fun JavaClassifierType.parameterType(index: Int): JavaType? {
-        return typeArguments.getOrNull(index)
+    private fun FirTypeRef.parameterType(index: Int): FirTypeRef? {
+        return when (this) {
+            is FirJavaTypeRef -> {
+                val javaClassifierType = type as? JavaClassifierType
+                if (javaClassifierType != null) {
+                    val type = javaClassifierType.typeArguments.getOrNull(index) ?: runIf(javaClassifierType.isRaw) {
+                        DummyJavaClassType.ObjectType
+                    }
+                    type?.toRef(source = null)
+                } else {
+                    null
+                }
+            }
+            is FirResolvedTypeRef -> coneType.typeArguments.getOrNull(index)?.type?.toFirResolvedTypeRef()
+            else -> null
+        }
     }
 
     @OptIn(ExperimentalContracts::class)
