@@ -74,6 +74,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit4) // needed for `com.intellij.tests.JUnit5TestSessionListener` from intellij test framework
 
     CompilerModules.compilerModules.forEach {
         testRuntimeOnly(project(it))
