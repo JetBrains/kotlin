@@ -20,21 +20,6 @@ RUN apt-get install -y git \
     && apt-get install -y libatomic1  \
     && apt-get install -y libc++1
 
-RUN apt-get update && apt-get install -y \
-    libgl1 \
-    libgl1-mesa-glx \
-    libpulse0 \
-    libx11-6 \
-    libxcb1 \
-    libxcomposite1 \
-    libxcursor1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxi6 \
-    libxrender1 \
-    libxtst6
-
 RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /usr/lib/jvm
