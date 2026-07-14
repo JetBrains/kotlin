@@ -24,8 +24,7 @@ fun startTest() {
         }
     } catch (e: Throwable) {
         println("Failed with exception!")
-        println(e.message)
-        println(e.printStackTrace())
+        println(e)
         wasiProcExit(1)
     }
 }
