@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -51,19 +52,16 @@ abstract class KotlinSoftwareComponent(
 
     private suspend fun subcomponentTargetsWithAvailableAtPointers(): List<KotlinTarget> {
         AfterFinaliseCompilations.await()
-        return kotlinTargets
-            .filter { target ->
-                if (target is KotlinMetadataTarget) return@filter false
-                true
-            }
+        return kotlinTargets.filter { target ->
+            target.platformType in listOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
+        }
     }
 
     /**
      * These are variants pointing to subcomponent variants via available-at pointers
      */
     private val _variants: Future<Set<SoftwareComponent>> = project.future {
-        return@future emptySet()
-        /*subcomponentTargetsWithAvailableAtPointers()
+        subcomponentTargetsWithAvailableAtPointers()
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
                     .filter { component -> component.publishable }
@@ -71,7 +69,7 @@ abstract class KotlinSoftwareComponent(
                     .toSet()
 
                 target.components.filter { it.name in targetPublishableComponentNames }
-            }.toSet()*/
+            }.toSet()
     }
 
     override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
@@ -118,19 +116,25 @@ abstract class KotlinSoftwareComponent(
                 uklibUsages.getOrThrow().toSet()
     }
 
-    private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
-            getHostSpecificMainSharedSourceSets(project)
+    private suspend fun allPublishableSourceSets(): Set<KotlinSourceSet> {
+        AfterFinaliseCompilations.await()
+        return kotlinTargets.flatMap { target ->
+            target.compilations.findByName(MAIN_COMPILATION_NAME)?.allKotlinSourceSets.orEmpty()
+        }.toSet()
+    }
 
     /**
      * Registration (during object init) of [sourcesJarTask] is required for cases when
      * user build scripts want to have access to sourcesJar task to configure it
      */
     private val sourcesJarTask: TaskProvider<Jar> = sourcesJarTaskNamed(
-        "sourcesJar",
-        name,
-        project,
-        project.future { allPublishableCommonSourceSets().associate { it.name to it.defaultImpl.allKotlin } },
-        name.toLowerCaseAsciiOnly()
+        taskName = "sourcesJar",
+        componentName = name,
+        project = project,
+        sourceSets = project.future {
+            allPublishableSourceSets().associate { it.name to it.defaultImpl.allKotlin }
+        },
+        artifactNameAppendix = name.toLowerCaseAsciiOnly()
     )
 
     private fun addSourcesJarArtifactToConfiguration(

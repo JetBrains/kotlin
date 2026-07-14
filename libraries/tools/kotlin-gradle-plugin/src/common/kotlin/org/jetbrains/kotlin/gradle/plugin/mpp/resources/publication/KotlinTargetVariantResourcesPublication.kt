@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 // Use KotlinMultiplatformExtension to make sure this usage context is only creatable in MPP
 @Suppress("UnusedReceiverParameter")
+// TODO NOW: Include resources into our artifact!
 internal fun AbstractKotlinTarget.setUpResourcesVariant(
     compilation: KotlinCompilation<*>,
 ): DefaultKotlinUsageContext? {

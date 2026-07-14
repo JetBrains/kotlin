@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.ComponentWithCoordinates
@@ -20,12 +21,16 @@ import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_FALLBACK_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.packMergedKlibTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
@@ -33,14 +38,25 @@ internal fun KotlinTargetSoftwareComponent(
     target: AbstractKotlinTarget,
     kotlinComponent: KotlinTargetComponent,
 ): KotlinTargetSoftwareComponent {
-    // val adhocVariant = softwareComponentFactory.adhoc(kotlinComponent.name)
 
-    val adhocVariant = target.project.multiplatformExtensionOrNull?.publishing?.adhocSoftwareComponent
-        ?: (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java).adhoc(kotlinComponent.name)
+    val adhocVariant = if (
+        target.platformType in listOf(androidJvm, jvm) || target.project.multiplatformExtensionOrNull == null) {
+        (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java).adhoc(kotlinComponent.name)
+    } else {
+        target.project.multiplatformExtension.publishing.adhocSoftwareComponent
+    }
 
     /* Launch configuration */
     target.project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
         kotlinComponent.internal.usages.forEach { kotlinUsageContext ->
+
+            if (target !is KotlinJvmTarget &&
+                kotlinUsageContext.attributes.getAttribute(Category.CATEGORY_ATTRIBUTE).name == Category.DOCUMENTATION
+            ) {
+                return@forEach
+            }
+
+
             /* Explicitly typing 'Project' to avoid smart cast from 'target.project as ProjectInternal' */
             //
             val project: Project = target.project
@@ -65,7 +81,6 @@ internal fun KotlinTargetSoftwareComponent(
                     outgoing.artifact(project.packMergedKlibTask)
                 } else {
                     artifacts.addAll(kotlinUsageContext.artifacts)
-
                 }
             }
 
@@ -97,7 +112,7 @@ private fun Configuration.filterOutNonResolvableDependenciesForStandardKmpResolu
 ) {
     val resolvableConfiguration = project.configurations.getByName(kotlinUsageContext.compilation.compileDependencyConfigurationName)
     val consumableConfiguration = project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName)
-    val isJvmOrAndroidPublication = kotlinUsageContext.compilation.platformType !in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
+    val isJvmOrAndroidPublication = kotlinUsageContext.compilation.platformType !in setOf(jvm, androidJvm)
 
     // TODO: Included builds
     dependencies.addAllLater(project.provider {
@@ -130,7 +145,7 @@ private fun Configuration.filterOutNonResolvableDependenciesForStandardKmpResolu
                 // requesting platform dependencies in non jvm compilations, but got kotlin/jvm variant -> unresolvable in standard KMP.
                 val kotlinPlatformTypeOfResolvedVariant = variantResult.attributes.getAttributeSafely(KotlinPlatformType.attribute)
                 if (isJvmOrAndroidPublication) {
-                    return@any kotlinPlatformTypeOfResolvedVariant == KotlinPlatformType.jvm.name
+                    return@any kotlinPlatformTypeOfResolvedVariant == jvm.name
                 }
 
                 false
