@@ -38,6 +38,17 @@ public fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitut
 }
 
 /**
+ * A [KaSubstitutor] with an empty type mapping. It does not perform any substitution.
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val emptySubstitutor: KaSubstitutor
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.substitutorProvider.emptySubstitutor()
+    }
+
+/**
  * Creates a [KaSubstitutor] based on the inheritance relationship between [subClass] and [superClass]. [subClass] must inherit from
  * [superClass] and there may not be any error types in the inheritance path. Otherwise, `null` is returned.
  *
@@ -77,8 +88,8 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
  * from each [leftTypesToRightTypes] pair and tries to solve the given constraint system:
  * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
  * - If there are no type parameters involved in the provided types and every left type is a subtype of its right type,
- *   [KaSubstitutor.Empty] is returned.
- * - If [leftTypesToRightTypes] is empty, [KaSubstitutor.Empty] is returned as there can be no contradictions with no constraints.
+ *   [emptySubstitutor] is returned.
+ * - If [leftTypesToRightTypes] is empty, [emptySubstitutor] is returned as there can be no contradictions with no constraints.
  *
  * [isFreeTypeParameter] is called on every type parameter involved in the provided types
  * and controls the set of free type parameters registered in the constraint system.
@@ -105,7 +116,7 @@ public fun createSubtypingUnificationSubstitutor(
  * tries to solve the given constraint system:
  * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
  * - If there are no type parameters involved in the provided types and [leftType] is a subtype of [rightType],
- *   [KaSubstitutor.Empty] is returned.
+ *   [emptySubstitutor] is returned.
  *
  * [constructionPolicy] controls the way the unification substitutor is constructed.
  * Only affects the construction when at least one of the involved types is generic, i.e., depends on a type parameter.
@@ -167,8 +178,8 @@ public fun createSubtypingUnificationSubstitutor(
  * from each [leftTypesToRightTypes] pair and tries to solve the given constraint system:
  * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
  * - If there are no type parameters involved in the provided types and every left type is a subtype of its right type,
- *   [KaSubstitutor.Empty] is returned.
- * - If [leftTypesToRightTypes] is empty, [KaSubstitutor.Empty] is returned as there can be no contradictions with no constraints.
+ *   [emptySubstitutor] is returned.
+ * - If [leftTypesToRightTypes] is empty, [emptySubstitutor] is returned as there can be no contradictions with no constraints.
  *
  * [constructionPolicy] controls the way the unification substitutor is constructed.
  * Only affects the construction when at least one of the involved types is generic, i.e., depends on a type parameter.

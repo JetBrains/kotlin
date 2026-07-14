@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,6 +27,11 @@ internal abstract class AbstractKaFirSubstitutor<T : ConeSubstitutor>(
         require(type is KaFirType)
         substitutor.substituteOrNull(type.coneType)?.let { builder.typeBuilder.buildKtType(it) }
     }
+}
+
+internal class KaFirEmptySubstitutor(override val token: KaLifetimeToken) : KaSubstitutor {
+    override fun substitute(type: KaType): KaType = withValidityAssertion { type }
+    override fun substituteOrNull(type: KaType): KaType? = withValidityAssertion { null }
 }
 
 internal class KaFirGenericSubstitutor(

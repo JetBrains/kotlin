@@ -23,6 +23,8 @@ public interface KaInternalsSubstitutorProvider {
 
     public fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitutor
 
+    public fun emptySubstitutor(): KaSubstitutor
+
     public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor?
 
     @KaIdeApi

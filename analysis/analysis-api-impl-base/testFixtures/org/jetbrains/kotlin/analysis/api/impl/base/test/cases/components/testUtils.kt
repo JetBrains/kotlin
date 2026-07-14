@@ -99,14 +99,13 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
             it?.let { stringRepresentation(it).indented() } ?: "null"
         }
         is PsiElement -> this.text
-        is KaSubstitutor.Empty -> "<empty substitutor>"
         is KaMapBackedSubstitutor -> {
             val mappingText = getAsMap().entries
                 .joinToString(prefix = "{", postfix = "}") { [k, v] -> stringRepresentation(k) + " = " + v }
             "<map substitutor: $mappingText>"
         }
         is KaChainedSubstitutor -> "${stringRepresentation(first)} then ${stringRepresentation(second)}"
-        is KaSubstitutor -> "<complex substitutor>"
+        is KaSubstitutor -> if (this::class.simpleName == "KaFirEmptySubstitutor") "<empty substitutor>" else "<complex substitutor>"
         is KaDiagnostic -> "$severity<$factoryName: $defaultMessage>"
         is KaType -> render()
         is Enum<*> -> name

@@ -48,6 +48,10 @@ public interface KaSubstitutor : KaLifetimeOwner {
      * A [KaSubstitutor] with an empty type mapping. It does not perform any substitution.
      */
     @KaExperimentalApi
+    @Deprecated(
+        message = "Use the 'emptySubstitutor' endpoint from 'org.jetbrains.kotlin.analysis.api.types' instead.",
+        replaceWith = ReplaceWith("emptySubstitutor", "org.jetbrains.kotlin.analysis.api.types.emptySubstitutor"),
+    )
     public class Empty(override val token: KaLifetimeToken) : KaSubstitutor {
         override fun substitute(type: KaType): KaType = withValidityAssertion { type }
         override fun substituteOrNull(type: KaType): KaType? = withValidityAssertion { null }

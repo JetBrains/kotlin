@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.signatures
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.AbstractKaFirSubstitutor
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirEmptySubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -52,7 +53,7 @@ internal class KaFirFunctionDummySignature<out S : KaFunctionSymbol>(
     }
 
     override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = withValidityAssertion {
-        if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this
+        if (substitutor is KaFirEmptySubstitutor) return@withValidityAssertion this
         require(substitutor is AbstractKaFirSubstitutor<*>)
 
         KaFirFunctionSubstitutorBasedSignature(token, firSymbol, firSymbolBuilder, substitutor.substitutor)
@@ -94,7 +95,7 @@ internal class KaFirFunctionSubstitutorBasedSignature<out S : KaFunctionSymbol>(
     }
 
     override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = withValidityAssertion {
-        if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this
+        if (substitutor is KaFirEmptySubstitutor) return@withValidityAssertion this
         require(substitutor is AbstractKaFirSubstitutor<*>)
         val chainedSubstitutor = ChainedSubstitutor(coneSubstitutor, substitutor.substitutor)
 
