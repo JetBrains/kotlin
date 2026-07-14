@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-87506
 // CHECK_BYTECODE_LISTING
@@ -16,7 +15,7 @@ actual open class A {
 
 @OptIn(ExperimentalVersionOverloading::class)
 class B : A() {
-    override fun foo(a: String, <!INVALID_VERSIONING_ON_NON_OPTIONAL!>@IntroducedAt("1")<!> b: String): String = a + b
+    override fun foo(a: String, @IntroducedAt("1") b: String): String = a + b
 }
 
 fun box(): String {
