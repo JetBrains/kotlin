@@ -69,6 +69,9 @@ open class CompilerCallbackServicesFacadeServer(
     override fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray? =
         incrementalCompilationComponents!!.getIncrementalCache(target).getModuleMappingData()
 
+    override fun incrementalCache_getMetadata(target: TargetId, moduleName: String): Map<File, ByteArray> =
+        incrementalCompilationComponents!!.getIncrementalCache(target).getMetadata(moduleName)
+
     // todo: remove (the method it called was relevant only for old IC)
     override fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String) {
     }
