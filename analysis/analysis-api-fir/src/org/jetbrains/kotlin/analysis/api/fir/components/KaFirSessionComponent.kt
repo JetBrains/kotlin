@@ -44,7 +44,7 @@ internal interface KaFirSessionComponent : KaSessionComponent {
 
     fun ConeDiagnostic.asKaDiagnostic(
         source: KtSourceElement,
-    ): KaDiagnosticWithPsi<*>? = asKaDiagnostic(source = source, analysisSession = analysisSession)
+    ): KaDiagnosticWithPsi<*>? = asKaDiagnostic(source = source, analysisSession)
 
     val KaType.coneType: ConeKotlinType
         get() {
