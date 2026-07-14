@@ -288,8 +288,8 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         return this == null || this is FirErrorExpression && diagnostic is ConeSyntaxDiagnostic
     }
 
-    context(reporter: DiagnosticReporter, context: CheckerContext)
     @OptIn(ApplicabilityDetail::class)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun reportGivenDiagnostic(
         source: KtSourceElement,
         destructuringDeclarationType: ConeKotlinType,
