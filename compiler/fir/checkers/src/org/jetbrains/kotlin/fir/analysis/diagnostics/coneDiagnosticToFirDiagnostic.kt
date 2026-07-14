@@ -572,7 +572,7 @@ private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, ses
 private fun KtLightSourceElement.isTrailingLambdaOnNewLine(): Boolean {
     val parent = treeStructure.getParent(this.lighterASTNode)
     if (parent?.tokenType == KtStubElementTypes.LAMBDA_ARGUMENT) {
-        var prevSibling = parent.getPreviousSibling(treeStructure)
+        var prevSibling = parent!!.getPreviousSibling(treeStructure)
         while (prevSibling != null && prevSibling.tokenType !is KtStubElementType<*, *>) {
             if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling is LighterASTTokenNode && prevSibling.text.contains("\n")) {
                 return true
