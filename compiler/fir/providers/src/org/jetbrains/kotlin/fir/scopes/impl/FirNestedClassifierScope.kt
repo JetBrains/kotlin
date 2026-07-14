@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -129,4 +128,4 @@ fun FirTypeParameterRef.toConeType(): ConeTypeParameterType = symbol.toConeType(
 fun FirTypeParameterSymbol.toConeType(): ConeTypeParameterType = toConeType(false)
 
 fun FirTypeParameterSymbol.toConeType(isNullable: Boolean): ConeTypeParameterType =
-    ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(this), isNullable)
+    ConeTypeParameterType(ConeTypeParameterLookupTag(this), isNullable)

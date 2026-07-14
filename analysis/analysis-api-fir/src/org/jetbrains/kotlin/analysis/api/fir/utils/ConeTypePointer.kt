@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.ProjectionKind.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 /**
@@ -219,7 +218,7 @@ private class ConeTypeParameterTypePointer(
         val typeParameterSymbol = typeParameterPointer.restoreSymbol(session) ?: return null
 
         val lookupTag = ConeTypeParameterLookupTag(typeParameterSymbol.firSymbol)
-        return ConeTypeParameterTypeImpl(lookupTag, isNullable)
+        return ConeTypeParameterType(lookupTag, isNullable)
     }
 }
 

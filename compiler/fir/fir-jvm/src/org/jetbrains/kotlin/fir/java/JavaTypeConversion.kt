@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.*
@@ -239,7 +238,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         is JavaTypeParameter -> {
             val symbol = javaTypeParameterStack[classifier]
             if (symbol != null) {
-                ConeTypeParameterTypeImpl(symbol.toLookupTag(), isMarkedNullable = lowerBound != null, attributes)
+                ConeTypeParameterType(symbol.toLookupTag(), isMarkedNullable = lowerBound != null, attributes)
             } else {
                 ConeErrorType(ConeUnresolvedNameError(classifier.name))
             }

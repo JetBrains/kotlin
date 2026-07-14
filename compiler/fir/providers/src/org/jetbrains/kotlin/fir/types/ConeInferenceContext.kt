@@ -123,7 +123,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 nullable,
                 coneAttributes,
             )
-            is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(
+            is ConeTypeParameterLookupTag -> ConeTypeParameterType(
                 constructor,
                 nullable,
                 coneAttributes

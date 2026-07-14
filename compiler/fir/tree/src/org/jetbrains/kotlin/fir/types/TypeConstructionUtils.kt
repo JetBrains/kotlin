@@ -15,7 +15,7 @@ fun ConeClassifierLookupTag.constructType(
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     return when (this) {
-        is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isMarkedNullable, attributes)
+        is ConeTypeParameterLookupTag -> ConeTypeParameterType(this, isMarkedNullable, attributes)
         is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isMarkedNullable, attributes)
         else -> error("! ${this::class}")
     }
@@ -47,7 +47,7 @@ fun FirClassifierSymbol<*>.constructType(
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     return when (this) {
-        is FirTypeParameterSymbol -> ConeTypeParameterTypeImpl(this.toLookupTag(), isMarkedNullable, attributes)
+        is FirTypeParameterSymbol -> ConeTypeParameterType(this.toLookupTag(), isMarkedNullable, attributes)
         is FirClassLikeSymbol<*> -> constructType(typeArguments, isMarkedNullable, attributes)
     }
 }

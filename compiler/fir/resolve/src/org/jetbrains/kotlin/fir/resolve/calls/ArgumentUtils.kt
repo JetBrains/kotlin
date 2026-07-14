@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
@@ -176,7 +175,7 @@ internal fun prepareTypeForArgumentTypeMismatch(type: ConeKotlinType): ConeKotli
         // In case of no constraints, just return the corresponding type parameter type
         val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
         if (originalTypeParameter != null) {
-            return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
+            return ConeTypeParameterType(originalTypeParameter, type.isMarkedNullable, type.attributes)
         }
     } else if (type is ConeIntegerLiteralType) {
         return type.possibleTypes.firstOrNull() ?: type

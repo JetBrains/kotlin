@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
@@ -837,7 +836,7 @@ fun buildExplicitBackingFieldReference(
     }.build()
 
 val FirTypeParameterSymbol.defaultType: ConeTypeParameterType
-    get() = ConeTypeParameterTypeImpl(toLookupTag(), isMarkedNullable = false)
+    get() = ConeTypeParameterType(toLookupTag(), isMarkedNullable = false)
 
 val FirUserTypeRef.shortName: Name get() = qualifier.last().name
 

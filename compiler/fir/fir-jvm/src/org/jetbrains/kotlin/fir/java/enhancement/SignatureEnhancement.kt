@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -580,7 +579,7 @@ class FirSignatureEnhancement(
                 containingDeclarationSymbol = functionSymbol
             } else typeParameter
             if (typeParameter is FirTypeParameter) {
-                typeParameterSubstitutionMap[typeParameter.symbol] = ConeTypeParameterTypeImpl(
+                typeParameterSubstitutionMap[typeParameter.symbol] = ConeTypeParameterType(
                     newTypeParameter.symbol.toLookupTag(), isMarkedNullable = false
                 )
             }
@@ -829,10 +828,10 @@ class FirSignatureEnhancement(
         val typeParameterCount = typeParameters.size
         val parametersAsTypeProjections = when {
             typeParameterCount == supertypeParameterCount ->
-                typeParameters.map { ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(it.symbol), isMarkedNullable = false) }
+                typeParameters.map { ConeTypeParameterType(ConeTypeParameterLookupTag(it.symbol), isMarkedNullable = false) }
             typeParameterCount == 1 && supertypeParameterCount > 1 && purelyImplementedClassIdFromAnnotation == null -> {
                 val projection =
-                    ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(typeParameters.first().symbol), isMarkedNullable = false)
+                    ConeTypeParameterType(ConeTypeParameterLookupTag(typeParameters.first().symbol), isMarkedNullable = false)
                 (1..supertypeParameterCount).map { projection }
             }
             else -> return null

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
@@ -264,7 +263,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
     override fun TypeConstructorMarker.defaultType(): ConeSimpleKotlinType {
         require(this is ConeClassifierLookupTag)
         return when (this) {
-            is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isMarkedNullable = false)
+            is ConeTypeParameterLookupTag -> ConeTypeParameterType(this, isMarkedNullable = false)
             is ConeClassLikeLookupTag -> {
                 val symbol = toClassSymbol(session)
                     ?: return ConeErrorType(ConeUnresolvedSymbolError(classId))
