@@ -10,20 +10,22 @@ import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.utils.checkWithAttachment
+import java.io.File
 
-class KlibIcData(incrementalData: IncrementalDataProvider) : KlibMetadataComponent {
+class KlibIcData(nonDirtyPreviousPackageFragments: Map<File, ByteArray>) : KlibMetadataComponent {
+
+    constructor(incrementalData: IncrementalDataProvider) : this(incrementalData.compiledPackageParts.mapValues { [file, result] -> result.metadata })
 
     private val fragments: Map<String, Map<String, ByteArray>> by lazy {
         val result = mutableMapOf<String, MutableMap<String, ByteArray>>()
 
-        incrementalData
-            .compiledPackageParts
+        nonDirtyPreviousPackageFragments
             .toSortedMap() // This is so that IC is more deterministic
-            .forEach { [file, translationResultValue] ->
-                val proto = parsePackageFragment(translationResultValue.metadata)
+            .forEach { [file, metadata] ->
+                val proto = parsePackageFragment(metadata)
                 val fqName = proto.getExtension(KlibMetadataProtoBuf.fqName)
                 val key = file.path
-                val existingValue = result.getOrPut(fqName, ::mutableMapOf).put(key, translationResultValue.metadata)
+                val existingValue = result.getOrPut(fqName, ::mutableMapOf).put(key, metadata)
                 checkWithAttachment(existingValue == null, { "Duplicate metadata entry" }) {
                     it.withAttachment("key", key)
                     it.withAttachment("fqName", fqName)

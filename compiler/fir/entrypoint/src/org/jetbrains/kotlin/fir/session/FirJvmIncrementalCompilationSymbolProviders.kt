@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.hmppModuleStructure
+import org.jetbrains.kotlin.config.incrementalCompilationComponents
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.modules.TargetId
 
 data class FirJvmIncrementalCompilationSymbolProviders(
     val symbolProviderForBinariesFromIncrementalCompilation: FirSymbolProvider?,
@@ -64,20 +65,25 @@ fun createIncrementalProvidersForNonLeafMppModules(
     moduleData: FirModuleData,
     configuration: CompilerConfiguration,
 ): FirJvmIncrementalCompilationSymbolProviders? {
-    val moduleStructure = configuration.hmppModuleStructure ?: return null
-    val incrementalClasspath = moduleStructure.incrementalDependencies.firstNotNullOfOrNull { [module, classpath] ->
-        runIf(module.name == moduleData.name.asStringStripSpecialMarkers()) { classpath }
-    } ?: return null
-    val resolvedLibraries = loadMetadataKlibs(incrementalClasspath, configuration).all
-    val provider = KlibBasedSymbolProvider(
-        session,
+    val moduleName = moduleData.name.asStringStripSpecialMarkers()
+    val incrementalCache = configuration.incrementalCacheForThisTarget() ?: return null
+
+    val provider = KlibIcCacheBasedSymbolProvider(
+        session = session,
         moduleDataProvider = SingleModuleDataProvider(moduleData),
         kotlinScopeProvider = session.kotlinScopeProvider,
-        resolvedLibraries,
+        icData = KlibIcData(incrementalCache.getMetadata(moduleName)),
         defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled,
     )
     return FirJvmIncrementalCompilationSymbolProviders(
         symbolProviderForBinariesFromIncrementalCompilation = provider,
         optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation = null,
     )
+}
+
+private fun CompilerConfiguration.incrementalCacheForThisTarget(): IncrementalCache? {
+    val moduleName = requireNotNull(moduleName) { "Module name must be specified for incremental compilation" }
+    val targetId = TargetId(moduleName, "java-production")
+
+    return incrementalCompilationComponents?.getIncrementalCache(targetId)
 }
