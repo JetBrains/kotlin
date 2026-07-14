@@ -61,7 +61,7 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
 
         private fun isLocal(expression: IrExpression, owner: IrDeclaration): Boolean {
             return when (expression) {
-                is IrGetValue -> expression.symbol.owner == owner
+                is IrGetValue -> expression.symbol.owner.parent == owner
                 is IrConstantValue -> true
                 else -> false
             }
