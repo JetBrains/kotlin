@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.io
 
 import java.io.File
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.exists
 import kotlin.io.path.readAttributes
 
 /**
@@ -30,4 +34,24 @@ fun Path.fileKey(): Any {
  */
 fun Path.deleteOnExit() {
     toFile().deleteOnExit()
+}
+
+/**
+ * Registers the file or (potentially non-empty) directory to be deleted when the JVM terminates.
+ * Note: All underlying files and directories will be deleted before deleting the containing directory.
+ */
+fun Path.deleteOnExitRecursively() {
+    if (!exists()) return
+
+    Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
+        override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+            file.deleteOnExit()
+            return FileVisitResult.CONTINUE
+        }
+
+        override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
+            dir.deleteOnExit()
+            return FileVisitResult.CONTINUE
+        }
+    })
 }
