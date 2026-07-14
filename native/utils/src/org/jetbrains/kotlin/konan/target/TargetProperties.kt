@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.konan.properties
 
 import org.jetbrains.kotlin.io.resolvablePropertyList
 import org.jetbrains.kotlin.io.resolvablePropertyString
-import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.hostTargetSuffix
+import java.util.*
 
 fun Properties.hostString(name: String, host: KonanTarget): String?
     = this.resolvablePropertyString(name, suffix = host.name)

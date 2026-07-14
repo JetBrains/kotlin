@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.config.konanRefinesModules
 import org.jetbrains.kotlin.konan.config.konanShortModuleName
 import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedKlibTo
-import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.nio.file.Path
+import java.util.Properties
 import kotlin.io.path.Path
 
 /**
