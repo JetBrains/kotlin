@@ -107,14 +107,14 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
 
             playwright.use {
                 with(client) {
-                    // TODO: Ideally, we'd like to create a separate root for each runner, but this doesn't currently play well with
+                    // TODO(KT-86706): Ideally, we'd like to create a separate root for each runner, but this doesn't currently play well with
                     // Gradle's test reporting API, which only supports one test report per root and overwrites previously created reports.
-                    // This will get easier once we split each runner into its own Gradle task (see KT-86706).
+                    // This will get easier once we split each runner into its own Gradle task.
                     root {
                         for (runner in spec.runners) {
                             suite(id = runner.name) {
                                 try {
-                                    // TODO: It would be better to eventually make currentRunnerName the ID of the Root node when we have
+                                    // TODO(KT-86706): It would be better to eventually make currentRunnerName the ID of the Root node when we have
                                     // one root per runner - see comment above.
                                     client.currentRunnerName = runner.name
                                     executeRunner(playwright, runner, handler)
