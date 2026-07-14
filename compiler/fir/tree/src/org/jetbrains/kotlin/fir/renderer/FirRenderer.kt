@@ -623,6 +623,15 @@ class FirRenderer(
             returnExpression.result.accept(this)
         }
 
+        override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion) {
+            annotationRenderer?.render(numericClassConversion)
+            print("NumericConversion<")
+            print(numericClassConversion.resolvedType)
+            print(">(")
+            numericClassConversion.originalExpression.accept(this)
+            print(")")
+        }
+
         override fun visitWhenBranch(whenBranch: FirWhenBranch) {
             val condition = whenBranch.condition
             if (condition is FirElseIfTrueCondition) {

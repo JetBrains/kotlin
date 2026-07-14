@@ -139,6 +139,14 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
                     position = 0,
                 )
             ]
+
+            this[StandardClassIds.Annotations.NumericClass] = [
+                FirCompilerRequiredParameterDescription(
+                    name = StandardClassIds.Annotations.ParameterNames.actualizations,
+                    kind = FirCraParameterKind.EnumParameter(StandardClassIds.NumericVariant, isVararg = true),
+                    position = null,
+                )
+            ]
         }
 
         override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments.keys + setOf(

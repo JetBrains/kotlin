@@ -994,6 +994,14 @@ class Fir2IrVisitor(
         return literalExpression.toIrConst(literalExpression.resolvedType.toIrType())
     }
 
+    override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: Any?): IrElement {
+        val preConverted = numericClassConversion.originalExpression.accept(this, data) as IrExpression
+
+        return with(adapterGenerator) {
+            preConverted.applyNumericClassCoercionIfNeeded(numericClassConversion)
+        }
+    }
+
     // ==================================================================================
 
     private fun FirStatement.toIrStatement(): IrStatement? {
