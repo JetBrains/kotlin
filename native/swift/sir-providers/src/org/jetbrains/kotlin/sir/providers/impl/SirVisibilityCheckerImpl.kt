@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.isFromTemporarilyIgnoredPackage
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
@@ -111,10 +112,26 @@ public class SirVisibilityCheckerImpl(
                 else
                     SirVisibility.PUBLIC
             }
-            is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType.let {
-                if (it.isPrimitive || it.isNothingType || it.isFunctionType) {
+            is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType.let { type ->
+                if (type is KaFunctionType) {
+                    val types = buildList {
+                        addAll(type.contextReceivers.map { it.type })
+                        addIfNotNull(type.receiverType)
+                        addAll(type.parameterTypes)
+                        add(type.returnType)
+                    }
+                    var visibility = SirVisibility.PUBLIC
+                    for (type in types) {
+                        when (val availability = type.availability()) {
+                            is SirAvailability.Available -> visibility = minOf(visibility, availability.visibility)
+                            is SirAvailability.Hidden -> return@withSessions SirAvailability.Hidden("Type in functional typealias is hidden")
+                            is SirAvailability.Unavailable -> return@withSessions SirAvailability.Unavailable("Type in functional typealias is unavailable")
+                        }
+                    }
+                    visibility
+                } else if (type.isPrimitive || type.isNothingType) {
                     SirVisibility.PUBLIC
-                } else when (val availability = it.availability()) {
+                } else when (val availability = type.availability()) {
                     is SirAvailability.Available -> availability.visibility
                     is SirAvailability.Hidden -> return@withSessions SirAvailability.Hidden("Typealias target is hidden")
                     is SirAvailability.Unavailable -> return@withSessions SirAvailability.Unavailable("Typealias target is unavailable")

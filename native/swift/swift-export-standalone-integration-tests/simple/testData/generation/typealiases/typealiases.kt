@@ -79,6 +79,20 @@ fun produce_closure(): closure = TODO()
 var block: closure = { }
 fun deeper_closure_typealiase(block: deeper_closure_typealias): deeper_closure_typealias = TODO()
 
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN)
+class HiddenClass
+
+@Suppress("DEPRECATION_ERROR")
+typealias funWithHiddenClassA = context(HiddenClass) () -> Unit
+@Suppress("DEPRECATION_ERROR")
+typealias funWithHiddenClassB = HiddenClass.() -> Unit
+@Suppress("DEPRECATION_ERROR")
+typealias funWithHiddenClassC = (HiddenClass) -> Unit
+@Suppress("DEPRECATION_ERROR")
+typealias funWithHiddenClassD = () -> HiddenClass
+@Suppress("DEPRECATION_ERROR")
+typealias funWithHiddenClassE = suspend () -> HiddenClass
+
 // FILE: should_be_ignored.kt
 import typealiases.Foo
 
