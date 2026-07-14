@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.testInfraError
-import org.jetbrains.kotlin.test.util.parseLanguageFeature
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlin.wasm.test.WasmCoroutineHelpersModuleTransformer
@@ -125,10 +124,9 @@ class CustomWasmSecondStageFacade internal constructor(
          * since all helper KLIBs in a batch share `unique_name=helpers`) — everything else is reused as-is from Stage 1.
          *
          * Since `GenerateWasmTests` only visits the `launcher.klib` main module here, the per-test `Launcher_<hash>`
-         * class is unused, so `WasmJsLauncherAdditionalSourceProvider.produceAdditionalFiles()` short-circuits to an
-         * empty list for this path. Aggregated batch settings (max `LANGUAGE_VERSION`, union of `LANGUAGE` features and
-         * `OPT_IN`s, `ALLOW_KOTLIN_PACKAGE` if requested by any test) are applied to both the launcher KLIB compilation
-         * and the final link, since all tests in the batch share one compiler invocation.
+         * class is unused, so `WasmJsLauncherAdditionalSourceProvider.produceAdditionalFiles()` short-circuits to an empty list for this path.
+         * Aggregated batch settings (max `LANGUAGE_VERSION`, union of `OPT_IN`s, `ALLOW_KOTLIN_PACKAGE` if requested by any test)
+         * are applied to both the launcher KLIB compilation and the final link, since all tests in the batch share one compiler invocation.
          */
         private fun groupedBatch(
             inputArtifact: GroupingStageInputArtifact,
@@ -156,9 +154,7 @@ class CustomWasmSecondStageFacade internal constructor(
                 launcherModule,
                 listOf(batchLauncherFile.originalFile),
                 launcherKlibFile,
-                languageVersion = firstStageSettings.maxLanguageVersion.versionString,
-                // CLI compiler does not accept test-only features. Anyway, ProxyLauncher does not depend on them, so they must be filtered out.
-                customLanguageFeatures = firstStageSettings.allLanguageFeatures.filterNot { it.parseLanguageFeature().first.testOnly },
+                languageVersion = firstStageSettings.maxLanguageVersion,
                 customOptIns = firstStageSettings.allOptIns,
                 allowKotlinPackage = firstStageSettings.allAllowKotlinPackage,
                 cleanedFirstStageRegularDependencies + perTestKlibPaths,
@@ -170,7 +166,6 @@ class CustomWasmSecondStageFacade internal constructor(
             val executableFolder = facade.runCli(
                 module = someModule.copy(files = emptyList()),
                 dirName = someModule.name.hashCode().toHexString(),
-                customLanguageFeatures = secondStageSettings.allLanguageFeatures,
                 customOptIns = secondStageSettings.allOptIns,
                 allowKotlinPackage = secondStageSettings.allAllowKotlinPackage,
                 includedLibrary = launcherKlibFile.absolutePath,
@@ -214,7 +209,6 @@ class CustomWasmSecondStageFacade internal constructor(
             val executableFolder = facade.runCli(
                 module,
                 dirName = module.name.hashCode().toHexString(),
-                customLanguageFeatures = mainModule.directives[LanguageSettingsDirectives.LANGUAGE],
                 customOptIns = mainModule.directives[LanguageSettingsDirectives.OPT_IN],
                 allowKotlinPackage = LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in mainModule.directives,
                 includedLibrary = perTestKlibPathsIsolated.first(),
@@ -262,7 +256,6 @@ class CustomWasmSecondStageFacade internal constructor(
     fun runCli(
         module: TestModule,
         dirName: String,
-        customLanguageFeatures: List<String>,
         customOptIns: List<String>,
         allowKotlinPackage: Boolean,
         includedLibrary: String, // will be passed as `-Xinclude`, so its tests functions will be processed by GenerateWasmTests.
@@ -322,12 +315,6 @@ class CustomWasmSecondStageFacade internal constructor(
                 runIf(isOldEH) {
                     listOf(KotlinWasmCompilerArguments::wasmUseNewExceptionProposal.cliArgument("false"))
                 },
-                customLanguageFeatures
-                    // Second stage CLI does not accept test-only features like `ImplicitSignedToUnsignedIntegerConversion`, so they need to be filtered out.
-                    // `ImplicitSignedToUnsignedIntegerConversion` is a first-stage-only feature, so it's safe not to pass it to the second stage.
-                    // Should some test-only feature be relevant to the second stage, then a split of the second stage to several CLI phases would help.
-                    .filterNot { it.parseLanguageFeature().first.testOnly }
-                    .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
                 customOptIns.map { CommonCompilerArguments::optIn.cliArgument + "=$it" },
             )
         }

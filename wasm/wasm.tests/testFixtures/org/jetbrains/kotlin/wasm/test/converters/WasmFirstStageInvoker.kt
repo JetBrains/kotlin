@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.platform.wasm.isWasmWasi
@@ -46,8 +48,7 @@ class WasmFirstStageInvoker(
         module: TestModule,
         sources: List<File>,
         klibOutputFile: File,
-        languageVersion: String,
-        customLanguageFeatures: List<String>,
+        languageVersion: LanguageVersion,
         customOptIns: List<String>,
         allowKotlinPackage: Boolean,
         regularDependencies: Set<String>,
@@ -64,11 +65,12 @@ class WasmFirstStageInvoker(
                     runIf(isWasmWasi) {
                         KotlinWasmCompilerArguments::wasmTarget.cliArgument(WasmTarget.WASI.alias)
                     },
-                    CommonCompilerArguments::languageVersion.cliArgument(languageVersion),
+                    CommonCompilerArguments::languageVersion.cliArgument(languageVersion.versionString),
                     CommonJsAndWasmCompilerArguments::outputDir.cliArgument, klibOutputFile.parentFile.path,
                     CommonJsAndWasmCompilerArguments::moduleName.cliArgument, klibOutputFile.nameWithoutExtension,
                     KotlinWasmCompilerArguments::wasmEnableArrayRangeChecks.cliArgument,
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
+                    CommonCompilerArguments::skipPrereleaseCheck.cliArgument,
                     runIf(allowKotlinPackage) {
                         CommonCompilerArguments::allowKotlinPackage.cliArgument
                     }
@@ -83,8 +85,9 @@ class WasmFirstStageInvoker(
                 returnValueCheckerModes.map {
                     CommonCompilerArguments::returnValueChecker.cliArgument(it.state)
                 },
-                customLanguageFeatures
-                    .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
+                runIf(languageVersion < LanguageVersion.LATEST_STABLE) {
+                    listOf(CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":+${LanguageFeature.ExportKlibToOlderAbiVersion.name}")
+                },
                 customOptIns.map { CommonCompilerArguments::optIn.cliArgument + "=$it" },
             )
         }

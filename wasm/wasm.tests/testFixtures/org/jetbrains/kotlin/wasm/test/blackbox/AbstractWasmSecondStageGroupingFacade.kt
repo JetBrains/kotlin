@@ -159,13 +159,12 @@ abstract class AbstractWasmSecondStageGroupingFacade(
     }
 
     /**
-     * Aggregated dependencies and language settings of every test in a groupedBatch, applied
+     * Aggregated dependencies and optins of every test in a groupedBatch, applied
      * uniformly to both the launcher KLIB compilation and the final link.
      *
      * Aggregation rules:
      *  - `regularDependencies` and `friendDependencies` — union across all tests;
      *  - `maxLanguageVersion` — maximum across all tests (so the batch is compiled using the maximum language version);
-     *  - `allLanguageFeatures` — union of `LANGUAGE` directives;
      *  - `allOptIns` — union of `OPT_IN` directives;
      *  - `allAllowKotlinPackage` — `true` if any test in the batch requested it.
      */
@@ -173,7 +172,6 @@ abstract class AbstractWasmSecondStageGroupingFacade(
         val regularDependencies: Set<String>,
         val friendDependencies: Set<String>,
         val maxLanguageVersion: org.jetbrains.kotlin.config.LanguageVersion,
-        val allLanguageFeatures: List<String>,
         val allOptIns: List<String>,
         val allAllowKotlinPackage: Boolean,
     )
@@ -235,10 +233,6 @@ abstract class AbstractWasmSecondStageGroupingFacade(
             module.languageVersionSettings.languageVersion
         }
 
-        val allLanguageFeatures = filteredOutputs.flatMap { [_, module, _] ->
-            module.directives[LanguageSettingsDirectives.LANGUAGE]
-        }.distinct()
-
         val allOptIns = filteredOutputs.flatMap { [_, module, _] ->
             module.directives[LanguageSettingsDirectives.OPT_IN]
         }.distinct()
@@ -251,7 +245,6 @@ abstract class AbstractWasmSecondStageGroupingFacade(
             regularDependencies,
             friendDependencies,
             maxLanguageVersion,
-            allLanguageFeatures,
             allOptIns,
             allAllowKotlinPackage,
         )
