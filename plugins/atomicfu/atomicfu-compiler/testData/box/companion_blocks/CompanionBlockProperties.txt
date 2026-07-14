@@ -13,7 +13,7 @@ final class Outer {
     private synthetic final static field i: java.util.concurrent.atomic.AtomicInteger
     static method <clinit>(): void
     public method <init>(): void
-    public synthetic final method getArr$main(): java.util.concurrent.atomic.AtomicIntegerArray
+    public synthetic final static method getArr$main(): java.util.concurrent.atomic.AtomicIntegerArray
     public synthetic final static method getB$main(): java.util.concurrent.atomic.AtomicReference
     public synthetic final static method getI$main(): java.util.concurrent.atomic.AtomicInteger
 }
