@@ -275,6 +275,12 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
     }
 
     @Test
+    @TestMetadata("CompanionFunctions.kt")
+    public void testCompanionFunctions() {
+      run("CompanionFunctions.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedCompanionProperties.kt")
     public void testDelegatedCompanionProperties() {
       run("DelegatedCompanionProperties.kt");

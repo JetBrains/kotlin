@@ -256,6 +256,12 @@ public class AtomicfuJsWithInlinedFunInKlibTestGenerated extends AbstractAtomicf
     }
 
     @Test
+    @TestMetadata("CompanionFunctions.kt")
+    public void testCompanionFunctions() {
+      run("CompanionFunctions.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedCompanionProperties.kt")
     public void testDelegatedCompanionProperties() {
       run("DelegatedCompanionProperties.kt");
