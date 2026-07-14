@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName
 class CompilerReferenceIndexIT : KotlinMavenTestBase() {
 
     @MavenTest
-    @DisplayName("Warns when CRI generation is enabled but incremental compilation is disabled")
+    @DisplayName("Warns and skips CRI generation when incremental compilation is disabled")
     fun testCriRequiresIncrementalCompilation(mavenVersion: TestVersions.Maven) {
         testProject("test-helloworld", mavenVersion) {
             setMavenProperty("kotlin.compiler.generateCompilerRefIndex", "true")
@@ -20,12 +20,13 @@ class CompilerReferenceIndexIT : KotlinMavenTestBase() {
 
             build("compile") {
                 assertBuildLogContains("Compiler reference index generation requires incremental compilation")
+                assertFileNotExists("target/kotlin-ic/compile/cri")
             }
         }
     }
 
     @MavenTest
-    @DisplayName("Does not warn when CRI generation and incremental compilation are enabled")
+    @DisplayName("Generates CRI without warning when incremental compilation is enabled")
     fun testCriWithIncrementalCompilationEnabled(mavenVersion: TestVersions.Maven) {
         testProject("test-helloworld", mavenVersion) {
             setMavenProperty("kotlin.compiler.generateCompilerRefIndex", "true")
@@ -34,6 +35,7 @@ class CompilerReferenceIndexIT : KotlinMavenTestBase() {
             build("compile") {
                 assertBuildLogContains("Using experimental Kotlin incremental compilation")
                 assertBuildLogDoesNotContain("Compiler reference index generation requires incremental compilation")
+                assertFileExists("target/kotlin-ic/compile/cri/subtypes.table")
             }
         }
     }
