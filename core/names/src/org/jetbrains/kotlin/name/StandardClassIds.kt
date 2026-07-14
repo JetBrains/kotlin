@@ -197,6 +197,7 @@ object StandardClassIds {
         val RequireKotlin = "RequireKotlin".internalId()
         val DslMarker = "DslMarker".baseId()
         val IntroducedAt = "IntroducedAt".baseId()
+        val NumericClass = "NumericClass".baseId()
 
         val LowPriorityInOverloadResolution = "LowPriorityInOverloadResolution".internalId()
 

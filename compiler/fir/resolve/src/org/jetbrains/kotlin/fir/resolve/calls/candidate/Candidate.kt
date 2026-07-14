@@ -162,6 +162,13 @@ class Candidate(
         map[expression] = conversionInfo
     }
 
+    var usesNumericClassConversion: Boolean = false
+        private set
+
+    fun markUseOfNumericClassConversion() {
+        usesNumericClassConversion = true
+    }
+
     // Computed getters
 
     val usesSamConversion: Boolean

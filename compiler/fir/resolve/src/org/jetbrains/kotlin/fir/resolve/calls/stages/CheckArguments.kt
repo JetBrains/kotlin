@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
@@ -18,12 +21,15 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.utils.addToStdlib.ensureIsInstance
 
 internal object CheckArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
@@ -66,6 +72,10 @@ internal object CheckArguments : ResolutionStage() {
                 ) {
                     sink.markCandidateForCompatibilityResolve()
                 }
+            }
+
+            candidate.shouldHaveLowPriorityDueToNumericClassConversion() -> {
+                sink.reportDiagnostic(LowerPriorityForNumericClassConversion)
             }
         }
     }
@@ -124,6 +134,8 @@ private fun Candidate.prepareExpectedType(
             }
         }
             ?: getExpectedTypeWithImplicitIntegerCoercion(context.session, argument, parameter, basicExpectedType)
+            ?: getExpectedTypeWithBuiltinToNumericClassConversion(context.session, argument, basicExpectedType)
+            ?: getExpectedTypeWithNumericClassToBuiltinConversion(context.session, argument, basicExpectedType)
             ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
 }
@@ -228,6 +240,71 @@ private fun getExpectedTypeWithImplicitIntegerCoercion(
         }
 
     return argumentType?.withNullabilityOf(candidateExpectedType, session.typeContext)
+}
+
+private fun Candidate.getExpectedTypeWithBuiltinToNumericClassConversion(
+    session: FirSession,
+    argument: FirExpression,
+    candidateExpectedType: ConeKotlinType,
+): ConeKotlinType? {
+    val argumentType = when {
+        argument.isIntegerLiteralOrOperatorCall() -> argument.resolvedType
+        argument is FirLiteralExpression -> argument.resolvedType
+        else -> argument.toReference(session)?.toResolvedCallableSymbol()?.takeIf { it.rawStatus.isConst }?.resolvedReturnType
+    }
+
+    val expectedTypeSymbol = candidateExpectedType.fullyExpandedType(session).toSymbol(session) ?: return null
+    if (argumentType == null || !expectedTypeSymbol.supportsNumericClassConversionFrom(argumentType, session)) return null
+
+    return argumentType.withNullabilityOf(candidateExpectedType, session.typeContext)
+        .also { markUseOfNumericClassConversion() }
+}
+
+context(context: ResolutionContext)
+private fun Candidate.getExpectedTypeWithNumericClassToBuiltinConversion(
+    session: FirSession,
+    argument: FirExpression,
+    candidateExpectedType: ConeKotlinType,
+): ConeKotlinType? {
+    val argumentType = argument.toReference(session)?.toResolvedCallableSymbol()
+        ?.let { context.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(it) }
+        ?.coneType
+    if (argumentType == null || argumentType.toSymbol(session)?.supportsNumericClassConversionTo(candidateExpectedType, session) != true) return null
+    return argumentType.withNullabilityOf(candidateExpectedType, session.typeContext)
+        .also { markUseOfNumericClassConversion() }
+}
+
+fun FirBasedSymbol<*>.supportsNumericClassConversionFrom(type: ConeKotlinType, session: FirSession): Boolean =
+    getSupportedNumericClassConversions(session)?.any { type.fitsInto(it) } ?: false
+
+fun FirBasedSymbol<*>.supportsNumericClassConversionTo(type: ConeKotlinType, session: FirSession): Boolean =
+    getSupportedNumericClassConversions(session)?.all { it.fitsInto(type) } ?: false
+
+private fun ConeKotlinType.fitsInto(other: ConeKotlinType): Boolean {
+    val primitiveClassIds = when {
+        isMarkedNullable && !other.isMarkedNullable -> return false
+        this is ConeIntegerLiteralType && possibleTypes.any { it == other } -> return true
+        isPrimitiveNumberOrNullableType && other.isPrimitiveNumberOrNullableType -> StandardClassIds.signedIntegerTypes
+        isUnsignedTypeOrNullableUnsignedType && other.isUnsignedTypeOrNullableUnsignedType -> StandardClassIds.unsignedTypes
+        else -> return false
+    }
+    return primitiveClassIds.indexOf(classId) <= primitiveClassIds.indexOf(other.classId)
+}
+
+private fun FirBasedSymbol<*>.getSupportedNumericClassConversions(session: FirSession): List<ConeKotlinType>? {
+    lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+
+    val actualizationsArgument = getAnnotationByClassId(StandardClassIds.Annotations.NumericClass, session)
+        ?.findArgumentByName(Name.identifier("actualizations"), returnFirstWhenNotFound = false)
+        ?: return null
+
+    val arguments = when (actualizationsArgument) {
+        is FirVarargArgumentsExpression -> actualizationsArgument.arguments
+        is FirCollectionLiteral -> actualizationsArgument.arguments
+        else -> return null
+    }
+
+    return arguments.ensureIsInstance<FirGetClassCall>()?.mapNotNull { it.getTargetType() }
 }
 
 private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCandidate? =

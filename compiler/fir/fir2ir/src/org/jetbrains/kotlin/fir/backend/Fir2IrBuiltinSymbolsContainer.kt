@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeEquivalentCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
@@ -23,6 +25,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.isBoolean
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
@@ -246,6 +250,10 @@ class Fir2IrBuiltinSymbolsContainer(
         unsignedTypesToUnsignedArrays.map { [k, v] -> v to loadClass(k.classId).owner.defaultType }.toMap()
     }
 
+    private val cinteropConvertFunctions: List<FirNamedFunctionSymbol> by lazy {
+        session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlinx.cinterop"), Name.identifier("convert"))
+    }
+
     // --------------------------- synthetic symbols ---------------------------
 
     val eqeqeqSymbol: IrSimpleFunctionSymbol get() = syntheticSymbolsContainer.eqeqeqSymbol
@@ -296,6 +304,29 @@ class Fir2IrBuiltinSymbolsContainer(
             mapKey = { symbol -> symbol.resolvedReceiverTypeRef?.toIrType()?.classifierOrNull },
             mapValue = { firSymbol, irSymbol -> firSymbol to irSymbol }
         )
+    }
+
+    fun getCinteropConvertFunctionOver(type: ConeKotlinType): Pair<FirNamedFunctionSymbol, IrSimpleFunctionSymbol>? {
+        val relevantFunction = cinteropConvertFunctions.find { it.resolvedReceiverType == type } ?: return null
+        return relevantFunction to findFunction(relevantFunction)
+    }
+
+    fun getMemberConvertionFunction(
+        fromType: ConeKotlinType,
+        toType: ConeKotlinType,
+    ): Pair<FirNamedFunctionSymbol, IrSimpleFunctionSymbol>? {
+        val expectedClassName = toType.classId?.shortClassName ?: return null
+
+        val argumentScope = fromType.scope(
+            useSiteSession = session,
+            scopeSession = scopeSession,
+            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        ) ?: return null
+
+        val convertionFunctions = argumentScope.getFunctions(Name.identifier("to${expectedClassName}"))
+        val relevantFunction = convertionFunctions.find { it.resolvedReturnType == toType } ?: return null
+        return relevantFunction to builtins.findFunction(relevantFunction)
     }
 
     // --------------------------- utilities for declaration loading ---------------------------
