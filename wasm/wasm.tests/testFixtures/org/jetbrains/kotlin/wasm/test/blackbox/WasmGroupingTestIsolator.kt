@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.model.GroupingTestIsolator
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator.BatchToken.Custom
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.util.parseLanguageFeature
 
 class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     override val directiveContainers: List<DirectivesContainer>
