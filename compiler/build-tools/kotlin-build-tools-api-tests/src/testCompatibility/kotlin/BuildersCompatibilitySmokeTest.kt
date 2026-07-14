@@ -10,15 +10,18 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
+import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain.Companion.metadata
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.supportsMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -114,6 +117,25 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
         assertEquals(JvmTarget.JVM_17, original.compilerArguments[JvmCompilerArguments.JVM_TARGET])
         assertEquals("modified", modified.compilerArguments[JvmCompilerArguments.MODULE_NAME])
         assertEquals(JvmTarget.JVM_21, modified.compilerArguments[JvmCompilerArguments.JVM_TARGET])
+    }
+
+    @DisplayName("Metadata: toBuilder round-trip does not affect the original operation")
+    @DefaultStrategyAgnosticCompilationTest
+    fun testMetadataToBuilderOperationImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val toolchain = strategyConfig.first
+        assumeTrue(toolchain.supportsMetadata())
+        val sources = listOf(workingDirectory.resolve("common.kt").also { it.writeText("fun f() = 1") })
+        val destination = workingDirectory.resolve("klib")
+        val original = toolchain.metadata.metadataKlibCompilationOperationBuilder(sources, destination).apply {
+            compilerArguments[MetadataArguments.MODULE_NAME] = "original"
+        }.build()
+
+        val newBuilder = original.toBuilder()
+        newBuilder.compilerArguments[MetadataArguments.MODULE_NAME] = "modified"
+        val modified = newBuilder.build()
+
+        assertEquals("original", original.compilerArguments[MetadataArguments.MODULE_NAME])
+        assertEquals("modified", modified.compilerArguments[MetadataArguments.MODULE_NAME])
     }
 
     @DisplayName("Modifying ClasspathSnapshottingOperation builder after build does not affect the built operation")
