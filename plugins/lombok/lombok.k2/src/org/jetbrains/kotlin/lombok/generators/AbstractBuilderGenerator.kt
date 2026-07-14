@@ -639,11 +639,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
         val nameInSingularForm = (singular.singularName ?: item.name.identifier.singularForm)?.let(Name::identifier) ?: return
 
-        val addMultipleParameterType: FirTypeRef
         val valueParameters: List<ConeLombokValueParameter>
 
         val fallbackParameterType = DummyJavaClassType.ObjectType.takeIf { javaClassifierType.isRaw }
         val source = builderSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+
+        val baseType: DummyJavaClass
+        val typeArguments: List<JavaType?>
 
         when (typeName) {
             in LombokNames.SUPPORTED_COLLECTIONS -> {
@@ -652,14 +654,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     ConeLombokValueParameter(nameInSingularForm, parameterType.toRef(source))
                 )
 
-                val baseType = when (typeName) {
+                baseType = when (typeName) {
                     in LombokNames.SUPPORTED_GUAVA_COLLECTIONS -> JavaClasses.Iterable
                     else -> JavaClasses.Collection
                 }
-
-                addMultipleParameterType = DummyJavaClassType(baseType, typeArguments = listOf(parameterType))
-                    .withProperNullability(singular.allowNull)
-                    .toRef(source)
+                typeArguments = listOf(parameterType)
             }
 
             in LombokNames.SUPPORTED_MAPS -> {
@@ -670,9 +669,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     ConeLombokValueParameter(Name.identifier("value"), valueType.toRef(source)),
                 )
 
-                addMultipleParameterType = DummyJavaClassType(JavaClasses.Map, typeArguments = listOf(keyType, valueType))
-                    .withProperNullability(singular.allowNull)
-                    .toRef(source)
+                baseType = JavaClasses.Map
+                typeArguments = listOf(keyType, valueType)
             }
 
             in LombokNames.SUPPORTED_TABLES -> {
@@ -686,10 +684,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     ConeLombokValueParameter(Name.identifier("value"), valueType.toRef(source)),
                 )
 
-                addMultipleParameterType = DummyJavaClassType(
-                    JavaClasses.Table,
-                    typeArguments = listOf(rowKeyType, columnKeyType, valueType)
-                ).withProperNullability(singular.allowNull).toRef(source)
+                baseType = JavaClasses.Table
+                typeArguments = listOf(rowKeyType, columnKeyType, valueType)
             }
 
             else -> return
@@ -709,6 +705,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
 
         addIfNonClashing(item.name.toMethodName(builder), existingFunctionNames) {
+            // Lombok uses runtime checks instead of @Nullable/@NotNull annotations.
+            // We include these annotations to enable static analysis and improve the developer experience.
+            val annotations = listOf(
+                if (singular.allowNull) NullabilityJavaAnnotation.Nullable else NullabilityJavaAnnotation.NotNull
+            )
+            val addMultipleParameterType = DummyJavaClassType(baseType, typeArguments, annotations).toRef(source)
             builderSymbol.createJavaMethod(
                 name = it,
                 valueParameters = listOf(ConeLombokValueParameter(item.name, addMultipleParameterType)),
@@ -972,10 +974,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         return typeArguments.getOrNull(index)
     }
 
-    private fun JavaType.withProperNullability(allowNull: Boolean): JavaType {
-        return if (allowNull) makeNullable() else makeNotNullable()
-    }
-
     @OptIn(ExperimentalContracts::class)
     protected val FirDeclaration.isStaticDeclaration: Boolean
         get() {
@@ -985,6 +983,3 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             return this !is FirNamedFunction || this.isStatic
         }
 }
-
-fun JavaType.makeNullable(): JavaType = withAnnotations(annotations + NullabilityJavaAnnotation.Nullable)
-fun JavaType.makeNotNullable(): JavaType = withAnnotations(annotations + NullabilityJavaAnnotation.NotNull)
