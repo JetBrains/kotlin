@@ -254,6 +254,18 @@ public class AtomicfuJvmFirLightTreeTestGenerated extends AbstractAtomicfuJvmFir
     public void testDelegatedCompanionProperties() {
       run("DelegatedCompanionProperties.kt");
     }
+
+    @Test
+    @TestMetadata("ExtensionsPropertiesWithoutBackingFields.kt")
+    public void testExtensionsPropertiesWithoutBackingFields() {
+      run("ExtensionsPropertiesWithoutBackingFields.kt");
+    }
+
+    @Test
+    @TestMetadata("PropertiesWithoutBackingField.kt")
+    public void testPropertiesWithoutBackingField() {
+      run("PropertiesWithoutBackingField.kt");
+    }
   }
 
   @Nested
