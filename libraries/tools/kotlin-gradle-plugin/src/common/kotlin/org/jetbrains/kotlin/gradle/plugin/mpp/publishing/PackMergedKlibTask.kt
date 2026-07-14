@@ -14,10 +14,7 @@ import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.artifacts.transform.TransformSpec
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.AttributeCompatibilityRule
 import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.CompatibilityCheckDetails
-import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemLocation
@@ -63,17 +60,16 @@ import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
 import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 import javax.inject.Inject
 
-private const val PACK_MERGED_KLIB_TASK_NAME = "packMergedKlibTask"
-internal const val MERGED_KLIB_ARTIFACT_TYPE = "mklib"
-internal const val MERGED_KLIB_USAGE_SUFFIX = "-merged"
+private const val PACK_KAR_TASK_NAME = "packKar"
+internal const val KAR_ARTIFACT_TYPE = "kar"
 
 /**
- * These attributes are only used to force the [UnpackMergedKlibTransform] in resolvable configurations.
+ * These attributes are only used to force the [KarToPlatformKlibTransformation] in resolvable configurations.
  * They are not used in consumable configurations and are never published (cf. 'uklibStateAttribute').
  */
-internal val mergedKlibStateAttribute = Attribute.of("org.jetbrains.kotlin.mergedKlibState", String::class.java)
-internal val mergedKlibStatePacked = "packed"
-internal val mergedKlibStateUnpacked = "unpacked"
+internal val karStateAttribute = Attribute.of("org.jetbrains.kotlin.karState", String::class.java)
+internal val karStatePacked = "packed"
+internal val karStateProcessed = "processed"
 
 /**
  * Path of a given target's klib inside the merged klib archive.
@@ -105,7 +101,7 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
         }
     }
 
-    val packTask = tasks.register(PACK_MERGED_KLIB_TASK_NAME, Zip::class.java) { zip ->
+    val packTask = tasks.register(PACK_KAR_TASK_NAME, Zip::class.java) { zip ->
         compileKlibTasks.forEach { (target, compileTaskProvider) ->
             val compileTask = compileTaskProvider?.get() ?: return@forEach
             val platformPath = target.mergedKlibPlatformPath ?: return@forEach
@@ -119,9 +115,8 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
             }
         }
 
-        zip.destinationDirectory.set(layout.buildDirectory.dir("merged-klib"))
-        zip.archiveExtension.set(MERGED_KLIB_ARTIFACT_TYPE)
-        zip.archiveFileName.set("merged-klib.$MERGED_KLIB_ARTIFACT_TYPE")
+        zip.destinationDirectory.set(layout.buildDirectory.dir("kar"))
+        zip.archiveExtension.set(KAR_ARTIFACT_TYPE)
     }
 
     /* Include all metadata compile klibs */
@@ -156,17 +151,17 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
 
     project.configurations.getByName(metadataTarget.internal.apiElementsConfigurationName).apply {
         outgoing.artifact(packTask)
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA + MERGED_KLIB_USAGE_SUFFIX))
+        attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
     }
 
-    configureMergedKlibTransformation()
-    configureTransformActionFromMklibToPsm()
+    configureKarKlibTransformation()
+    configureTransformActionFromKarToPsm()
 }
 
 
 internal val Project.packMergedKlibTask: TaskProvider<Task>
-    get() = tasks.named(PACK_MERGED_KLIB_TASK_NAME)
+    get() = tasks.named(PACK_KAR_TASK_NAME)
 
 
 /**
@@ -174,32 +169,28 @@ internal val Project.packMergedKlibTask: TaskProvider<Task>
  *
  * - At graph level, [MergedKlibUsageCompatibilityRule] lets configurations requesting e.g. 'kotlin-api'
  *   select variants published with the 'kotlin-api-merged' usage.
- * - At artifact level, '.mklib' artifacts carry [mergedKlibStatePacked] while klib-consuming configurations
- *   request [mergedKlibStateUnpacked]; the mismatch forces [UnpackMergedKlibTransform] which extracts the
+ * - At artifact level, '.mklib' artifacts carry [karStatePacked] while klib-consuming configurations
+ *   request [karStateProcessed]; the mismatch forces [KarToPlatformKlibTransformation] which extracts the
  *   klib matching the consumer's platform type and konan target from the merged klib.
  */
-internal fun Project.configureMergedKlibTransformation() {
-    dependencies.attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
-        strategy.compatibilityRules.add(MergedKlibUsageCompatibilityRule::class.java)
-    }
-
-    dependencies.artifactTypes.maybeCreate(MERGED_KLIB_ARTIFACT_TYPE)
-        .attributes.attribute(mergedKlibStateAttribute, mergedKlibStatePacked)
+internal fun Project.configureKarKlibTransformation() {
+    dependencies.artifactTypes.maybeCreate(KAR_ARTIFACT_TYPE)
+        .attributes.attribute(karStateAttribute, karStatePacked)
 
     multiplatformExtension.targets.configureEach { target ->
         val platformPath = target.mergedKlibPlatformPath ?: return@configureEach
         target.registerUnpackMergedKlibTransform(platformPath)
-        target.requestUnpackedMergedKlibs()
+        target.requestProcessedKar()
     }
 }
 
 private fun KotlinTarget.registerUnpackMergedKlibTransform(platformPath: String) {
-    project.dependencies.registerTransform(UnpackMergedKlibTransform::class.java) { spec ->
-        spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, MERGED_KLIB_ARTIFACT_TYPE)
+    project.dependencies.registerTransform(KarToPlatformKlibTransformation::class.java) { spec ->
+        spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, KAR_ARTIFACT_TYPE)
         spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, "klib")
 
-        spec.from.attribute(mergedKlibStateAttribute, mergedKlibStatePacked)
-        spec.to.attribute(mergedKlibStateAttribute, mergedKlibStateUnpacked)
+        spec.from.attribute(karStateAttribute, karStatePacked)
+        spec.to.attribute(karStateAttribute, karStateProcessed)
 
         /* Disambiguate the per-target transform registrations by the same attributes the consumer requests */
         spec.attributeForBothEnds(KotlinPlatformType.attribute, this.platformType)
@@ -225,36 +216,13 @@ private fun <T : Any> TransformSpec<*>.attributeForBothEnds(attribute: Attribute
     to.attribute(attribute, value)
 }
 
-private fun KotlinTarget.requestUnpackedMergedKlibs() {
+private fun KotlinTarget.requestProcessedKar() {
     compilations.configureEach { compilation ->
         val configurations = compilation.internal.configurations
         configurations.compileDependencyConfiguration
-            .attributes.attribute(mergedKlibStateAttribute, mergedKlibStateUnpacked)
+            .attributes.attribute(karStateAttribute, karStateProcessed)
         configurations.runtimeDependencyConfiguration
-            ?.attributes?.attribute(mergedKlibStateAttribute, mergedKlibStateUnpacked)
-    }
-}
-
-/**
- * Merged klib variants are published with the original usage plus [MERGED_KLIB_USAGE_SUFFIX]
- * (see [org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetSoftwareComponent]). This rule allows consumers requesting the original usage
- * (e.g. 'kotlin-api') to select such variants; the actual klib is then extracted by [UnpackMergedKlibTransform].
- */
-internal class MergedKlibUsageCompatibilityRule : AttributeCompatibilityRule<Usage> {
-    override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
-        val consumerUsage = consumerValue.name ?: return@with
-        val producerUsage = producerValue.name ?: return@with
-        if (producerUsage == consumerUsage + MERGED_KLIB_USAGE_SUFFIX) compatible()
-
-        /*
-         * 'kotlin-metadata' consumers (e.g. host-specific metadata configurations used by the metadata transformation)
-         * may fall back to the platform 'kotlin-api' variant when no metadata variant is published for the target
-         * (see KotlinUsages.KotlinMetadataCompatibility). Keep this fallback working when the platform variant
-         * is published as a merged klib.
-         */
-        if (consumerUsage == KotlinUsages.KOTLIN_METADATA && producerUsage == KotlinUsages.KOTLIN_API + MERGED_KLIB_USAGE_SUFFIX) {
-            compatible()
-        }
+            ?.attributes?.attribute(karStateAttribute, karStateProcessed)
     }
 }
 
@@ -263,10 +231,10 @@ internal class MergedKlibUsageCompatibilityRule : AttributeCompatibilityRule<Usa
  * into an unpacked klib directory.
  */
 @DisableCachingByDefault(because = "Unpacking a merged klib is not worth caching")
-internal abstract class UnpackMergedKlibTransform @Inject constructor(
+internal abstract class KarToPlatformKlibTransformation @Inject constructor(
     private val fileOperations: FileSystemOperations,
     private val archiveOperations: ArchiveOperations,
-) : TransformAction<UnpackMergedKlibTransform.Parameters> {
+) : TransformAction<KarToPlatformKlibTransformation.Parameters> {
 
     interface Parameters : TransformParameters {
         @get:Input
@@ -289,17 +257,17 @@ internal abstract class UnpackMergedKlibTransform @Inject constructor(
     }
 }
 
-private fun Project.configureTransformActionFromMklibToPsm() {
+private fun Project.configureTransformActionFromKarToPsm() {
     dependencies.registerTransformForArtifactType(
         ProjectStructureMetadataTransformAction::class.java,
-        fromArtifactType = MERGED_KLIB_ARTIFACT_TYPE,
+        fromArtifactType = KAR_ARTIFACT_TYPE,
         toArtifactType = KotlinUsages.KOTLIN_PSM_METADATA
     ) { transform ->
         transform.parameters { params ->
             params.psmPath.set("metadata/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")
         }
         transform.from.apply {
-            attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA + MERGED_KLIB_USAGE_SUFFIX))
+            attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
         }
         transform.to.apply {
             attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))

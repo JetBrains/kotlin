@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MERGED_KLIB_ARTIFACT_TYPE
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KAR_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.utils.checksumString
 import org.jetbrains.kotlin.gradle.utils.copyPartially
 import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
@@ -70,7 +70,7 @@ internal class CompositeMetadataArtifactImpl(
         override val sourceSetName: String,
         private val artifactFile: ArtifactFile,
     ) : CompositeMetadataArtifactContent.SourceSetContent, Closeable {
-        private val isMKlib = artifactFile.file.extension == MERGED_KLIB_ARTIFACT_TYPE
+        private val isMKlib = artifactFile.file.extension == KAR_ARTIFACT_TYPE
 
         val sourceSetPath = if (isMKlib) "metadata/$sourceSetName" else sourceSetName
 

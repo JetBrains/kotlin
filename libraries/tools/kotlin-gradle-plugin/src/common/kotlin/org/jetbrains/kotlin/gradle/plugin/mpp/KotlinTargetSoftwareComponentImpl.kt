@@ -20,26 +20,14 @@ import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_FALLBACK_VARIANT
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MERGED_KLIB_USAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.packMergedKlibTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
-import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
-import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
-import org.jetbrains.kotlin.gradle.utils.isAllGradleProjectsEvaluated
-import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
-import org.jetbrains.kotlin.gradle.utils.projectPathCompat
-import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
-import kotlin.collections.forEach
 
 internal fun KotlinTargetSoftwareComponent(
     target: AbstractKotlinTarget,
@@ -75,8 +63,6 @@ internal fun KotlinTargetSoftwareComponent(
                 )
                 if (kotlinUsageContext.artifacts.any { it.extension == "klib" }) {
                     outgoing.artifact(project.packMergedKlibTask)
-                    val currentUsage = attributes.getAttribute(Usage.USAGE_ATTRIBUTE)
-                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(currentUsage.name + MERGED_KLIB_USAGE_SUFFIX))
                 } else {
                     artifacts.addAll(kotlinUsageContext.artifacts)
 
@@ -111,8 +97,7 @@ private fun Configuration.filterOutNonResolvableDependenciesForStandardKmpResolu
 ) {
     val resolvableConfiguration = project.configurations.getByName(kotlinUsageContext.compilation.compileDependencyConfigurationName)
     val consumableConfiguration = project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName)
-    val isJvmOrAndroidPublication =
-        kotlinUsageContext.compilation.platformType !in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
+    val isJvmOrAndroidPublication = kotlinUsageContext.compilation.platformType !in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
 
     // TODO: Included builds
     dependencies.addAllLater(project.provider {

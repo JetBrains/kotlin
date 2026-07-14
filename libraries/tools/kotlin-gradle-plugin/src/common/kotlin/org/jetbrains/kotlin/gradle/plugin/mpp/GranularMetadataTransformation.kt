@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetVisibilityProvider.PlatformCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvedConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KotlinProjectCoordinatesData
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MERGED_KLIB_USAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.consumeRootModuleCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -609,12 +608,7 @@ internal val AttributeContainer.containsMultiplatformAttributes: Boolean
 private val AttributeContainer.containsCompositeMetadataJarAttributes: Boolean
     get() {
         val usageAttribute = keySet().find { it.name == Usage.USAGE_ATTRIBUTE.name } ?: return false
-
-        if (getAttribute(usageAttribute).toString() !in listOf(
-                KotlinUsages.KOTLIN_METADATA,
-                KotlinUsages.KOTLIN_METADATA + MERGED_KLIB_USAGE_SUFFIX
-            )
-        ) return false
+        if (getAttribute(usageAttribute).toString() != KotlinUsages.KOTLIN_METADATA) return false
 
         val platformType = keySet().find { it.name == KotlinPlatformType.attribute.name } ?: return false
         return getAttribute(platformType).toString() == KotlinPlatformType.common.name

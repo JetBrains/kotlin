@@ -9,8 +9,8 @@ import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.mergedKlibPlatformPath
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.mergedKlibStateAttribute
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.mergedKlibStateUnpacked
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.karStateAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.karStateProcessed
 import org.jetbrains.kotlin.gradle.util.buildKMPWithAllBackends
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -51,14 +51,14 @@ class MergedKlibConsumptionTest {
             val compilation = project.multiplatformExtension.targets.getByName(targetName)
                 .compilations.getByName("main")
             return project.configurations.getByName(compilation.compileDependencyConfigurationName)
-                .attributes.getAttribute(mergedKlibStateAttribute)
+                .attributes.getAttribute(karStateAttribute)
         }
 
-        assertEquals(mergedKlibStateUnpacked, compileDependencyConfigurationAttribute("linuxX64"))
-        assertEquals(mergedKlibStateUnpacked, compileDependencyConfigurationAttribute("iosArm64"))
-        assertEquals(mergedKlibStateUnpacked, compileDependencyConfigurationAttribute("js"))
-        assertEquals(mergedKlibStateUnpacked, compileDependencyConfigurationAttribute("wasmJs"))
-        assertEquals(mergedKlibStateUnpacked, compileDependencyConfigurationAttribute("wasmWasi"))
+        assertEquals(karStateProcessed, compileDependencyConfigurationAttribute("linuxX64"))
+        assertEquals(karStateProcessed, compileDependencyConfigurationAttribute("iosArm64"))
+        assertEquals(karStateProcessed, compileDependencyConfigurationAttribute("js"))
+        assertEquals(karStateProcessed, compileDependencyConfigurationAttribute("wasmJs"))
+        assertEquals(karStateProcessed, compileDependencyConfigurationAttribute("wasmWasi"))
 
         /* Non klib compilations must not request the merged klib state */
         assertNull(compileDependencyConfigurationAttribute("jvm"))
@@ -72,14 +72,14 @@ class MergedKlibConsumptionTest {
 
         /* Used by the metadata transformation; may fall back to the (merged) platform api variant */
         assertEquals(
-            mergedKlibStateUnpacked,
+            karStateProcessed,
             project.configurations.getByName("linuxX64CompilationDependenciesMetadata")
-                .attributes.getAttribute(mergedKlibStateAttribute)
+                .attributes.getAttribute(karStateAttribute)
         )
         assertEquals(
-            mergedKlibStateUnpacked,
+            karStateProcessed,
             project.configurations.getByName("iosArm64CompilationDependenciesMetadata")
-                .attributes.getAttribute(mergedKlibStateAttribute)
+                .attributes.getAttribute(karStateAttribute)
         )
     }
 }
