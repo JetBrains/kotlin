@@ -2418,7 +2418,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<MavenComparableVersion?>("highestVersion")
             parameter<FirCallableSymbol<*>>("sourceOfHighestVersion")
         }
-        val VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION by error<PsiElement>()
     }
 
     val COMPANION_BLOCKS_AND_EXTENSIONS by object : DiagnosticGroup("Companion Blocks & Extensions") {

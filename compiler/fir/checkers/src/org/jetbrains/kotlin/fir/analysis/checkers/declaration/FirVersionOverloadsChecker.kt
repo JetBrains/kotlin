@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -59,11 +57,9 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
         val paramVersions = computeAndCheckParameterVersions(declaration)
 
         val dependencyChecker = DependencyChecker(context, reporter, paramVersions)
-        val complexExpressionChecker = ComplexExpressionChecker(context, reporter)
         for (param in declaration.valueParameters) {
             val defaultValue = param.defaultValue ?: continue
             defaultValue.accept(dependencyChecker, paramVersions[param.symbol])
-            defaultValue.accept(complexExpressionChecker)
         }
     }
 
@@ -183,23 +179,6 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
                     )
                 }
             }
-        }
-    }
-
-    private class ComplexExpressionChecker(
-        val context: CheckerContext,
-        val reporter: DiagnosticReporter
-    ) : FirDefaultVisitorVoid() {
-        override fun visitElement(element: FirElement) {
-            element.acceptChildren(this)
-        }
-
-        override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression) {
-            anonymousObjectExpression.tooComplex()
-        }
-
-        fun FirElement.tooComplex() {
-            reporter.reportOn(source, FirErrors.VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION, context)
         }
     }
 

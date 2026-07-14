@@ -8758,12 +8758,6 @@ private fun KaDiagnosticConverterBuilder.addConversions197() {
             token,
         )
     }
-    add(FirErrors.VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION) { firDiagnostic ->
-        VersionOverloadsTooComplexExpressionImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions198() {

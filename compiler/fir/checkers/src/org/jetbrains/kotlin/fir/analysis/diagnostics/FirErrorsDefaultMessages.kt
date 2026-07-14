@@ -928,7 +928,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREMENT_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREMENT_DEPRECATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
@@ -3974,11 +3973,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             MAVEN_VERSION,
             SYMBOL,
         )
-        map.put(
-            VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION,
-            "Not supported in combination with '@IntroducedAt'."
-        )
-
         map.put(
             COMPANION_BLOCK_MEMBER_EXTENSION,
             "Companion block member cannot be an extension."

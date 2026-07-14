@@ -5719,11 +5719,6 @@ internal class NonAscendingVersionAnnotationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonAscendingVersionAnnotation
 
-internal class VersionOverloadsTooComplexExpressionImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VersionOverloadsTooComplexExpression
-
 internal class CompanionBlockMemberExtensionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

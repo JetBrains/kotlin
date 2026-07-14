@@ -4765,10 +4765,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val sourceOfHighestVersion: KaCallableSymbol
     }
 
-    interface VersionOverloadsTooComplexExpression : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = VersionOverloadsTooComplexExpression::class
-    }
-
     interface CompanionBlockMemberExtension : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = CompanionBlockMemberExtension::class
     }
