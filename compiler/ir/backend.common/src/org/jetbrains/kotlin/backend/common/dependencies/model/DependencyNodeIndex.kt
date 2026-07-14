@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.asEntity
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.isNotPrivate
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.parentEnclosingEntityOrSelf
-import org.jetbrains.kotlin.backend.common.dependencies.util.hasCustomImplementation
+import org.jetbrains.kotlin.backend.common.dependencies.util.isCustomAccessor
 import org.jetbrains.kotlin.backend.common.dependencies.util.isPrivate
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 sealed interface InitializationCycleAccessResult {
     val poisonsInitializers: Boolean get() = false
@@ -112,7 +113,7 @@ data class PropertyIndex(
             else -> null
         }
 
-    val getter: FunctionIndex.PropertyAccessor? = symbol.owner.getter?.takeIf { it.hasCustomImplementation }
+    val getter: FunctionIndex.PropertyAccessor? = symbol.owner.getter?.takeIf { it.isCustomAccessor }
         ?.let { FunctionIndex.PropertyAccessor(it.symbol, enclosingEntity) }
 
     val initializedClosure: FunctionIndex.Closure? = symbol.owner.backingField?.initializer?.expression?.let {
@@ -127,10 +128,11 @@ data class PropertyIndex(
     }
 
     val name: FqName
-        get() = symbol.owner.callableId.classId?.relativeClassName?.child(symbol.owner.name) ?: FqName.topLevel(symbol.owner.name)
+        get() = symbol.owner.parentClassOrNull?.let {
+            (it.classId?.relativeClassName ?: FqName.topLevel(Name.special("<anonymous>"))).child(symbol.owner.name)
+        } ?: FqName.topLevel(symbol.owner.name)
 
-    override fun toString(): String =
-        "${symbol.owner.callableId.classId?.relativeClassName?.asString() ?: ""}.${symbol.owner.name.asString()}"
+    override fun toString(): String = name.asString()
 }
 
 data class AnonymousInitializerIndex(

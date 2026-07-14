@@ -46,7 +46,6 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
         }
         val informationFlow = cycle.informationFlowInto(node)
         for ([from, _, _] in informationFlow) {
-            println("$from -> $node")
             accessingUninitializedEntityAt(from, cycle)?.let {
                 yield(it)
                 continue
@@ -117,7 +116,6 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
             val informationFlow = cycle.informationFlowInto(node)
             sequence {
                 for ([from, _, accesses] in informationFlow) {
-                    println("$from -> $node")
                     accessingUninitializedEntityAt(from, cycle)?.let {
                         yield(it with accesses)
                         continue
