@@ -11,9 +11,12 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.exists
+import kotlin.io.path.isSymbolicLink
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.readAttributes
+import kotlin.io.path.readSymbolicLink
 
 /**
  * Returns a canonical path computed the same way as [File.canonicalPath] does.
@@ -62,3 +65,13 @@ fun Path.deleteOnExitRecursively() {
  * represented by the extension receiver does not exist.
  */
 fun Path.listDirectoryEntriesIfDirectoryExists(): List<Path> = if (exists()) listDirectoryEntries() else emptyList()
+
+/**
+ * A safe version of [Path.createSymbolicLinkPointingTo] that does not to attempt to create a symbolic link
+ * if the required symbolic link already exists.
+ */
+fun Path.ensureSymbolicLinkTo(target: Path) {
+    if (!isSymbolicLink() || readSymbolicLink() != target) {
+        createSymbolicLinkPointingTo(target)
+    }
+}

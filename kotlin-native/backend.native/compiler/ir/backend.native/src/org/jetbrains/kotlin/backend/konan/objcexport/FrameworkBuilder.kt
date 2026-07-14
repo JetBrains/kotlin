@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.io.ensureSymbolicLinkTo
 import kotlin.io.path.Path
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
-import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.writeBytes
 
 /**
@@ -66,9 +66,9 @@ internal class FrameworkBuilder(
         val infoPlistContents = infoPListBuilder.build(frameworkName, mainPackageGuesser, moduleDescriptor)
         infoPlistFile.writeBytes(infoPlistContents.toByteArray())
         if (target.family == Family.OSX) {
-            frameworkDirectory.resolve("Versions/Current").createSymbolicLinkPointingTo(Path("A"))
+            frameworkDirectory.resolve("Versions/Current").ensureSymbolicLinkTo(Path("A"))
             for (child in listOf(frameworkName, "Headers", "Modules", "Resources")) {
-                frameworkDirectory.resolve(child).createSymbolicLinkPointingTo(Path("Versions/Current/$child"))
+                frameworkDirectory.resolve(child).ensureSymbolicLinkTo(Path("Versions/Current/$child"))
             }
         }
     }
