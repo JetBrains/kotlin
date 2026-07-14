@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import kotlin.io.path.Path
+import kotlin.io.path.exists
 
 fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments) = with(NativeConfigurationKeys) {
     val commonSources = arguments.commonSources.toSet().map { it.absoluteNormalizedFile() }
@@ -293,8 +295,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         "dev-with-asserts" -> LlvmVariant.DevWithAsserts
         null -> null
         else -> {
-            val file = File(variant)
-            if (!file.exists) {
+            val file = Path(variant)
+            if (!file.exists()) {
                 report(KONAN_ARGUMENT_ERROR, "`-Xllvm-variant` should be `user`, `dev` or an absolute path. Got: $variant")
                 null
             } else {
