@@ -3,9 +3,9 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(ExperimentalLibClass::class, "3lib20ExperimentalLibClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OpenClass::class, "3lib9OpenClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(RegularLibClass::class, "3lib15RegularLibClassC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceOne::class, "_InterfaceOne")
-@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceTwo::class, "_InterfaceTwo")
-@file:kotlin.native.internal.objc.BindClassToObjCName(InternalLibInterface::class, "_InternalLibInterface")
+@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceOne::class, "_lib_InterfaceOne")
+@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceTwo::class, "_lib_InterfaceTwo")
+@file:kotlin.native.internal.objc.BindClassToObjCName(InternalLibInterface::class, "_lib_InternalLibInterface")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

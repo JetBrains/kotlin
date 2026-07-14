@@ -5,7 +5,7 @@ import KotlinRuntimeSupport
 public protocol P: KotlinRuntime.KotlinBase, override._P {
     func f() -> Swift.Void
 }
-@objc(_P)
+@objc(_override_P)
 public protocol _P {
 }
 public protocol __P: KotlinRuntimeSupport._KotlinBridgeable {

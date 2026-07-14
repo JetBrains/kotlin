@@ -158,7 +158,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> ExportedKotlinPackages.kotlin.ByteArray
     }
-    @objc(_BinaryFormat)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_BinaryFormat)
     public protocol _BinaryFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
     }
     public protocol __BinaryFormat: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.serialization.__SerialFormat {
@@ -171,7 +171,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             decoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     }
-    @objc(_DeserializationStrategy)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy)
     public protocol _DeserializationStrategy {
     }
     public protocol __DeserializationStrategy: KotlinRuntimeSupport._KotlinBridgeable {
@@ -181,7 +181,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             get
         }
     }
-    @objc(_KSerializer)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_KSerializer)
     public protocol _KSerializer: ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
     }
     public protocol __KSerializer: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.serialization.__SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization.__DeserializationStrategy {
@@ -191,7 +191,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             get
         }
     }
-    @objc(_SerialFormat)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_SerialFormat)
     public protocol _SerialFormat {
     }
     public protocol __SerialFormat: KotlinRuntimeSupport._KotlinBridgeable {
@@ -205,7 +205,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void
     }
-    @objc(_SerializationStrategy)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_SerializationStrategy)
     public protocol _SerializationStrategy {
     }
     public protocol __SerializationStrategy: KotlinRuntimeSupport._KotlinBridgeable {
@@ -220,7 +220,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.String
     }
-    @objc(_StringFormat)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_StringFormat)
     public protocol _StringFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
     }
     public protocol __StringFormat: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.serialization.__SerialFormat {
@@ -546,7 +546,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         @_spi(kotlinx$serialization$InternalSerializationApi)
         func typeParametersSerializers() -> ExportedKotlinPackages.kotlin.Array
     }
-    @objc(_GeneratedSerializer)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_`internal`_GeneratedSerializer)
     public protocol _GeneratedSerializer: ExportedKotlinPackages.kotlinx.serialization._KSerializer {
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)
@@ -1217,7 +1217,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     public protocol SerializersModuleCollector: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules._SerializersModuleCollector {
     }
-    @objc(_SerializersModuleCollector)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleCollector)
     public protocol _SerializersModuleCollector {
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
@@ -1477,7 +1477,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
             index: Swift.Int32
         ) -> Swift.Bool
     }
-    @objc(_SerialDescriptor)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor)
     public protocol _SerialDescriptor {
     }
     public protocol __SerialDescriptor: KotlinRuntimeSupport._KotlinBridgeable {
@@ -2452,7 +2452,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             consumeChunk: @escaping (Swift.String) -> Swift.Void
         ) -> Swift.Void
     }
-    @objc(_ChunkedDecoder)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_encoding_ChunkedDecoder)
     public protocol _ChunkedDecoder {
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
@@ -2520,7 +2520,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
         ) -> Swift.Void
     }
-    @objc(_CompositeDecoder)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder)
     public protocol _CompositeDecoder {
     }
     public protocol __CompositeDecoder: KotlinRuntimeSupport._KotlinBridgeable {
@@ -2593,7 +2593,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             index: Swift.Int32
         ) -> Swift.Bool
     }
-    @objc(_CompositeEncoder)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoder)
     public protocol _CompositeEncoder {
     }
     public protocol __CompositeEncoder: KotlinRuntimeSupport._KotlinBridgeable {
@@ -2628,7 +2628,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         func decodeShort() -> Swift.Int16
         func decodeString() -> Swift.String
     }
-    @objc(_Decoder)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder)
     public protocol _Decoder {
     }
     public protocol __Decoder: KotlinRuntimeSupport._KotlinBridgeable {
@@ -2687,7 +2687,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             value: Swift.String
         ) -> Swift.Void
     }
-    @objc(_Encoder)
+    @objc(_ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder)
     public protocol _Encoder {
     }
     public protocol __Encoder: KotlinRuntimeSupport._KotlinBridgeable {

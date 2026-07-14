@@ -25,7 +25,7 @@ extension ExportedKotlinPackages.kotlin.collections {
         func hasNext() -> Swift.Bool
         func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     }
-    @objc(_Iterator)
+    @objc(_ExportedKotlinPackages_kotlin_collections_Iterator)
     public protocol _Iterator {
     }
     public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {

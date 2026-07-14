@@ -3,8 +3,8 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(AsyncBase::class, "4main9AsyncBaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(AsyncGreeterBase::class, "4main16AsyncGreeterBaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(AsyncOverloaded::class, "4main15AsyncOverloadedC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(AsyncDefaulter::class, "_AsyncDefaulter")
-@file:kotlin.native.internal.objc.BindClassToObjCName(AsyncGreeter::class, "_AsyncGreeter")
+@file:kotlin.native.internal.objc.BindClassToObjCName(AsyncDefaulter::class, "_main_AsyncDefaulter")
+@file:kotlin.native.internal.objc.BindClassToObjCName(AsyncGreeter::class, "_main_AsyncGreeter")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

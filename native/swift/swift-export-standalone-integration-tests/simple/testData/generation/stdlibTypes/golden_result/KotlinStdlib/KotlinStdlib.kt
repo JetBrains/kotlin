@@ -1,11 +1,11 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.ByteArray::class, "22ExportedKotlinPackages6kotlinO12KotlinStdlibE9ByteArrayC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.CharArray::class, "22ExportedKotlinPackages6kotlinO12KotlinStdlibE9CharArrayC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.CharSequence::class, "_CharSequence")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.CharSequence::class, "_ExportedKotlinPackages_kotlin_CharSequence")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.ByteIterator::class, "22ExportedKotlinPackages6kotlinO11collectionsO12KotlinStdlibE12ByteIteratorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.CharIterator::class, "22ExportedKotlinPackages6kotlinO11collectionsO12KotlinStdlibE12CharIteratorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.text.StringBuilder::class, "22ExportedKotlinPackages6kotlinO4textO12KotlinStdlibE13StringBuilderC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.text.Appendable::class, "_Appendable")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.text.Appendable::class, "_ExportedKotlinPackages_kotlin_text_Appendable")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

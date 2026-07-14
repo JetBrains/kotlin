@@ -1,5 +1,5 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
-@file:kotlin.native.internal.objc.BindClassToObjCName(list2.MyList::class, "_MyList")
+@file:kotlin.native.internal.objc.BindClassToObjCName(list2.MyList::class, "_ExportedKotlinPackages_list2_MyList")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*

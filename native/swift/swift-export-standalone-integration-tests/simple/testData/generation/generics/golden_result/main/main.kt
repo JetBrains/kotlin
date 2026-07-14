@@ -13,13 +13,13 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Pair::class, "4main4PairC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(StringProducer::class, "4main14StringProducerC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(TripleBox::class, "4main9TripleBoxC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(A::class, "_A")
-@file:kotlin.native.internal.objc.BindClassToObjCName(AFactory::class, "_AFactory")
-@file:kotlin.native.internal.objc.BindClassToObjCName(B::class, "_B")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Consumer::class, "_Consumer")
-@file:kotlin.native.internal.objc.BindClassToObjCName(ConsumerProducer::class, "_ConsumerProducer")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Processor::class, "_Processor")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Producer::class, "_Producer")
+@file:kotlin.native.internal.objc.BindClassToObjCName(A::class, "_main_A")
+@file:kotlin.native.internal.objc.BindClassToObjCName(AFactory::class, "_main_AFactory")
+@file:kotlin.native.internal.objc.BindClassToObjCName(B::class, "_main_B")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Consumer::class, "_main_Consumer")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ConsumerProducer::class, "_main_ConsumerProducer")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Processor::class, "_main_Processor")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Producer::class, "_main_Producer")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

@@ -18,7 +18,7 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension ExportedKotlinPackages.list2 {
     public protocol MyList: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.List, ExportedKotlinPackages.list2._MyList {
     }
-    @objc(_MyList)
+    @objc(_ExportedKotlinPackages_list2_MyList)
     public protocol _MyList: ExportedKotlinPackages.kotlin.collections._List {
     }
     public protocol __MyList: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__List {

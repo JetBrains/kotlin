@@ -1,7 +1,7 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Baz::class, "4main3BazC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "_Bar")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "_main_Bar")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

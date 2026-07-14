@@ -243,22 +243,22 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
             get
         }
     }
-    @objc(_Flow)
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_flow_Flow)
     public protocol _Flow {
     }
-    @objc(_FlowCollector)
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector)
     public protocol _FlowCollector {
     }
-    @objc(_MutableSharedFlow)
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_flow_MutableSharedFlow)
     public protocol _MutableSharedFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow._FlowCollector {
     }
-    @objc(_MutableStateFlow)
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_flow_MutableStateFlow)
     public protocol _MutableStateFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow, ExportedKotlinPackages.kotlinx.coroutines.flow._MutableSharedFlow {
     }
-    @objc(_SharedFlow)
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_flow_SharedFlow)
     public protocol _SharedFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._Flow {
     }
-    @objc(_StateFlow)
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_flow_StateFlow)
     public protocol _StateFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow {
     }
     public protocol __Flow: KotlinRuntimeSupport._KotlinBridgeable {

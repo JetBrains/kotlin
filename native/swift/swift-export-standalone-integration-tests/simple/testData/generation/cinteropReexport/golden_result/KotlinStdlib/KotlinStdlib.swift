@@ -17,7 +17,7 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension ExportedKotlinPackages.kotlinx.cinterop {
     public protocol ObjCObject: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.cinterop._ObjCObject {
     }
-    @objc(_ObjCObject)
+    @objc(_ExportedKotlinPackages_kotlinx_cinterop_ObjCObject)
     public protocol _ObjCObject {
     }
     public protocol __ObjCObject: KotlinRuntimeSupport._KotlinBridgeable {
