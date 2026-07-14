@@ -160,27 +160,20 @@ internal class KTypeSubstitutor(
         val RAW_SUBSTITUTION = KTypeSubstitutor(emptyMap(), eraseToUpperBoundsAfterSubstitution = true)
 
         fun create(type: KType): KTypeSubstitutor {
-            val isRaw = (type as? AbstractKType)?.isRawType == true
-            val type = if (isRaw) type.eraseToUpperBoundsAndMakeItRawRecursively() else type
-            val parameters = with(ReflectTypeSystemContext) {
-                val classifier = (type as AbstractKType).typeConstructor()
-                List(classifier.parametersCount()) { classifier.getParameter(it) as KTypeParameter }
-            }
-            check(parameters.size == type.arguments.size) {
-                "Params vs args count mismatch (${parameters.size} != ${type.arguments.size}) for type '$type'"
-            }
-            return when {
-                parameters.isEmpty() -> EMPTY.copy(isRaw)
-                else -> KTypeSubstitutor(parameters.zip(type.arguments).toMap(), eraseToUpperBoundsAfterSubstitution = isRaw)
-            }
+            val isRaw = (type as AbstractKType).isRawType
+            val type = if (isRaw) type.eraseToUpperBoundsAndMakeItRawRecursively() as AbstractKType else type
+            val classifier = with(ReflectTypeSystemContext) { type.typeConstructor() } as KClassifier
+            return create(classifier, type.arguments, type.isSuspendFunctionType, isRaw)
         }
 
-        fun create(klass: KClass<*>, arguments: List<KTypeProjection>, isSuspendFunctionType: Boolean, isRaw: Boolean): KTypeSubstitutor {
-            val typeParameters = klass.allTypeParameters().run {
-                // For a type `suspend () -> String` (also known as `SuspendFunction0<String>`), the classifier will be `Function1` because
-                // suspend functions are mapped to normal functions (with +1 arity) on JVM.
-                if (isSuspendFunctionType) drop(1) else this
-            }
+        fun create(klass: KClassifier, arguments: List<KTypeProjection>, isSuspendFunctionType: Boolean, isRaw: Boolean): KTypeSubstitutor {
+            val typeParameters = if (klass is KClass<*>)
+                klass.allTypeParameters().run {
+                    // For a type `suspend () -> String` (also known as `SuspendFunction0<String>`), the classifier will be `Function1`
+                    // because suspend functions are mapped to normal functions (with +1 arity) on JVM.
+                    if (isSuspendFunctionType) drop(1) else this
+                }
+            else emptyList()
             check(typeParameters.size == arguments.size) {
                 "Params vs args count mismatch (${typeParameters.size} != ${arguments.size}) for class '$klass' with args: ${arguments.joinToString()}"
             }
