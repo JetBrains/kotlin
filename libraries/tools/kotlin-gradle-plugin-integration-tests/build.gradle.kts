@@ -13,6 +13,7 @@ plugins {
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")
     id("gradle-plugin-published-compiler-dependency-configuration") // the test compilation's output is injected into test project's build classpath for the buildscript injection
+    id("kotlin-git.gradle-build-conventions.file-leak-detector-downloader")
 }
 
 testsJar()
@@ -518,6 +519,8 @@ tasks.withType<Test>().configureEach {
     androidSdkProvisioner {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
     }
+
+    jvmArgumentProviders.add(fileLeakDetectorDownloader.argProvider)
 
     useJUnitPlatform {
         includeEngines("junit-jupiter")

@@ -72,7 +72,10 @@ data class BuildOptions(
     val konanDataDir: Path? = konanDir, // null can be used only if you are using custom 'kotlin.native.home' or 'org.jetbrains.kotlin.native.home' property instead of konanDir
     val kotlinUserHome: Path? = testKitDir.resolve(".kotlin"),
     val compilerArgumentsLogLevel: String? = "info",
-    val fileLeaksReportFile: File? = null,
+    /**
+     * Enable file-leak-detector if not-null. A trace report will be written to the specified file.
+     */
+    val fileLeaksReportFile: Path? = null,
     val continueAfterFailure: Boolean = false,
     /**
      * Override the directory to store flag files indicating "daemon process is alive" controlled by Kotlin Daemon.
