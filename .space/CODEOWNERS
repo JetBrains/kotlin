@@ -471,6 +471,7 @@
 /repo/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /repo/auto-code-review svyatoslav.scherbina@jetbrains.com sergey.bogolepov@jetbrains.com simon.ogorodnik@jetbrains.com
 /repo/gradle-build-conventions/kgp-npm-tooling-helper "Kotlin Build Tools"
+/repo/gradle-build-conventions/file-leak-detector-downloader "Kotlin Build Tools"
 
 /resources/ "Kotlin Build Infrastructure"
 

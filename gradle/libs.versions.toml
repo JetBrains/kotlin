@@ -96,6 +96,7 @@ bouncycastle = "1.84"
 kotlin-before-bta-v2 = "2.2.21"
 bytebuddy = "1.18.9"
 playwright = "1.61.0"
+fileLeakDetector = "1.21"
 jmh = "0.7.3"
 
 analysis-api-kotlin = "2.3.21"
@@ -242,6 +243,8 @@ analysis-api-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", 
 analysis-api-kotlin-metadata-jvm = { module = "org.jetbrains.kotlin:kotlin-metadata-jvm", version.ref = "analysis-api-kotlin" }
 analysis-api-intellij-patched-kotlinx-coroutines-core-jvm = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "analysis-api-kotlinx-coroutines" }
 analysis-api-intellij-patched-kotlinx-coroutines-debug = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-debug", version.ref = "analysis-api-kotlinx-coroutines" }
+
+fileLeakDetector = { module = "io.jenkins.tools:file-leak-detector", version.ref = "fileLeakDetector" }
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }

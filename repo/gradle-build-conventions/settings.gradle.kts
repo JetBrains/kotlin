@@ -80,4 +80,4 @@ include(":test-federation-convention")
 include(":repo-test-fixtures")
 include(":java-flight-recorder")
 include(":test-inputs-check-v2")
-
+include(":file-leak-detector-downloader")
