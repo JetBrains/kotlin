@@ -267,6 +267,12 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
     }
 
     @Test
+    @TestMetadata("ComanionTraces.kt")
+    public void testComanionTraces() {
+      run("ComanionTraces.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionBlockProperties.kt")
     public void testCompanionBlockProperties() {
       run("CompanionBlockProperties.kt");
