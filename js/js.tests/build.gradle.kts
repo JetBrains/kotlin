@@ -68,8 +68,6 @@ dependencies {
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesImplementation(project(":wasm:wasm.frontend"))
-    testFixturesImplementation(libs.junit4)
-    testImplementation(libs.junit4)
     testFixturesApi(testFixtures(project(":kotlin-build-common")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
 
@@ -88,8 +86,6 @@ dependencies {
     testRuntimeOnly(project(":compiler:ir.backend.common"))
     testRuntimeOnly(project(":kotlin-util-klib-abi"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
-
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     // these dependencies shouldn't be exposed to other modules
     // to avoid potential clashes in cases when another module

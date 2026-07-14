@@ -33,10 +33,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.testInfraError
-import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
-import org.junit.ComparisonFailure
+import org.junit.jupiter.api.Assertions
+import org.opentest4j.AssertionFailedError
 import java.io.File
 
 abstract class JsAbstractInvalidationTest(
@@ -201,7 +202,7 @@ abstract class JsAbstractInvalidationTest(
 
         private fun verifyJsExecutableProducerBuildModules(stepId: Int, gotRebuilt: List<String>, expectedRebuilt: List<String>) {
             val got = gotRebuilt.filter { moduleName -> libraryNamesToExcludeFromStats.none { moduleName.startsWith(it) } }
-            JUnit4Assertions.assertSameElements(got, expectedRebuilt) {
+            JUnit5Assertions.assertSameElements(expectedRebuilt, got) {
                 "Mismatched rebuilt modules at step $stepId"
             }
         }
@@ -218,8 +219,8 @@ abstract class JsAbstractInvalidationTest(
                     withModuleSystem = projectInfo.moduleKind in setOf(ModuleKind.COMMON_JS, ModuleKind.UMD, ModuleKind.AMD),
                     entryModulePath = jsFiles.last()
                 )
-            } catch (e: ComparisonFailure) {
-                throw ComparisonFailure("Mismatched box out at step $stepId", e.expected, e.actual)
+            } catch (e: AssertionFailedError) {
+                throw AssertionFailedError("Mismatched box out at step $stepId", e.expected, e.actual)
             } catch (e: IllegalStateException) {
                 throw IllegalStateException("Something goes wrong (bad JS code?) at step $stepId\n${e.message}")
             } catch (e: ScriptExecutionException) {
@@ -239,12 +240,12 @@ abstract class JsAbstractInvalidationTest(
                 }
 
                 val dtsFile = jsDir.resolve(dtsFilePath)
-                JUnit4Assertions.assertTrue(dtsFile.exists()) {
+                Assertions.assertTrue(dtsFile.exists()) {
                     "Cannot find $dtsFileExtension (${dtsFile.absolutePath}) file for module ${info.moduleName} at step $stepId"
                 }
 
                 val gotDTS = dtsFile.readText()
-                JUnit4Assertions.assertEqualsToFile(expectedDTS.file, gotDTS, { it }) {
+                JUnit5Assertions.assertEqualsToFile(expectedDTS.file, gotDTS, { it }) {
                     "Mismatched $$dtsFileExtension for module ${info.moduleName} at step $stepId"
                 }
             }
@@ -258,7 +259,7 @@ abstract class JsAbstractInvalidationTest(
                 val sourceMappingUrlLine = jsCodeFile.readLines().singleOrNull { it.startsWith(SOURCE_MAPPING_URL_PREFIX) }
 
                 if (sourceMappingUrlLine != null) {
-                    JUnit4Assertions.assertEquals("${SOURCE_MAPPING_URL_PREFIX}${jsCodeFile.name}.map", sourceMappingUrlLine) {
+                    Assertions.assertEquals("${SOURCE_MAPPING_URL_PREFIX}${jsCodeFile.name}.map", sourceMappingUrlLine) {
                         "Mismatched source map url at step $stepId"
                     }
                 }
