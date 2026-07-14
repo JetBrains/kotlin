@@ -294,7 +294,7 @@ class NativeSecondStageCompilationConfig(
     val objcEntryPoints: ObjCEntryPoints by lazy {
         configuration
                 .get(BinaryOptions.objcExportEntryPointsPath)
-                ?.let { File(it).readObjCEntryPoints() }
+                ?.let { Path(it).readObjCEntryPoints() }
                 ?: ObjCEntryPoints.ALL
     }
 

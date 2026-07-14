@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
@@ -16,14 +15,18 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerato
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.io.deleteOnExit
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.objcGenerics
 import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createTempFile
+import kotlin.io.path.name
+import kotlin.io.path.writeLines
 
 internal class ObjCExportedInterface(
         val generatedClasses: Set<ClassDescriptor>,
@@ -140,7 +143,7 @@ internal fun createObjCFramework(
         config: NativeSecondStageCompilationConfig,
         moduleDescriptor: ModuleDescriptor,
         exportedInterface: ObjCExportedInterface,
-        frameworkDirectory: File
+        frameworkDirectory: Path
 ) {
     val frameworkName = frameworkDirectory.name.removeSuffix(CompilerOutputKind.FRAMEWORK.suffix())
     val frameworkBuilder = FrameworkBuilder(
@@ -162,7 +165,7 @@ internal fun createObjCFramework(
 internal fun createTestBundle(
         config: NativeSecondStageCompilationConfig,
         moduleDescriptor: ModuleDescriptor,
-        bundleDirectory: File
+        bundleDirectory: Path
 ) {
     val name = bundleDirectory.name.removeSuffix(CompilerOutputKind.TEST_BUNDLE.suffix())
     BundleBuilder(
@@ -234,22 +237,22 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
             "}"
     )
 
-    val source = createTempFile("protocols", ".m").deleteOnExit()
+    val source = createTempFile("protocols", ".m").apply { deleteOnExit() }
     source.writeLines(headerLines + protocolsStub)
 
-    val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
+    val bitcode = createTempFile("protocols", ".bc").apply { deleteOnExit() }
 
     val clangCommand = generationState.config.clang.clangC(
-            source.absolutePath,
+            source.absolutePathString(),
             "-O2",
             "-emit-llvm",
-            "-c", "-o", bitcode.absolutePath
+            "-c", "-o", bitcode.absolutePathString()
     )
 
     val result = Command(clangCommand).getResult(withErrors = true)
 
     if (result.exitCode == 0) {
-        generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
+        generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePathString()
     } else {
         // Note: ignoring compile errors intentionally.
         // In this case resulting framework will likely be unusable due to compile errors when importing it.

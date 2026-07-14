@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
 import org.jetbrains.kotlin.backend.konan.objcexport.dumpSelectorToSignatureMapping
 import org.jetbrains.kotlin.backend.konan.objcexport.produceObjCExportInterface
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.konan.library.javaFile
 
 /**
  * Create internal representation of Objective-C wrapper.
@@ -41,7 +42,7 @@ internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<NativeBac
     val config = context.config
     // TODO: Share this instance between multiple contexts (including NativeGenerationState)?
     val outputFiles = OutputFiles(config.outputPath, config.target, config.produce)
-    createObjCFramework(config, input.moduleDescriptor, input.exportedInterface, outputFiles.mainFile)
+    createObjCFramework(config, input.moduleDescriptor, input.exportedInterface, outputFiles.mainFile.javaFile().toPath())
 }
 
 /**

@@ -78,7 +78,6 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
         val entryPoints = File(root, "objc-entry-points")
             .takeIf { it.isFile }
             ?.toPath()
-            ?.let { org.jetbrains.kotlin.konan.file.File(it) }
             ?.readObjCEntryPoints()
             ?: ObjCEntryPoints.ALL
 
