@@ -108,6 +108,7 @@ internal class GranularAnnotationsBox(
             StandardClassIds.Annotations.Target,
             StandardClassIds.Annotations.IntroducedAt,
             StandardClassIds.Annotations.EqualityBound,
+            StandardClassIds.Annotations.NumericClass,
         ).associateBy { it.asFqNameString() } + specialAnnotationsListWithSafeArgumentsResolve
     }
 }

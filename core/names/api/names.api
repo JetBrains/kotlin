@@ -185,6 +185,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds {
 	public final fun byName (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getAbstractMap ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getAllBuiltinTypes ()Ljava/util/Set;
+	public final fun getAllIntegerTypes ()Ljava/util/Set;
 	public final fun getAnnotation ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getAnnotationRetention ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getAnnotationTarget ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -275,6 +276,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds {
 	public final fun getMutableSet ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNothing ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNumber ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getNumericVariant ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getPrimitiveArrayTypeByElementType ()Ljava/util/Map;
 	public final fun getPrimitiveTypes ()Ljava/util/Set;
 	public final fun getResult ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -336,6 +338,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getMustBeDocumented ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMustUseReturnValues ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNoInfer ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getNumericClass ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getOnlyInputTypes ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getOptionalExpectation ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getPublishedApi ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -358,6 +361,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 
 public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations$ParameterNames {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/name/StandardClassIds$Annotations$ParameterNames;
+	public final fun getActualizations ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedLevel ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedMessage ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedSinceKotlinErrorSince ()Lorg/jetbrains/kotlin/name/Name;
