@@ -174,7 +174,7 @@ private fun <F> prepareKlibSessions(
                 init = sessionConfigurator,
             )
         },
-        additionalProvidersForMetadataLibrarySessionsInHmppMode = { session, moduleDataProvider, scopeProvider, libraries ->
+        additionalProvidersForMetadataLibrarySessionsInHmppMode = { session, moduleDataProvider, scopeProvider, libraries, _, _ ->
             sessionFactory.createAdditionalDependencyProviders(session, moduleDataProvider, scopeProvider, libraries)
         },
     )
@@ -285,10 +285,10 @@ object SessionConstructionUtils {
         isScript: (F) -> Boolean,
         fileBelongsToModule: (F, String) -> Boolean,
         createMetadataSessionFactoryContextForHmppCommonLibrarySession: () -> AbstractFirMetadataSessionFactory.Context,
+        additionalProvidersForMetadataLibrarySessionsInHmppMode: AdditionalProvidersSupplierForHmpp? = null,
         createSharedLibrarySession: () -> FirSession,
         createLibrarySession: (sharedLibrarySession: FirSession) -> FirSession,
         createSourceSession: FirSessionProducer,
-        additionalProvidersForMetadataLibrarySessionsInHmppMode: AdditionalProvidersSupplier? = null,
     ): List<SessionWithSources<F>> {
         val languageVersionSettings = configuration.languageVersionSettings
         val [scripts, nonScriptFiles] = when (configuration.dontCreateSeparateSessionForScripts) {
@@ -501,7 +501,7 @@ object SessionConstructionUtils {
         fileBelongsToModule: (F, String) -> Boolean,
         createMetadataSessionFactoryContextForHmppCommonLibrarySession: () -> AbstractFirMetadataSessionFactory.Context,
         createFirSession: FirSessionProducer,
-        additionalProvidersForMetadataLibrarySessions: AdditionalProvidersSupplier?,
+        additionalProvidersForMetadataLibrarySessions: AdditionalProvidersSupplierForHmpp?,
     ): List<SessionWithSources<F>> {
         val moduleDataForHmppModule = LinkedHashMap<HmppCliModule, FirModuleData>()
 
@@ -558,7 +558,7 @@ object SessionConstructionUtils {
                         klibs,
                         configuration.languageVersionSettings,
                         metadataSessionFactoryContext,
-                        additionalProvidersForMetadataLibrarySessions,
+                        additionalProviders = additionalProvidersForMetadataLibrarySessions?.bind(libPaths, friendLibPaths),
                     )
                 }
             }

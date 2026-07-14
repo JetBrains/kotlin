@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -65,6 +66,7 @@ import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 import javax.xml.stream.XMLOutputFactory
 import javax.xml.stream.XMLStreamWriter
+import kotlin.io.path.Path
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmFrontendPipelinePhase",
@@ -365,6 +367,36 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     createJvmContext = { context },
                     createJsContext = { shouldNotBeCalled() }
                 )
+            },
+            additionalProvidersForMetadataLibrarySessionsInHmppMode = l@{ session, moduleDataProvider, scopeProvider, libraries, rawRegularDependencies, rawFriendDependencies ->
+                /*
+                 * If no klibs were passed to the dependencies of the common fragment we try to interpret the fragment
+                 * classpath as JVM classpath (with .jar and .class files).
+                 *
+                 * This could happen in a single-target project setup.
+                 */
+                if (libraries.isNotEmpty()) return@l emptyList()
+                val dependencies = (rawRegularDependencies + rawFriendDependencies).map { Path(it) }
+                if (dependencies.isEmpty()) return@l emptyList()
+                val scope = projectEnvironment.getSearchScopeByClassPath(dependencies)
+                val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(scope)
+                val moduleData = moduleDataProvider.allModuleData.first { it.session == session }
+                val provider = JvmClassFileBasedSymbolProvider(
+                    session,
+                    moduleDataProvider,
+                    scopeProvider,
+                    context.packagePartProviderForLibraries,
+                    kotlinClassFinder,
+                    projectEnvironment.getFirJavaFacade(session, moduleData, context.librariesScope)
+                )
+                val builtinsProvider = FirJvmSessionFactory.initializeBuiltinsProvider(
+                    session,
+                    moduleData,
+                    scopeProvider,
+                    kotlinClassFinder,
+                )
+
+                listOf(provider, builtinsProvider)
             },
             createSharedLibrarySession = {
                 FirJvmSessionFactory.createSharedLibrarySession(

@@ -265,7 +265,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         }
     }
 
-    private fun initializeBuiltinsProvider(
+    fun initializeBuiltinsProvider(
         session: FirSession,
         builtinsModuleData: FirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,

@@ -42,6 +42,23 @@ fun interface AdditionalProvidersSupplier {
     ): List<FirSymbolProvider>
 }
 
+fun interface AdditionalProvidersSupplierForHmpp {
+    fun createProviders(
+        session: FirSession,
+        moduleDataProvider: ModuleDataProvider,
+        scopeProvider: FirKotlinScopeProvider,
+        libraries: List<KotlinLibrary>,
+        rawRegularDependencies: Collection<String>,
+        rawFriendDependencies: Collection<String>,
+    ): List<FirSymbolProvider>
+
+    fun bind(rawRegularDependencies: Collection<String>, rawFriendDependencies: Collection<String>): AdditionalProvidersSupplier {
+        return { session, moduleDataProvider, scopeProvider, libraries ->
+            createProviders(session, moduleDataProvider, scopeProvider, libraries, rawRegularDependencies, rawFriendDependencies)
+        }
+    }
+}
+
 @OptIn(SessionConfiguration::class)
 abstract class AbstractFirMetadataSessionFactory(
     val targetPlatform: TargetPlatform,
