@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.konan.config.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -21,6 +20,9 @@ import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.library.validateNoLibrariesWerePassedViaCliByUniqueName
 import org.jetbrains.kotlin.util.Logger
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 
 class KonanLibrariesResolveSupport(
     configuration: CompilerConfiguration,
@@ -28,18 +30,16 @@ class KonanLibrariesResolveSupport(
     distribution: Distribution,
     resolveManifestDependenciesLenient: Boolean
 ) {
-    private val includedLibraryFiles =
-            configuration.konanIncludedLibraries.map { File(it) }
+    private val includedLibraryFiles: List<Path> = configuration.konanIncludedLibraries.map { Path(it) }
 
-    private val libraryToCacheFile =
-                    configuration.konanLibraryToAddToCache?.let { File(it) }
+    private val libraryToCacheFile: Path? = configuration.konanLibraryToAddToCache?.let { Path(it) }
 
     private val libraryPaths = configuration.konanLibraries
 
     private val unresolvedLibraries = libraryPaths.toUnresolvedLibraries
 
     val resolver = defaultResolver(
-        libraryPaths + includedLibraryFiles.map { it.absolutePath },
+        libraryPaths + includedLibraryFiles.map { it.absolutePathString() },
         target,
         distribution,
         CompilerLoggerAdapter(configuration),
@@ -54,7 +54,7 @@ class KonanLibrariesResolveSupport(
     val resolvedLibraries = run {
         val additionalLibraryFiles = (includedLibraryFiles + listOfNotNull(libraryToCacheFile)).toSet()
         resolver.resolveWithDependencies(
-            unresolvedLibraries + additionalLibraryFiles.map { RequiredUnresolvedLibrary(it.absolutePath) },
+            unresolvedLibraries + additionalLibraryFiles.map { RequiredUnresolvedLibrary(it.absolutePathString()) },
             noStdLib = configuration.konanNoStdlib,
             noDefaultLibs = configuration.konanNoDefaultLibs,
             duplicatedUniqueNameStrategy = configuration.get(

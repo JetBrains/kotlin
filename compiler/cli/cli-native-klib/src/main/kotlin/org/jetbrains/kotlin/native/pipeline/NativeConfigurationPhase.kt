@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
 import org.jetbrains.kotlin.konan.config.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import java.io.File
 
 /**
  * Configuration phase for native klib compilation pipeline.
