@@ -303,8 +303,9 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     private fun K2JVMCompilerArguments.applyJvmClasspathMetadata() {
-        val metadataJvmDestinationFile = taskBuildCacheableOutputDirectory.file("metadata-jvm").get().asFile
+        useIcClasspathMetadata = true
 
+        val metadataJvmDestinationFile = taskBuildCacheableOutputDirectory.file("metadata-jvm").get().asFile
         commonFragmentsMetadataDestination = metadataJvmDestinationFile.absolutePath
         if (metadataJvmDestinationFile.exists()) {
             fragmentIncrementalClasspath = metadataJvmDestinationFile

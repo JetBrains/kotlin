@@ -1007,6 +1007,19 @@ The default value is 'inline'.""",
     }
 
     compilerArgument {
+        name = "Xuse-ic-classpath-metadata"
+        description = """
+            Use classpath metadata for incremental compilation.
+            This is used solely for incremental compilation and should not be used directly.
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xjava-direct"
         description = "Experimental direct java support.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

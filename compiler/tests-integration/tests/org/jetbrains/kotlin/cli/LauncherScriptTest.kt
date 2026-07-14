@@ -781,6 +781,7 @@ Caused by: java.lang.AssertionError: assert
             K2JVMCompilerArguments::multiPlatform.cliArgument,
             K2JVMCompilerArguments::expectActualClasses.cliArgument,
             K2JVMCompilerArguments::incrementalCompilation.cliArgument,
+            K2JVMCompilerArguments::useIcClasspathMetadata.cliArgument,
             K2JVMCompilerArguments::fragments.cliArgument("common,platform"),
             K2JVMCompilerArguments::fragmentSources.cliArgument("common:${newCommonKt.absolutePath}"),
             K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
@@ -792,6 +793,47 @@ Caused by: java.lang.AssertionError: assert
                     x.bar() // should not be visible
                       ^^^
             """.trimIndent()
+        )
+    }
+
+    /*
+     * Positive counterpart of [testDummyFragmentIncrementalClasspathTest]: with -Xuse-ic-classpath-metadata
+     * the new classpath-metadata IC symbol-provider path is used. Here the leaf `platform` fragment is recompiled
+     * incrementally against the previously produced common metadata (which supplies the `expect class Some`). Since
+     * the `common` fragment is provided as metadata on the incremental classpath rather than recompiled, the expect
+     * declaration resolves correctly and the `actual` platform code compiles successfully.
+     */
+    @Test
+    fun testFragmentIncrementalClasspathWithClasspathMetadata() {
+        val metadataDir = compileSimpleCommonPlatformProject()
+        val newPlatformKt = tmpdir.resolve("new-platform.kt").apply {
+            writeText(
+                """
+                    actual class Some {
+                        actual fun foo() {} // actualizes the expect `Some.foo` supplied by common metadata
+
+                        fun bar() {}
+                    }
+                """.trimIndent()
+            )
+        }
+        val newClassesDir = tmpdir.resolve("new-classes")
+        runProcess(
+            "kotlinc-jvm",
+            newPlatformKt.absolutePath,
+            K2JVMCompilerArguments::destination.cliArgument, newClassesDir.absolutePath,
+            K2JVMCompilerArguments::multiPlatform.cliArgument,
+            K2JVMCompilerArguments::expectActualClasses.cliArgument,
+            K2JVMCompilerArguments::incrementalCompilation.cliArgument,
+            K2JVMCompilerArguments::useIcClasspathMetadata.cliArgument,
+            K2JVMCompilerArguments::fragments.cliArgument("common,platform"),
+            K2JVMCompilerArguments::fragmentSources.cliArgument("platform:${newPlatformKt.absolutePath}"),
+            K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
+            K2JVMCompilerArguments::fragmentIncrementalClasspath.cliArgument("common:${metadataDir.resolve("common").absolutePath}"),
+
+            expectedExitCode = 0,
+            expectedStdout = "",
+            expectedStderr = "",
         )
     }
 

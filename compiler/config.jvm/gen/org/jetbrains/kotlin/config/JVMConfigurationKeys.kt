@@ -180,6 +180,10 @@ object JVMConfigurationKeys {
     @JvmField
     val IC_METADATA_TRACKER = CompilerConfigurationKey.create<ICJvmMetadataTracker>("IC_METADATA_TRACKER")
 
+    // Enable classpath metadata for KMP incremental compilation
+    @JvmField
+    val USE_IC_CLASSPATH_METADATA = CompilerConfigurationKey.create<Boolean>("USE_IC_CLASSPATH_METADATA")
+
     // Use java-direct as frontend Java facade
     @JvmField
     val USE_JAVA_DIRECT = CompilerConfigurationKey.create<Boolean>("USE_JAVA_DIRECT")
@@ -377,6 +381,10 @@ var CompilerConfiguration.commonFragmentsOutputDir: File?
 var CompilerConfiguration.icMetadataTracker: ICJvmMetadataTracker?
     get() = get(JVMConfigurationKeys.IC_METADATA_TRACKER)
     set(value) { putIfNotNull(JVMConfigurationKeys.IC_METADATA_TRACKER, value) }
+
+var CompilerConfiguration.useIcClasspathMetadata: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_IC_CLASSPATH_METADATA)
+    set(value) { put(JVMConfigurationKeys.USE_IC_CLASSPATH_METADATA, value) }
 
 var CompilerConfiguration.useJavaDirect: Boolean
     get() = getBoolean(JVMConfigurationKeys.USE_JAVA_DIRECT)

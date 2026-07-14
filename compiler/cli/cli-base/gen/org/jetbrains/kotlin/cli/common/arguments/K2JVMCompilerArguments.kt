@@ -641,6 +641,17 @@ See KT-45671 for more details.""",
         }
 
     @Argument(
+        value = "-Xuse-ic-classpath-metadata",
+        description = """Use classpath metadata for incremental compilation.
+This is used solely for incremental compilation and should not be used directly.""",
+    )
+    var useIcClasspathMetadata: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xuse-inline-scopes-numbers",
         description = "Use inline scopes numbers for inline marker variables.",
     )

@@ -135,6 +135,8 @@ where advanced options include:
   -Xuse-14-inline-classes-mangling-scheme
                              Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30.
   -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
+  -Xuse-ic-classpath-metadata Use classpath metadata for incremental compilation.
+                             This is used solely for incremental compilation and should not be used directly.
   -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
