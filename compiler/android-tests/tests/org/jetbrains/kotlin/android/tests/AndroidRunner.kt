@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.android.tests
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.util.io.FileUtil
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.extension.*
@@ -33,16 +35,22 @@ import java.nio.file.Paths
 class AndroidRunner {
     companion object {
         private var pathManager: PathManager? = null
+        private var compilationResults: AndroidCompilationResultsCache? = null
         private var runtimeResults: AndroidRuntimeResultsCache? = null
 
         @JvmStatic
         @AfterAll
         fun tearDown() {
             try {
-                runtimeResults?.close()
+                compilationResults?.close()
             } finally {
-                runtimeResults = null
-                pathManager?.tmpFolder?.let { FileUtil.delete(File(it)) }
+                compilationResults = null
+                try {
+                    runtimeResults?.close()
+                } finally {
+                    runtimeResults = null
+                    pathManager?.tmpFolder?.let { FileUtil.delete(File(it)) }
+                }
             }
         }
     }
@@ -55,7 +63,9 @@ class AndroidRunner {
         println("Created temporary folder for running android tests: ${tmpFolder.absolutePath}")
         pathManager = PathManager(tmpFolder.absolutePath)
         val plan = CodegenTestsOnAndroidGenerator.discover(pathManager!!)
+        val compilationResults = AndroidCompilationResultsCache(plan)
         val runtimeResults = AndroidRuntimeResultsCache(pathManager!!, plan)
+        AndroidRunner.compilationResults = compilationResults
         AndroidRunner.runtimeResults = runtimeResults
         return listOf(
             DynamicContainer.dynamicContainer(
@@ -71,7 +81,7 @@ class AndroidRunner {
                 plan.flavorContainers { _, tests ->
                     tests.directoryContainers { test ->
                         DynamicTest.dynamicTest(test.displayName) {
-                            plan.compile(test)
+                            compilationResults.assertCompiled(test)
                         }
                     }
                 }
@@ -165,6 +175,56 @@ class AndroidRunner {
                 }
             }
             return result
+        }
+    }
+
+    private class AndroidCompilationResultsCache(
+        private val plan: AndroidTestPlan
+    ) : AutoCloseable {
+        private val parallelism = compilationParallelism()
+        private val semaphore = Semaphore(parallelism)
+        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        private val compilationJobs = plan.tests.associate { test ->
+            test.info.name to scope.async(start = CoroutineStart.LAZY) {
+                semaphore.withPermit {
+                    plan.compile(test)
+                }
+            }
+        }
+
+        private var started = false
+
+        fun assertCompiled(test: AndroidPlannedTest) {
+            runBlocking {
+                startAll()
+                compilationJobs.getValue(test.info.name).await()
+            }
+        }
+
+        override fun close() {
+            scope.cancel()
+        }
+
+        private fun startAll() {
+            if (started) return
+
+            synchronized(this) {
+                if (started) return
+
+                println("Compiling Android tests with parallelism $parallelism...")
+                compilationJobs.values.forEach { it.start() }
+                started = true
+            }
+        }
+
+        private fun compilationParallelism(): Int {
+            val configured = System.getProperty("kotlin.test.android.compilation.parallelism")?.toIntOrNull()
+            return (configured ?: Runtime.getRuntime().availableProcessors().coerceAtMost(DEFAULT_COMPILATION_PARALLELISM))
+                .coerceAtLeast(1)
+        }
+
+        companion object {
+            private const val DEFAULT_COMPILATION_PARALLELISM = 4
         }
     }
 
