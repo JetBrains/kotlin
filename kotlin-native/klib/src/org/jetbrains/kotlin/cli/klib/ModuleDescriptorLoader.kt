@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 
+// TODO(KT-87732): Drop this class.
 internal class ModuleDescriptorLoader(private val output: KlibToolOutput) {
     @OptIn(K1Deprecation::class)
     fun load(library: KotlinLibrary): ModuleDescriptorImpl? {

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.hasAbi
 import org.jetbrains.kotlin.library.loadSizeInfo
-import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.name.FqName
@@ -210,6 +209,8 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: ParsedArgu
         val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
         val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
         val typeTranslator = TypeTranslatorImpl(symbolTable, ModuleDescriptorLoader.languageVersionSettings, module)
+
+        // TODO(KT-87732): Do not use `IrBuiltInsOverDescriptors` here.
         val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
 
         val moduleDeserializer = NonLinkingIrInlineFunctionDeserializer.ModuleDeserializer(
