@@ -59,7 +59,7 @@ plugins {
     id("build-time-report")
     id("modularized-test-configurations")
     id("resolve-dependencies")
-    id("org.gradle.crypto.checksum") version "1.4.0"
+    alias(libs.plugins.gradle.crypto.checksum)
     alias(libs.plugins.kotlinx.bcv) apply false
     id("signing-convention")
     id("org.jetbrains.kotlin.jvm") apply false
