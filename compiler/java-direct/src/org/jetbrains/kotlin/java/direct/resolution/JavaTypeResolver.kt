@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -234,10 +233,7 @@ private fun resolveFromSamePackage(simpleName: String, fullResolution: Boolean):
 context(c: JavaResolutionContext)
 private fun resolveFromJavaLang(simpleName: String, fullResolution: Boolean): ClassId? {
     val classId = ClassId(FqName("java.lang"), Name.identifier(simpleName))
-    if (JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName()) != null || classExists(classId, fullResolution)) {
-        return classId
-    }
-    return null
+    return if (classExists(classId, fullResolution)) classId else null
 }
 
 /**

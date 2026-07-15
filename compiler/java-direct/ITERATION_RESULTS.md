@@ -36,6 +36,20 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-15 — Drop redundant `JavaToKotlinClassMap` disjunct in `resolveFromJavaLang`
+- **Change**: `resolveFromJavaLang` accepted a name when either `JavaToKotlinClassMap.mapJavaToKotlin`
+  hit **or** `classExists` was true; the map disjunct is dead. It only ever probes `ClassId(java.lang, X)`,
+  and `classExists` resolves those via the symbol provider whose JVM builtins arm answers only `kotlin.*`
+  ids (`StandardClassIds.builtInsPackages`), so a `java.lang.*` lookup never returns a `BuiltIns`-origin
+  symbol filtered by `tryResolve` — it hits the JDK library class instead. Every mapped `java.lang` fqName
+  (Object/String/Number/CharSequence/Comparable/Throwable/Cloneable/Iterable/Enum/wrappers/Deprecated)
+  exists in both full JDK and mockJDK, so `classExists` already covers exactly what the map would.
+  Collapsed to `classExists(classId, fullResolution)`, matching `resolveFromSamePackage`; better PSI
+  parity (no divergence in the no-JDK case). Removed the now-unused `JavaToKotlinClassMap` import.
+- **Files**: `resolution/JavaTypeResolver.kt` (−5/+1).
+- **Tests**: box+phased suite green (0 FAILED/0 errors).
+- **Result**: simplification landed (reviewer question — `classExists` alone suffices).
+
 ### 2026-07-15 — Nameless Java method recovered as a constructor (`testNamelessInJava`)
 - **Change**: `JavaClassOverAst.constructors` required a constructor `METHOD` node to have both no
   return `TYPE` **and** an `IDENTIFIER`, so a malformed nameless declaration like `void () {}`
