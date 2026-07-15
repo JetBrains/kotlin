@@ -106,16 +106,16 @@ fun Task.dependsOnKotlinGradlePluginPublishToBuildRepo() {
 }
 
 fun Task.dependsOnKotlinGradlePluginPublish() {
-    val localPublishedMark = project.configurations.detachedConfiguration(
+    val publishedMark = project.configurations.detachedConfiguration(
         *kotlinGradlePluginAndItsRequired.filter {
             // Compose compiler plugin does not assemble with LV 1.9 and should not be a part of the dist bundle for now
             it != ":plugins:compose-compiler-plugin:compiler"
         }.map { p ->
-            project.dependencies.project(p, configuration = "localPublishedMark")
+            project.dependencies.project(p, configuration = "publishedMark")
         }.toTypedArray()
     )
-    inputs.files(localPublishedMark.incoming.artifactView { lenient(true) }.files)
-        .withPropertyName("localPublishedMarks")
+    inputs.files(publishedMark.incoming.artifactView { lenient(true) }.files)
+        .withPropertyName("publishedMark")
         .withPathSensitivity(PathSensitivity.NONE)
 }
 
