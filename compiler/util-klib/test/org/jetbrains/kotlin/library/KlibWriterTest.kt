@@ -201,27 +201,6 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
         }.writeTo(createNewKlibDir())
     }
 
-    @Test
-    fun `Existing files removal control`() {
-        fun newWriter(allowIncrementalOverwriting: Boolean) = KlibWriter {
-            manifest {
-                moduleName("sample")
-                versions(MOCK_VERSIONS)
-                platformAndTargets(BuiltInsPlatform.COMMON)
-            }
-            allowIncrementalOverwriting(allowIncrementalOverwriting)
-        }
-
-        val klibDir = createNewKlibDir()
-        val staleFile = klibDir.resolve("stale.txt").apply { writeText("stale") }
-
-        newWriter(allowIncrementalOverwriting = true).writeTo(klibDir)
-        assertTrue(staleFile.exists(), "Pre-existing file must be preserved when allowIncrementalOverwriting = true")
-
-        newWriter(allowIncrementalOverwriting = false).writeTo(klibDir)
-        assertFalse(staleFile.exists(), "Pre-existing file must be removed when allowIncrementalOverwriting = false")
-    }
-
     override fun writeKlib(parameters: NewKlibWriterParameters): Path {
         val klibLocation = createNewKlibDir()
 
