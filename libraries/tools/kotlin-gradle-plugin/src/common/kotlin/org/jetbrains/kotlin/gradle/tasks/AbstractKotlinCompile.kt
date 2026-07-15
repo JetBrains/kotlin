@@ -104,7 +104,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @Input
     internal open fun isIncrementalCompilationEnabled(): Boolean =
-        incremental
+        this@AbstractKotlinCompile.incremental
 
     // This allows us to treat friendPaths as Input rather than InputFiles
     @get:Input

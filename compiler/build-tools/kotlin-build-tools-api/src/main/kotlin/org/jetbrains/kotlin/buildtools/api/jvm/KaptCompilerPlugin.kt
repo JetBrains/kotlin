@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
-import org.jetbrains.kotlin.buildtools.api.jvm.KaptCompilerPlugin.Option
+import org.jetbrains.kotlin.buildtools.api.jvm.KaptCompilerPlugin.StubsPhase.Option
 import java.nio.file.Path
 
 @ExperimentalBuildToolsApi
@@ -72,6 +72,12 @@ public interface KaptCompilerPlugin {
          */
         @JvmField
         public val INFO_AS_WARNINGS: Option<Boolean> = Option("infoAsWarnings", KotlinReleaseVersion(2, 5, 0))
+
+        /**
+         * Output path for Java stubs.
+         */
+        @JvmField
+        public val STUBS_OUTPUT_DIR: Option<Path?> = Option("stubs", KotlinReleaseVersion(2, 5, 0))
     }
 
     @ExperimentalBuildToolsApi
@@ -195,6 +201,12 @@ public interface KaptCompilerPlugin {
              */
             @JvmField
             public val DUMP_PROCESSOR_STATS: Option<Path?> = Option("dumpProcessorStats", KotlinReleaseVersion(2, 5, 0))
+
+            /**
+             * Map diagnostic reported on kapt stubs to original locations in Kotlin sources.
+             */
+            @JvmField
+            public val MAP_DIAGNOSTIC_LOCATIONS: Option<Boolean> = Option("mapDiagnosticLocations", KotlinReleaseVersion(2, 5, 0))
         }
     }
 
@@ -219,12 +231,6 @@ public interface KaptCompilerPlugin {
 
         public companion object {
             /**
-             * Output path for Java stubs.
-             */
-            @JvmField
-            public val STUBS_OUTPUT_DIR: Option<Path?> = Option("stubs", KotlinReleaseVersion(2, 5, 0))
-
-            /**
              * Strip @Metadata annotations from stubs.
              */
             @JvmField
@@ -235,12 +241,6 @@ public interface KaptCompilerPlugin {
              */
             @JvmField
             public val STRICT_MODE: Option<Boolean> = Option("strict", KotlinReleaseVersion(2, 5, 0))
-
-            /**
-             * Map diagnostic reported on kapt stubs to original locations in Kotlin sources.
-             */
-            @JvmField
-            public val MAP_DIAGNOSTIC_LOCATIONS: Option<Boolean> = Option("mapDiagnosticLocations", KotlinReleaseVersion(2, 5, 0))
         }
     }
 }

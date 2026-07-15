@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.configuration.KaptAptTaskConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptWithoutKotlincConfig
 import org.jetbrains.kotlin.gradle.utils.*
@@ -201,7 +202,7 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
         )
 
         val kaptGenerateStubsTaskProvider: TaskProvider<KaptGenerateStubsTask> = context.createKaptGenerateStubsTask()
-        val kaptTaskProvider: TaskProvider<out KaptTask> = context.createKaptKotlinTask(
+        val kaptTaskProvider: TaskProvider<out KaptAptTask> = context.createKaptKotlinTask(
             kaptGenerateStubsTaskProvider
         )
 
@@ -241,9 +242,9 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
 
     private fun Kapt3SubpluginContext.createKaptKotlinTask(
         generateStubsTask: TaskProvider<KaptGenerateStubsTask>
-    ): TaskProvider<out KaptTask> {
+    ): TaskProvider<out KaptAptTask> {
         val taskName = kotlinCompile.kaptTaskName
-        val taskConfigAction = KaptWithoutKotlincConfig(
+        val taskConfigAction = KaptAptTaskConfig(
             kotlinCompilation.project,
             generateStubsTask,
             kaptExtension
@@ -321,7 +322,7 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
             task.annotationProcessorOptionsProviders.finalizeValueOnRead()
         }
 
-        return project.registerTask(taskName, KaptWithoutKotlincTask::class.java, emptyList()).also {
+        return project.registerTask(taskName, KaptAptTask::class.java, emptyList()).also {
             taskConfigAction.execute(it)
         }
     }
@@ -496,7 +497,7 @@ private object KaptWithAndroid {
         kapt3SubpluginContext: Kapt3GradleSubplugin.Kapt3SubpluginContext,
         project: Project,
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variantData: DeprecatedAndroidBaseVariant,
-        kaptTask: TaskProvider<out KaptTask>
+        kaptTask: TaskProvider<out BaseKaptTask>
     ) {
         val kaptSourceOutput = project.fileTree(kapt3SubpluginContext.sourcesOutputDir).builtBy(kaptTask)
         kaptSourceOutput.include("**/*.java")
@@ -509,7 +510,7 @@ private object KaptWithAndroid {
     }
 }
 
-internal fun registerGeneratedJavaSource(kaptTask: TaskProvider<out KaptTask>, javaTaskProvider: TaskProvider<out AbstractCompile>) {
+internal fun registerGeneratedJavaSource(kaptTask: TaskProvider<out BaseKaptTask>, javaTaskProvider: TaskProvider<out AbstractCompile>) {
     javaTaskProvider.configure { javaTask ->
         val generatedJavaSources = javaTask.project.fileTree(kaptTask.flatMap { it.destinationDir })
         generatedJavaSources.include("**/*.java")

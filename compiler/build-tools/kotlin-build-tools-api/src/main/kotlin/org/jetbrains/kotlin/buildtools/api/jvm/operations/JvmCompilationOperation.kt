@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.KaptCompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
@@ -146,8 +145,6 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
             dependenciesSnapshotFiles: List<Path>,
             shrunkClasspathSnapshot: Path,
         ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder
-
-        public fun kaptCompilerPluginBuilder(kaptClasspath: List<Path>): KaptCompilerPlugin.Builder
     }
 
     /**

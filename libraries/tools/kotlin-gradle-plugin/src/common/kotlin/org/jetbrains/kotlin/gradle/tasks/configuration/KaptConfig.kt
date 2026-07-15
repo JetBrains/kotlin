@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.tasks.toCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 
-internal open class KaptConfig<TASK : KaptTask>(
+internal open class KaptConfig<TASK : BaseKaptTask>(
     project: Project,
     protected val ext: KaptExtensionConfig,
 ) : TaskConfigAction<TASK>(project) {
@@ -38,7 +38,7 @@ internal open class KaptConfig<TASK : KaptTask>(
             taskProvider.configure { task ->
                 task.verbose.set(KaptTask.queryKaptVerboseProperty(project))
 
-                task.isIncremental = KaptProperties.isIncrementalKapt(project).get()
+                task.incremental = KaptProperties.isIncrementalKapt(project).get()
                 task.useBuildCache = ext.useBuildCache
 
                 task.includeCompileClasspath.set(
@@ -213,6 +213,68 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
                     project.plugins.none { it is AbstractKotlinAndroidPluginWrapper }
                 }
             )
+            task.kaptJars.from(project.configurations.getByName(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME))
+        }
+    }
+
+    constructor(project: Project, ext: KaptExtensionConfig) : super(project, ext) {
+        configureTask { task ->
+            val kotlinSourceDir = objectFactory.fileCollection().from(task.kotlinSourcesDestinationDir)
+            if (ext is KaptExtension) {
+                val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir)
+                task.kaptPluginOptions.add(nonAndroidDslOptions.toCompilerPluginOptions())
+            }
+        }
+    }
+}
+
+internal class KaptAptTaskConfig : KaptConfig<KaptAptTask> {
+
+    init {
+        configureTask { task ->
+//            task.addJdkClassesToClasspath.set(
+//                project.providers.provider {
+//                    project.plugins.none { it is AbstractKotlinAndroidPluginWrapper }
+//                }
+//            )
+            task.kaptJars.from(project.configurations.getByName(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME))
+            task.mapDiagnosticLocations = ext.mapDiagnosticLocations
+            if (ext is KaptExtension) {
+                task.annotationProcessorFqNames.set(providers.provider {
+                    ext.processors.split(',').filter { it.isNotEmpty() }
+                })
+            }
+            task.disableClassloaderCacheForProcessors = project.disableClassloaderCacheForProcessors()
+            task.classLoadersCacheSize = KaptProperties.getClassloadersCacheSize(project).get()
+            task.javacOptions.set(getJavaOptions(task.defaultJavaSourceCompatibility))
+        }
+    }
+
+    constructor(
+        project: Project,
+        kaptGenerateStubsTask: TaskProvider<KaptGenerateStubsTask>,
+        ext: KaptExtensionConfig,
+    ) : super(project, kaptGenerateStubsTask, ext) {
+        project.configurations.findResolvable(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)
+            ?: project.configurations.createResolvable(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
+                dependencies.addAllLater(project.listProperty {
+                    val kaptDependency = "org.jetbrains.kotlin:kotlin-annotation-processing-gradle:${project.getKotlinPluginVersion()}"
+                    listOf(
+                        project.dependencies.create(kaptDependency),
+                        project.dependencies.kotlinDependency(
+                            "kotlin-stdlib",
+                            project.topLevelExtension.coreLibrariesVersion
+                        )
+                    )
+                })
+            }
+
+        configureTask { task ->
+//            task.addJdkClassesToClasspath.set(
+//                project.providers.provider {
+//                    project.plugins.none { it is AbstractKotlinAndroidPluginWrapper }
+//                }
+//            )
             task.kaptJars.from(project.configurations.getByName(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME))
         }
     }

@@ -51,6 +51,10 @@ public class KotlinToolchainsV1Adapter(
             override fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperation.Builder {
                 return DiscoverScriptExtensionsOperationV1Adapter(compilationService, classpath)
             }
+
+            override fun kaptCompilerPluginBuilder(kaptClasspath: List<Path>): KaptCompilerPlugin.Builder {
+                TODO("Not yet implemented")
+            }
         }
     }
 

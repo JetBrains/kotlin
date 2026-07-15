@@ -1,0 +1,476 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.gradle.internal
+
+import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.*
+import org.gradle.process.CommandLineArgumentProvider
+import org.gradle.work.Incremental
+import org.gradle.work.InputChanges
+import org.gradle.work.NormalizeLineEndings
+import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
+import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
+import org.jetbrains.kotlin.buildtools.api.jvm.KaptCompilerPlugin
+import org.jetbrains.kotlin.buildtools.api.jvm.kaptCompilerPlugin
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.compilerRunner.btapi.UsesBuildSessionService
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptClasspathChanges
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.UnknownSnapshot
+import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
+import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.*
+import java.io.File
+import java.util.jar.JarFile
+import javax.inject.Inject
+
+@CacheableTask
+abstract class KaptAptTask @Inject constructor(
+    project: Project,
+    workerExecutor: WorkerExecutor,
+    objectFactory: ObjectFactory,
+) : KotlinCompile(
+    objectFactory.KotlinJvmCompilerOptionsDefault(project),
+    workerExecutor,
+    objectFactory
+), KaptApt, BaseKaptTask, UsesBuildSessionService, UsesClassLoadersCachingBuildService {
+
+    // Bug in Gradle - without this override Gradle complains @Internal is not
+    // compatible with @Classpath and @Incremental annotations
+    @get:Internal
+    abstract override val libraries: ConfigurableFileCollection
+
+    /**
+     * [K2MultiplatformStructure] is not required for Kapt stubs
+     */
+    @InternalKotlinGradlePluginApi
+    @get:Internal
+    override val multiplatformStructure: K2MultiplatformStructure get() = super.multiplatformStructure
+
+    /* Used as input as empty kapt classpath should not trigger stub generation, but a non-empty one should. */
+    @Input
+    fun getIfKaptClasspathIsPresent() = !kaptClasspath.isEmpty
+
+    @get:Input
+    abstract override val verbose: Property<Boolean>
+
+//    override fun skipCondition(): Boolean = sources.isEmpty && javaSources.isEmpty
+
+    // Task need to run even if there is no Kotlin sources, but only Java
+    @get:Incremental
+    @get:NormalizeLineEndings
+    @get:InputFiles
+    @get:IgnoreEmptyDirectories
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    override val sources: FileCollection = super.sources
+
+    @get:Internal
+    override val scriptSources: FileCollection = objectFactory.fileCollection()
+
+    @get:Internal
+    abstract val kotlinCompileDestinationDirectory: DirectoryProperty
+
+    override val incrementalProps: List<FileCollection>
+        get() = listOf(
+            sources,
+            javaSources,
+            commonSourceSet,
+            classpathSnapshotProperties.classpathSnapshot
+        )
+
+    @get:Classpath
+    abstract val compilerClasspath: ConfigurableFileCollection
+
+    @get:PathSensitive(PathSensitivity.NONE)
+    @get:Incremental
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:Optional
+    @get:InputFiles
+    abstract override val classpathStructure: ConfigurableFileCollection
+
+    @get:Nested
+    abstract val kaptPluginOptions: ListProperty<CompilerPluginConfig>
+
+    @get:Input
+    override val includeCompileClasspath: Property<Boolean> = objectFactory
+        .propertyWithConvention(true)
+        .chainedFinalizeValueOnRead()
+
+    @Suppress("unused", "DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+        message = "Don't use directly. Used only for up-to-date checks",
+        level = DeprecationLevel.ERROR
+    )
+    @get:Incremental
+    @get:CompileClasspath
+    internal val internalAbiClasspath: FileCollection = project.objects.fileCollection().from(
+        { if (includeCompileClasspath.get()) null else classpath }
+    )
+
+    @Suppress("unused", "DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+        message = "Don't use directly. Used only for up-to-date checks",
+        level = DeprecationLevel.ERROR
+    )
+    @get:Incremental
+    @get:Classpath
+    internal val internalNonAbiClasspath: FileCollection = project.objects.fileCollection().from(
+        { if (includeCompileClasspath.get()) classpath else null }
+    )
+
+    @get:Internal
+    override var useBuildCache: Boolean = false
+
+    protected fun checkAnnotationProcessorClasspath() {
+        if (!includeCompileClasspath.get()) return
+
+        val kaptClasspath = kaptClasspath.toSet()
+        val processorsFromCompileClasspath = classpath.files.filterTo(LinkedHashSet()) {
+            hasAnnotationProcessors(it)
+        }
+        val processorsAbsentInKaptClasspath = processorsFromCompileClasspath.filter { it !in kaptClasspath }
+        if (processorsAbsentInKaptClasspath.isNotEmpty()) {
+            if (logger.isInfoEnabled) {
+                logger.warn(
+                    "Annotation processors discovery from compile classpath is deprecated."
+                            + "\nSet 'kapt.include.compile.classpath=false' to disable discovery."
+                            + "\nThe following files, containing annotation processors, are not present in KAPT classpath:\n"
+                            + processorsAbsentInKaptClasspath.joinToString("\n") { "  '$it'" }
+                            + "\nAdd corresponding dependencies to any of the following configurations:\n"
+                            + kaptClasspathConfigurationNames.get().joinToString("\n") { " '$it'" }
+                )
+            } else {
+                logger.warn(
+                    "Annotation processors discovery from compile classpath is deprecated."
+                            + "\nSet 'kapt.include.compile.classpath=false' to disable discovery."
+                            + "\nRun the build with '--info' for more details."
+                )
+            }
+
+        }
+    }
+
+    protected fun getIncrementalChanges(inputChanges: InputChanges): KaptIncrementalChanges {
+        return if (incremental) {
+            findClasspathChanges(inputChanges)
+        } else {
+            cleanOutputsAndLocalState()
+            KaptIncrementalChanges.Unknown
+        }
+    }
+
+    private fun findClasspathChanges(inputChanges: InputChanges): KaptIncrementalChanges {
+        val incAptCacheDir = incAptCache.asFile.get()
+        incAptCacheDir.mkdirs()
+        val allDataFiles = classpathStructure.files
+
+        return if (inputChanges.isIncremental) {
+            val startTime = System.currentTimeMillis()
+
+            @Suppress("DEPRECATION_ERROR")
+            val changedFiles = listOf(
+                source,
+                internalNonAbiClasspath,
+                internalAbiClasspath,
+                classpathStructure
+            ).fold(mutableSetOf<File>()) { acc, prop ->
+                inputChanges.getFileChanges(prop).forEach { acc.add(it.file) }
+                acc
+            }
+
+            val previousSnapshot = loadPreviousSnapshot(incAptCacheDir, allDataFiles, changedFiles)
+            val currentSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory
+                .createCurrent(
+                    incAptCacheDir,
+                    classpath.files.toList(),
+                    kaptClasspath.files.toList(),
+                    allDataFiles
+                )
+            val classpathChanges = currentSnapshot.diff(previousSnapshot, changedFiles)
+            if (classpathChanges == KaptClasspathChanges.Unknown) {
+                // We are unable to determine classpath changes, so clean the local state as we will run non-incrementally
+                cleanOutputsAndLocalState()
+            }
+            currentSnapshot.writeToCache()
+
+            if (logger.isInfoEnabled) {
+                val time = "Took ${System.currentTimeMillis() - startTime}ms."
+                when {
+                    previousSnapshot == UnknownSnapshot ->
+                        logger.info("Initializing classpath information for KAPT. $time")
+                    classpathChanges == KaptClasspathChanges.Unknown ->
+                        logger.info("Unable to use existing data, re-initializing classpath information for KAPT. $time")
+                    else -> {
+                        classpathChanges as KaptClasspathChanges.Known
+                        logger.info("Full list of impacted classpath names: ${classpathChanges.names}. $time")
+                    }
+                }
+            }
+
+            return when (classpathChanges) {
+                is KaptClasspathChanges.Unknown -> KaptIncrementalChanges.Unknown
+                is KaptClasspathChanges.Known -> KaptIncrementalChanges.Known(
+                    changedFiles.filter { it.extension == "java" }.toSet(), classpathChanges.names
+                )
+            }
+        } else {
+            cleanOutputsAndLocalState("Kapt is running non-incrementally")
+
+            ClasspathSnapshot.ClasspathSnapshotFactory
+                .createCurrent(
+                    incAptCacheDir,
+                    classpath.files.toList(),
+                    kaptClasspath.files.toList(),
+                    allDataFiles
+                )
+                .writeToCache()
+
+            KaptIncrementalChanges.Unknown
+        }
+    }
+
+
+    private fun loadPreviousSnapshot(
+        cacheDir: File,
+        allDataFiles: MutableSet<File>,
+        changedFiles: MutableSet<File>,
+    ): ClasspathSnapshot {
+        val loadedPrevious = ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(cacheDir)
+
+        val previousAndCurrentDataFiles = lazy { loadedPrevious.getAllDataFiles() + allDataFiles }
+        val allChangesRecognized = changedFiles.all {
+            val extension = it.extension
+            if (extension.isEmpty() || extension == "java" || extension == "jar" || extension == "class") {
+                return@all true
+            }
+            // if not a directory, Java source file, jar, or class, it has to be a structure file, in order to understand changes
+            it in previousAndCurrentDataFiles.value
+        }
+        return if (allChangesRecognized) {
+            loadedPrevious
+        } else {
+            ClasspathSnapshot.ClasspathSnapshotFactory.getEmptySnapshot()
+        }
+    }
+
+    private fun hasAnnotationProcessors(file: File): Boolean {
+        val processorEntryPath = "META-INF/services/javax.annotation.processing.Processor"
+
+        try {
+            when {
+                file.isDirectory -> {
+                    return file.resolve(processorEntryPath).exists()
+                }
+                file.isFile && file.extension.equals("jar", ignoreCase = true) -> {
+                    return JarFile(file).use { jar ->
+                        jar.getJarEntry(processorEntryPath) != null
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            logger.debug("Could not check annotation processors existence in $file: $e")
+        }
+        return false
+    }
+
+    override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JVMCompilerArguments> {
+        primitive { args ->
+            args.allowNoSourceFiles = true
+
+            KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+
+            requireNotNull(args.moduleName)
+
+            // Copied from KotlinCompile
+            if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+                args.reportPerf = true
+            }
+
+            val pluginOptionsWithKapt = pluginOptions.toSingleCompilerPluginOptions()
+                .withWrappedKaptOptions(withApClasspath = kaptClasspath)
+
+            args.pluginOptions = (pluginOptionsWithKapt.arguments).toTypedArray()
+
+            args.verbose = verbose.get()
+            args.destinationAsFile = destinationDirectory.get().asFile
+        }
+
+        pluginClasspath { args ->
+            args.pluginClasspaths = runSafe {
+                listOfNotNull(
+                    pluginClasspath, kotlinPluginData?.orNull?.classpath
+                ).reduce(FileCollection::plus).toPathsArray()
+            } ?: emptyArray()
+        }
+
+        dependencyClasspath { args ->
+            args.classpathAsList = runSafe { libraries.toList().filter { it.exists() } }.orEmpty()
+            args.friendPaths = friendPaths.toPathsArray()
+        }
+
+        sources { args ->
+            args.freeArgs += (scriptSources.asFileTree.files + javaSources.files + sources.asFileTree.files).map { it.absolutePath }
+        }
+    }
+
+
+    /*   FROM KaptWithoutKotlincTask  */
+    @get:Input
+    var classLoadersCacheSize: Int = 0
+
+    @get:Input
+    var disableClassloaderCacheForProcessors: Set<String> = emptySet()
+
+    @get:Input
+    var mapDiagnosticLocations: Boolean = false
+
+    @get:Input
+    abstract val annotationProcessorFqNames: ListProperty<String>
+
+    @get:Input
+    abstract val javacOptions: MapProperty<String, String>
+
+    @get:Internal
+    internal val projectDir = project.projectDir
+
+    @get:Input
+    val kaptProcessJvmArgs: ListProperty<String> = objectFactory.listPropertyWithConvention(emptyList())
+
+    /**
+     * The file collection that contains `org.jetbrains.kotlin:kotlin-annotation-processing-gradle` and `kotlin-stdlib`
+     * artifacts that are used to run annotation processing.
+     *
+     * The artifacts' versions must be the same as the version of the Kotlin compiler used to compile the related Kotlin sources.
+     */
+    @get:Classpath
+    abstract val kaptJars: ConfigurableFileCollection
+
+    init {
+        // Skip annotation processing if no annotation processors were provided.
+        onlyIf { task ->
+            with(task as KaptWithoutKotlincTask) {
+                val isRunTask = !(annotationProcessorFqNames.get().isEmpty() && kaptClasspath.isEmpty())
+                if (!isRunTask) task.logger.info("No annotation processors provided. Skip KAPT processing.")
+                isRunTask
+            }
+        }
+    }
+
+    private fun getAnnotationProcessorOptions(): Map<String, String> {
+        val result = mutableMapOf<String, String>()
+        kaptPluginOptions.toSingleCompilerPluginOptions().subpluginOptionsByPluginId[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID]?.forEach {
+            result[it.key] = it.value
+        }
+        fun addArgumentsFromProvider(provider: CommandLineArgumentProvider) {
+            for (argument in provider.asArguments()) {
+                result[argument.removePrefix("-A")] = ""
+            }
+        }
+
+        @Suppress("DEPRECATION")
+        val deprecatedProviders = annotationProcessorOptionProviders
+        for (providers in deprecatedProviders) {
+            for (provider in (providers as List<*>)) {
+                addArgumentsFromProvider(provider as CommandLineArgumentProvider)
+            }
+        }
+        for (provider in annotationProcessorOptionsProviders.get()) {
+            addArgumentsFromProvider(provider)
+        }
+
+        return result
+    }
+
+    private fun checkProcessorCachingSetup() {
+        if (includeCompileClasspath.get() && classLoadersCacheSize > 0) {
+            logger.warn(
+                "ClassLoaders cache can't be enabled together with AP discovery in compilation classpath."
+                        + "\nSet 'kapt.include.compile.classpath=false' to disable discovery"
+            )
+        }
+    }
+
+    override fun callCompilerAsync(args: K2JVMCompilerArguments, inputChanges: InputChanges, taskOutputsBackup: TaskOutputsBackup?) {
+        checkProcessorCachingSetup()
+        checkAnnotationProcessorClasspath()
+
+        val incrementalChanges = getIncrementalChanges(inputChanges)
+        val (changedFiles, classpathChanges) = when (incrementalChanges) {
+            is KaptIncrementalChanges.Unknown -> Pair(emptyList<File>(), emptyList<String>())
+            is KaptIncrementalChanges.Known -> Pair(incrementalChanges.changedSources.toList(), incrementalChanges.changedClasspathJvmNames)
+        }
+
+        val kaptArgs = buildSessionService.get().getOrCreateBuildSession(
+            classLoadersCachingService.get(),
+            compilerClasspath.toList()
+        ).kotlinToolchains.jvm.kaptCompilerPlugin(kaptJars.files.map(File::toPath)) {
+            this[KaptCompilerPlugin.VERBOSE] = verbose.get()
+            this[KaptCompilerPlugin.STUBS_OUTPUT_DIR] = stubsDir.get().asFile.toPath()
+            aptPhase = aptPhaseBuilder().apply {
+                this[KaptCompilerPlugin.AptPhase.INCLUDE_COMPILE_CLASSPATH] = includeCompileClasspath.get()
+                this[KaptCompilerPlugin.AptPhase.MAP_DIAGNOSTIC_LOCATIONS] = mapDiagnosticLocations
+                this[KaptCompilerPlugin.AptPhase.PROCESS_INCREMENTALLY] = incrementalChanges is KaptIncrementalChanges.Known
+                this[KaptCompilerPlugin.AptPhase.CHANGED_FILES] = changedFiles.map(File::toPath)
+                this[KaptCompilerPlugin.AptPhase.COMPILED_SOURCES_DIR] = compiledSources.files.map(File::toPath)
+                this[KaptCompilerPlugin.AptPhase.INCREMENTAL_CACHE] = incAptCache.orNull?.asFile?.toPath()
+                this[KaptCompilerPlugin.AptPhase.CLASSPATH_CHANGES] = classpathChanges.toList()
+                this[KaptCompilerPlugin.AptPhase.SOURCE_OUTPUT_DIR] = destinationDir.get().asFile.toPath()
+                this[KaptCompilerPlugin.AptPhase.CLASS_OUTPUT_DIR] = classesDir.get().asFile.toPath()
+                this[KaptCompilerPlugin.AptPhase.ANNOTATION_PROCESSORS] = annotationProcessorFqNames.get()
+                this[KaptCompilerPlugin.AptPhase.ANNOTATION_PROCESSOR_CLASSPATH] = this@KaptAptTask.kaptClasspath.files.map(File::toPath)
+                this[KaptCompilerPlugin.AptPhase.APT_OPTIONS] = getAnnotationProcessorOptions()
+                this[KaptCompilerPlugin.AptPhase.JAVAC_OPTIONS] = javacOptions.get()
+            }.build()
+        }
+
+        args.applyCompilerPlugins(listOf(kaptArgs.toCompilerPlugin()))
+        super.callCompilerAsync(args, inputChanges, taskOutputsBackup)
+    }
+}
+
+private fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<CompilerPlugin>) {
+    pluginClasspaths += plugins.flatMap { it.classpath }.map { it.toFile().absolutePath }.toTypedArray()
+    pluginOptions += plugins.flatMap { plugin -> plugin.rawArguments.map { option -> "plugin:${plugin.pluginId}:${option.key}=${option.value}" } }
+        .toTypedArray()
+    pluginOrderConstraints += plugins.flatMap { plugin ->
+        plugin.orderingRequirements.map { order ->
+            when (order.relation) {
+                CompilerPluginPartialOrderRelation.BEFORE -> "${plugin.pluginId}>${order.otherPluginId}"
+                CompilerPluginPartialOrderRelation.AFTER -> "${order.otherPluginId}>${plugin.pluginId}"
+            }
+        }
+    }
+        .toSet() // avoid duplicates
+        .toTypedArray()
+}

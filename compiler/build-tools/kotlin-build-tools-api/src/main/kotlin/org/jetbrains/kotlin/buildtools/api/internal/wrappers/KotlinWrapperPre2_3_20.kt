@@ -213,10 +213,6 @@ internal class KotlinWrapperPre2_3_20(
                 )
             }
 
-            override fun kaptCompilerPluginBuilder(kaptClasspath: List<Path>): KaptCompilerPlugin.Builder {
-                TODO("Not yet implemented")
-            }
-
             inner class JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
                 workingDirectory: Path,
                 sourcesChanges: SourcesChanges,

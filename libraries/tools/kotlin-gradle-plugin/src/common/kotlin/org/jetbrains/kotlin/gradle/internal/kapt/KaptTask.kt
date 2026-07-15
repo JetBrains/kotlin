@@ -9,7 +9,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
@@ -29,12 +28,33 @@ import java.io.File
 import java.util.jar.JarFile
 import javax.inject.Inject
 
+internal interface BaseKaptTask : BaseKapt, TaskWithLocalState {
+    @get:Input
+    var incremental: Boolean
+
+    @get:Input
+    val verbose: Property<Boolean>
+
+    @get:Internal
+    var useBuildCache: Boolean
+
+    @get:PathSensitive(PathSensitivity.NONE)
+    @get:Incremental
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:Optional
+    @get:InputFiles
+    val classpathStructure: ConfigurableFileCollection
+
+
+}
+
 @CacheableTask
 abstract class KaptTask @Inject constructor(
     objectFactory: ObjectFactory
 ) : DefaultTask(),
     TaskWithLocalState,
-    BaseKapt {
+    BaseKaptTask {
 
     init {
         cacheOnlyIfEnabledForKotlin()
@@ -52,7 +72,7 @@ abstract class KaptTask @Inject constructor(
     @get:NormalizeLineEndings
     @get:Optional
     @get:InputFiles
-    abstract val classpathStructure: ConfigurableFileCollection
+    abstract override val classpathStructure: ConfigurableFileCollection
 
     @get:Nested
     abstract val kaptPluginOptions: ListProperty<CompilerPluginConfig>
@@ -69,7 +89,7 @@ abstract class KaptTask @Inject constructor(
         .chainedFinalizeValueOnRead()
 
     @get:Input
-    internal var isIncremental = true
+    override var incremental = true
 
     @get:Internal
     internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
@@ -101,14 +121,14 @@ abstract class KaptTask @Inject constructor(
     )
 
     @get:Internal
-    var useBuildCache: Boolean = false
+    override var useBuildCache: Boolean = false
 
     @get:Internal
     override val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
     @get:Input
-    abstract val verbose: Property<Boolean>
+    abstract override val verbose: Property<Boolean>
 
     protected fun checkAnnotationProcessorClasspath() {
         if (!includeCompileClasspath.get()) return
@@ -140,7 +160,7 @@ abstract class KaptTask @Inject constructor(
     }
 
     protected fun getIncrementalChanges(inputChanges: InputChanges): KaptIncrementalChanges {
-        return if (isIncremental) {
+        return if (incremental) {
             findClasspathChanges(inputChanges)
         } else {
             cleanOutputsAndLocalState()

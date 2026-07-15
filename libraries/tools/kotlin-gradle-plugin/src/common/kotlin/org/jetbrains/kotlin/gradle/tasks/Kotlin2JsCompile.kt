@@ -65,7 +65,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     ProducesKlib {
 
     init {
-        incremental = true
+        this@Kotlin2JsCompile.incremental = true
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
@@ -83,7 +83,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     internal var incrementalJsKlib: Boolean = true
 
     override fun isIncrementalCompilationEnabled(): Boolean {
-        return incrementalJsKlib || incremental
+        return incrementalJsKlib || this@Kotlin2JsCompile.incremental
     }
 
     // Workaround to be able to use default value and change it later based on external input

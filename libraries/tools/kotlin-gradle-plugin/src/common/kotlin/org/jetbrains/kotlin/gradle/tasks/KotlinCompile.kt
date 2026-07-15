@@ -174,7 +174,7 @@ abstract class KotlinCompile @Inject constructor(
         }
 
     init {
-        incremental = true
+        this@KotlinCompile.incremental = true
     }
 
     override fun skipCondition(): Boolean = sources.isEmpty && scriptSources.isEmpty

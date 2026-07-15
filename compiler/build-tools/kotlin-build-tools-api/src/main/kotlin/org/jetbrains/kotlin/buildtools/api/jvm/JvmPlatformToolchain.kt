@@ -69,6 +69,15 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
      */
     public fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperation.Builder
 
+    /**
+     * Creates a builder for configuring KAPT as a compiler plugin.
+     *
+     * @param kaptClasspath classpath to search for KAPT processors
+     *
+     * @since 2.5.0
+     */
+    public fun kaptCompilerPluginBuilder(kaptClasspath: List<Path>): KaptCompilerPlugin.Builder
+
     public companion object {
         /**
          * Gets a [JvmPlatformToolchain] instance from [KotlinToolchains].
@@ -137,3 +146,24 @@ public inline fun JvmPlatformToolchain.discoverScriptExtensionsOperation(
     }
     return discoverScriptExtensionsOperationBuilder(classpath).apply(builderAction).build()
 }
+
+/**
+ * Convenience function for creating a [DiscoverScriptExtensionsOperation] with options configured by [builderAction].
+ *
+ * @return an immutable `DiscoverScriptExtensionsOperation`.
+ * @see JvmPlatformToolchain.discoverScriptExtensionsOperationBuilder
+ *
+ * @since 2.4.0
+ */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun JvmPlatformToolchain.kaptCompilerPlugin(
+    kaptClasspath: List<Path>,
+    builderAction: KaptCompilerPlugin.Builder.() -> Unit = {},
+): KaptCompilerPlugin {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return kaptCompilerPluginBuilder(kaptClasspath).apply(builderAction).build()
+}
+

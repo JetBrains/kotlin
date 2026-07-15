@@ -157,10 +157,6 @@ internal class JvmCompilationOperationImpl private constructor(
         )
     }
 
-    override fun kaptCompilerPluginBuilder(kaptClasspath: List<Path>): KaptCompilerPlugin.Builder {
-        return KaptCompilerPluginImpl(kaptClasspath.toList())
-    }
-
     private fun getKotlinFilenameExtensions(): Set<String> =
         DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
 

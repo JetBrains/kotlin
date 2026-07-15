@@ -200,6 +200,10 @@ interface KaptGenerateStubs : KotlinJvmCompile {
 
 }
 
+interface KaptApt : KaptGenerateStubs {
+
+}
+
 /**
  * Represents a Kotlin task that runs annotation processing using [Kotlin/Kapt](https://kotlinlang.org/docs/kapt.html).
  *

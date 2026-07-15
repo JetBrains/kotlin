@@ -121,36 +121,36 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         }
 
         val kaptFlagsForWorker = mutableSetOf<String>().apply {
-            if (verbose.get()) add("VERBOSE")
-            if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS")
-            if (includeCompileClasspath.get()) add("INCLUDE_COMPILE_CLASSPATH")
-            if (incrementalChanges is KaptIncrementalChanges.Known) add("INCREMENTAL_APT")
+            if (verbose.get()) add("VERBOSE") // done
+            if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS") // done
+            if (includeCompileClasspath.get()) add("INCLUDE_COMPILE_CLASSPATH") // done
+            if (incrementalChanges is KaptIncrementalChanges.Known) add("INCREMENTAL_APT") // done
         }
 
         val optionsForWorker = KaptOptionsForWorker(
-            projectDir,
-            compileClasspath,
-            source.files.toList(),
+            projectBaseDir = projectDir,
+            compileClasspath = compileClasspath,
+            javaSourceRoots = source.files.toList(),
 
-            changedFiles,
-            compiledSources.toList(),
-            incAptCache.orNull?.asFile,
-            classpathChanges.toList(),
+            changedFiles = changedFiles, // done
+            compiledSources = compiledSources.toList(), // done
+            incAptCache = incAptCache.orNull?.asFile, // done
+            classpathChanges = classpathChanges.toList(), // done
 
-            destinationDir.get().asFile,
-            classesDir.get().asFile,
-            stubsDir.asFile.get(),
+            sourcesOutputDir = destinationDir.get().asFile, // done
+            classesOutputDir = classesDir.get().asFile, // done
+            stubsOutputDir = stubsDir.asFile.get(), // done
 
-            kaptClasspath.files.toList(),
-            kaptExternalClasspath.files.toList(),
-            annotationProcessorFqNames.get(),
+            processingClasspath = kaptClasspath.files.toList(),
+            processingExternalClasspath = kaptExternalClasspath.files.toList(),
+            processors = annotationProcessorFqNames.get(), // done
 
-            getAnnotationProcessorOptions(),
-            javacOptions.get(),
+            processingOptions = getAnnotationProcessorOptions(), // done
+            javacOptions = javacOptions.get(), // done
 
-            kaptFlagsForWorker,
+            flags = kaptFlagsForWorker, // done
 
-            disableClassloaderCacheForProcessors
+            disableClassloaderCacheForProcessors = disableClassloaderCacheForProcessors
         )
 
         val kaptClasspath = kaptJars

@@ -1465,6 +1465,17 @@ public final class org/jetbrains/kotlin/gradle/tasks/Kapt$DefaultImpls {
 	public static fun getKotlinJavaToolchain (Lorg/jetbrains/kotlin/gradle/tasks/Kapt;)Lorg/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/KaptApt : org/jetbrains/kotlin/gradle/tasks/KaptGenerateStubs {
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/KaptApt$DefaultImpls {
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KaptApt;Lkotlin/jvm/functions/Function1;)V
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KaptApt;Lorg/gradle/api/Action;)V
+	public static fun getKotlinJavaToolchain (Lorg/jetbrains/kotlin/gradle/tasks/KaptApt;)Lorg/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain;
+	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KaptApt;Lkotlin/jvm/functions/Function1;)V
+	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KaptApt;Lorg/gradle/api/Action;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/KaptGenerateStubs : org/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile {
 	public abstract fun getKaptClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getStubsDir ()Lorg/gradle/api/file/DirectoryProperty;

@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Other plugins tests")
 class SubpluginsIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS, incremental = false)
 
     @OtherGradlePluginTests
     @DisplayName("Subplugin example works as expected")
