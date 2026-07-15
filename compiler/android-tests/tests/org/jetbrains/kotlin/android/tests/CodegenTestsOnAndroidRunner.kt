@@ -53,7 +53,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
             val gradleRunner = GradleRunner(pathManager)
             this.gradleRunner = gradleRunner
-            cleanAndBuildProject(gradleRunner)
 
             emulator.startAdbServer()
             adbServerStarted = true
@@ -78,44 +77,53 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    fun runTestsAsync(
-        flavorsToRun: List<String>,
-        listener: AndroidRuntimeTestListener,
-    ): Deferred<Map<String, AndroidRuntimeTestResult>> {
-        return scope.async {
-            runTestsInStartedEmulator(flavorsToRun, listener)
+    fun buildFlavorApks(flavorName: String) {
+        runBlocking {
+            check(isStarted) { "Android emulator is not started" }
+            val gradleRunner = gradleRunner ?: error("Gradle runner is not created")
+            throwIfBackgroundProcessFailed()
+            gradleRunner.assembleAndroidDebugTest(flavorName)
+            throwIfBackgroundProcessFailed()
         }
     }
 
-    private suspend fun runTestsInStartedEmulator(
-        flavorsToRun: List<String>,
+    fun installFlavorApks(flavorName: String) {
+        runBlocking {
+            check(isStarted) { "Android emulator is not started" }
+            val emulator = emulator ?: error("Android emulator is not created")
+            val gradleRunner = gradleRunner ?: error("Gradle runner is not created")
+            throwIfBackgroundProcessFailed()
+            installAndroidDebugTestWithRetry(gradleRunner, emulator, flavorName)
+            throwIfBackgroundProcessFailed()
+        }
+    }
+
+    fun runFlavorTestsAsync(
+        flavorName: String,
         listener: AndroidRuntimeTestListener,
-    ): Map<String, AndroidRuntimeTestResult> {
-        assertNotEquals(0L, flavorsToRun.size.toLong(), "There are no generated Android test flavors to run")
+    ): Deferred<List<AndroidRuntimeTestResult>> {
+        return scope.async {
+            runFlavorTestsInStartedEmulator(flavorName, listener)
+        }
+    }
+
+    private suspend fun runFlavorTestsInStartedEmulator(
+        flavorName: String,
+        listener: AndroidRuntimeTestListener,
+    ): List<AndroidRuntimeTestResult> {
         check(isStarted) { "Android emulator is not started" }
         val emulator = emulator ?: error("Android emulator is not created")
-        val gradleRunner = gradleRunner ?: error("Gradle runner is not created")
-        val allResults = linkedMapOf<String, AndroidRuntimeTestResult>()
 
         try {
             throwIfBackgroundProcessFailed()
-            for (flavor in flavorsToRun) {
-                installAndroidDebugTestWithRetry(gradleRunner, emulator, flavor)
-                val className = flavor.capitalizeAsciiOnly()
-                val flavorResults = runTestsOnEmulator(emulator, className, listener)
-                for (result in flavorResults) {
-                    check(allResults.put(result.testName, result) == null) {
-                        "Duplicate Android runtime result for ${result.testName}"
-                    }
-                }
+            val className = flavorName.capitalizeAsciiOnly()
+            return runTestsOnEmulator(emulator, className, listener).also {
                 throwIfBackgroundProcessFailed()
             }
         } catch (e: RuntimeException) {
             e.printStackTrace()
             throw e
         }
-
-        return allResults
     }
 
     private suspend fun installAndroidDebugTestWithRetry(
@@ -324,11 +332,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                 }
                 throw e
             }
-        }
-
-        private suspend fun cleanAndBuildProject(gradleRunner: GradleRunner) {
-            gradleRunner.clean()
-            gradleRunner.assembleAndroidTest()
         }
     }
 }

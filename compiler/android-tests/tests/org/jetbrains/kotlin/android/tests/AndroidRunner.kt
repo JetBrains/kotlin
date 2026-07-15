@@ -68,9 +68,11 @@ class AndroidRunner {
             ),
             DynamicContainer.dynamicContainer(
                 "Compilation",
-                plan.flavorContainers { test ->
-                    DynamicTest.dynamicTest(test.displayName) {
-                        plan.compile(test)
+                plan.flavorContainers { _, tests ->
+                    tests.map { test ->
+                        DynamicTest.dynamicTest(test.displayName) {
+                            plan.compile(test)
+                        }
                     }
                 }
             ),
@@ -82,10 +84,23 @@ class AndroidRunner {
             ),
             DynamicContainer.dynamicContainer(
                 "Runtime",
-                plan.flavorContainers { test ->
-                    DynamicTest.dynamicTest(test.displayName) {
-                        runtimeResults.assertPassed(test)
-                    }
+                plan.flavorContainers { flavorName, tests ->
+                    listOf(
+                        DynamicTest.dynamicTest("Build APKs") {
+                            runtimeResults.buildFlavorApks(flavorName)
+                        },
+                        DynamicTest.dynamicTest("Install APKs") {
+                            runtimeResults.installFlavorApks(flavorName)
+                        },
+                        DynamicContainer.dynamicContainer(
+                            "Tests",
+                            tests.map { test ->
+                                DynamicTest.dynamicTest(test.displayName) {
+                                    runtimeResults.assertPassed(test)
+                                }
+                            }
+                        )
+                    )
                 } + DynamicTest.dynamicTest("No unexpected Android test results") {
                     runtimeResults.assertNoUnexpectedResults()
                 }
@@ -93,12 +108,12 @@ class AndroidRunner {
         )
     }
 
-    private fun AndroidTestPlan.flavorContainers(testFactory: (AndroidPlannedTest) -> DynamicTest): List<DynamicNode> {
+    private fun AndroidTestPlan.flavorContainers(containerFactory: (String, List<AndroidPlannedTest>) -> List<DynamicNode>): List<DynamicNode> {
         val testsByFlavor = tests.groupBy { it.flavorName }
         return flavorsToRun.map { flavorName ->
             DynamicContainer.dynamicContainer(
                 flavorName,
-                testsByFlavor.getValue(flavorName).map(testFactory)
+                containerFactory(flavorName, testsByFlavor.getValue(flavorName))
             )
         }
     }
@@ -117,6 +132,14 @@ class AndroidRunner {
 
         fun startEmulator() {
             emulatorRunner()
+        }
+
+        fun buildFlavorApks(flavorName: String) {
+            emulatorRunner().buildFlavorApks(flavorName)
+        }
+
+        fun installFlavorApks(flavorName: String) {
+            emulatorRunner().installFlavorApks(flavorName)
         }
 
         fun assertPassed(test: AndroidPlannedTest) {
@@ -164,63 +187,72 @@ class AndroidRunner {
         }
 
         private class RuntimeRun(
-            private val plan: AndroidTestPlan,
-            runner: CodegenTestsOnAndroidRunner,
+            plan: AndroidTestPlan,
+            private val runner: CodegenTestsOnAndroidRunner,
         ) {
+            private val testsByFlavor = plan.tests.groupBy { it.flavorName }
             private val started = plan.tests.associate { it.info.name to CompletableDeferred<Unit>() }
             private val finished = plan.tests.associate { it.info.name to CompletableDeferred<AndroidRuntimeTestResult>() }
+            private val flavorRuns = linkedMapOf<String, Deferred<List<AndroidRuntimeTestResult>>>()
 
-            private val asyncResults: Deferred<Map<String, AndroidRuntimeTestResult>> = runner.runTestsAsync(
-                plan.flavorsToRun,
-                object : AndroidRuntimeTestListener {
-                    override fun testStarted(testName: String) {
-                        started[testName]?.complete(Unit)
-                    }
-
-                    override fun testFinished(result: AndroidRuntimeTestResult) {
-                        started[result.testName]?.complete(Unit)
-                        finished[result.testName]?.complete(result)
-                    }
+            private val listener = object : AndroidRuntimeTestListener {
+                override fun testStarted(testName: String) {
+                    started[testName]?.complete(Unit)
                 }
-            )
 
-            init {
-                asyncResults.invokeOnCompletion { cause ->
-                    if (cause != null) {
-                        completePendingExceptionally(cause)
-                    } else {
-                        completeMissingResults()
-                    }
+                override fun testFinished(result: AndroidRuntimeTestResult) {
+                    started[result.testName]?.complete(Unit)
+                    finished[result.testName]?.complete(result)
                 }
             }
 
             suspend fun awaitStarted(test: AndroidPlannedTest) {
+                createFlavorRunIfNeeded(test.flavorName)
                 started.getValue(test.info.name).await()
             }
 
             suspend fun awaitFinished(test: AndroidPlannedTest): AndroidRuntimeTestResult {
+                createFlavorRunIfNeeded(test.flavorName)
                 return finished.getValue(test.info.name).await()
             }
 
             suspend fun awaitResults(): Map<String, AndroidRuntimeTestResult> {
-                return asyncResults.await()
+                val results = linkedMapOf<String, AndroidRuntimeTestResult>()
+                for (flavorResult in flavorRuns.values.flatMap { it.await() }) {
+                    check(results.put(flavorResult.testName, flavorResult) == null) {
+                        "Duplicate Android runtime result for ${flavorResult.testName}"
+                    }
+                }
+                return results
             }
 
-            private fun completePendingExceptionally(cause: Throwable) {
-                for (job in started.values) {
-                    job.completeExceptionally(cause)
+            private fun createFlavorRunIfNeeded(flavorName: String) {
+                if (flavorRuns.contains(flavorName)) return
+
+                val run = runner.runFlavorTestsAsync(flavorName, listener)
+                run.invokeOnCompletion { cause ->
+                    if (cause != null) {
+                        completeFlavorExceptionally(flavorName, cause)
+                    } else {
+                        completeMissingFlavorResults(flavorName)
+                    }
                 }
-                for (job in finished.values) {
-                    job.completeExceptionally(cause)
+                flavorRuns[flavorName] = run
+            }
+
+            private fun completeFlavorExceptionally(flavorName: String, cause: Throwable) {
+                for (test in testsByFlavor.getValue(flavorName)) {
+                    val testName = test.info.name
+                    started.getValue(testName).completeExceptionally(cause)
+                    finished.getValue(testName).completeExceptionally(cause)
                 }
             }
 
-            private fun completeMissingResults() {
-                for (job in started.values) {
-                    job.complete(Unit)
-                }
-                for (test in plan.tests) {
-                    finished.getValue(test.info.name).completeExceptionally(
+            private fun completeMissingFlavorResults(flavorName: String) {
+                for (test in testsByFlavor.getValue(flavorName)) {
+                    val testName = test.info.name
+                    started.getValue(testName).complete(Unit)
+                    finished.getValue(testName).completeExceptionally(
                         AssertionError("No Android runtime result for ${test.info.name} (${test.info.file.path})")
                     )
                 }
