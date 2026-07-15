@@ -142,7 +142,7 @@ customFirstStageTest("2.4.0")
 customSecondStageTest("2.4.0")
 
 // TODO: Keep updating the following compiler versions to be the previous major one.
-customStagesAggregateTest("2.3.0")
+customStagesAggregateTest("2.4.0")
 
 tasks.test {
     // The default test task does not resolve the necessary dependencies and does not set up the environment.
