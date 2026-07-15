@@ -12,8 +12,6 @@ package test.generated.alldistinct
 //
 
 import kotlin.test.*
-import test.TestPlatform
-import test.testExceptOn
 
 class AllDistinctSequencesTest {
 
@@ -70,23 +68,17 @@ class AllDistinctSequencesTest {
 
     @Test
     fun allDistinctDifferentNaNBitsDouble() {
-        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
-        testExceptOn(TestPlatform.Js) {
-            assertFalse(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinct())
-            assertFalse(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinct())
-            assertFalse(sequenceOf(Double.fromBits(0x7FF8000000000001L), Double.fromBits(0xFFF80000L shl 32), Double.NaN).allDistinct())
-        }
+        assertFalse(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinct())
+        assertFalse(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinct())
+        assertFalse(sequenceOf(Double.fromBits(0x7FF8000000000001L), Double.fromBits(0xFFF80000L shl 32), Double.NaN).allDistinct())
         assertTrue(sequenceOf(Double.NaN, 1.0).allDistinct())
         assertTrue(sequenceOf(0.0, 1.0).allDistinct())
     }
 
     @Test
     fun allDistinctByDifferentNaNBitsDouble() {
-        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
-        testExceptOn(TestPlatform.Js) {
-            assertFalse(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinctBy { it })
-            assertFalse(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinctBy { it })
-        }
+        assertFalse(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinctBy { it })
+        assertFalse(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinctBy { it })
         assertTrue(sequenceOf(Double.NaN, 1.0).allDistinctBy { it })
     }
 
@@ -121,23 +113,17 @@ class AllDistinctSequencesTest {
 
     @Test
     fun allDistinctDifferentNaNBitsFloat() {
-        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
-        testExceptOn(TestPlatform.Js) {
-            assertFalse(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinct())
-            assertFalse(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinct())
-            assertFalse(sequenceOf(Float.fromBits(0x7FC00001), Float.fromBits(0xFFFC0000.toInt()), Float.NaN).allDistinct())
-        }
+        assertFalse(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinct())
+        assertFalse(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinct())
+        assertFalse(sequenceOf(Float.fromBits(0x7FC00001), Float.fromBits(0xFFFC0000.toInt()), Float.NaN).allDistinct())
         assertTrue(sequenceOf(Float.NaN, 1.0f).allDistinct())
         assertTrue(sequenceOf(0.0f, 1.0f).allDistinct())
     }
 
     @Test
     fun allDistinctByDifferentNaNBitsFloat() {
-        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
-        testExceptOn(TestPlatform.Js) {
-            assertFalse(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinctBy { it })
-            assertFalse(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinctBy { it })
-        }
+        assertFalse(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinctBy { it })
+        assertFalse(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinctBy { it })
         assertTrue(sequenceOf(Float.NaN, 1.0f).allDistinctBy { it })
     }
 }

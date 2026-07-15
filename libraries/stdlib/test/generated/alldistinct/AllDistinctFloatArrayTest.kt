@@ -12,8 +12,6 @@ package test.generated.alldistinct
 //
 
 import kotlin.test.*
-import test.TestPlatform
-import test.testExceptOn
 
 class AllDistinctFloatArrayTest {
 
@@ -70,23 +68,17 @@ class AllDistinctFloatArrayTest {
 
     @Test
     fun allDistinctDifferentNaNBitsFloat() {
-        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
-        testExceptOn(TestPlatform.Js) {
-            assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinct())
-            assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinct())
-            assertFalse(floatArrayOf(Float.fromBits(0x7FC00001), Float.fromBits(0xFFFC0000.toInt()), Float.NaN).allDistinct())
-        }
+        assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinct())
+        assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinct())
+        assertFalse(floatArrayOf(Float.fromBits(0x7FC00001), Float.fromBits(0xFFFC0000.toInt()), Float.NaN).allDistinct())
         assertTrue(floatArrayOf(Float.NaN, 1.0f).allDistinct())
         assertTrue(floatArrayOf(0.0f, 1.0f).allDistinct())
     }
 
     @Test
     fun allDistinctByDifferentNaNBitsFloat() {
-        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
-        testExceptOn(TestPlatform.Js) {
-            assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinctBy { it })
-            assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinctBy { it })
-        }
+        assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinctBy { it })
+        assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinctBy { it })
         assertTrue(floatArrayOf(Float.NaN, 1.0f).allDistinctBy { it })
     }
 }
