@@ -45,7 +45,7 @@ internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask
         }
         if (errorDiagnostics.isNotEmpty()) {
             errorDiagnostics.reportProblems(reporter, options)
-            throw InvalidUserCodeException("Kotlin Gradle Plugin reported errors. Check the log for details")
+            throw InvalidUserCodeException("Kotlin Gradle Plugin reported errors. Check the Gradle Problems report or log for details")
         }
     }
 
