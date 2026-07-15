@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
+import org.jetbrains.kotlin.library.metadata.metadataFlags
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
@@ -363,6 +364,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
                 moduleName(configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
                 versions(versions)
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
+                metadataFlags(configuration.languageVersionSettings)
             }
             includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
             includeIr(serializerOutput.serializedIr)

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedFirMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loadSizeInfo
+import org.jetbrains.kotlin.library.metadata.metadataFlags
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.util.metadataVersion
 import java.io.File
@@ -62,6 +63,7 @@ internal object JvmMetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemoryS
                 moduleName(configuration[CommonConfigurationKeys.MODULE_NAME]!!)
                 versions(versions)
                 platformAndTargets(BuiltInsPlatform.COMMON)
+                metadataFlags(configuration.languageVersionSettings)
             }
             allowIncrementalOverwriting(configuration.incrementalCompilation)
             include(JvmMetadataComponentWriter(serializedMetadata, configuration.fileMappingTracker))

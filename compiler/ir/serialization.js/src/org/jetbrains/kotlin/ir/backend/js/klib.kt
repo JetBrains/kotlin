@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToManifest
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
@@ -352,6 +353,7 @@ fun serializeModuleIntoKlib(
         p.setProperty(KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT, SerializedKlibFingerprint(fingerprints).klibFingerprint.toString())
 
         addLanguageFeaturesToManifest(p, configuration.languageVersionSettings)
+        addMetadataFlagsToManifest(p, configuration.languageVersionSettings)
     }
 
     performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
