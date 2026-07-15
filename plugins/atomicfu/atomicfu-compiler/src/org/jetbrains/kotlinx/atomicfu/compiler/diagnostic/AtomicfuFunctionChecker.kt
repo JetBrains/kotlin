@@ -17,24 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.text
-
-private const val KOTLINX_ATOMICFU = "kotlinx.atomicfu"
-private val ATOMIC_TYPES = setOf(
-    "AtomicInt",
-    "AtomicLong",
-    "AtomicBoolean",
-    "AtomicRef",
-    "AtomicIntArray",
-    "AtomicLongArray",
-    "AtomicBooleanArray",
-    "AtomicArray"
-)
-
-private fun ClassId.isAtomicType(): Boolean {
-    return packageFqName.toString() == KOTLINX_ATOMICFU && relativeClassName.toString() in ATOMIC_TYPES
-}
 
 object AtomicfuFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)

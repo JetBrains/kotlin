@@ -28,6 +28,12 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   }
 
   @Test
+  @TestMetadata("AtomicFunctionReferences.kt")
+  public void testAtomicFunctionReferences() {
+    run("AtomicFunctionReferences.kt");
+  }
+
+  @Test
   @TestMetadata("CheckAtomicVisibilityTest.kt")
   public void testCheckAtomicVisibilityTest() {
     run("CheckAtomicVisibilityTest.kt");

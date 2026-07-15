@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
@@ -28,6 +29,11 @@ class AtomicfuFirCheckers(session: FirSession) : FirAdditionalCheckersExtension(
         override val functionCallCheckers: Set<FirFunctionCallChecker>
             get() = setOf(
                 AtomicfuAtomicRefToPrimitiveCallChecker,
+            )
+
+        override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
+            get() = setOf(
+                AtomicCallableReferenceChecker
             )
     }
 

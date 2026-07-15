@@ -70,6 +70,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
     private const val ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE_MESSAGE =
         "Atomic extension functions must be inline and non-public: `''{0}''`"
 
+    private const val ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN_MESSAGE =
+        "Taking a reference to an atomic member or extension function is prohibited: `''{0}''`."
+
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
@@ -88,6 +91,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE, ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN, ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
         )
     }
 
