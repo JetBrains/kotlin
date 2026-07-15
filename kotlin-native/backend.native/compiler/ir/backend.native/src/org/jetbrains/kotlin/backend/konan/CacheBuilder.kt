@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
+import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.reportLog
@@ -102,13 +103,45 @@ class CacheBuilder(
     private val KotlinLibrary.isSubjectOfIC: Boolean
         get() = isExplicitlySpecifiedByUserInCLIArgument && !isExternal && !isNativeStdlib
 
-    // Only auto-cached external libraries contribute to the fingerprint: changes in the per-file cached dependencies are tracked
-    // by the dirty-file analysis, and the distribution libraries only change together with the compiler fingerprint.
+    // Among the IC'ed libraries only the cinterop ones are cached monolithically (see buildLibraryCache).
+    private val KotlinLibrary.isCachedPerFile: Boolean
+        get() = isSubjectOfIC && !isCInteropLibrary()
+
+    // Only monolithically cached non-distribution dependencies (auto-cached external libraries and IC'ed cinterop libraries)
+    // contribute to the fingerprint: changes in the per-file cached dependencies are tracked by the dirty-file analysis,
+    // and the distribution libraries only change together with the compiler fingerprint (they live in compiler's dist directory).
     private fun computeDependenciesFingerprint(library: KotlinLibrary): FingerprintHash {
-        val externalCachedDependencies = library.getAllTransitiveDependencies(uniqueNameToLibrary).filter {
-            !it.isSubjectOfIC && !it.isImplicitlyLoadedFromKotlinNativeDistribution && !it.isNativeStdlib
+        val monolithicallyCachedDependencies = library.getAllTransitiveDependencies(uniqueNameToLibrary).filter {
+            !it.isCachedPerFile && !it.isImplicitlyLoadedFromKotlinNativeDistribution && !it.isNativeStdlib
         }
-        return CachedLibraries.computeDependenciesFingerprint(externalCachedDependencies, uniqueNameToHash)
+        return CachedLibraries.computeDependenciesFingerprint(monolithicallyCachedDependencies, uniqueNameToHash)
+    }
+
+    private val currentCompilerFingerprint by lazy { config.distribution.compilerFingerprint }
+
+    // Returns a human-readable reason if the cache of an IC'ed library cannot be reused, or null if it is up to date.
+    private fun staleCacheReason(library: KotlinLibrary, cache: CachedLibraries.Cache): String? {
+        val metadata = when (cache) {
+            is CachedLibraries.Cache.Monolithic -> cache.getMetadataOrNull() // A cinterop library.
+            is CachedLibraries.Cache.PerFile -> {
+                // All files of a per-file cache are produced against the same compiler and dependencies,
+                // so any file's metadata identifies the fingerprints of the whole cache.
+                val anyCachedFile = File(cache.path).listFiles.firstOrNull()?.name ?: return null
+                cache.getMetadataOrNull(anyCachedFile)
+            }
+        }
+        return when {
+            metadata == null ->
+                "has no metadata (it was produced by a compiler older than 2.2.20)"
+            metadata.compilerFingerprint != currentCompilerFingerprint ->
+                "was produced by a different compiler version"
+            metadata.dependenciesFingerprint != computeDependenciesFingerprint(library) ->
+                "was produced against different dependencies"
+            cache is CachedLibraries.Cache.Monolithic
+                    && metadata.hash != SerializedKlibFingerprint(library.path.toFile()).klibFingerprint ->
+                "does not match the current content of the library"
+            else -> null
+        }
     }
 
     fun build() {
@@ -157,37 +190,28 @@ class CacheBuilder(
         // This happens when a dependency is changed to an already-cached version, e.g. rolled back to the version it had before
         // an update (KT-87194). Each cache records the fingerprint of such dependencies, so force a full rebuild whenever
         // it doesn't match the current dependencies.
+        // The dirty-file check doesn't cover the monolithically cached cinterop libraries either: their caches are looked up
+        // by the library name, so a changed library would silently reuse the stale cache (KT-87273). Each cache records
+        // the fingerprint of its library, so force a rebuild whenever it doesn't match the current library.
         // Caches produced by compilers older than 2.2.20 don't have the metadata at all; rebuild them as well (KT-87202).
-        val currentCompilerFingerprint = config.distribution.compilerFingerprint
-        val staleCacheLibraries = icedLibraries.filter { library ->
-            // All files of a per-file cache are produced against the same compiler and dependencies,
-            // so any file's metadata identifies the fingerprints of the whole cache.
-            val cache = caches[library] as? CachedLibraries.Cache.PerFile ?: return@filter false
-            val anyCachedFile = File(cache.path).listFiles.firstOrNull()?.name ?: return@filter false
-            val metadata = cache.getMetadataOrNull(anyCachedFile)
-            when {
-                metadata == null -> {
-                    configuration.reportLog(
-                            "Incremental cache for ${library.path} has no metadata" +
-                                    " (it was produced by a compiler older than 2.2.20); rebuilding it")
-                    true
-                }
-                metadata.compilerFingerprint != currentCompilerFingerprint -> {
-                    configuration.reportLog(
-                            "Incremental cache for ${library.path} was produced by a different compiler version; rebuilding it")
-                    true
-                }
-                metadata.dependenciesFingerprint != computeDependenciesFingerprint(library) -> {
-                    configuration.reportLog(
-                            "Incremental cache for ${library.path} was produced against different dependencies; rebuilding it")
-                    true
-                }
-                else -> false
+        val staleCaches = icedLibraries.mapNotNull { library ->
+            val cache = caches[library] ?: return@mapNotNull null
+            staleCacheReason(library, cache)?.let { reason ->
+                configuration.reportLog("Incremental cache for ${library.path} $reason; rebuilding it")
+                library to cache
             }
         }
 
+        // Unlike per-file caches, which are rebuilt in place file by file, a stale monolithic cache is deleted and rebuilt
+        // right away: the dependent cache builds spawned below read it at its fixed name-keyed location.
+        val [staleMonolithicCaches, stalePerFileCaches] = staleCaches.partition { it.second is CachedLibraries.Cache.Monolithic }
+        staleMonolithicCaches.forEach { [library, cache] ->
+            File(cache.rootDirectory).deleteRecursively()
+            lastRebuiltArchives.addAll(buildLibraryCache(library, false, emptyList()))
+        }
+
         // Every library dependable on one of the changed external libraries needs its cache to be fully rebuilt.
-        val needFullRebuild = findAllDependable(externalLibrariesToCache) + staleCacheLibraries
+        val needFullRebuild = findAllDependable(externalLibrariesToCache) + stalePerFileCaches.map { it.first }
 
         val libraryFilesWithFqNames = mutableMapOf<KotlinLibrary, List<FileWithFqName>>()
 
@@ -535,7 +559,7 @@ class CacheBuilder(
             this.cachedLibraries = cachedLibraries
             cacheDirectories = listOf(libraryCacheDirectory.absolutePath)
             this.makePerFileCache = makePerFileCache
-            if (makePerFileCache)
+            if (library.isSubjectOfIC)
                 cachedLibraryDependenciesFingerprint = computeDependenciesFingerprint(library).toString()
             if (filesToCache.isNotEmpty())
                 this.filesToCache = filesToCache

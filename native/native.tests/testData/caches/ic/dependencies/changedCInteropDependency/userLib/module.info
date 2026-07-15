@@ -1,0 +1,22 @@
+STEP 0:
+    dependencies: cinterop
+    arguments: -opt-in=kotlinx.cinterop.ExperimentalForeignApi
+    modifications:
+        U : file1.kt -> file1.kt
+    added cache: file1.kt
+
+// KT-87273: the cinterop dependency has changed, so the caches must be fully rebuilt even though
+// the sources are untouched: the compiled binaries reference symbols of the changed library.
+STEP 1:
+    dependencies: cinterop
+    arguments: -opt-in=kotlinx.cinterop.ExperimentalForeignApi
+    modifications:
+        U : file2.kt -> file2.kt
+    modified cache: file1.kt
+    added cache: file2.kt
+
+// Nothing changes: the caches must be reused as is.
+STEP 2:
+    dependencies: cinterop
+    arguments: -opt-in=kotlinx.cinterop.ExperimentalForeignApi
+    unchanged cache: file1.kt, file2.kt

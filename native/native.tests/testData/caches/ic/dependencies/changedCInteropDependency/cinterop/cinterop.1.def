@@ -1,0 +1,4 @@
+package = cstubs
+---
+static int answer(void) { return 45; }
+static int answerTwice(void) { return 2 * answer(); }

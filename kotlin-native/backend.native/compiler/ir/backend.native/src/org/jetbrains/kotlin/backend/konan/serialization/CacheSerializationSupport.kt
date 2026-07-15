@@ -600,7 +600,8 @@ class CacheMetadata(
         val target: KonanTarget,
         val compilerFingerprint: String,
         val runtimeFingerprint: String?, // only present in caches using the runtime (i.e. for stdlib)
-        // Combined fingerprint of auto-cached external libraries the cache was built against.
+        // Combined fingerprint of the monolithically cached dependencies (auto-cached external libraries
+        // and IC'ed cinterop libraries) the cache was built against.
         val dependenciesFingerprint: FingerprintHash?,
 )
 
