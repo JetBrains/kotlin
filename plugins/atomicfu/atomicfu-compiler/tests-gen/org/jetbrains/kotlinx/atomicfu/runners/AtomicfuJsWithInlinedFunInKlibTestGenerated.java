@@ -200,6 +200,12 @@ public class AtomicfuJsWithInlinedFunInKlibTestGenerated extends AbstractAtomicf
     }
 
     @Test
+    @TestMetadata("PlusMinus.kt")
+    public void testPlusMinus() {
+      run("PlusMinus.kt");
+    }
+
+    @Test
     @TestMetadata("ScopeTest.kt")
     public void testScopeTest() {
       run("ScopeTest.kt");

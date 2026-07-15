@@ -212,6 +212,12 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("PlusMinus.kt")
+    public void testPlusMinus() {
+      run("PlusMinus.kt");
+    }
+
+    @Test
     @TestMetadata("ScopeTest.kt")
     public void testScopeTest() {
       run("ScopeTest.kt");
