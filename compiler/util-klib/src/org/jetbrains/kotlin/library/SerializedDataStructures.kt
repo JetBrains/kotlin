@@ -12,23 +12,6 @@ class SerializedMetadata(
     val metadataVersion: IntArray,
 )
 
-class SerializedFirMetadata(
-    val module: ByteArray,
-    val fragments: List<List<SerializedFirFile>>,
-    val fragmentNames: List<String>,
-    val metadataVersion: IntArray,
-)
-
-class SerializedFirFile(
-    val name: String,
-    val content: ByteArray,
-    /**
-     * The path to the source file this fragment was generated from.
-     * Can be null if the fragment was generated without a corresponding source file (e.g. for generated content).
-     */
-    val path: String? = null,
-)
-
 class SerializedDeclaration(val id: Int, val bytes: ByteArray) {
     val size = bytes.size
 }
