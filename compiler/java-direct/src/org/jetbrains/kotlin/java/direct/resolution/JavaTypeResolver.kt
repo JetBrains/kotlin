@@ -60,9 +60,10 @@ internal fun resolveQualifiedNameToClassIdFromParts(
     fullResolution: Boolean,
 ): ClassId? {
     // Try each split of `parts` into an outer-class prefix and a nested tail, shortest prefix first.
-    // The boundary isn't known up front (for `a.b.C.D`, `a.b` could be the package or `a.b.C` the
-    // outer class), so every split is tried; each prefix resolves by the same rules (recursively when
-    // multi-part). Per JLS 6.5.2, the first prefix resolving to a class in scope wins.
+    // The boundary isn't known up front (for `a.b.C.D`, the outer class could be `a.b.C` with tail
+    // `D`, or `a.b` with `C.D` a two-part nested tail), so every split is tried; each prefix resolves
+    // by the same rules (recursively when multi-part). Per JLS 6.5.2, the first prefix resolving to a
+    // class in scope wins.
     require(parts.size > 1)
     for (i in 1 until parts.size) {
         val outerParts = parts.subList(0, i)
