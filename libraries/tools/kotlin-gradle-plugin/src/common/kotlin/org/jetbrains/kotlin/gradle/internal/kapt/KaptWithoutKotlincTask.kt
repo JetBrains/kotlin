@@ -56,7 +56,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
     @get:Input
     val stubGenerationScheme: Property<KaptStubGenerationScheme> =
-        objectFactory.propertyWithConvention(KaptStubGenerationScheme.JTREE)
+        objectFactory.propertyWithConvention(KaptStubGenerationScheme.DIRECT)
 
     @get:Input
     abstract val annotationProcessorFqNames: ListProperty<String>

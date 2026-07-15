@@ -42,7 +42,7 @@ open class KaptExtension @Inject constructor(objectFactory: ObjectFactory) : Kap
     override var stripMetadata: Boolean = false
 
     override val stubGenerationScheme: Property<KaptStubGenerationScheme> =
-        objectFactory.propertyWithConvention(KaptStubGenerationScheme.JTREE)
+        objectFactory.propertyWithConvention(KaptStubGenerationScheme.DIRECT)
 
     override var showProcessorStats: Boolean = false
 
