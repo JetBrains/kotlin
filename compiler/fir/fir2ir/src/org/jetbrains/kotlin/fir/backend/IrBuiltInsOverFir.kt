@@ -53,7 +53,6 @@ class IrBuiltInsOverFir(
 
     override val irFactory: IrFactory = IrFactoryImpl
 
-    override val kotlinInternalPackageFragment: IrExternalPackageFragment = createPackage(StandardClassIds.BASE_INTERNAL_PACKAGE)
     override val operatorsPackageFragment: IrExternalPackageFragment = createPackage(StandardClassIds.BASE_INTERNAL_IR_PACKAGE)
 
     // ------------------------------------- synthetics -------------------------------------
