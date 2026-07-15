@@ -1,4 +1,5 @@
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FIELD])
       psi: KtAnnotationEntry
@@ -18,6 +19,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Anno
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -33,8 +36,10 @@ KaNamedClassSymbol:
   importableFqName: Anno
 
 KaKotlinPropertySymbol:
+  anchorPsi: KtProperty
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: KtBackingField
     annotations: [
       Anno()
         psi: KtAnnotationEntry
@@ -55,6 +60,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Test.foo)
+    psi: KtBackingField
+    realPsi: KtBackingField
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -75,6 +82,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtProperty
     annotations: []
     callableId: null
     contextParameters: []
@@ -91,6 +99,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -128,6 +138,8 @@ KaKotlinPropertySymbol:
   name: foo
   origin: SOURCE
   primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -150,6 +162,7 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: Test
   classKind: CLASS
@@ -166,6 +179,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Test
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []

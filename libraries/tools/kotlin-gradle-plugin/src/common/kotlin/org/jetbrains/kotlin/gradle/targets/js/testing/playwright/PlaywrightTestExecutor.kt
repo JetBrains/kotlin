@@ -31,7 +31,6 @@ import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -76,7 +75,7 @@ internal class PwRunnerSpec(
  * within a single test task invocation.
  */
 internal class PwExecutionSpec(
-    val createClient: (TestResultProcessor, Logger) -> TCServiceMessagesClient,
+    val createClient: (TestResultProcessor, Logger) -> PlaywrightTCServiceMessagesClient,
     val runners: List<PwRunnerSpec>,
     val nodeExecutable: String,
     val playwrightCli: String,
@@ -108,10 +107,16 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
 
             playwright.use {
                 with(client) {
+                    // TODO(KT-86706): Ideally, we'd like to create a separate root for each runner, but this doesn't currently play well with
+                    // Gradle's test reporting API, which only supports one test report per root and overwrites previously created reports.
+                    // This will get easier once we split each runner into its own Gradle task.
                     root {
                         for (runner in spec.runners) {
                             suite(id = runner.name) {
                                 try {
+                                    // TODO(KT-86706): It would be better to eventually make currentRunnerName the ID of the Root node when we have
+                                    // one root per runner - see comment above.
+                                    client.currentRunnerName = runner.name
                                     executeRunner(playwright, runner, handler)
                                 } catch (t: Throwable) {
                                     val tsEnd = System.currentTimeMillis()

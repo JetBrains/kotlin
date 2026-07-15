@@ -141,7 +141,6 @@ class RedundantStatementElimination(private val root: JsFunction) {
                     JsBinaryOperator.INOP,
                     JsBinaryOperator.INSTANCEOF -> listOf(expression)
 
-                    JsBinaryOperator.ASG,
                     JsBinaryOperator.ASG_ADD,
                     JsBinaryOperator.ASG_SUB,
                     JsBinaryOperator.ASG_MUL,
@@ -155,6 +154,8 @@ class RedundantStatementElimination(private val root: JsFunction) {
                     JsBinaryOperator.ASG_SHRU -> listOf(expression)
                 }
             }
+
+            is JsAssignmentOperation -> listOf(expression)
 
             is JsInvocation -> {
                 if (expression.sideEffects != SideEffectKind.AFFECTS_STATE) {
@@ -201,7 +202,7 @@ class RedundantStatementElimination(private val root: JsFunction) {
                 }
             }
 
-            is JsLiteral.JsValueLiteral -> listOf()
+            is JsLiteral.JsValueLiteral, is JsThisRef -> listOf()
 
             is JsArrayLiteral -> replaceMany(expression.expressions)
 

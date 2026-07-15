@@ -1,4 +1,5 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /MyClass.Companion.functionFromCompanion
   contextParameters: []
@@ -22,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: functionFromCompanion
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -30,6 +33,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -52,6 +56,8 @@ KaNamedFunctionSymbol:
       name: i
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -79,6 +85,7 @@ KaNamedFunctionSymbol:
   importableFqName: MyClass.Companion.functionFromCompanion
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: [
     kotlin/jvm/JvmStatic()
       psi: KtAnnotationEntry
@@ -105,6 +112,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: staticFunctionFromCompanion
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -126,6 +135,7 @@ KaNamedFunctionSymbol:
   importableFqName: MyClass.Companion.staticFunctionFromCompanion
 
 KaNamedClassSymbol:
+  anchorPsi: KtObjectDeclaration
   annotations: []
   classId: MyClass.Companion
   classKind: COMPANION_OBJECT
@@ -142,6 +152,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Companion
   origin: SOURCE
+  psi: KtObjectDeclaration
+  realPsi: KtObjectDeclaration
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -157,6 +169,7 @@ KaNamedClassSymbol:
   importableFqName: MyClass.Companion
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: MyClass
   classKind: CLASS
@@ -173,6 +186,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: MyClass
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []

@@ -22,11 +22,14 @@ import org.jetbrains.kotlin.config.getModuleNameForSource
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.konan.config.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.exists
 
 fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments) = with(NativeConfigurationKeys) {
     val commonSources = arguments.commonSources.toSet().map { it.absoluteNormalizedFile() }
@@ -293,8 +296,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         "dev-with-asserts" -> LlvmVariant.DevWithAsserts
         null -> null
         else -> {
-            val file = File(variant)
-            if (!file.exists) {
+            val file = Path(variant)
+            if (!file.exists()) {
                 report(KONAN_ARGUMENT_ERROR, "`-Xllvm-variant` should be `user`, `dev` or an absolute path. Got: $variant")
                 null
             } else {
@@ -329,7 +332,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     konanTarget = config.target.toString()
     put(DEBUG, config.debug)
     setupPartialLinkageConfig(config.partialLinkageConfig)
-    putIfNotNull(EXTERNAL_DEPENDENCIES, config.externalDependenciesFile?.absolutePath)
+    putIfNotNull(EXTERNAL_DEPENDENCIES, config.externalDependenciesFile?.absolutePathString())
     put(PROPERTY_LAZY_INITIALIZATION, config.propertyLazyInitialization)
     put(BinaryOptions.genericSafeCasts, config.genericSafeCasts)
     put(BinaryOptions.stripDebugInfoFromNativeLibs, !config.useDebugInfoInNativeLibs)

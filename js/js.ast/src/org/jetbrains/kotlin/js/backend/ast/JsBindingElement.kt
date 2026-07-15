@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.js.backend.ast
 
 class JsBindingElement(
-    target: JsAssignable,
+    target: JsDeclarable,
     defaultValue: JsExpression?,
     val isSpread: Boolean
 ) : SourceInfoAwareJsNode() {
-    var target: JsAssignable = target
+    var target: JsDeclarable = target
         private set
 
     var defaultValue: JsExpression? = defaultValue

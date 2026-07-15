@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
-import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -144,9 +143,10 @@ class WebStaticInitializersDeclarationLowering(private val context: JsCommonBack
 
         val hasStaticFieldInitializer = container.declarations.any {
             when (it) {
-                is IrEnumEntry -> it.correspondingField?.isStatic == true && it.initializerExpression != null
-                is IrField -> it.isStatic && it.initializer != null
-                is IrProperty -> it.backingField?.isStatic == true && it.backingField?.initializer != null
+                is IrEnumEntry -> it.correspondingField?.isStatic == true
+                is IrField -> it.isStatic && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
+                        it.correspondingPropertySymbol?.owner?.isLateinit == false
+                is IrProperty -> it.backingField?.isStatic == true && !it.isLateinit
                 else -> false
             }
         }
@@ -240,7 +240,7 @@ class WebStaticInitializersDeclarationLowering(private val context: JsCommonBack
             endOffset = UNDEFINED_OFFSET
             this.origin = origin
             name = Name.identifier(STATIC_INIT_FUNCTION_NAME)
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = DescriptorVisibilities.PUBLIC
             returnType = context.irBuiltIns.unitType
         }
         return initFunction.apply {

@@ -81,13 +81,14 @@ fun ConeDiagnostic.toFirDiagnostics(
     source: KtSourceElement?,
     callOrAssignmentSource: KtSourceElement?,
     valueParameter: FirValueParameter? = null,
+    forNoneApplicable: Boolean = false,
 ): List<KtDiagnostic> {
     return when (this) {
         is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, source, callOrAssignmentSource)
         is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, source, callOrAssignmentSource)
         is ConeAmbiguityError -> mapConeAmbiguityError(source, callOrAssignmentSource, session)
         is ConeFunctionCallExpectedError -> mapFunctionCallExpected(source, session, callOrAssignmentSource)
-        else -> listOfNotNull(mapOtherDiagnostic(source, valueParameter, callOrAssignmentSource, session))
+        else -> listOfNotNull(mapOtherDiagnostic(source, valueParameter, callOrAssignmentSource, session, forNoneApplicable))
     }
 }
 
@@ -461,7 +462,12 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
         return buildList {
             // For every overload, build a list with all its nested diagnostics.
             val candidatesWithDiagnostics = candidatesWithErrors.map { [candidate, coneDiagnostic] ->
-                candidate.symbol to coneDiagnostic?.toFirDiagnostics(session, source, callOrAssignmentSource = null, valueParameter = null).orEmpty()
+                candidate.symbol to coneDiagnostic?.toFirDiagnostics(
+                    session,
+                    source,
+                    callOrAssignmentSource = null,
+                    forNoneApplicable = true
+                ).orEmpty()
             }
 
             // Determine the list of nested diagnostics shared by every overload and report them on the top-level.
@@ -543,6 +549,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     valueParameter: FirValueParameter?,
     callOrAssignmentSource: KtSourceElement?,
     session: FirSession,
+    forNoneApplicable: Boolean,
 ): KtDiagnostic? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.createOn(
         source,
@@ -667,7 +674,9 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeIntermediateDiagnostic -> null // At least some usages are accounted in FirMissingDependencyClassChecker
     is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.createOn(source, this.reason, session)
     is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.createOn(source, this.reason, session)
-    is ConeTypeParameterInQualifiedAccess -> null // reported in various checkers instead
+    is ConeTypeParameterInQualifiedAccess -> runIf(forNoneApplicable) { // when not for NONE_APPLICABLE, reported in various checkers
+        FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.createOn(source, this.symbol, session)
+    }
     is ConeNotAnnotationContainer -> null // Reported in FirAnnotationExpressionChecker.checkAnnotationUsedAsAnnotationArgument
     is ConeImportFromSingleton -> FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.createOn(source, this.name, session)
     is ConeUnsupported -> FirErrors.UNSUPPORTED.createOn(this.source ?: source, this.reason, session)

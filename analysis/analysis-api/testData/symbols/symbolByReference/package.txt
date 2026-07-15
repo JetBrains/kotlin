@@ -1,7 +1,10 @@
 KaPackageSymbol:
+  anchorPsi: PsiPackage(one.two)
   fqName: one.two
   location: TOP_LEVEL
   origin: SOURCE
+  psi: PsiPackage(one.two)
+  realPsi: PsiPackage(one.two)
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null

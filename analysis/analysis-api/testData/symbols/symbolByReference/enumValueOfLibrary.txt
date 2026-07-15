@@ -1,4 +1,5 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: /MyKotlinEnum.valueOf
   contextParameters: []
@@ -22,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: valueOf
   origin: LIBRARY
+  psi: KtClass
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -30,6 +33,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -52,6 +56,8 @@ KaNamedFunctionSymbol:
       name: value
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

@@ -798,6 +798,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
     }
 
     @Test
+    @TestMetadata("generatedMemberFunction.kt")
+    public void testGeneratedMemberFunction() {
+      run("generatedMemberFunction.kt");
+    }
+
+    @Test
     @TestMetadata("generatedNestedClassInLocalClass.kt")
     public void testGeneratedNestedClassInLocalClass() {
       run("generatedNestedClassInLocalClass.kt");
@@ -813,6 +819,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
     @TestMetadata("generatedScriptLocalClass.kts")
     public void testGeneratedScriptLocalClass() {
       run("generatedScriptLocalClass.kts");
+    }
+
+    @Test
+    @TestMetadata("generatedTopLevelFunction.kt")
+    public void testGeneratedTopLevelFunction() {
+      run("generatedTopLevelFunction.kt");
     }
   }
 }

@@ -1,4 +1,5 @@
 KaReceiverParameterSymbol:
+  anchorPsi: KtTypeReference
   annotations: [
     ReceiverAnnotation()
       psi: KtAnnotationEntry
@@ -18,6 +19,8 @@ KaReceiverParameterSymbol:
   name: <receiver>
   origin: SOURCE
   owningCallableSymbol: KaKotlinPropertySymbol(/prop)
+  psi: KtTypeReference
+  realPsi: KtTypeReference
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [

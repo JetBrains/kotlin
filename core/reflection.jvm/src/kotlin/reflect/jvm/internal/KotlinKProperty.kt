@@ -134,6 +134,9 @@ internal abstract class KotlinKProperty<out V>(
         ): ReflectKCallable<ReturnType> =
             error("Property accessors can only be copied by copying the corresponding property")
 
+        override fun rebind(boundReceiver: Any?): ReflectKCallable<ReturnType> =
+            error("Property accessors can only be bound by copying the corresponding property")
+
         override val annotations: List<Annotation>
             get() =
                 if (property.isLocalDelegated) emptyList()

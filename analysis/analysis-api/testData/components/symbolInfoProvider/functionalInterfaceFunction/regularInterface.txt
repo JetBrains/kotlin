@@ -1,5 +1,6 @@
 CLASS:
   KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: RegularInterface
   classKind: INTERFACE
@@ -16,6 +17,8 @@ CLASS:
   modality: ABSTRACT
   name: RegularInterface
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       abbreviation: null

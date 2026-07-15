@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.konan.file.File
+import java.io.File
 
 internal object Android {
     const val API = "21"
@@ -248,7 +248,7 @@ sealed class ClangArgs(
             val javaHome = System.getenv("JAVA_HOME")?.let(::File)
 
             listOfNotNull(home, parent, javaHome)
-                .firstOrNull { it.child("include").exists }?.absolutePath
+                .firstOrNull { it.resolve("include").exists() }?.absolutePath
                 ?: error("JNI headers not found")
         }
 

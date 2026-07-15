@@ -1,5 +1,6 @@
 CLASS:
   KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: RegularClass
   classKind: CLASS
@@ -16,6 +17,8 @@ CLASS:
   modality: FINAL
   name: RegularClass
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       abbreviation: null

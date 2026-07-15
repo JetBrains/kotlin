@@ -4,6 +4,7 @@ KtNameReferenceExpression(150,153): 'foo'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
             contextParameters: []
@@ -20,6 +21,8 @@ KtNameReferenceExpression(150,153): 'foo'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -30,6 +33,7 @@ KtNameReferenceExpression(150,153): 'foo'
           type = kotlin.Long,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
             contextParameters: []
@@ -46,6 +50,8 @@ KtNameReferenceExpression(150,153): 'foo'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/usage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -72,7 +78,7 @@ KtNameReferenceExpression(150,153): 'foo'
             name = <unused var>
             receiverType = null
             returnType = kotlin.Long
-            symbol = <unused var>: kotlin.Long
+            symbol = <unused var>: T
             contextParameters = []
             callableId = null,
           KaVariableSignature:

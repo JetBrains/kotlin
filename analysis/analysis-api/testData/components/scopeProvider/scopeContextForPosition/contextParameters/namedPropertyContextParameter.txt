@@ -24,6 +24,7 @@ scopes:
     classifiers: 0
     callables: 2
       KaContextParameterSymbol:
+        anchorPsi: KtParameter
         annotations: []
         callableId: null
         contextParameters: []
@@ -39,6 +40,8 @@ scopes:
         modality: FINAL
         name: a
         origin: SOURCE
+        psi: KtParameter
+        realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -47,6 +50,7 @@ scopes:
         typeParameters: []
         visibility: PUBLIC
       KaContextParameterSymbol:
+        anchorPsi: KtParameter
         annotations: []
         callableId: null
         contextParameters: []
@@ -62,6 +66,8 @@ scopes:
         modality: FINAL
         name: s
         origin: SOURCE
+        psi: KtParameter
+        realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -80,34 +86,54 @@ scopes:
   PackageMemberScope, index = 3
     packages: 6
       KaPackageSymbol:
+        anchorPsi: PsiPackage(META-INF)
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(META-INF)
+        realPsi: PsiPackage(META-INF)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(java)
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(java)
+        realPsi: PsiPackage(java)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(javax)
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(javax)
+        realPsi: PsiPackage(javax)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(kotlin)
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(kotlin)
+        realPsi: PsiPackage(kotlin)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(org)
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(org)
+        realPsi: PsiPackage(org)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(sun)
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(sun)
+        realPsi: PsiPackage(sun)
     classifiers: 0
     callables: 1
       KaKotlinPropertySymbol:
+        anchorPsi: KtProperty
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
+          anchorPsi: KtProperty
           annotations: []
           callableId: null
           contextParameters: []
@@ -125,6 +151,8 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/foo)
+          psi: null
+          realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -135,6 +163,7 @@ scopes:
         callableId: /foo
         contextParameters: [
           KaContextParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -150,6 +179,8 @@ scopes:
             modality: FINAL
             name: a
             origin: SOURCE
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -158,6 +189,7 @@ scopes:
             typeParameters: []
             visibility: PUBLIC
           KaContextParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -173,6 +205,8 @@ scopes:
             modality: FINAL
             name: s
             origin: SOURCE
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -196,6 +230,7 @@ scopes:
               type: kotlin/String
         ]
         getter: KaPropertyGetterSymbol:
+          anchorPsi: KtPropertyAccessor
           annotations: []
           callableId: null
           contextParameters: []
@@ -212,6 +247,8 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: KtPropertyAccessor
+          realPsi: KtPropertyAccessor
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -240,6 +277,8 @@ scopes:
         name: foo
         origin: SOURCE
         primaryConstructorParameter: null
+        psi: KtProperty
+        realPsi: KtProperty
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 
@@ -27,7 +26,8 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
     level = DeprecationLevel.ERROR
 )
 fun createKotlinLibraryComponents(
-    libraryFile: File,
+    @Suppress("DEPRECATION_ERROR")
+    libraryFile: org.jetbrains.kotlin.konan.file.File,
     /* ignored*/ isDefault: Boolean = false,
     @Suppress("DEPRECATION", "UNRESOLVED_REFERENCE", "DEPRECATION_ERROR")
     /* ignored*/ zipAccessor: org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor? = null,

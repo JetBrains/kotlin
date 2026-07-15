@@ -22,6 +22,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaValueParameterSymbol:
+        anchorPsi: KtParameter
         annotations: []
         callableId: null
         contextParameters: []
@@ -44,6 +45,8 @@ scopes:
         name: param
         origin: SOURCE
         primaryConstructorProperty: null
+        psi: KtParameter
+        realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

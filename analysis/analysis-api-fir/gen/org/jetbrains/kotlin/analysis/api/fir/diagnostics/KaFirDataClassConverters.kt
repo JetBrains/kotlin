@@ -2546,12 +2546,6 @@ private fun KaDiagnosticConverterBuilder.addConversions55() {
             token,
         )
     }
-    add(FirErrors.INVALID_VERSIONING_ON_NONFINAL_FUNCTION) { firDiagnostic ->
-        InvalidVersioningOnNonfinalFunctionImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJvmErrors.JAVA_CLASS_ON_COMPANION) { firDiagnostic ->
         JavaClassOnCompanionImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -8760,12 +8754,6 @@ private fun KaDiagnosticConverterBuilder.addConversions197() {
     }
     add(FirErrors.REDUNDANT_MODALITY_MODIFIER) { firDiagnostic ->
         RedundantModalityModifierImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION) { firDiagnostic ->
-        VersionOverloadsTooComplexExpressionImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

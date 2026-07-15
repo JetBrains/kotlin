@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.InconsistencyChecker
 import org.jetbrains.kotlin.generators.allowGenerationOnTeamCity
 import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.dsl.forEachTestClassParallel
-import org.jetbrains.kotlin.generators.model.TestInfraRevision
 import org.jetbrains.kotlin.generators.skipTestAllFilesCheck
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
@@ -37,7 +36,7 @@ fun generateTestGroupSuiteWithJUnit5(
     mainClassName: String? = TestGeneratorUtil.getMainClassName(),
     init: TestGroupSuite.() -> Unit,
 ) {
-    val suite = TestGroupSuite(TestInfraRevision.StandardJUnit5, skipTestAllFilesCheck).apply(init)
+    val suite = TestGroupSuite(skipTestAllFilesCheck).apply(init)
     suite.forEachTestClassParallel { testClass ->
         (
             val changed = newFileGenerated, val testSourceFilePath

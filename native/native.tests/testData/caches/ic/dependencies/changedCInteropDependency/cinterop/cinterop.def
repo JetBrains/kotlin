@@ -1,0 +1,3 @@
+package = cstubs
+---
+static int answer(void) { return 40; }

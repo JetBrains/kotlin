@@ -88,7 +88,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
         for (stmt in ast) {
             object : RecursiveJsVisitor() {
                 override fun visitVars(x: JsVars) {
-                    x.synthetic = x.vars.flatMap { it.assignable.names }.any { isSyntheticId(it.ident) }
+                    x.synthetic = x.vars.flatMap { it.declarable.names }.any { isSyntheticId(it.ident) }
                     super.visitVars(x)
                 }
 

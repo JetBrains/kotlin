@@ -1,0 +1,38 @@
+IS_THE_SAME_SYMBOL: true
+FAKE_OVERRIDE_ORIGINAL:
+  KaNamedFunctionSymbol:
+    anchorPsi: KtNamedFunction
+    annotations: []
+    callableId: test/MyClass.foo
+    contextParameters: []
+    contextReceivers: []
+    contractEffects: []
+    hasStableParameterNames: true
+    isActual: false
+    isBuiltinFunctionInvoke: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInfix: false
+    isInline: false
+    isOperator: false
+    isOverride: false
+    isStatic: false
+    isSuspend: false
+    isTailRec: false
+    location: CLASS
+    modality: FINAL
+    name: foo
+    origin: SOURCE
+    psi: KtNamedFunction
+    realPsi: KtNamedFunction
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Unit
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+    containingDeclaration: test/MyClass

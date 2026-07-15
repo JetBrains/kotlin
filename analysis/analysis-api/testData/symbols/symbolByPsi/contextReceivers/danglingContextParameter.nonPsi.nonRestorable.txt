@@ -1,4 +1,5 @@
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: [
     Anno(position = "param")
       psi: KtAnnotationEntry
@@ -17,6 +18,8 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter1
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaClassErrorType:
     annotations: [
@@ -33,6 +36,7 @@ KaContextParameterSymbol:
   importableFqName: null
 
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: []
   callableId: null
   contextParameters: []
@@ -48,6 +52,8 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter2
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -69,6 +75,7 @@ KaContextParameterSymbol:
   importableFqName: null
 
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: [
     Anno(position = "param")
       psi: KtAnnotationEntry
@@ -87,6 +94,8 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter1
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaClassErrorType:
     annotations: [
@@ -103,6 +112,7 @@ KaContextParameterSymbol:
   importableFqName: null
 
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: []
   callableId: null
   contextParameters: []
@@ -118,6 +128,8 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter2
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -139,6 +151,7 @@ KaContextParameterSymbol:
   importableFqName: null
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: null
   classKind: CLASS
@@ -155,6 +168,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -170,6 +185,7 @@ KaNamedClassSymbol:
   importableFqName: null
 
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: [
     Anno(position = "param")
       psi: KtAnnotationEntry
@@ -188,6 +204,8 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter1
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaClassErrorType:
     annotations: [
@@ -204,6 +222,7 @@ KaContextParameterSymbol:
   importableFqName: null
 
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: []
   callableId: null
   contextParameters: []
@@ -219,6 +238,8 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter2
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

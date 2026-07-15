@@ -1,4 +1,5 @@
 KaBackingFieldSymbol:
+  anchorPsi: KtProperty
   annotations: [
     FieldAnnotation()
       psi: KtAnnotationEntry
@@ -21,6 +22,8 @@ KaBackingFieldSymbol:
   name: field
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KaKotlinPropertySymbol(/x)
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

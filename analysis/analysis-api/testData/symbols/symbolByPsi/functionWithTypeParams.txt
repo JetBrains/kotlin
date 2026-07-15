@@ -1,4 +1,5 @@
 KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
   annotations: []
   isActual: false
   isExpect: false
@@ -8,6 +9,8 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -17,6 +20,7 @@ KaTypeParameterSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /foo
   contextParameters: []
@@ -40,6 +44,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +53,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Unit
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -56,6 +63,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: X
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -66,6 +75,7 @@ KaNamedFunctionSymbol:
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -88,6 +98,8 @@ KaNamedFunctionSymbol:
       name: x
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []

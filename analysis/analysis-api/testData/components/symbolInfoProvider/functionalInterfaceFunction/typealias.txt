@@ -1,5 +1,6 @@
 CLASS:
   KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: IntPredicate
   classKind: INTERFACE
@@ -16,6 +17,8 @@ CLASS:
   modality: ABSTRACT
   name: IntPredicate
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       abbreviation: null
@@ -43,6 +46,7 @@ CLASS:
 
 FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /IntPredicate.accept
   contextParameters: []
@@ -66,6 +70,8 @@ FUNCTIONAL INTERFACE FUNCTION:
   modality: ABSTRACT
   name: accept
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     abbreviation: null
@@ -85,6 +91,7 @@ FUNCTIONAL INTERFACE FUNCTION:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -107,6 +114,8 @@ FUNCTIONAL INTERFACE FUNCTION:
       name: i
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         abbreviation: null

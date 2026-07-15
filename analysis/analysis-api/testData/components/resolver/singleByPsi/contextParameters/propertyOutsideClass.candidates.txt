@@ -4,6 +4,7 @@ KtNameReferenceExpression(245,259): 'propertyMember'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
             contextParameters: []
@@ -20,6 +21,8 @@ KtNameReferenceExpression(245,259): 'propertyMember'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -31,6 +34,7 @@ KtNameReferenceExpression(245,259): 'propertyMember'
       ]
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
           contextParameters: []
@@ -47,6 +51,8 @@ KtNameReferenceExpression(245,259): 'propertyMember'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []

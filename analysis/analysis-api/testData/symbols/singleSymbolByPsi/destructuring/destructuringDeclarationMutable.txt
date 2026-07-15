@@ -1,4 +1,5 @@
 KaDestructuringDeclarationSymbol:
+  anchorPsi: KtDestructuringDeclaration
   annotations: [
     AAA(value = "y")
       psi: KtAnnotationEntry
@@ -13,6 +14,8 @@ KaDestructuringDeclarationSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
+  psi: KtDestructuringDeclaration
+  realPsi: KtDestructuringDeclaration
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(destructuringDeclarationMutable.kt)
   getContainingModule: KaSourceModule "Sources of main"

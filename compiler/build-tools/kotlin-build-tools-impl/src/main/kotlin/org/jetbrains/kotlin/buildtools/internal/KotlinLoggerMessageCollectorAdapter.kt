@@ -36,7 +36,11 @@ internal class KotlinLoggerMessageCollectorAdapter(
         when (effectiveSeverity) {
             CompilerMessageSeverity.EXCEPTION -> kotlinLogger.error(
                 renderedMessage,
-                KotlinCompilationProcessFailedException(message)
+                if (KotlinToolchainsImpl.getBtaApiVersion() is BtaApiVersion.Before2_4_20) {
+                    RuntimeException(message)
+                } else {
+                    KotlinCompilationProcessFailedException(message)
+                }
             ) // TODO: get the original exception properly and avoid duplication of stacktrace in message
             CompilerMessageSeverity.ERROR -> kotlinLogger.error(renderedMessage)
             CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.WARNING, CompilerMessageSeverity.FIXED_WARNING -> kotlinLogger.warn(

@@ -36,7 +36,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/klib/dump-abi/malformed")
     withJsRuntime()
 
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         outputs.dir(layout.buildDirectory.dir("t"))
         useJUnitPlatform()
     }

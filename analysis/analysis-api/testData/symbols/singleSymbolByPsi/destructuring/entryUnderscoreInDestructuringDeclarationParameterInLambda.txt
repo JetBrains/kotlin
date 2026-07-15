@@ -1,4 +1,5 @@
 KaLocalVariableSymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
   annotations: []
   callableId: null
   contextParameters: []
@@ -15,6 +16,8 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: <unused var>
   origin: SOURCE
+  psi: KtDestructuringDeclarationEntry
+  realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

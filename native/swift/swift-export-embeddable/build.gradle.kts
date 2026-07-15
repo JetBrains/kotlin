@@ -231,5 +231,6 @@ projectTests {
             transitiveTestRuntimeClasspath,
         )
         testClassesDirs = testSourceSet.output.classesDirs
+        systemProperty("ide.can.use.coroutines.fork", "false")
     }
 }

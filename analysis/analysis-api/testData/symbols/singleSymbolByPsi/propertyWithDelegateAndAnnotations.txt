@@ -1,4 +1,5 @@
 KaKotlinPropertySymbol:
+  anchorPsi: KtProperty
   annotations: [
     ExplicitPropertyAnnotation()
       psi: KtAnnotationEntry
@@ -6,6 +7,7 @@ KaKotlinPropertySymbol:
       psi: KtAnnotationEntry
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: KtProperty
     annotations: [
       DelegateAnnotation()
         psi: KtAnnotationEntry
@@ -26,6 +28,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/lazyProperty)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -42,6 +46,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtProperty
     annotations: []
     callableId: null
     contextParameters: []
@@ -58,6 +63,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -91,6 +98,8 @@ KaKotlinPropertySymbol:
   name: lazyProperty
   origin: SOURCE
   primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

@@ -49,7 +49,6 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
-    testFixturesApi(libs.junit4)
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 
@@ -72,7 +71,7 @@ sourcesJar()
 javadocJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, javaLauncher = JdkMajorVersion.JDK_1_8) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_1_8) {
         addClasspathProperty("kotlin.jvm.abi.jar.path") {
             from(tasks.jar.map { it.archiveFile.get() })
         }

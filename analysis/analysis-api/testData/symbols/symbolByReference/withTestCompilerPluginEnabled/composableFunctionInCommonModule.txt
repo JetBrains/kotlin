@@ -1,4 +1,5 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: [
     org/jetbrains/kotlin/plugin/sandbox/MyInlineable()
       psi: KtAnnotationEntry
@@ -25,6 +26,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -33,6 +36,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -55,6 +59,8 @@ KaNamedFunctionSymbol:
       name: text
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: [

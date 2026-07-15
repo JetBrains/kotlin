@@ -18,12 +18,10 @@ dependencies {
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.benchmark.runtime)
 
-    testFixturesApi(libs.junit4)
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesApi(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 }
@@ -64,8 +62,13 @@ benchmark {
 }
 
 tasks.withType<JavaExec>().matching { it.name == "testBenchmark" }.configureEach {
-    dependsOn(":createIdeaHomeForTests")
-    systemProperty("idea.home.path", ideaHomePathForTests().get().asFile.canonicalPath)
+    val ideaHomeForTests = this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
+    jvmArgumentProviders.add(this.project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
+        property.set("idea.home.path")
+        classpath.from(ideaHomeForTests)
+        directory.value(ideaHomePathForTests())
+    })
+
     systemProperty("idea.use.native.fs.for.win", false)
 }
 
@@ -76,12 +79,8 @@ tasks.withType<JmhBytecodeGeneratorTask>().configureEach {
 }
 
 projectTests {
-    testTask(
-        parallel = false, // Disable parallelization to get more robust performance measurements
-        jUnitMode = JUnitMode.JUnit4
-    ) {
+    testTask {
         workingDir = rootDir
-        useJUnitPlatform()
     }
 
     withJvmStdlibAndReflect()

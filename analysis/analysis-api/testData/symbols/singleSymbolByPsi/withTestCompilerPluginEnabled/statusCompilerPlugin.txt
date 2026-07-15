@@ -1,4 +1,5 @@
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: [
     org/jetbrains/kotlin/plugin/sandbox/AllOpen()
       psi: KtAnnotationEntry
@@ -18,6 +19,8 @@ KaNamedClassSymbol:
   modality: OPEN
   name: Foo
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []

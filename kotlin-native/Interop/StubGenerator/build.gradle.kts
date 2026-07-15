@@ -67,7 +67,7 @@ open class TestArgumentProvider @Inject constructor(
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         // konan.home points to the kotlin-native project directory for konan.properties; declare it
         // as an input so the cache is properly invalidated when it changes.
         inputs.dir(project(":kotlin-native").isolated.projectDirectory.dir("konan"))

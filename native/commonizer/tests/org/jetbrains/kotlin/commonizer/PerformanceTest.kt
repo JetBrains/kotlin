@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.commonizer.PerformanceTest.DefaultCommonizationParam
 import org.jetbrains.kotlin.commonizer.PerformanceTest.DefaultCommonizationParameters.NATIVE_DISTRIBUTION_PATH
 import org.jetbrains.kotlin.commonizer.utils.CommonizerMemoryTracker
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.junit.Ignore
 import org.junit.jupiter.api.*
 import java.io.File
 import org.jetbrains.kotlin.commonizer.cli.main as entryPoint
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.commonizer.cli.main as entryPoint
  * NOTE: First of all you would need to specify the actual values in [NATIVE_DISTRIBUTION_PATH]
  * and [COMMONIZED_TARGETS] properties!
  *
- * NOTE 2: Don't forget to unmute the test by removing the [Ignore] annotation!
+ * NOTE 2: Don't forget to unmute the test by removing the [Disabled] annotation!
  */
 @Disabled
 class PerformanceTest {

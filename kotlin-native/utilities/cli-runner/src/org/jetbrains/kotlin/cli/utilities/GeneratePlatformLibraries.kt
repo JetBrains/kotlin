@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.utilities
 
 import org.jetbrains.kotlin.cli.bc.K2Native
-import org.jetbrains.kotlin.konan.file.File
 import java.util.concurrent.*
 import kotlinx.cli.*
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
@@ -18,13 +17,24 @@ import org.jetbrains.kotlin.konan.util.PlatformLibsInfo
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.interop.gen.jvm.parseKeyValuePairs
 import org.jetbrains.kotlin.native.interop.tool.SHORT_MODULE_NAME
+import org.jetbrains.kotlin.io.listDirectoryEntriesIfDirectoryExists
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
+import java.nio.file.Path
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
+import kotlin.io.path.absolute
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
+import kotlin.io.path.extension
+import kotlin.io.path.forEachLine
+import kotlin.io.path.name
 
 // TODO: We definitely need to unify logging in different parts of the compiler.
 private class Logger(val level: Level = Level.NORMAL) {
@@ -138,23 +148,23 @@ fun generatePlatformLibraries(args: Array<String>) = usingNativeMemoryAllocator 
     val targetCacheArgs = platformManager.let {
         target.let(it::loader).additionalCacheFlags
     }
-    val inputDirectory = inputDirectoryPath?.File()
-            ?: File(distribution.konanSubdir, "platformDef").child(target.visibleName)
+    val inputDirectory = inputDirectoryPath?.let(::Path)
+            ?: Path(distribution.konanSubdir, "platformDef", target.visibleName)
 
-    val outputDirectory = outputDirectoryPath?.File()
-            ?: File(distribution.klib, "platform").child(target.visibleName)
+    val outputDirectory = outputDirectoryPath?.let(::Path)
+            ?: Path(distribution.klib, "platform", target.visibleName)
 
-    val cacheDirectory = cacheDirectoryPath?.File()
+    val cacheDirectory = cacheDirectoryPath?.let(::Path)
 
-    if (!inputDirectory.exists) throw Error("input directory doesn't exist")
-    if (!outputDirectory.exists) {
-        outputDirectory.mkdirs()
+    if (!inputDirectory.exists()) throw Error("input directory doesn't exist")
+    if (!outputDirectory.exists()) {
+        outputDirectory.createDirectories()
     }
-    if (cacheDirectory != null && !cacheDirectory.exists) {
-        cacheDirectory.mkdirs()
+    if (cacheDirectory != null && !cacheDirectory.exists()) {
+        cacheDirectory.createDirectories()
     }
 
-    val stdlibFile = stdlibPath?.File() ?: File(distribution.stdlib)
+    val stdlibFile = stdlibPath?.let(::Path) ?: Path(distribution.stdlib)
 
     val logger = Logger(if (verbose) Logger.Level.VERBOSE else Logger.Level.NORMAL)
 
@@ -190,9 +200,9 @@ private sealed class ProcessingStatus {
     class FAIL(val error: Throwable) : ProcessingStatus()
 }
 
-private data class DirectoriesInfo(val inputDirectory: File, val outputDirectory: File, val stdlib: File)
+private data class DirectoriesInfo(val inputDirectory: Path, val outputDirectory: Path, val stdlib: Path)
 
-private data class CacheInfo(val cacheDirectory: File,  val cacheKind: String,  val cacheArgs: List<String>)
+private data class CacheInfo(val cacheDirectory: Path, val cacheKind: String, val cacheArgs: List<String>)
 
 private class DefFile(val name: String, val depends: MutableList<DefFile>) {
     override fun toString(): String = "$name: [${depends.joinToString(separator = ", ") { it.name }}]"
@@ -204,13 +214,13 @@ private class DefFile(val name: String, val depends: MutableList<DefFile>) {
         get() = name
 }
 
-private fun createTempDir(prefix: String, parent: File): File =
-        File(Files.createTempDirectory(Paths.get(parent.absolutePath), prefix).toString())
+private fun createTempDir(prefix: String, parent: Path): Path = Files.createTempDirectory(parent.absolute(), prefix)
 
-private fun File.deleteAtomicallyIfPossible(tmpDirectory: File) {
+@OptIn(ExperimentalPathApi::class)
+private fun Path.deleteAtomicallyIfPossible(tmpDirectory: Path) {
     // Try to atomically delete the old directory.
-    val tmpToDelete = Files.createTempFile(Paths.get(tmpDirectory.absolutePath), null, null).toFile()
-    if (renameAtomic(this.absolutePath, tmpToDelete.absolutePath, replaceExisting = true)) {
+    val tmpToDelete = Files.createTempFile(tmpDirectory.absolute(), null, null).toFile()
+    if (renameAtomic(this.absolutePathString(), tmpToDelete.absolutePath, replaceExisting = true)) {
         tmpToDelete.deleteRecursively()
     } else {
         // Can't move to a tmp directory -> delete in a regular way.
@@ -243,31 +253,32 @@ private fun topoSort(defFiles: List<DefFile>): List<DefFile> {
     return result
 }
 
+@OptIn(ExperimentalPathApi::class)
 private fun generateLibrary(
         target: KonanTarget,
         cinteropOptions: CInteropOptions,
         def: DefFile,
         directories: DirectoriesInfo,
-        tmpDirectory: File,
+        tmpDirectory: Path,
         rebuild: Boolean,
         logger: Logger
 ): Unit = with(directories) {
-    val defFile = inputDirectory.child("${def.name}.def")
-    val outKlib = outputDirectory.child(def.libraryName)
+    val defFile = inputDirectory.resolve("${def.name}.def")
+    val outKlib = outputDirectory.resolve(def.libraryName)
 
-    if (outKlib.exists && !rebuild) {
+    if (outKlib.exists() && !rebuild) {
         logger.verbose("Skip generating ${def.name} as it's already generated")
         return
     }
 
-    val tmpKlib = tmpDirectory.child(def.libraryName)
+    val tmpKlib = tmpDirectory.resolve(def.libraryName)
 
     try {
         val cinteropArgs = arrayOf(
-                "-o", tmpKlib.absolutePath,
+                "-o", tmpKlib.absolutePathString(),
                 "-target", target.visibleName,
-                "-def", defFile.absolutePath,
-                "-compiler-option", "-fmodules-cache-path=${tmpDirectory.child("clangModulesCache").absolutePath}",
+                "-def", defFile.absolutePathString(),
+                "-compiler-option", "-fmodules-cache-path=${tmpDirectory.resolve("clangModulesCache").absolutePathString()}",
                 "-no-default-libs", "-Xpurge-user-libs", "-nopack",
                 "-Xdisable-experimental-annotation",
                 *cinteropOptions.additionalArguments.toTypedArray(),
@@ -282,7 +293,7 @@ private fun generateLibrary(
         }
 
         // Atomically move the generated library to the destination path.
-        if (!renameAtomic(tmpKlib.absolutePath, outKlib.absolutePath, replaceExisting = false)) {
+        if (!renameAtomic(tmpKlib.absolutePathString(), outKlib.absolutePathString(), replaceExisting = false)) {
             tmpKlib.deleteRecursively()
         }
     } finally {
@@ -293,25 +304,26 @@ private fun generateLibrary(
 private fun getLibraryCacheDir(
         libraryName: String,
         target: KonanTarget,
-        cacheDirectory: File,
+        cacheDirectory: Path,
         cacheKind: String
-): File {
+): Path {
     val cacheBaseName = CachedLibraries.getCachedLibraryName(libraryName)
     val cacheOutputKind = CompilerOutputKind.valueOf(cacheKind.uppercase())
-    return OutputFiles(cacheDirectory.child(cacheBaseName).absolutePath, target, cacheOutputKind).mainFile
+    return OutputFiles(cacheDirectory.resolve(cacheBaseName).absolutePathString(), target, cacheOutputKind).mainFile
 }
 
+@OptIn(ExperimentalPathApi::class)
 private fun buildCache(
         target: KonanTarget,
         def: DefFile,
-        outputDirectory: File,
+        outputDirectory: Path,
         cacheInfo: CacheInfo,
         rebuild: Boolean,
         logger: Logger,
         konanDataDir: String?,
 ): Unit = with(cacheInfo) {
     val libraryCacheDir = getLibraryCacheDir(def.name, target, cacheDirectory, cacheKind)
-    if (libraryCacheDir.listFilesOrEmpty.isNotEmpty() && !rebuild) {
+    if (libraryCacheDir.listDirectoryEntriesIfDirectoryExists().isNotEmpty() && !rebuild) {
         logger.verbose("Skip precompiling ${def.name} as it's already precompiled")
         return
     }
@@ -323,8 +335,8 @@ private fun buildCache(
     val compilerArgs = listOfNotNull(
             "-p", cacheKind,
             "-target", target.visibleName,
-            "-Xadd-cache=${outputDirectory.absolutePath}/${def.libraryName}",
-            "-Xcache-directory=${cacheDirectory.absolutePath}",
+            "-Xadd-cache=${outputDirectory.absolutePathString()}/${def.libraryName}",
+            "-Xcache-directory=${cacheDirectory.absolutePathString()}",
             konanDataDir?.let { "-Xkonan-data-dir=${it}" },
     ) + cacheArgs
 
@@ -334,12 +346,12 @@ private fun buildCache(
 
 private fun buildStdlibCache(
         target: KonanTarget,
-        stdlib: File,
+        stdlib: Path,
         cacheInfo: CacheInfo,
         logger: Logger
 ): Unit = with(cacheInfo) {
     val stdlibCacheFile = getLibraryCacheDir("stdlib", target, cacheDirectory, cacheKind)
-    if (stdlibCacheFile.exists) {
+    if (stdlibCacheFile.exists()) {
         logger.verbose("Skip precompiling standard library as it's already precompiled")
         return
     }
@@ -348,14 +360,15 @@ private fun buildStdlibCache(
     val compilerArgs = arrayOf(
             "-p", cacheKind,
             "-target", target.visibleName,
-            "-Xadd-cache=${stdlib.absolutePath}",
-            "-Xcache-directory=${cacheDirectory.absolutePath}",
+            "-Xadd-cache=${stdlib.absolutePathString()}",
+            "-Xcache-directory=${cacheDirectory.absolutePathString()}",
             *cacheArgs.toTypedArray()
     )
     logger.verbose("Run compiler with args: ${compilerArgs.joinToString(separator = " ")}")
     K2Native.mainNoExit(compilerArgs)
 }
 
+@OptIn(ExperimentalPathApi::class)
 private fun generatePlatformLibraries(
         target: KonanTarget,
         cinteropOptions: CInteropOptions,
@@ -387,7 +400,7 @@ private fun generatePlatformLibraries(
     // Build dependencies graph.
     val defFiles = mutableMapOf<String, DefFile>()
     val dependsRegex = Regex("^depends = (.*)")
-    inputDirectory.listFilesOrEmpty.filter { it.extension == "def" }.forEach { file ->
+    inputDirectory.listDirectoryEntriesIfDirectoryExists().filter { it.extension == "def" }.forEach { file ->
         val name = file.name.split(".").also { assert(it.size == 2) }[0]
         val def = defFiles.getOrPut(name) {
             DefFile(name, mutableListOf())
@@ -416,7 +429,7 @@ private fun generatePlatformLibraries(
     val countTotal = sorted.size
     val countProcessed = AtomicInteger(0)
     try {
-        tmpDirectory.mkdirs()
+        tmpDirectory.createDirectories()
         sorted.forEach { def ->
             executorPool.execute {
                 // A bit ugly, we just block here until all dependencies are built.

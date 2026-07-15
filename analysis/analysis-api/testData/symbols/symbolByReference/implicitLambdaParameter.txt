@@ -1,4 +1,5 @@
 KaValueParameterSymbol:
+  anchorPsi: KtFunctionLiteral
   annotations: []
   callableId: null
   contextParameters: []
@@ -21,6 +22,8 @@ KaValueParameterSymbol:
   name: it
   origin: SOURCE_MEMBER_GENERATED
   primaryConstructorProperty: null
+  psi: KtFunctionLiteral
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

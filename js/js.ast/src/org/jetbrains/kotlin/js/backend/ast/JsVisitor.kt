@@ -210,17 +210,26 @@ abstract class JsVisitor {
     open fun visitSpread(spread: JsSpread): Unit =
         visitElement(spread)
 
-    open fun visitAssignable(assignable: JsAssignable): Unit =
-        visitElement(assignable)
+    open fun visitAssignment(x: JsAssignmentOperation): Unit =
+        visitElement(x)
 
-    open fun visitNamedAssignable(assignable: JsAssignable.Named): Unit =
-        visitAssignable(assignable)
+    open fun visitSimpleAssignment(x: JsAssignmentOperation.Simple): Unit =
+        visitAssignment(x)
 
-    open fun visitArrayPatternAssignable(pattern: JsAssignable.ArrayPattern): Unit =
-        visitAssignable(pattern)
+    open fun visitDestructuringAssignment(x: JsAssignmentOperation.Destructuring): Unit =
+        visitAssignment(x)
 
-    open fun visitObjectPatternAssignable(pattern: JsAssignable.ObjectPattern): Unit =
-        visitAssignable(pattern)
+    open fun visitDeclarable(declarable: JsDeclarable): Unit =
+        visitElement(declarable)
+
+    open fun visitNamedDeclarable(declarable: JsDeclarable.Named): Unit =
+        visitDeclarable(declarable)
+
+    open fun visitArrayPatternDeclarable(pattern: JsDeclarable.ArrayPattern): Unit =
+        visitDeclarable(pattern)
+
+    open fun visitObjectPatternDeclarable(pattern: JsDeclarable.ObjectPattern): Unit =
+        visitDeclarable(pattern)
 
     open fun visitBindingProperty(property: JsBindingProperty): Unit =
         visitElement(property)

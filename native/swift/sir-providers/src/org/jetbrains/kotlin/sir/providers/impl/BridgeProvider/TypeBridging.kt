@@ -47,7 +47,7 @@ internal fun asyncContinuationBridges(
     // continuation
     AsCovariantBlock(parameters = listOf(resultBridge), returnType = AsVoid),
     // exception
-    // A `null` exception is used to signal a cancellation, see `suspendSwiftCoroutine`/`awaitSwiftCoroutine`.
+    // A `null` exception is used to signal a cancellation, see `suspendSwiftCoroutine`.
     AsCovariantBlock(
         parameters = listOf(AsObjCBridged(SirSwiftModule.error.nominalType().optional(), CType.NSError.nullable)),
         returnType = AsVoid,
@@ -59,6 +59,29 @@ internal fun asyncContinuationBridges(
         cType = CType.Object,
     ),
 )
+
+context(session: SirSession)
+internal fun renderKotlinSuspendSwiftCoroutine(
+    typeNamer: SirTypeNamer,
+    async: Triple<KotlinToSwiftBridge, KotlinToSwiftBridge, KotlinToSwiftBridge>,
+    prelude: String = "",
+    call: (continuation: String, exception: String, cancellation: String) -> String,
+): String {
+    val args = listOf(
+        "continuation" to async.first,
+        "exception" to async.second,
+        "cancellation" to async.third,
+    )
+    val defineArgs = args.joinToString(prefix = " ", postfix = " ->") {
+        "${it.first}: ${typeNamer.kotlinFqName(it.second.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}"
+    }
+    val lines = buildList {
+        if (prelude.isNotEmpty()) add(prelude)
+        args.forEach { add("val _${it.first} = ${it.second.inKotlinSources.kotlinToSwift(typeNamer, it.first)}") }
+        add(call("_continuation", "_exception", "_cancellation"))
+    }
+    return "suspendSwiftCoroutine {$defineArgs\n${lines.joinToString("\n").prependIndent("    ")}\n}"
+}
 
 context(session: SirSession)
 private fun bridgeTypeForVariadicParameter(type: SirType): Bridge =
@@ -999,32 +1022,25 @@ internal sealed interface Bridge {
                     addAll(contextParameters.mapIndexed { idx, el -> "ctx${idx}" to el })
                     addAll(parameters.mapIndexed { idx, el -> "arg${idx}" to el })
                 }.takeIf { it.isNotEmpty() }
-                val asyncArgs = asyncParameters?.let {
-                    buildList {
-                        add("continuation" to it.first)
-                        add("exception" to it.second)
-                        add("cancellation" to it.third)
-                    }
-                }
-                val allArgs = buildList {
-                    argsInClosure?.let(::addAll)
-                    asyncArgs?.let(::addAll)
-                }
-                val mappedArgs = allArgs.takeIf { it.isNotEmpty() }?.joinToString(separator = "\n", postfix = "\n") { [name, bridge] ->
+                val regularConversions = argsInClosure.orEmpty().joinToString(separator = "\n") { [name, bridge] ->
                     "val _$name = ${bridge.inKotlinSources.kotlinToSwift(typeNamer, name)}"
-                } ?: ""
-                val callArgs = allArgs.joinToString { [name, _] -> "_$name" }
-                var body = mappedArgs + "val _result = kotlinFun($callArgs)\n${
-                    returnType.inKotlinSources.swiftToKotlin(typeNamer, "_result")
-                }"
-                if (asyncArgs != null) {
-                    body = """suspendSwiftCoroutine {${asyncArgs.defineArgs(typeNamer)}
-                    ${body.prependIndent("|    ")}
-                    |}""".trimMargin()
                 }
+                val regularCallArgs = argsInClosure.orEmpty().map { [name, _] -> "_$name" }
+
+                val body = asyncParameters?.let { async ->
+                    renderKotlinSuspendSwiftCoroutine(typeNamer, async, prelude = regularConversions) { continuation, exception, cancellation ->
+                        "val _result = kotlinFun(${(regularCallArgs + listOf(continuation, exception, cancellation)).joinToString()})\n" +
+                                returnType.inKotlinSources.swiftToKotlin(typeNamer, "_result")
+                    }
+                } ?: run {
+                    val mappedArgs = regularConversions.takeIf { it.isNotEmpty() }?.let { "$it\n" } ?: ""
+                    mappedArgs + "val _result = kotlinFun(${regularCallArgs.joinToString()})\n" +
+                            returnType.inKotlinSources.swiftToKotlin(typeNamer, "_result")
+                }
+
                 return """run {
                 |    val kotlinFun = convertBlockPtrToKotlinFunction<$kotlinFunctionTypeRendered>($valueExpression);
-                |    ${asyncArgs?.let { "suspend " } ?: ""}{${argsInClosure.defineArgs(typeNamer)}
+                |    ${asyncParameters?.let { "suspend " } ?: ""}{${argsInClosure.defineArgs(typeNamer)}
                 ${body.prependIndent("|        ")}
                 |    }
                 |}""".trimMargin()

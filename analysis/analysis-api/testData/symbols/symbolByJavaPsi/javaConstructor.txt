@@ -1,4 +1,5 @@
 KaConstructorSymbol:
+  anchorPsi: PsiMethodImpl
   annotations: []
   callableId: null
   containingClassId: JavaClass
@@ -14,6 +15,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -22,6 +25,7 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: PsiParameterImpl
       annotations: []
       callableId: null
       contextParameters: []
@@ -44,6 +48,8 @@ KaConstructorSymbol:
       name: _count
       origin: JAVA_SOURCE
       primaryConstructorProperty: null
+      psi: PsiParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

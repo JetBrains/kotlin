@@ -4,6 +4,7 @@ KtNameReferenceExpression(64,68): 'this'
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
+        anchorPsi: KtTypeReference
         annotations: []
         callableId: null
         contextParameters: []
@@ -20,6 +21,8 @@ KtNameReferenceExpression(64,68): 'this'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaKotlinPropertySymbol(/Foo.foo)
+        psi: KtTypeReference
+        realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

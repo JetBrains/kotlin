@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
+import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.konan.config.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -27,11 +27,18 @@ import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.nio.channels.OverlappingFileLockException
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import org.jetbrains.kotlin.io.canonicalPathString
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.absolute
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.writeText
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
     val allDependencies = mutableSetOf<KotlinLibrary>()
@@ -56,7 +63,7 @@ class CacheBuilder(
         val compilationSpawner: CompilationSpawner
 ) {
     private val configuration = config.configuration
-    private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!.map { File(it) }
+    private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!.map { Path(Path(it).canonicalPathString()) }
     private val icEnabled = configuration[CommonConfigurationKeys.INCREMENTAL_COMPILATION]!!
     private val includedLibraries = configuration.konanIncludedLibraries.toSet()
     private val generateTestRunner = configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER)
@@ -96,21 +103,54 @@ class CacheBuilder(
     private val KotlinLibrary.isExternal: Boolean
         get() {
             val libraryCanonicalPath = Path(path.canonicalPathString())
-            return autoCacheableFrom.any { libraryCanonicalPath.startsWith(Path(it.canonicalPath)) }
+            return autoCacheableFrom.any { libraryCanonicalPath.startsWith(it) }
         }
 
     private val KotlinLibrary.isSubjectOfIC: Boolean
         get() = isExplicitlySpecifiedByUserInCLIArgument && !isExternal && !isNativeStdlib
 
-    // Only auto-cached external libraries contribute to the fingerprint: changes in the per-file cached dependencies are tracked
-    // by the dirty-file analysis, and the distribution libraries only change together with the compiler fingerprint.
+    // Among the IC'ed libraries only the cinterop ones are cached monolithically (see buildLibraryCache).
+    private val KotlinLibrary.isCachedPerFile: Boolean
+        get() = isSubjectOfIC && !isCInteropLibrary()
+
+    // Only monolithically cached non-distribution dependencies (auto-cached external libraries and IC'ed cinterop libraries)
+    // contribute to the fingerprint: changes in the per-file cached dependencies are tracked by the dirty-file analysis,
+    // and the distribution libraries only change together with the compiler fingerprint (they live in compiler's dist directory).
     private fun computeDependenciesFingerprint(library: KotlinLibrary): FingerprintHash {
-        val externalCachedDependencies = library.getAllTransitiveDependencies(uniqueNameToLibrary).filter {
-            !it.isSubjectOfIC && !it.isImplicitlyLoadedFromKotlinNativeDistribution && !it.isNativeStdlib
+        val monolithicallyCachedDependencies = library.getAllTransitiveDependencies(uniqueNameToLibrary).filter {
+            !it.isCachedPerFile && !it.isImplicitlyLoadedFromKotlinNativeDistribution && !it.isNativeStdlib
         }
-        return CachedLibraries.computeDependenciesFingerprint(externalCachedDependencies, uniqueNameToHash)
+        return CachedLibraries.computeDependenciesFingerprint(monolithicallyCachedDependencies, uniqueNameToHash)
     }
 
+    private val currentCompilerFingerprint by lazy { config.distribution.compilerFingerprint }
+
+    // Returns a human-readable reason if the cache of an IC'ed library cannot be reused, or null if it is up to date.
+    private fun staleCacheReason(library: KotlinLibrary, cache: CachedLibraries.Cache): String? {
+        val metadata = when (cache) {
+            is CachedLibraries.Cache.Monolithic -> cache.getMetadataOrNull() // A cinterop library.
+            is CachedLibraries.Cache.PerFile -> {
+                // All files of a per-file cache are produced against the same compiler and dependencies,
+                // so any file's metadata identifies the fingerprints of the whole cache.
+                val anyCachedFile = Path(cache.path).listDirectoryEntries().firstOrNull()?.name ?: return null
+                cache.getMetadataOrNull(anyCachedFile)
+            }
+        }
+        return when {
+            metadata == null ->
+                "has no metadata (it was produced by a compiler older than 2.2.20)"
+            metadata.compilerFingerprint != currentCompilerFingerprint ->
+                "was produced by a different compiler version"
+            metadata.dependenciesFingerprint != computeDependenciesFingerprint(library) ->
+                "was produced against different dependencies"
+            cache is CachedLibraries.Cache.Monolithic
+                    && metadata.hash != SerializedKlibFingerprint(library.path.toFile()).klibFingerprint ->
+                "does not match the current content of the library"
+            else -> null
+        }
+    }
+
+    @OptIn(ExperimentalPathApi::class)
     fun build() {
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
         val icedLibraries = mutableListOf<KotlinLibrary>()
@@ -157,37 +197,28 @@ class CacheBuilder(
         // This happens when a dependency is changed to an already-cached version, e.g. rolled back to the version it had before
         // an update (KT-87194). Each cache records the fingerprint of such dependencies, so force a full rebuild whenever
         // it doesn't match the current dependencies.
+        // The dirty-file check doesn't cover the monolithically cached cinterop libraries either: their caches are looked up
+        // by the library name, so a changed library would silently reuse the stale cache (KT-87273). Each cache records
+        // the fingerprint of its library, so force a rebuild whenever it doesn't match the current library.
         // Caches produced by compilers older than 2.2.20 don't have the metadata at all; rebuild them as well (KT-87202).
-        val currentCompilerFingerprint = config.distribution.compilerFingerprint
-        val staleCacheLibraries = icedLibraries.filter { library ->
-            // All files of a per-file cache are produced against the same compiler and dependencies,
-            // so any file's metadata identifies the fingerprints of the whole cache.
-            val cache = caches[library] as? CachedLibraries.Cache.PerFile ?: return@filter false
-            val anyCachedFile = File(cache.path).listFiles.firstOrNull()?.name ?: return@filter false
-            val metadata = cache.getMetadataOrNull(anyCachedFile)
-            when {
-                metadata == null -> {
-                    configuration.reportLog(
-                            "Incremental cache for ${library.path} has no metadata" +
-                                    " (it was produced by a compiler older than 2.2.20); rebuilding it")
-                    true
-                }
-                metadata.compilerFingerprint != currentCompilerFingerprint -> {
-                    configuration.reportLog(
-                            "Incremental cache for ${library.path} was produced by a different compiler version; rebuilding it")
-                    true
-                }
-                metadata.dependenciesFingerprint != computeDependenciesFingerprint(library) -> {
-                    configuration.reportLog(
-                            "Incremental cache for ${library.path} was produced against different dependencies; rebuilding it")
-                    true
-                }
-                else -> false
+        val staleCaches = icedLibraries.mapNotNull { library ->
+            val cache = caches[library] ?: return@mapNotNull null
+            staleCacheReason(library, cache)?.let { reason ->
+                configuration.reportLog("Incremental cache for ${library.path} $reason; rebuilding it")
+                library to cache
             }
         }
 
+        // Unlike per-file caches, which are rebuilt in place file by file, a stale monolithic cache is deleted and rebuilt
+        // right away: the dependent cache builds spawned below read it at its fixed name-keyed location.
+        val [staleMonolithicCaches, stalePerFileCaches] = staleCaches.partition { it.second is CachedLibraries.Cache.Monolithic }
+        staleMonolithicCaches.forEach { [library, cache] ->
+            Path(cache.rootDirectory).deleteRecursively()
+            lastRebuiltArchives.addAll(buildLibraryCache(library, false, emptyList()))
+        }
+
         // Every library dependable on one of the changed external libraries needs its cache to be fully rebuilt.
-        val needFullRebuild = findAllDependable(externalLibrariesToCache) + staleCacheLibraries
+        val needFullRebuild = findAllDependable(externalLibrariesToCache) + stalePerFileCaches.map { it.first }
 
         val libraryFilesWithFqNames = mutableMapOf<KotlinLibrary, List<FileWithFqName>>()
 
@@ -204,8 +235,8 @@ class CacheBuilder(
                 continue
             }
 
-            val libraryCacheRootDir = File(cache.path)
-            val cachedFiles = libraryCacheRootDir.listFiles.map { it.name }
+            val libraryCacheRootDir = Path(cache.path)
+            val cachedFiles = libraryCacheRootDir.listDirectoryEntries().map { it.name }
 
             val actualFilesWithFqNames = library.getFilesWithFqNames()
             libraryFilesWithFqNames[library] = actualFilesWithFqNames
@@ -279,7 +310,7 @@ class CacheBuilder(
 
         removedFiles.forEach {
             dirtyFiles.remove(it)
-            File(caches[it.library]!!.rootDirectory).child(it.file).deleteRecursively()
+            Path(caches[it.library]!!.rootDirectory).resolve(it.file).deleteRecursively()
         }
 
         val groupedDirtyFiles = dirtyFiles.groupBy { it.library }
@@ -353,38 +384,38 @@ class CacheBuilder(
                     config.autoCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash)
             else -> config.incrementalCacheDirectory!!
         }
-        val libraryCache = libraryCacheDirectory.child(
+        val libraryCache = libraryCacheDirectory.resolve(
                 if (makePerFileCache)
                     CachedLibraries.getPerFileCachedLibraryName(library)
                 else
                     CachedLibraries.getCachedLibraryName(library)
         )
-        libraryCacheDirectory.mkdirs()
+        libraryCacheDirectory.createDirectories()
 
         /*
          * Use lock file to not allow caches building in parallel. Actually, this is OK (there are some synchronization
          * mechanisms in the compiler) but may take up a lot of memory (especially when building stdlib cache). In particular,
          * this happens during some tests which specify certain binary options which won't allow to use the precompiled caches.
          */
-        val lockFileName = "${libraryCache.absolutePath}.lock"
+        val lockFileName = "${libraryCache.absolutePathString()}.lock"
         val lockFile = if (isExternal) {
             // External (system/auto) caches are shared between processes and may be built
             // in parallel so guard their construction with a file lock.
-            File(lockFileName)
+            Path(lockFileName)
         } else {
             // Incremental caches live in a per-project directory and are never built in parallel.
             null
         }
 
         buildUnderFileLock(lockFile, skipBuildAction = {
-            libraryCache.exists.also {
-                if (it) cacheRootDirectories[library] = libraryCache.absolutePath
+            libraryCache.exists().also {
+                if (it) cacheRootDirectories[library] = libraryCache.absolutePathString()
             }
         }) {
             tryBuildingLibraryCache(library, dependencies, dependencyCaches, libraryCacheDirectory, makePerFileCache, filesToCache, libraryCache)
         }
 
-        val cacheRootPath = Path(libraryCache.absolutePath)
+        val cacheRootPath = libraryCache.absolute()
 
         return if (makePerFileCache) {
             library.getPerFileCachedBinaryFilePaths(cacheRootPath, filesToCache)
@@ -416,7 +447,7 @@ class CacheBuilder(
      * filesystem inodes. That breaks mutual exclusion.
      */
     private fun buildUnderFileLock(
-            lockFile: File?,
+            lockFile: Path?,
             skipBuildAction: () -> Boolean,
             buildAction: () -> Unit,
     ) {
@@ -425,7 +456,7 @@ class CacheBuilder(
         }
 
         FileChannel.open(
-                Paths.get(lockFile.absolutePath),
+                lockFile.absolute(),
                 StandardOpenOption.CREATE,
                 StandardOpenOption.READ,
                 StandardOpenOption.WRITE
@@ -451,19 +482,20 @@ class CacheBuilder(
         }
     }
 
+    @OptIn(ExperimentalPathApi::class)
     private fun tryBuildingLibraryCache(
             library: KotlinLibrary,
             dependencies: List<KotlinLibrary>,
             dependencyCaches: List<String>,
-            libraryCacheDirectory: File,
+            libraryCacheDirectory: Path,
             makePerFileCache: Boolean,
             filesToCache: List<String>,
-            libraryCache: File,
+            libraryCache: Path,
     ) {
         try {
             // TODO: Run monolithic cache builds in parallel.
             spawnLibraryCacheBuild(library, dependencies, dependencyCaches, libraryCacheDirectory, makePerFileCache, filesToCache)
-            cacheRootDirectories[library] = libraryCache.absolutePath
+            cacheRootDirectories[library] = libraryCache.absolutePathString()
         } catch (t: Throwable) {
             try {
                 libraryCache.deleteRecursively()
@@ -498,7 +530,7 @@ class CacheBuilder(
             library: KotlinLibrary,
             dependencies: List<KotlinLibrary>,
             dependencyCaches: List<String>,
-            libraryCacheDirectory: File,
+            libraryCacheDirectory: Path,
             makePerFileCache: Boolean,
             filesToCache: List<String>,
     ) {
@@ -513,7 +545,7 @@ class CacheBuilder(
                     "-p static_cache -Xadd-cache=${library.path} \\\n" +
                             libraries.joinToString("\n") { "-library $it \\" } + "\n" +
                             cachedLibraries.entries.joinToString("\n") { "-Xcached-library=${it.key},${it.value} \\" } + "\n" +
-                            "-Xcache-directory=${libraryCacheDirectory.absolutePath}\n"
+                            "-Xcache-directory=${libraryCacheDirectory.absolutePathString()}\n"
             )
 
             setupCommonOptionsForCaches(config)
@@ -527,15 +559,15 @@ class CacheBuilder(
             konanLibraries = libraries
             val generateTestRunner = this@CacheBuilder.generateTestRunner
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
-                konanFriendLibraries = config.friendModuleFiles.map { it.absolutePath }
+                konanFriendLibraries = config.friendModuleFiles.map { it.absolutePathString() }
                 this.generateTestRunner = generateTestRunner
                 konanIncludedLibraries = listOf(libraryPath)
                 configuration.testDumpOutputPath?.let { testDumpOutputPath = it }
             }
             this.cachedLibraries = cachedLibraries
-            cacheDirectories = listOf(libraryCacheDirectory.absolutePath)
+            cacheDirectories = listOf(libraryCacheDirectory.absolutePathString())
             this.makePerFileCache = makePerFileCache
-            if (makePerFileCache)
+            if (library.isSubjectOfIC)
                 cachedLibraryDependenciesFingerprint = computeDependenciesFingerprint(library).toString()
             if (filesToCache.isNotEmpty())
                 this.filesToCache = filesToCache
@@ -544,7 +576,7 @@ class CacheBuilder(
 
     private fun dumpLastRebuiltArchivesToDisk(lastRebuiltArchives: List<Path>) {
         config.dumpBuiltCachesTo?.let { outputPath ->
-            val rebuiltArchivesFile = File(outputPath)
+            val rebuiltArchivesFile = Path(outputPath)
             val fileContent = if (lastRebuiltArchives.isEmpty())
                 ""
             else

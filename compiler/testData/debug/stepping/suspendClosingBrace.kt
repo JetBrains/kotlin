@@ -45,6 +45,7 @@ suspend fun box() {
 // test.kt:11 foo
 // test.kt:12 foo
 // GeneratedCodeMarkers.kt:... box
+// GeneratedCodeMarkers.kt:... box
 // test.kt:18 box
 
 // EXPECTATIONS NATIVE

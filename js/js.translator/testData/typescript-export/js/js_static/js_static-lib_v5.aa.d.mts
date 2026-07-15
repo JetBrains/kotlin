@@ -5,6 +5,10 @@ export declare class WithIgnoredCompanion {
     static bar(): string;
     static staticSuspend(): Promise<string>;
     static staticSuspendWithDefault(value?: string): Promise<string>;
+    static staticSuspendWithSeveralDefaults(prefix?: string, count?: number, suffix?: string): Promise<string>;
+    static staticSuspendWithRequiredAndDefault(required: string, optional?: string): Promise<string>;
+    static staticSuspendWithDependentDefault(prefix?: string, suffix?: string): Promise<string>;
+    static staticSuspendWithReceiverDefault(value?: string): Promise<string>;
     static get foo(): string;
     static get baz(): string;
     static get mutable(): string;
@@ -21,6 +25,7 @@ export declare class WithoutIgnoredCompanion {
     static bar(): string;
     static staticSuspend(): Promise<string>;
     static staticSuspendWithDefault(value?: string): Promise<string>;
+    static renamedStaticSuspendDefault(value?: string): Promise<string>;
     static get foo(): string;
     static get baz(): string;
     static get mutable(): string;

@@ -1,4 +1,5 @@
 KaSamConstructorSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: /MyTypeAlias
   contextParameters: []
@@ -13,6 +14,8 @@ KaSamConstructorSymbol:
   modality: FINAL
   name: MyTypeAlias
   origin: SAM_CONSTRUCTOR
+  psi: KtClass
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -21,6 +24,7 @@ KaSamConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -43,6 +47,8 @@ KaSamConstructorSymbol:
       name: function
       origin: SAM_CONSTRUCTOR
       primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []

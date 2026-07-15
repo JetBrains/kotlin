@@ -1,13 +1,20 @@
+context(c@Int)
 fun <S> foo1(t: Int): Int fromClass Y
   S from /Y.foo1
+  c: Int from /Y.foo1
   t: Int from /Y.foo1
 
+context(c@Int)
 fun <Q> foo2(t: Int) fromClass Y
   Q from /Y.foo2
+  c: Int from /Y.foo2
   t: Int from /Y.foo2
 
-fun <U> foo3() fromClass X
-  U from /X.foo3
+context(c@Int)
+fun <U> Int.foo3() fromClass Y
+  U from /Y.foo3
+  c: Int from /Y.foo3
+  receiver Int from /Y.foo3
 
 fun equals(other: Any?): Boolean fromClass kotlin/Any
   other: Any? from kotlin/Any.equals

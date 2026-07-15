@@ -1117,7 +1117,6 @@ object FirErrors : KtDiagnosticsContainer() {
 
     // Version Overloads
     val INVALID_VERSIONING_ON_NON_OPTIONAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_NON_OPTIONAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val INVALID_VERSIONING_ON_NONFINAL_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_NONFINAL_FUNCTION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INVALID_VERSIONING_ON_NONFINAL_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_NONFINAL_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INVALID_VERSIONING_ON_LOCAL_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_LOCAL_FUNCTION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INVALID_VERSIONING_ON_ANNOTATION_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_ANNOTATION_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
@@ -1127,7 +1126,6 @@ object FirErrors : KtDiagnosticsContainer() {
     val INVALID_VERSIONING_ON_VARARG: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_VARARG", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NON_ASCENDING_VERSION_ANNOTATION: KtDiagnosticFactory3<MavenComparableVersion?, MavenComparableVersion?, FirCallableSymbol<*>> = KtDiagnosticFactory3("NON_ASCENDING_VERSION_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Companion Blocks & Extensions
     val COMPANION_BLOCK_MEMBER_EXTENSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_BLOCK_MEMBER_EXTENSION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())

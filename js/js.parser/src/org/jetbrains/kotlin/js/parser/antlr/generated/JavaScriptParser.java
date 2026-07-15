@@ -7128,55 +7128,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class TernaryExpressionContext extends SingleExpressionImplContext {
-		public List<SingleExpressionImplContext> singleExpressionImpl() {
-			return getRuleContexts(SingleExpressionImplContext.class);
-		}
-		public SingleExpressionImplContext singleExpressionImpl(int i) {
-			return getRuleContext(SingleExpressionImplContext.class,i);
-		}
-		public TerminalNode QuestionMark() { return getToken(JavaScriptParser.QuestionMark, 0); }
-		public TerminalNode Colon() { return getToken(JavaScriptParser.Colon, 0); }
-		public TernaryExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterTernaryExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitTernaryExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitTernaryExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class LogicalAndExpressionContext extends SingleExpressionImplContext {
-		public List<SingleExpressionImplContext> singleExpressionImpl() {
-			return getRuleContexts(SingleExpressionImplContext.class);
-		}
-		public SingleExpressionImplContext singleExpressionImpl(int i) {
-			return getRuleContext(SingleExpressionImplContext.class,i);
-		}
-		public TerminalNode And() { return getToken(JavaScriptParser.And, 0); }
-		public LogicalAndExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterLogicalAndExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitLogicalAndExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitLogicalAndExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class PowerExpressionContext extends SingleExpressionImplContext {
 		public List<SingleExpressionImplContext> singleExpressionImpl() {
 			return getRuleContexts(SingleExpressionImplContext.class);
@@ -7197,67 +7148,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitPowerExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class PreIncrementExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode PlusPlus() { return getToken(JavaScriptParser.PlusPlus, 0); }
-		public SingleExpressionImplContext singleExpressionImpl() {
-			return getRuleContext(SingleExpressionImplContext.class,0);
-		}
-		public PreIncrementExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterPreIncrementExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitPreIncrementExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitPreIncrementExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class ObjectLiteralExpressionContext extends SingleExpressionImplContext {
-		public ObjectLiteralContext objectLiteral() {
-			return getRuleContext(ObjectLiteralContext.class,0);
-		}
-		public ObjectLiteralExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterObjectLiteralExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitObjectLiteralExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitObjectLiteralExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class MetaExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode New() { return getToken(JavaScriptParser.New, 0); }
-		public TerminalNode Dot() { return getToken(JavaScriptParser.Dot, 0); }
-		public TerminalNode Target() { return getToken(JavaScriptParser.Target, 0); }
-		public MetaExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterMetaExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitMetaExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitMetaExpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -7286,30 +7176,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class LogicalOrExpressionContext extends SingleExpressionImplContext {
-		public List<SingleExpressionImplContext> singleExpressionImpl() {
-			return getRuleContexts(SingleExpressionImplContext.class);
-		}
-		public SingleExpressionImplContext singleExpressionImpl(int i) {
-			return getRuleContext(SingleExpressionImplContext.class,i);
-		}
-		public TerminalNode Or() { return getToken(JavaScriptParser.Or, 0); }
-		public LogicalOrExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterLogicalOrExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitLogicalOrExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitLogicalOrExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class OptionalChainExpressionContext extends SingleExpressionImplContext {
 		public List<SingleExpressionImplContext> singleExpressionImpl() {
 			return getRuleContexts(SingleExpressionImplContext.class);
@@ -7330,68 +7196,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitOptionalChainExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class ImportMetaExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode Import() { return getToken(JavaScriptParser.Import, 0); }
-		public TerminalNode Dot() { return getToken(JavaScriptParser.Dot, 0); }
-		public TerminalNode Meta() { return getToken(JavaScriptParser.Meta, 0); }
-		public ImportMetaExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterImportMetaExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitImportMetaExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitImportMetaExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class NotExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode Not() { return getToken(JavaScriptParser.Not, 0); }
-		public SingleExpressionImplContext singleExpressionImpl() {
-			return getRuleContext(SingleExpressionImplContext.class,0);
-		}
-		public NotExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterNotExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitNotExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitNotExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class PreDecreaseExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode MinusMinus() { return getToken(JavaScriptParser.MinusMinus, 0); }
-		public SingleExpressionImplContext singleExpressionImpl() {
-			return getRuleContext(SingleExpressionImplContext.class,0);
-		}
-		public PreDecreaseExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterPreDecreaseExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitPreDecreaseExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitPreDecreaseExpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -7419,27 +7223,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class AwaitExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode Await() { return getToken(JavaScriptParser.Await, 0); }
-		public SingleExpressionImplContext singleExpressionImpl() {
-			return getRuleContext(SingleExpressionImplContext.class,0);
-		}
-		public AwaitExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterAwaitExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitAwaitExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitAwaitExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class ThisExpressionContext extends SingleExpressionImplContext {
 		public TerminalNode This() { return getToken(JavaScriptParser.This, 0); }
 		public ThisExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
@@ -7454,94 +7237,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitThisExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class FunctionExpressionContext extends SingleExpressionImplContext {
-		public AnonymousFunctionContext anonymousFunction() {
-			return getRuleContext(AnonymousFunctionContext.class,0);
-		}
-		public FunctionExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterFunctionExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitFunctionExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitFunctionExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class UnaryMinusExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode Minus() { return getToken(JavaScriptParser.Minus, 0); }
-		public SingleExpressionImplContext singleExpressionImpl() {
-			return getRuleContext(SingleExpressionImplContext.class,0);
-		}
-		public UnaryMinusExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterUnaryMinusExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitUnaryMinusExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitUnaryMinusExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class AssignmentExpressionContext extends SingleExpressionImplContext {
-		public SingleExpressionImplContext lhs;
-		public SingleExpressionImplContext rhs;
-		public TerminalNode Assign() { return getToken(JavaScriptParser.Assign, 0); }
-		public List<SingleExpressionImplContext> singleExpressionImpl() {
-			return getRuleContexts(SingleExpressionImplContext.class);
-		}
-		public SingleExpressionImplContext singleExpressionImpl(int i) {
-			return getRuleContext(SingleExpressionImplContext.class,i);
-		}
-		public AssignmentExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterAssignmentExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitAssignmentExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitAssignmentExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class PostDecreaseExpressionContext extends SingleExpressionImplContext {
-		public SingleExpressionImplContext singleExpressionImpl() {
-			return getRuleContext(SingleExpressionImplContext.class,0);
-		}
-		public TerminalNode MinusMinus() { return getToken(JavaScriptParser.MinusMinus, 0); }
-		public PostDecreaseExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterPostDecreaseExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitPostDecreaseExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitPostDecreaseExpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -7563,95 +7258,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitTypeofExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class InstanceofExpressionContext extends SingleExpressionImplContext {
-		public List<SingleExpressionImplContext> singleExpressionImpl() {
-			return getRuleContexts(SingleExpressionImplContext.class);
-		}
-		public SingleExpressionImplContext singleExpressionImpl(int i) {
-			return getRuleContext(SingleExpressionImplContext.class,i);
-		}
-		public TerminalNode Instanceof() { return getToken(JavaScriptParser.Instanceof, 0); }
-		public InstanceofExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterInstanceofExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitInstanceofExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitInstanceofExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class UnaryPlusExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode Plus() { return getToken(JavaScriptParser.Plus, 0); }
-		public SingleExpressionImplContext singleExpressionImpl() {
-			return getRuleContext(SingleExpressionImplContext.class,0);
-		}
-		public UnaryPlusExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterUnaryPlusExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitUnaryPlusExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitUnaryPlusExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class DeleteExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode Delete() { return getToken(JavaScriptParser.Delete, 0); }
-		public SingleExpressionImplContext singleExpressionImpl() {
-			return getRuleContext(SingleExpressionImplContext.class,0);
-		}
-		public DeleteExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterDeleteExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitDeleteExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitDeleteExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class ImportExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode Import() { return getToken(JavaScriptParser.Import, 0); }
-		public TerminalNode OpenParen() { return getToken(JavaScriptParser.OpenParen, 0); }
-		public SingleExpressionImplContext singleExpressionImpl() {
-			return getRuleContext(SingleExpressionImplContext.class,0);
-		}
-		public TerminalNode CloseParen() { return getToken(JavaScriptParser.CloseParen, 0); }
-		public ImportExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterImportExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitImportExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitImportExpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -7707,20 +7313,27 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class SuperExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode Super() { return getToken(JavaScriptParser.Super, 0); }
-		public SuperExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+	public static class ArrayDestructuringAssignmentExpressionContext extends SingleExpressionImplContext {
+		public SingleExpressionImplContext rhs;
+		public ArrayBindingPatternContext arrayBindingPattern() {
+			return getRuleContext(ArrayBindingPatternContext.class,0);
+		}
+		public TerminalNode Assign() { return getToken(JavaScriptParser.Assign, 0); }
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public ArrayDestructuringAssignmentExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterSuperExpression(this);
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterArrayDestructuringAssignmentExpression(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitSuperExpression(this);
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitArrayDestructuringAssignmentExpression(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitSuperExpression(this);
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitArrayDestructuringAssignmentExpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -7777,28 +7390,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class ParenthesizedExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode OpenParen() { return getToken(JavaScriptParser.OpenParen, 0); }
-		public ExpressionSequenceContext expressionSequence() {
-			return getRuleContext(ExpressionSequenceContext.class,0);
-		}
-		public TerminalNode CloseParen() { return getToken(JavaScriptParser.CloseParen, 0); }
-		public ParenthesizedExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterParenthesizedExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitParenthesizedExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitParenthesizedExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class AdditiveExpressionContext extends SingleExpressionImplContext {
 		public List<SingleExpressionImplContext> singleExpressionImpl() {
 			return getRuleContexts(SingleExpressionImplContext.class);
@@ -7847,49 +7438,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitRelationalExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class PostIncrementExpressionContext extends SingleExpressionImplContext {
-		public SingleExpressionImplContext singleExpressionImpl() {
-			return getRuleContext(SingleExpressionImplContext.class,0);
-		}
-		public TerminalNode PlusPlus() { return getToken(JavaScriptParser.PlusPlus, 0); }
-		public PostIncrementExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterPostIncrementExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitPostIncrementExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitPostIncrementExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class YieldExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode Yield() { return getToken(JavaScriptParser.Yield, 0); }
-		public TerminalNode YieldStar() { return getToken(JavaScriptParser.YieldStar, 0); }
-		public ExpressionSequenceContext expressionSequence() {
-			return getRuleContext(ExpressionSequenceContext.class,0);
-		}
-		public YieldExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterYieldExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitYieldExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitYieldExpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -8008,30 +7556,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class ClassExpressionContext extends SingleExpressionImplContext {
-		public TerminalNode Class() { return getToken(JavaScriptParser.Class, 0); }
-		public ClassTailContext classTail() {
-			return getRuleContext(ClassTailContext.class,0);
-		}
-		public IdentifierContext identifier() {
-			return getRuleContext(IdentifierContext.class,0);
-		}
-		public ClassExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterClassExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitClassExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitClassExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class MemberIndexExpressionContext extends SingleExpressionImplContext {
 		public SingleExpressionImplContext singleExpressionImpl() {
 			return getRuleContext(SingleExpressionImplContext.class,0);
@@ -8054,26 +7578,6 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitMemberIndexExpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class IdentifierExpressionContext extends SingleExpressionImplContext {
-		public IdentifierContext identifier() {
-			return getRuleContext(IdentifierContext.class,0);
-		}
-		public IdentifierExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterIdentifierExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitIdentifierExpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitIdentifierExpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -8175,6 +7679,552 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
+	public static class TernaryExpressionContext extends SingleExpressionImplContext {
+		public List<SingleExpressionImplContext> singleExpressionImpl() {
+			return getRuleContexts(SingleExpressionImplContext.class);
+		}
+		public SingleExpressionImplContext singleExpressionImpl(int i) {
+			return getRuleContext(SingleExpressionImplContext.class,i);
+		}
+		public TerminalNode QuestionMark() { return getToken(JavaScriptParser.QuestionMark, 0); }
+		public TerminalNode Colon() { return getToken(JavaScriptParser.Colon, 0); }
+		public TernaryExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterTernaryExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitTernaryExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitTernaryExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class LogicalAndExpressionContext extends SingleExpressionImplContext {
+		public List<SingleExpressionImplContext> singleExpressionImpl() {
+			return getRuleContexts(SingleExpressionImplContext.class);
+		}
+		public SingleExpressionImplContext singleExpressionImpl(int i) {
+			return getRuleContext(SingleExpressionImplContext.class,i);
+		}
+		public TerminalNode And() { return getToken(JavaScriptParser.And, 0); }
+		public LogicalAndExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterLogicalAndExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitLogicalAndExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitLogicalAndExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class PreIncrementExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode PlusPlus() { return getToken(JavaScriptParser.PlusPlus, 0); }
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public PreIncrementExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterPreIncrementExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitPreIncrementExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitPreIncrementExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ObjectLiteralExpressionContext extends SingleExpressionImplContext {
+		public ObjectLiteralContext objectLiteral() {
+			return getRuleContext(ObjectLiteralContext.class,0);
+		}
+		public ObjectLiteralExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterObjectLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitObjectLiteralExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitObjectLiteralExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class MetaExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode New() { return getToken(JavaScriptParser.New, 0); }
+		public TerminalNode Dot() { return getToken(JavaScriptParser.Dot, 0); }
+		public TerminalNode Target() { return getToken(JavaScriptParser.Target, 0); }
+		public MetaExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterMetaExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitMetaExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitMetaExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class LogicalOrExpressionContext extends SingleExpressionImplContext {
+		public List<SingleExpressionImplContext> singleExpressionImpl() {
+			return getRuleContexts(SingleExpressionImplContext.class);
+		}
+		public SingleExpressionImplContext singleExpressionImpl(int i) {
+			return getRuleContext(SingleExpressionImplContext.class,i);
+		}
+		public TerminalNode Or() { return getToken(JavaScriptParser.Or, 0); }
+		public LogicalOrExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterLogicalOrExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitLogicalOrExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitLogicalOrExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ImportMetaExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode Import() { return getToken(JavaScriptParser.Import, 0); }
+		public TerminalNode Dot() { return getToken(JavaScriptParser.Dot, 0); }
+		public TerminalNode Meta() { return getToken(JavaScriptParser.Meta, 0); }
+		public ImportMetaExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterImportMetaExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitImportMetaExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitImportMetaExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class NotExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode Not() { return getToken(JavaScriptParser.Not, 0); }
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public NotExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterNotExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitNotExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitNotExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class PreDecreaseExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode MinusMinus() { return getToken(JavaScriptParser.MinusMinus, 0); }
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public PreDecreaseExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterPreDecreaseExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitPreDecreaseExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitPreDecreaseExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class AwaitExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode Await() { return getToken(JavaScriptParser.Await, 0); }
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public AwaitExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterAwaitExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitAwaitExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitAwaitExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class FunctionExpressionContext extends SingleExpressionImplContext {
+		public AnonymousFunctionContext anonymousFunction() {
+			return getRuleContext(AnonymousFunctionContext.class,0);
+		}
+		public FunctionExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterFunctionExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitFunctionExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitFunctionExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class UnaryMinusExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode Minus() { return getToken(JavaScriptParser.Minus, 0); }
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public UnaryMinusExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterUnaryMinusExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitUnaryMinusExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitUnaryMinusExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class AssignmentExpressionContext extends SingleExpressionImplContext {
+		public SingleExpressionImplContext lhs;
+		public SingleExpressionImplContext rhs;
+		public TerminalNode Assign() { return getToken(JavaScriptParser.Assign, 0); }
+		public List<SingleExpressionImplContext> singleExpressionImpl() {
+			return getRuleContexts(SingleExpressionImplContext.class);
+		}
+		public SingleExpressionImplContext singleExpressionImpl(int i) {
+			return getRuleContext(SingleExpressionImplContext.class,i);
+		}
+		public AssignmentExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterAssignmentExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitAssignmentExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitAssignmentExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class PostDecreaseExpressionContext extends SingleExpressionImplContext {
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public TerminalNode MinusMinus() { return getToken(JavaScriptParser.MinusMinus, 0); }
+		public PostDecreaseExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterPostDecreaseExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitPostDecreaseExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitPostDecreaseExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class InstanceofExpressionContext extends SingleExpressionImplContext {
+		public List<SingleExpressionImplContext> singleExpressionImpl() {
+			return getRuleContexts(SingleExpressionImplContext.class);
+		}
+		public SingleExpressionImplContext singleExpressionImpl(int i) {
+			return getRuleContext(SingleExpressionImplContext.class,i);
+		}
+		public TerminalNode Instanceof() { return getToken(JavaScriptParser.Instanceof, 0); }
+		public InstanceofExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterInstanceofExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitInstanceofExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitInstanceofExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class UnaryPlusExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode Plus() { return getToken(JavaScriptParser.Plus, 0); }
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public UnaryPlusExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterUnaryPlusExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitUnaryPlusExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitUnaryPlusExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class DeleteExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode Delete() { return getToken(JavaScriptParser.Delete, 0); }
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public DeleteExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterDeleteExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitDeleteExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitDeleteExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ImportExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode Import() { return getToken(JavaScriptParser.Import, 0); }
+		public TerminalNode OpenParen() { return getToken(JavaScriptParser.OpenParen, 0); }
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public TerminalNode CloseParen() { return getToken(JavaScriptParser.CloseParen, 0); }
+		public ImportExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterImportExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitImportExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitImportExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class SuperExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode Super() { return getToken(JavaScriptParser.Super, 0); }
+		public SuperExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterSuperExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitSuperExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitSuperExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ParenthesizedExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode OpenParen() { return getToken(JavaScriptParser.OpenParen, 0); }
+		public ExpressionSequenceContext expressionSequence() {
+			return getRuleContext(ExpressionSequenceContext.class,0);
+		}
+		public TerminalNode CloseParen() { return getToken(JavaScriptParser.CloseParen, 0); }
+		public ParenthesizedExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterParenthesizedExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitParenthesizedExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitParenthesizedExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class PostIncrementExpressionContext extends SingleExpressionImplContext {
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public TerminalNode PlusPlus() { return getToken(JavaScriptParser.PlusPlus, 0); }
+		public PostIncrementExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterPostIncrementExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitPostIncrementExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitPostIncrementExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ObjectDestructuringAssignmentExpressionContext extends SingleExpressionImplContext {
+		public SingleExpressionImplContext rhs;
+		public ObjectBindingPatternContext objectBindingPattern() {
+			return getRuleContext(ObjectBindingPatternContext.class,0);
+		}
+		public TerminalNode Assign() { return getToken(JavaScriptParser.Assign, 0); }
+		public SingleExpressionImplContext singleExpressionImpl() {
+			return getRuleContext(SingleExpressionImplContext.class,0);
+		}
+		public ObjectDestructuringAssignmentExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterObjectDestructuringAssignmentExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitObjectDestructuringAssignmentExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitObjectDestructuringAssignmentExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class YieldExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode Yield() { return getToken(JavaScriptParser.Yield, 0); }
+		public TerminalNode YieldStar() { return getToken(JavaScriptParser.YieldStar, 0); }
+		public ExpressionSequenceContext expressionSequence() {
+			return getRuleContext(ExpressionSequenceContext.class,0);
+		}
+		public YieldExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterYieldExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitYieldExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitYieldExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ClassExpressionContext extends SingleExpressionImplContext {
+		public TerminalNode Class() { return getToken(JavaScriptParser.Class, 0); }
+		public ClassTailContext classTail() {
+			return getRuleContext(ClassTailContext.class,0);
+		}
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
+		}
+		public ClassExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterClassExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitClassExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitClassExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class IdentifierExpressionContext extends SingleExpressionImplContext {
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
+		}
+		public IdentifierExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterIdentifierExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitIdentifierExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitIdentifierExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class CoalesceExpressionContext extends SingleExpressionImplContext {
 		public List<SingleExpressionImplContext> singleExpressionImpl() {
 			return getRuleContexts(SingleExpressionImplContext.class);
@@ -8215,7 +8265,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(982);
+			setState(990);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,113,_ctx) ) {
 			case 1:
@@ -8283,7 +8333,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(934);
 				match(New);
 				setState(935);
-				singleExpressionImpl(43);
+				singleExpressionImpl(45);
 				}
 				break;
 			case 6:
@@ -8320,7 +8370,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(942);
 				match(Delete);
 				setState(943);
-				singleExpressionImpl(37);
+				singleExpressionImpl(39);
 				}
 				break;
 			case 9:
@@ -8331,7 +8381,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(944);
 				match(Void);
 				setState(945);
-				singleExpressionImpl(36);
+				singleExpressionImpl(38);
 				}
 				break;
 			case 10:
@@ -8342,7 +8392,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(946);
 				match(Typeof);
 				setState(947);
-				singleExpressionImpl(35);
+				singleExpressionImpl(37);
 				}
 				break;
 			case 11:
@@ -8353,7 +8403,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(948);
 				match(PlusPlus);
 				setState(949);
-				singleExpressionImpl(34);
+				singleExpressionImpl(36);
 				}
 				break;
 			case 12:
@@ -8364,7 +8414,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(950);
 				match(MinusMinus);
 				setState(951);
-				singleExpressionImpl(33);
+				singleExpressionImpl(35);
 				}
 				break;
 			case 13:
@@ -8375,7 +8425,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(952);
 				match(Plus);
 				setState(953);
-				singleExpressionImpl(32);
+				singleExpressionImpl(34);
 				}
 				break;
 			case 14:
@@ -8386,7 +8436,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(954);
 				match(Minus);
 				setState(955);
-				singleExpressionImpl(31);
+				singleExpressionImpl(33);
 				}
 				break;
 			case 15:
@@ -8397,7 +8447,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(956);
 				match(BitNot);
 				setState(957);
-				singleExpressionImpl(30);
+				singleExpressionImpl(32);
 				}
 				break;
 			case 16:
@@ -8408,7 +8458,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(958);
 				match(Not);
 				setState(959);
-				singleExpressionImpl(29);
+				singleExpressionImpl(31);
 				}
 				break;
 			case 17:
@@ -8419,7 +8469,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(960);
 				match(Await);
 				setState(961);
-				singleExpressionImpl(28);
+				singleExpressionImpl(30);
 				}
 				break;
 			case 18:
@@ -8504,38 +8554,64 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				break;
 			case 24:
 				{
-				_localctx = new ArrayLiteralExpressionContext(_localctx);
+				_localctx = new ObjectDestructuringAssignmentExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(976);
-				arrayLiteral();
+				objectBindingPattern();
+				setState(977);
+				match(Assign);
+				setState(978);
+				((ObjectDestructuringAssignmentExpressionContext)_localctx).rhs = singleExpressionImpl(5);
 				}
 				break;
 			case 25:
 				{
-				_localctx = new ObjectLiteralExpressionContext(_localctx);
+				_localctx = new ArrayDestructuringAssignmentExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(977);
-				objectLiteral();
+				setState(980);
+				arrayBindingPattern();
+				setState(981);
+				match(Assign);
+				setState(982);
+				((ArrayDestructuringAssignmentExpressionContext)_localctx).rhs = singleExpressionImpl(4);
 				}
 				break;
 			case 26:
 				{
+				_localctx = new ArrayLiteralExpressionContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(984);
+				arrayLiteral();
+				}
+				break;
+			case 27:
+				{
+				_localctx = new ObjectLiteralExpressionContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(985);
+				objectLiteral();
+				}
+				break;
+			case 28:
+				{
 				_localctx = new ParenthesizedExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(978);
+				setState(986);
 				match(OpenParen);
-				setState(979);
+				setState(987);
 				expressionSequence(0);
-				setState(980);
+				setState(988);
 				match(CloseParen);
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(1071);
+			setState(1079);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,118,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -8543,40 +8619,40 @@ public class JavaScriptParser extends JavaScriptParserBase {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(1069);
+					setState(1077);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,117,_ctx) ) {
 					case 1:
 						{
 						_localctx = new OptionalChainExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(984);
-						if (!(precpred(_ctx, 48))) throw new FailedPredicateException(this, "precpred(_ctx, 48)");
-						setState(985);
+						setState(992);
+						if (!(precpred(_ctx, 50))) throw new FailedPredicateException(this, "precpred(_ctx, 50)");
+						setState(993);
 						match(QuestionMarkDot);
-						setState(986);
-						singleExpressionImpl(49);
+						setState(994);
+						singleExpressionImpl(51);
 						}
 						break;
 					case 2:
 						{
 						_localctx = new PowerExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(987);
-						if (!(precpred(_ctx, 27))) throw new FailedPredicateException(this, "precpred(_ctx, 27)");
-						setState(988);
+						setState(995);
+						if (!(precpred(_ctx, 29))) throw new FailedPredicateException(this, "precpred(_ctx, 29)");
+						setState(996);
 						match(Power);
-						setState(989);
-						singleExpressionImpl(27);
+						setState(997);
+						singleExpressionImpl(29);
 						}
 						break;
 					case 3:
 						{
 						_localctx = new MultiplicativeExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(990);
-						if (!(precpred(_ctx, 26))) throw new FailedPredicateException(this, "precpred(_ctx, 26)");
-						setState(991);
+						setState(998);
+						if (!(precpred(_ctx, 28))) throw new FailedPredicateException(this, "precpred(_ctx, 28)");
+						setState(999);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 469762048L) != 0)) ) {
 						_errHandler.recoverInline(this);
@@ -8586,17 +8662,17 @@ public class JavaScriptParser extends JavaScriptParserBase {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(992);
-						singleExpressionImpl(27);
+						setState(1000);
+						singleExpressionImpl(29);
 						}
 						break;
 					case 4:
 						{
 						_localctx = new AdditiveExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(993);
-						if (!(precpred(_ctx, 25))) throw new FailedPredicateException(this, "precpred(_ctx, 25)");
-						setState(994);
+						setState(1001);
+						if (!(precpred(_ctx, 27))) throw new FailedPredicateException(this, "precpred(_ctx, 27)");
+						setState(1002);
 						_la = _input.LA(1);
 						if ( !(_la==Plus || _la==Minus) ) {
 						_errHandler.recoverInline(this);
@@ -8606,29 +8682,29 @@ public class JavaScriptParser extends JavaScriptParserBase {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(995);
-						singleExpressionImpl(26);
+						setState(1003);
+						singleExpressionImpl(28);
 						}
 						break;
 					case 5:
 						{
 						_localctx = new CoalesceExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(996);
-						if (!(precpred(_ctx, 24))) throw new FailedPredicateException(this, "precpred(_ctx, 24)");
-						setState(997);
+						setState(1004);
+						if (!(precpred(_ctx, 26))) throw new FailedPredicateException(this, "precpred(_ctx, 26)");
+						setState(1005);
 						match(NullCoalesce);
-						setState(998);
-						singleExpressionImpl(25);
+						setState(1006);
+						singleExpressionImpl(27);
 						}
 						break;
 					case 6:
 						{
 						_localctx = new BitShiftExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(999);
-						if (!(precpred(_ctx, 23))) throw new FailedPredicateException(this, "precpred(_ctx, 23)");
-						setState(1000);
+						setState(1007);
+						if (!(precpred(_ctx, 25))) throw new FailedPredicateException(this, "precpred(_ctx, 25)");
+						setState(1008);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 30064771072L) != 0)) ) {
 						_errHandler.recoverInline(this);
@@ -8638,17 +8714,17 @@ public class JavaScriptParser extends JavaScriptParserBase {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(1001);
-						singleExpressionImpl(24);
+						setState(1009);
+						singleExpressionImpl(26);
 						}
 						break;
 					case 7:
 						{
 						_localctx = new RelationalExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1002);
-						if (!(precpred(_ctx, 22))) throw new FailedPredicateException(this, "precpred(_ctx, 22)");
-						setState(1003);
+						setState(1010);
+						if (!(precpred(_ctx, 24))) throw new FailedPredicateException(this, "precpred(_ctx, 24)");
+						setState(1011);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 515396075520L) != 0)) ) {
 						_errHandler.recoverInline(this);
@@ -8658,41 +8734,41 @@ public class JavaScriptParser extends JavaScriptParserBase {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(1004);
-						singleExpressionImpl(23);
+						setState(1012);
+						singleExpressionImpl(25);
 						}
 						break;
 					case 8:
 						{
 						_localctx = new InstanceofExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1005);
-						if (!(precpred(_ctx, 21))) throw new FailedPredicateException(this, "precpred(_ctx, 21)");
-						setState(1006);
+						setState(1013);
+						if (!(precpred(_ctx, 23))) throw new FailedPredicateException(this, "precpred(_ctx, 23)");
+						setState(1014);
 						match(Instanceof);
-						setState(1007);
-						singleExpressionImpl(22);
+						setState(1015);
+						singleExpressionImpl(24);
 						}
 						break;
 					case 9:
 						{
 						_localctx = new InExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1008);
-						if (!(precpred(_ctx, 20))) throw new FailedPredicateException(this, "precpred(_ctx, 20)");
-						setState(1009);
+						setState(1016);
+						if (!(precpred(_ctx, 22))) throw new FailedPredicateException(this, "precpred(_ctx, 22)");
+						setState(1017);
 						match(In);
-						setState(1010);
-						singleExpressionImpl(21);
+						setState(1018);
+						singleExpressionImpl(23);
 						}
 						break;
 					case 10:
 						{
 						_localctx = new EqualityExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1011);
-						if (!(precpred(_ctx, 19))) throw new FailedPredicateException(this, "precpred(_ctx, 19)");
-						setState(1012);
+						setState(1019);
+						if (!(precpred(_ctx, 21))) throw new FailedPredicateException(this, "precpred(_ctx, 21)");
+						setState(1020);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 8246337208320L) != 0)) ) {
 						_errHandler.recoverInline(this);
@@ -8702,84 +8778,84 @@ public class JavaScriptParser extends JavaScriptParserBase {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(1013);
-						singleExpressionImpl(20);
+						setState(1021);
+						singleExpressionImpl(22);
 						}
 						break;
 					case 11:
 						{
 						_localctx = new BitAndExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1014);
-						if (!(precpred(_ctx, 18))) throw new FailedPredicateException(this, "precpred(_ctx, 18)");
-						setState(1015);
+						setState(1022);
+						if (!(precpred(_ctx, 20))) throw new FailedPredicateException(this, "precpred(_ctx, 20)");
+						setState(1023);
 						match(BitAnd);
-						setState(1016);
-						singleExpressionImpl(19);
+						setState(1024);
+						singleExpressionImpl(21);
 						}
 						break;
 					case 12:
 						{
 						_localctx = new BitXOrExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1017);
-						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
-						setState(1018);
+						setState(1025);
+						if (!(precpred(_ctx, 19))) throw new FailedPredicateException(this, "precpred(_ctx, 19)");
+						setState(1026);
 						match(BitXOr);
-						setState(1019);
-						singleExpressionImpl(18);
+						setState(1027);
+						singleExpressionImpl(20);
 						}
 						break;
 					case 13:
 						{
 						_localctx = new BitOrExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1020);
-						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
-						setState(1021);
+						setState(1028);
+						if (!(precpred(_ctx, 18))) throw new FailedPredicateException(this, "precpred(_ctx, 18)");
+						setState(1029);
 						match(BitOr);
-						setState(1022);
-						singleExpressionImpl(17);
+						setState(1030);
+						singleExpressionImpl(19);
 						}
 						break;
 					case 14:
 						{
 						_localctx = new LogicalAndExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1023);
-						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
-						setState(1024);
+						setState(1031);
+						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
+						setState(1032);
 						match(And);
-						setState(1025);
-						singleExpressionImpl(16);
+						setState(1033);
+						singleExpressionImpl(18);
 						}
 						break;
 					case 15:
 						{
 						_localctx = new LogicalOrExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1026);
-						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
-						setState(1027);
+						setState(1034);
+						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
+						setState(1035);
 						match(Or);
-						setState(1028);
-						singleExpressionImpl(15);
+						setState(1036);
+						singleExpressionImpl(17);
 						}
 						break;
 					case 16:
 						{
 						_localctx = new TernaryExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1029);
-						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
-						setState(1030);
+						setState(1037);
+						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
+						setState(1038);
 						match(QuestionMark);
-						setState(1031);
+						setState(1039);
 						singleExpressionImpl(0);
-						setState(1032);
+						setState(1040);
 						match(Colon);
-						setState(1033);
-						singleExpressionImpl(13);
+						setState(1041);
+						singleExpressionImpl(15);
 						}
 						break;
 					case 17:
@@ -8787,12 +8863,12 @@ public class JavaScriptParser extends JavaScriptParserBase {
 						_localctx = new AssignmentExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						((AssignmentExpressionContext)_localctx).lhs = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1035);
-						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
-						setState(1036);
+						setState(1043);
+						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
+						setState(1044);
 						match(Assign);
-						setState(1037);
-						((AssignmentExpressionContext)_localctx).rhs = singleExpressionImpl(12);
+						setState(1045);
+						((AssignmentExpressionContext)_localctx).rhs = singleExpressionImpl(14);
 						}
 						break;
 					case 18:
@@ -8800,35 +8876,35 @@ public class JavaScriptParser extends JavaScriptParserBase {
 						_localctx = new AssignmentOperatorExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						((AssignmentOperatorExpressionContext)_localctx).lhs = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1038);
-						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
-						setState(1039);
+						setState(1046);
+						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
+						setState(1047);
 						assignmentOperator();
-						setState(1040);
-						((AssignmentOperatorExpressionContext)_localctx).rhs = singleExpressionImpl(11);
+						setState(1048);
+						((AssignmentOperatorExpressionContext)_localctx).rhs = singleExpressionImpl(13);
 						}
 						break;
 					case 19:
 						{
 						_localctx = new MemberIndexExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1042);
-						if (!(precpred(_ctx, 47))) throw new FailedPredicateException(this, "precpred(_ctx, 47)");
-						setState(1044);
+						setState(1050);
+						if (!(precpred(_ctx, 49))) throw new FailedPredicateException(this, "precpred(_ctx, 49)");
+						setState(1052);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 						if (_la==QuestionMarkDot) {
 							{
-							setState(1043);
+							setState(1051);
 							match(QuestionMarkDot);
 							}
 						}
 
-						setState(1046);
+						setState(1054);
 						match(OpenBracket);
-						setState(1047);
+						setState(1055);
 						expressionSequence(0);
-						setState(1048);
+						setState(1056);
 						match(CloseBracket);
 						}
 						break;
@@ -8836,31 +8912,31 @@ public class JavaScriptParser extends JavaScriptParserBase {
 						{
 						_localctx = new MemberDotExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1050);
-						if (!(precpred(_ctx, 46))) throw new FailedPredicateException(this, "precpred(_ctx, 46)");
-						setState(1052);
+						setState(1058);
+						if (!(precpred(_ctx, 48))) throw new FailedPredicateException(this, "precpred(_ctx, 48)");
+						setState(1060);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 						if (_la==QuestionMark) {
 							{
-							setState(1051);
+							setState(1059);
 							match(QuestionMark);
 							}
 						}
 
-						setState(1054);
+						setState(1062);
 						match(Dot);
-						setState(1056);
+						setState(1064);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 						if (_la==Hashtag) {
 							{
-							setState(1055);
+							setState(1063);
 							match(Hashtag);
 							}
 						}
 
-						setState(1058);
+						setState(1066);
 						identifierName();
 						}
 						break;
@@ -8868,9 +8944,9 @@ public class JavaScriptParser extends JavaScriptParserBase {
 						{
 						_localctx = new ArgumentsExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1059);
-						if (!(precpred(_ctx, 42))) throw new FailedPredicateException(this, "precpred(_ctx, 42)");
-						setState(1060);
+						setState(1067);
+						if (!(precpred(_ctx, 44))) throw new FailedPredicateException(this, "precpred(_ctx, 44)");
+						setState(1068);
 						arguments();
 						}
 						break;
@@ -8878,11 +8954,11 @@ public class JavaScriptParser extends JavaScriptParserBase {
 						{
 						_localctx = new PostIncrementExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1061);
-						if (!(precpred(_ctx, 39))) throw new FailedPredicateException(this, "precpred(_ctx, 39)");
-						setState(1062);
+						setState(1069);
+						if (!(precpred(_ctx, 41))) throw new FailedPredicateException(this, "precpred(_ctx, 41)");
+						setState(1070);
 						if (!(this.notLineTerminator())) throw new FailedPredicateException(this, "this.notLineTerminator()");
-						setState(1063);
+						setState(1071);
 						match(PlusPlus);
 						}
 						break;
@@ -8890,11 +8966,11 @@ public class JavaScriptParser extends JavaScriptParserBase {
 						{
 						_localctx = new PostDecreaseExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1064);
-						if (!(precpred(_ctx, 38))) throw new FailedPredicateException(this, "precpred(_ctx, 38)");
-						setState(1065);
+						setState(1072);
+						if (!(precpred(_ctx, 40))) throw new FailedPredicateException(this, "precpred(_ctx, 40)");
+						setState(1073);
 						if (!(this.notLineTerminator())) throw new FailedPredicateException(this, "this.notLineTerminator()");
-						setState(1066);
+						setState(1074);
 						match(MinusMinus);
 						}
 						break;
@@ -8902,16 +8978,16 @@ public class JavaScriptParser extends JavaScriptParserBase {
 						{
 						_localctx = new TemplateStringExpressionContext(new SingleExpressionImplContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_singleExpressionImpl);
-						setState(1067);
-						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
-						setState(1068);
+						setState(1075);
+						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
+						setState(1076);
 						templateStringLiteral();
 						}
 						break;
 					}
 					} 
 				}
-				setState(1073);
+				setState(1081);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,118,_ctx);
 			}
@@ -8959,9 +9035,9 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1074);
+			setState(1082);
 			match(Assign);
-			setState(1075);
+			setState(1083);
 			singleExpression();
 			}
 		}
@@ -9013,34 +9089,34 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		AssignableContext _localctx = new AssignableContext(_ctx, getState());
 		enterRule(_localctx, 160, RULE_assignable);
 		try {
-			setState(1081);
+			setState(1089);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,119,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1077);
+				setState(1085);
 				identifier();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1078);
+				setState(1086);
 				keyword();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(1079);
+				setState(1087);
 				arrayBindingPattern();
 				}
 				break;
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(1080);
+				setState(1088);
 				objectBindingPattern();
 				}
 				break;
@@ -9098,39 +9174,39 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1083);
+			setState(1091);
 			match(OpenBrace);
-			setState(1095);
+			setState(1103);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,122,_ctx) ) {
 			case 1:
 				{
-				setState(1084);
+				setState(1092);
 				propertyAssignment();
-				setState(1089);
+				setState(1097);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,120,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(1085);
+						setState(1093);
 						match(Comma);
-						setState(1086);
+						setState(1094);
 						propertyAssignment();
 						}
 						} 
 					}
-					setState(1091);
+					setState(1099);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,120,_ctx);
 				}
-				setState(1093);
+				setState(1101);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==Comma) {
 					{
-					setState(1092);
+					setState(1100);
 					match(Comma);
 					}
 				}
@@ -9138,7 +9214,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				}
 				break;
 			}
-			setState(1097);
+			setState(1105);
 			match(CloseBrace);
 			}
 		}
@@ -9244,14 +9320,14 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		enterRule(_localctx, 164, RULE_anonymousFunction);
 		int _la;
 		try {
-			setState(1120);
+			setState(1128);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,127,_ctx) ) {
 			case 1:
 				_localctx = new NamedFunctionContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1099);
+				setState(1107);
 				functionDeclaration();
 				}
 				break;
@@ -9259,43 +9335,43 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				_localctx = new AnonymousFunctionDeclContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1101);
+				setState(1109);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==Async) {
 					{
-					setState(1100);
+					setState(1108);
 					match(Async);
 					}
 				}
 
-				setState(1103);
+				setState(1111);
 				match(Function_);
-				setState(1105);
+				setState(1113);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==Multiply) {
 					{
-					setState(1104);
+					setState(1112);
 					match(Multiply);
 					}
 				}
 
-				setState(1107);
+				setState(1115);
 				match(OpenParen);
-				setState(1109);
+				setState(1117);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 4503599627370495L) != 0)) {
 					{
-					setState(1108);
+					setState(1116);
 					formalParameterList();
 					}
 				}
 
-				setState(1111);
+				setState(1119);
 				match(CloseParen);
-				setState(1112);
+				setState(1120);
 				functionBody();
 				}
 				break;
@@ -9303,21 +9379,21 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				_localctx = new ArrowFunctionContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(1114);
+				setState(1122);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,126,_ctx) ) {
 				case 1:
 					{
-					setState(1113);
+					setState(1121);
 					match(Async);
 					}
 					break;
 				}
-				setState(1116);
+				setState(1124);
 				arrowFunctionParameters();
-				setState(1117);
+				setState(1125);
 				match(ARROW);
-				setState(1118);
+				setState(1126);
 				arrowFunctionBody();
 				}
 				break;
@@ -9368,7 +9444,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		enterRule(_localctx, 166, RULE_arrowFunctionParameters);
 		int _la;
 		try {
-			setState(1128);
+			setState(1136);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NullLiteral:
@@ -9427,26 +9503,26 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Identifier:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1122);
+				setState(1130);
 				identifierName();
 				}
 				break;
 			case OpenParen:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1123);
+				setState(1131);
 				match(OpenParen);
-				setState(1125);
+				setState(1133);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 4503599627370495L) != 0)) {
 					{
-					setState(1124);
+					setState(1132);
 					formalParameterList();
 					}
 				}
 
-				setState(1127);
+				setState(1135);
 				match(CloseParen);
 				}
 				break;
@@ -9496,20 +9572,20 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		ArrowFunctionBodyContext _localctx = new ArrowFunctionBodyContext(_ctx, getState());
 		enterRule(_localctx, 168, RULE_arrowFunctionBody);
 		try {
-			setState(1132);
+			setState(1140);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,130,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1130);
+				setState(1138);
 				singleExpression();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1131);
+				setState(1139);
 				functionBody();
 				}
 				break;
@@ -9567,7 +9643,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1134);
+			setState(1142);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 2305561534236983296L) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -9628,41 +9704,41 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		LiteralContext _localctx = new LiteralContext(_ctx, getState());
 		enterRule(_localctx, 172, RULE_literal);
 		try {
-			setState(1143);
+			setState(1151);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NullLiteral:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1136);
+				setState(1144);
 				match(NullLiteral);
 				}
 				break;
 			case BooleanLiteral:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1137);
+				setState(1145);
 				match(BooleanLiteral);
 				}
 				break;
 			case StringLiteral:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(1138);
+				setState(1146);
 				match(StringLiteral);
 				}
 				break;
 			case BackTick:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(1139);
+				setState(1147);
 				templateStringLiteral();
 				}
 				break;
 			case RegularExpressionLiteral:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(1140);
+				setState(1148);
 				match(RegularExpressionLiteral);
 				}
 				break;
@@ -9673,7 +9749,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case BinaryIntegerLiteral:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(1141);
+				setState(1149);
 				numericLiteral();
 				}
 				break;
@@ -9683,7 +9759,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case BigDecimalIntegerLiteral:
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(1142);
+				setState(1150);
 				bigintLiteral();
 				}
 				break;
@@ -9740,23 +9816,23 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1145);
+			setState(1153);
 			match(BackTick);
-			setState(1149);
+			setState(1157);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==TemplateStringStartExpression || _la==TemplateStringAtom) {
 				{
 				{
-				setState(1146);
+				setState(1154);
 				templateStringAtom();
 				}
 				}
-				setState(1151);
+				setState(1159);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(1152);
+			setState(1160);
 			match(BackTick);
 			}
 		}
@@ -9802,24 +9878,24 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		TemplateStringAtomContext _localctx = new TemplateStringAtomContext(_ctx, getState());
 		enterRule(_localctx, 176, RULE_templateStringAtom);
 		try {
-			setState(1159);
+			setState(1167);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case TemplateStringAtom:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1154);
+				setState(1162);
 				match(TemplateStringAtom);
 				}
 				break;
 			case TemplateStringStartExpression:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1155);
+				setState(1163);
 				match(TemplateStringStartExpression);
-				setState(1156);
+				setState(1164);
 				singleExpression();
-				setState(1157);
+				setState(1165);
 				match(TemplateCloseBrace);
 				}
 				break;
@@ -9871,7 +9947,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1161);
+			setState(1169);
 			_la = _input.LA(1);
 			if ( !(((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 31L) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -9926,7 +10002,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1163);
+			setState(1171);
 			_la = _input.LA(1);
 			if ( !(((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & 15L) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -9982,11 +10058,11 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1165);
+			setState(1173);
 			if (!(this.n("get"))) throw new FailedPredicateException(this, "this.n(\"get\")");
-			setState(1166);
+			setState(1174);
 			identifier();
-			setState(1167);
+			setState(1175);
 			classElementName();
 			}
 		}
@@ -10034,11 +10110,11 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1169);
+			setState(1177);
 			if (!(this.n("set"))) throw new FailedPredicateException(this, "this.n(\"set\")");
-			setState(1170);
+			setState(1178);
 			identifier();
-			setState(1171);
+			setState(1179);
 			classElementName();
 			}
 		}
@@ -10084,20 +10160,20 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		IdentifierNameContext _localctx = new IdentifierNameContext(_ctx, getState());
 		enterRule(_localctx, 186, RULE_identifierName);
 		try {
-			setState(1175);
+			setState(1183);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,134,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1173);
+				setState(1181);
 				identifier();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1174);
+				setState(1182);
 				reservedWord();
 				}
 				break;
@@ -10151,7 +10227,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1177);
+			setState(1185);
 			_la = _input.LA(1);
 			if ( !(((((_la - 99)) & ~0x3f) == 0 && ((1L << (_la - 99)) & 58789903L) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -10204,7 +10280,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		ReservedWordContext _localctx = new ReservedWordContext(_ctx, getState());
 		enterRule(_localctx, 190, RULE_reservedWord);
 		try {
-			setState(1182);
+			setState(1190);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case Break:
@@ -10258,21 +10334,21 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Static:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1179);
+				setState(1187);
 				keyword();
 				}
 				break;
 			case NullLiteral:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1180);
+				setState(1188);
 				match(NullLiteral);
 				}
 				break;
 			case BooleanLiteral:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(1181);
+				setState(1189);
 				match(BooleanLiteral);
 				}
 				break;
@@ -10366,244 +10442,244 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		KeywordContext _localctx = new KeywordContext(_ctx, getState());
 		enterRule(_localctx, 192, RULE_keyword);
 		try {
-			setState(1232);
+			setState(1240);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case Break:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1184);
+				setState(1192);
 				match(Break);
 				}
 				break;
 			case Do:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1185);
+				setState(1193);
 				match(Do);
 				}
 				break;
 			case Instanceof:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(1186);
+				setState(1194);
 				match(Instanceof);
 				}
 				break;
 			case Typeof:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(1187);
+				setState(1195);
 				match(Typeof);
 				}
 				break;
 			case Case:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(1188);
+				setState(1196);
 				match(Case);
 				}
 				break;
 			case Else:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(1189);
+				setState(1197);
 				match(Else);
 				}
 				break;
 			case New:
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(1190);
+				setState(1198);
 				match(New);
 				}
 				break;
 			case Var:
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(1191);
+				setState(1199);
 				match(Var);
 				}
 				break;
 			case Catch:
 				enterOuterAlt(_localctx, 9);
 				{
-				setState(1192);
+				setState(1200);
 				match(Catch);
 				}
 				break;
 			case Finally:
 				enterOuterAlt(_localctx, 10);
 				{
-				setState(1193);
+				setState(1201);
 				match(Finally);
 				}
 				break;
 			case Return:
 				enterOuterAlt(_localctx, 11);
 				{
-				setState(1194);
+				setState(1202);
 				match(Return);
 				}
 				break;
 			case Void:
 				enterOuterAlt(_localctx, 12);
 				{
-				setState(1195);
+				setState(1203);
 				match(Void);
 				}
 				break;
 			case Continue:
 				enterOuterAlt(_localctx, 13);
 				{
-				setState(1196);
+				setState(1204);
 				match(Continue);
 				}
 				break;
 			case For:
 				enterOuterAlt(_localctx, 14);
 				{
-				setState(1197);
+				setState(1205);
 				match(For);
 				}
 				break;
 			case Switch:
 				enterOuterAlt(_localctx, 15);
 				{
-				setState(1198);
+				setState(1206);
 				match(Switch);
 				}
 				break;
 			case While:
 				enterOuterAlt(_localctx, 16);
 				{
-				setState(1199);
+				setState(1207);
 				match(While);
 				}
 				break;
 			case Debugger:
 				enterOuterAlt(_localctx, 17);
 				{
-				setState(1200);
+				setState(1208);
 				match(Debugger);
 				}
 				break;
 			case Function_:
 				enterOuterAlt(_localctx, 18);
 				{
-				setState(1201);
+				setState(1209);
 				match(Function_);
 				}
 				break;
 			case This:
 				enterOuterAlt(_localctx, 19);
 				{
-				setState(1202);
+				setState(1210);
 				match(This);
 				}
 				break;
 			case With:
 				enterOuterAlt(_localctx, 20);
 				{
-				setState(1203);
+				setState(1211);
 				match(With);
 				}
 				break;
 			case Default:
 				enterOuterAlt(_localctx, 21);
 				{
-				setState(1204);
+				setState(1212);
 				match(Default);
 				}
 				break;
 			case If:
 				enterOuterAlt(_localctx, 22);
 				{
-				setState(1205);
+				setState(1213);
 				match(If);
 				}
 				break;
 			case Throw:
 				enterOuterAlt(_localctx, 23);
 				{
-				setState(1206);
+				setState(1214);
 				match(Throw);
 				}
 				break;
 			case Delete:
 				enterOuterAlt(_localctx, 24);
 				{
-				setState(1207);
+				setState(1215);
 				match(Delete);
 				}
 				break;
 			case In:
 				enterOuterAlt(_localctx, 25);
 				{
-				setState(1208);
+				setState(1216);
 				match(In);
 				}
 				break;
 			case Try:
 				enterOuterAlt(_localctx, 26);
 				{
-				setState(1209);
+				setState(1217);
 				match(Try);
 				}
 				break;
 			case Class:
 				enterOuterAlt(_localctx, 27);
 				{
-				setState(1210);
+				setState(1218);
 				match(Class);
 				}
 				break;
 			case Enum:
 				enterOuterAlt(_localctx, 28);
 				{
-				setState(1211);
+				setState(1219);
 				match(Enum);
 				}
 				break;
 			case Extends:
 				enterOuterAlt(_localctx, 29);
 				{
-				setState(1212);
+				setState(1220);
 				match(Extends);
 				}
 				break;
 			case Super:
 				enterOuterAlt(_localctx, 30);
 				{
-				setState(1213);
+				setState(1221);
 				match(Super);
 				}
 				break;
 			case Const:
 				enterOuterAlt(_localctx, 31);
 				{
-				setState(1214);
+				setState(1222);
 				match(Const);
 				}
 				break;
 			case Export:
 				enterOuterAlt(_localctx, 32);
 				{
-				setState(1215);
+				setState(1223);
 				match(Export);
 				}
 				break;
 			case Import:
 				enterOuterAlt(_localctx, 33);
 				{
-				setState(1216);
+				setState(1224);
 				match(Import);
 				}
 				break;
 			case Implements:
 				enterOuterAlt(_localctx, 34);
 				{
-				setState(1217);
+				setState(1225);
 				match(Implements);
 				}
 				break;
@@ -10611,98 +10687,98 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case NonStrictLet:
 				enterOuterAlt(_localctx, 35);
 				{
-				setState(1218);
+				setState(1226);
 				let_();
 				}
 				break;
 			case Private:
 				enterOuterAlt(_localctx, 36);
 				{
-				setState(1219);
+				setState(1227);
 				match(Private);
 				}
 				break;
 			case Public:
 				enterOuterAlt(_localctx, 37);
 				{
-				setState(1220);
+				setState(1228);
 				match(Public);
 				}
 				break;
 			case Interface:
 				enterOuterAlt(_localctx, 38);
 				{
-				setState(1221);
+				setState(1229);
 				match(Interface);
 				}
 				break;
 			case Package:
 				enterOuterAlt(_localctx, 39);
 				{
-				setState(1222);
+				setState(1230);
 				match(Package);
 				}
 				break;
 			case Protected:
 				enterOuterAlt(_localctx, 40);
 				{
-				setState(1223);
+				setState(1231);
 				match(Protected);
 				}
 				break;
 			case Static:
 				enterOuterAlt(_localctx, 41);
 				{
-				setState(1224);
+				setState(1232);
 				match(Static);
 				}
 				break;
 			case Yield:
 				enterOuterAlt(_localctx, 42);
 				{
-				setState(1225);
+				setState(1233);
 				match(Yield);
 				}
 				break;
 			case YieldStar:
 				enterOuterAlt(_localctx, 43);
 				{
-				setState(1226);
+				setState(1234);
 				match(YieldStar);
 				}
 				break;
 			case Async:
 				enterOuterAlt(_localctx, 44);
 				{
-				setState(1227);
+				setState(1235);
 				match(Async);
 				}
 				break;
 			case Await:
 				enterOuterAlt(_localctx, 45);
 				{
-				setState(1228);
+				setState(1236);
 				match(Await);
 				}
 				break;
 			case From:
 				enterOuterAlt(_localctx, 46);
 				{
-				setState(1229);
+				setState(1237);
 				match(From);
 				}
 				break;
 			case As:
 				enterOuterAlt(_localctx, 47);
 				{
-				setState(1230);
+				setState(1238);
 				match(As);
 				}
 				break;
 			case Of:
 				enterOuterAlt(_localctx, 48);
 				{
-				setState(1231);
+				setState(1239);
 				match(Of);
 				}
 				break;
@@ -10751,7 +10827,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1234);
+			setState(1242);
 			_la = _input.LA(1);
 			if ( !(_la==StrictLet || _la==NonStrictLet) ) {
 			_errHandler.recoverInline(this);
@@ -10801,34 +10877,34 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		EosContext _localctx = new EosContext(_ctx, getState());
 		enterRule(_localctx, 196, RULE_eos);
 		try {
-			setState(1240);
+			setState(1248);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,137,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1236);
+				setState(1244);
 				match(SemiColon);
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1237);
+				setState(1245);
 				match(EOF);
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(1238);
+				setState(1246);
 				if (!(this.lineTerminatorAhead())) throw new FailedPredicateException(this, "this.lineTerminatorAhead()");
 				}
 				break;
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(1239);
+				setState(1247);
 				if (!(this.closeBrace())) throw new FailedPredicateException(this, "this.closeBrace()");
 				}
 				break;
@@ -10948,57 +11024,57 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		case 11:
 			return this.notLineTerminator();
 		case 12:
-			return precpred(_ctx, 48);
+			return precpred(_ctx, 50);
 		case 13:
-			return precpred(_ctx, 27);
+			return precpred(_ctx, 29);
 		case 14:
-			return precpred(_ctx, 26);
+			return precpred(_ctx, 28);
 		case 15:
-			return precpred(_ctx, 25);
+			return precpred(_ctx, 27);
 		case 16:
-			return precpred(_ctx, 24);
+			return precpred(_ctx, 26);
 		case 17:
-			return precpred(_ctx, 23);
+			return precpred(_ctx, 25);
 		case 18:
-			return precpred(_ctx, 22);
+			return precpred(_ctx, 24);
 		case 19:
-			return precpred(_ctx, 21);
+			return precpred(_ctx, 23);
 		case 20:
-			return precpred(_ctx, 20);
+			return precpred(_ctx, 22);
 		case 21:
-			return precpred(_ctx, 19);
+			return precpred(_ctx, 21);
 		case 22:
-			return precpred(_ctx, 18);
+			return precpred(_ctx, 20);
 		case 23:
-			return precpred(_ctx, 17);
+			return precpred(_ctx, 19);
 		case 24:
-			return precpred(_ctx, 16);
+			return precpred(_ctx, 18);
 		case 25:
-			return precpred(_ctx, 15);
+			return precpred(_ctx, 17);
 		case 26:
-			return precpred(_ctx, 14);
+			return precpred(_ctx, 16);
 		case 27:
-			return precpred(_ctx, 13);
+			return precpred(_ctx, 15);
 		case 28:
-			return precpred(_ctx, 12);
+			return precpred(_ctx, 14);
 		case 29:
-			return precpred(_ctx, 11);
+			return precpred(_ctx, 13);
 		case 30:
-			return precpred(_ctx, 47);
+			return precpred(_ctx, 49);
 		case 31:
-			return precpred(_ctx, 46);
+			return precpred(_ctx, 48);
 		case 32:
-			return precpred(_ctx, 42);
+			return precpred(_ctx, 44);
 		case 33:
-			return precpred(_ctx, 39);
+			return precpred(_ctx, 41);
 		case 34:
 			return this.notLineTerminator();
 		case 35:
-			return precpred(_ctx, 38);
+			return precpred(_ctx, 40);
 		case 36:
 			return this.notLineTerminator();
 		case 37:
-			return precpred(_ctx, 9);
+			return precpred(_ctx, 11);
 		}
 		return true;
 	}
@@ -11027,7 +11103,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u0085\u04db\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
+		"\u0004\u0001\u0085\u04e3\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
 		"\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004"+
 		"\u0002\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007"+
 		"\u0002\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b"+
@@ -11147,33 +11223,34 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
 		"N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
 		"N\u0001N\u0001N\u0003N\u03cb\bN\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
-		"N\u0001N\u0001N\u0001N\u0001N\u0003N\u03d7\bN\u0001N\u0001N\u0001N\u0001"+
+		"N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
+		"N\u0001N\u0001N\u0003N\u03df\bN\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
 		"N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
 		"N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
 		"N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
 		"N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
 		"N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
-		"N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0003N\u0415\bN\u0001N\u0001"+
-		"N\u0001N\u0001N\u0001N\u0001N\u0003N\u041d\bN\u0001N\u0001N\u0003N\u0421"+
-		"\bN\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001"+
-		"N\u0001N\u0005N\u042e\bN\nN\fN\u0431\tN\u0001O\u0001O\u0001O\u0001P\u0001"+
-		"P\u0001P\u0001P\u0003P\u043a\bP\u0001Q\u0001Q\u0001Q\u0001Q\u0005Q\u0440"+
-		"\bQ\nQ\fQ\u0443\tQ\u0001Q\u0003Q\u0446\bQ\u0003Q\u0448\bQ\u0001Q\u0001"+
-		"Q\u0001R\u0001R\u0003R\u044e\bR\u0001R\u0001R\u0003R\u0452\bR\u0001R\u0001"+
-		"R\u0003R\u0456\bR\u0001R\u0001R\u0001R\u0003R\u045b\bR\u0001R\u0001R\u0001"+
-		"R\u0001R\u0003R\u0461\bR\u0001S\u0001S\u0001S\u0003S\u0466\bS\u0001S\u0003"+
-		"S\u0469\bS\u0001T\u0001T\u0003T\u046d\bT\u0001U\u0001U\u0001V\u0001V\u0001"+
-		"V\u0001V\u0001V\u0001V\u0001V\u0003V\u0478\bV\u0001W\u0001W\u0005W\u047c"+
-		"\bW\nW\fW\u047f\tW\u0001W\u0001W\u0001X\u0001X\u0001X\u0001X\u0001X\u0003"+
-		"X\u0488\bX\u0001Y\u0001Y\u0001Z\u0001Z\u0001[\u0001[\u0001[\u0001[\u0001"+
-		"\\\u0001\\\u0001\\\u0001\\\u0001]\u0001]\u0003]\u0498\b]\u0001^\u0001"+
-		"^\u0001_\u0001_\u0001_\u0003_\u049f\b_\u0001`\u0001`\u0001`\u0001`\u0001"+
+		"N\u0001N\u0001N\u0001N\u0001N\u0003N\u041d\bN\u0001N\u0001N\u0001N\u0001"+
+		"N\u0001N\u0001N\u0003N\u0425\bN\u0001N\u0001N\u0003N\u0429\bN\u0001N\u0001"+
+		"N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0001N\u0005"+
+		"N\u0436\bN\nN\fN\u0439\tN\u0001O\u0001O\u0001O\u0001P\u0001P\u0001P\u0001"+
+		"P\u0003P\u0442\bP\u0001Q\u0001Q\u0001Q\u0001Q\u0005Q\u0448\bQ\nQ\fQ\u044b"+
+		"\tQ\u0001Q\u0003Q\u044e\bQ\u0003Q\u0450\bQ\u0001Q\u0001Q\u0001R\u0001"+
+		"R\u0003R\u0456\bR\u0001R\u0001R\u0003R\u045a\bR\u0001R\u0001R\u0003R\u045e"+
+		"\bR\u0001R\u0001R\u0001R\u0003R\u0463\bR\u0001R\u0001R\u0001R\u0001R\u0003"+
+		"R\u0469\bR\u0001S\u0001S\u0001S\u0003S\u046e\bS\u0001S\u0003S\u0471\b"+
+		"S\u0001T\u0001T\u0003T\u0475\bT\u0001U\u0001U\u0001V\u0001V\u0001V\u0001"+
+		"V\u0001V\u0001V\u0001V\u0003V\u0480\bV\u0001W\u0001W\u0005W\u0484\bW\n"+
+		"W\fW\u0487\tW\u0001W\u0001W\u0001X\u0001X\u0001X\u0001X\u0001X\u0003X"+
+		"\u0490\bX\u0001Y\u0001Y\u0001Z\u0001Z\u0001[\u0001[\u0001[\u0001[\u0001"+
+		"\\\u0001\\\u0001\\\u0001\\\u0001]\u0001]\u0003]\u04a0\b]\u0001^\u0001"+
+		"^\u0001_\u0001_\u0001_\u0003_\u04a7\b_\u0001`\u0001`\u0001`\u0001`\u0001"+
 		"`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001"+
 		"`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001"+
 		"`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001"+
 		"`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001`\u0001"+
-		"`\u0001`\u0001`\u0001`\u0003`\u04d1\b`\u0001a\u0001a\u0001b\u0001b\u0001"+
-		"b\u0001b\u0003b\u04d9\bb\u0001b\u0000\u0002\u0098\u009cc\u0000\u0002\u0004"+
+		"`\u0001`\u0001`\u0001`\u0003`\u04d9\b`\u0001a\u0001a\u0001b\u0001b\u0001"+
+		"b\u0001b\u0003b\u04e1\bb\u0001b\u0000\u0002\u0098\u009cc\u0000\u0002\u0004"+
 		"\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016\u0018\u001a\u001c\u001e \""+
 		"$&(*,.02468:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|~\u0080\u0082\u0084\u0086"+
 		"\u0088\u008a\u008c\u008e\u0090\u0092\u0094\u0096\u0098\u009a\u009c\u009e"+
@@ -11181,7 +11258,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u00b8\u00ba\u00bc\u00be\u00c0\u00c2\u00c4\u0000\f\u0003\u0000ffpp||\u0001"+
 		"\u0000fg\u0001\u0000\u001a\u001c\u0001\u0000\u0016\u0017\u0001\u0000 "+
 		"\"\u0001\u0000#&\u0001\u0000\'*\u0001\u00000<\u0001\u0000@D\u0001\u0000"+
-		"EH\u0004\u0000cfoossz|\u0001\u0000rs\u058e\u0000\u00c7\u0001\u0000\u0000"+
+		"EH\u0004\u0000cfoossz|\u0001\u0000rs\u0598\u0000\u00c7\u0001\u0000\u0000"+
 		"\u0000\u0002\u00ce\u0001\u0000\u0000\u0000\u0004\u00d3\u0001\u0000\u0000"+
 		"\u0000\u0006\u00d9\u0001\u0000\u0000\u0000\b\u00e4\u0001\u0000\u0000\u0000"+
 		"\n\u00e7\u0001\u0000\u0000\u0000\f\u00ff\u0001\u0000\u0000\u0000\u000e"+
@@ -11217,17 +11294,17 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u0000\u0090\u0367\u0001\u0000\u0000\u0000\u0092\u0371\u0001\u0000\u0000"+
 		"\u0000\u0094\u0373\u0001\u0000\u0000\u0000\u0096\u0384\u0001\u0000\u0000"+
 		"\u0000\u0098\u038a\u0001\u0000\u0000\u0000\u009a\u0395\u0001\u0000\u0000"+
-		"\u0000\u009c\u03d6\u0001\u0000\u0000\u0000\u009e\u0432\u0001\u0000\u0000"+
-		"\u0000\u00a0\u0439\u0001\u0000\u0000\u0000\u00a2\u043b\u0001\u0000\u0000"+
-		"\u0000\u00a4\u0460\u0001\u0000\u0000\u0000\u00a6\u0468\u0001\u0000\u0000"+
-		"\u0000\u00a8\u046c\u0001\u0000\u0000\u0000\u00aa\u046e\u0001\u0000\u0000"+
-		"\u0000\u00ac\u0477\u0001\u0000\u0000\u0000\u00ae\u0479\u0001\u0000\u0000"+
-		"\u0000\u00b0\u0487\u0001\u0000\u0000\u0000\u00b2\u0489\u0001\u0000\u0000"+
-		"\u0000\u00b4\u048b\u0001\u0000\u0000\u0000\u00b6\u048d\u0001\u0000\u0000"+
-		"\u0000\u00b8\u0491\u0001\u0000\u0000\u0000\u00ba\u0497\u0001\u0000\u0000"+
-		"\u0000\u00bc\u0499\u0001\u0000\u0000\u0000\u00be\u049e\u0001\u0000\u0000"+
-		"\u0000\u00c0\u04d0\u0001\u0000\u0000\u0000\u00c2\u04d2\u0001\u0000\u0000"+
-		"\u0000\u00c4\u04d8\u0001\u0000\u0000\u0000\u00c6\u00c8\u0005\u0001\u0000"+
+		"\u0000\u009c\u03de\u0001\u0000\u0000\u0000\u009e\u043a\u0001\u0000\u0000"+
+		"\u0000\u00a0\u0441\u0001\u0000\u0000\u0000\u00a2\u0443\u0001\u0000\u0000"+
+		"\u0000\u00a4\u0468\u0001\u0000\u0000\u0000\u00a6\u0470\u0001\u0000\u0000"+
+		"\u0000\u00a8\u0474\u0001\u0000\u0000\u0000\u00aa\u0476\u0001\u0000\u0000"+
+		"\u0000\u00ac\u047f\u0001\u0000\u0000\u0000\u00ae\u0481\u0001\u0000\u0000"+
+		"\u0000\u00b0\u048f\u0001\u0000\u0000\u0000\u00b2\u0491\u0001\u0000\u0000"+
+		"\u0000\u00b4\u0493\u0001\u0000\u0000\u0000\u00b6\u0495\u0001\u0000\u0000"+
+		"\u0000\u00b8\u0499\u0001\u0000\u0000\u0000\u00ba\u049f\u0001\u0000\u0000"+
+		"\u0000\u00bc\u04a1\u0001\u0000\u0000\u0000\u00be\u04a6\u0001\u0000\u0000"+
+		"\u0000\u00c0\u04d8\u0001\u0000\u0000\u0000\u00c2\u04da\u0001\u0000\u0000"+
+		"\u0000\u00c4\u04e0\u0001\u0000\u0000\u0000\u00c6\u00c8\u0005\u0001\u0000"+
 		"\u0000\u00c7\u00c6\u0001\u0000\u0000\u0000\u00c7\u00c8\u0001\u0000\u0000"+
 		"\u0000\u00c8\u00ca\u0001\u0000\u0000\u0000\u00c9\u00cb\u0003z=\u0000\u00ca"+
 		"\u00c9\u0001\u0000\u0000\u0000\u00ca\u00cb\u0001\u0000\u0000\u0000\u00cb"+
@@ -11634,229 +11711,233 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u0000\u0000\u0000\u0392\u0393\u0001\u0000\u0000\u0000\u0393\u0099\u0001"+
 		"\u0000\u0000\u0000\u0394\u0392\u0001\u0000\u0000\u0000\u0395\u0396\u0003"+
 		"\u009cN\u0000\u0396\u009b\u0001\u0000\u0000\u0000\u0397\u0398\u0006N\uffff"+
-		"\uffff\u0000\u0398\u03d7\u0003\u00a4R\u0000\u0399\u039b\u0005h\u0000\u0000"+
+		"\uffff\u0000\u0398\u03df\u0003\u00a4R\u0000\u0399\u039b\u0005h\u0000\u0000"+
 		"\u039a\u039c\u0003\u00bc^\u0000\u039b\u039a\u0001\u0000\u0000\u0000\u039b"+
 		"\u039c\u0001\u0000\u0000\u0000\u039c\u039d\u0001\u0000\u0000\u0000\u039d"+
-		"\u03d7\u0003f3\u0000\u039e\u039f\u0005O\u0000\u0000\u039f\u03a0\u0003"+
-		"\u00bc^\u0000\u03a0\u03a1\u0003\u0094J\u0000\u03a1\u03d7\u0001\u0000\u0000"+
+		"\u03df\u0003f3\u0000\u039e\u039f\u0005O\u0000\u0000\u039f\u03a0\u0003"+
+		"\u00bc^\u0000\u03a0\u03a1\u0003\u0094J\u0000\u03a1\u03df\u0001\u0000\u0000"+
 		"\u0000\u03a2\u03a3\u0005O\u0000\u0000\u03a3\u03a4\u0003\u009cN\u0000\u03a4"+
-		"\u03a5\u0003\u0094J\u0000\u03a5\u03d7\u0001\u0000\u0000\u0000\u03a6\u03a7"+
-		"\u0005O\u0000\u0000\u03a7\u03d7\u0003\u009cN+\u03a8\u03a9\u0005O\u0000"+
-		"\u0000\u03a9\u03aa\u0005\u0013\u0000\u0000\u03aa\u03d7\u0005{\u0000\u0000"+
+		"\u03a5\u0003\u0094J\u0000\u03a5\u03df\u0001\u0000\u0000\u0000\u03a6\u03a7"+
+		"\u0005O\u0000\u0000\u03a7\u03df\u0003\u009cN-\u03a8\u03a9\u0005O\u0000"+
+		"\u0000\u03a9\u03aa\u0005\u0013\u0000\u0000\u03aa\u03df\u0005{\u0000\u0000"+
 		"\u03ab\u03ac\u0005n\u0000\u0000\u03ac\u03ad\u0005\u0013\u0000\u0000\u03ad"+
-		"\u03d7\u0005z\u0000\u0000\u03ae\u03af\u0005`\u0000\u0000\u03af\u03d7\u0003"+
-		"\u009cN%\u03b0\u03b1\u0005T\u0000\u0000\u03b1\u03d7\u0003\u009cN$\u03b2"+
-		"\u03b3\u0005L\u0000\u0000\u03b3\u03d7\u0003\u009cN#\u03b4\u03b5\u0005"+
-		"\u0014\u0000\u0000\u03b5\u03d7\u0003\u009cN\"\u03b6\u03b7\u0005\u0015"+
-		"\u0000\u0000\u03b7\u03d7\u0003\u009cN!\u03b8\u03b9\u0005\u0016\u0000\u0000"+
-		"\u03b9\u03d7\u0003\u009cN \u03ba\u03bb\u0005\u0017\u0000\u0000\u03bb\u03d7"+
-		"\u0003\u009cN\u001f\u03bc\u03bd\u0005\u0018\u0000\u0000\u03bd\u03d7\u0003"+
-		"\u009cN\u001e\u03be\u03bf\u0005\u0019\u0000\u0000\u03bf\u03d7\u0003\u009c"+
-		"N\u001d\u03c0\u03c1\u0005p\u0000\u0000\u03c1\u03d7\u0003\u009cN\u001c"+
-		"\u03c2\u03c3\u0005n\u0000\u0000\u03c3\u03c4\u0005\u0007\u0000\u0000\u03c4"+
-		"\u03c5\u0003\u009cN\u0000\u03c5\u03c6\u0005\b\u0000\u0000\u03c6\u03d7"+
-		"\u0001\u0000\u0000\u0000\u03c7\u03ca\u0007\u0001\u0000\u0000\u03c8\u03c9"+
-		"\u0004N\u000b\u0000\u03c9\u03cb\u0003\u0098L\u0000\u03ca\u03c8\u0001\u0000"+
-		"\u0000\u0000\u03ca\u03cb\u0001\u0000\u0000\u0000\u03cb\u03d7\u0001\u0000"+
-		"\u0000\u0000\u03cc\u03d7\u0005[\u0000\u0000\u03cd\u03d7\u0003\u00bc^\u0000"+
-		"\u03ce\u03d7\u0005k\u0000\u0000\u03cf\u03d7\u0003\u00acV\u0000\u03d0\u03d7"+
-		"\u0003|>\u0000\u03d1\u03d7\u0003\u00a2Q\u0000\u03d2\u03d3\u0005\u0007"+
-		"\u0000\u0000\u03d3\u03d4\u0003\u0098L\u0000\u03d4\u03d5\u0005\b\u0000"+
-		"\u0000\u03d5\u03d7\u0001\u0000\u0000\u0000\u03d6\u0397\u0001\u0000\u0000"+
-		"\u0000\u03d6\u0399\u0001\u0000\u0000\u0000\u03d6\u039e\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03a2\u0001\u0000\u0000\u0000\u03d6\u03a6\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03a8\u0001\u0000\u0000\u0000\u03d6\u03ab\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03ae\u0001\u0000\u0000\u0000\u03d6\u03b0\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03b2\u0001\u0000\u0000\u0000\u03d6\u03b4\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03b6\u0001\u0000\u0000\u0000\u03d6\u03b8\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03ba\u0001\u0000\u0000\u0000\u03d6\u03bc\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03be\u0001\u0000\u0000\u0000\u03d6\u03c0\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03c2\u0001\u0000\u0000\u0000\u03d6\u03c7\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03cc\u0001\u0000\u0000\u0000\u03d6\u03cd\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03ce\u0001\u0000\u0000\u0000\u03d6\u03cf\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03d0\u0001\u0000\u0000\u0000\u03d6\u03d1\u0001\u0000\u0000"+
-		"\u0000\u03d6\u03d2\u0001\u0000\u0000\u0000\u03d7\u042f\u0001\u0000\u0000"+
-		"\u0000\u03d8\u03d9\n0\u0000\u0000\u03d9\u03da\u0005\u0010\u0000\u0000"+
-		"\u03da\u042e\u0003\u009cN1\u03db\u03dc\n\u001b\u0000\u0000\u03dc\u03dd"+
-		"\u0005\u001d\u0000\u0000\u03dd\u042e\u0003\u009cN\u001b\u03de\u03df\n"+
-		"\u001a\u0000\u0000\u03df\u03e0\u0007\u0002\u0000\u0000\u03e0\u042e\u0003"+
-		"\u009cN\u001b\u03e1\u03e2\n\u0019\u0000\u0000\u03e2\u03e3\u0007\u0003"+
-		"\u0000\u0000\u03e3\u042e\u0003\u009cN\u001a\u03e4\u03e5\n\u0018\u0000"+
-		"\u0000\u03e5\u03e6\u0005\u001e\u0000\u0000\u03e6\u042e\u0003\u009cN\u0019"+
-		"\u03e7\u03e8\n\u0017\u0000\u0000\u03e8\u03e9\u0007\u0004\u0000\u0000\u03e9"+
-		"\u042e\u0003\u009cN\u0018\u03ea\u03eb\n\u0016\u0000\u0000\u03eb\u03ec"+
-		"\u0007\u0005\u0000\u0000\u03ec\u042e\u0003\u009cN\u0017\u03ed\u03ee\n"+
-		"\u0015\u0000\u0000\u03ee\u03ef\u0005K\u0000\u0000\u03ef\u042e\u0003\u009c"+
-		"N\u0016\u03f0\u03f1\n\u0014\u0000\u0000\u03f1\u03f2\u0005a\u0000\u0000"+
-		"\u03f2\u042e\u0003\u009cN\u0015\u03f3\u03f4\n\u0013\u0000\u0000\u03f4"+
-		"\u03f5\u0007\u0006\u0000\u0000\u03f5\u042e\u0003\u009cN\u0014\u03f6\u03f7"+
-		"\n\u0012\u0000\u0000\u03f7\u03f8\u0005+\u0000\u0000\u03f8\u042e\u0003"+
-		"\u009cN\u0013\u03f9\u03fa\n\u0011\u0000\u0000\u03fa\u03fb\u0005,\u0000"+
-		"\u0000\u03fb\u042e\u0003\u009cN\u0012\u03fc\u03fd\n\u0010\u0000\u0000"+
-		"\u03fd\u03fe\u0005-\u0000\u0000\u03fe\u042e\u0003\u009cN\u0011\u03ff\u0400"+
-		"\n\u000f\u0000\u0000\u0400\u0401\u0005.\u0000\u0000\u0401\u042e\u0003"+
-		"\u009cN\u0010\u0402\u0403\n\u000e\u0000\u0000\u0403\u0404\u0005/\u0000"+
-		"\u0000\u0404\u042e\u0003\u009cN\u000f\u0405\u0406\n\r\u0000\u0000\u0406"+
-		"\u0407\u0005\u000f\u0000\u0000\u0407\u0408\u0003\u009cN\u0000\u0408\u0409"+
-		"\u0005\u0011\u0000\u0000\u0409\u040a\u0003\u009cN\r\u040a\u042e\u0001"+
-		"\u0000\u0000\u0000\u040b\u040c\n\f\u0000\u0000\u040c\u040d\u0005\u000e"+
-		"\u0000\u0000\u040d\u042e\u0003\u009cN\f\u040e\u040f\n\u000b\u0000\u0000"+
-		"\u040f\u0410\u0003\u00aaU\u0000\u0410\u0411\u0003\u009cN\u000b\u0411\u042e"+
-		"\u0001\u0000\u0000\u0000\u0412\u0414\n/\u0000\u0000\u0413\u0415\u0005"+
-		"\u0010\u0000\u0000\u0414\u0413\u0001\u0000\u0000\u0000\u0414\u0415\u0001"+
-		"\u0000\u0000\u0000\u0415\u0416\u0001\u0000\u0000\u0000\u0416\u0417\u0005"+
-		"\u0005\u0000\u0000\u0417\u0418\u0003\u0098L\u0000\u0418\u0419\u0005\u0006"+
-		"\u0000\u0000\u0419\u042e\u0001\u0000\u0000\u0000\u041a\u041c\n.\u0000"+
-		"\u0000\u041b\u041d\u0005\u000f\u0000\u0000\u041c\u041b\u0001\u0000\u0000"+
+		"\u03df\u0005z\u0000\u0000\u03ae\u03af\u0005`\u0000\u0000\u03af\u03df\u0003"+
+		"\u009cN\'\u03b0\u03b1\u0005T\u0000\u0000\u03b1\u03df\u0003\u009cN&\u03b2"+
+		"\u03b3\u0005L\u0000\u0000\u03b3\u03df\u0003\u009cN%\u03b4\u03b5\u0005"+
+		"\u0014\u0000\u0000\u03b5\u03df\u0003\u009cN$\u03b6\u03b7\u0005\u0015\u0000"+
+		"\u0000\u03b7\u03df\u0003\u009cN#\u03b8\u03b9\u0005\u0016\u0000\u0000\u03b9"+
+		"\u03df\u0003\u009cN\"\u03ba\u03bb\u0005\u0017\u0000\u0000\u03bb\u03df"+
+		"\u0003\u009cN!\u03bc\u03bd\u0005\u0018\u0000\u0000\u03bd\u03df\u0003\u009c"+
+		"N \u03be\u03bf\u0005\u0019\u0000\u0000\u03bf\u03df\u0003\u009cN\u001f"+
+		"\u03c0\u03c1\u0005p\u0000\u0000\u03c1\u03df\u0003\u009cN\u001e\u03c2\u03c3"+
+		"\u0005n\u0000\u0000\u03c3\u03c4\u0005\u0007\u0000\u0000\u03c4\u03c5\u0003"+
+		"\u009cN\u0000\u03c5\u03c6\u0005\b\u0000\u0000\u03c6\u03df\u0001\u0000"+
+		"\u0000\u0000\u03c7\u03ca\u0007\u0001\u0000\u0000\u03c8\u03c9\u0004N\u000b"+
+		"\u0000\u03c9\u03cb\u0003\u0098L\u0000\u03ca\u03c8\u0001\u0000\u0000\u0000"+
+		"\u03ca\u03cb\u0001\u0000\u0000\u0000\u03cb\u03df\u0001\u0000\u0000\u0000"+
+		"\u03cc\u03df\u0005[\u0000\u0000\u03cd\u03df\u0003\u00bc^\u0000\u03ce\u03df"+
+		"\u0005k\u0000\u0000\u03cf\u03df\u0003\u00acV\u0000\u03d0\u03d1\u0003\u0084"+
+		"B\u0000\u03d1\u03d2\u0005\u000e\u0000\u0000\u03d2\u03d3\u0003\u009cN\u0005"+
+		"\u03d3\u03df\u0001\u0000\u0000\u0000\u03d4\u03d5\u0003\u0088D\u0000\u03d5"+
+		"\u03d6\u0005\u000e\u0000\u0000\u03d6\u03d7\u0003\u009cN\u0004\u03d7\u03df"+
+		"\u0001\u0000\u0000\u0000\u03d8\u03df\u0003|>\u0000\u03d9\u03df\u0003\u00a2"+
+		"Q\u0000\u03da\u03db\u0005\u0007\u0000\u0000\u03db\u03dc\u0003\u0098L\u0000"+
+		"\u03dc\u03dd\u0005\b\u0000\u0000\u03dd\u03df\u0001\u0000\u0000\u0000\u03de"+
+		"\u0397\u0001\u0000\u0000\u0000\u03de\u0399\u0001\u0000\u0000\u0000\u03de"+
+		"\u039e\u0001\u0000\u0000\u0000\u03de\u03a2\u0001\u0000\u0000\u0000\u03de"+
+		"\u03a6\u0001\u0000\u0000\u0000\u03de\u03a8\u0001\u0000\u0000\u0000\u03de"+
+		"\u03ab\u0001\u0000\u0000\u0000\u03de\u03ae\u0001\u0000\u0000\u0000\u03de"+
+		"\u03b0\u0001\u0000\u0000\u0000\u03de\u03b2\u0001\u0000\u0000\u0000\u03de"+
+		"\u03b4\u0001\u0000\u0000\u0000\u03de\u03b6\u0001\u0000\u0000\u0000\u03de"+
+		"\u03b8\u0001\u0000\u0000\u0000\u03de\u03ba\u0001\u0000\u0000\u0000\u03de"+
+		"\u03bc\u0001\u0000\u0000\u0000\u03de\u03be\u0001\u0000\u0000\u0000\u03de"+
+		"\u03c0\u0001\u0000\u0000\u0000\u03de\u03c2\u0001\u0000\u0000\u0000\u03de"+
+		"\u03c7\u0001\u0000\u0000\u0000\u03de\u03cc\u0001\u0000\u0000\u0000\u03de"+
+		"\u03cd\u0001\u0000\u0000\u0000\u03de\u03ce\u0001\u0000\u0000\u0000\u03de"+
+		"\u03cf\u0001\u0000\u0000\u0000\u03de\u03d0\u0001\u0000\u0000\u0000\u03de"+
+		"\u03d4\u0001\u0000\u0000\u0000\u03de\u03d8\u0001\u0000\u0000\u0000\u03de"+
+		"\u03d9\u0001\u0000\u0000\u0000\u03de\u03da\u0001\u0000\u0000\u0000\u03df"+
+		"\u0437\u0001\u0000\u0000\u0000\u03e0\u03e1\n2\u0000\u0000\u03e1\u03e2"+
+		"\u0005\u0010\u0000\u0000\u03e2\u0436\u0003\u009cN3\u03e3\u03e4\n\u001d"+
+		"\u0000\u0000\u03e4\u03e5\u0005\u001d\u0000\u0000\u03e5\u0436\u0003\u009c"+
+		"N\u001d\u03e6\u03e7\n\u001c\u0000\u0000\u03e7\u03e8\u0007\u0002\u0000"+
+		"\u0000\u03e8\u0436\u0003\u009cN\u001d\u03e9\u03ea\n\u001b\u0000\u0000"+
+		"\u03ea\u03eb\u0007\u0003\u0000\u0000\u03eb\u0436\u0003\u009cN\u001c\u03ec"+
+		"\u03ed\n\u001a\u0000\u0000\u03ed\u03ee\u0005\u001e\u0000\u0000\u03ee\u0436"+
+		"\u0003\u009cN\u001b\u03ef\u03f0\n\u0019\u0000\u0000\u03f0\u03f1\u0007"+
+		"\u0004\u0000\u0000\u03f1\u0436\u0003\u009cN\u001a\u03f2\u03f3\n\u0018"+
+		"\u0000\u0000\u03f3\u03f4\u0007\u0005\u0000\u0000\u03f4\u0436\u0003\u009c"+
+		"N\u0019\u03f5\u03f6\n\u0017\u0000\u0000\u03f6\u03f7\u0005K\u0000\u0000"+
+		"\u03f7\u0436\u0003\u009cN\u0018\u03f8\u03f9\n\u0016\u0000\u0000\u03f9"+
+		"\u03fa\u0005a\u0000\u0000\u03fa\u0436\u0003\u009cN\u0017\u03fb\u03fc\n"+
+		"\u0015\u0000\u0000\u03fc\u03fd\u0007\u0006\u0000\u0000\u03fd\u0436\u0003"+
+		"\u009cN\u0016\u03fe\u03ff\n\u0014\u0000\u0000\u03ff\u0400\u0005+\u0000"+
+		"\u0000\u0400\u0436\u0003\u009cN\u0015\u0401\u0402\n\u0013\u0000\u0000"+
+		"\u0402\u0403\u0005,\u0000\u0000\u0403\u0436\u0003\u009cN\u0014\u0404\u0405"+
+		"\n\u0012\u0000\u0000\u0405\u0406\u0005-\u0000\u0000\u0406\u0436\u0003"+
+		"\u009cN\u0013\u0407\u0408\n\u0011\u0000\u0000\u0408\u0409\u0005.\u0000"+
+		"\u0000\u0409\u0436\u0003\u009cN\u0012\u040a\u040b\n\u0010\u0000\u0000"+
+		"\u040b\u040c\u0005/\u0000\u0000\u040c\u0436\u0003\u009cN\u0011\u040d\u040e"+
+		"\n\u000f\u0000\u0000\u040e\u040f\u0005\u000f\u0000\u0000\u040f\u0410\u0003"+
+		"\u009cN\u0000\u0410\u0411\u0005\u0011\u0000\u0000\u0411\u0412\u0003\u009c"+
+		"N\u000f\u0412\u0436\u0001\u0000\u0000\u0000\u0413\u0414\n\u000e\u0000"+
+		"\u0000\u0414\u0415\u0005\u000e\u0000\u0000\u0415\u0436\u0003\u009cN\u000e"+
+		"\u0416\u0417\n\r\u0000\u0000\u0417\u0418\u0003\u00aaU\u0000\u0418\u0419"+
+		"\u0003\u009cN\r\u0419\u0436\u0001\u0000\u0000\u0000\u041a\u041c\n1\u0000"+
+		"\u0000\u041b\u041d\u0005\u0010\u0000\u0000\u041c\u041b\u0001\u0000\u0000"+
 		"\u0000\u041c\u041d\u0001\u0000\u0000\u0000\u041d\u041e\u0001\u0000\u0000"+
-		"\u0000\u041e\u0420\u0005\u0013\u0000\u0000\u041f\u0421\u0005\u001f\u0000"+
-		"\u0000\u0420\u041f\u0001\u0000\u0000\u0000\u0420\u0421\u0001\u0000\u0000"+
-		"\u0000\u0421\u0422\u0001\u0000\u0000\u0000\u0422\u042e\u0003\u00ba]\u0000"+
-		"\u0423\u0424\n*\u0000\u0000\u0424\u042e\u0003\u0094J\u0000\u0425\u0426"+
-		"\n\'\u0000\u0000\u0426\u0427\u0004N\"\u0000\u0427\u042e\u0005\u0014\u0000"+
-		"\u0000\u0428\u0429\n&\u0000\u0000\u0429\u042a\u0004N$\u0000\u042a\u042e"+
-		"\u0005\u0015\u0000\u0000\u042b\u042c\n\t\u0000\u0000\u042c\u042e\u0003"+
-		"\u00aeW\u0000\u042d\u03d8\u0001\u0000\u0000\u0000\u042d\u03db\u0001\u0000"+
-		"\u0000\u0000\u042d\u03de\u0001\u0000\u0000\u0000\u042d\u03e1\u0001\u0000"+
-		"\u0000\u0000\u042d\u03e4\u0001\u0000\u0000\u0000\u042d\u03e7\u0001\u0000"+
-		"\u0000\u0000\u042d\u03ea\u0001\u0000\u0000\u0000\u042d\u03ed\u0001\u0000"+
-		"\u0000\u0000\u042d\u03f0\u0001\u0000\u0000\u0000\u042d\u03f3\u0001\u0000"+
-		"\u0000\u0000\u042d\u03f6\u0001\u0000\u0000\u0000\u042d\u03f9\u0001\u0000"+
-		"\u0000\u0000\u042d\u03fc\u0001\u0000\u0000\u0000\u042d\u03ff\u0001\u0000"+
-		"\u0000\u0000\u042d\u0402\u0001\u0000\u0000\u0000\u042d\u0405\u0001\u0000"+
-		"\u0000\u0000\u042d\u040b\u0001\u0000\u0000\u0000\u042d\u040e\u0001\u0000"+
-		"\u0000\u0000\u042d\u0412\u0001\u0000\u0000\u0000\u042d\u041a\u0001\u0000"+
-		"\u0000\u0000\u042d\u0423\u0001\u0000\u0000\u0000\u042d\u0425\u0001\u0000"+
-		"\u0000\u0000\u042d\u0428\u0001\u0000\u0000\u0000\u042d\u042b\u0001\u0000"+
-		"\u0000\u0000\u042e\u0431\u0001\u0000\u0000\u0000\u042f\u042d\u0001\u0000"+
-		"\u0000\u0000\u042f\u0430\u0001\u0000\u0000\u0000\u0430\u009d\u0001\u0000"+
-		"\u0000\u0000\u0431\u042f\u0001\u0000\u0000\u0000\u0432\u0433\u0005\u000e"+
-		"\u0000\u0000\u0433\u0434\u0003\u009aM\u0000\u0434\u009f\u0001\u0000\u0000"+
-		"\u0000\u0435\u043a\u0003\u00bc^\u0000\u0436\u043a\u0003\u00c0`\u0000\u0437"+
-		"\u043a\u0003\u0088D\u0000\u0438\u043a\u0003\u0084B\u0000\u0439\u0435\u0001"+
-		"\u0000\u0000\u0000\u0439\u0436\u0001\u0000\u0000\u0000\u0439\u0437\u0001"+
-		"\u0000\u0000\u0000\u0439\u0438\u0001\u0000\u0000\u0000\u043a\u00a1\u0001"+
-		"\u0000\u0000\u0000\u043b\u0447\u0005\t\u0000\u0000\u043c\u0441\u0003\u0082"+
-		"A\u0000\u043d\u043e\u0005\r\u0000\u0000\u043e\u0440\u0003\u0082A\u0000"+
-		"\u043f\u043d\u0001\u0000\u0000\u0000\u0440\u0443\u0001\u0000\u0000\u0000"+
-		"\u0441\u043f\u0001\u0000\u0000\u0000\u0441\u0442\u0001\u0000\u0000\u0000"+
-		"\u0442\u0445\u0001\u0000\u0000\u0000\u0443\u0441\u0001\u0000\u0000\u0000"+
-		"\u0444\u0446\u0005\r\u0000\u0000\u0445\u0444\u0001\u0000\u0000\u0000\u0445"+
-		"\u0446\u0001\u0000\u0000\u0000\u0446\u0448\u0001\u0000\u0000\u0000\u0447"+
-		"\u043c\u0001\u0000\u0000\u0000\u0447\u0448\u0001\u0000\u0000\u0000\u0448"+
-		"\u0449\u0001\u0000\u0000\u0000\u0449\u044a\u0005\u000b\u0000\u0000\u044a"+
-		"\u00a3\u0001\u0000\u0000\u0000\u044b\u0461\u0003b1\u0000\u044c\u044e\u0005"+
-		"o\u0000\u0000\u044d\u044c\u0001\u0000\u0000\u0000\u044d\u044e\u0001\u0000"+
-		"\u0000\u0000\u044e\u044f\u0001\u0000\u0000\u0000\u044f\u0451\u0005Z\u0000"+
-		"\u0000\u0450\u0452\u0005\u001a\u0000\u0000\u0451\u0450\u0001\u0000\u0000"+
-		"\u0000\u0451\u0452\u0001\u0000\u0000\u0000\u0452\u0453\u0001\u0000\u0000"+
-		"\u0000\u0453\u0455\u0005\u0007\u0000\u0000\u0454\u0456\u0003r9\u0000\u0455"+
-		"\u0454\u0001\u0000\u0000\u0000\u0455\u0456\u0001\u0000\u0000\u0000\u0456"+
-		"\u0457\u0001\u0000\u0000\u0000\u0457\u0458\u0005\b\u0000\u0000\u0458\u0461"+
-		"\u0003x<\u0000\u0459\u045b\u0005o\u0000\u0000\u045a\u0459\u0001\u0000"+
-		"\u0000\u0000\u045a\u045b\u0001\u0000\u0000\u0000\u045b\u045c\u0001\u0000"+
-		"\u0000\u0000\u045c\u045d\u0003\u00a6S\u0000\u045d\u045e\u0005=\u0000\u0000"+
-		"\u045e\u045f\u0003\u00a8T\u0000\u045f\u0461\u0001\u0000\u0000\u0000\u0460"+
-		"\u044b\u0001\u0000\u0000\u0000\u0460\u044d\u0001\u0000\u0000\u0000\u0460"+
-		"\u045a\u0001\u0000\u0000\u0000\u0461\u00a5\u0001\u0000\u0000\u0000\u0462"+
-		"\u0469\u0003\u00ba]\u0000\u0463\u0465\u0005\u0007\u0000\u0000\u0464\u0466"+
-		"\u0003r9\u0000\u0465\u0464\u0001\u0000\u0000\u0000\u0465\u0466\u0001\u0000"+
-		"\u0000\u0000\u0466\u0467\u0001\u0000\u0000\u0000\u0467\u0469\u0005\b\u0000"+
-		"\u0000\u0468\u0462\u0001\u0000\u0000\u0000\u0468\u0463\u0001\u0000\u0000"+
-		"\u0000\u0469\u00a7\u0001\u0000\u0000\u0000\u046a\u046d\u0003\u009aM\u0000"+
-		"\u046b\u046d\u0003x<\u0000\u046c\u046a\u0001\u0000\u0000\u0000\u046c\u046b"+
-		"\u0001\u0000\u0000\u0000\u046d\u00a9\u0001\u0000\u0000\u0000\u046e\u046f"+
-		"\u0007\u0007\u0000\u0000\u046f\u00ab\u0001\u0000\u0000\u0000\u0470\u0478"+
-		"\u0005>\u0000\u0000\u0471\u0478\u0005?\u0000\u0000\u0472\u0478\u0005}"+
-		"\u0000\u0000\u0473\u0478\u0003\u00aeW\u0000\u0474\u0478\u0005\u0004\u0000"+
-		"\u0000\u0475\u0478\u0003\u00b2Y\u0000\u0476\u0478\u0003\u00b4Z\u0000\u0477"+
-		"\u0470\u0001\u0000\u0000\u0000\u0477\u0471\u0001\u0000\u0000\u0000\u0477"+
-		"\u0472\u0001\u0000\u0000\u0000\u0477\u0473\u0001\u0000\u0000\u0000\u0477"+
-		"\u0474\u0001\u0000\u0000\u0000\u0477\u0475\u0001\u0000\u0000\u0000\u0477"+
-		"\u0476\u0001\u0000\u0000\u0000\u0478\u00ad\u0001\u0000\u0000\u0000\u0479"+
-		"\u047d\u0005~\u0000\u0000\u047a\u047c\u0003\u00b0X\u0000\u047b\u047a\u0001"+
-		"\u0000\u0000\u0000\u047c\u047f\u0001\u0000\u0000\u0000\u047d\u047b\u0001"+
-		"\u0000\u0000\u0000\u047d\u047e\u0001\u0000\u0000\u0000\u047e\u0480\u0001"+
-		"\u0000\u0000\u0000\u047f\u047d\u0001\u0000\u0000\u0000\u0480\u0481\u0005"+
-		"~\u0000\u0000\u0481\u00af\u0001\u0000\u0000\u0000\u0482\u0488\u0005\u0085"+
-		"\u0000\u0000\u0483\u0484\u0005\u0084\u0000\u0000\u0484\u0485\u0003\u009a"+
-		"M\u0000\u0485\u0486\u0005\n\u0000\u0000\u0486\u0488\u0001\u0000\u0000"+
-		"\u0000\u0487\u0482\u0001\u0000\u0000\u0000\u0487\u0483\u0001\u0000\u0000"+
-		"\u0000\u0488\u00b1\u0001\u0000\u0000\u0000\u0489\u048a\u0007\b\u0000\u0000"+
-		"\u048a\u00b3\u0001\u0000\u0000\u0000\u048b\u048c\u0007\t\u0000\u0000\u048c"+
-		"\u00b5\u0001\u0000\u0000\u0000\u048d\u048e\u0004[&\u0000\u048e\u048f\u0003"+
-		"\u00bc^\u0000\u048f\u0490\u0003n7\u0000\u0490\u00b7\u0001\u0000\u0000"+
-		"\u0000\u0491\u0492\u0004\\\'\u0000\u0492\u0493\u0003\u00bc^\u0000\u0493"+
-		"\u0494\u0003n7\u0000\u0494\u00b9\u0001\u0000\u0000\u0000\u0495\u0498\u0003"+
-		"\u00bc^\u0000\u0496\u0498\u0003\u00be_\u0000\u0497\u0495\u0001\u0000\u0000"+
-		"\u0000\u0497\u0496\u0001\u0000\u0000\u0000\u0498\u00bb\u0001\u0000\u0000"+
-		"\u0000\u0499\u049a\u0007\n\u0000\u0000\u049a\u00bd\u0001\u0000\u0000\u0000"+
-		"\u049b\u049f\u0003\u00c0`\u0000\u049c\u049f\u0005>\u0000\u0000\u049d\u049f"+
-		"\u0005?\u0000\u0000\u049e\u049b\u0001\u0000\u0000\u0000\u049e\u049c\u0001"+
-		"\u0000\u0000\u0000\u049e\u049d\u0001\u0000\u0000\u0000\u049f\u00bf\u0001"+
-		"\u0000\u0000\u0000\u04a0\u04d1\u0005I\u0000\u0000\u04a1\u04d1\u0005J\u0000"+
-		"\u0000\u04a2\u04d1\u0005K\u0000\u0000\u04a3\u04d1\u0005L\u0000\u0000\u04a4"+
-		"\u04d1\u0005M\u0000\u0000\u04a5\u04d1\u0005N\u0000\u0000\u04a6\u04d1\u0005"+
-		"O\u0000\u0000\u04a7\u04d1\u0005P\u0000\u0000\u04a8\u04d1\u0005Q\u0000"+
-		"\u0000\u04a9\u04d1\u0005R\u0000\u0000\u04aa\u04d1\u0005S\u0000\u0000\u04ab"+
-		"\u04d1\u0005T\u0000\u0000\u04ac\u04d1\u0005U\u0000\u0000\u04ad\u04d1\u0005"+
-		"V\u0000\u0000\u04ae\u04d1\u0005W\u0000\u0000\u04af\u04d1\u0005X\u0000"+
-		"\u0000\u04b0\u04d1\u0005Y\u0000\u0000\u04b1\u04d1\u0005Z\u0000\u0000\u04b2"+
-		"\u04d1\u0005[\u0000\u0000\u04b3\u04d1\u0005\\\u0000\u0000\u04b4\u04d1"+
-		"\u0005]\u0000\u0000\u04b5\u04d1\u0005^\u0000\u0000\u04b6\u04d1\u0005_"+
-		"\u0000\u0000\u04b7\u04d1\u0005`\u0000\u0000\u04b8\u04d1\u0005a\u0000\u0000"+
-		"\u04b9\u04d1\u0005b\u0000\u0000\u04ba\u04d1\u0005h\u0000\u0000\u04bb\u04d1"+
-		"\u0005i\u0000\u0000\u04bc\u04d1\u0005j\u0000\u0000\u04bd\u04d1\u0005k"+
-		"\u0000\u0000\u04be\u04d1\u0005l\u0000\u0000\u04bf\u04d1\u0005m\u0000\u0000"+
-		"\u04c0\u04d1\u0005n\u0000\u0000\u04c1\u04d1\u0005q\u0000\u0000\u04c2\u04d1"+
-		"\u0003\u00c2a\u0000\u04c3\u04d1\u0005t\u0000\u0000\u04c4\u04d1\u0005u"+
-		"\u0000\u0000\u04c5\u04d1\u0005v\u0000\u0000\u04c6\u04d1\u0005w\u0000\u0000"+
-		"\u04c7\u04d1\u0005x\u0000\u0000\u04c8\u04d1\u0005y\u0000\u0000\u04c9\u04d1"+
-		"\u0005f\u0000\u0000\u04ca\u04d1\u0005g\u0000\u0000\u04cb\u04d1\u0005o"+
-		"\u0000\u0000\u04cc\u04d1\u0005p\u0000\u0000\u04cd\u04d1\u0005d\u0000\u0000"+
-		"\u04ce\u04d1\u0005c\u0000\u0000\u04cf\u04d1\u0005e\u0000\u0000\u04d0\u04a0"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04a1\u0001\u0000\u0000\u0000\u04d0\u04a2"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04a3\u0001\u0000\u0000\u0000\u04d0\u04a4"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04a5\u0001\u0000\u0000\u0000\u04d0\u04a6"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04a7\u0001\u0000\u0000\u0000\u04d0\u04a8"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04a9\u0001\u0000\u0000\u0000\u04d0\u04aa"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04ab\u0001\u0000\u0000\u0000\u04d0\u04ac"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04ad\u0001\u0000\u0000\u0000\u04d0\u04ae"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04af\u0001\u0000\u0000\u0000\u04d0\u04b0"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04b1\u0001\u0000\u0000\u0000\u04d0\u04b2"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04b3\u0001\u0000\u0000\u0000\u04d0\u04b4"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04b5\u0001\u0000\u0000\u0000\u04d0\u04b6"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04b7\u0001\u0000\u0000\u0000\u04d0\u04b8"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04b9\u0001\u0000\u0000\u0000\u04d0\u04ba"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04bb\u0001\u0000\u0000\u0000\u04d0\u04bc"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04bd\u0001\u0000\u0000\u0000\u04d0\u04be"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04bf\u0001\u0000\u0000\u0000\u04d0\u04c0"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04c1\u0001\u0000\u0000\u0000\u04d0\u04c2"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04c3\u0001\u0000\u0000\u0000\u04d0\u04c4"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04c5\u0001\u0000\u0000\u0000\u04d0\u04c6"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04c7\u0001\u0000\u0000\u0000\u04d0\u04c8"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04c9\u0001\u0000\u0000\u0000\u04d0\u04ca"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04cb\u0001\u0000\u0000\u0000\u04d0\u04cc"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04cd\u0001\u0000\u0000\u0000\u04d0\u04ce"+
-		"\u0001\u0000\u0000\u0000\u04d0\u04cf\u0001\u0000\u0000\u0000\u04d1\u00c1"+
-		"\u0001\u0000\u0000\u0000\u04d2\u04d3\u0007\u000b\u0000\u0000\u04d3\u00c3"+
-		"\u0001\u0000\u0000\u0000\u04d4\u04d9\u0005\f\u0000\u0000\u04d5\u04d9\u0005"+
-		"\u0000\u0000\u0001\u04d6\u04d9\u0004b(\u0000\u04d7\u04d9\u0004b)\u0000"+
-		"\u04d8\u04d4\u0001\u0000\u0000\u0000\u04d8\u04d5\u0001\u0000\u0000\u0000"+
-		"\u04d8\u04d6\u0001\u0000\u0000\u0000\u04d8\u04d7\u0001\u0000\u0000\u0000"+
-		"\u04d9\u00c5\u0001\u0000\u0000\u0000\u008a\u00c7\u00ca\u00d3\u00d9\u00e1"+
-		"\u00e4\u00e7\u00ff\u0103\u010a\u0110\u0114\u011b\u0123\u0128\u012a\u0131"+
-		"\u0135\u013e\u0142\u014a\u014e\u0152\u015b\u0163\u0167\u016f\u0174\u0176"+
-		"\u017d\u0182\u018d\u0196\u01a5\u01b9\u01bd\u01c1\u01c9\u01d2\u01d7\u01de"+
-		"\u01e3\u01e8\u01ef\u01f6\u01fd\u020f\u0213\u0215\u021c\u0222\u0227\u0236"+
-		"\u0239\u023e\u0241\u024c\u0250\u0255\u0260\u0266\u026e\u0274\u027a\u027e"+
-		"\u0282\u0285\u028a\u0290\u0298\u029d\u02a2\u02a6\u02aa\u02b4\u02b9\u02bc"+
-		"\u02c1\u02c8\u02cf\u02d7\u02de\u02e4\u02e6\u02f3\u02f6\u02fb\u030e\u0315"+
-		"\u031f\u0324\u0327\u032b\u032f\u0335\u033c\u0344\u0347\u034b\u0352\u035b"+
-		"\u035e\u0361\u0365\u0371\u0379\u037d\u037f\u0384\u0388\u0392\u039b\u03ca"+
-		"\u03d6\u0414\u041c\u0420\u042d\u042f\u0439\u0441\u0445\u0447\u044d\u0451"+
-		"\u0455\u045a\u0460\u0465\u0468\u046c\u0477\u047d\u0487\u0497\u049e\u04d0"+
-		"\u04d8";
+		"\u0000\u041e\u041f\u0005\u0005\u0000\u0000\u041f\u0420\u0003\u0098L\u0000"+
+		"\u0420\u0421\u0005\u0006\u0000\u0000\u0421\u0436\u0001\u0000\u0000\u0000"+
+		"\u0422\u0424\n0\u0000\u0000\u0423\u0425\u0005\u000f\u0000\u0000\u0424"+
+		"\u0423\u0001\u0000\u0000\u0000\u0424\u0425\u0001\u0000\u0000\u0000\u0425"+
+		"\u0426\u0001\u0000\u0000\u0000\u0426\u0428\u0005\u0013\u0000\u0000\u0427"+
+		"\u0429\u0005\u001f\u0000\u0000\u0428\u0427\u0001\u0000\u0000\u0000\u0428"+
+		"\u0429\u0001\u0000\u0000\u0000\u0429\u042a\u0001\u0000\u0000\u0000\u042a"+
+		"\u0436\u0003\u00ba]\u0000\u042b\u042c\n,\u0000\u0000\u042c\u0436\u0003"+
+		"\u0094J\u0000\u042d\u042e\n)\u0000\u0000\u042e\u042f\u0004N\"\u0000\u042f"+
+		"\u0436\u0005\u0014\u0000\u0000\u0430\u0431\n(\u0000\u0000\u0431\u0432"+
+		"\u0004N$\u0000\u0432\u0436\u0005\u0015\u0000\u0000\u0433\u0434\n\u000b"+
+		"\u0000\u0000\u0434\u0436\u0003\u00aeW\u0000\u0435\u03e0\u0001\u0000\u0000"+
+		"\u0000\u0435\u03e3\u0001\u0000\u0000\u0000\u0435\u03e6\u0001\u0000\u0000"+
+		"\u0000\u0435\u03e9\u0001\u0000\u0000\u0000\u0435\u03ec\u0001\u0000\u0000"+
+		"\u0000\u0435\u03ef\u0001\u0000\u0000\u0000\u0435\u03f2\u0001\u0000\u0000"+
+		"\u0000\u0435\u03f5\u0001\u0000\u0000\u0000\u0435\u03f8\u0001\u0000\u0000"+
+		"\u0000\u0435\u03fb\u0001\u0000\u0000\u0000\u0435\u03fe\u0001\u0000\u0000"+
+		"\u0000\u0435\u0401\u0001\u0000\u0000\u0000\u0435\u0404\u0001\u0000\u0000"+
+		"\u0000\u0435\u0407\u0001\u0000\u0000\u0000\u0435\u040a\u0001\u0000\u0000"+
+		"\u0000\u0435\u040d\u0001\u0000\u0000\u0000\u0435\u0413\u0001\u0000\u0000"+
+		"\u0000\u0435\u0416\u0001\u0000\u0000\u0000\u0435\u041a\u0001\u0000\u0000"+
+		"\u0000\u0435\u0422\u0001\u0000\u0000\u0000\u0435\u042b\u0001\u0000\u0000"+
+		"\u0000\u0435\u042d\u0001\u0000\u0000\u0000\u0435\u0430\u0001\u0000\u0000"+
+		"\u0000\u0435\u0433\u0001\u0000\u0000\u0000\u0436\u0439\u0001\u0000\u0000"+
+		"\u0000\u0437\u0435\u0001\u0000\u0000\u0000\u0437\u0438\u0001\u0000\u0000"+
+		"\u0000\u0438\u009d\u0001\u0000\u0000\u0000\u0439\u0437\u0001\u0000\u0000"+
+		"\u0000\u043a\u043b\u0005\u000e\u0000\u0000\u043b\u043c\u0003\u009aM\u0000"+
+		"\u043c\u009f\u0001\u0000\u0000\u0000\u043d\u0442\u0003\u00bc^\u0000\u043e"+
+		"\u0442\u0003\u00c0`\u0000\u043f\u0442\u0003\u0088D\u0000\u0440\u0442\u0003"+
+		"\u0084B\u0000\u0441\u043d\u0001\u0000\u0000\u0000\u0441\u043e\u0001\u0000"+
+		"\u0000\u0000\u0441\u043f\u0001\u0000\u0000\u0000\u0441\u0440\u0001\u0000"+
+		"\u0000\u0000\u0442\u00a1\u0001\u0000\u0000\u0000\u0443\u044f\u0005\t\u0000"+
+		"\u0000\u0444\u0449\u0003\u0082A\u0000\u0445\u0446\u0005\r\u0000\u0000"+
+		"\u0446\u0448\u0003\u0082A\u0000\u0447\u0445\u0001\u0000\u0000\u0000\u0448"+
+		"\u044b\u0001\u0000\u0000\u0000\u0449\u0447\u0001\u0000\u0000\u0000\u0449"+
+		"\u044a\u0001\u0000\u0000\u0000\u044a\u044d\u0001\u0000\u0000\u0000\u044b"+
+		"\u0449\u0001\u0000\u0000\u0000\u044c\u044e\u0005\r\u0000\u0000\u044d\u044c"+
+		"\u0001\u0000\u0000\u0000\u044d\u044e\u0001\u0000\u0000\u0000\u044e\u0450"+
+		"\u0001\u0000\u0000\u0000\u044f\u0444\u0001\u0000\u0000\u0000\u044f\u0450"+
+		"\u0001\u0000\u0000\u0000\u0450\u0451\u0001\u0000\u0000\u0000\u0451\u0452"+
+		"\u0005\u000b\u0000\u0000\u0452\u00a3\u0001\u0000\u0000\u0000\u0453\u0469"+
+		"\u0003b1\u0000\u0454\u0456\u0005o\u0000\u0000\u0455\u0454\u0001\u0000"+
+		"\u0000\u0000\u0455\u0456\u0001\u0000\u0000\u0000\u0456\u0457\u0001\u0000"+
+		"\u0000\u0000\u0457\u0459\u0005Z\u0000\u0000\u0458\u045a\u0005\u001a\u0000"+
+		"\u0000\u0459\u0458\u0001\u0000\u0000\u0000\u0459\u045a\u0001\u0000\u0000"+
+		"\u0000\u045a\u045b\u0001\u0000\u0000\u0000\u045b\u045d\u0005\u0007\u0000"+
+		"\u0000\u045c\u045e\u0003r9\u0000\u045d\u045c\u0001\u0000\u0000\u0000\u045d"+
+		"\u045e\u0001\u0000\u0000\u0000\u045e\u045f\u0001\u0000\u0000\u0000\u045f"+
+		"\u0460\u0005\b\u0000\u0000\u0460\u0469\u0003x<\u0000\u0461\u0463\u0005"+
+		"o\u0000\u0000\u0462\u0461\u0001\u0000\u0000\u0000\u0462\u0463\u0001\u0000"+
+		"\u0000\u0000\u0463\u0464\u0001\u0000\u0000\u0000\u0464\u0465\u0003\u00a6"+
+		"S\u0000\u0465\u0466\u0005=\u0000\u0000\u0466\u0467\u0003\u00a8T\u0000"+
+		"\u0467\u0469\u0001\u0000\u0000\u0000\u0468\u0453\u0001\u0000\u0000\u0000"+
+		"\u0468\u0455\u0001\u0000\u0000\u0000\u0468\u0462\u0001\u0000\u0000\u0000"+
+		"\u0469\u00a5\u0001\u0000\u0000\u0000\u046a\u0471\u0003\u00ba]\u0000\u046b"+
+		"\u046d\u0005\u0007\u0000\u0000\u046c\u046e\u0003r9\u0000\u046d\u046c\u0001"+
+		"\u0000\u0000\u0000\u046d\u046e\u0001\u0000\u0000\u0000\u046e\u046f\u0001"+
+		"\u0000\u0000\u0000\u046f\u0471\u0005\b\u0000\u0000\u0470\u046a\u0001\u0000"+
+		"\u0000\u0000\u0470\u046b\u0001\u0000\u0000\u0000\u0471\u00a7\u0001\u0000"+
+		"\u0000\u0000\u0472\u0475\u0003\u009aM\u0000\u0473\u0475\u0003x<\u0000"+
+		"\u0474\u0472\u0001\u0000\u0000\u0000\u0474\u0473\u0001\u0000\u0000\u0000"+
+		"\u0475\u00a9\u0001\u0000\u0000\u0000\u0476\u0477\u0007\u0007\u0000\u0000"+
+		"\u0477\u00ab\u0001\u0000\u0000\u0000\u0478\u0480\u0005>\u0000\u0000\u0479"+
+		"\u0480\u0005?\u0000\u0000\u047a\u0480\u0005}\u0000\u0000\u047b\u0480\u0003"+
+		"\u00aeW\u0000\u047c\u0480\u0005\u0004\u0000\u0000\u047d\u0480\u0003\u00b2"+
+		"Y\u0000\u047e\u0480\u0003\u00b4Z\u0000\u047f\u0478\u0001\u0000\u0000\u0000"+
+		"\u047f\u0479\u0001\u0000\u0000\u0000\u047f\u047a\u0001\u0000\u0000\u0000"+
+		"\u047f\u047b\u0001\u0000\u0000\u0000\u047f\u047c\u0001\u0000\u0000\u0000"+
+		"\u047f\u047d\u0001\u0000\u0000\u0000\u047f\u047e\u0001\u0000\u0000\u0000"+
+		"\u0480\u00ad\u0001\u0000\u0000\u0000\u0481\u0485\u0005~\u0000\u0000\u0482"+
+		"\u0484\u0003\u00b0X\u0000\u0483\u0482\u0001\u0000\u0000\u0000\u0484\u0487"+
+		"\u0001\u0000\u0000\u0000\u0485\u0483\u0001\u0000\u0000\u0000\u0485\u0486"+
+		"\u0001\u0000\u0000\u0000\u0486\u0488\u0001\u0000\u0000\u0000\u0487\u0485"+
+		"\u0001\u0000\u0000\u0000\u0488\u0489\u0005~\u0000\u0000\u0489\u00af\u0001"+
+		"\u0000\u0000\u0000\u048a\u0490\u0005\u0085\u0000\u0000\u048b\u048c\u0005"+
+		"\u0084\u0000\u0000\u048c\u048d\u0003\u009aM\u0000\u048d\u048e\u0005\n"+
+		"\u0000\u0000\u048e\u0490\u0001\u0000\u0000\u0000\u048f\u048a\u0001\u0000"+
+		"\u0000\u0000\u048f\u048b\u0001\u0000\u0000\u0000\u0490\u00b1\u0001\u0000"+
+		"\u0000\u0000\u0491\u0492\u0007\b\u0000\u0000\u0492\u00b3\u0001\u0000\u0000"+
+		"\u0000\u0493\u0494\u0007\t\u0000\u0000\u0494\u00b5\u0001\u0000\u0000\u0000"+
+		"\u0495\u0496\u0004[&\u0000\u0496\u0497\u0003\u00bc^\u0000\u0497\u0498"+
+		"\u0003n7\u0000\u0498\u00b7\u0001\u0000\u0000\u0000\u0499\u049a\u0004\\"+
+		"\'\u0000\u049a\u049b\u0003\u00bc^\u0000\u049b\u049c\u0003n7\u0000\u049c"+
+		"\u00b9\u0001\u0000\u0000\u0000\u049d\u04a0\u0003\u00bc^\u0000\u049e\u04a0"+
+		"\u0003\u00be_\u0000\u049f\u049d\u0001\u0000\u0000\u0000\u049f\u049e\u0001"+
+		"\u0000\u0000\u0000\u04a0\u00bb\u0001\u0000\u0000\u0000\u04a1\u04a2\u0007"+
+		"\n\u0000\u0000\u04a2\u00bd\u0001\u0000\u0000\u0000\u04a3\u04a7\u0003\u00c0"+
+		"`\u0000\u04a4\u04a7\u0005>\u0000\u0000\u04a5\u04a7\u0005?\u0000\u0000"+
+		"\u04a6\u04a3\u0001\u0000\u0000\u0000\u04a6\u04a4\u0001\u0000\u0000\u0000"+
+		"\u04a6\u04a5\u0001\u0000\u0000\u0000\u04a7\u00bf\u0001\u0000\u0000\u0000"+
+		"\u04a8\u04d9\u0005I\u0000\u0000\u04a9\u04d9\u0005J\u0000\u0000\u04aa\u04d9"+
+		"\u0005K\u0000\u0000\u04ab\u04d9\u0005L\u0000\u0000\u04ac\u04d9\u0005M"+
+		"\u0000\u0000\u04ad\u04d9\u0005N\u0000\u0000\u04ae\u04d9\u0005O\u0000\u0000"+
+		"\u04af\u04d9\u0005P\u0000\u0000\u04b0\u04d9\u0005Q\u0000\u0000\u04b1\u04d9"+
+		"\u0005R\u0000\u0000\u04b2\u04d9\u0005S\u0000\u0000\u04b3\u04d9\u0005T"+
+		"\u0000\u0000\u04b4\u04d9\u0005U\u0000\u0000\u04b5\u04d9\u0005V\u0000\u0000"+
+		"\u04b6\u04d9\u0005W\u0000\u0000\u04b7\u04d9\u0005X\u0000\u0000\u04b8\u04d9"+
+		"\u0005Y\u0000\u0000\u04b9\u04d9\u0005Z\u0000\u0000\u04ba\u04d9\u0005["+
+		"\u0000\u0000\u04bb\u04d9\u0005\\\u0000\u0000\u04bc\u04d9\u0005]\u0000"+
+		"\u0000\u04bd\u04d9\u0005^\u0000\u0000\u04be\u04d9\u0005_\u0000\u0000\u04bf"+
+		"\u04d9\u0005`\u0000\u0000\u04c0\u04d9\u0005a\u0000\u0000\u04c1\u04d9\u0005"+
+		"b\u0000\u0000\u04c2\u04d9\u0005h\u0000\u0000\u04c3\u04d9\u0005i\u0000"+
+		"\u0000\u04c4\u04d9\u0005j\u0000\u0000\u04c5\u04d9\u0005k\u0000\u0000\u04c6"+
+		"\u04d9\u0005l\u0000\u0000\u04c7\u04d9\u0005m\u0000\u0000\u04c8\u04d9\u0005"+
+		"n\u0000\u0000\u04c9\u04d9\u0005q\u0000\u0000\u04ca\u04d9\u0003\u00c2a"+
+		"\u0000\u04cb\u04d9\u0005t\u0000\u0000\u04cc\u04d9\u0005u\u0000\u0000\u04cd"+
+		"\u04d9\u0005v\u0000\u0000\u04ce\u04d9\u0005w\u0000\u0000\u04cf\u04d9\u0005"+
+		"x\u0000\u0000\u04d0\u04d9\u0005y\u0000\u0000\u04d1\u04d9\u0005f\u0000"+
+		"\u0000\u04d2\u04d9\u0005g\u0000\u0000\u04d3\u04d9\u0005o\u0000\u0000\u04d4"+
+		"\u04d9\u0005p\u0000\u0000\u04d5\u04d9\u0005d\u0000\u0000\u04d6\u04d9\u0005"+
+		"c\u0000\u0000\u04d7\u04d9\u0005e\u0000\u0000\u04d8\u04a8\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04a9\u0001\u0000\u0000\u0000\u04d8\u04aa\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04ab\u0001\u0000\u0000\u0000\u04d8\u04ac\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04ad\u0001\u0000\u0000\u0000\u04d8\u04ae\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04af\u0001\u0000\u0000\u0000\u04d8\u04b0\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04b1\u0001\u0000\u0000\u0000\u04d8\u04b2\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04b3\u0001\u0000\u0000\u0000\u04d8\u04b4\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04b5\u0001\u0000\u0000\u0000\u04d8\u04b6\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04b7\u0001\u0000\u0000\u0000\u04d8\u04b8\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04b9\u0001\u0000\u0000\u0000\u04d8\u04ba\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04bb\u0001\u0000\u0000\u0000\u04d8\u04bc\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04bd\u0001\u0000\u0000\u0000\u04d8\u04be\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04bf\u0001\u0000\u0000\u0000\u04d8\u04c0\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04c1\u0001\u0000\u0000\u0000\u04d8\u04c2\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04c3\u0001\u0000\u0000\u0000\u04d8\u04c4\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04c5\u0001\u0000\u0000\u0000\u04d8\u04c6\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04c7\u0001\u0000\u0000\u0000\u04d8\u04c8\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04c9\u0001\u0000\u0000\u0000\u04d8\u04ca\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04cb\u0001\u0000\u0000\u0000\u04d8\u04cc\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04cd\u0001\u0000\u0000\u0000\u04d8\u04ce\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04cf\u0001\u0000\u0000\u0000\u04d8\u04d0\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04d1\u0001\u0000\u0000\u0000\u04d8\u04d2\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04d3\u0001\u0000\u0000\u0000\u04d8\u04d4\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04d5\u0001\u0000\u0000\u0000\u04d8\u04d6\u0001\u0000\u0000"+
+		"\u0000\u04d8\u04d7\u0001\u0000\u0000\u0000\u04d9\u00c1\u0001\u0000\u0000"+
+		"\u0000\u04da\u04db\u0007\u000b\u0000\u0000\u04db\u00c3\u0001\u0000\u0000"+
+		"\u0000\u04dc\u04e1\u0005\f\u0000\u0000\u04dd\u04e1\u0005\u0000\u0000\u0001"+
+		"\u04de\u04e1\u0004b(\u0000\u04df\u04e1\u0004b)\u0000\u04e0\u04dc\u0001"+
+		"\u0000\u0000\u0000\u04e0\u04dd\u0001\u0000\u0000\u0000\u04e0\u04de\u0001"+
+		"\u0000\u0000\u0000\u04e0\u04df\u0001\u0000\u0000\u0000\u04e1\u00c5\u0001"+
+		"\u0000\u0000\u0000\u008a\u00c7\u00ca\u00d3\u00d9\u00e1\u00e4\u00e7\u00ff"+
+		"\u0103\u010a\u0110\u0114\u011b\u0123\u0128\u012a\u0131\u0135\u013e\u0142"+
+		"\u014a\u014e\u0152\u015b\u0163\u0167\u016f\u0174\u0176\u017d\u0182\u018d"+
+		"\u0196\u01a5\u01b9\u01bd\u01c1\u01c9\u01d2\u01d7\u01de\u01e3\u01e8\u01ef"+
+		"\u01f6\u01fd\u020f\u0213\u0215\u021c\u0222\u0227\u0236\u0239\u023e\u0241"+
+		"\u024c\u0250\u0255\u0260\u0266\u026e\u0274\u027a\u027e\u0282\u0285\u028a"+
+		"\u0290\u0298\u029d\u02a2\u02a6\u02aa\u02b4\u02b9\u02bc\u02c1\u02c8\u02cf"+
+		"\u02d7\u02de\u02e4\u02e6\u02f3\u02f6\u02fb\u030e\u0315\u031f\u0324\u0327"+
+		"\u032b\u032f\u0335\u033c\u0344\u0347\u034b\u0352\u035b\u035e\u0361\u0365"+
+		"\u0371\u0379\u037d\u037f\u0384\u0388\u0392\u039b\u03ca\u03de\u041c\u0424"+
+		"\u0428\u0435\u0437\u0441\u0449\u044d\u044f\u0455\u0459\u045d\u0462\u0468"+
+		"\u046d\u0470\u0474\u047f\u0485\u048f\u049f\u04a6\u04d8\u04e0";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

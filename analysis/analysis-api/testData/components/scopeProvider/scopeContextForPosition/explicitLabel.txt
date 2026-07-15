@@ -22,6 +22,7 @@ scopes:
     packages: 0
     classifiers: 1
       KaNamedClassSymbol:
+        anchorPsi: KtObjectDeclaration
         annotations: []
         classId: kotlin/String.Companion
         classKind: COMPANION_OBJECT
@@ -38,6 +39,8 @@ scopes:
         modality: FINAL
         name: Companion
         origin: LIBRARY
+        psi: KtObjectDeclaration
+        realPsi: KtObjectDeclaration
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -48,6 +51,7 @@ scopes:
         visibility: PUBLIC
     callables: 8
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: [
           kotlin/internal/IntrinsicConstEvaluation()
             psi: null
@@ -74,6 +78,8 @@ scopes:
         modality: OPEN
         name: compareTo
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -82,6 +88,7 @@ scopes:
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -104,6 +111,8 @@ scopes:
             name: other
             origin: LIBRARY
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -114,6 +123,7 @@ scopes:
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: [
           kotlin/internal/IntrinsicConstEvaluation()
             psi: null
@@ -140,6 +150,8 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -148,6 +160,7 @@ scopes:
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -170,6 +183,8 @@ scopes:
             name: other
             origin: LIBRARY
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -180,6 +195,7 @@ scopes:
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: [
           kotlin/internal/IntrinsicConstEvaluation()
             psi: null
@@ -206,6 +222,8 @@ scopes:
         modality: OPEN
         name: get
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -214,6 +232,7 @@ scopes:
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -236,6 +255,8 @@ scopes:
             name: index
             origin: LIBRARY
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -246,6 +267,7 @@ scopes:
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: [
           kotlin/internal/IntrinsicConstEvaluation()
             psi: null
@@ -272,6 +294,8 @@ scopes:
         modality: FINAL
         name: plus
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -280,6 +304,7 @@ scopes:
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -302,6 +327,8 @@ scopes:
             name: other
             origin: LIBRARY
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -312,6 +339,7 @@ scopes:
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/String.subSequence
         contextParameters: []
@@ -335,6 +363,8 @@ scopes:
         modality: OPEN
         name: subSequence
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -343,6 +373,7 @@ scopes:
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -365,6 +396,8 @@ scopes:
             name: startIndex
             origin: LIBRARY
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -373,6 +406,7 @@ scopes:
             typeParameters: []
             visibility: PUBLIC
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -395,6 +429,8 @@ scopes:
             name: endIndex
             origin: LIBRARY
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -405,6 +441,7 @@ scopes:
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: [
           kotlin/internal/IntrinsicConstEvaluation()
             psi: null
@@ -431,6 +468,8 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -440,11 +479,13 @@ scopes:
         valueParameters: []
         visibility: PUBLIC
       KaKotlinPropertySymbol:
+        anchorPsi: KtProperty
         annotations: [
           kotlin/internal/IntrinsicConstEvaluation()
             psi: null
         ]
         backingFieldSymbol: KaBackingFieldSymbol:
+          anchorPsi: KtProperty
           annotations: []
           callableId: null
           contextParameters: []
@@ -462,6 +503,8 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(kotlin/String.length)
+          psi: null
+          realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -473,6 +516,7 @@ scopes:
         contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
+          anchorPsi: KtProperty
           annotations: []
           callableId: null
           contextParameters: []
@@ -489,6 +533,8 @@ scopes:
           location: PROPERTY
           modality: OPEN
           origin: LIBRARY
+          psi: null
+          realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -517,6 +563,8 @@ scopes:
         name: length
         origin: LIBRARY
         primaryConstructorParameter: null
+        psi: KtProperty
+        realPsi: KtProperty
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -526,6 +574,7 @@ scopes:
         typeParameters: []
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/Any.hashCode
         contextParameters: []
@@ -549,6 +598,8 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -559,6 +610,7 @@ scopes:
         visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
+        anchorPsi: KtPrimaryConstructor
         annotations: []
         callableId: null
         containingClassId: kotlin/String
@@ -574,6 +626,8 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: LIBRARY
+        psi: KtPrimaryConstructor
+        realPsi: KtPrimaryConstructor
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -610,32 +664,51 @@ scopes:
   PackageMemberScope, index = 6
     packages: 6
       KaPackageSymbol:
+        anchorPsi: PsiPackage(META-INF)
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(META-INF)
+        realPsi: PsiPackage(META-INF)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(java)
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(java)
+        realPsi: PsiPackage(java)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(javax)
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(javax)
+        realPsi: PsiPackage(javax)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(kotlin)
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(kotlin)
+        realPsi: PsiPackage(kotlin)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(org)
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(org)
+        realPsi: PsiPackage(org)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(sun)
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(sun)
+        realPsi: PsiPackage(sun)
     classifiers: 0
     callables: 2
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: /test
         contextParameters: []
@@ -659,6 +732,8 @@ scopes:
         modality: FINAL
         name: test
         origin: SOURCE
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -668,6 +743,7 @@ scopes:
         valueParameters: []
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: /block
         contextParameters: []
@@ -691,6 +767,8 @@ scopes:
         modality: FINAL
         name: block
         origin: SOURCE
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -699,6 +777,7 @@ scopes:
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -721,6 +800,8 @@ scopes:
             name: value
             origin: SOURCE
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -729,6 +810,7 @@ scopes:
             typeParameters: []
             visibility: PUBLIC
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -751,6 +833,8 @@ scopes:
             name: block
             origin: SOURCE
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaFunctionType:
               annotations: []

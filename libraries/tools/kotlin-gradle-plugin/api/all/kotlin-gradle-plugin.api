@@ -464,7 +464,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/GradleUtilsKt {
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/KaptExtension : org/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig {
-	public fun <init> ()V
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
 	public fun annotationProcessor (Ljava/lang/String;)V
 	public fun annotationProcessors ([Ljava/lang/String;)V
 	public fun arguments (Lkotlin/jvm/functions/Function1;)V
@@ -480,6 +480,7 @@ public class org/jetbrains/kotlin/gradle/plugin/KaptExtension : org/jetbrains/ko
 	public fun getShowProcessorStats ()Z
 	public fun getStrictMode ()Z
 	public fun getStripMetadata ()Z
+	public fun getStubGenerationScheme ()Lorg/gradle/api/provider/Property;
 	public fun getUseBuildCache ()Z
 	public fun getUseLightAnalysis ()Z
 	public fun javacOptions (Lkotlin/jvm/functions/Function1;)V

@@ -201,7 +201,7 @@ val kotlincNativeImageDist = tasks.register<Copy>("kotlincNativeImageDist") {
 }
 
 fun ProjectTestsExtension.nativeImageTestTask(name: String, body: Test.() -> Unit): TaskProvider<out Task> =
-    testTask(taskName = name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+    testTask(taskName = name, skipInLocalBuild = false) {
         javaLauncher.set(graalLauncher)
         body()
     }

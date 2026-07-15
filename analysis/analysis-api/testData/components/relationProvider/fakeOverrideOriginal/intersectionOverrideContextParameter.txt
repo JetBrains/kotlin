@@ -1,0 +1,29 @@
+IS_THE_SAME_SYMBOL: false
+FAKE_OVERRIDE_ORIGINAL:
+  KaContextParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    isActual: false
+    isCompanion: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isVal: true
+    location: LOCAL
+    modality: FINAL
+    name: c
+    origin: SOURCE
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    typeParameters: []
+    visibility: PUBLIC
+    containingDeclaration: test/A.foo

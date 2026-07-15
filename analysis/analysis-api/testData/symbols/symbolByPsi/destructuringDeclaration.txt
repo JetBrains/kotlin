@@ -1,4 +1,5 @@
 KaConstructorSymbol:
+  anchorPsi: KtPrimaryConstructor
   annotations: []
   callableId: null
   containingClassId: P
@@ -14,6 +15,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor
+  realPsi: KtPrimaryConstructor
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -22,6 +25,7 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -44,6 +48,8 @@ KaConstructorSymbol:
       name: x
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/P.x)
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -57,6 +63,7 @@ KaConstructorSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -79,6 +86,8 @@ KaConstructorSymbol:
       name: y
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/P.y)
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -100,6 +109,7 @@ KaConstructorSymbol:
   importableFqName: P
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: P
   classKind: CLASS
@@ -116,6 +126,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: P
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -131,6 +143,7 @@ KaNamedClassSymbol:
   importableFqName: P
 
 KaLocalVariableSymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
   annotations: []
   callableId: null
   contextParameters: []
@@ -147,6 +160,8 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: l
   origin: SOURCE
+  psi: KtDestructuringDeclarationEntry
+  realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -161,6 +176,7 @@ KaLocalVariableSymbol:
   importableFqName: null
 
 KaLocalVariableSymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
   annotations: []
   callableId: null
   contextParameters: []
@@ -177,6 +193,8 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: r
   origin: SOURCE
+  psi: KtDestructuringDeclarationEntry
+  realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -191,6 +209,7 @@ KaLocalVariableSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /destruct
   contextParameters: []
@@ -214,6 +233,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: destruct
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

@@ -96,6 +96,7 @@ class KaptCommandLineProcessor : CommandLineProcessor {
             INFO_AS_WARNINGS_OPTION -> setFlag(KaptFlag.INFO_AS_WARNINGS, value)
             STRICT_MODE_OPTION -> setFlag(KaptFlag.STRICT, value)
             STRIP_METADATA_OPTION -> setFlag(KaptFlag.STRIP_METADATA, value)
+            STUB_GENERATION_SCHEME_OPTION -> setSelector(enumValues<StubGenerationScheme>(), value) { stubGenerationScheme = it }
             USE_K2 -> {}
 
             SHOW_PROCESSOR_STATS -> setFlag(KaptFlag.SHOW_PROCESSOR_STATS, value)

@@ -18,9 +18,7 @@ dependencies {
     testCompileOnly(kotlinTest("junit"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.junit4)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -54,7 +52,6 @@ sourceSets {
 
 projectTests {
     testTask(
-        jUnitMode = JUnitMode.JUnit5,
         javaLauncher = JdkMajorVersion.JDK_1_8,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
     ) {
@@ -65,7 +62,7 @@ projectTests {
         addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
     }
 
-    testTask("fastJarFSLongTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
+    testTask("fastJarFSLongTests", skipInLocalBuild = true) {
         include("**/FastJarFSLongTest*")
     }
 

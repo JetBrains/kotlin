@@ -487,9 +487,7 @@ class ConeOverloadConflictResolver(
             is FirVariable -> createFlatSignature(call, declaration)
             is FirClass -> createFlatSignature(call, declaration)
             is FirTypeAlias -> createFlatSignature(call, declaration)
-            else -> errorWithAttachment("Not supported: ${declaration::class.java}") {
-                withFirEntry("declaration", declaration)
-            }
+            else -> createEmptySignature(call)
         }
     }
 
@@ -532,6 +530,20 @@ class ConeOverloadConflictResolver(
             hasVarargs = function.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = function.isExpect,
+            isSyntheticMember = false,
+        )
+    }
+
+    private fun createEmptySignature(call: Candidate): FlatSignature<Candidate> {
+        return FlatSignature(
+            origin = call,
+            typeParameters = emptyList(),
+            valueParameterTypes = emptyList<TypeWithConversion>(),
+            hasExtensionReceiver = false,
+            contextReceiverCount = 0,
+            hasVarargs = false,
+            numDefaults = 0,
+            isExpect = false,
             isSyntheticMember = false,
         )
     }

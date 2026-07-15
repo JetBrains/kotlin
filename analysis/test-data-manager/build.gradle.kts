@@ -31,7 +31,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         filter {
             excludeTestsMatching("org.jetbrains.kotlin.analysis.test.data.manager.fakes.*")
         }

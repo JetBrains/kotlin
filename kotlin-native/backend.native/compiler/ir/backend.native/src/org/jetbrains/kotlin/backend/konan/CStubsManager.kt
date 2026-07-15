@@ -1,12 +1,17 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.io.deleteOnExit
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.copyTo
+import kotlin.io.path.createTempFile
+import kotlin.io.path.writeLines
 
 private const val dumpBridges = false
 
@@ -17,7 +22,7 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
         stubs += Stub(kotlinLocation, lines)
     }
 
-    fun compile(clang: ClangArgs, diagnosticReporter: IrDiagnosticReporter, verbose: Boolean): List<File> {
+    fun compile(clang: ClangArgs, diagnosticReporter: IrDiagnosticReporter, verbose: Boolean): List<Path> {
         if (languageToStubs.isEmpty()) return emptyList()
 
         val bitcodes = languageToStubs.entries.map { [language, stubs] ->
@@ -30,24 +35,24 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
                 }
                 else -> ".c"
             }
-            val cSource = createTempFile("cstubs", sourceFileExtension).deleteOnExit()
+            val cSource = createTempFile("cstubs", sourceFileExtension).apply { deleteOnExit() }
             cSource.writeLines(stubs.flatMap { it.lines })
 
-            val bitcode = createTempFile("cstubs", ".bc").deleteOnExit()
+            val bitcode = createTempFile("cstubs", ".bc").apply { deleteOnExit() }
 
-            val cSourcePath = cSource.absolutePath
+            val cSourcePath = cSource.absolutePathString()
 
             val clangCommand = clang.clangC(
                     *compilerOptions.toTypedArray(), "-O2",
                     "-fexceptions", // Allow throwing exceptions through generated stubs.
-                    cSourcePath, "-emit-llvm", "-c", "-o", bitcode.absolutePath
+                    cSourcePath, "-emit-llvm", "-c", "-o", bitcode.absolutePathString()
             )
             if (dumpBridges) {
                 println("CSTUBS for ${language}")
                 stubs.flatMap { it.lines }.forEach {
                     println(it)
                 }
-                println("CSTUBS in ${cSource.absolutePath}")
+                println("CSTUBS in ${cSource.absolutePathString()}")
                 println("CSTUBS CLANG COMMAND:")
                 println(clangCommand.joinToString(" "))
             }
@@ -83,7 +88,7 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
 
         val cSourceCopyPath = "cstubs.c"
         if (verbose) {
-            File(cSourcePath).copyTo(File(cSourceCopyPath))
+            Path(cSourcePath).copyTo(Path(cSourceCopyPath), overwrite = true)
         }
 
         if (errorLines.isNotEmpty()) {

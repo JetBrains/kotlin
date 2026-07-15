@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.konan.util
 
 import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
-import org.jetbrains.kotlin.konan.properties.Properties
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.RandomAccessFile
@@ -26,6 +25,7 @@ import java.net.InetAddress
 import java.net.URL
 import java.net.UnknownHostException
 import java.nio.file.Paths
+import java.util.Properties
 
 private val Properties.dependenciesUrl: String
     get() = getProperty("dependenciesUrl")

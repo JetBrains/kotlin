@@ -23,16 +23,18 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.config.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.native.resolve.KonanLibrariesResolveSupport
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.Properties
 import kotlin.io.path.Path
+import kotlin.io.path.isDirectory
+import kotlin.io.path.name
 
 class NativeSecondStageCompilationConfig(
         val project: Project,
@@ -294,7 +296,7 @@ class NativeSecondStageCompilationConfig(
     val objcEntryPoints: ObjCEntryPoints by lazy {
         configuration
                 .get(BinaryOptions.objcExportEntryPointsPath)
-                ?.let { File(it).readObjCEntryPoints() }
+                ?.let { Path(it).readObjCEntryPoints() }
                 ?: ObjCEntryPoints.ALL
     }
 
@@ -419,7 +421,7 @@ class NativeSecondStageCompilationConfig(
         }.getFullList()
     }
 
-    internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
+    internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
 
     val fullExportedNamePrefix: String
         get() = configuration.fullExportedNamePrefix ?: implicitModuleName
@@ -511,7 +513,7 @@ class NativeSecondStageCompilationConfig(
         "Konan_main"
     }
 
-    internal val testDumpFile: File? = configuration.testDumpOutputPath?.let(::File)
+    internal val testDumpFile: Path? = configuration.testDumpOutputPath?.let(::Path)
 
     internal val useDebugInfoInNativeLibs = configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
@@ -598,20 +600,20 @@ class NativeSecondStageCompilationConfig(
             append("-swift_export")
     }
 
-    internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString)
+    internal val systemCacheDirectory = Path(distribution.systemCacheRootDirectory.absolutePath).resolve(systemCacheFlavorString)
 
     private val autoCacheRootDirectory = configuration.autoCacheDir?.let {
-        File(it).apply {
-            if (!isDirectory) configuration.reportCompilationErrorAndThrow("auto cache directory $this is not found or is not a directory")
+        Path(it).apply {
+            if (!isDirectory()) configuration.reportCompilationErrorAndThrow("auto cache directory $this is not found or is not a directory")
         }
-    } ?: File(distribution.systemCacheRootDirectory.absolutePath)
-    internal val autoCacheDirectory = autoCacheRootDirectory.child(userCacheFlavorString)
+    } ?: Path(distribution.systemCacheRootDirectory.absolutePath)
+    internal val autoCacheDirectory = autoCacheRootDirectory.resolve(userCacheFlavorString)
     private val incrementalCacheRootDirectory = configuration.incrementalCacheDir?.let {
-        File(it).apply {
-            if (!isDirectory) configuration.reportCompilationErrorAndThrow("incremental cache directory $this is not found or is not a directory")
+        Path(it).apply {
+            if (!isDirectory()) configuration.reportCompilationErrorAndThrow("incremental cache directory $this is not found or is not a directory")
         }
     }
-    internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.child(userCacheFlavorString)
+    internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.resolve(userCacheFlavorString)
     internal val dumpBuiltCachesTo = configuration.dumpBuiltCachesTo
 
     internal val ignoreCacheReason = when {
@@ -647,7 +649,7 @@ class NativeSecondStageCompilationConfig(
             else
                 CachedLibraries.getCachedLibraryName(it.klib)
         }
-                ?: File(outputPath).name
+                ?: Path(outputPath).name
 
     /**
      * Do not compile binary when compiling framework.

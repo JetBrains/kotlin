@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -144,10 +145,19 @@ fun Fir2IrConversionScope.createTemporaryVariableForSafeCallConstruction(
     createTemporaryVariable(receiverExpression, "safe_receiver")
 
 fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<IrSimpleType>? {
-    require((klass.valueClassRepresentation != null) == (klass.isInlineOrValue) || klass.isExpect) {
-        "Value class has no representation: ${klass.render()}"
+    val valueClassRepresentation = klass.valueClassRepresentation
+    if (valueClassRepresentation == null) {
+        require(!klass.isInlineOrValue || klass.isExpect) {
+            "Value class has no representation: ${klass.render()}"
+        }
+        return null
     }
-    return klass.valueClassRepresentation?.mapUnderlyingType {
+    /*
+     * In debugger annotations on the primary constructor (or parameters/their types in it) of a value class might be not resolved yet,
+     * so it's required to call lazy resolve to resolve them (and so underlying type in the valueClassRepresentation).
+     */
+    klass.primaryConstructorIfAny(session)?.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+    return valueClassRepresentation.mapUnderlyingType {
         it.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: ${klass.render()}")
     }
 }

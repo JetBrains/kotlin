@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
+import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -89,6 +90,7 @@ internal abstract class SirAbstractVariableFromKtSymbol(
     override val setter: SirSetter? by lazy {
         (ktSymbol as? KaPropertySymbol)
             ?.takeIf { it.setter?.visibility == KaSymbolVisibility.PUBLIC }
+            ?.takeUnless { it.setter?.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN }
             ?.let {
                 it.setter?.let { SirSetterFromKtSymbol(it, sirSession) }
                     ?: if (!it.isVal) DefaultSetter(it, sirSession) else null

@@ -1,4 +1,5 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /foo
   contextParameters: []
@@ -22,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -30,6 +33,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -52,6 +56,8 @@ KaNamedFunctionSymbol:
       name: action
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -80,12 +86,14 @@ KaNamedFunctionSymbol:
   importableFqName: foo
 
 KaKotlinPropertySymbol:
+  anchorPsi: KtScriptInitializer
   annotations: []
   backingFieldSymbol: null
   callableId: /$$result
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtScriptInitializer
     annotations: []
     callableId: null
     contextParameters: []
@@ -102,6 +110,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: PLUGIN
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -135,6 +145,8 @@ KaKotlinPropertySymbol:
   name: $$result
   origin: PLUGIN
   primaryConstructorParameter: null
+  psi: KtScriptInitializer
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

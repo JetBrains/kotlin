@@ -1,4 +1,5 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: library/api/fooApi3
   contextParameters: []
@@ -22,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: fooApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -39,6 +42,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.fooApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: library/api/internalFooApi3
   contextParameters: []
@@ -62,6 +66,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalFooApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -79,6 +85,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.internalFooApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: library/api/privateFooApi3
   contextParameters: []
@@ -102,6 +109,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateFooApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -119,6 +128,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.privateFooApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: library/api/barApi3
   contextParameters: []
@@ -142,7 +152,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: barApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
     contextParameters: []
@@ -159,6 +172,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/barApi3)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -187,6 +202,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.barApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: library/api/internalBarApi3
   contextParameters: []
@@ -210,7 +226,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalBarApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
     contextParameters: []
@@ -227,6 +246,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/internalBarApi3)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -255,6 +276,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.internalBarApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: library/api/privateBarApi3
   contextParameters: []
@@ -278,7 +300,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateBarApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
     contextParameters: []
@@ -295,6 +320,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/privateBarApi3)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -323,6 +350,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.privateBarApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/fooApi2
   contextParameters: []
@@ -346,6 +374,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: fooApi2
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -363,6 +393,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.fooApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/internalFooApi2
   contextParameters: []
@@ -386,6 +417,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalFooApi2
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -403,6 +436,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.internalFooApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/privateFooApi2
   contextParameters: []
@@ -426,6 +460,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateFooApi2
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -443,6 +479,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.privateFooApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/barApi2
   contextParameters: []
@@ -466,7 +503,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: barApi2
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -483,6 +523,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/barApi2)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -511,6 +553,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.barApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/internalBarApi2
   contextParameters: []
@@ -534,7 +577,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalBarApi2
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -551,6 +597,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/internalBarApi2)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -579,6 +627,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.internalBarApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/privateBarApi2
   contextParameters: []
@@ -602,7 +651,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateBarApi2
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -619,6 +671,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/privateBarApi2)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -647,6 +701,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.privateBarApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/fooApi1
   contextParameters: []
@@ -670,6 +725,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: fooApi1
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -687,6 +744,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.fooApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/internalFooApi1
   contextParameters: []
@@ -710,6 +768,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalFooApi1
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -727,6 +787,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.internalFooApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/privateFooApi1
   contextParameters: []
@@ -750,6 +811,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateFooApi1
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -767,6 +830,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.privateFooApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/barApi1
   contextParameters: []
@@ -790,7 +854,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: barApi1
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -807,6 +874,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/barApi1)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -835,6 +904,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.barApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/internalBarApi1
   contextParameters: []
@@ -858,7 +928,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalBarApi1
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -875,6 +948,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/internalBarApi1)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -903,6 +978,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.internalBarApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: library/api/privateBarApi1
   contextParameters: []
@@ -926,7 +1002,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateBarApi1
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -943,6 +1022,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/privateBarApi1)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -971,6 +1052,7 @@ KaNamedFunctionSymbol:
   importableFqName: library.api.privateBarApi1
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: library/api/FakeI
   classKind: INTERFACE
@@ -987,6 +1069,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: FakeI
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1002,6 +1086,7 @@ KaNamedClassSymbol:
   importableFqName: library.api.FakeI
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: library/api/InternalFakeI
   classKind: INTERFACE
@@ -1018,6 +1103,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: InternalFakeI
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1033,6 +1120,7 @@ KaNamedClassSymbol:
   importableFqName: library.api.InternalFakeI
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: library/api/PrivateFakeI
   classKind: INTERFACE
@@ -1049,6 +1137,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: PrivateFakeI
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1064,6 +1154,7 @@ KaNamedClassSymbol:
   importableFqName: library.api.PrivateFakeI
 
 KaNamedClassSymbol:
+  anchorPsi: null
   annotations: []
   classId: library/api/PrivateI
   classKind: INTERFACE
@@ -1080,6 +1171,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: PrivateI
   origin: LIBRARY
+  psi: null
+  realPsi: null
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1095,6 +1188,7 @@ KaNamedClassSymbol:
   importableFqName: library.api.PrivateI
 
 KaNamedClassSymbol:
+  anchorPsi: null
   annotations: []
   classId: library/api/InternalI
   classKind: INTERFACE
@@ -1111,6 +1205,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: InternalI
   origin: LIBRARY
+  psi: null
+  realPsi: null
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1126,6 +1222,7 @@ KaNamedClassSymbol:
   importableFqName: library.api.InternalI
 
 KaNamedClassSymbol:
+  anchorPsi: null
   annotations: []
   classId: library/api/I
   classKind: INTERFACE
@@ -1142,6 +1239,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: I
   origin: LIBRARY
+  psi: null
+  realPsi: null
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1157,6 +1256,7 @@ KaNamedClassSymbol:
   importableFqName: library.api.I
 
 KaNamedClassSymbol:
+  anchorPsi: null
   annotations: []
   classId: library/api/C1
   classKind: CLASS
@@ -1173,6 +1273,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: C1
   origin: LIBRARY
+  psi: null
+  realPsi: null
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1188,6 +1290,7 @@ KaNamedClassSymbol:
   importableFqName: library.api.C1
 
 KaNamedClassSymbol:
+  anchorPsi: null
   annotations: []
   classId: library/api/InternalC1
   classKind: CLASS
@@ -1204,6 +1307,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InternalC1
   origin: LIBRARY
+  psi: null
+  realPsi: null
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1219,6 +1324,7 @@ KaNamedClassSymbol:
   importableFqName: library.api.InternalC1
 
 KaNamedClassSymbol:
+  anchorPsi: null
   annotations: []
   classId: library/api/PrivateC1
   classKind: CLASS
@@ -1235,6 +1341,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: PrivateC1
   origin: LIBRARY
+  psi: null
+  realPsi: null
   superTypes: [
     KaUsualClassType:
       annotations: []

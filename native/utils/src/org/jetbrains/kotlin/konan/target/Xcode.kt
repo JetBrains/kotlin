@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.MissingXcodeException
 import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.file.File
 import java.util.Locale
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 
 data class XcodeVersion(val major: Int, val minor: Int) : Comparable<XcodeVersion> {
     override fun compareTo(other: XcodeVersion): Int {
@@ -91,12 +92,12 @@ internal class CurrentXcode : Xcode {
 
     override val toolchain by lazy {
         val ldPath = xcrun("-f", "ld") // = $toolchain/usr/bin/ld
-        File(ldPath).parentFile.parentFile.absolutePath
+        Path(ldPath).parent.parent.absolutePathString()
     }
 
     override val additionalTools: String by lazy {
         val bitcodeBuildToolPath = xcrun("-f", "bitcode-build-tool")
-        File(bitcodeBuildToolPath).parentFile.parentFile.absolutePath
+        Path(bitcodeBuildToolPath).parent.parent.absolutePathString()
     }
 
     override val simulatorRuntimes: String by lazy {

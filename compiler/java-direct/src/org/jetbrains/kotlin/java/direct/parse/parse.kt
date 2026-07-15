@@ -12,7 +12,7 @@ import com.intellij.java.syntax.parser.JavaParser
 import com.intellij.platform.syntax.lexer.performLexing
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilderFactory
-import fleet.com.intellij.multiplatform.pom.java.LanguageLevel
+import com.intellij.pom.java.LanguageLevel
 
 fun parseJavaToSyntaxTreeBuilder(
     charSequence: CharSequence,

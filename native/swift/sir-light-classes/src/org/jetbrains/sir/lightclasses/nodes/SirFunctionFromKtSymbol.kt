@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.sir.util.unavailableTypes
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -165,14 +166,19 @@ internal open class SirFunctionFromKtSymbol(
         }.orEmpty()
 
         val reverseBridges = if (needsReverseBridge()) {
+            val params = buildList {
+                addIfNotNull(contextParameter)
+                addIfNotNull(extensionReceiverParameter)
+                addAll(parameters)
+            }
             bridgeProxy?.createReverseSirBridges(
                 targetClassFqName = (ktSymbol as? KaNamedFunctionSymbol)
                     ?.containingSymbol?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.asString() }
                     ?: "",
                 targetMethodName = ktSymbol.name?.asString() ?: "",
                 swiftDynamicCall = { selfExpr, paramExprs ->
+                    check(paramExprs.size == params.size) { "Parameter expression count doesn't match parameter count" }
                     val methodName = this@SirFunctionFromKtSymbol.name
-                    val params = this@SirFunctionFromKtSymbol.parameters
                     val tryPrefix = when {
                         isAsync -> "try await "
                         errorType != SirType.never -> "try! "

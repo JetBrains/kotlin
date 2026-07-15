@@ -1,10 +1,12 @@
 KaKotlinPropertySymbol:
+  anchorPsi: KtClass
   annotations: []
   backingFieldSymbol: null
   callableId: /A.foo
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
     contextParameters: []
@@ -21,6 +23,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: DELEGATED
+    psi: KtClass
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -58,6 +62,8 @@ KaKotlinPropertySymbol:
   name: foo
   origin: DELEGATED
   primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

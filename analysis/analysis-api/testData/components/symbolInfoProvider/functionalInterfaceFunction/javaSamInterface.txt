@@ -1,5 +1,6 @@
 CLASS:
   KaNamedClassSymbol:
+  anchorPsi: PsiClassImpl
   annotations: []
   classId: JavaRunnable
   classKind: INTERFACE
@@ -16,6 +17,8 @@ CLASS:
   modality: ABSTRACT
   name: JavaRunnable
   origin: JAVA_SOURCE
+  psi: PsiClassImpl
+  realPsi: PsiClassImpl
   superTypes: [
     KaUsualClassType:
       abbreviation: null
@@ -43,6 +46,7 @@ CLASS:
 
 FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
+  anchorPsi: PsiMethodImpl
   annotations: []
   callableId: /JavaRunnable.run
   contextParameters: []
@@ -66,6 +70,8 @@ FUNCTIONAL INTERFACE FUNCTION:
   modality: ABSTRACT
   name: run
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     abbreviation: null

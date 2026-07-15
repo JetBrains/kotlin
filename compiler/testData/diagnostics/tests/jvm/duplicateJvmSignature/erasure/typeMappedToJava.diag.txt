@@ -1,0 +1,7 @@
+/typeMappedToJava.kt:5:1: error: Platform declaration clash: The following declarations have the same JVM signature (foo(Ljava/lang/String;)V):
+    fun foo(s: java.lang.String): Unit defined in root package
+    fun foo(s: kotlin.String): Unit defined in root package
+
+/typeMappedToJava.kt:6:1: error: Platform declaration clash: The following declarations have the same JVM signature (foo(Ljava/lang/String;)V):
+    fun foo(s: java.lang.String): Unit defined in root package
+    fun foo(s: kotlin.String): Unit defined in root package

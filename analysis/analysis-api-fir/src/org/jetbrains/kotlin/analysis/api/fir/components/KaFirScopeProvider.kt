@@ -9,7 +9,10 @@ import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
-import org.jetbrains.kotlin.analysis.api.fir.symbols.*
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirScriptSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
@@ -62,8 +65,7 @@ internal class KaFirScopeProvider(
     }
 
     private fun KaDeclarationContainerSymbol.getFirForScope(): FirClass = when (this) {
-        is KaFirNamedClassSymbol -> firSymbol.fir
-        is KaFirPsiJavaClassSymbol -> firSymbol.fir
+        is KaFirNamedClassSymbolBase<*> -> firSymbol.fir
         is KaFirAnonymousObjectSymbol -> firSymbol.fir
         else -> error(
             "`${this::class.qualifiedName}` needs to be specially handled by the scope provider or is an unknown" +

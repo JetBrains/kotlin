@@ -92,7 +92,6 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
             StandardClassIds.Annotations.Target,
             StandardClassIds.Annotations.DeprecatedSinceKotlin,
             StandardClassIds.Annotations.SinceKotlin,
-            StandardClassIds.Annotations.IntroducedAt,
         )
 
         override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(

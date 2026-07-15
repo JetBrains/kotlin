@@ -216,7 +216,6 @@ include(
     ":compiler:tests-common",
     ":compiler:tests-integration",
     ":compiler:tests-mutes",
-    ":compiler:tests-mutes:mutes-junit4",
     ":compiler:tests-mutes:mutes-junit5",
     ":compiler:jklib.tests",
     ":js:js.ast",
@@ -707,7 +706,6 @@ include(
 include(
     ":analysis",
     ":analysis:low-level-api-fir",
-    ":analysis:low-level-api-fir:tests-jdk11",
     ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests",
     ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
     ":analysis:analysis-api-fir:analysis-api-fir-generator",

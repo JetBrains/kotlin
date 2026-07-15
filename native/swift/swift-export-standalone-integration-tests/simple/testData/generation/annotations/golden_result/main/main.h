@@ -369,6 +369,10 @@ _Bool normalChildT_obsoletedV_get(void * self);
 
 _Bool normalChildT_removedF(void * self);
 
+int32_t normalChildT_removedSetterExt_get__TypesOfArgumentsE__Swift_String__(void * self, NSString * receiver);
+
+int32_t normalChildT_removedSetter_get(void * self);
+
 _Bool normalChildT_removedV_get(void * self);
 
 _Bool normalT_deprecatedF(void * self);

@@ -7,8 +7,8 @@ import org.jetbrains.kotlin.objcexport.isMappedObjCType
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertFalse
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class IsMappedObjCTypeTests(

@@ -1,0 +1,39 @@
+KaTypeAliasSymbol:
+  anchorPsi: null
+  annotations: []
+  classId: kotlin/DeepRecursiveFunctionBlock
+  expandedType: KaFunctionType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          *
+          *
+        ]
+        type: kotlin/DeepRecursiveScope<*, *>
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any?
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any?
+    ]
+    type: suspend kotlin/DeepRecursiveScope<*, *>.(kotlin/Any?) -> kotlin/Any?
+  isActual: false
+  isExpect: false
+  isExternal: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: DeepRecursiveFunctionBlock
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  typeParameters: []
+  visibility: PRIVATE
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  deprecation: null
+  importableFqName: kotlin.DeepRecursiveFunctionBlock

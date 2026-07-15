@@ -637,6 +637,7 @@ internal fun renderScopeWithParentDeclarations(scope: KaScope): String = prettyP
         append(symbol.render(renderer))
         append(" fromClass ")
         append(containingDeclaration.classId?.asString())
+
         if (symbol.typeParameters.isNotEmpty()) {
             appendLine()
             withIndent {
@@ -645,6 +646,31 @@ internal fun renderScopeWithParentDeclarations(scope: KaScope): String = prettyP
                     append(typeParameter.render(renderer))
                     append(" from ")
                     append(containingDeclarationForTypeParameter?.qualifiedNameString())
+                }
+            }
+        }
+
+        if (symbol is KaCallableSymbol) {
+            if (symbol.contextParameters.isNotEmpty()) {
+                appendLine()
+                withIndent {
+                    printCollection(symbol.contextParameters, separator = "\n") { contextParameter ->
+                        val containingDeclarationForContextParameter = contextParameter.containingDeclaration
+                        append(contextParameter.render(renderer))
+                        append(" from ")
+                        append(containingDeclarationForContextParameter?.qualifiedNameString())
+                    }
+                }
+            }
+
+            val receiverParameterSymbol = symbol.receiverParameter
+            if (receiverParameterSymbol != null) {
+                withIndent {
+                    appendLine()
+                    append("receiver ")
+                    append(receiverParameterSymbol.render(renderer))
+                    append(" from ")
+                    append(receiverParameterSymbol.containingDeclaration?.qualifiedNameString())
                 }
             }
         }

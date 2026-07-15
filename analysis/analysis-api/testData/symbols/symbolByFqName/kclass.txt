@@ -1,4 +1,5 @@
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: kotlin/reflect/KClass
   classKind: INTERFACE
@@ -15,6 +16,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: KClass
   origin: LIBRARY
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -31,6 +34,7 @@ KaNamedClassSymbol:
   ]
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -40,6 +44,8 @@ KaNamedClassSymbol:
       modality: FINAL
       name: T
       origin: LIBRARY
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: [
         KaUsualClassType:
           annotations: []

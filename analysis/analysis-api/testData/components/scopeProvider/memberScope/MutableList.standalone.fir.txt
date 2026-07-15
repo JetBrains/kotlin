@@ -1,4 +1,5 @@
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: [
     kotlin/IgnorableReturnValue()
       psi: null
@@ -25,6 +26,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: add
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -33,6 +36,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -55,6 +59,8 @@ KaNamedFunctionSymbol:
       name: element
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -85,6 +91,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.add
   contextParameters: []
@@ -108,6 +115,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: add
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -116,6 +125,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -138,6 +148,8 @@ KaNamedFunctionSymbol:
       name: index
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -151,6 +163,7 @@ KaNamedFunctionSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -173,6 +186,8 @@ KaNamedFunctionSymbol:
       name: element
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -203,6 +218,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: [
     kotlin/IgnorableReturnValue()
       psi: null
@@ -229,6 +245,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: remove
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -237,6 +255,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -259,6 +278,8 @@ KaNamedFunctionSymbol:
       name: element
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -289,6 +310,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: [
     kotlin/IgnorableReturnValue()
       psi: null
@@ -315,6 +337,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -323,6 +347,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -345,6 +370,8 @@ KaNamedFunctionSymbol:
       name: elements
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -380,6 +407,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: [
     kotlin/IgnorableReturnValue()
       psi: null
@@ -406,6 +434,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -414,6 +444,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -436,6 +467,8 @@ KaNamedFunctionSymbol:
       name: index
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -449,6 +482,7 @@ KaNamedFunctionSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -471,6 +505,8 @@ KaNamedFunctionSymbol:
       name: elements
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -506,6 +542,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: [
     kotlin/IgnorableReturnValue()
       psi: null
@@ -532,6 +569,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: removeAll
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -540,6 +579,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -562,6 +602,8 @@ KaNamedFunctionSymbol:
       name: elements
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -597,6 +639,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: [
     kotlin/IgnorableReturnValue()
       psi: null
@@ -623,6 +666,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: retainAll
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -631,6 +676,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -653,6 +699,8 @@ KaNamedFunctionSymbol:
       name: elements
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -688,6 +736,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.clear
   contextParameters: []
@@ -711,6 +760,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: clear
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -736,6 +787,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: [
     kotlin/IgnorableReturnValue()
       psi: null
@@ -762,6 +814,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: set
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -769,6 +823,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -791,6 +846,8 @@ KaNamedFunctionSymbol:
       name: index
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -804,6 +861,7 @@ KaNamedFunctionSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -826,6 +884,8 @@ KaNamedFunctionSymbol:
       name: element
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -856,6 +916,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: [
     kotlin/IgnorableReturnValue()
       psi: null
@@ -882,6 +943,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: removeAt
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -889,6 +952,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -911,6 +975,8 @@ KaNamedFunctionSymbol:
       name: index
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -942,6 +1008,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.listIterator
   contextParameters: []
@@ -965,6 +1032,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -994,6 +1063,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.listIterator
   contextParameters: []
@@ -1017,6 +1087,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1029,6 +1101,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1051,6 +1124,8 @@ KaNamedFunctionSymbol:
       name: index
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1082,6 +1157,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.subList
   contextParameters: []
@@ -1105,6 +1181,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: subList
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1117,6 +1195,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1139,6 +1218,8 @@ KaNamedFunctionSymbol:
       name: fromIndex
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1152,6 +1233,7 @@ KaNamedFunctionSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1174,6 +1256,8 @@ KaNamedFunctionSymbol:
       name: toIndex
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1205,12 +1289,14 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: []
   backingFieldSymbol: null
   callableId: kotlin/collections/MutableList.size
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1227,6 +1313,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: ABSTRACT
     origin: INTERSECTION_OVERRIDE
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1268,6 +1356,8 @@ KaKotlinPropertySymbol:
   name: size
   origin: INTERSECTION_OVERRIDE
   primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1294,6 +1384,7 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.isEmpty
   contextParameters: []
@@ -1317,6 +1408,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: isEmpty
   origin: INTERSECTION_OVERRIDE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1342,6 +1435,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.contains
   contextParameters: []
@@ -1365,6 +1459,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: contains
   origin: INTERSECTION_OVERRIDE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1373,6 +1469,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1395,6 +1492,8 @@ KaNamedFunctionSymbol:
       name: element
       origin: INTERSECTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -1425,6 +1524,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.iterator
   contextParameters: []
@@ -1448,6 +1548,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: iterator
   origin: INTERSECTION_OVERRIDE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1477,6 +1579,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.containsAll
   contextParameters: []
@@ -1500,6 +1603,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: containsAll
   origin: INTERSECTION_OVERRIDE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1508,6 +1613,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1530,6 +1636,8 @@ KaNamedFunctionSymbol:
       name: elements
       origin: INTERSECTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1565,6 +1673,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.get
   contextParameters: []
@@ -1588,6 +1697,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: get
   origin: SUBSTITUTION_OVERRIDE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -1595,6 +1706,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1617,6 +1729,8 @@ KaNamedFunctionSymbol:
       name: index
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1648,6 +1762,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.indexOf
   contextParameters: []
@@ -1671,6 +1786,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: indexOf
   origin: SUBSTITUTION_OVERRIDE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1679,6 +1796,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1701,6 +1819,8 @@ KaNamedFunctionSymbol:
       name: element
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -1731,6 +1851,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.lastIndexOf
   contextParameters: []
@@ -1754,6 +1875,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: lastIndexOf
   origin: SUBSTITUTION_OVERRIDE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1762,6 +1885,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1784,6 +1908,8 @@ KaNamedFunctionSymbol:
       name: element
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -1814,6 +1940,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/Any.equals
   contextParameters: []
@@ -1837,6 +1964,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1845,6 +1974,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1867,6 +1997,8 @@ KaNamedFunctionSymbol:
       name: other
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1894,6 +2026,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/Any.hashCode
   contextParameters: []
@@ -1917,6 +2050,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1938,6 +2073,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/Any.toString
   contextParameters: []
@@ -1961,6 +2097,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1982,6 +2120,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.getFirst
   contextParameters: []
@@ -2005,6 +2144,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getFirst
   origin: SUBSTITUTION_OVERRIDE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -2029,6 +2170,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/MutableList.getLast
   contextParameters: []
@@ -2052,6 +2194,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getLast
   origin: SUBSTITUTION_OVERRIDE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []

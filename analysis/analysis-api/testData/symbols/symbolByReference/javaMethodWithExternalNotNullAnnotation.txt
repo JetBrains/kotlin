@@ -1,4 +1,5 @@
 KaNamedFunctionSymbol:
+  anchorPsi: PsiMethodImpl
   annotations: [
     org/jetbrains/annotations/NotNull()
       psi: null
@@ -25,6 +26,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []

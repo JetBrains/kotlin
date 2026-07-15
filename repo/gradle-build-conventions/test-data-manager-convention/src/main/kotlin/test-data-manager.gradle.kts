@@ -4,25 +4,27 @@
  */
 
 /**
- * Plugin for registering the `manageTestData` and `updateTestData` tasks in a module.
+ * Plugin for registering the `checkTestData` and `updateTestData` tasks in a module.
  *
  * Apply this plugin to modules that have managed test data.
  *
  * ## Tasks
  *
- * - **`manageTestData`** ([TestDataManagerModuleTask]) — supports both `--mode=check` (default)
- *   and `--mode=update`. Options accepted via `--option` CLI flags.
- * - **`updateTestData`** ([UpdateTestDataModuleTask]) — always runs in `update` mode. Options
- *   accepted only via `-P` Gradle properties so the configuration cache stays valid when
- *   option values change between runs.
+ * - **`checkTestData`** ([CheckTestDataModuleTask]) — runs tests and fails on mismatches without
+ *   modifying anything.
+ * - **`updateTestData`** ([UpdateTestDataModuleTask]) — runs tests and updates files on mismatches.
+ *
+ * Both accept their options only via `-P` Gradle properties (not `--option` CLI flags) — see
+ * [AbstractTestDataModuleTask] for the rationale and the full option list.
  *
  * ## Usage
  *
  * ```bash
- * # Check mode (CLI options)
- * ./gradlew :analysis:analysis-api-fir:manageTestData --test-data-path=path/to/file.kt
+ * # Check mode
+ * ./gradlew :analysis:analysis-api-fir:checkTestData \
+ *     -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=path/to/file.kt
  *
- * # Update mode via the dedicated task (CC-friendly, -P options)
+ * # Update mode
  * ./gradlew :analysis:analysis-api-fir:updateTestData \
  *     -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=path/to/file.kt
  *
@@ -30,9 +32,7 @@
  * ./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testClassPattern=.*Fir.*
  * ```
  *
- * When `manageTestData` is run via orchestration from `manageTestDataGlobally`, it pulls
- * configuration from the shared [TestDataManagerConfiguration] extension. `updateTestData`
- * has no orchestrator — each module reads its own `-P` properties independently.
+ * There is no global orchestrator task — each module reads its own `-P` properties independently.
  *
  * ## Ordering
  *
@@ -40,33 +40,35 @@
  * order when running across modules (e.g., golden modules first).
  */
 
-tasks.register<TestDataManagerModuleTask>(manageTestDataTaskName) {
-    markAsIdeaTestTask()
+tasks.register<CheckTestDataModuleTask>(checkTestDataTaskName) {
+    wireOptions(checkTestDataTaskName)
+}
 
-    // Wire providers from shared config
-    // Note: the config might have values only in the case running the task by the global one
-    val rootConfig = rootProject.extensions.getByType<TestDataManagerConfiguration>()
-    mode.convention(rootConfig.mode.orElse(TestDataManagerMode.DEFAULT))
-    testDataPath.convention(rootConfig.testDataPath)
-    testClassPattern.convention(rootConfig.testClassPattern)
-    goldenOnly.convention(rootConfig.goldenOnly)
-    incremental.convention(rootConfig.incremental)
-
-    wireFromTestTask(manageTestDataTaskName)
+tasks.register<UpdateTestDataModuleTask>(updateTestDataTaskName) {
+    wireOptions(updateTestDataTaskName)
 }
 
 /**
  * Wires a test-data manager-style [JavaExec] task to mirror the module's regular `test` task
  * so tests run the same way under the manager as they do normally.
  *
- * Shared by both [TestDataManagerModuleTask] and [UpdateTestDataModuleTask] registrations.
+ * Shared by both [CheckTestDataModuleTask] and [UpdateTestDataModuleTask] registrations.
  *
  * @param peerTaskName the name of the manager task being configured. Used to rewrite
  *   `mustRunAfter` constraints so that, e.g., `:moduleA:test → :moduleB:test` becomes
  *   `:moduleA:peerTaskName → :moduleB:peerTaskName` — preserving cross-module ordering
  *   between manager-task instances.
  */
-private fun JavaExec.wireFromTestTask(peerTaskName: String) {
+private fun AbstractTestDataModuleTask.wireOptions(peerTaskName: String) {
+    /**
+     * Wires each option's convention from its `-P` Gradle property. The providers are resolved lazily at
+     * execution time, so they are not configuration-cache inputs — see [AbstractTestDataModuleTask].
+     */
+    testDataPath.convention(project.providers.gradleProperty(TestDataManagerOption.TEST_DATA_PATH))
+    testClassPattern.convention(project.providers.gradleProperty(TestDataManagerOption.TEST_CLASS_PATTERN))
+    goldenOnly.convention(project.providers.gradleProperty(TestDataManagerOption.GOLDEN_ONLY).map { it.toBoolean() })
+    incremental.convention(project.providers.gradleProperty(TestDataManagerOption.INCREMENTAL).map { it.toBoolean() })
+
     // Capture test task configuration eagerly during configuration (configuration-cache compatible)
     // Note: taskProvider.map creates a task dependency, so we capture the value directly
     val testTask = tasks.named<Test>("test").get()
@@ -111,17 +113,13 @@ private fun JavaExec.wireFromTestTask(peerTaskName: String) {
     jvmArgumentProviders += testTask.jvmArgumentProviders
         .filter { it !is JfrArgumentProvider }
 
-    // Forward idea.active to enable IDE integration in TestDataManagerRunner
+    // IDE integration: mark the task the same way as `Test` so IDEA's test runner picks it up
+    // and forwards `idea.active` to enable IDE integration in `TestDataManagerRunner`.
     if (project.providers.systemProperty("idea.active").isPresent) {
+        extra["idea.internal.test"] = true
         systemProperty("idea.active", "true")
     }
 
     // Pass project name for unique test IDs when running multiple modules in parallel
     systemProperty(TestDataManagerOption.PROJECT_NAME, project.path)
-}
-
-tasks.register<UpdateTestDataModuleTask>(updateTestDataTaskName) {
-    markAsIdeaTestTask()
-
-    wireFromTestTask(updateTestDataTaskName)
 }

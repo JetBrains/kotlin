@@ -1,4 +1,5 @@
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: kotlin/collections/Iterator
   classKind: INTERFACE
@@ -15,6 +16,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: Iterator
   origin: LIBRARY
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -23,6 +26,7 @@ KaNamedClassSymbol:
   ]
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -32,6 +36,8 @@ KaNamedClassSymbol:
       modality: FINAL
       name: T
       origin: LIBRARY
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: OUT_VARIANCE
       visibility: LOCAL

@@ -1,5 +1,6 @@
 Resolved constructor:
   KaConstructorSymbol:
+    anchorPsi: KtTypeAlias
     annotations: []
     callableId: null
     containingClassId: test/MyTypeAlias
@@ -15,6 +16,8 @@ Resolved constructor:
     location: CLASS
     modality: FINAL
     origin: TYPEALIASED_CONSTRUCTOR
+    psi: KtTypeAlias
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -31,6 +34,7 @@ Resolved constructor:
 
 Original constructor if type aliased:
   KaConstructorSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
     containingClassId: test/MyClass
@@ -46,6 +50,8 @@ Original constructor if type aliased:
     location: CLASS
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
+    psi: KtClass
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []

@@ -48,4 +48,8 @@ internal class KotlinKConstructor(
         require(overriddenStorage == KCallableOverriddenStorage.EMPTY) { "Constructors cannot have fake overrides: $this" }
         return KotlinKConstructor(container, signature, CallableReference.NO_RECEIVER, kmConstructor)
     }
+
+    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
+        if (this.rawBoundReceiver === boundReceiver) this
+        else KotlinKConstructor(container, signature, boundReceiver, kmConstructor)
 }

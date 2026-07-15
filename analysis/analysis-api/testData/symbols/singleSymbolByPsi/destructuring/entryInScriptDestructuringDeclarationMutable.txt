@@ -1,10 +1,12 @@
 KaKotlinPropertySymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
   annotations: []
   backingFieldSymbol: null
   callableId: /a
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtDestructuringDeclarationEntry
     annotations: []
     callableId: null
     contextParameters: []
@@ -21,6 +23,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -54,12 +58,15 @@ KaKotlinPropertySymbol:
   name: a
   origin: SOURCE
   primaryConstructorParameter: null
+  psi: KtDestructuringDeclarationEntry
+  realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: KaPropertySetterSymbol:
+    anchorPsi: KtDestructuringDeclarationEntry
     annotations: []
     callableId: null
     contextParameters: []
@@ -77,6 +84,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     parameter: KaValueParameterSymbol:
+      anchorPsi: KtDestructuringDeclarationEntry
       annotations: []
       callableId: null
       contextParameters: []
@@ -99,6 +107,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -111,6 +121,8 @@ KaKotlinPropertySymbol:
       getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclarationMutable.kts"
       deprecation: null
       importableFqName: null
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -119,6 +131,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: KtDestructuringDeclarationEntry
         annotations: []
         callableId: null
         contextParameters: []
@@ -141,6 +154,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: SOURCE
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

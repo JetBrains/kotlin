@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
@@ -103,7 +102,7 @@ internal fun KaFirPsiSymbol<*, *>.psiOrSymbolEquals(other: Any?): Boolean {
         backingPsi is PsiMember || otherBackingPsi is PsiMember -> {
             return backingPsi != null &&
                     otherBackingPsi != null &&
-                    PsiEquivalenceUtil.areElementsEquivalent(backingPsi, otherBackingPsi)
+                    backingPsi.manager.areElementsEquivalent(backingPsi, otherBackingPsi)
         }
 
         backingPsi !== otherBackingPsi -> return false

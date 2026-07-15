@@ -1,0 +1,30 @@
+IS_THE_SAME_SYMBOL: true
+FAKE_OVERRIDE_ORIGINAL:
+  KaEnumEntrySymbol:
+    anchorPsi: KtEnumEntry
+    annotations: []
+    callableId: test/MyEnum.AA
+    contextParameters: []
+    contextReceivers: []
+    initializer: null
+    isActual: false
+    isCompanion: true
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isVal: true
+    location: CLASS
+    modality: FINAL
+    name: AA
+    origin: SOURCE
+    psi: KtEnumEntry
+    realPsi: KtEnumEntry
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/MyEnum
+    typeParameters: []
+    visibility: PUBLIC
+    containingDeclaration: test/MyEnum

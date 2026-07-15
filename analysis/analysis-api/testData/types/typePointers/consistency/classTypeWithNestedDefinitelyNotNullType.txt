@@ -17,6 +17,7 @@ KaUsualClassType:
             annotations: []
             name: T1
             symbol: KaTypeParameterSymbol:
+              anchorPsi: KtTypeParameter
               annotations: []
               isActual: false
               isExpect: false
@@ -26,6 +27,8 @@ KaUsualClassType:
               modality: FINAL
               name: T1
               origin: SOURCE
+              psi: KtTypeParameter
+              realPsi: KtTypeParameter
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
@@ -47,6 +50,7 @@ KaUsualClassType:
         annotations: []
         name: T1
         symbol: KaTypeParameterSymbol:
+          anchorPsi: KtTypeParameter
           annotations: []
           isActual: false
           isExpect: false
@@ -56,6 +60,8 @@ KaUsualClassType:
           modality: FINAL
           name: T1
           origin: SOURCE
+          psi: KtTypeParameter
+          realPsi: KtTypeParameter
           upperBounds: []
           variance: INVARIANT
           visibility: LOCAL

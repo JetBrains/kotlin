@@ -73,7 +73,7 @@ enum class KotlinJpsLibrary(val id: String, roots: () -> Array<File>) {
         val library = project.addLibrary(id, JpsJavaLibraryType.INSTANCE)
 
         for (fileRoot in roots) {
-            library.addRoot(fileRoot, JpsOrderRootType.COMPILED)
+            library.addRoot(fileRoot.toPath(), JpsOrderRootType.COMPILED)
         }
 
         return library

@@ -10,6 +10,8 @@ plugins {
 
 dependencies {
     testFixturesImplementation(libs.opentest4j)
+    testFixturesImplementation(libs.junit.jupiter.api)
+
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils.common")))
     testFixturesImplementation(project(":compiler:fir:entrypoint"))
     testFixturesImplementation(project(":compiler:cli"))
@@ -37,5 +39,5 @@ optInToK1Deprecation()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }

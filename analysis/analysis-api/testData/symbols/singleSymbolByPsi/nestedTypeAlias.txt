@@ -1,4 +1,5 @@
 KaTypeAliasSymbol:
+  anchorPsi: KtTypeAlias
   annotations: []
   classId: Outer.MyAlias
   expandedType: KaUsualClassType:
@@ -19,8 +20,11 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: MyAlias
   origin: SOURCE
+  psi: KtTypeAlias
+  realPsi: KtTypeAlias
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -30,6 +34,8 @@ KaTypeAliasSymbol:
       modality: FINAL
       name: C
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -38,6 +44,7 @@ KaTypeAliasSymbol:
       deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -47,6 +54,8 @@ KaTypeAliasSymbol:
       modality: FINAL
       name: D
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL

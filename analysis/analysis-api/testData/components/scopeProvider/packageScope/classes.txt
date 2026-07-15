@@ -1,4 +1,5 @@
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: test/A
   classKind: CLASS
@@ -15,6 +16,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: A
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -30,6 +33,7 @@ KaNamedClassSymbol:
   importableFqName: test.A
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: test/InternalA
   classKind: CLASS
@@ -46,6 +50,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: InternalA
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -61,6 +67,7 @@ KaNamedClassSymbol:
   importableFqName: test.InternalA
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: test/PrivateA
   classKind: CLASS
@@ -77,6 +84,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: PrivateA
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -92,6 +101,7 @@ KaNamedClassSymbol:
   importableFqName: test.PrivateA
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: test/B
   classKind: CLASS
@@ -108,6 +118,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: B
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -123,6 +135,7 @@ KaNamedClassSymbol:
   importableFqName: test.B
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: test/InternalB
   classKind: CLASS
@@ -139,6 +152,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InternalB
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -154,6 +169,7 @@ KaNamedClassSymbol:
   importableFqName: test.InternalB
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: test/PrivateB
   classKind: CLASS
@@ -170,6 +186,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: PrivateB
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []

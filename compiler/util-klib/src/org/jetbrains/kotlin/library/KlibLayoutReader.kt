@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.io.ZipFileSystemAccessor
+import org.jetbrains.kotlin.io.deleteOnExitRecursively
 import java.io.IOException
-import java.nio.file.FileVisitResult
-import java.nio.file.Files
 import java.nio.file.Files.createTempDirectory
 import java.nio.file.Files.createTempFile
 import java.nio.file.Path
-import java.nio.file.SimpleFileVisitor
-import java.nio.file.attribute.BasicFileAttributes
 import java.util.zip.ZipException
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.copyTo
@@ -98,25 +95,6 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
                 else -> throw ZipException("Unsupported type of the file system object in KLIB archive: $fileOrDirectory")
             }
         }
-    }
-
-    companion object {
-        private fun Path.deleteOnExitRecursively() {
-            if (!exists()) return
-
-            Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
-                override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                    file.toFile().deleteOnExit()
-                    return FileVisitResult.CONTINUE
-                }
-
-                override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
-                    dir.toFile().deleteOnExit()
-                    return FileVisitResult.CONTINUE
-                }
-            })
-        }
-
     }
 }
 

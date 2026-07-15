@@ -1,4 +1,3 @@
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:*
 // IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR, JS_IR_ES6
 // ^^^^^^
 // The Mutli Module tests are compiling the main module as a dependency module.

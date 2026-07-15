@@ -17,8 +17,10 @@ scopes:
     classifiers: 0
     callables: 4
       KaKotlinPropertySymbol:
+        anchorPsi: null
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
+          anchorPsi: null
           annotations: []
           callableId: null
           contextParameters: []
@@ -36,6 +38,8 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(<local>/column)
+          psi: null
+          realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -47,6 +51,7 @@ scopes:
         contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
+          anchorPsi: null
           annotations: []
           callableId: null
           contextParameters: []
@@ -63,7 +68,10 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: PLUGIN
+          psi: null
+          realPsi: null
           receiverParameter: KaReceiverParameterSymbol:
+            anchorPsi: null
             annotations: []
             callableId: null
             contextParameters: []
@@ -80,6 +88,8 @@ scopes:
             name: <receiver>
             origin: PLUGIN
             owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
+            psi: null
+            realPsi: null
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -119,7 +129,10 @@ scopes:
         name: column
         origin: PLUGIN
         primaryConstructorParameter: null
+        psi: null
+        realPsi: null
         receiverParameter: KaReceiverParameterSymbol:
+          anchorPsi: null
           annotations: []
           callableId: null
           contextParameters: []
@@ -136,6 +149,8 @@ scopes:
           name: <receiver>
           origin: PLUGIN
           owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
+          psi: null
+          realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -156,6 +171,7 @@ scopes:
         typeParameters: []
         visibility: LOCAL
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/Any.equals
         contextParameters: []
@@ -179,6 +195,8 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -187,6 +205,7 @@ scopes:
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -209,6 +228,8 @@ scopes:
             name: other
             origin: LIBRARY
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -219,6 +240,7 @@ scopes:
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/Any.hashCode
         contextParameters: []
@@ -242,6 +264,8 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -251,6 +275,7 @@ scopes:
         valueParameters: []
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/Any.toString
         contextParameters: []
@@ -274,6 +299,8 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -284,6 +311,7 @@ scopes:
         visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
         containingClassId: null
@@ -299,6 +327,8 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: PLUGIN
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -313,6 +343,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaLocalVariableSymbol:
+        anchorPsi: KtProperty
         annotations: []
         callableId: null
         contextParameters: []
@@ -329,6 +360,8 @@ scopes:
         modality: FINAL
         name: df
         origin: SOURCE
+        psi: KtProperty
+        realPsi: KtProperty
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -348,6 +381,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaValueParameterSymbol:
+        anchorPsi: KtParameter
         annotations: []
         callableId: null
         contextParameters: []
@@ -370,6 +404,8 @@ scopes:
         name: df
         origin: SOURCE
         primaryConstructorProperty: null
+        psi: KtParameter
+        realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -390,31 +426,50 @@ scopes:
   PackageMemberScope, index = 4
     packages: 6
       KaPackageSymbol:
+        anchorPsi: PsiPackage(META-INF)
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(META-INF)
+        realPsi: PsiPackage(META-INF)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(java)
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(java)
+        realPsi: PsiPackage(java)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(javax)
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(javax)
+        realPsi: PsiPackage(javax)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(kotlin)
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(kotlin)
+        realPsi: PsiPackage(kotlin)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(org)
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(org)
+        realPsi: PsiPackage(org)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(sun)
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(sun)
+        realPsi: PsiPackage(sun)
     classifiers: 2
       KaNamedClassSymbol:
+        anchorPsi: KtClass
         annotations: []
         classId: DataFrame
         classKind: INTERFACE
@@ -431,6 +486,8 @@ scopes:
         modality: ABSTRACT
         name: DataFrame
         origin: SOURCE
+        psi: KtClass
+        realPsi: KtClass
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -439,6 +496,7 @@ scopes:
         ]
         typeParameters: [
           KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
             annotations: []
             isActual: false
             isExpect: false
@@ -448,12 +506,15 @@ scopes:
             modality: FINAL
             name: T
             origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
             upperBounds: []
             variance: OUT_VARIANCE
             visibility: LOCAL
         ]
         visibility: PUBLIC
       KaNamedClassSymbol:
+        anchorPsi: KtClass
         annotations: []
         classId: Refine
         classKind: ANNOTATION_CLASS
@@ -470,6 +531,8 @@ scopes:
         modality: FINAL
         name: Refine
         origin: SOURCE
+        psi: KtClass
+        realPsi: KtClass
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -480,6 +543,7 @@ scopes:
         visibility: PUBLIC
     callables: 2
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: [
           Refine()
             psi: KtAnnotationEntry
@@ -506,7 +570,10 @@ scopes:
         modality: FINAL
         name: add
         origin: SOURCE
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
           contextParameters: []
@@ -523,6 +590,8 @@ scopes:
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/add)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -545,6 +614,7 @@ scopes:
           type: DataFrame<kotlin/Any?>
         typeParameters: [
           KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
             annotations: []
             isActual: false
             isExpect: false
@@ -554,10 +624,13 @@ scopes:
             modality: FINAL
             name: T
             origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT
             visibility: LOCAL
           KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
             annotations: []
             isActual: false
             isExpect: false
@@ -567,12 +640,15 @@ scopes:
             modality: FINAL
             name: R
             origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT
             visibility: LOCAL
         ]
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -595,6 +671,8 @@ scopes:
             name: columnName
             origin: SOURCE
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -603,6 +681,7 @@ scopes:
             typeParameters: []
             visibility: PUBLIC
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -625,6 +704,8 @@ scopes:
             name: expression
             origin: SOURCE
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaFunctionType:
               annotations: []
@@ -639,6 +720,7 @@ scopes:
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: /test_1
         contextParameters: []
@@ -662,6 +744,8 @@ scopes:
         modality: FINAL
         name: test_1
         origin: SOURCE
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -670,6 +754,7 @@ scopes:
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -692,6 +777,8 @@ scopes:
             name: df
             origin: SOURCE
             primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []

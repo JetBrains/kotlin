@@ -1,4 +1,5 @@
 // simple.One
+// STDLIB_JDK8
 // FULL_JDK
 
 package simple

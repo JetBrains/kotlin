@@ -68,7 +68,6 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(project(":plugins:parcelize:parcelize-compiler:parcelize.cli"))
 
@@ -81,7 +80,8 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(toolsJar())
-    testFixturesApi(libs.junit4)
+    testImplementation(project(":compiler:cli-base"))
+    testFixturesImplementation(libs.junit4) // needed for runtime of box tests, see `ParcelizeMainClassProvider`
 
     // Must be kept in sync with ANDROID_API_VERSION in ParcelizeRuntimeClasspathProvider.
     // The dependency version defined here determines the Android API version.
@@ -122,7 +122,7 @@ val prepareRobolectricDependencies by tasks.registering(Copy::class) {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)) {
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)) {
         inputs.files(prepareRobolectricDependencies.map { it.outputs })
             .withNormalizer(ClasspathNormalizer::class)
             .withPropertyName("prepareRobolectricDependenciesOutput")

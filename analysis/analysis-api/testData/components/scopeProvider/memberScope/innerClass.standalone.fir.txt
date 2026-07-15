@@ -1,4 +1,5 @@
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/Any.equals
   contextParameters: []
@@ -22,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -30,6 +33,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -52,6 +56,8 @@ KaNamedFunctionSymbol:
       name: other
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -79,6 +85,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/Any.hashCode
   contextParameters: []
@@ -102,6 +109,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -123,6 +132,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/Any.toString
   contextParameters: []
@@ -146,6 +156,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -167,6 +179,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: test/B.ClassInB
   classKind: CLASS
@@ -183,6 +196,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: ClassInB
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -198,6 +213,7 @@ KaNamedClassSymbol:
   importableFqName: test.B.ClassInB
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: test/B.InnerClassInB
   classKind: CLASS
@@ -214,6 +230,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InnerClassInB
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -229,6 +247,7 @@ KaNamedClassSymbol:
   importableFqName: test.B.InnerClassInB
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: test/A.ClassInA
   classKind: CLASS
@@ -245,6 +264,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: ClassInA
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -260,6 +281,7 @@ KaNamedClassSymbol:
   importableFqName: test.A.ClassInA
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: test/A.InnerClassInA
   classKind: CLASS
@@ -276,6 +298,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InnerClassInA
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -291,6 +315,7 @@ KaNamedClassSymbol:
   importableFqName: test.A.InnerClassInA
 
 KaConstructorSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: null
   containingClassId: test/B
@@ -306,6 +331,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.util
 
-import org.jetbrains.kotlin.konan.file.File
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.absolute
+import kotlin.io.path.name
+import kotlin.io.path.pathString
 import kotlin.system.measureTimeMillis
 
 private fun printMilliseconds(message: String, body: () -> Unit) {
@@ -29,10 +33,10 @@ fun String.prefixIfNot(prefix: String) =
     if (this.startsWith(prefix)) this else "$prefix$this"
 
 fun String.prefixBaseNameIfNot(prefix: String): String {
-    val file = File(this).absoluteFile
-    val name = file.name
-    val directory = file.parent
-    return "$directory/${name.prefixIfNot(prefix)}"
+    val absolutePath: Path = Path(this).absolute()
+    val name: String = absolutePath.name
+    val directory: Path = absolutePath.parent
+    return directory.resolve(name.prefixIfNot(prefix)).pathString
 }
 
 fun String.suffixIfNot(suffix: String) =

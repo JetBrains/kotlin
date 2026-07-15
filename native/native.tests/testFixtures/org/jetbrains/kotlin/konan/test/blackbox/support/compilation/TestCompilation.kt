@@ -567,7 +567,7 @@ class CInteropCompilation(
             ) =
                 invokeCInterop(
                     classLoader.classLoader,
-                    expectedArtifact.klibFile,
+                    expectedArtifact.klibFile.toPath(),
                     args.toTypedArray()
                 )
 

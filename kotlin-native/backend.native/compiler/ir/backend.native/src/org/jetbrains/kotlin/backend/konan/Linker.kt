@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.components.nativeIncludedBinaries
 import org.jetbrains.kotlin.konan.library.linkerOpts
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -18,6 +17,11 @@ import org.jetbrains.kotlin.konan.target.LinkerArguments
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.name
 import kotlin.io.path.pathString
 
@@ -99,17 +103,17 @@ internal class Linker(
             require(target.family.isAppleFamily) {
                 "Test Bundle requires a target belonging to Apple family"
             }
-            val bundleDir = File(outputFile)
+            val bundleDir = Path(outputFile)
             val name = bundleDir.name.removeSuffix(config.produce.suffix())
             val bundleRelativePath = if (target.family == Family.OSX) "Contents/MacOS/$name" else name
 
             ExecutableTarget(
-                    path = bundleDir.child(bundleRelativePath).absolutePath,
+                    path = bundleDir.resolve(bundleRelativePath).absolutePathString(),
                     flags = listOf("-bundle", "-dead_strip")
             )
         }
         CompilerOutputKind.FRAMEWORK -> {
-            val framework = File(outputFile)
+            val framework = Path(outputFile)
             val dylibName = framework.name.removeSuffix(".framework")
             val dylibRelativePath = when (target.family) {
                 Family.IOS, Family.TVOS, Family.WATCHOS -> dylibName
@@ -118,7 +122,7 @@ internal class Linker(
             }
 
             ExecutableTarget(
-                    path = framework.child(dylibRelativePath).absolutePath,
+                    path = framework.resolve(dylibRelativePath).absolutePathString(),
                     flags = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
             )
         }
@@ -135,9 +139,9 @@ internal class Linker(
     }
 
     private fun prepareFileSystem(executablePath: String) {
-        val file = File(executablePath)
-        file.parentFile.mkdirs()
-        file.delete()
+        val file = Path(executablePath)
+        file.parent.createDirectories()
+        file.deleteIfExists()
     }
 
     private fun runLinker(

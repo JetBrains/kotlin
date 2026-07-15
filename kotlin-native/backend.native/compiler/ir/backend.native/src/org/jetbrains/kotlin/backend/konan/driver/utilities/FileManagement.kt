@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.temporaryFilesDir
 import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.pathString
 
 internal fun createTempFiles(config: NativeSecondStageCompilationConfig, cacheDeserializationStrategy: CacheDeserializationStrategy?): TempFiles {
     val pathToTempDir = config.configuration.temporaryFilesDir?.let {
         val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
         if (singleFileStrategy == null)
             it
-        else org.jetbrains.kotlin.konan.file.File(it, CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).path
+        else Path(it, CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).pathString
     }
     return TempFiles(pathToTempDir)
 }

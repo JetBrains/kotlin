@@ -1,4 +1,5 @@
 KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
   annotations: []
   isActual: false
   isExpect: false
@@ -8,6 +9,8 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -17,6 +20,7 @@ KaTypeParameterSymbol:
   importableFqName: null
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: X
   classKind: CLASS
@@ -33,6 +37,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -41,6 +47,7 @@ KaNamedClassSymbol:
   ]
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -50,6 +57,8 @@ KaNamedClassSymbol:
       modality: FINAL
       name: T
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -66,6 +75,7 @@ KaNamedClassSymbol:
   importableFqName: X
 
 KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
   annotations: []
   isActual: false
   isExpect: false
@@ -75,6 +85,8 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: Z
   origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -84,6 +96,7 @@ KaTypeParameterSymbol:
   importableFqName: null
 
 KaTypeAliasSymbol:
+  anchorPsi: KtTypeAlias
   annotations: []
   classId: Y
   expandedType: KaUsualClassType:
@@ -101,8 +114,11 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: Y
   origin: SOURCE
+  psi: KtTypeAlias
+  realPsi: KtTypeAlias
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -112,6 +128,8 @@ KaTypeAliasSymbol:
       modality: FINAL
       name: Z
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL

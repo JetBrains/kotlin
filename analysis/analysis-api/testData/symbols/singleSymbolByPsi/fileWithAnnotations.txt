@@ -1,4 +1,5 @@
 KaFileSymbol:
+  anchorPsi: KtFile
   annotations: [
     kotlin/Suppress(names = ["abc"])
       psi: KtAnnotationEntry
@@ -7,6 +8,8 @@ KaFileSymbol:
   ]
   location: TOP_LEVEL
   origin: SOURCE
+  psi: KtFile
+  realPsi: KtFile
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null

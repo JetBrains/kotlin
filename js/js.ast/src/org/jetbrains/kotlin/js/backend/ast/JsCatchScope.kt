@@ -9,9 +9,9 @@ package org.jetbrains.kotlin.js.backend.ast
  */
 class JsCatchScope(
     parent: JsScope,
-    private val assignable: JsAssignable
+    private val declarable: JsDeclarable
 ) : JsDeclarationScope(parent, "Catch scope", true) {
-    private val names get() = assignable.names
+    private val names get() = declarable.names
 
     override fun declareName(identifier: String): JsName {
         // Declare into parent scope!
@@ -23,7 +23,7 @@ class JsCatchScope(
     }
 
     fun copy(): JsCatchScope {
-        return JsCatchScope(parent, assignable)
+        return JsCatchScope(parent, declarable)
     }
 
     override fun findOwnName(ident: String): JsName? {

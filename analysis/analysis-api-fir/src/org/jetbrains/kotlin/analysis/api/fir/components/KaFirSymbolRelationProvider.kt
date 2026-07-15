@@ -542,15 +542,52 @@ internal class KaFirSymbolRelationProvider(
     }
 
     override fun fakeOverrideOriginal(symbol: KaCallableSymbol): KaCallableSymbol = withValidityAssertion {
-        if (symbol is KaReceiverParameterSymbol) return symbol
-
         require(symbol is KaFirSymbol<*>)
+        if (symbol is KaLocalVariableSymbol ||
+            symbol is KaEnumEntrySymbol ||
+            symbol is KaConstructorSymbol ||
+            symbol is KaSamConstructorSymbol ||
+            symbol is KaAnonymousFunctionSymbol
+        ) {
+            return symbol
+        }
 
-        val originalDeclaration = symbol.firSymbol.fir as FirCallableDeclaration
-        val unwrappedDeclaration = originalDeclaration.unwrapFakeOverridesOrDelegated()
-
-        return unwrappedDeclaration.buildSymbol(analysisSession.firSymbolBuilder) as KaCallableSymbol
+        // Fake-override attributes are placed on the first-class callables, not on their sub-callables (e.g., value parameters).
+        // So for such callables we unwrap the enclosing callable and return the corresponding sub-callable from the base declaration.
+        return when (symbol) {
+            is KaReceiverParameterSymbol -> {
+                val original = fakeOverrideOriginal(symbol.owningCallableSymbol)
+                original.receiverParameter
+            }
+            is KaValueParameterSymbol -> {
+                val owner = containingDeclaration(symbol) as? KaFunctionSymbol ?: return symbol
+                val index = owner.valueParameters.indexOf(symbol)
+                val original = fakeOverrideOriginal(owner) as? KaFunctionSymbol
+                original?.valueParameters?.getOrNull(index)
+            }
+            is KaContextParameterSymbol -> {
+                val owner = containingDeclaration(symbol) as? KaCallableSymbol ?: return symbol
+                val index = owner.contextParameters.indexOf(symbol)
+                val original = fakeOverrideOriginal(owner)
+                original.contextParameters.getOrNull(index)
+            }
+            is KaPropertyAccessorSymbol -> {
+                val owner = containingDeclaration(symbol) as? KaPropertySymbol ?: return symbol
+                val original = fakeOverrideOriginal(owner) as? KaPropertySymbol ?: return symbol
+                if (symbol is KaPropertyGetterSymbol) {
+                    original.getter
+                } else {
+                    original.setter
+                }
+            }
+            else -> {
+                val originalDeclaration = symbol.firSymbol.fir as FirCallableDeclaration
+                val unwrappedDeclaration = originalDeclaration.unwrapFakeOverridesOrDelegated()
+                unwrappedDeclaration.buildSymbol(analysisSession.firSymbolBuilder) as KaCallableSymbol
+            }
+        } ?: symbol
     }
+
 
     override fun getExpectsForActual(symbol: KaDeclarationSymbol): List<KaDeclarationSymbol> = withValidityAssertion {
         symbol.getExpectsForActualSpecial()?.let { return it }

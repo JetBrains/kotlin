@@ -1,0 +1,38 @@
+KaNamedClassSymbol:
+  anchorPsi: null
+  annotations: []
+  classId: kotlin/io/FileWalkDirection
+  classKind: ENUM_CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: FileWalkDirection
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/io/FileWalkDirection
+      ]
+      type: kotlin/Enum<kotlin/io/FileWalkDirection>
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  applicableAnnotationTargets: null
+  deprecation: null
+  importableFqName: kotlin.io.FileWalkDirection

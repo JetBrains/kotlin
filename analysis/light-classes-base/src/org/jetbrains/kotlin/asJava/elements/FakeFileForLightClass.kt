@@ -14,7 +14,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.compiled.ClsFileImpl
-import com.intellij.psi.impl.java.stubs.ClsStubPsiFactory
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
 import com.intellij.psi.impl.source.PsiFileImpl
@@ -44,10 +43,7 @@ open class FakeFileForLightClass(
     override fun getPackageName() = packageFqName.asString()
 
     private fun createFakeJavaFileStub(): PsiJavaFileStub {
-        val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /* compiled = */true)
-        javaFileStub.psiFactory = ClsStubPsiFactory.INSTANCE
-        javaFileStub.psi = this
-        return javaFileStub
+        return PsiJavaFileStubImpl(this, null, /* compiled = */true)
     }
 
     override fun getModificationStamp(): Long = ktFile.modificationStamp

@@ -1,4 +1,5 @@
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: /Foo.memberFunctionWithReceiver
   contextParameters: []
@@ -22,7 +23,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: memberFunctionWithReceiver
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: null
     annotations: [
       MyAnnotation7()
         psi: null
@@ -42,6 +46,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(/Foo.memberFunctionWithReceiver)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [
@@ -77,6 +83,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: /Foo.memberFunctionWithReceiverWithNullableReceiver
   contextParameters: []
@@ -100,7 +107,10 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: memberFunctionWithReceiverWithNullableReceiver
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: null
     annotations: [
       MyAnnotation7()
         psi: null
@@ -120,6 +130,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(/Foo.memberFunctionWithReceiverWithNullableReceiver)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [
@@ -142,6 +154,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -164,6 +177,8 @@ KaNamedFunctionSymbol:
       name: l
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -191,8 +206,10 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -210,6 +227,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.withDefaultGetter)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -230,6 +249,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: [
       Anno()
         psi: null
@@ -249,6 +269,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -286,6 +308,8 @@ KaKotlinPropertySymbol:
   name: withDefaultGetter
   origin: LIBRARY
   primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -308,8 +332,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -327,6 +353,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.withDefaultSetter)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -347,6 +375,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -363,6 +392,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -400,12 +431,15 @@ KaKotlinPropertySymbol:
   name: withDefaultSetter
   origin: LIBRARY
   primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
+    anchorPsi: null
     annotations: [
       Anno()
         psi: null
@@ -426,6 +460,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -448,6 +483,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -460,6 +497,8 @@ KaKotlinPropertySymbol:
       getContainingModule: KaLibraryModule "Library lib"
       deprecation: null
       importableFqName: null
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -468,6 +507,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
         contextParameters: []
@@ -490,6 +530,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: LIBRARY
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -529,8 +571,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -548,6 +592,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.both)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -568,6 +614,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: [
       Anno()
         psi: null
@@ -587,6 +634,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -624,12 +673,15 @@ KaKotlinPropertySymbol:
   name: both
   origin: LIBRARY
   primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
+    anchorPsi: null
     annotations: [
       Anno()
         psi: null
@@ -650,6 +702,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -672,6 +725,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -684,6 +739,8 @@ KaKotlinPropertySymbol:
       getContainingModule: KaLibraryModule "Library lib"
       deprecation: null
       importableFqName: null
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -692,6 +749,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
         contextParameters: []
@@ -714,6 +772,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: LIBRARY
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -753,11 +813,13 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: [
     MyAnnotation4()
       psi: null
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
     annotations: [
       MyAnnotation5()
         psi: null
@@ -778,6 +840,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.allAnnotations)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -798,6 +862,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: [
       MyAnnotation()
         psi: null
@@ -817,6 +882,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -854,12 +921,15 @@ KaKotlinPropertySymbol:
   name: allAnnotations
   origin: LIBRARY
   primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
+    anchorPsi: null
     annotations: [
       MyAnnotation2()
         psi: null
@@ -880,6 +950,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
+      anchorPsi: null
       annotations: [
         MyAnnotation3()
           psi: null
@@ -905,6 +976,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -917,6 +990,8 @@ KaKotlinPropertySymbol:
       getContainingModule: KaLibraryModule "Library lib"
       deprecation: null
       importableFqName: null
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -925,6 +1000,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: [
           MyAnnotation3()
             psi: null
@@ -950,6 +1026,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: LIBRARY
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -989,8 +1067,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1008,6 +1088,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.memberPropertyWithReceiver)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1028,6 +1110,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1044,7 +1127,10 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: KaReceiverParameterSymbol:
+      anchorPsi: null
       annotations: [
         MyAnnotation7()
           psi: null
@@ -1064,6 +1150,8 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: LIBRARY
       owningCallableSymbol: KaKotlinPropertySymbol(/Foo.memberPropertyWithReceiver)
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: [
@@ -1115,7 +1203,10 @@ KaKotlinPropertySymbol:
   name: memberPropertyWithReceiver
   origin: LIBRARY
   primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: null
     annotations: [
       MyAnnotation7()
         psi: null
@@ -1135,6 +1226,8 @@ KaKotlinPropertySymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaKotlinPropertySymbol(/Foo.memberPropertyWithReceiver)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [
@@ -1155,6 +1248,7 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Unit
   setter: KaPropertySetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1172,6 +1266,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1194,6 +1289,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1206,7 +1303,10 @@ KaKotlinPropertySymbol:
       getContainingModule: KaLibraryModule "Library lib"
       deprecation: null
       importableFqName: null
+    psi: null
+    realPsi: null
     receiverParameter: KaReceiverParameterSymbol:
+      anchorPsi: null
       annotations: [
         MyAnnotation7()
           psi: null
@@ -1226,6 +1326,8 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: LIBRARY
       owningCallableSymbol: KaKotlinPropertySymbol(/Foo.memberPropertyWithReceiver)
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: [
@@ -1248,6 +1350,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
         contextParameters: []
@@ -1270,6 +1373,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: LIBRARY
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -1309,11 +1414,13 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: [
     Anno()
       psi: null
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1331,6 +1438,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.withCustomSetter)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1351,6 +1460,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1367,6 +1477,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1404,12 +1516,15 @@ KaKotlinPropertySymbol:
   name: withCustomSetter
   origin: LIBRARY
   primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1427,6 +1542,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1449,6 +1565,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1461,6 +1579,8 @@ KaKotlinPropertySymbol:
       getContainingModule: KaLibraryModule "Library lib"
       deprecation: null
       importableFqName: null
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1469,6 +1589,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
         contextParameters: []
@@ -1491,6 +1612,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: LIBRARY
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -1530,11 +1653,13 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: [
     Anno()
       psi: null
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1552,6 +1677,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.withCustomGetter)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1572,6 +1699,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1588,6 +1716,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1625,12 +1755,15 @@ KaKotlinPropertySymbol:
   name: withCustomGetter
   origin: LIBRARY
   primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1648,6 +1781,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1670,6 +1804,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1682,6 +1818,8 @@ KaKotlinPropertySymbol:
       getContainingModule: KaLibraryModule "Library lib"
       deprecation: null
       importableFqName: null
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1690,6 +1828,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
         contextParameters: []
@@ -1712,6 +1851,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: LIBRARY
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -1751,11 +1892,13 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: [
     Anno()
       psi: null
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1773,6 +1916,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.custom)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1793,6 +1938,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1809,6 +1955,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1846,12 +1994,15 @@ KaKotlinPropertySymbol:
   name: custom
   origin: LIBRARY
   primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1869,6 +2020,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -1891,6 +2043,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -1903,6 +2057,8 @@ KaKotlinPropertySymbol:
       getContainingModule: KaLibraryModule "Library lib"
       deprecation: null
       importableFqName: null
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1911,6 +2067,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
         contextParameters: []
@@ -1933,6 +2090,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: LIBRARY
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -1972,11 +2131,13 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: [
     Anno()
       psi: null
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -1994,6 +2155,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.variable)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -2014,6 +2177,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -2030,6 +2194,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -2067,12 +2233,15 @@ KaKotlinPropertySymbol:
   name: variable
   origin: LIBRARY
   primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
     contextParameters: []
@@ -2090,6 +2259,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -2112,6 +2282,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2124,6 +2296,8 @@ KaKotlinPropertySymbol:
       getContainingModule: KaLibraryModule "Library lib"
       deprecation: null
       importableFqName: null
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -2132,6 +2306,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
         contextParameters: []
@@ -2154,6 +2329,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: LIBRARY
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -2193,6 +2370,7 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaConstructorSymbol:
+  anchorPsi: null
   annotations: []
   callableId: null
   containingClassId: Foo
@@ -2208,6 +2386,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2216,6 +2396,7 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -2238,6 +2419,8 @@ KaConstructorSymbol:
       name: withDefaultGetter
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2251,6 +2434,7 @@ KaConstructorSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -2273,6 +2457,8 @@ KaConstructorSymbol:
       name: withDefaultSetter
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2286,6 +2472,7 @@ KaConstructorSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -2308,6 +2495,8 @@ KaConstructorSymbol:
       name: both
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -2321,6 +2510,7 @@ KaConstructorSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: [
         MyAnnotation6()
           psi: null
@@ -2346,6 +2536,8 @@ KaConstructorSymbol:
       name: allAnnotations
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

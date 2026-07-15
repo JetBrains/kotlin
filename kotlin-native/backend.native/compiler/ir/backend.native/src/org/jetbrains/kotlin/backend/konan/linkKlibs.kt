@@ -163,7 +163,7 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, 
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
     // TODO Don't use file names in friend modules detection. Should be done in scope of KT-61096
-    val canonicalFriendPaths = config.friendModuleFiles.mapToSetOrEmpty { it.canonicalPath }
+    val canonicalFriendPaths = config.friendModuleFiles.mapToSetOrEmpty { it.canonicalPathString() }
     val friendModules = config.resolvedLibraries.getFullList()
             .filter { it.path.canonicalPathString() in canonicalFriendPaths }
             .map { it.uniqueName }

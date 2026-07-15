@@ -3,9 +3,9 @@ package org.jetbrains.kotlin.library.metadata
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.storage.StorageManager
+import java.nio.file.Path
 
 interface KlibResolvedModuleDescriptorsFactory {
 
@@ -23,17 +23,46 @@ interface KlibResolvedModuleDescriptorsFactory {
      * instance will be shared by all modules created in this method. But this instance will have no connection
      * with probably existing built-ins instance of your source module(s).
      */
+    @Suppress("DEPRECATION_ERROR")
     fun createResolved(
         resolvedLibraries: KotlinLibraryResolveResult,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        friendModuleFiles: Set<File>,
-        refinesModuleFiles: Set<File>,
-        includedLibraryFiles: Set<File>,
+        friendModuleFiles: Set<org.jetbrains.kotlin.konan.file.File>,
+        refinesModuleFiles: Set<org.jetbrains.kotlin.konan.file.File>,
+        includedLibraryFiles: Set<org.jetbrains.kotlin.konan.file.File>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors
+
+    /**
+     * A duplicate of [createResolved], which accepts [java.nio.file.Path] instead of [org.jetbrains.kotlin.konan.file.File].
+     *
+     * FYI: No much attention to naming of this function, anyway it's going to be removed soon as a part of K1.
+     */
+    @Suppress("DEPRECATION_ERROR")
+    fun createResolved2(
+        resolvedLibraries: KotlinLibraryResolveResult,
+        storageManager: StorageManager,
+        builtIns: KotlinBuiltIns?,
+        languageVersionSettings: LanguageVersionSettings,
+        friendModuleFiles: Set<Path>,
+        refinesModuleFiles: Set<Path>,
+        includedLibraryFiles: Set<Path>,
+        additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
+        isForMetadataCompilation: Boolean,
+    ): KotlinResolvedModuleDescriptors = createResolved(
+        resolvedLibraries = resolvedLibraries,
+        storageManager = storageManager,
+        builtIns = builtIns,
+        languageVersionSettings = languageVersionSettings,
+        friendModuleFiles = friendModuleFiles.mapTo(hashSetOf()) { org.jetbrains.kotlin.konan.file.File(it) },
+        refinesModuleFiles = refinesModuleFiles.mapTo(hashSetOf()) { org.jetbrains.kotlin.konan.file.File(it) },
+        includedLibraryFiles = includedLibraryFiles.mapTo(hashSetOf()) { org.jetbrains.kotlin.konan.file.File(it) },
+        additionalDependencyModules = additionalDependencyModules,
+        isForMetadataCompilation = isForMetadataCompilation,
+    )
 }
 
 class KotlinResolvedModuleDescriptors(

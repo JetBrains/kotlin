@@ -1,5 +1,6 @@
 CLASS:
   KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: GenericPredicate
   classKind: INTERFACE
@@ -16,6 +17,8 @@ CLASS:
   modality: ABSTRACT
   name: GenericPredicate
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       abbreviation: null
@@ -35,6 +38,7 @@ CLASS:
   ]
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -44,6 +48,8 @@ CLASS:
       modality: FINAL
       name: T
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -61,6 +67,7 @@ CLASS:
 
 FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /GenericPredicate.test
   contextParameters: []
@@ -84,6 +91,8 @@ FUNCTIONAL INTERFACE FUNCTION:
   modality: ABSTRACT
   name: test
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     abbreviation: null
@@ -103,6 +112,7 @@ FUNCTIONAL INTERFACE FUNCTION:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -125,12 +135,15 @@ FUNCTIONAL INTERFACE FUNCTION:
       name: value
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         abbreviation: null
         annotations: []
         name: T
         symbol: KaTypeParameterSymbol:
+          anchorPsi: KtTypeParameter
           annotations: []
           isActual: false
           isExpect: false
@@ -140,6 +153,8 @@ FUNCTIONAL INTERFACE FUNCTION:
           modality: FINAL
           name: T
           origin: SOURCE
+          psi: KtTypeParameter
+          realPsi: KtTypeParameter
           upperBounds: []
           variance: INVARIANT
           visibility: LOCAL
@@ -173,6 +188,7 @@ FUNCTIONAL INTERFACE FUNCTION:
             annotations: []
             name: T
             symbol: KaTypeParameterSymbol:
+              anchorPsi: KtTypeParameter
               annotations: []
               isActual: false
               isExpect: false
@@ -182,6 +198,8 @@ FUNCTIONAL INTERFACE FUNCTION:
               modality: FINAL
               name: T
               origin: SOURCE
+              psi: KtTypeParameter
+              realPsi: KtTypeParameter
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
@@ -201,6 +219,7 @@ FUNCTIONAL INTERFACE FUNCTION:
         annotations: []
         name: T
         symbol: KaTypeParameterSymbol:
+          anchorPsi: KtTypeParameter
           annotations: []
           isActual: false
           isExpect: false
@@ -210,6 +229,8 @@ FUNCTIONAL INTERFACE FUNCTION:
           modality: FINAL
           name: T
           origin: SOURCE
+          psi: KtTypeParameter
+          realPsi: KtTypeParameter
           upperBounds: []
           variance: INVARIANT
           visibility: LOCAL

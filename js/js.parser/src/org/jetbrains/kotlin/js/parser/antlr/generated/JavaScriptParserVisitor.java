@@ -578,47 +578,12 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTemplateStringExpression(JavaScriptParser.TemplateStringExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code TernaryExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTernaryExpression(JavaScriptParser.TernaryExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code LogicalAndExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLogicalAndExpression(JavaScriptParser.LogicalAndExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code PowerExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitPowerExpression(JavaScriptParser.PowerExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code PreIncrementExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPreIncrementExpression(JavaScriptParser.PreIncrementExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code ObjectLiteralExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitObjectLiteralExpression(JavaScriptParser.ObjectLiteralExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code MetaExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMetaExpression(JavaScriptParser.MetaExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code InExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
@@ -627,40 +592,12 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInExpression(JavaScriptParser.InExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code LogicalOrExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLogicalOrExpression(JavaScriptParser.LogicalOrExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code OptionalChainExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitOptionalChainExpression(JavaScriptParser.OptionalChainExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code ImportMetaExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitImportMetaExpression(JavaScriptParser.ImportMetaExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code NotExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNotExpression(JavaScriptParser.NotExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code PreDecreaseExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPreDecreaseExpression(JavaScriptParser.PreDecreaseExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ArgumentsExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
@@ -669,13 +606,6 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArgumentsExpression(JavaScriptParser.ArgumentsExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code AwaitExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAwaitExpression(JavaScriptParser.AwaitExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code ThisExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
 	 * @param ctx the parse tree
@@ -683,68 +613,12 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitThisExpression(JavaScriptParser.ThisExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code FunctionExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionExpression(JavaScriptParser.FunctionExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code UnaryMinusExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitUnaryMinusExpression(JavaScriptParser.UnaryMinusExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code AssignmentExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssignmentExpression(JavaScriptParser.AssignmentExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code PostDecreaseExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPostDecreaseExpression(JavaScriptParser.PostDecreaseExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code TypeofExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitTypeofExpression(JavaScriptParser.TypeofExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code InstanceofExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInstanceofExpression(JavaScriptParser.InstanceofExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code UnaryPlusExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitUnaryPlusExpression(JavaScriptParser.UnaryPlusExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code DeleteExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeleteExpression(JavaScriptParser.DeleteExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code ImportExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitImportExpression(JavaScriptParser.ImportExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code EqualityExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
@@ -760,12 +634,12 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBitXOrExpression(JavaScriptParser.BitXOrExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code SuperExpression}
+	 * Visit a parse tree produced by the {@code ArrayDestructuringAssignmentExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSuperExpression(JavaScriptParser.SuperExpressionContext ctx);
+	T visitArrayDestructuringAssignmentExpression(JavaScriptParser.ArrayDestructuringAssignmentExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code MultiplicativeExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
@@ -781,13 +655,6 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBitShiftExpression(JavaScriptParser.BitShiftExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ParenthesizedExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitParenthesizedExpression(JavaScriptParser.ParenthesizedExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code AdditiveExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
 	 * @param ctx the parse tree
@@ -801,20 +668,6 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitRelationalExpression(JavaScriptParser.RelationalExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code PostIncrementExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPostIncrementExpression(JavaScriptParser.PostIncrementExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code YieldExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitYieldExpression(JavaScriptParser.YieldExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code BitNotExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
@@ -851,26 +704,12 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMemberDotExpression(JavaScriptParser.MemberDotExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ClassExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassExpression(JavaScriptParser.ClassExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code MemberIndexExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitMemberIndexExpression(JavaScriptParser.MemberIndexExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code IdentifierExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIdentifierExpression(JavaScriptParser.IdentifierExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code BitAndExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
@@ -899,6 +738,181 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVoidExpression(JavaScriptParser.VoidExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code TernaryExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTernaryExpression(JavaScriptParser.TernaryExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code LogicalAndExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLogicalAndExpression(JavaScriptParser.LogicalAndExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code PreIncrementExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPreIncrementExpression(JavaScriptParser.PreIncrementExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ObjectLiteralExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitObjectLiteralExpression(JavaScriptParser.ObjectLiteralExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code MetaExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMetaExpression(JavaScriptParser.MetaExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code LogicalOrExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLogicalOrExpression(JavaScriptParser.LogicalOrExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ImportMetaExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitImportMetaExpression(JavaScriptParser.ImportMetaExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NotExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNotExpression(JavaScriptParser.NotExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code PreDecreaseExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPreDecreaseExpression(JavaScriptParser.PreDecreaseExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code AwaitExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAwaitExpression(JavaScriptParser.AwaitExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code FunctionExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionExpression(JavaScriptParser.FunctionExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code UnaryMinusExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryMinusExpression(JavaScriptParser.UnaryMinusExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code AssignmentExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignmentExpression(JavaScriptParser.AssignmentExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code PostDecreaseExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPostDecreaseExpression(JavaScriptParser.PostDecreaseExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code InstanceofExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInstanceofExpression(JavaScriptParser.InstanceofExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code UnaryPlusExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryPlusExpression(JavaScriptParser.UnaryPlusExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code DeleteExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeleteExpression(JavaScriptParser.DeleteExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ImportExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitImportExpression(JavaScriptParser.ImportExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SuperExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSuperExpression(JavaScriptParser.SuperExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ParenthesizedExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenthesizedExpression(JavaScriptParser.ParenthesizedExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code PostIncrementExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPostIncrementExpression(JavaScriptParser.PostIncrementExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ObjectDestructuringAssignmentExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitObjectDestructuringAssignmentExpression(JavaScriptParser.ObjectDestructuringAssignmentExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code YieldExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitYieldExpression(JavaScriptParser.YieldExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ClassExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClassExpression(JavaScriptParser.ClassExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code IdentifierExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdentifierExpression(JavaScriptParser.IdentifierExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code CoalesceExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.

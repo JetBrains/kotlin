@@ -44,7 +44,6 @@ fun ProjectTestsExtension.testCodebaseTask(
 
     return testTask(
         taskName = taskName,
-        jUnitMode = JUnitMode.JUnit5,
         skipInLocalBuild = false,
     ) {
         group = "verification"

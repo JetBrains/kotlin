@@ -1,5 +1,6 @@
 CONSTRUCTOR:
   KaSamConstructorSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: /Predicate
   contextParameters: []
@@ -14,6 +15,8 @@ CONSTRUCTOR:
   modality: FINAL
   name: Predicate
   origin: SAM_CONSTRUCTOR
+  psi: KtClass
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     abbreviation: null
@@ -29,6 +32,7 @@ CONSTRUCTOR:
             annotations: []
             name: A
             symbol: KaTypeParameterSymbol:
+              anchorPsi: KtTypeParameter
               annotations: []
               isActual: false
               isExpect: false
@@ -38,6 +42,8 @@ CONSTRUCTOR:
               modality: FINAL
               name: A
               origin: SAM_CONSTRUCTOR
+              psi: KtTypeParameter
+              realPsi: null
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
@@ -57,6 +63,7 @@ CONSTRUCTOR:
         annotations: []
         name: A
         symbol: KaTypeParameterSymbol:
+          anchorPsi: KtTypeParameter
           annotations: []
           isActual: false
           isExpect: false
@@ -66,6 +73,8 @@ CONSTRUCTOR:
           modality: FINAL
           name: A
           origin: SAM_CONSTRUCTOR
+          psi: KtTypeParameter
+          realPsi: null
           upperBounds: []
           variance: INVARIANT
           visibility: LOCAL
@@ -82,6 +91,7 @@ CONSTRUCTOR:
     hasFlexibleNullability: false
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -91,6 +101,8 @@ CONSTRUCTOR:
       modality: FINAL
       name: A
       origin: SAM_CONSTRUCTOR
+      psi: KtTypeParameter
+      realPsi: null
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -101,6 +113,7 @@ CONSTRUCTOR:
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -123,6 +136,8 @@ CONSTRUCTOR:
       name: function
       origin: SAM_CONSTRUCTOR
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaFunctionType:
         abbreviation: null
@@ -139,6 +154,7 @@ CONSTRUCTOR:
             annotations: []
             name: A
             symbol: KaTypeParameterSymbol:
+              anchorPsi: KtTypeParameter
               annotations: []
               isActual: false
               isExpect: false
@@ -148,6 +164,8 @@ CONSTRUCTOR:
               modality: FINAL
               name: A
               origin: SAM_CONSTRUCTOR
+              psi: KtTypeParameter
+              realPsi: null
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
@@ -172,6 +190,7 @@ CONSTRUCTOR:
                 annotations: []
                 name: A
                 symbol: KaTypeParameterSymbol:
+                  anchorPsi: KtTypeParameter
                   annotations: []
                   isActual: false
                   isExpect: false
@@ -181,6 +200,8 @@ CONSTRUCTOR:
                   modality: FINAL
                   name: A
                   origin: SAM_CONSTRUCTOR
+                  psi: KtTypeParameter
+                  realPsi: null
                   upperBounds: []
                   variance: INVARIANT
                   visibility: LOCAL
@@ -231,6 +252,7 @@ CONSTRUCTOR:
             annotations: []
             name: A
             symbol: KaTypeParameterSymbol:
+              anchorPsi: KtTypeParameter
               annotations: []
               isActual: false
               isExpect: false
@@ -240,6 +262,8 @@ CONSTRUCTOR:
               modality: FINAL
               name: A
               origin: SAM_CONSTRUCTOR
+              psi: KtTypeParameter
+              realPsi: null
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
@@ -286,6 +310,7 @@ CONSTRUCTOR:
 
 FUNCTIONAL INTERFACE:
   KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: Predicate
   classKind: INTERFACE
@@ -302,6 +327,8 @@ FUNCTIONAL INTERFACE:
   modality: ABSTRACT
   name: Predicate
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       abbreviation: null
@@ -321,6 +348,7 @@ FUNCTIONAL INTERFACE:
   ]
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -330,6 +358,8 @@ FUNCTIONAL INTERFACE:
       modality: FINAL
       name: A
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL

@@ -33,6 +33,7 @@ project.configureMigratedRootSettings()
 project.configureJsCacheRedirector()
 project.configurePublishingRetry()
 project.exposeCompileAllConfiguration()
+project.configureJarEntryCompression()
 
 // There are problems with common build dir:
 //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location
@@ -561,5 +562,14 @@ fun Project.exposeCompileAllConfiguration() {
             val task = tasks.named<JavaCompile>(it)
             artifacts.add(compileAllConfig.name, task.map { it.destinationDirectory }) { builtBy(task) }
         }
+    }
+}
+
+fun Project.configureJarEntryCompression() {
+    tasks.withType<org.gradle.jvm.tasks.Jar>().configureEach {
+        entryCompression = if (kotlinBuildProperties.jarCompression)
+            ZipEntryCompression.DEFLATED
+        else
+            ZipEntryCompression.STORED
     }
 }

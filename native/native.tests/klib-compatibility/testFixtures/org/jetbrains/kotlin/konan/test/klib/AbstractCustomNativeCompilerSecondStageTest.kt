@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirect
 import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
+import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
 import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironm
 import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.utils.bind
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 
 @Tag("custom-second-stage")
@@ -48,13 +50,9 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
         )
         defaultDirectives {
             +DISABLE_FIR_DUMP_HANDLER
-            if (customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
-                // We need to set the custom LV to let `UnsupportedFeaturesTestConfigurator` skip tests with
-                // the language features that are not supported in the given custom LV.
-                setupCustomLanguageVersionForKlibCompatibilityTest(customNativeCompilerSettings.defaultLanguageVersion)
 
-                LANGUAGE with "+ExportKlibToOlderAbiVersion"
-            }
+            setupCustomLVForKlibForwardCompatibilityTest(customNativeCompilerSettings.defaultLanguageVersion)
+
             OPT_IN with listOf(
                 "kotlin.native.internal.InternalForKotlinNative",
                 "kotlin.native.internal.InternalForKotlinNativeTests",

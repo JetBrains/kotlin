@@ -335,7 +335,7 @@ fun Project.analysisApiPublishingLatch(block: () -> Unit) {
 }
 
 private fun Project.specialPublishingLatch(latchPropertyName: String, block: () -> Unit) {
-    val shouldActivate = rootProject.findProperty(latchPropertyName)?.toString()?.toBoolean() == true
+    val shouldActivate = project.kotlinBuildProperties.booleanProperty(latchPropertyName).getOrElse(false)
     if (shouldActivate) {
         block()
     }
@@ -447,13 +447,6 @@ fun Project.publishProjectJars(
     }
 
     sourcesJar {
-        for (projectPath in projects) {
-            val projectTasks = project(projectPath).tasks
-            if (projectTasks.names.any { it == "compileKotlin" }) {
-                // this is needed in order to declare explicit dependency on code generation tasks
-                dependsOn(projectTasks.named("compileKotlin").map { it.dependsOn })
-            }
-        }
         from {
             projects.map {
                 project(it).mainSourceSet.allSource

@@ -5,12 +5,14 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 
+if (project == rootProject) {
+    error("${project.path} is the root project, apply d8-root-configuration instead of d8-configuration")
+}
+
 project.plugins.apply(D8Plugin::class.java)
-rootProject.plugins.apply(D8Plugin::class.java)
 val d8EnvSpec = project.the<D8EnvSpec>().apply {
     downloadBaseUrl.set(null as String?)
 }
-val d8RootEnvSpec = rootProject.the<D8EnvSpec>()
 
 val d8KotlinBuild = extensions.create<D8Extension>(
     "d8KotlinBuild",
@@ -19,6 +21,5 @@ val d8KotlinBuild = extensions.create<D8Extension>(
 )
 
 with(d8KotlinBuild) {
-    d8RootEnvSpec.version.set(v8Version)
     d8EnvSpec.version.set(v8Version)
 }

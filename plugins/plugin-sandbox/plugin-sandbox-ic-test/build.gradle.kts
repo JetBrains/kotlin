@@ -29,9 +29,9 @@ dependencies {
     testRuntimeOnly(libs.intellij.fastutil)
 
     testRuntimeOnly(toolsJar())
-    testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(project(":compiler:cli-base"))
 }
 
 sourceSets {
@@ -44,7 +44,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 3072) {
+    testTask(maxHeapSizeMb = 3072) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         wasmNodeJsKotlinBuild {
             setupNodeJs(nodejsVersion)

@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION_WITH_DOT
@@ -29,8 +28,9 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
      *   true - yes, allow to look up by relative path and by library name.
      *   false - no, allow to look up strictly by library name.
      */
-    class SearchRoot(val searchRootPath: File, val allowLookupByRelativePath: Boolean = false) {
-        fun lookUp(libraryPath: File): LookupResult {
+    @Suppress("DEPRECATION_ERROR")
+    class SearchRoot(val searchRootPath: org.jetbrains.kotlin.konan.file.File, val allowLookupByRelativePath: Boolean = false) {
+        fun lookUp(libraryPath: org.jetbrains.kotlin.konan.file.File): LookupResult {
             if (libraryPath.isAbsolute) {
                 // Look up by the absolute path if it is indeed an absolute path.
                 return LookupResult.Found(lookUpByAbsolutePath(libraryPath) ?: return LookupResult.NotFound)
@@ -43,12 +43,12 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
             }
 
             // First, try to resolve by the relative path.
-            val resolvedLibrary = lookUpByAbsolutePath(File(searchRootPath, libraryPath))
+            val resolvedLibrary = lookUpByAbsolutePath(org.jetbrains.kotlin.konan.file.File(searchRootPath, libraryPath))
                 ?: run {
                     if (!isDefinitelyRelativePath && libraryPath.extension.isEmpty()) {
                         // If the path actually looks like an unique name of the library, try to guess the name of the KLIB file.
                         // TODO: This logic is unreliable and needs to be replaced by the new KLIB resolver in the future.
-                        lookUpByAbsolutePath(File(searchRootPath, "${libraryPath.path}.$KLIB_FILE_EXTENSION"))
+                        lookUpByAbsolutePath(org.jetbrains.kotlin.konan.file.File(searchRootPath, "${libraryPath.path}.$KLIB_FILE_EXTENSION"))
                     } else null
                 }
                 ?: return LookupResult.NotFound
@@ -57,7 +57,7 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
         }
 
         companion object {
-            fun lookUpByAbsolutePath(absoluteLibraryPath: File): File? =
+            internal fun lookUpByAbsolutePath(absoluteLibraryPath: org.jetbrains.kotlin.konan.file.File): org.jetbrains.kotlin.konan.file.File? =
                 if (!absoluteLibraryPath.isFile && !absoluteLibraryPath.isDirectory) null
                 else absoluteLibraryPath
         }
@@ -65,7 +65,9 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
 
     sealed interface LookupResult {
         object NotFound : LookupResult
-        data class Found(val library: File) : LookupResult
+
+        @Suppress("DEPRECATION_ERROR")
+        data class Found(val library: org.jetbrains.kotlin.konan.file.File) : LookupResult
     }
 
     /**
@@ -78,7 +80,8 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
      */
     val searchRoots: List<SearchRoot>
 
-    fun resolutionSequence(givenPath: String): Sequence<File>
+    @Suppress("DEPRECATION_ERROR")
+    fun resolutionSequence(givenPath: String): Sequence<org.jetbrains.kotlin.konan.file.File>
     fun resolve(unresolved: LenientUnresolvedLibrary): L?
     fun resolve(unresolved: RequiredUnresolvedLibrary): L
     fun resolve(givenPath: String): L
@@ -108,16 +111,27 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     override val logger: Logger
 ) : SearchPathResolver<L> {
 
-    private val distHead: File? get() = distributionKlib?.File()?.child("common")
-    open val distPlatformHead: File? = null
-    private val currentDirHead: File? get() = if (!skipCurrentDir) File.userDir else null
+    @Suppress("DEPRECATION_ERROR")
+    private val distHead: org.jetbrains.kotlin.konan.file.File?
+        get() = distributionKlib
+            ?.let { org.jetbrains.kotlin.konan.file.File(it) }
+            ?.child("common")
 
-    abstract fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean = false): List<L>
+    @Suppress("DEPRECATION_ERROR")
+    open val distPlatformHead: org.jetbrains.kotlin.konan.file.File? = null
 
-    private val directLibraryUniqueNames: Map</* Unique Name*/ String, File> by lazy {
-        HashMap<String, File>().apply {
+    @Suppress("DEPRECATION_ERROR")
+    private val currentDirHead: org.jetbrains.kotlin.konan.file.File?
+        get() = if (!skipCurrentDir) USER_DIR else null
+
+    @Suppress("DEPRECATION_ERROR")
+    abstract fun libraryComponentBuilder(file: org.jetbrains.kotlin.konan.file.File, /* ignored */ isDefault: Boolean = false): List<L>
+
+    @Suppress("DEPRECATION_ERROR")
+    private val directLibraryUniqueNames: Map</* Unique Name*/ String, org.jetbrains.kotlin.konan.file.File> by lazy {
+        HashMap<String, org.jetbrains.kotlin.konan.file.File>().apply {
             for (directLib in directLibs) {
-                val absolutePath = SearchRoot.lookUpByAbsolutePath(File(directLib)) ?: continue
+                val absolutePath = SearchRoot.lookUpByAbsolutePath(org.jetbrains.kotlin.konan.file.File(directLib)) ?: continue
                 val uniqueName = libraryComponentBuilder(absolutePath).singleOrNull()?.uniqueName ?: continue
                 this[uniqueName] = absolutePath
             }
@@ -140,7 +154,8 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     /**
      * Returns a sequence of libraries passed to the compiler directly for which unique_name == [givenName].
      */
-    private fun directLibsSequence(givenName: String): Sequence<File> {
+    @Suppress("DEPRECATION_ERROR")
+    private fun directLibsSequence(givenName: String): Sequence<org.jetbrains.kotlin.konan.file.File> {
         // Search among user-provided libraries by unique name.
         // It's a workaround for maven publication. When a library is published without Gradle metadata,
         // it has a complex file name (e.g. foo-macos_x64-1.0.klib). But a dependency on this lib in manifests
@@ -152,9 +167,10 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         return generateSequence { directLibraryUniqueNames[givenName] }
     }
 
-    override fun resolutionSequence(givenPath: String): Sequence<File> {
-        val given: File? = validFileOrNull(givenPath)
-        val sequence: Sequence<File?> = when {
+    @Suppress("DEPRECATION_ERROR")
+    override fun resolutionSequence(givenPath: String): Sequence<org.jetbrains.kotlin.konan.file.File> {
+        val given: org.jetbrains.kotlin.konan.file.File? = validFileOrNull(givenPath)
+        val sequence: Sequence<org.jetbrains.kotlin.konan.file.File?> = when {
             given == null -> {
                 // The given path can't denote a real file, so just look for such
                 // unique_name among libraries passed to the compiler directly.
@@ -228,7 +244,8 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     override fun resolve(givenPath: String) = resolve(RequiredUnresolvedLibrary(givenPath))
 
-    private fun getDefaultLibrariesFromDir(directory: File, prefix: String = "org.jetbrains.kotlin") =
+    @Suppress("DEPRECATION_ERROR")
+    private fun getDefaultLibrariesFromDir(directory: org.jetbrains.kotlin.konan.file.File, prefix: String = "org.jetbrains.kotlin") =
         if (directory.exists) {
             directory.listFiles
                 .asSequence()
@@ -258,6 +275,12 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         }
 
         return result
+    }
+
+    companion object {
+        @Suppress("DEPRECATION_ERROR")
+        private val USER_DIR: org.jetbrains.kotlin.konan.file.File
+            get() = org.jetbrains.kotlin.konan.file.File(System.getProperty("user.dir"))
     }
 }
 
@@ -336,7 +359,8 @@ fun validateNoLibrariesWerePassedViaCliByUniqueName(givenNames: List<String>, re
     if (givenNames.isEmpty() || resolvedLibraries.isEmpty()) return
 
     val potentiallyUniqueNames: Set<String> = givenNames.filterTo(hashSetOf()) { givenName ->
-        val given: File? = validFileOrNull(givenName)
+        @Suppress("DEPRECATION_ERROR")
+        val given: org.jetbrains.kotlin.konan.file.File? = validFileOrNull(givenName)
         given == null || given.nameSegments.size == 1
     }
 
@@ -362,9 +386,10 @@ fun validateNoLibrariesWerePassedViaCliByUniqueName(givenNames: List<String>, re
  * Returns a [File] instance if the [path] is valid on the current file system and null otherwise.
  * Doesn't check whether the file denoted by [path] really exists.
  */
-private fun validFileOrNull(path: String): File? =
+@Suppress("DEPRECATION_ERROR")
+private fun validFileOrNull(path: String): org.jetbrains.kotlin.konan.file.File? =
     try {
-        File(Paths.get(path))
+        org.jetbrains.kotlin.konan.file.File(Paths.get(path))
     } catch (_: InvalidPathException) {
         null
     }

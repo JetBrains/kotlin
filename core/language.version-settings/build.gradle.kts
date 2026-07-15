@@ -39,7 +39,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, javaLauncher = JdkMajorVersion.JDK_1_8)
+    testTask(javaLauncher = JdkMajorVersion.JDK_1_8)
 }
 
 val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {

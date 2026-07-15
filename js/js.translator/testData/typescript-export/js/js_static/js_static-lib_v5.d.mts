@@ -9,6 +9,10 @@ export declare class WithIgnoredCompanion {
     static set mutable(value: string);
     static staticSuspend(): Promise<string>;
     static staticSuspendWithDefault(value?: string): Promise<string>;
+    static staticSuspendWithSeveralDefaults(prefix?: string, count?: number, suffix?: string): Promise<string>;
+    static staticSuspendWithRequiredAndDefault(required: string, optional?: string): Promise<string>;
+    static staticSuspendWithDependentDefault(prefix?: string, suffix?: string): Promise<string>;
+    static staticSuspendWithReceiverDefault(value?: string): Promise<string>;
 }
 export declare namespace WithIgnoredCompanion {
     /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -25,6 +29,7 @@ export declare class WithoutIgnoredCompanion {
     static set mutable(value: string);
     static staticSuspend(): Promise<string>;
     static staticSuspendWithDefault(value?: string): Promise<string>;
+    static renamedStaticSuspendDefault(value?: string): Promise<string>;
 }
 export declare namespace WithoutIgnoredCompanion {
     /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

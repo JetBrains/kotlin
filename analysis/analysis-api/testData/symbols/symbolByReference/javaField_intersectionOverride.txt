@@ -1,4 +1,5 @@
 KaJavaFieldSymbol:
+  anchorPsi: PsiFieldImpl
   annotations: []
   callableId: /Config.minValue
   contextParameters: []
@@ -15,6 +16,8 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: minValue
   origin: INTERSECTION_OVERRIDE
+  psi: PsiFieldImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []

@@ -2,6 +2,7 @@ KtThisExpression(65,69): 'this'
   KaSymbolResolutionSuccess:
     symbols = [
       KaScriptSymbol:
+        anchorPsi: KtScript
         annotations: []
         isActual: false
         isExpect: false
@@ -10,5 +11,7 @@ KtThisExpression(65,69): 'this'
         modality: FINAL
         name: <script-ScriptThisExpression.kts>
         origin: SOURCE
+        psi: KtScript
+        realPsi: KtScript
         visibility: LOCAL
     ]

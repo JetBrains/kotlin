@@ -57,7 +57,7 @@ object BuiltinMethodsWithSpecialGenericSignature : SpecialGenericSignatures() {
         get() = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
 
     @JvmStatic
-    fun CallableMemberDescriptor.getSpecialSignatureInfo(): SpecialSignatureInfo? {
+    internal fun CallableMemberDescriptor.getSpecialSignatureInfo(): SpecialSignatureInfo? {
         if (name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
 
         val builtinSignature = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.computeJvmSignature()
@@ -69,11 +69,11 @@ object BuiltinMethodsWithSpecialGenericSignature : SpecialGenericSignatures() {
 
 @K1Deprecation
 object BuiltinMethodsWithDifferentJvmName : SpecialGenericSignatures() {
-    fun getJvmName(functionDescriptor: SimpleFunctionDescriptor): Name? {
+    internal fun getJvmName(functionDescriptor: SimpleFunctionDescriptor): Name? {
         return SIGNATURE_TO_JVM_REPRESENTATION_NAME[functionDescriptor.computeJvmSignature() ?: return null]
     }
 
-    fun isBuiltinFunctionWithDifferentNameInJvm(functionDescriptor: SimpleFunctionDescriptor): Boolean {
+    internal fun isBuiltinFunctionWithDifferentNameInJvm(functionDescriptor: SimpleFunctionDescriptor): Boolean {
         return KotlinBuiltIns.isBuiltIn(functionDescriptor) && functionDescriptor.firstOverridden {
             SIGNATURE_TO_JVM_REPRESENTATION_NAME.containsKey(functionDescriptor.computeJvmSignature())
         } != null
@@ -114,23 +114,6 @@ fun <T : CallableMemberDescriptor> T.getOverriddenSpecialBuiltin(): T? {
     return firstOverridden {
         KotlinBuiltIns.isBuiltIn(it) && it.getSpecialSignatureInfo() != null
     } as T?
-}
-
-// The subtle difference between getOverriddenBuiltinReflectingJvmDescriptor and getOverriddenSpecialBuiltin
-// is that first one return descriptor reflecting JVM signature (JVM descriptor)
-// E.g. it returns `contains(e: E): Boolean` instead of `contains(e: String): Boolean` for implementation of Collection<String>.contains
-// Implementation differs by getting 'original' for collection methods with erased value parameters
-// Also it ignores Collection<String>.containsAll overrides because they have the same JVM descriptor
-@Suppress("UNCHECKED_CAST")
-@K1Deprecation
-fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinReflectingJvmDescriptor(): T? {
-    getOverriddenBuiltinWithDifferentJvmName()?.let { return it }
-
-    if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
-
-    return firstOverridden {
-        KotlinBuiltIns.isBuiltIn(it) && it.getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false
-    }?.original as T?
 }
 
 @K1Deprecation
@@ -177,7 +160,7 @@ fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
 }
 
 @K1Deprecation
-val CallableMemberDescriptor.isFromJava: Boolean
+private val CallableMemberDescriptor.isFromJava: Boolean
     get() {
         val descriptor = propertyIfAccessor
         return descriptor.containingDeclaration is JavaClassDescriptor

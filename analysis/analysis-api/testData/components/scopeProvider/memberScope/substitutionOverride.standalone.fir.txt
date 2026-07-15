@@ -1,4 +1,5 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: test/Base.noGeneric
   contextParameters: []
@@ -22,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: noGeneric
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,6 +50,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: test/Base.noGenericWithExplicitType
   contextParameters: []
@@ -70,6 +74,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: noGenericWithExplicitType
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -95,6 +101,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: test/ClassWithGenericBase.withOuterGeneric
   contextParameters: []
@@ -118,6 +125,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterGeneric
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -126,6 +135,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -148,6 +158,8 @@ KaNamedFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -175,6 +187,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: test/ClassWithGenericBase.withOuterGenericWithExplicitType
   contextParameters: []
@@ -198,6 +211,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterGenericWithExplicitType
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -206,6 +221,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -228,6 +244,8 @@ KaNamedFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -255,6 +273,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: test/Base.withOwnGeneric
   contextParameters: []
@@ -278,6 +297,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOwnGeneric
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -285,6 +306,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Boolean
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -294,6 +316,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: TT
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -304,6 +328,7 @@ KaNamedFunctionSymbol:
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -326,6 +351,8 @@ KaNamedFunctionSymbol:
       name: tt
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -356,6 +383,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: test/Base.withOwnGenericWithExplicitType
   contextParameters: []
@@ -379,6 +407,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOwnGenericWithExplicitType
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -386,6 +416,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Boolean
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -395,6 +426,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: TT
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -405,6 +438,7 @@ KaNamedFunctionSymbol:
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -427,6 +461,8 @@ KaNamedFunctionSymbol:
       name: tt
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -457,6 +493,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: test/ClassWithGenericBase.withOuterAndOwnGeneric
   contextParameters: []
@@ -480,6 +517,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterAndOwnGeneric
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -487,6 +526,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Long
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -496,6 +536,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: TT
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -506,6 +548,7 @@ KaNamedFunctionSymbol:
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -528,6 +571,8 @@ KaNamedFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -541,6 +586,7 @@ KaNamedFunctionSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -563,6 +609,8 @@ KaNamedFunctionSymbol:
       name: tt
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -589,6 +637,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: test/ClassWithGenericBase.withOuterAndOwnGenericWithExplicitType
   contextParameters: []
@@ -612,6 +661,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterAndOwnGenericWithExplicitType
   origin: SUBSTITUTION_OVERRIDE
+  psi: KtNamedFunction
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -619,6 +670,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Long
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -628,6 +680,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: TT
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -638,6 +692,7 @@ KaNamedFunctionSymbol:
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -660,6 +715,8 @@ KaNamedFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -673,6 +730,7 @@ KaNamedFunctionSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -695,6 +753,8 @@ KaNamedFunctionSymbol:
       name: tt
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -721,6 +781,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/Any.equals
   contextParameters: []
@@ -744,6 +805,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -752,6 +815,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
       contextParameters: []
@@ -774,6 +838,8 @@ KaNamedFunctionSymbol:
       name: other
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -801,6 +867,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/Any.hashCode
   contextParameters: []
@@ -824,6 +891,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -845,6 +914,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/Any.toString
   contextParameters: []
@@ -868,6 +938,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -889,6 +961,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaConstructorSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: null
   containingClassId: test/ClassWithGenericBase
@@ -904,6 +977,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

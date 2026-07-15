@@ -55,6 +55,9 @@ abstract class TestSymbolTargetResolver<R> {
 
                 is SetterTarget -> resolveSetterTarget(target, owner)
                     ?: error("Cannot find a setter in the owner `$owner`.")
+
+                is ReceiverParameterTarget -> resolveReceiverParameterTarget(target, owner)
+                    ?: error("Cannot find a receiver parameter in the owner `$owner`.")
             }
         }
     }
@@ -74,6 +77,7 @@ abstract class TestSymbolTargetResolver<R> {
     protected open fun resolveContextParameterTarget(target: ContextParameterTarget, owner: R): R? = unsupportedTarget(target)
     protected open fun resolveGetterTarget(target: GetterTarget, owner: R): R? = unsupportedTarget(target)
     protected open fun resolveSetterTarget(target: SetterTarget, owner: R): R? = unsupportedTarget(target)
+    protected open fun resolveReceiverParameterTarget(target: ReceiverParameterTarget, owner: R): R? = unsupportedTarget(target)
     protected open fun resolveFieldTarget(target: FieldTarget): R? = unsupportedTarget(target)
 
     private fun unsupportedTarget(target: TestSymbolTarget): Nothing =

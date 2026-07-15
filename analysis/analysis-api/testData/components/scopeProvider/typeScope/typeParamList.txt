@@ -189,6 +189,7 @@ KaFunctionSignature:
 
 Declaration Scope:
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/collections/List.contains
   contextParameters: []
@@ -212,6 +213,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: contains
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -220,6 +223,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -242,6 +246,8 @@ KaNamedFunctionSymbol:
       name: element
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -251,6 +257,7 @@ KaNamedFunctionSymbol:
   ]
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/collections/List.containsAll
   contextParameters: []
@@ -274,6 +281,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: containsAll
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -282,6 +291,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -304,6 +314,8 @@ KaNamedFunctionSymbol:
       name: elements
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -318,6 +330,7 @@ KaNamedFunctionSymbol:
   ]
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/collections/List.get
   contextParameters: []
@@ -341,6 +354,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: get
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -348,6 +363,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -370,6 +386,8 @@ KaNamedFunctionSymbol:
       name: index
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -380,6 +398,7 @@ KaNamedFunctionSymbol:
   ]
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/collections/List.indexOf
   contextParameters: []
@@ -403,6 +422,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: indexOf
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -411,6 +432,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -433,6 +455,8 @@ KaNamedFunctionSymbol:
       name: element
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -442,6 +466,7 @@ KaNamedFunctionSymbol:
   ]
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/collections/List.isEmpty
   contextParameters: []
@@ -465,6 +490,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: isEmpty
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -474,6 +501,7 @@ KaNamedFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/collections/List.iterator
   contextParameters: []
@@ -497,6 +525,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: iterator
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -510,6 +540,7 @@ KaNamedFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/collections/List.lastIndexOf
   contextParameters: []
@@ -533,6 +564,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: lastIndexOf
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -541,6 +574,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -563,6 +597,8 @@ KaNamedFunctionSymbol:
       name: element
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -572,6 +608,7 @@ KaNamedFunctionSymbol:
   ]
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/collections/List.listIterator
   contextParameters: []
@@ -595,6 +632,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -608,6 +647,7 @@ KaNamedFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/collections/List.listIterator
   contextParameters: []
@@ -631,6 +671,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -643,6 +685,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -665,6 +708,8 @@ KaNamedFunctionSymbol:
       name: index
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -675,6 +720,7 @@ KaNamedFunctionSymbol:
   ]
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/collections/List.subList
   contextParameters: []
@@ -698,6 +744,8 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: subList
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -710,6 +758,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -732,6 +781,8 @@ KaNamedFunctionSymbol:
       name: fromIndex
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -740,6 +791,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       visibility: PUBLIC
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -762,6 +814,8 @@ KaNamedFunctionSymbol:
       name: toIndex
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -772,8 +826,10 @@ KaNamedFunctionSymbol:
   ]
   visibility: PUBLIC
 KaKotlinPropertySymbol:
+  anchorPsi: KtProperty
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: KtProperty
     annotations: []
     callableId: null
     contextParameters: []
@@ -791,6 +847,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/collections/List.size)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -802,6 +860,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtProperty
     annotations: []
     callableId: null
     contextParameters: []
@@ -818,6 +877,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: ABSTRACT
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -846,6 +907,8 @@ KaKotlinPropertySymbol:
   name: size
   origin: LIBRARY
   primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -855,6 +918,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/Any.equals
   contextParameters: []
@@ -878,6 +942,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -886,6 +952,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -908,6 +975,8 @@ KaNamedFunctionSymbol:
       name: other
       origin: LIBRARY
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -918,6 +987,7 @@ KaNamedFunctionSymbol:
   ]
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/Any.hashCode
   contextParameters: []
@@ -941,6 +1011,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -950,6 +1022,7 @@ KaNamedFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: kotlin/Any.toString
   contextParameters: []
@@ -973,6 +1046,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -982,6 +1057,7 @@ KaNamedFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/List.getFirst
   contextParameters: []
@@ -1005,6 +1081,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getFirst
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -1013,6 +1091,7 @@ KaNamedFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 KaNamedFunctionSymbol:
+  anchorPsi: null
   annotations: []
   callableId: kotlin/collections/List.getLast
   contextParameters: []
@@ -1036,6 +1115,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getLast
   origin: LIBRARY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []

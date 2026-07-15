@@ -7,6 +7,4 @@ package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.test.Assertions
 
-abstract class AssertionsService : Assertions(), TestService
-
 val TestServices.assertions: AssertionsService by TestServices.testServiceAccessor()

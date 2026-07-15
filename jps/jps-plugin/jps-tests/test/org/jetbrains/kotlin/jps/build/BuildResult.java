@@ -67,7 +67,7 @@ public final class BuildResult implements MessageHandler {
     });
     final Int2ObjectMap<BuildTarget<?>> id2Target = new Int2ObjectOpenHashMap<>();
     for (BuildTarget<?> target : targets) {
-      id2Target.put(pd.dataManager.getTargetsState().getBuildTargetId(target), target);
+      id2Target.put(pd.dataManager.getTargetStateManager().getBuildTargetId(target), target);
     }
     Int2ObjectMap<String> hashCodeToOutputPath = new Int2ObjectOpenHashMap<>();
     for (BuildTarget<?> target : targets) {

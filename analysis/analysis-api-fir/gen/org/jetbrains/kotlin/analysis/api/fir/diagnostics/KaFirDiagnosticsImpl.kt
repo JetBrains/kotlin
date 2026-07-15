@@ -5669,11 +5669,6 @@ internal class InvalidVersioningOnNonOptionalImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnNonOptional
 
-internal class InvalidVersioningOnNonfinalFunctionImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnNonfinalFunction
-
 internal class InvalidVersioningOnNonfinalClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -5723,11 +5718,6 @@ internal class NonAscendingVersionAnnotationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonAscendingVersionAnnotation
-
-internal class VersionOverloadsTooComplexExpressionImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VersionOverloadsTooComplexExpression
 
 internal class CompanionBlockMemberExtensionImpl(
     firDiagnostic: KtPsiDiagnostic,

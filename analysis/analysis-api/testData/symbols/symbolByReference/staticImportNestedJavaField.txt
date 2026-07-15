@@ -1,4 +1,5 @@
 KaJavaFieldSymbol:
+  anchorPsi: PsiFieldImpl
   annotations: []
   callableId: /Dependency.Nested.bar
   contextParameters: []
@@ -15,6 +16,8 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: bar
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl
+  realPsi: PsiFieldImpl
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

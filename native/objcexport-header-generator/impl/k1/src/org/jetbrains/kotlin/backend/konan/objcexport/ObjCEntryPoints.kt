@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
+import java.nio.file.Path
 
 /** A predicate which checks whether the given declaration is entry point, and should be exposed in Objective-C. */
 interface ObjCEntryPoints {
@@ -29,7 +29,7 @@ interface ObjCEntryPoints {
 /**
  * Reads entry points from this file.
  */
-fun File.readObjCEntryPoints(): ObjCEntryPoints =
+fun Path.readObjCEntryPoints(): ObjCEntryPoints =
     readObjCEntryPointList()
         .toSet()
         .let { entryPointSet ->

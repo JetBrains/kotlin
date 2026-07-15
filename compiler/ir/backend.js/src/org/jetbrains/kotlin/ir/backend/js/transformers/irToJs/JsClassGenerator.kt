@@ -82,7 +82,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun JsCompositeBlock.wrapInFunction(): JsStatement {
-        val classHolderName = JsAssignable.Named(JsName("${className.ident}Class", true))
+        val classHolderName = JsDeclarable.Named(JsName("${className.ident}Class", true))
         val functionWrapper = JsFunction(emptyScope, JsBlock(), "lazy wrapper for classes in per-file").apply {
             name = className
             with(body.statements) {
@@ -349,7 +349,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return getJsName() == null && !name.asString().isValidES5Identifier()
     }
 
-    private fun IrSimpleFunction.prototypeAccessRef(): JsExpression {
+    private fun IrSimpleFunction.prototypeAccessRef(): JsAssignableExpression {
         return jsElementAccess(name.asString(), classPrototypeRef)
     }
 

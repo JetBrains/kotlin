@@ -120,7 +120,7 @@ open class ProjectTestArgumentProvider @Inject constructor(
 projectTests {
     testData(isolated, "testData")
 
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         /**
          * It's expected that test should be executed on CI, but currently this project under `kotlin.native.enabled`
          */

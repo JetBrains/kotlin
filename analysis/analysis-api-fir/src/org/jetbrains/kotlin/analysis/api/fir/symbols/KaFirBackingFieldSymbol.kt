@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
@@ -40,9 +39,6 @@ internal class KaFirBackingFieldSymbol private constructor(
         analysisSession = session,
         backingOwningProperty = owningProperty
     )
-
-    override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsi }
 
     override val owningProperty: KaKotlinPropertySymbol
         get() = withValidityAssertion { backingOwningProperty }

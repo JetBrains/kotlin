@@ -1,6 +1,3 @@
-import org.gradle.kotlin.dsl.implementation
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -88,6 +85,8 @@ dependencies {
     testFixturesApi(testFixtures(project(":plugins:plugin-sandbox")))
 
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
+    testImplementation(libs.lincheck)
+    testImplementation(libs.junit.jupiter.params)
 }
 
 sourceSets {
@@ -111,8 +110,6 @@ kotlin {
 
 projectTests {
     testTask(
-        jUnitMode = JUnitMode.JUnit5,
-        javaLauncher = JdkMajorVersion.JDK_1_8,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_11_0, // TestsWithJava11 and others
             JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others

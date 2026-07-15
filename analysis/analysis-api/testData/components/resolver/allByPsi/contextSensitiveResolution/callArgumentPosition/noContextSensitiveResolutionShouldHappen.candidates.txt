@@ -533,6 +533,7 @@ KtCallExpression(350,356): 'foo(X)'
       dispatchReceiver = null
       extensionReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
           contextParameters: []
@@ -549,6 +550,8 @@ KtCallExpression(350,356): 'foo(X)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(<local>/bar)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -611,6 +614,7 @@ KtNameReferenceExpression(350,353): 'foo'
       dispatchReceiver = null
       extensionReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
           contextParameters: []
@@ -627,6 +631,8 @@ KtNameReferenceExpression(350,353): 'foo'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(<local>/bar)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -694,6 +700,7 @@ KtNameReferenceExpression(354,355): 'X'
       dispatchReceiver = null
       extensionReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
           contextParameters: []
@@ -710,6 +717,8 @@ KtNameReferenceExpression(354,355): 'X'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(<local>/bar)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []

@@ -1,5 +1,6 @@
 Resolved constructor:
   KaConstructorSymbol:
+    anchorPsi: KtTypeAlias
     annotations: []
     callableId: null
     containingClassId: test/MyTypeAlias
@@ -15,6 +16,8 @@ Resolved constructor:
     location: CLASS
     modality: FINAL
     origin: TYPEALIASED_CONSTRUCTOR
+    psi: KtTypeAlias
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -28,6 +31,7 @@ Resolved constructor:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: KtClass
         annotations: []
         callableId: null
         contextParameters: []
@@ -50,6 +54,8 @@ Resolved constructor:
         name: t
         origin: TYPEALIASED_CONSTRUCTOR
         primaryConstructorProperty: null
+        psi: KtClass
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -72,6 +78,7 @@ Resolved constructor:
 
 Original constructor if type aliased:
   KaConstructorSymbol:
+    anchorPsi: KtPrimaryConstructor
     annotations: []
     callableId: null
     containingClassId: test/MyClass
@@ -87,6 +94,8 @@ Original constructor if type aliased:
     location: CLASS
     modality: FINAL
     origin: SOURCE
+    psi: KtPrimaryConstructor
+    realPsi: KtPrimaryConstructor
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -98,6 +107,7 @@ Original constructor if type aliased:
       type: test/MyClass<T>
     typeParameters: [
       KaTypeParameterSymbol:
+        anchorPsi: KtTypeParameter
         annotations: []
         isActual: false
         isExpect: false
@@ -107,6 +117,8 @@ Original constructor if type aliased:
         modality: FINAL
         name: T
         origin: SOURCE
+        psi: KtTypeParameter
+        realPsi: KtTypeParameter
         upperBounds: []
         variance: INVARIANT
         visibility: LOCAL
@@ -117,6 +129,7 @@ Original constructor if type aliased:
     ]
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: KtParameter
         annotations: []
         callableId: null
         contextParameters: []
@@ -139,6 +152,8 @@ Original constructor if type aliased:
         name: t
         origin: SOURCE
         primaryConstructorProperty: null
+        psi: KtParameter
+        realPsi: KtParameter
         receiverParameter: null
         returnType: KaTypeParameterType:
           annotations: []

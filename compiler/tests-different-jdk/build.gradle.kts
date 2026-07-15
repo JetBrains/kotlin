@@ -17,14 +17,12 @@ dependencies {
     testImplementation(project(":compiler:fir:fir2ir", "testsJarConfig"))
     testRuntimeOnly(testFixtures(project(":compiler:fir:fir2ir")))
 
-    testImplementation(libs.junit4)
     testImplementation(libs.junit.platform.suite)
     testImplementation(kotlinStdlib())
     testImplementation(project(":libraries:tools:abi-comparator"))
 
     testImplementation(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
 }
 
@@ -58,7 +56,6 @@ projectTests {
     ) {
         testTask(
             taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
-            jUnitMode = JUnitMode.JUnit5,
             javaLauncher = jdk,
             maxMetaspaceSizeMb = 1024,
             skipInLocalBuild = false,

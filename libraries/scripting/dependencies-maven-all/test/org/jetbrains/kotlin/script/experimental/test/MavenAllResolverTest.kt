@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.script.experimental.test
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.script.experimental.dependencies.RepositoryCoordinates
 import kotlin.script.experimental.dependencies.impl.makeExternalDependenciesResolverOptions
 import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver

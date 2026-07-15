@@ -4724,10 +4724,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
     }
 
-    interface InvalidVersioningOnNonfinalFunction : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidVersioningOnNonfinalFunction::class
-    }
-
     interface InvalidVersioningOnNonfinalClass : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvalidVersioningOnNonfinalClass::class
     }
@@ -4767,10 +4763,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val lowestVersion: MavenComparableVersion?
         val highestVersion: MavenComparableVersion?
         val sourceOfHighestVersion: KaCallableSymbol
-    }
-
-    interface VersionOverloadsTooComplexExpression : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = VersionOverloadsTooComplexExpression::class
     }
 
     interface CompanionBlockMemberExtension : KaFirDiagnostic<PsiElement> {

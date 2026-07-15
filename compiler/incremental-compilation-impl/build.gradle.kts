@@ -62,11 +62,11 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, javaLauncher = JdkMajorVersion.JDK_1_8) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_1_8) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 
-    testTask("testJvmICWithJdk11", jUnitMode = JUnitMode.JUnit5, javaLauncher = JdkMajorVersion.JDK_11_0, skipInLocalBuild = false) {
+    testTask("testJvmICWithJdk11", javaLauncher = JdkMajorVersion.JDK_11_0, skipInLocalBuild = false) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         filter {
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK1JvmCompilerRunnerTestGenerated*")

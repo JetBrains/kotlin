@@ -102,7 +102,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         val configuration = CompilerConfiguration.create()
 
-        configuration.put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
         configuration.treatWarningsAsErrors = arguments.allWarningsAsErrors
 
         val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors, arguments.reportAllWarnings).also {

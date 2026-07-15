@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.services.configuration
 
 import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
+import com.intellij.util.currentJavaVersion
 import com.intellij.util.lang.JavaVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -147,7 +148,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
             TestJdkKind.FULL_JDK -> getJdkHomeFromProperty {
-                runIf(JavaVersion.current() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
+                runIf(currentJavaVersion() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
             }
         }
 

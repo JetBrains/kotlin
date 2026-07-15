@@ -1,5 +1,5 @@
 // FULL_JDK
-// WITH_STDLIB
+// STDLIB_JDK8
 // SCRIPT_DEFAULT_IMPORTS: kotlin.streams.asSequence
 
 import java.util.stream.Stream

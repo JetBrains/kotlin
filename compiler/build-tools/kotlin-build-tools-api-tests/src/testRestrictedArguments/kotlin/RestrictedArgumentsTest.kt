@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.buildtools.tests.restricted
 
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_ASSERTIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
@@ -82,6 +83,40 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
                             "This warning will become an error starting from Kotlin 2.5.0."
                 )
             }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("-d reports during execution on metadata")
+    fun testDestinationReportsDuringExecutionOnMetadata(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        metadataProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            module.checkRestrictedArgument(
+                "-d",
+                errorSince = KotlinReleaseVersion.v2_5_0,
+                configuredArgs = listOf("-d", "output/dir")
+            ) {
+                assertLogContainsLines(
+                    LogLevel.WARN,
+                    "Argument '-d' is not supported in the Build Tools API. " +
+                            "The destination is configured via the ${KotlinMetadataPlatformToolchain::metadataKlibCompilationOperationBuilder::parameters.get()[2].name} " +
+                            "parameter of ${KotlinMetadataPlatformToolchain::metadataKlibCompilationOperationBuilder.name}. " +
+                            "This warning will become an error starting from Kotlin 2.5.0."
+                )
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("-Xlegacy-metadata-jar-k2 reports restricted usage")
+    fun testLegacyMetadataJar(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        metadataProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            module.checkRestrictedArgument(
+                "-Xlegacy-metadata-jar-k2",
+                errorSince = KotlinReleaseVersion.v2_6_0,
+                configuredArgs = listOf("-Xlegacy-metadata-jar-k2")
+            )
         }
     }
 
@@ -231,20 +266,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         )
     }
 
-    private fun assertRestrictedArgError(
-        argumentAliases: List<String>,
-        exception: CompilerArgumentsParseException,
-    ) {
-        val aliasesAsString = argumentAliases.joinToString(separator = "/") { "'$it'" }
-        assert(
-            exception.message?.contains("$aliasesAsString is not supported in the Build Tools API.") == true &&
-                    exception.message?.contains("will become an error") == false
-        ) {
-            "CompilerArgumentsParseException should be thrown for $aliasesAsString with expected message, but it was not: ${exception.message}"
-        }
-    }
-
-    private fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.checkRestrictedArgument(
+    private fun Module<out BaseCompilationOperation, *, *>.checkRestrictedArgument(
         vararg argumentAliases: String,
         errorSince: KotlinReleaseVersion,
         configuredArgs: List<String>,
@@ -257,7 +279,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         additionalCompilationAssertions = additionalCompilationAssertions,
     )
 
-    private fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.checkRestrictedArguments(
+    private fun Module<out BaseCompilationOperation, *, *>.checkRestrictedArguments(
         vararg restrictedArgs: Pair<List<String>, KotlinReleaseVersion>,
         configuredArgs: List<String>,
         expectedCompilationError: Boolean = false,

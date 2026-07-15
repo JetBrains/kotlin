@@ -1,0 +1,34 @@
+KaNamedClassSymbol:
+  anchorPsi: null
+  annotations: []
+  classId: one/Producer.NestedClass
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: FINAL
+  name: NestedClass
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Producer
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "Library library"
+  applicableAnnotationTargets: null
+  deprecation: null
+  importableFqName: one.Producer.NestedClass
+  isPublicApi: false

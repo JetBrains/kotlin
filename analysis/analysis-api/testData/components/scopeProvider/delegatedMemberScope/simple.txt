@@ -1,10 +1,12 @@
 KaKotlinPropertySymbol:
+  anchorPsi: KtClass
   annotations: []
   backingFieldSymbol: null
   callableId: /A.zoo
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
     contextParameters: []
@@ -21,7 +23,10 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: DELEGATED
+    psi: KtClass
+    realPsi: null
     receiverParameter: KaReceiverParameterSymbol:
+      anchorPsi: KtTypeReference
       annotations: []
       callableId: null
       contextParameters: []
@@ -38,6 +43,8 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: DELEGATED
       owningCallableSymbol: KaKotlinPropertySymbol(/A.zoo)
+      psi: KtTypeReference
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -86,7 +93,10 @@ KaKotlinPropertySymbol:
   name: zoo
   origin: DELEGATED
   primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
     contextParameters: []
@@ -103,6 +113,8 @@ KaKotlinPropertySymbol:
     name: <receiver>
     origin: DELEGATED
     owningCallableSymbol: KaKotlinPropertySymbol(/A.zoo)
+    psi: KtTypeReference
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -120,6 +132,7 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Unit
   setter: KaPropertySetterSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
     contextParameters: []
@@ -137,6 +150,7 @@ KaKotlinPropertySymbol:
     modality: ABSTRACT
     origin: DELEGATED
     parameter: KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -159,6 +173,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: DELEGATED
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -171,7 +187,10 @@ KaKotlinPropertySymbol:
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
+    psi: KtClass
+    realPsi: null
     receiverParameter: KaReceiverParameterSymbol:
+      anchorPsi: KtTypeReference
       annotations: []
       callableId: null
       contextParameters: []
@@ -188,6 +207,8 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: DELEGATED
       owningCallableSymbol: KaKotlinPropertySymbol(/A.zoo)
+      psi: KtTypeReference
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -207,6 +228,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: KtClass
         annotations: []
         callableId: null
         contextParameters: []
@@ -229,6 +251,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: DELEGATED
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -268,6 +292,7 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: /A.foo
   contextParameters: []
@@ -291,6 +316,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: DELEGATED
+  psi: KtNamedFunction
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -312,12 +339,14 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: KtClass
   annotations: []
   backingFieldSymbol: null
   callableId: /A.foo
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
     contextParameters: []
@@ -334,6 +363,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: DELEGATED
+    psi: KtClass
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -371,6 +402,8 @@ KaKotlinPropertySymbol:
   name: foo
   origin: DELEGATED
   primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -393,6 +426,7 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: /A.smth
   contextParameters: []
@@ -416,7 +450,10 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: smth
   origin: DELEGATED
+  psi: KtNamedFunction
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
     contextParameters: []
@@ -433,6 +470,8 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: DELEGATED
     owningCallableSymbol: KaNamedFunctionSymbol(/A.smth)
+    psi: KtTypeReference
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -465,12 +504,14 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: KtClass
   annotations: []
   backingFieldSymbol: null
   callableId: /A.bar
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
     contextParameters: []
@@ -487,6 +528,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: DELEGATED
+    psi: KtClass
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -524,12 +567,15 @@ KaKotlinPropertySymbol:
   name: bar
   origin: DELEGATED
   primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Long
   setter: KaPropertySetterSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
     contextParameters: []
@@ -547,6 +593,7 @@ KaKotlinPropertySymbol:
     modality: ABSTRACT
     origin: DELEGATED
     parameter: KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -569,6 +616,8 @@ KaKotlinPropertySymbol:
       name: value
       origin: DELEGATED
       primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -581,6 +630,8 @@ KaKotlinPropertySymbol:
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
+    psi: KtClass
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -589,6 +640,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: KtClass
         annotations: []
         callableId: null
         contextParameters: []
@@ -611,6 +663,8 @@ KaKotlinPropertySymbol:
         name: value
         origin: DELEGATED
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -650,12 +704,14 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
+  anchorPsi: KtClass
   annotations: []
   backingFieldSymbol: null
   callableId: /A.doo
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
     contextParameters: []
@@ -672,7 +728,10 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: DELEGATED
+    psi: KtClass
+    realPsi: null
     receiverParameter: KaReceiverParameterSymbol:
+      anchorPsi: KtTypeReference
       annotations: []
       callableId: null
       contextParameters: []
@@ -689,6 +748,8 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: DELEGATED
       owningCallableSymbol: KaKotlinPropertySymbol(/A.doo)
+      psi: KtTypeReference
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -737,7 +798,10 @@ KaKotlinPropertySymbol:
   name: doo
   origin: DELEGATED
   primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
     contextParameters: []
@@ -754,6 +818,8 @@ KaKotlinPropertySymbol:
     name: <receiver>
     origin: DELEGATED
     owningCallableSymbol: KaKotlinPropertySymbol(/A.doo)
+    psi: KtTypeReference
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []

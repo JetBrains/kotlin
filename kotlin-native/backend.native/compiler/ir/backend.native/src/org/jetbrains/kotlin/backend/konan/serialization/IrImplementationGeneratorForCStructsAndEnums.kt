@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
-import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.backend.konan.lower.EnumClassLowering
 import org.jetbrains.kotlin.backend.konan.lower.EnumConstructorsLowering
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -80,8 +77,11 @@ internal class IrImplementationGeneratorForCStructsAndEnums(
     }
 
     private fun createBodyForCStructCompanionConstructor(cStructCompanionClass: IrClass) {
-        val size = cStructCompanionClass.getAnnotationArgumentValue<Long>(varTypeAnnotationFqName, "size")!!
-        val align = cStructCompanionClass.getAnnotationArgumentValue<Int>(varTypeAnnotationFqName, "align")!!
+        val varTypeAnnotation = cStructCompanionClass.annotations.findAnnotation(varTypeAnnotationFqName)
+                ?: error("$varTypeAnnotationFqName annotation not found on class ${cStructCompanionClass.classId}")
+
+        val size = varTypeAnnotation.getConstArgument<Long>("size")!!
+        val align = varTypeAnnotation.getConstArgument<Int>("align")!!
 
         val primaryConstructor = cStructCompanionClass.primaryConstructor!!
         primaryConstructor.body = builtIns.createIrBuilder(primaryConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {

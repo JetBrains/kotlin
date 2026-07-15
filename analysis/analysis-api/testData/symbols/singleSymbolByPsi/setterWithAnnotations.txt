@@ -1,4 +1,5 @@
 KaPropertySetterSymbol:
+  anchorPsi: KtPropertyAccessor
   annotations: [
     SetAnnotation()
       psi: KtAnnotationEntry
@@ -21,6 +22,7 @@ KaPropertySetterSymbol:
   modality: FINAL
   origin: SOURCE
   parameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
     annotations: [
       ExplicitSetparamAnnotation()
         psi: KtAnnotationEntry
@@ -48,6 +50,8 @@ KaPropertySetterSymbol:
     name: value
     origin: SOURCE
     primaryConstructorProperty: null
+    psi: KtParameter
+    realPsi: KtParameter
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -60,6 +64,8 @@ KaPropertySetterSymbol:
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
     importableFqName: null
+  psi: KtPropertyAccessor
+  realPsi: KtPropertyAccessor
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -68,6 +74,7 @@ KaPropertySetterSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: [
         ExplicitSetparamAnnotation()
           psi: KtAnnotationEntry
@@ -95,6 +102,8 @@ KaPropertySetterSymbol:
       name: value
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

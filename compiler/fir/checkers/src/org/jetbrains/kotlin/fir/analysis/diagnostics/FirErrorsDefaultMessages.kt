@@ -498,7 +498,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_ANNOTATION_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_LOCAL_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NONFINAL_CLASS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NONFINAL_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NON_OPTIONAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER
@@ -929,7 +928,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREMENT_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREMENT_DEPRECATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
@@ -3935,10 +3933,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "'@IntroducedAt' annotation can only be added to parameters with default values."
         )
         map.put(
-            INVALID_VERSIONING_ON_NONFINAL_FUNCTION,
-            "'@IntroducedAt' annotation cannot be used in non-final methods."
-        )
-        map.put(
             INVALID_VERSIONING_ON_NONFINAL_CLASS,
             "'@IntroducedAt' annotation cannot be used in non-final classes."
         )
@@ -3979,11 +3973,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             MAVEN_VERSION,
             SYMBOL,
         )
-        map.put(
-            VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION,
-            "Not supported in combination with '@IntroducedAt'."
-        )
-
         map.put(
             COMPANION_BLOCK_MEMBER_EXTENSION,
             "Companion block member cannot be an extension."

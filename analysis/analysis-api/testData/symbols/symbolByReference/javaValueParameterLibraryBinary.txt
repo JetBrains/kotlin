@@ -1,4 +1,5 @@
 KaValueParameterSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
   contextParameters: []
@@ -21,6 +22,8 @@ KaValueParameterSymbol:
   name: name
   origin: JAVA_LIBRARY
   primaryConstructorProperty: null
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

@@ -1,10 +1,12 @@
 KaKotlinPropertySymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
   annotations: []
   backingFieldSymbol: null
   callableId: /<unused var>
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtDestructuringDeclarationEntry
     annotations: []
     callableId: null
     contextParameters: []
@@ -21,6 +23,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -54,6 +58,8 @@ KaKotlinPropertySymbol:
   name: <unused var>
   origin: SOURCE
   primaryConstructorParameter: null
+  psi: KtDestructuringDeclarationEntry
+  realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -72,6 +78,7 @@ KaKotlinPropertySymbol:
   importableFqName: <unused var>
 
 KaPropertyGetterSymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
   annotations: []
   callableId: null
   contextParameters: []
@@ -88,6 +95,8 @@ KaPropertyGetterSymbol:
   location: PROPERTY
   modality: FINAL
   origin: SOURCE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

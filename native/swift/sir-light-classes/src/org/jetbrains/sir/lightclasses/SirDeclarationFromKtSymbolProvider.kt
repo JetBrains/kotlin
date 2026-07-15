@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTranslationResult
 import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.swiftIdentifier
@@ -96,8 +97,8 @@ public class SirDeclarationFromKtSymbolProvider(
                 if (ktSymbol is KaPropertySymbol && (ktSymbol.isExtension || ktSymbol.contextParameters.isNotEmpty())) {
                     ktSymbol.getter?.toSirFunction(ktSymbol)
                         ?.takeUnlessUnavailableInProtocol()?.takeUnlessNSObjectConflict()?.let { getter ->
-                            val setter = ktSymbol.setter?.toSirFunction(ktSymbol)
-                                ?.takeUnlessUnavailableInProtocol()?.takeUnlessNSObjectConflict()
+                            val setter = ktSymbol.setter?.takeUnless { it.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN }
+                                ?.toSirFunction(ktSymbol)?.takeUnlessUnavailableInProtocol()?.takeUnlessNSObjectConflict()
                             SirTranslationResult.ExtensionProperty(getter, setter)
                         } ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
                 } else {

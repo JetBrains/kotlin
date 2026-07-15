@@ -33,7 +33,31 @@ import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-typealias AdditionalProvidersSupplier = (FirSession, ModuleDataProvider, FirKotlinScopeProvider, List<KotlinLibrary>) -> List<FirSymbolProvider>
+fun interface AdditionalProvidersSupplier {
+    fun createProviders(
+        session: FirSession,
+        moduleDataProvider: ModuleDataProvider,
+        scopeProvider: FirKotlinScopeProvider,
+        libraries: List<KotlinLibrary>,
+    ): List<FirSymbolProvider>
+}
+
+fun interface AdditionalProvidersSupplierForHmpp {
+    fun createProviders(
+        session: FirSession,
+        moduleDataProvider: ModuleDataProvider,
+        scopeProvider: FirKotlinScopeProvider,
+        libraries: List<KotlinLibrary>,
+        rawRegularDependencies: Collection<String>,
+        rawFriendDependencies: Collection<String>,
+    ): List<FirSymbolProvider>
+
+    fun bind(rawRegularDependencies: Collection<String>, rawFriendDependencies: Collection<String>): AdditionalProvidersSupplier {
+        return { session, moduleDataProvider, scopeProvider, libraries ->
+            createProviders(session, moduleDataProvider, scopeProvider, libraries, rawRegularDependencies, rawFriendDependencies)
+        }
+    }
+}
 
 @OptIn(SessionConfiguration::class)
 abstract class AbstractFirMetadataSessionFactory(
@@ -110,7 +134,7 @@ abstract class AbstractFirMetadataSessionFactory(
                         )
                     }
 
-                    additionalProviders?.invoke(session, moduleDataProvider, kotlinScopeProvider, resolvedKLibs)
+                    additionalProviders?.createProviders(session, moduleDataProvider, kotlinScopeProvider, resolvedKLibs)
                         ?.let { this += it }
                 }
             }

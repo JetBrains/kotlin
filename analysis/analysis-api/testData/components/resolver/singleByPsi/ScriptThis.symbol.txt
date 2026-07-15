@@ -4,6 +4,7 @@ KtNameReferenceExpression(16,20): 'this'
   KaSymbolResolutionSuccess:
     symbols = [
       KaScriptSymbol:
+        anchorPsi: KtScript
         annotations: []
         isActual: false
         isExpect: false
@@ -12,5 +13,7 @@ KtNameReferenceExpression(16,20): 'this'
         modality: FINAL
         name: <script-ScriptThis.kts>
         origin: SOURCE
+        psi: KtScript
+        realPsi: KtScript
         visibility: LOCAL
     ]

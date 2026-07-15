@@ -1,10 +1,14 @@
 packages: 1
   KaPackageSymbol:
+    anchorPsi: PsiPackage(generated)
     fqName: generated
     location: TOP_LEVEL
     origin: SOURCE
+    psi: PsiPackage(generated)
+    realPsi: PsiPackage(generated)
 classifiers: 2
   KaNamedClassSymbol:
+    anchorPsi: KtClass
     annotations: []
     classId: generated/GenClass1
     classKind: CLASS
@@ -21,6 +25,8 @@ classifiers: 2
     modality: FINAL
     name: GenClass1
     origin: SOURCE
+    psi: KtClass
+    realPsi: KtClass
     superTypes: [
       KaUsualClassType:
         annotations: []
@@ -34,6 +40,7 @@ classifiers: 2
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtClass GenClass1]
   KaNamedClassSymbol:
+    anchorPsi: KtClass
     annotations: []
     classId: generated/GenClass2
     classKind: CLASS
@@ -50,6 +57,8 @@ classifiers: 2
     modality: OPEN
     name: GenClass2
     origin: SOURCE
+    psi: KtClass
+    realPsi: KtClass
     superTypes: [
       KaUsualClassType:
         annotations: []
@@ -64,6 +73,7 @@ classifiers: 2
         [Resolve extension navigation target for test for KtClass GenClass2]
 callables: 5
   KaNamedFunctionSymbol:
+    anchorPsi: KtNamedFunction
     annotations: []
     callableId: generated/genTopLevelFun1
     contextParameters: []
@@ -87,6 +97,8 @@ callables: 5
     modality: FINAL
     name: genTopLevelFun1
     origin: SOURCE
+    psi: KtNamedFunction
+    realPsi: KtNamedFunction
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -95,6 +107,7 @@ callables: 5
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: KtParameter
         annotations: []
         callableId: null
         contextParameters: []
@@ -117,6 +130,8 @@ callables: 5
         name: foo
         origin: SOURCE
         primaryConstructorProperty: null
+        psi: KtParameter
+        realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -131,6 +146,7 @@ callables: 5
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtNamedFunction genTopLevelFun1]
   KaNamedFunctionSymbol:
+    anchorPsi: KtNamedFunction
     annotations: []
     callableId: generated/genTopLevelExtension1
     contextParameters: []
@@ -154,7 +170,10 @@ callables: 5
     modality: FINAL
     name: genTopLevelExtension1
     origin: SOURCE
+    psi: KtNamedFunction
+    realPsi: KtNamedFunction
     receiverParameter: KaReceiverParameterSymbol:
+      anchorPsi: KtTypeReference
       annotations: []
       callableId: null
       contextParameters: []
@@ -171,6 +190,8 @@ callables: 5
       name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaNamedFunctionSymbol(generated/genTopLevelExtension1)
+      psi: KtTypeReference
+      realPsi: KtTypeReference
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -190,8 +211,10 @@ callables: 5
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtNamedFunction genTopLevelExtension1]
   KaKotlinPropertySymbol:
+    anchorPsi: KtProperty
     annotations: []
     backingFieldSymbol: KaBackingFieldSymbol:
+      anchorPsi: KtProperty
       annotations: []
       callableId: null
       contextParameters: []
@@ -209,6 +232,8 @@ callables: 5
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVal1)
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -220,6 +245,7 @@ callables: 5
     contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
+      anchorPsi: KtProperty
       annotations: []
       callableId: null
       contextParameters: []
@@ -236,6 +262,8 @@ callables: 5
       location: PROPERTY
       modality: FINAL
       origin: SOURCE
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -264,6 +292,8 @@ callables: 5
     name: genTopLevelVal1
     origin: SOURCE
     primaryConstructorParameter: null
+    psi: KtProperty
+    realPsi: KtProperty
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -277,8 +307,10 @@ callables: 5
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtProperty genTopLevelVal1]
   KaKotlinPropertySymbol:
+    anchorPsi: KtProperty
     annotations: []
     backingFieldSymbol: KaBackingFieldSymbol:
+      anchorPsi: KtProperty
       annotations: []
       callableId: null
       contextParameters: []
@@ -296,6 +328,8 @@ callables: 5
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVar1)
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -307,6 +341,7 @@ callables: 5
     contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
+      anchorPsi: KtProperty
       annotations: []
       callableId: null
       contextParameters: []
@@ -323,6 +358,8 @@ callables: 5
       location: PROPERTY
       modality: FINAL
       origin: SOURCE
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -351,12 +388,15 @@ callables: 5
     name: genTopLevelVar1
     origin: SOURCE
     primaryConstructorParameter: null
+    psi: KtProperty
+    realPsi: KtProperty
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/String
     setter: KaPropertySetterSymbol:
+      anchorPsi: KtPropertyAccessor
       annotations: []
       callableId: null
       contextParameters: []
@@ -374,6 +414,7 @@ callables: 5
       modality: FINAL
       origin: SOURCE
       parameter: KaValueParameterSymbol:
+        anchorPsi: KtPropertyAccessor
         annotations: []
         callableId: null
         contextParameters: []
@@ -396,6 +437,8 @@ callables: 5
         name: value
         origin: SOURCE
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -403,6 +446,8 @@ callables: 5
           type: kotlin/String
         typeParameters: []
         visibility: PUBLIC
+      psi: KtPropertyAccessor
+      realPsi: KtPropertyAccessor
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -411,6 +456,7 @@ callables: 5
       typeParameters: []
       valueParameters: [
         KaValueParameterSymbol:
+          anchorPsi: KtPropertyAccessor
           annotations: []
           callableId: null
           contextParameters: []
@@ -433,6 +479,8 @@ callables: 5
           name: value
           origin: SOURCE
           primaryConstructorProperty: null
+          psi: null
+          realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -449,8 +497,10 @@ callables: 5
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtProperty genTopLevelVar1]
   KaKotlinPropertySymbol:
+    anchorPsi: KtProperty
     annotations: []
     backingFieldSymbol: KaBackingFieldSymbol:
+      anchorPsi: KtProperty
       annotations: []
       callableId: null
       contextParameters: []
@@ -468,6 +518,8 @@ callables: 5
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genExtensionVal1)
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -479,6 +531,7 @@ callables: 5
     contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
+      anchorPsi: KtPropertyAccessor
       annotations: []
       callableId: null
       contextParameters: []
@@ -495,7 +548,10 @@ callables: 5
       location: PROPERTY
       modality: FINAL
       origin: SOURCE
+      psi: KtPropertyAccessor
+      realPsi: KtPropertyAccessor
       receiverParameter: KaReceiverParameterSymbol:
+        anchorPsi: KtTypeReference
         annotations: []
         callableId: null
         contextParameters: []
@@ -512,6 +568,8 @@ callables: 5
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
+        psi: KtTypeReference
+        realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -546,7 +604,10 @@ callables: 5
     name: genExtensionVal1
     origin: SOURCE
     primaryConstructorParameter: null
+    psi: KtProperty
+    realPsi: KtProperty
     receiverParameter: KaReceiverParameterSymbol:
+      anchorPsi: KtTypeReference
       annotations: []
       callableId: null
       contextParameters: []
@@ -563,6 +624,8 @@ callables: 5
       name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
+      psi: KtTypeReference
+      realPsi: KtTypeReference
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

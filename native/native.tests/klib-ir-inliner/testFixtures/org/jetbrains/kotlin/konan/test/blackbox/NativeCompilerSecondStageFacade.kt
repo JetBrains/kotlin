@@ -84,7 +84,6 @@ class NativeCompilerSecondStageFacade private constructor(
                 mainLibraries = listOf(mainLibrary),
                 enableAssertions = AssertionsMode.ALWAYS_DISABLE !in module.directives[ASSERTIONS_MODE],
                 withPlatformLibs = module.directives.contains(WITH_PLATFORM_LIBS),
-                customLanguageFeatures = module.directives[LanguageSettingsDirectives.LANGUAGE],
                 freeArgs = module.directives[FREE_COMPILER_ARGS] + irCheckersArguments(module) + customArgs,
                 verifyIrMode = if (isCompatibilityTesting) VerifyIrMode.NONE else VerifyIrMode.ERROR,
             )
@@ -148,7 +147,6 @@ class NativeCompilerSecondStageFacade private constructor(
                 mainLibraries = mainLibraries,
                 enableAssertions = AssertionsMode.ALWAYS_DISABLE !in someModule.directives[ASSERTIONS_MODE],
                 withPlatformLibs = someModule.directives.contains(WITH_PLATFORM_LIBS),
-                customLanguageFeatures = someModule.directives[LanguageSettingsDirectives.LANGUAGE],
                 freeArgs = freeArgs + irCheckersArguments(someModule) + "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
                 verifyIrMode = VerifyIrMode.ERROR,
             )
@@ -201,7 +199,6 @@ class NativeCompilerSecondStageFacade private constructor(
         mainLibraries: List<String>,
         enableAssertions: Boolean,
         withPlatformLibs: Boolean,
-        customLanguageFeatures: List<String>,
         freeArgs: List<String>,
         verifyIrMode: VerifyIrMode = VerifyIrMode.ERROR,
     ): CliRunResult {
@@ -239,9 +236,6 @@ class NativeCompilerSecondStageFacade private constructor(
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
                 },
                 listOf(K2NativeCompilerArguments::friendModules.cliArgument, friendModules).takeIf { friendModules.isNotEmpty() },
-                customLanguageFeatures
-                    .filterNot { LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly }
-                    .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
                 freeArgs,
                 fileCheckStage?.let {
                     listOf(

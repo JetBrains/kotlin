@@ -55,7 +55,6 @@ dependencies {
     testFixturesApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testFixturesApi(jpsModel()) { isTransitive = false }
     testFixturesApi(jpsModelImpl()) { isTransitive = false }
-    testFixturesApi(libs.junit4)
 
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
@@ -136,7 +135,6 @@ projectTests {
     withThirdPartyJsr305()
 
     testTask(
-        jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0, // e.g. org.jetbrains.kotlin.test.runners.ForeignAnnotationsCompiledJavaTestGenerated.Java11Tests

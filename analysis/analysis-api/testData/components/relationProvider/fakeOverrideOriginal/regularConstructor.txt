@@ -1,0 +1,64 @@
+IS_THE_SAME_SYMBOL: true
+FAKE_OVERRIDE_ORIGINAL:
+  KaConstructorSymbol:
+    anchorPsi: KtSecondaryConstructor
+    annotations: []
+    callableId: null
+    containingClassId: test/MyClass
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isPrimary: false
+    location: CLASS
+    modality: FINAL
+    origin: SOURCE
+    psi: KtSecondaryConstructor
+    realPsi: KtSecondaryConstructor
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/MyClass
+    typeParameters: []
+    valueParameters: [
+      KaValueParameterSymbol:
+        anchorPsi: KtParameter
+        annotations: []
+        callableId: null
+        contextParameters: []
+        contextReceivers: []
+        hasDeclaredDefaultValue: false
+        hasDefaultValue: false
+        isActual: false
+        isCompanion: false
+        isCrossinline: false
+        isDelegated: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: x
+        origin: SOURCE
+        primaryConstructorProperty: null
+        psi: KtParameter
+        realPsi: KtParameter
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Int
+        typeParameters: []
+        visibility: PUBLIC
+    ]
+    visibility: PUBLIC
+    containingDeclaration: test/MyClass

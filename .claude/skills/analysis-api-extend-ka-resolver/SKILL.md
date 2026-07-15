@@ -275,10 +275,10 @@ Read the newly generated/updated golden `.txt` files and sanity-check:
 For quick investigation of individual tests, run on a specific subdirectory or file:
 ```bash
 # By subdirectory
-./gradlew manageTestDataGlobally --mode=check --golden-only --test-data-path=analysis/analysis-api/testData/components/resolver/singleByPsi/<specific-subdir>/
+./gradlew checkTestData -Porg.jetbrains.kotlin.testDataManager.options.goldenOnly=true -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/singleByPsi/<specific-subdir>/
 
 # By individual file
-./gradlew manageTestDataGlobally --mode=check --test-data-path=analysis/analysis-api/testData/components/resolver/singleByPsi/<subdir>/TestName.kt
+./gradlew checkTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/singleByPsi/<subdir>/TestName.kt
 ```
 
 ---

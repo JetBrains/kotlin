@@ -1,4 +1,5 @@
 KaNamedClassSymbol:
+  anchorPsi: null
   annotations: []
   classId: kotlin/Array
   classKind: CLASS
@@ -15,6 +16,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Array
   origin: LIBRARY
+  psi: null
+  realPsi: null
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -31,6 +34,7 @@ KaNamedClassSymbol:
   ]
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: null
       annotations: []
       isActual: false
       isExpect: false
@@ -40,6 +44,8 @@ KaNamedClassSymbol:
       modality: FINAL
       name: T
       origin: LIBRARY
+      psi: null
+      realPsi: null
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL

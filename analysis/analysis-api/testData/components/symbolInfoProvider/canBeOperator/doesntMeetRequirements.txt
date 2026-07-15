@@ -1,5 +1,6 @@
 FUNCTION:
   KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /A.plus
   contextParameters: []
@@ -23,6 +24,8 @@ FUNCTION:
   modality: FINAL
   name: plus
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     abbreviation: null

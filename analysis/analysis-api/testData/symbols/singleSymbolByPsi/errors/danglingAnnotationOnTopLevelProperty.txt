@@ -1,4 +1,5 @@
 KaLocalVariableSymbol:
+  anchorPsi: KtProperty
   annotations: [
     Ann()
       psi: KtAnnotationEntry
@@ -18,6 +19,8 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: localVal
   origin: SOURCE
+  psi: KtProperty
+  realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

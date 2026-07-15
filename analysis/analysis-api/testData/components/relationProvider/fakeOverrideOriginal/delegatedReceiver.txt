@@ -1,0 +1,30 @@
+IS_THE_SAME_SYMBOL: false
+FAKE_OVERRIDE_ORIGINAL:
+  KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    isActual: false
+    isCompanion: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isVal: true
+    location: LOCAL
+    modality: FINAL
+    name: <receiver>
+    origin: SOURCE
+    owningCallableSymbol: KaNamedFunctionSymbol(test/I.foo)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    typeParameters: []
+    visibility: PUBLIC
+    containingDeclaration: test/I.foo

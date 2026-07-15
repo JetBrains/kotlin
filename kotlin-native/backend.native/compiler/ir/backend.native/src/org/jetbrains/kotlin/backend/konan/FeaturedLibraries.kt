@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.config.exportedLibraries
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.pathString
 
 internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
         getDescriptorsFromLibraries((config.exportedLibraries + config.includedLibraries).toSet())

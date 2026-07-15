@@ -16,6 +16,17 @@ export async function box(): Promise<string> {
     assert(await WithIgnoredCompanion.staticSuspend() === "STATIC SUSPEND")
     assert(await WithIgnoredCompanion.staticSuspendWithDefault() === "DEFAULT STATIC SUSPEND")
     assert(await WithIgnoredCompanion.staticSuspendWithDefault("PROVIDED VALUE") === "PROVIDED VALUE")
+    assert(await WithIgnoredCompanion.staticSuspendWithSeveralDefaults() === "A2Z")
+    assert(await WithIgnoredCompanion.staticSuspendWithSeveralDefaults("B") === "B2Z")
+    assert(await WithIgnoredCompanion.staticSuspendWithSeveralDefaults("B", undefined, "Y") === "B2Y")
+    assert(await WithIgnoredCompanion.staticSuspendWithSeveralDefaults("B", 3, "Y") === "B3Y")
+    assert(await WithIgnoredCompanion.staticSuspendWithRequiredAndDefault("R") === "RD")
+    assert(await WithIgnoredCompanion.staticSuspendWithRequiredAndDefault("R", "P") === "RP")
+    assert(await WithIgnoredCompanion.staticSuspendWithDependentDefault() === "AAZ")
+    assert(await WithIgnoredCompanion.staticSuspendWithDependentDefault("B") === "BBZ")
+    assert(await WithIgnoredCompanion.staticSuspendWithDependentDefault("B", "Y") === "BY")
+    assert(await WithIgnoredCompanion.staticSuspendWithReceiverDefault() === "BARRRR")
+    assert(await WithIgnoredCompanion.staticSuspendWithReceiverDefault("PROVIDED VALUE") === "PROVIDED VALUE")
 
     assert(WithoutIgnoredCompanion.bar() === "BARRRR");
     assert(WithoutIgnoredCompanion.foo === "FOOOO");
@@ -26,6 +37,8 @@ export async function box(): Promise<string> {
     assert(await WithoutIgnoredCompanion.staticSuspend() === "STATIC SUSPEND")
     assert(await WithoutIgnoredCompanion.staticSuspendWithDefault() === "DEFAULT STATIC SUSPEND")
     assert(await WithoutIgnoredCompanion.staticSuspendWithDefault("PROVIDED VALUE") === "PROVIDED VALUE")
+    assert(await WithoutIgnoredCompanion.renamedStaticSuspendDefault() === "RENAMED DEFAULT")
+    assert(await WithoutIgnoredCompanion.renamedStaticSuspendDefault("PROVIDED VALUE") === "PROVIDED VALUE")
 
     assert(WithoutIgnoredCompanion.Companion.hidden() === "BARRRR");
     assert(WithoutIgnoredCompanion.Companion.delegated === "BAZZZZ");

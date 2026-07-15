@@ -9,8 +9,10 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CInteropCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependency
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isDisabledNative
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
@@ -135,17 +137,31 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                 val module = testStructure.modules.getValue(moduleName)
                 val moduleStep = module.getStep(step.id)
                     ?: fail("Module '$moduleName' is in step ${step.id} order but has no module-info entry")
-                producedLibraries[moduleName] = compileToLibrary(
-                    module.sourceDir,
-                    outputDir(moduleName),
-                    freeCompilerArgs = TestCompilerArgs(
-                        // otherwise, it might shadow some problems with inline functions.
-                        listOf("-XXLanguage:-IrIntraModuleInlinerBeforeKlibSerialization") + moduleStep.cliArguments
-                    ),
-                    dependencies = moduleStep.dependencies.toCompilationDependencies(),
-                )
+                val defFile = module.sourceDir.listFiles()?.singleOrNull { it.extension == "def" }
+                producedLibraries[moduleName] = if (defFile != null) {
+                    compileCInteropLibrary(moduleName, defFile)
+                } else {
+                    compileToLibrary(
+                        module.sourceDir,
+                        outputDir(moduleName),
+                        freeCompilerArgs = TestCompilerArgs(
+                            // otherwise, it might shadow some problems with inline functions.
+                            listOf("-XXLanguage:-IrIntraModuleInlinerBeforeKlibSerialization") + moduleStep.cliArguments
+                        ),
+                        dependencies = moduleStep.dependencies.toCompilationDependencies(),
+                    )
+                }
             }
         }
+
+        private fun compileCInteropLibrary(moduleName: String, defFile: File): KLIB =
+            CInteropCompilation(
+                settings = testRunSettings,
+                freeCompilerArgs = TestCompilerArgs.EMPTY,
+                defFile = defFile,
+                dependencies = emptyList(),
+                expectedArtifact = KLIB(outputDir(moduleName).resolve("$moduleName.klib")),
+            ).result.assertSuccess().resultingArtifact
 
         // Compile test, NOT respecting possible `mode=TWO_STAGE_MULTI_MODULE`: don't add intermediate LibraryCompilation(kt->klib).
         // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module
@@ -184,6 +200,8 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                     val key = CacheKey(moduleName, relativePath)
                     val sourceFile = module.sourceDir.resolve(relativePath)
                     val cacheDir = when {
+                        // C-interop libraries are cached monolithically, so a def file maps to the whole-library cache.
+                        relativePath.endsWith(".def") -> monolithicLibraryCache(moduleName)
                         sourceFile.exists() -> libraryFileCache(moduleName, relativePath, sourceFile.packageFqName())
                         else -> previousSnapshot[key]?.cacheDir
                             ?: fail("No previous cache entry data for removed source file $moduleName/$relativePath at step $stepId")
@@ -295,6 +313,9 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
 
     private fun archivePath(cacheDir: File): String =
         Path(cacheDir.absolutePath, "bin", "lib${cacheDir.name}.a").toString()
+
+    private fun monolithicLibraryCache(libName: String): File =
+        icCacheDir.resolve(cacheFlavor).resolve("$libName-cache")
 
     private fun libraryFileCache(libName: String, libFileRelativePath: String, fqName: String): File {
         val libCacheDir = icCacheDir.resolve(cacheFlavor).resolve("$libName-per-file-cache")

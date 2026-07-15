@@ -1609,7 +1609,7 @@ fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
     return arguments.filterNotNull()
 }
 
-val IrFunction.propertyIfAccessor: IrDeclaration
+val IrFunction.propertyIfAccessor: IrDeclarationWithName
     get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
 
 /**

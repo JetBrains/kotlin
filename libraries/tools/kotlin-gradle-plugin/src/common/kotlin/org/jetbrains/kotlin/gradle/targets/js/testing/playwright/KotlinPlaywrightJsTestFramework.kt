@@ -107,7 +107,7 @@ internal class KotlinPlaywrightJsTestFramework(
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
-        NpmPackageVersion("playwright-core", "1.60.0")
+        NpmPackageVersion("playwright-core", PLAYWRIGHT_VERSION)
     )
 
     @get:Internal
@@ -152,7 +152,7 @@ internal class KotlinPlaywrightJsTestFramework(
         val modules = NpmProjectModules(npmToolingEnv)
 
         return PwExecutionSpec(
-            createClient = { processor, logger -> TCServiceMessagesClient(processor, clientSettings, logger) },
+            createClient = { processor, logger -> PlaywrightTCServiceMessagesClient(processor, clientSettings, logger) },
             runners = pwRunners,
             nodeExecutable = executable.get(),
             playwrightCli = modules.require("playwright-core/cli.js"),

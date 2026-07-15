@@ -1,0 +1,20 @@
+KaDestructuringDeclarationSymbol:
+  anchorPsi: KtParameter
+  annotations: []
+  entries: [
+    KaLocalVariableSymbol(<local>/first)
+    KaLocalVariableSymbol(<local>/second)
+  ]
+  isActual: false
+  isExpect: false
+  isExternal: false
+  location: LOCAL
+  modality: FINAL
+  origin: SOURCE
+  psi: KtDestructuringDeclaration
+  realPsi: KtParameter
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(fullFormLambda.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null

@@ -1,4 +1,5 @@
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: [
     Anno()
       psi: KtAnnotationEntry
@@ -19,6 +20,8 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter1
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [

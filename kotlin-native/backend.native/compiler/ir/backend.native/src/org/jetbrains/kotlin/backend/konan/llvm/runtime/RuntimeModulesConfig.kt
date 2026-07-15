@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.backend.konan.llvm.runtime
 
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.konan.config.runtimeFile
-import org.jetbrains.kotlin.konan.file.File
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 
 class RuntimeModulesConfig(private val config: NativeSecondStageCompilationConfig) {
     /**
@@ -17,7 +18,7 @@ class RuntimeModulesConfig(private val config: NativeSecondStageCompilationConfi
         get() = config.debug
 
     private val RuntimeModule.absolutePath: String
-        get() = File(config.distribution.defaultNatives(config.target)).child(filename).absolutePath
+        get() = Path(config.distribution.defaultNatives(config.target)).resolve(filename).absolutePathString()
 
     private val compilerInterfaceAbsolutePath by lazy {
         config.configuration.runtimeFile

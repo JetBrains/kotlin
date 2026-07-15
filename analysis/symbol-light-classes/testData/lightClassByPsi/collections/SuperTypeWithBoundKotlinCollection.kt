@@ -1,3 +1,5 @@
+// STDLIB_JDK8
+// FULL_JDK
 abstract class KotlinClass<K : RegularInterface, V: RegularInterface?> : Map<K, V>
 
 interface RegularInterface

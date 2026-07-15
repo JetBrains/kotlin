@@ -25,9 +25,8 @@ fun box(): String {
     assertEquals("a", A::p.call())
     assertTrue(A::p is KMutableProperty0<*>)
 
-    // TODO: uncomment when KT-85767 is fixed.
-    // val pd = (A::p).apply { isAccessible = true }.getDelegate() as Delegate
-    // assertEquals("a", pd.storage)
+    val pd = (A::p).apply { isAccessible = true }.getDelegate() as Delegate
+    assertEquals("a", pd.storage)
 
     return "OK"
 }

@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.nomain
 import org.jetbrains.kotlin.konan.config.verifyBitcode
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.javaFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -44,8 +42,12 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.io.path.Path
+import kotlin.io.path.createFile
+import kotlin.io.path.name
+import kotlin.io.path.writeLines
 
-private fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc").javaFile()
+private fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc").toFile()
 
 internal fun PhaseEngine<NativeBackendPhaseContext>.runFrontend(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val languageVersion = config.languageVersionSettings.languageVersion
@@ -189,7 +191,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             if (context.config.produce.isHeaderCache) {
                 newEngine(generationState) { generationStateEngine ->
                     generationStateEngine.runAndMeasurePhase(SaveAdditionalCacheInfoPhase)
-                    File(outputFiles.nativeBinaryFile).createNew()
+                    Path(outputFiles.nativeBinaryFile).createFile()
                     generationStateEngine.runAndMeasurePhase(FinalizeCachePhase, outputFiles)
                 }
                 return
@@ -200,10 +202,10 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                     val bitcodeFile = tempFiles.createBitcodeFile(generationState.llvmModuleName)
                     val cExportFiles = if (config.produceCInterface) {
                         CExportFiles(
-                                cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
+                                cppAdapter = tempFiles.create("api", ".cpp").toFile(),
                                 bitcodeAdapter = tempFiles.createBitcodeFile("api"),
-                                header = outputFiles.cAdapterHeader.javaFile(),
-                                def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.javaFile() else null,
+                                header = outputFiles.cAdapterHeader.toFile(),
+                                def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.toFile() else null,
                         )
                     } else null
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
@@ -292,8 +294,7 @@ private fun PhaseEngine<NativeGenerationState>.collectAndMaybeSerializeDependenc
     val depsFilePath = context.config.writeSerializedDependencies ?: return deps
 
     if (depsFilePath.isNotEmpty()) {
-        val fileWriteSerializedDependencies = depsFilePath.File()
-        fileWriteSerializedDependencies.writeLines(DependenciesTrackingResult.serialize(deps))
+        Path(depsFilePath).writeLines(DependenciesTrackingResult.serialize(deps))
     }
 
     return deps
@@ -426,7 +427,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
 ) {
-    val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
+    val compilationResult = temporaryFiles.create(Path(outputFiles.nativeBinaryFile).name, ".o").toFile()
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
     val linkerOutputKind = determineLinkerOutput(context)
     val [linkerInput, cacheBinaries] = run {
@@ -436,7 +437,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
                 compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
-                val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").javaFile()
+                val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").toFile()
                 runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
                 // Static caches are linked into binary, so we don't need to pass them.
                 prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)

@@ -33,6 +33,7 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "testFixtures" { projectDefault() }
+    "test" { projectDefault() }
 }
 
 optInToK1Deprecation()
@@ -47,7 +48,7 @@ projectTests {
     withTestJar()
     withAnnotations()
 
-    testTask(jUnitMode = JUnitMode.JUnit5, javaLauncher = JdkMajorVersion.JDK_1_8)
+    testTask(javaLauncher = JdkMajorVersion.JDK_1_8)
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt", generateTestsInBuildDirectory = true)
 }
 

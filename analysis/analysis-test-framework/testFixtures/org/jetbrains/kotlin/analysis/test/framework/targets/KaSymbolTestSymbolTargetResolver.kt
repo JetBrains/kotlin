@@ -130,6 +130,11 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
         return owner.setter
     }
 
+    override fun resolveReceiverParameterTarget(target: ReceiverParameterTarget, owner: KaSymbol): KaSymbol? {
+        requireSpecificOwner<KaCallableSymbol>(target, owner)
+        return owner.receiverParameter
+    }
+
     override fun resolveFieldTarget(target: FieldTarget): KaSymbol? {
         val callables = resolveCallableTarget(CallableTarget(target.callableId))
         return callables

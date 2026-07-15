@@ -558,6 +558,7 @@ internal class StubBasedFirMemberDeserializer(
         localContext: StubBasedFirDeserializationContext,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ): FirReceiverParameter = buildReceiverParameter {
+        source = receiverTypeReference.toKtPsiSourceElement(KtFakeSourceElementKind.ReceiverFromType)
         typeRef = receiverTypeReference.toTypeRef(localContext)
         annotations += c.annotationDeserializer.loadAnnotations(
             ktAnnotated = receiverTypeReference,

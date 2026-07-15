@@ -73,8 +73,8 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     id("project-tests-convention") apply false
     id("test-federation-convention") apply false
-    id("test-data-manager-root")
     id("nodejs-configuration") apply false
+    id("d8-root-configuration")
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -128,10 +128,6 @@ if (!project.hasProperty("versions.kotlin-native")) {
     }
 }
 
-extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"] = listOf(
-    commonDependency("org.jetbrains.kotlin:kotlin-reflect")
-)
-
 val coreLibProjects by extra {
     listOfNotNull(
         ":kotlin-stdlib",
@@ -181,20 +177,13 @@ gradle.taskGraph.whenReady {
         "$profile build profile is active ($proguardMessage, $jarCompressionMessage). " +
                 "Use -Pteamcity=<true|false> to reproduce CI/local build"
     )
-
-    allTasks.filterIsInstance<org.gradle.jvm.tasks.Jar>().forEach { task ->
-        task.entryCompression = if (kotlinBuildProperties.jarCompression)
-            ZipEntryCompression.DEFLATED
-        else
-            ZipEntryCompression.STORED
-    }
 }
 
 val dist = tasks.register("dist") {
     dependsOn(":kotlin-compiler:dist")
 }
 
-tasks.register("createIdeaHomeForTests") {
+val createIdeaHomeForTests = tasks.register("createIdeaHomeForTests") {
     val ideaBuildNumberFileForTests = ideaBuildNumberFileForTests()
     val intellijSdkVersion = kotlinBuildProperties.versionsProperty("intellijSdk").get()
     outputs.dir(ideaHomePathForTests())
@@ -204,6 +193,10 @@ tasks.register("createIdeaHomeForTests") {
             writeText("IC-$intellijSdkVersion")
         }
     }
+}
+val ideaHomeForTests = configurations.consumable("ideaHomeForTests")
+artifacts {
+    add(ideaHomeForTests.name, createIdeaHomeForTests)
 }
 
 val publishedMark: NamedDomainObjectProvider<DependencyScopeConfiguration> = configurations.dependencyScope("publishedMark")
@@ -651,12 +644,9 @@ tasks {
     }
 
     register<Exec>("installJps") {
-        val installTask = this
-        allprojects {
-            plugins.withType<MavenPublishPlugin> {
-                installTask.dependsOn(tasks.named("publishToMavenLocal"))
-            }
-        }
+        inputs.files(localPublishedMarkElements.get().incoming.artifactView { lenient(true) }.files)
+            .withPathSensitivity(PathSensitivity.NONE)
+            .withPropertyName("localPublishedMarks")
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
         commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests", "-DexcludeTestModules=true")

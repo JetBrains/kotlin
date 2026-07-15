@@ -1,7 +1,6 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.util.*
 
@@ -393,7 +392,6 @@ projectTests {
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
         testTask(
             taskName = taskName,
-            jUnitMode = JUnitMode.JUnit5,
             skipInLocalBuild = skipInLocalBuild,
             maxHeapSizeMb = 6144
         ) {

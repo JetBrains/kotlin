@@ -1,3 +1,46 @@
+## 2.4.10
+
+### Backend. Wasm
+
+- [`KT-87066`](https://youtrack.jetbrains.com/issue/KT-87066) K/Wasm: Not all files are presented in compiler output directory with multimodule-closed-world and incremental compilation
+
+### Compiler
+
+- [`KT-86939`](https://youtrack.jetbrains.com/issue/KT-86939) JVM: IllegalStateException "No value for annotation parameter" when using const val in nested Java annotation array argument
+- [`KT-83766`](https://youtrack.jetbrains.com/issue/KT-83766) K2: Wrong sourcePsi is set for `SymbolPsiLiteral` in SLC for annotation arguments referencing a const val
+- [`KT-86728`](https://youtrack.jetbrains.com/issue/KT-86728) Reified type inference: expected type not propagated into inline call inside lambda with elvis operator
+
+### Compose Compiler
+
+- [`b/522127447`](https://issuetracker.google.com/issues/522127447) Compose Compiler 2.4: classes previously inferred `stable` now reported `runtime`/`Uncertain`
+
+### Klibs
+
+- [`KT-86501`](https://youtrack.jetbrains.com/issue/KT-86501) Native: IrTypeAliasSymbolImpl is already bound. Signature: kotlinx.datetime/Instant|null[0] on iosSimulatorArm64
+
+### Tools. CLI
+
+- [`KT-86930`](https://youtrack.jetbrains.com/issue/KT-86930) Introduce `kotlinr` in the Kotlin distribution
+
+### Tools. Gradle. BCV
+
+- [`KT-87223`](https://youtrack.jetbrains.com/issue/KT-87223) Gradle, BCV: open version range in kotlinAbiValidationCompatClasspath causes kotlin-build-tools-impl to resolve to 2.4.20-Beta1 instead of 2.4.0
+
+### Tools. Gradle. JS
+
+- [`KT-87304`](https://youtrack.jetbrains.com/issue/KT-87304) jsBrowserTest fails with "exited with errors (exit code: 1)"
+- [`KT-86057`](https://youtrack.jetbrains.com/issue/KT-86057) kotlinUpgradeYarnLock skips lock file regeneration when kotlinNpmInstall is up-to-date, causing kotlinStoreYarnLock to fail
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-87084`](https://youtrack.jetbrains.com/issue/KT-87084) False positive warning for JS and Wasm compilations when CRI is enabled
+
+### Tools. Scripts
+
+- [`KT-87076`](https://youtrack.jetbrains.com/issue/KT-87076) `@file`:CompilerOptions("-jvm-target", ...) ignored in .main.kts scripts in Kotlin 2.4.0, falling back to JVM target 1.8
+- [`KT-86352`](https://youtrack.jetbrains.com/issue/KT-86352) K2 scripting: FirResolvedTypeRef exception when resolving extension functions from imported scripts
+
+
 ## 2.4.0
 
 ### Analysis API

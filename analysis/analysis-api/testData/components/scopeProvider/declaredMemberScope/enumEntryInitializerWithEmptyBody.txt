@@ -1,4 +1,5 @@
 KaConstructorSymbol:
+  anchorPsi: KtEnumEntry
   annotations: []
   callableId: null
   containingClassId: null
@@ -14,6 +15,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtEnumEntry
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

@@ -169,7 +169,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val field = expression.symbol.owner
         val ref = JsNameRef(context.getNameForValueDeclaration(field))
         val value = expression.value.accept(this, context)
-        return JsBinaryOperation(JsBinaryOperator.ASG, ref, value).withSource(expression, context)
+        return JsAssignmentOperation.Simple(ref, value).withSource(expression, context)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsExpression {
@@ -185,7 +185,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             assert(constructor.isPrimary) {
                 "Delegation to secondary inline constructors must be lowered into simple function calls"
             }
-            return JsBinaryOperation(JsBinaryOperator.ASG, thisRef, arguments.single()).withSource(expression, context)
+            return JsAssignmentOperation.Simple(thisRef, arguments.single()).withSource(expression, context)
         }
 
         return if (context.staticContext.backendContext.es6mode) {
@@ -311,7 +311,10 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             IrDynamicOperator.ANDAND -> binaryOperation(JsBinaryOperator.AND, expression, data)
             IrDynamicOperator.OROR -> binaryOperation(JsBinaryOperator.OR, expression, data)
 
-            IrDynamicOperator.EQ -> binaryOperation(JsBinaryOperator.ASG, expression, data)
+            IrDynamicOperator.EQ -> JsAssignmentOperation.Simple(
+                expression.left.accept(this, data) as JsAssignableExpression,
+                expression.right.accept(this, data)
+            )
             IrDynamicOperator.PLUSEQ -> binaryOperation(JsBinaryOperator.ASG_ADD, expression, data)
             IrDynamicOperator.MINUSEQ -> binaryOperation(JsBinaryOperator.ASG_SUB, expression, data)
             IrDynamicOperator.MULEQ -> binaryOperation(JsBinaryOperator.ASG_MUL, expression, data)

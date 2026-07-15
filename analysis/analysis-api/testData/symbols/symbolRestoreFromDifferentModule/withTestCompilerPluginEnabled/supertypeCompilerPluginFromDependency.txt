@@ -1,5 +1,6 @@
 Inital from Sources of main:
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: [
     org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype()
       psi: KtAnnotationEntry
@@ -19,6 +20,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -34,6 +37,7 @@ KaNamedClassSymbol:
 
 Restored in Sources of restoreInContextOf:
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: [
     org/jetbrains/kotlin/plugin/sandbox/MyInterfaceSupertype()
       psi: KtAnnotationEntry
@@ -53,6 +57,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []

@@ -55,7 +55,6 @@ open class JsSuspendFunctionsLowering<C : JsCommonBackendContext>(
     private val coroutineImplLabelPropertySetter = ctx.symbols.coroutineImplLabelPropertySetter.owner
     private val coroutineImplLabelPropertyGetter = ctx.symbols.coroutineImplLabelPropertyGetter.owner
     private val coroutineImplResultSymbolGetter = ctx.symbols.coroutineImplResultSymbolGetter.owner
-    private val coroutineImplResultSymbolSetter = ctx.symbols.coroutineImplResultSymbolSetter.owner
 
     override val stateMachineMethodName = Name.identifier("doResume")
 
@@ -358,17 +357,8 @@ open class JsSuspendFunctionsLowering<C : JsCommonBackendContext>(
     }
 
     override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
-        val dispatchReceiverVar = createTmpVariable(receiver, irType = receiver.type)
-        +irCall(coroutineImplResultSymbolSetter).apply {
-            arguments[0] = irGet(dispatchReceiverVar)
-            arguments[1] = irGetObject(context.irBuiltIns.unitClass)
-        }
-        +irCall(coroutineImplExceptionPropertySetter).apply {
-            arguments[0] = irGet(dispatchReceiverVar)
-            arguments[1] = irNull()
-        }
         val call = irCall(invokeSuspendFunction.symbol).apply {
-            arguments[0] = irGet(dispatchReceiverVar)
+            arguments[0] = receiver
         }
         val functionReturnType = scope.scopeOwnerSymbol.assertedCast<IrSimpleFunctionSymbol> { "Expected function symbol" }.owner.returnType
         +irReturn(generateDelegatedCall(functionReturnType, call))

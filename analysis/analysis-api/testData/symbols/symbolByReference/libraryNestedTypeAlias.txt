@@ -1,4 +1,5 @@
 KaTypeAliasSymbol:
+  anchorPsi: KtTypeAlias
   annotations: []
   classId: Foo.TA
   expandedType: KaUsualClassType:
@@ -12,6 +13,8 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: TA
   origin: LIBRARY
+  psi: KtTypeAlias
+  realPsi: KtTypeAlias
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null

@@ -1,4 +1,5 @@
 KaLocalVariableSymbol:
+  anchorPsi: KtParameter
   annotations: []
   callableId: null
   contextParameters: []
@@ -15,6 +16,8 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: loopVariable
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -29,6 +32,7 @@ KaLocalVariableSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /usage
   contextParameters: []
@@ -52,6 +56,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: usage
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

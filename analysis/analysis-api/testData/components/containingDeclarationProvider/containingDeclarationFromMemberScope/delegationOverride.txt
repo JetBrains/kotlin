@@ -1,0 +1,16 @@
+context(xx@Int)
+fun <T> Int.foo(x: T) fromClass Delegating
+  T from /Delegating.foo
+  xx: Int from /Delegating.foo
+  receiver Int from /Delegating.foo
+  x: T from /Delegating.foo
+
+fun equals(other: Any?): Boolean fromClass kotlin/Any
+  other: Any? from kotlin/Any.equals
+
+fun hashCode(): Int fromClass kotlin/Any
+
+fun toString(): String fromClass kotlin/Any
+
+constructor(impl: I) fromClass Delegating
+  impl: I from <constructor> Delegating

@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import kotlinx.metadata.KmAnnotation
-import kotlinx.metadata.KmAnnotationArgument
-import kotlinx.metadata.KmClass
-import kotlinx.metadata.KmDeclarationContainer
+import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleMetadata
-import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.io.unzipTo
 import org.jetbrains.kotlin.io.zipDirAs
@@ -45,6 +41,10 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.moveTo
 import kotlin.io.path.name
 import kotlin.io.path.pathString
+import kotlin.metadata.KmAnnotation
+import kotlin.metadata.KmAnnotationArgument
+import kotlin.metadata.KmClass
+import kotlin.metadata.KmDeclarationContainer
 
 // See KT-59030.
 @OptIn(ExperimentalPathApi::class)
@@ -92,7 +92,10 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
         val oldLibrary = KlibLoader { libraryPaths(originalLibraryFile) }.load().librariesStdlibFirst.single()
 
         // Patch the metadata.
-        val patchedMetadata = spoilDeprecatedAnnotationsInMetadata(oldLibrary.metadata)
+        val patchedMetadata = spoilDeprecatedAnnotationsInMetadata(
+            metadataVersion = oldLibrary.metadataVersion!!.run { KlibMetadataVersion(major, minor, patch) },
+            originalMetadata = oldLibrary.metadata
+        )
 
         // Write the patched library.
         val patchedLibraryTmpDir = Path(patchedLibraryFile.pathString + "-tmp")
@@ -134,10 +137,14 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
 
         private fun Path.newDir(name: String): Path = resolve(name).apply { createDirectories() }
 
-        private fun spoilDeprecatedAnnotationsInMetadata(originalMetadata: KlibMetadataComponent): SerializedMetadata {
+        private fun spoilDeprecatedAnnotationsInMetadata(
+            metadataVersion: KlibMetadataVersion,
+            originalMetadata: KlibMetadataComponent,
+        ): SerializedMetadata {
             // Read the metadata.
-            val moduleMetadata = KlibModuleMetadata.read(
+            val moduleMetadata = KlibModuleMetadata.readStrict(
                 object : KlibModuleMetadata.MetadataLibraryProvider {
+                    override val metadataVersion get() = metadataVersion
                     override val moduleHeaderData get() = originalMetadata.moduleHeaderData
                     override fun packageMetadataParts(fqName: String) = originalMetadata.getPackageFragmentNames(fqName)
                     override fun packageMetadata(fqName: String, partName: String) = originalMetadata.getPackageFragment(fqName, partName)
@@ -174,19 +181,19 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
             }
         }
 
-        private fun spoilDeprecatedAnnotationInMetadata(deprecated: KmAnnotation): KmAnnotation =
-            deprecated.copy(
-                arguments = deprecated.arguments.mapValues { [argName, argValue] ->
-                    if (argName == REPLACE_WITH_ARG) spoilReplaceWithAnnotationInMetadata(argValue.unwrap()).wrap() else argValue
-                }
-            )
+        private fun spoilDeprecatedAnnotationInMetadata(deprecated: KmAnnotation): KmAnnotation = KmAnnotation(
+            className = deprecated.className,
+            arguments = deprecated.arguments.mapValues { [argName, argValue] ->
+                if (argName == REPLACE_WITH_ARG) spoilReplaceWithAnnotationInMetadata(argValue.unwrap()).wrap() else argValue
+            }
+        )
 
-        private fun spoilReplaceWithAnnotationInMetadata(replaceWith: KmAnnotation): KmAnnotation =
-            replaceWith.copy(
-                arguments = replaceWith.arguments.filterKeys { argName -> argName != EXPRESSION_ARG }
-            )
+        private fun spoilReplaceWithAnnotationInMetadata(replaceWith: KmAnnotation): KmAnnotation = KmAnnotation(
+            className = replaceWith.className,
+            arguments = replaceWith.arguments.filterKeys { argName -> argName != EXPRESSION_ARG }
+        )
 
-        private fun KmAnnotationArgument<*>.unwrap(): KmAnnotation = (this as KmAnnotationArgument.AnnotationValue).value
+        private fun KmAnnotationArgument.unwrap(): KmAnnotation = (this as KmAnnotationArgument.AnnotationValue).annotation
         private fun KmAnnotation.wrap(): KmAnnotationArgument.AnnotationValue = KmAnnotationArgument.AnnotationValue(this)
     }
 }

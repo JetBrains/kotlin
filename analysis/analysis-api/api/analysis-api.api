@@ -1265,9 +1265,11 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaScriptSymbol :
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaSymbol : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
+	public abstract fun getAnchorPsi ()Lcom/intellij/psi/PsiElement;
 	public abstract fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public abstract fun getOrigin ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public abstract fun getPsi ()Lcom/intellij/psi/PsiElement;
+	public abstract fun getRealPsi ()Lcom/intellij/psi/PsiElement;
 }
 
 public final class org/jetbrains/kotlin/analysis/api/symbols/KaSymbolKt {

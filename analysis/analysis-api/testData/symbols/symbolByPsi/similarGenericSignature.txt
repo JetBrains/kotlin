@@ -1,4 +1,5 @@
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: A
   classKind: CLASS
@@ -15,6 +16,8 @@ KaNamedClassSymbol:
   modality: OPEN
   name: A
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -30,6 +33,7 @@ KaNamedClassSymbol:
   importableFqName: A
 
 KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
   annotations: []
   isActual: false
   isExpect: false
@@ -39,6 +43,8 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: J
   origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
   upperBounds: [
     KaUsualClassType:
       annotations: []
@@ -53,6 +59,7 @@ KaTypeParameterSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /foo
   contextParameters: []
@@ -76,12 +83,15 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
     type: J
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -91,6 +101,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: J
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: [
         KaUsualClassType:
           annotations: []
@@ -106,6 +118,7 @@ KaNamedFunctionSymbol:
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -128,6 +141,8 @@ KaNamedFunctionSymbol:
       name: j
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
@@ -150,6 +165,7 @@ KaNamedFunctionSymbol:
   importableFqName: foo
 
 KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
   annotations: []
   isActual: false
   isExpect: false
@@ -159,6 +175,8 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -168,6 +186,7 @@ KaTypeParameterSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /foo
   contextParameters: []
@@ -191,12 +210,15 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
     type: T
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -206,6 +228,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -216,6 +240,7 @@ KaNamedFunctionSymbol:
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -238,6 +263,8 @@ KaNamedFunctionSymbol:
       name: j
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []

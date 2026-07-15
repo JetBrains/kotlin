@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.utils
 
+import com.intellij.util.currentJavaVersion
 import java.io.File
 import java.lang.IllegalStateException
 import com.intellij.util.lang.JavaVersion
@@ -115,17 +116,10 @@ interface KotlinPaths {
 
     // TODO: Maybe we need separate classpaths for compilers with and without the daemon
     enum class ClassPaths(val contents: List<Jar> = emptyList()) {
-        Empty(),
-        StdLib(Jar.StdLib, gen = {
-            when {
-                JavaVersion.current() >= JavaVersion.compose(8) -> listOf(Jar.StdLibJdk7, Jar.StdLibJdk8)
-                JavaVersion.current() >= JavaVersion.compose(7) -> listOf(Jar.StdLibJdk7)
-                else -> emptyList()
-            }
-        }),
+        Empty,
+        StdLib(Jar.StdLib),
         Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.ScriptRuntime, Jar.KotlinDaemon, Jar.CoroutinesCore),
         CompilerWithScripting(Compiler, Jar.ScriptingPlugin, Jar.ScriptingImpl, Jar.ScriptingLib, Jar.ScriptingJvmLib),
-        MainKts(StdLib, Jar.MainKts, Jar.ScriptRuntime, Jar.Reflect)
         ;
 
         constructor(vararg jars: Jar) : this(jars.asList())

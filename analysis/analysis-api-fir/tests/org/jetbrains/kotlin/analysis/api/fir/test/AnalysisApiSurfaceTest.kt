@@ -91,10 +91,11 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
                 assertEquals(builtinTypes.int, typeArgument.type, "Type argument should be Int after substitution")
             }
 
-            val regularClassSymbol = findClass(ClassId.fromString("test/JavaBox")) as KaNamedClassSymbol
+            val regularClassSymbol = findClass(ClassId.fromString("test/JavaBox")) as KaFirPsiJavaClassSymbol
             val psiBasedClassSymbol = (regularClassSymbol.psi as PsiClass).namedClassSymbol as KaFirPsiJavaClassSymbol
+            assertEquals(regularClassSymbol, psiBasedClassSymbol)
 
-            assertIs<KaFirTypeParameterSymbol>(regularClassSymbol.typeParameters.single())
+            assertIs<KaFirPsiJavaTypeParameterSymbol>(regularClassSymbol.typeParameters.single())
             assertIs<KaFirPsiJavaTypeParameterSymbol>(psiBasedClassSymbol.typeParameters.single())
 
             checkSubstitution(regularClassSymbol)

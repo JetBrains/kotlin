@@ -1,4 +1,5 @@
 KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
   annotations: [
     A()
       psi: KtAnnotationEntry
@@ -11,6 +12,8 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL

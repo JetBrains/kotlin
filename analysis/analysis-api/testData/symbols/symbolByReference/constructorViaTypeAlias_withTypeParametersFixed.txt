@@ -1,4 +1,5 @@
 KaConstructorSymbol:
+  anchorPsi: KtTypeAlias
   annotations: []
   callableId: null
   containingClassId: test/MyAlias
@@ -14,6 +15,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: TYPEALIASED_CONSTRUCTOR
+  psi: KtTypeAlias
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -27,6 +30,7 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
       contextParameters: []
@@ -49,6 +53,8 @@ KaConstructorSymbol:
       name: t
       origin: TYPEALIASED_CONSTRUCTOR
       primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

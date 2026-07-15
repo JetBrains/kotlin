@@ -16,12 +16,13 @@ import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.config.konanRefinesModules
 import org.jetbrains.kotlin.konan.config.konanShortModuleName
 import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedKlibTo
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import java.nio.file.Path
+import java.util.Properties
+import kotlin.io.path.Path
 
 /**
  * This interface exists not because it is a good abstraction. Rather, it emerged
@@ -40,11 +41,11 @@ interface NativeCompilationConfig {
     val metadataKlib: Boolean
         get() = configuration.metadataKlib
 
-    val friendModuleFiles: Set<File>
-        get() = configuration.konanFriendLibraries.map { File(it) }.toSet()
+    val friendModuleFiles: Set<Path>
+        get() = configuration.konanFriendLibraries.map { Path(it) }.toSet()
 
-    val refinesModuleFiles: Set<File>
-        get() = configuration.konanRefinesModules.map { File(it) }.toSet()
+    val refinesModuleFiles: Set<Path>
+        get() = configuration.konanRefinesModules.map { Path(it) }.toSet()
 
     val nativeLibraries: List<String>
         get() = configuration.konanNativeLibraries

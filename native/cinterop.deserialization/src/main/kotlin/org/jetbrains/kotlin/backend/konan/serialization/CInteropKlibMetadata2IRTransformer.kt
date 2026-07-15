@@ -49,7 +49,7 @@ import kotlin.metadata.Visibility as KmVisibility
 class CInteropKlibMetadata2IRTransformer(
     private val symbolTable: SymbolTable,
     private val symbols: ExternalSymbols,
-    private val declarationTracker: DeclarationTracker,
+    internal val declarationTracker: DeclarationTracker,
     private val getNestedKmClass: (ClassId) -> KmClass?,
     private val getOrCreateContainingPackageFragment: (kmDeclaration: Any) -> IrPackageFragment,
     private val getReferencedDeclarationSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol,
@@ -547,8 +547,7 @@ class CInteropKlibMetadata2IRTransformer(
         // - Other Klibs are not expected to define any of those packages (see also KT-85765, KT-86193).
         // We can use all of that to infer whether a referenced class comes from Kolin code (the Stdlib), forward declarations,
         // or otherwise, from C-interop Klib. This information is necessary to construct a proper IdSignature.
-        val isInteropClass = !classId.packageFqName.isDefinedInStdlib() && !classId.packageFqName.isPackageOfForwardDeclaration()
-        val classSignature = classId.toCInteropSignature(isCInterop = isInteropClass)
+        val classSignature = classId.toCInteropSignature(isCInterop = !classId.definitelyNotFromCInterop())
 
         return getReferencedDeclarationSymbol(classSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL) as IrClassSymbol
     }
@@ -742,19 +741,5 @@ class CInteropKlibMetadata2IRTransformer(
             KmVariance.IN -> Variance.INVARIANT
             KmVariance.OUT -> Variance.OUT_VARIANCE
         }
-
-        private fun FqName.isDefinedInStdlib(): Boolean =
-            isSubpackageOf(StandardNames.BUILT_INS_PACKAGE_FQ_NAME) || isSubpackageOf(NativeStandardInteropNames.cInteropPackage)
-
-        private fun FqName.isPackageOfForwardDeclaration(): Boolean =
-            this in NativeForwardDeclarationKind.packageFqNameToKind
-
-        private fun ClassId.toCInteropSignature(isCInterop: Boolean) = IdSignature.CommonSignature(
-            packageFqName = packageFqName.asString(),
-            declarationFqName = relativeClassName.asString(),
-            id = null,
-            mask = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.encode(isCInterop),
-            description = null,
-        )
     }
 }

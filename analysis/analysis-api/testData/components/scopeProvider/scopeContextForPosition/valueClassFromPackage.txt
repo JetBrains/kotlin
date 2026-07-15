@@ -11,6 +11,7 @@ scopes:
     packages: 0
     classifiers: 1
       KaNamedClassSymbol:
+        anchorPsi: KtClass
         annotations: [
           <error>()
             psi: KtAnnotationEntry
@@ -30,6 +31,8 @@ scopes:
         modality: FINAL
         name: ValueInt
         origin: SOURCE
+        psi: KtClass
+        realPsi: KtClass
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -52,4 +55,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 5
-

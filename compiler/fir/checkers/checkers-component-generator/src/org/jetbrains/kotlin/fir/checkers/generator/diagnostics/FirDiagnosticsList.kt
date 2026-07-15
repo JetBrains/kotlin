@@ -2402,7 +2402,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val VERSION_OVERLOADS by object : DiagnosticGroup("Version Overloads") {
         val INVALID_VERSIONING_ON_NON_OPTIONAL by error<PsiElement>()
-        val INVALID_VERSIONING_ON_NONFINAL_FUNCTION by error<PsiElement>()
         val INVALID_VERSIONING_ON_NONFINAL_CLASS by error<PsiElement>()
         val INVALID_VERSIONING_ON_LOCAL_FUNCTION by error<PsiElement>()
         val INVALID_VERSIONING_ON_ANNOTATION_CLASS by error<PsiElement>()
@@ -2419,7 +2418,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<MavenComparableVersion?>("highestVersion")
             parameter<FirCallableSymbol<*>>("sourceOfHighestVersion")
         }
-        val VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION by error<PsiElement>()
     }
 
     val COMPANION_BLOCKS_AND_EXTENSIONS by object : DiagnosticGroup("Companion Blocks & Extensions") {

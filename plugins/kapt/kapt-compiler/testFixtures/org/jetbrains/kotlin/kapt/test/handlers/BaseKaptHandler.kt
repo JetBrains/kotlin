@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kapt.test.handlers
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.List
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
+import org.jetbrains.kotlin.kapt.base.StubGenerationScheme
 import org.jetbrains.kotlin.kapt.base.parseJavaFiles
 import org.jetbrains.kotlin.kapt.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
@@ -30,7 +31,12 @@ abstract class BaseKaptHandler(testServices: TestServices) : AbstractKaptHandler
 
         val kaptStubs = converter.convert()
         val convertedFiles = kaptStubs.mapIndexed { index, stub ->
-            val sourceFile = module.createTempJavaFile("stub$index.java", stub.file.prettyPrint(kaptContext.context))
+            val content =
+                if (kaptContext.options.stubGenerationScheme == StubGenerationScheme.DIRECT)
+                    stub.directFileContent
+                else
+                    stub.jtreeFile.prettyPrint(kaptContext.context)
+            val sourceFile = module.createTempJavaFile("stub$index.java", content)
             stub.writeMetadataIfNeeded(forSource = sourceFile)
             sourceFile
         }

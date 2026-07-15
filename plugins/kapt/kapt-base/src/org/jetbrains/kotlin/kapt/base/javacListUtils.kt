@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt.base
 
+import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.List as JavacList
 
 inline fun <T, R> mapJList(values: Iterable<T>?, f: (T) -> R?): JavacList<R> {
@@ -57,4 +58,5 @@ operator fun <T : Any> JavacList<T>.plus(other: JavacList<T>): JavacList<T> {
     return this.appendList(other)
 }
 
-fun <T : Any> Iterable<T>.toJavacList(): JavacList<T> = JavacList.from(this)
+fun <T : JCTree> List<Pair<T, String>>.getJavacList(): JavacList<T> =
+    mapJList(this) { it.first }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertFalse
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.junit.jupiter.api.Test
 
 class HideContextParametersTest(

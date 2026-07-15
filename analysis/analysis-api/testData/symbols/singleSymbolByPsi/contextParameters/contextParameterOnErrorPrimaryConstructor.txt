@@ -1,4 +1,5 @@
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: []
   callableId: null
   contextParameters: []
@@ -14,6 +15,8 @@ KaContextParameterSymbol:
   modality: FINAL
   name: c
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

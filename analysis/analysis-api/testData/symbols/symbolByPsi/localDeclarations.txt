@@ -1,4 +1,5 @@
 KaLocalVariableSymbol:
+  anchorPsi: KtProperty
   annotations: []
   callableId: null
   contextParameters: []
@@ -15,6 +16,8 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: q
   origin: SOURCE
+  psi: KtProperty
+  realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -29,6 +32,7 @@ KaLocalVariableSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: null
   contextParameters: []
@@ -52,6 +56,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: aaa
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -69,6 +75,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: null
   classKind: CLASS
@@ -85,6 +92,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: F
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -100,6 +109,7 @@ KaNamedClassSymbol:
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /yyy
   contextParameters: []
@@ -123,6 +133,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: yyy
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

@@ -64,7 +64,7 @@ kotlin {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }
 
 optInToExperimentalCompilerApi()

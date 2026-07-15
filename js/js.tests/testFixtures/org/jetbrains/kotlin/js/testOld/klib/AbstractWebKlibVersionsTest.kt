@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.junit.jupiter.api.BeforeEach
@@ -188,7 +188,7 @@ abstract class AbstractWebKlibVersionsTest {
     abstract fun compileToBinary(entryModuleKlib: File, dependency: File?, outputFile: File): CompilationResult
 
     data class CompilationResult(val exitCode: ExitCode, val output: String) {
-        fun assertSuccess() = JUnit4Assertions.assertTrue(exitCode == ExitCode.OK) {
+        fun assertSuccess() = JUnit5Assertions.assertTrue(exitCode == ExitCode.OK) {
             buildString {
                 appendLine("Expected exit code: ${ExitCode.OK}, Actual: $exitCode")
                 appendLine("Compiler output:")
@@ -196,7 +196,7 @@ abstract class AbstractWebKlibVersionsTest {
             }
         }
 
-        fun assertFailure() = JUnit4Assertions.assertTrue(exitCode != ExitCode.OK) {
+        fun assertFailure() = JUnit5Assertions.assertTrue(exitCode != ExitCode.OK) {
             buildString {
                 appendLine("Expected exit code: any but ${ExitCode.OK}, Actual: $exitCode")
                 appendLine("Compiler output:")

@@ -1,4 +1,5 @@
 KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
   annotations: [
     org/jetbrains/annotations/NotNull()
       psi: KtAnnotationEntry
@@ -11,6 +12,8 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -20,6 +23,7 @@ KaTypeParameterSymbol:
   importableFqName: null
 
 KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
   annotations: []
   isActual: false
   isExpect: false
@@ -29,6 +33,8 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: R
   origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
   visibility: LOCAL
@@ -38,6 +44,7 @@ KaTypeParameterSymbol:
   importableFqName: null
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: A
   classKind: CLASS
@@ -54,6 +61,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -62,6 +71,7 @@ KaNamedClassSymbol:
   ]
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: [
         org/jetbrains/annotations/NotNull()
           psi: KtAnnotationEntry
@@ -74,6 +84,8 @@ KaNamedClassSymbol:
       modality: FINAL
       name: T
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
@@ -82,6 +94,7 @@ KaNamedClassSymbol:
       deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -91,6 +104,8 @@ KaNamedClassSymbol:
       modality: FINAL
       name: R
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL

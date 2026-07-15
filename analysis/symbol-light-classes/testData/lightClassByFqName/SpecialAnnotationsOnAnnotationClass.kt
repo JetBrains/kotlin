@@ -1,4 +1,5 @@
 // Anno
+// STDLIB_JDK8
 // FULL_JDK
 
 @Retention(AnnotationRetention.SOURCE)

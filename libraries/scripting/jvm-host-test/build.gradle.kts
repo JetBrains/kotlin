@@ -36,7 +36,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         dependsOn(":dist")
         workingDir = rootDir
     }

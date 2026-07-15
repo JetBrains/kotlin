@@ -1,4 +1,5 @@
 KaValueParameterSymbol:
+  anchorPsi: KtParameter
   annotations: []
   callableId: null
   contextParameters: []
@@ -21,6 +22,8 @@ KaValueParameterSymbol:
   name: abc
   origin: SOURCE
   primaryConstructorProperty: null
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

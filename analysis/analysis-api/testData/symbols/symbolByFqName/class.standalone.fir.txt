@@ -1,0 +1,54 @@
+KaNamedClassSymbol:
+  anchorPsi: null
+  annotations: []
+  classId: kotlin/Lazy
+  classKind: INTERFACE
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: ABSTRACT
+  name: Lazy
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: [
+    KaTypeParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: LIBRARY
+      psi: null
+      realPsi: null
+      upperBounds: []
+      variance: OUT_VARIANCE
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  applicableAnnotationTargets: null
+  deprecation: null
+  importableFqName: kotlin.Lazy

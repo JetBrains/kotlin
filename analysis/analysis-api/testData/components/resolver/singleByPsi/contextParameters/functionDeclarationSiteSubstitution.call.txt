@@ -5,6 +5,7 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
             contextParameters: []
@@ -21,6 +22,8 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -31,6 +34,7 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
           type = kotlin.Long,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
             contextParameters: []
@@ -47,6 +51,8 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/usage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []

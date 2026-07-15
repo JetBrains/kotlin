@@ -76,7 +76,6 @@ projectTests {
     fun kaptTestTask(name: String, javaLauncher: JdkMajorVersion) {
         testTask(
             taskName = name,
-            jUnitMode = JUnitMode.JUnit5,
             javaLauncher = javaLauncher,
             skipInLocalBuild = false,
             // JDK21 is required by KaptStubConverterTestGenerated.testJvmRecord

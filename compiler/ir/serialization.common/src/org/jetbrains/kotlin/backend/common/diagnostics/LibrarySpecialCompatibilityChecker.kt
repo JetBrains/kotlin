@@ -17,7 +17,7 @@ import kotlin.io.path.readBytes
 
 /** See KT-68322 for details. */
 abstract class LibrarySpecialCompatibilityChecker {
-    protected class Version(
+    class Version(
         private val comparableVersion: MavenComparableVersion,
         private val languageVersion: LanguageVersion,
         private val rawVersion: String
@@ -27,7 +27,7 @@ abstract class LibrarySpecialCompatibilityChecker {
         override fun hashCode() = comparableVersion.hashCode()
 
         // TODO (KT-83853): Find a reliable way to detect dev compiler versions.
-        val isDevVersion: Boolean = "-dev-" in rawVersion || rawVersion.endsWith("-SNAPSHOT")
+        val isDevVersion: Boolean = "-dev-" in rawVersion || rawVersion.endsWith("-dev") || rawVersion.endsWith("-SNAPSHOT")
 
         override fun toString() = rawVersion
         fun toComparableVersionString() = comparableVersion.toString()
@@ -69,7 +69,7 @@ abstract class LibrarySpecialCompatibilityChecker {
         // It might happen that the compiler has already got a new major version (N.M+1.0), but there is still the old bootstrap compiler
         // version (N.M,*) used to compile stdlib & kotlin-test libraries. As a result, these libraries still have `abi_version=N.M.0`
         // in their manifest files. And the compatibility check, if it were applied, would fail.
-        val useRelaxedCompatibilityCheckForDevCompilerVersion = true // TODO(KT-87548) revert to after bootstrap isLatestKlibAbiCompatibilityLevel && compilerVersion.isDevVersion
+        val useRelaxedCompatibilityCheckForDevCompilerVersion = isLatestKlibAbiCompatibilityLevel && compilerVersion.isDevVersion
 
         for (library in libraries) {
             val checkedLibrary = library.toCheckedLibrary() ?: continue

@@ -225,6 +225,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByFqNameTestGenerated ext
   }
 
   @Test
+  @TestMetadata("samConstructor.kt")
+  public void testSamConstructor() {
+    run("samConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("samConstructorAlias.kt")
+  public void testSamConstructorAlias() {
+    run("samConstructorAlias.kt");
+  }
+
+  @Test
   @TestMetadata("samConstructorFromInterface.kt")
   public void testSamConstructorFromInterface() {
     run("samConstructorFromInterface.kt");

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.script.examples.jvm.resolve.maven.test
 
 import org.jetbrains.kotlin.script.examples.jvm.resolve.maven.host.evalFile
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.script.experimental.api.ResultWithDiagnostics
 
@@ -17,9 +17,9 @@ class ResolveTest {
     fun testNoDeps() {
         val res = evalFile(File("testData/hello-no-deps.scriptwithdeps.kts"))
 
-        Assert.assertTrue(
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Success
+        Assertions.assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
         )
     }
 
@@ -27,9 +27,9 @@ class ResolveTest {
     fun testResolveJunit() {
         val res = evalFile(File("testData/hello-maven-resolve-junit.scriptwithdeps.kts"))
 
-        Assert.assertTrue(
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Success
+        Assertions.assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
         )
     }
 
@@ -37,21 +37,23 @@ class ResolveTest {
     fun testUnresolvedJunit() {
         val res = evalFile(File("testData/hello-unresolved-junit.scriptwithdeps.kts"))
 
-        Assert.assertTrue(
+        Assertions.assertTrue(
+            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unresolved reference 'junit'.") },
             "test failed - expecting a failure with the message \"Unresolved reference 'junit'\" but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
-                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unresolved reference 'junit'.") })
+                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
+        )
     }
 
     @Test
     fun testResolveError() {
         val res = evalFile(File("testData/hello-maven-resolve-error.scriptwithdeps.kts"))
 
-        Assert.assertTrue(
+        Assertions.assertTrue(
+            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("File 'abracadabra' not found") },
             "test failed - expecting a failure with the message \"Unknown set of arguments to maven resolver: abracadabra\" but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
-                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("File 'abracadabra' not found") })
+                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
+        )
     }
 }

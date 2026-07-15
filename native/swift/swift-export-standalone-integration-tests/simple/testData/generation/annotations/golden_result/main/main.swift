@@ -650,6 +650,11 @@ public final class normalChildT: main.normalT {
             return { normalChildT_obsoletedV_get(self.__externalRCRef()); return () }()
         }
     }
+    public var removedSetter: Swift.Int32 {
+        get {
+            return normalChildT_removedSetter_get(self.__externalRCRef())
+        }
+    }
     public var removedV: Swift.Void {
         get {
             return { normalChildT_removedV_get(self.__externalRCRef()); return () }()
@@ -672,6 +677,11 @@ public final class normalChildT: main.normalT {
     @available(*, deprecated, message: "Deprecated")
     public override func deprecatedInFutureF() -> Swift.Void {
         return { normalChildT_deprecatedInFutureF(self.__externalRCRef()); return () }()
+    }
+    public func getRemovedSetterExt(
+        _ receiver: Swift.String
+    ) -> Swift.Int32 {
+        return normalChildT_removedSetterExt_get__TypesOfArgumentsE__Swift_String__(self.__externalRCRef(), receiver)
     }
     public override func normalF() -> Swift.Void {
         return { normalChildT_normalF(self.__externalRCRef()); return () }()

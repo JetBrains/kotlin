@@ -311,6 +311,57 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitSimpleAssignment(@NotNull JsAssignmentOperation.Simple x) {
+        printCommentsBeforeNode(x);
+        pushSourceInfo(x.getSource());
+
+        // Assignment is right-associative, so the left-hand side is parenthesized only when it has
+        // strictly lower precedence (wrongAssoc), matching the former JsBinaryOperator.ASG rendering.
+        JsExpression target = x.getTarget();
+        boolean isTargetEnclosed = parenPush(x, target, true);
+        accept(target);
+        if (isTargetEnclosed) {
+            rightParen();
+        }
+        space();
+        assignment();
+
+        JsExpression value = x.getValue();
+        boolean isValueEnclosed;
+        if (value instanceof JsBinaryOperation && ((JsBinaryOperation) value).getOperator() == JsBinaryOperator.AND) {
+            space();
+            leftParen();
+            isValueEnclosed = true;
+        }
+        else {
+            space();
+            isValueEnclosed = parenPush(x, value, false);
+        }
+        accept(value);
+        if (isValueEnclosed) {
+            rightParen();
+        }
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitDestructuringAssignment(@NotNull JsAssignmentOperation.Destructuring x) {
+        printCommentsBeforeNode(x);
+        pushSourceInfo(x.getSource());
+
+        x.getPattern().accept(this);
+        space();
+        assignment();
+        space();
+        accept(x.getValue());
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
     public void visitBlock(@NotNull JsBlock x) {
         printJsBlock(x, true, null);
     }
@@ -454,7 +505,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(CHARS_CATCH);
         space();
         leftParen();
-        accept(x.getParameter().getAssignable());
+        accept(x.getParameter().getDeclarable());
 
         rightParen();
         space();
@@ -686,7 +737,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         space();
         leftParen();
 
-        JsAssignable assignable = x.getBindingAssignable();
+        JsDeclarable assignable = x.getBindingDeclarable();
         JsVars.Variant variant = x.getBindingVarVariant();
         JsExpression bindingExpression = x.getBindingExpression();
         JsExpression iterableExpression = x.getIterableExpression();
@@ -1200,7 +1251,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             ellipsis();
         }
 
-        accept(x.getAssignable());
+        accept(x.getDeclarable());
 
         JsExpression defaultValue = x.getDefaultValue();
         if (defaultValue != null) {
@@ -1420,7 +1471,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         pushSourceInfo(var.getSource());
         printCommentsBeforeNode(var);
 
-        accept(var.getAssignable());
+        accept(var.getDeclarable());
         JsExpression initExpr = var.getInitExpression();
         if (initExpr != null) {
             space();
@@ -1646,12 +1697,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitNamedAssignable(@NotNull JsAssignable.Named assignable) {
-        nameDef(assignable.getName());
+    public void visitNamedDeclarable(@NotNull JsDeclarable.Named declarable) {
+        nameDef(declarable.getName());
     }
 
     @Override
-    public void visitArrayPatternAssignable(@NotNull JsAssignable.ArrayPattern pattern) {
+    public void visitArrayPatternDeclarable(@NotNull JsDeclarable.ArrayPattern pattern) {
         pushSourceInfo(pattern.getSource());
         printCommentsBeforeNode(pattern);
 
@@ -1676,7 +1727,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitObjectPatternAssignable(@NotNull JsAssignable.ObjectPattern pattern) {
+    public void visitObjectPatternDeclarable(@NotNull JsDeclarable.ObjectPattern pattern) {
         pushSourceInfo(pattern.getSource());
         printCommentsBeforeNode(pattern);
 

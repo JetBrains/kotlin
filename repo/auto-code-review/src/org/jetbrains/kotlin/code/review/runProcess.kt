@@ -15,7 +15,8 @@ import kotlin.io.path.writeText
 
 suspend fun runProcess(
     directory: File,
-    input: String?,
+    input: String? = null,
+    addEnvironment: Map<String, String> = emptyMap(),
     command: List<String>,
 ): ExecutionResult = withContext(Dispatchers.IO) {
     val stdinFile = input?.let {
@@ -33,6 +34,7 @@ suspend fun runProcess(
                     stdinFile = stdinFile?.toFile(),
                     stdoutFile = stdoutFile.toFile(),
                     stderrFile = stderrFile.toFile(),
+                    addEnvironment = addEnvironment,
                     command = command
                 )
             } finally {
@@ -51,6 +53,7 @@ suspend fun runProcess(
     stdinFile: File?,
     stdoutFile: File,
     stderrFile: File,
+    addEnvironment: Map<String, String>,
     command: List<String>,
 ): ExecutionResult = withContext(Dispatchers.IO) {
     /*
@@ -66,6 +69,7 @@ suspend fun runProcess(
         .apply { if (stdinFile != null) redirectInput(stdinFile) }
         .redirectOutput(stdoutFile)
         .redirectError(stderrFile)
+        .apply { environment().putAll(addEnvironment) }
 
     val exitCode = processBuilder.start().onExit().await().exitValue()
 

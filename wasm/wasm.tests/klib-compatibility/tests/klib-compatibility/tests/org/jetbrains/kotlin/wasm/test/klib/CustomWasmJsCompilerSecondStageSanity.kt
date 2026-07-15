@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
 import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.opentest4j.TestAbortedException
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -30,7 +30,7 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkGreenNeedsUnmuting() {
-        val exception = assertThrows<AssertionError> {
+        val exception = assertThrowsIfNotMuted<AssertionError> {
             runTest(testDataRoot + "greenNeedsUnmuting.kt")
         }
         val expected = "Looks like this test can be unmuted. " +
@@ -40,7 +40,7 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkIncorrectBoxResult() {
-        val exception = assertThrows<WasmVMException> {
+        val exception = assertThrowsIfNotMuted<WasmVMException> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
         checkIncorrectBoxResult(exception, "incorrectBoxResult")
@@ -55,7 +55,7 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkNotMutedWithIgnoreRuntimeErrors1stStage() {
-        val exception = assertThrows<WasmVMException> {
+        val exception = assertThrowsIfNotMuted<WasmVMException> {
             runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
         checkIncorrectBoxResult(exception, "mutedWithIgnoreRuntimeErrors1stStage")
@@ -64,7 +64,7 @@ class CustomWasmJsCompilerSecondStageSanity :
     @Test
     fun checkMutedWithIgnoreRuntimeErrors2ndStage() {
         // TODO KT-87378 Reconsider behavior of IGNORE_* directives, so no exception would be thrown here
-        val exception = assertThrows<TestAbortedException> {
+        val exception = assertThrowsIfNotMuted<TestAbortedException> {
             runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
         }
         assertEquals(null, exception.message)
@@ -73,7 +73,7 @@ class CustomWasmJsCompilerSecondStageSanity :
     @Test
     fun checkMutedDueToFrontendErrorWithCustom1stStageOfLatestLV() {
         Assumptions.assumeTrue(LanguageVersion.LATEST_STABLE == customWasmJsCompilerSettings.defaultLanguageVersion)
-        val exception = assertThrows<Throwable> {
+        val exception = assertThrowsIfNotMuted<Throwable> {
             runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
         }
         // Frontend errors are not suppressed when testing within one major compiler version
@@ -85,7 +85,7 @@ class CustomWasmJsCompilerSecondStageSanity :
     fun checkMutedDueToFrontendErrorWithCustom1stStageOfOldLV() {
         Assumptions.assumeFalse(LanguageVersion.LATEST_STABLE == customWasmJsCompilerSettings.defaultLanguageVersion)
         // TODO KT-87378 Reconsider behavior of IGNORE_* directives, so no exception would be thrown here
-        val exception = assertThrows<Throwable> {
+        val exception = assertThrowsIfNotMuted<Throwable> {
             runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
         }
         // Some tests cannot be compiled with previous LV. These are just ignored
@@ -101,5 +101,21 @@ class CustomWasmJsCompilerSecondStageSanity :
     @Test
     fun checkRecompilePasses() {
         runTest(testDataRoot + "recompile.kt")
+    }
+
+    private inline fun <reified T : Throwable> assertThrowsIfNotMuted(executable: () -> Unit): T {
+        val throwable: Throwable? = try {
+            executable()
+        } catch (caught: Throwable) {
+            caught
+        } as? Throwable
+
+        if (throwable is TestAbortedException) throw throwable
+
+        return Assertions.assertThrows(T::class.java) {
+            if (throwable != null) {
+                throw throwable
+            }
+        }
     }
 }

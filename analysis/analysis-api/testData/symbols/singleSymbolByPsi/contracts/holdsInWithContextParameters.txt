@@ -1,8 +1,10 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /conditionInContext
   contextParameters: [
     KaContextParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -18,6 +20,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: a
       origin: SOURCE
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -47,6 +51,7 @@ KaNamedFunctionSymbol:
             KaContractExplicitParameterValue:
               symbol:
                 KaContextParameterSymbol:
+                  anchorPsi: KtParameter
                   annotations: []
                   callableId: null
                   contextParameters: []
@@ -62,6 +67,8 @@ KaNamedFunctionSymbol:
                   modality: FINAL
                   name: a
                   origin: SOURCE
+                  psi: KtParameter
+                  realPsi: KtParameter
                   receiverParameter: null
                   returnType: KaUsualClassType:
                     annotations: []
@@ -78,6 +85,7 @@ KaNamedFunctionSymbol:
         KaContractExplicitParameterValue:
           symbol:
             KaValueParameterSymbol:
+              anchorPsi: KtParameter
               annotations: []
               callableId: null
               contextParameters: []
@@ -100,6 +108,8 @@ KaNamedFunctionSymbol:
               name: block
               origin: SOURCE
               primaryConstructorProperty: null
+              psi: KtParameter
+              realPsi: KtParameter
               receiverParameter: null
               returnType: KaFunctionType:
                 annotations: []
@@ -136,6 +146,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: conditionInContext
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -144,6 +156,7 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -166,6 +179,8 @@ KaNamedFunctionSymbol:
       name: block
       origin: SOURCE
       primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []

@@ -1522,6 +1522,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
             contextParameters: []
@@ -1538,6 +1539,8 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/receiverUsage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1548,6 +1551,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
           type = Implicit,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
             contextParameters: []
@@ -1564,6 +1568,8 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1673,6 +1679,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
             contextParameters: []
@@ -1689,6 +1696,8 @@ KtNameReferenceExpression(691,698): 'unnamed'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/receiverUsage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1699,6 +1708,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
           type = Implicit,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
             contextParameters: []
@@ -1715,6 +1725,8 @@ KtNameReferenceExpression(691,698): 'unnamed'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1842,6 +1854,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
             contextParameters: []
@@ -1858,6 +1871,8 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/receiverUsage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1868,6 +1883,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
           type = Implicit,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
             contextParameters: []
@@ -1884,6 +1900,8 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -1993,6 +2011,7 @@ KtNameReferenceExpression(745,750): 'named'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
             contextParameters: []
@@ -2009,6 +2028,8 @@ KtNameReferenceExpression(745,750): 'named'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/receiverUsage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -2019,6 +2040,7 @@ KtNameReferenceExpression(745,750): 'named'
           type = Implicit,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
             contextParameters: []
@@ -2035,6 +2057,8 @@ KtNameReferenceExpression(745,750): 'named'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -2170,6 +2194,7 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
             contextParameters: []
@@ -2186,6 +2211,8 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/receiverUsage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -2315,6 +2342,7 @@ KtNameReferenceExpression(800,807): 'unnamed'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
             contextParameters: []
@@ -2331,6 +2359,8 @@ KtNameReferenceExpression(800,807): 'unnamed'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/receiverUsage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -2526,6 +2556,7 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
             contextParameters: []
@@ -2542,6 +2573,8 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/receiverUsage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -2671,6 +2704,7 @@ KtNameReferenceExpression(869,874): 'named'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
             contextParameters: []
@@ -2687,6 +2721,8 @@ KtNameReferenceExpression(869,874): 'named'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/receiverUsage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []

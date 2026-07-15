@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
@@ -16,7 +15,6 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.build.project.tests.CollectTestDataTask
 
@@ -148,8 +146,6 @@ abstract class ProjectTestsExtension(val project: Project) {
     // -------------------- test task definitions --------------------
 
     fun testTask(
-        parallel: Boolean? = null,
-        jUnitMode: JUnitMode,
         javaLauncher: JdkMajorVersion = DEFAULT_JAVA_LAUNCHER_FOR_TESTS,
         maxHeapSizeMb: Int? = null,
         minHeapSizeMb: Int? = null,
@@ -162,8 +158,6 @@ abstract class ProjectTestsExtension(val project: Project) {
         @Suppress("UNCHECKED_CAST")
         return testTask(
             taskName = "test",
-            parallel,
-            jUnitMode,
             javaLauncher,
             maxHeapSizeMb,
             minHeapSizeMb,
@@ -178,8 +172,6 @@ abstract class ProjectTestsExtension(val project: Project) {
 
     fun testTask(
         taskName: String,
-        parallel: Boolean? = null,
-        jUnitMode: JUnitMode,
         javaLauncher: JdkMajorVersion = DEFAULT_JAVA_LAUNCHER_FOR_TESTS,
         maxHeapSizeMb: Int? = null,
         minHeapSizeMb: Int? = null,
@@ -193,26 +185,17 @@ abstract class ProjectTestsExtension(val project: Project) {
         if (skipInLocalBuild && !project.kotlinBuildProperties.isTeamcityBuild.get()) {
             return project.tasks.register(taskName)
         }
-        if (jUnitMode == JUnitMode.JUnit5 && parallel != null) {
-            throw GradleException("JUnit5 tests are parallel by default and its configured with `junit-platform.properties`, please remove `parallel=$parallel` argument")
-        }
+
         if (enableGroupingTestEngine) {
-            when (jUnitMode) {
-                JUnitMode.JUnit4 -> throw GradleException("JUnit4 tests are not supported with grouping test engine. Change the JUnitMode to JUnit5")
-                JUnitMode.JUnit5 -> {
-                    project.dependencies {
-                        add(
-                            configurationName = "testRuntimeOnly",
-                            dependencyNotation = testFixtures(project(":compiler:test-infrastructure:grouping-test-engine")),
-                        )
-                    }
-                }
+            project.dependencies {
+                add(
+                    configurationName = "testRuntimeOnly",
+                    dependencyNotation = testFixtures(project(":compiler:test-infrastructure:grouping-test-engine")),
+                )
             }
         }
         return project.createGeneralTestTask(
             taskName,
-            parallel ?: false,
-            jUnitMode,
             javaLauncher,
             maxHeapSizeMb,
             minHeapSizeMb,
@@ -220,9 +203,7 @@ abstract class ProjectTestsExtension(val project: Project) {
             reservedCodeCacheSizeMb,
             defineJDKEnvVariables,
         ) {
-            if (jUnitMode == JUnitMode.JUnit5) {
-                useJUnitPlatform()
-            }
+            useJUnitPlatform()
             body()
         }
     }

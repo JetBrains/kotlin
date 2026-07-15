@@ -318,6 +318,8 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         str = replaceIfNeeded(str, "$JDK_17$", () -> KtTestUtil.getJdk17Home().getPath());
         str = replaceIfNeeded(str, "$STDLIB_JS$", () -> ForTestCompileRuntime.stdlibJsForTests().getAbsolutePath());
         str = replaceIfNeeded(str, "$STDLIB_WASM_JS$", () -> ForTestCompileRuntime.stdlibWasmJsForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$DIST_STDLIB_WASM_JS$", () -> ForTestCompileRuntime.stdlibWasmJsFromDist().getAbsolutePath());
+        str = replaceIfNeeded(str, "$DIST_STDLIB_WASM_WASI$", () -> ForTestCompileRuntime.stdlibWasmWasiFromDist().getAbsolutePath());
         str = replaceIfNeeded(str, "$STDLIB_NATIVE$", () -> FilesKt.resolve(KotlinNativePaths.INSTANCE.getHomePath(), konanCommonLibraryPath(KONAN_STDLIB_NAME)).getAbsolutePath());
         str = replaceIfNeeded(str, "$LOMBOK-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.lombokCompilerPluginForTests().getAbsolutePath());
         str = replaceIfNeeded(str, "$ALLOPEN-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.allOpenCompilerPluginForTests().getAbsolutePath());

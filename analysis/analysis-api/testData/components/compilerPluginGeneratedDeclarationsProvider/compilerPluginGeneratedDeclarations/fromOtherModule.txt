@@ -1,6 +1,7 @@
 packages: 0
 classifiers: 1
   KaNamedClassSymbol:
+    anchorPsi: null
     annotations: []
     classId: foo/AllOpenGenerated
     classKind: CLASS
@@ -17,6 +18,8 @@ classifiers: 1
     modality: FINAL
     name: AllOpenGenerated
     origin: PLUGIN
+    psi: null
+    realPsi: null
     superTypes: [
       KaUsualClassType:
         annotations: []
@@ -27,6 +30,7 @@ classifiers: 1
     visibility: PUBLIC
 callables: 1
   KaNamedFunctionSymbol:
+    anchorPsi: null
     annotations: []
     callableId: dependency/dummyTest
     contextParameters: []
@@ -50,6 +54,8 @@ callables: 1
     modality: FINAL
     name: dummyTest
     origin: PLUGIN
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -58,6 +64,7 @@ callables: 1
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
         contextParameters: []
@@ -80,6 +87,8 @@ callables: 1
         name: value
         origin: PLUGIN
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

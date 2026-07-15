@@ -197,7 +197,7 @@ class ExportModelToJsStatements(
                     else -> prototypeOf(name.makeRef(), staticContext)
                 }
                 val klassExport = when {
-                    namespace != null -> jsAssignment(newNameSpace, name.makeRef()).makeStmt()
+                    namespace != null && newNameSpace is JsAssignableExpression -> jsAssignment(newNameSpace, name.makeRef()).makeStmt()
                     esModules -> {
                         if (declaration.attributes.contains(ExportedAttribute.DefaultExport)) {
                             JsExport(JsExport.Subject.Default(name.makeRef()))

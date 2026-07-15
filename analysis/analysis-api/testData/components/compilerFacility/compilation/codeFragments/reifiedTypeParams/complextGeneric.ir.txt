@@ -8,7 +8,7 @@ MODULE_FRAGMENT
       FUN name:run visibility:public modality:FINAL returnType:kotlin.String [companion]
         EXPRESSION_BODY
           BLOCK type=kotlin.String origin=null
-            CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.reflect.KType' type=kotlin.String origin=null
+            CALL 'public open fun toString (): kotlin.String [expect,fake_override] declared in kotlin.reflect.KType' type=kotlin.String origin=null
               ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
                 CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
                   TYPE_ARG T: T of <root>.ContextKt.foo1

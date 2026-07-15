@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiPackage
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
@@ -378,6 +379,14 @@ public class KaDebugRenderer(
             // Java values
             is Enum<*> -> printer.append(value.name)
             is List<*> -> renderList(value, printer, currentSymbolStack)
+            is PsiPackage -> {
+                // They are provided by the platform and could be anonymous
+                printer.append("PsiPackage(")
+                printer.append(value.qualifiedName)
+                printer.append(')')
+            }
+
+            is PsiElement -> printer.append(value::class.java.simpleName)
             else -> printer.append(value.toString())
         }
     }
@@ -480,7 +489,6 @@ public class KaDebugRenderer(
     @KaNonPublicApi
     public companion object {
         private val ignoredPropertyNames = setOf(
-            "psi",
             "token",
             "builder",
             "coneType",

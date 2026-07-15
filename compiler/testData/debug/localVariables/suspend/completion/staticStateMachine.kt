@@ -23,6 +23,7 @@ suspend fun box() {
 // test.kt:7 foo1: l:long=42:long, $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null
 // test.kt:8 foo1: l:long=42:long, $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null
 // test.kt:9 foo1: l:long=42:long, $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, dead:long=42:long
+// test.kt:12 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:13 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 
 // EXPECTATIONS JS_IR
@@ -39,8 +40,8 @@ suspend fun box() {
 // test.kt:12 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (9, 9, 4)
 // test.kt:9 $foo1: $l:i64=i64, $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1, 1, 1, 1)
 // coroutineHelpers.kt:9 $EmptyContinuation.<get-context>: $<this>:(ref $EmptyContinuation)=(ref $EmptyContinuation) (37, 37)
-// test.kt:9 $foo1: $l:i64=i64, $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1, 1, 1, 1, 1, 1, 1, 1)
-// test.kt:6 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
+// test.kt:9 $foo1: $l:i64=i64, $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1)
+// test.kt:6 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref null $kotlin.Any)=null, $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
 // test.kt:4 $foo: $$completion:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$) (19, 19)
 // test.kt:6 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4)
 // test.kt:9 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1)

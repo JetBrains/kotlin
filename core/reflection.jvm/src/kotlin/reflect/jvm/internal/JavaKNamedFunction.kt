@@ -132,4 +132,8 @@ internal class JavaKNamedFunction(
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
         JavaKNamedFunction(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
+
+    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
+        if (this.rawBoundReceiver === boundReceiver) this
+        else JavaKNamedFunction(container, jMethod, boundReceiver, overriddenStorage)
 }

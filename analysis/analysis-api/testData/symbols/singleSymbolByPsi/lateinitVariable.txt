@@ -1,4 +1,5 @@
 KaLocalVariableSymbol:
+  anchorPsi: KtProperty
   annotations: []
   callableId: null
   contextParameters: []
@@ -15,6 +16,8 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: something
   origin: SOURCE
+  psi: KtProperty
+  realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

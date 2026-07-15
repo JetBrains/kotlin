@@ -1,4 +1,5 @@
 KaValueParameterSymbol:
+  anchorPsi: PsiAnnotationMethodImpl
   annotations: []
   callableId: null
   contextParameters: []
@@ -21,6 +22,8 @@ KaValueParameterSymbol:
   name: name
   origin: JAVA_SOURCE
   primaryConstructorProperty: null
+  psi: PsiAnnotationMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

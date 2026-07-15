@@ -12,7 +12,12 @@ project.updateJvmTarget("1.8")
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
-    testImplementation(libs.junit4)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
     testImplementation(libs.kotlinx.coroutines.core)
 }
 
@@ -23,6 +28,10 @@ sourceSets {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 publish()

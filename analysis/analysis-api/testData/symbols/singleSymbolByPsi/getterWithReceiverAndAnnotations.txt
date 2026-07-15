@@ -1,4 +1,5 @@
 KaPropertyGetterSymbol:
+  anchorPsi: KtPropertyAccessor
   annotations: [
     GetAnnotation()
       psi: KtAnnotationEntry
@@ -20,7 +21,10 @@ KaPropertyGetterSymbol:
   location: PROPERTY
   modality: FINAL
   origin: SOURCE
+  psi: KtPropertyAccessor
+  realPsi: KtPropertyAccessor
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: [
       ReceiverAnnotation()
         psi: KtAnnotationEntry
@@ -40,6 +44,8 @@ KaPropertyGetterSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/x)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [

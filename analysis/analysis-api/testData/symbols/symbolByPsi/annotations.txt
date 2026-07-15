@@ -1,4 +1,5 @@
 KaConstructorSymbol:
+  anchorPsi: KtPrimaryConstructor
   annotations: []
   callableId: null
   containingClassId: Anno
@@ -14,6 +15,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor
+  realPsi: KtPrimaryConstructor
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -22,6 +25,7 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -44,6 +48,8 @@ KaConstructorSymbol:
       name: param1
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/Anno.param1)
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -57,6 +63,7 @@ KaConstructorSymbol:
       deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -79,6 +86,8 @@ KaConstructorSymbol:
       name: param2
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/Anno.param2)
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -100,6 +109,7 @@ KaConstructorSymbol:
   importableFqName: Anno
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: Anno
   classKind: ANNOTATION_CLASS
@@ -116,6 +126,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Anno
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -131,6 +143,7 @@ KaNamedClassSymbol:
   importableFqName: Anno
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: [
     Anno(param1 = "funparam", param2 = 3)
       psi: KtAnnotationEntry
@@ -157,6 +170,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: x
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -178,6 +193,7 @@ KaNamedFunctionSymbol:
   importableFqName: null
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: [
     Anno(param1 = "param", param2 = 2)
       psi: KtAnnotationEntry
@@ -197,6 +213,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []

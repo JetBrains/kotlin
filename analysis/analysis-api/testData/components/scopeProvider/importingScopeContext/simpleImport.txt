@@ -4,6 +4,7 @@ scopes:
     packages: 0
     classifiers: 1
       KaNamedClassSymbol:
+        anchorPsi: KtClass
         annotations: []
         classId: other/A
         classKind: CLASS
@@ -20,6 +21,8 @@ scopes:
         modality: FINAL
         name: A
         origin: SOURCE
+        psi: KtClass
+        realPsi: KtClass
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -44,4 +47,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 5
-

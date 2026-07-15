@@ -24,13 +24,11 @@ internal external fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArgumen
 public suspend fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>, value: kotlin.Any?): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<Unit, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __value, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __value, _continuation, _exception, _cancellation)
     }
 }
 
@@ -41,13 +39,11 @@ internal external fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArg
 public suspend fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>, value: kotlin.Any?): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
-    return awaitSwiftCoroutine { __resume, __cancellation ->
-        val __continuation: Function1<Unit, Unit> = { _result -> __resume(kotlin.Result.success(_result)) }
-        val __exception: Function1<platform.Foundation.NSError?, Unit> = { _error -> __resume(kotlin.Result.failure(_error?.let(::SwiftException) ?: kotlinx.coroutines.CancellationException("Cancelled using CancellationError in Swift"))) }
-        val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-        val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-        val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-        kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __value, __continuationPtr, __exceptionPtr, __cancellationPtr)
+    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __value, _continuation, _exception, _cancellation)
     }
 }
 

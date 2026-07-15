@@ -146,6 +146,8 @@ class KotlinBuildProperties internal constructor(
 
     val verificationTasksDisabled: Provider<Boolean> = booleanProperty("kotlin.build.disable.verification.tasks")
 
+    val jarCompression: Boolean get() = booleanProperty("kotlin.build.jar.compression", isTeamcityBuild).get()
+
     private fun Provider<String>.toBoolean(defaultValue: Boolean = false): Provider<Boolean> = map {
         if (it.isEmpty()) return@map true // has property without value means 'true'
         return@map it.trim().toBoolean()

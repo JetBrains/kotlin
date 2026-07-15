@@ -13,6 +13,7 @@ KtCallExpression(78,85): 'block()'
         type = context(kotlin.String) kotlin.Int.() -> kotlin.Unit
       extensionReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
           contextParameters: []
@@ -29,6 +30,8 @@ KtCallExpression(78,85): 'block()'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []

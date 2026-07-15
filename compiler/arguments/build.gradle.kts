@@ -52,7 +52,7 @@ dependencies {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }
 
 val generateJson = tasks.register<JavaExec>("generateJson") {

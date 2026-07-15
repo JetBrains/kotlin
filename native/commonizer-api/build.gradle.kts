@@ -33,7 +33,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, javaLauncher = JdkMajorVersion.JDK_21_0) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_21_0) {
         useProvidedNativeBootstrapDistribution { distribution ->
             addClasspathProperty("konan.home") {
                 from(distribution.map { it.root })

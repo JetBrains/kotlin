@@ -78,8 +78,6 @@ dependencies {
 
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testFixturesApi(libs.junit4)
-
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly(toolsJar())
@@ -105,10 +103,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(
-        jUnitMode = JUnitMode.JUnit5,
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)
-    ) {
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
 
         val prefix = "org.jetbrains.kotlin.test"
         addClasspathProperty(guavaClasspathForTests, "$prefix.guava")

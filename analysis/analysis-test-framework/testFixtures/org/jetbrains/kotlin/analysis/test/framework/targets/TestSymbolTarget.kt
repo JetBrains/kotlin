@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.targets
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.ContextParameterTarget
-import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.TypeParameterTarget
-import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.ValueParameterTarget
+import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -90,6 +88,8 @@ sealed interface TestSymbolTarget {
 
     data class ContextParameterTarget(val name: Name, override val ownerTarget: TestSymbolTarget) : TargetWithOwner
 
+    data class ReceiverParameterTarget(override val ownerTarget: TestSymbolTarget) : TargetWithOwner
+
     data class GetterTarget(override val ownerTarget: TestSymbolTarget) : TargetWithOwner
 
     data class SetterTarget(override val ownerTarget: TestSymbolTarget) : TargetWithOwner
@@ -111,6 +111,7 @@ sealed interface TestSymbolTarget {
             "sam_constructor:",
             "type_parameter:",
             "value_parameter:",
+            "receiver_parameter:",
             "context_parameter:",
             "getter:",
             "setter:",
@@ -157,6 +158,7 @@ sealed interface TestSymbolTarget {
                 "sam_constructor" -> SamConstructorTarget(ClassId.fromString(value))
                 "type_parameter" -> createTypeParameterTarget(value, contextFile)
                 "value_parameter" -> createValueParameterTarget(value, contextFile)
+                "receiver_parameter" -> ReceiverParameterTarget(create(value, contextFile))
                 "context_parameter" -> createContextParameterTarget(value, contextFile)
                 "getter" -> GetterTarget(create(value, contextFile))
                 "setter" -> SetterTarget(create(value, contextFile))

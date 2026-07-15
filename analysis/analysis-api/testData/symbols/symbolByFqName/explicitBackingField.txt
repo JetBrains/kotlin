@@ -1,4 +1,5 @@
 KaBackingFieldSymbol:
+  anchorPsi: KtBackingField
   annotations: []
   callableId: null
   contextParameters: []
@@ -16,6 +17,8 @@ KaBackingFieldSymbol:
   name: field
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KaKotlinPropertySymbol(one/Test.foo)
+  psi: KtBackingField
+  realPsi: KtBackingField
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []

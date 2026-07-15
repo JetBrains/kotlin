@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.implementation
-
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -35,12 +33,10 @@ optInToK1Deprecation()
 
 dependencies {
     // junit
-    testImplementation(libs.junit4)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.intellij.fastutil)
     testRuntimeOnly(jpsModelImpl())
 
@@ -100,7 +96,7 @@ dependencies {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 1024) {
+    testTask(maxHeapSizeMb = 1024) {
         workingDir = rootDir
         jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
         environment("CI", kotlinBuildProperties.isTeamcityBuild.get())

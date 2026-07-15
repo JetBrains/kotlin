@@ -89,11 +89,15 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
         with(actualMetadataArguments) {
             restrict(
                 "d",
-                reason = "The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder.",
+                reason = "The destination is configured via the destination parameter of metadataKlibCompilationOperationBuilder.",
                 warningSince = KotlinReleaseVersion.v2_4_0,
                 errorSince = KotlinReleaseVersion.v2_5_0
             ) // configured explicitly when instantiating operations
-            drop("Xlegacy-metadata-jar-k2")
+            restrict(
+                "Xlegacy-metadata-jar-k2",
+                warningSince = KotlinReleaseVersion.v2_5_0,
+                errorSince = KotlinReleaseVersion.v2_6_0
+            ) // unsupported in BTA, we produce only metadata klib
         }
     })
     put(actualJvmCompilerArguments.name, buildMap {

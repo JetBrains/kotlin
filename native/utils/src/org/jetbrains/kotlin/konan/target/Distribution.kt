@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.loadProperties
+import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import java.nio.file.Path
+import java.util.Properties
+import kotlin.io.path.Path
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.listDirectoryEntries
 
 class Distribution private constructor(private val serialized: Serialized) : java.io.Serializable {
     constructor(
@@ -30,10 +34,10 @@ class Distribution private constructor(private val serialized: Serialized) : jav
     val konanSubdir = "$konanHome/konan"
     val mainPropertyFileName = "$konanSubdir/konan.properties"
 
-    private fun propertyFilesFromConfigDir(configDir: String, genericName: String): List<File> {
-        val directory = File(configDir, "platforms/$genericName")
-        return if (directory.isDirectory)
-            directory.listFiles
+    private fun propertyFilesFromConfigDir(configDir: String, genericName: String): List<Path> {
+        val directory = Path(configDir, "platforms/$genericName")
+        return if (directory.isDirectory())
+            directory.listDirectoryEntries()
         else
             emptyList()
     }
@@ -54,11 +58,11 @@ class Distribution private constructor(private val serialized: Serialized) : jav
     val properties by lazy {
         val result = Properties()
 
-        fun loadPropertiesSafely(source: File) {
-            if (source.isFile) result.putAll(source.loadProperties())
+        fun loadPropertiesSafely(source: Path) {
+            if (source.isRegularFile()) result.putAll(source.readProperties())
         }
 
-        loadPropertiesSafely(File(mainPropertyFileName))
+        loadPropertiesSafely(Path(mainPropertyFileName))
 
         if (onlyDefaultProfiles) {
             result.keepOnlyDefaultProfiles()

@@ -1,4 +1,5 @@
 KaTypeAliasSymbol:
+  anchorPsi: KtTypeAlias
   annotations: []
   classId: kotlin/DeepRecursiveFunctionBlock
   expandedType: KaFunctionType:
@@ -28,6 +29,8 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: DeepRecursiveFunctionBlock
   origin: LIBRARY
+  psi: KtTypeAlias
+  realPsi: KtTypeAlias
   typeParameters: []
   visibility: PRIVATE
   getContainingFileSymbol: null

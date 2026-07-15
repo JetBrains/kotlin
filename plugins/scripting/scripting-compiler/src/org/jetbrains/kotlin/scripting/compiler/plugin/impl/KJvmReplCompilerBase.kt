@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
-
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -18,7 +15,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.K1JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.MessageCollectorAccess
@@ -28,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -37,9 +32,7 @@ import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplImplicitsExtensionsResolutionFilter
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.*
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -374,14 +367,14 @@ class ReplCompilationState<AnalyzerT : ReplCodeAnalyzerBase>(
     }
 
     private val manglerAndSymbolTable by lazy {
-        val mangler = JvmDescriptorMangler(
+        val mangler = K1JvmDescriptorMangler(
             MainFunctionDetector(analyzerEngine.trace.bindingContext, environment.configuration.languageVersionSettings)
         )
-        val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl)
+        val symbolTable = SymbolTable(K1JvmIdSignatureDescriptor(mangler), IrFactoryImpl)
         mangler to symbolTable
     }
 
-    val mangler: JvmDescriptorMangler get() = manglerAndSymbolTable.first
+    val mangler: K1JvmDescriptorMangler get() = manglerAndSymbolTable.first
     val symbolTable: SymbolTable get() = manglerAndSymbolTable.second
 }
 

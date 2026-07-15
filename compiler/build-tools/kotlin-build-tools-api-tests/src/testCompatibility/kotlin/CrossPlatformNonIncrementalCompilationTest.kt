@@ -14,8 +14,8 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 
 /**
- * Tests that verify compilation behavior across both JVM and JS platforms.
- * Each test runs the same logic using both [jvmProject] (JVM) and [jsProject] (JS).
+ * Tests that verify compilation behavior across all supported platforms (JVM, JS, Wasm and metadata).
+ * Each test runs the same logic against every platform the current compiler supports, via [ProjectCreator].
  */
 class CrossPlatformNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Compilation with syntax error fails on all platforms")
@@ -45,6 +45,19 @@ class CrossPlatformNonIncrementalCompilationTest : BaseCompilationTest() {
                 module1.link {
                     assertOutputsContains(module1.expectedOutputFileName)
                 }
+            }
+        }
+    }
+
+    @DisplayName("A missing classpath dependency fails the compilation on all platforms")
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun missingClasspathDependencyFailsCompilationAllPlatforms(project: ProjectCreator) {
+        project {
+            // module-2 references `Bar` from module-1; without the dependency the reference is unresolved.
+            val consumer = module("basic-multimodule-project/module-2")
+            consumer.compile {
+                expectFail()
+                assertLogContainsPatterns(LogLevel.ERROR, ".*[Uu]nresolved reference.*Bar.*".toRegex())
             }
         }
     }

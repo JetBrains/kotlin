@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
-import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.util.InternalServer
 import org.jetbrains.kotlin.konan.util.ProgressCallback
+import java.util.Properties
 
 class AppleConfigurablesImpl(
     target: KonanTarget,

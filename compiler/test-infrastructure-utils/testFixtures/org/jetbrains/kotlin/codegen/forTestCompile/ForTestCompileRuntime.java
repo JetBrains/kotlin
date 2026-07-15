@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.forTestCompile;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 import java.lang.ref.SoftReference;
@@ -44,7 +45,7 @@ public class ForTestCompileRuntime {
     @NotNull
     @Deprecated
     public static File runtimeJarFromDistForTests() {
-        return new File("dist/kotlinc/lib/kotlin-stdlib.jar");
+        return distKotlincLibFile("kotlin-stdlib.jar");
     }
 
     @NotNull
@@ -74,7 +75,7 @@ public class ForTestCompileRuntime {
     @NotNull
     @Deprecated
     public static File reflectJarFromDistForTests() {
-        return new File("dist/kotlinc/lib/kotlin-reflect.jar");
+        return distKotlincLibFile("kotlin-reflect.jar");
     }
 
     @NotNull
@@ -85,6 +86,21 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File distKotlincForTests() {
         return new File(getFileFromProperty(KOTLIN_DIST_PATH), "kotlinc");
+    }
+
+    @NotNull
+    public static File distKotlincLibFile(@NotNull String fileName) {
+        return new File(distKotlincForTests(), "lib/" + fileName);
+    }
+
+    @NotNull
+    public static File stdlibWasmJsFromDist() {
+        return distKotlincLibFile(PathUtil.WASM_JS_LIB_NAME + ".klib");
+    }
+
+    @NotNull
+    public static File stdlibWasmWasiFromDist() {
+        return distKotlincLibFile(PathUtil.WASM_WASI_LIB_NAME + ".klib");
     }
 
     @NotNull

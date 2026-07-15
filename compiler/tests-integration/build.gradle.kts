@@ -25,13 +25,11 @@ dependencies {
     testFixturesApi(kotlinTest())
     testCompileOnly(kotlinTest("junit"))
 
-    testFixturesApi(libs.junit4)
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesApi(libs.junit.platform.launcher)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -91,7 +89,6 @@ projectTests {
             JdkMajorVersion.JDK_17_0,
             JdkMajorVersion.JDK_21_0
         ),
-        jUnitMode = JUnitMode.JUnit5,
         javaLauncher = JdkMajorVersion.JDK_1_8
     ) {
         dependsOn(":dist")

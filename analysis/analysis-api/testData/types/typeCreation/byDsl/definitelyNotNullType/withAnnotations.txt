@@ -21,6 +21,7 @@ KaDefinitelyNotNullType:
     ]
     name: T
     symbol: KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
       isActual: false
       isExpect: false
@@ -30,6 +31,8 @@ KaDefinitelyNotNullType:
       modality: FINAL
       name: T
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL

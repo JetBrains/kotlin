@@ -2,6 +2,7 @@ packages: 0
 classifiers: 0
 callables: 1
   KaNamedFunctionSymbol:
+    anchorPsi: null
     annotations: []
     callableId: /dummyTest
     contextParameters: []
@@ -25,6 +26,8 @@ callables: 1
     modality: FINAL
     name: dummyTest
     origin: PLUGIN
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -33,6 +36,7 @@ callables: 1
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
         contextParameters: []
@@ -55,6 +59,8 @@ callables: 1
         name: value
         origin: PLUGIN
         primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

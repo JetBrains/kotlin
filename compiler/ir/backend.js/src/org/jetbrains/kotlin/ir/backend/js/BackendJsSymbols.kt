@@ -38,7 +38,6 @@ abstract class BackendWebSymbols(
     val coroutineImplLabelPropertyGetter by CallableIds.coroutineState.getterSymbol()
     val coroutineImplLabelPropertySetter by CallableIds.coroutineState.setterSymbol()
     val coroutineImplResultSymbolGetter by CallableIds.coroutineResult.getterSymbol()
-    val coroutineImplResultSymbolSetter by CallableIds.coroutineResult.setterSymbol()
     val coroutineImplExceptionPropertyGetter by CallableIds.coroutineException.getterSymbol()
     val coroutineImplExceptionPropertySetter by CallableIds.coroutineException.setterSymbol()
     val coroutineImplExceptionStatePropertyGetter by CallableIds.coroutineExceptionState.getterSymbol()

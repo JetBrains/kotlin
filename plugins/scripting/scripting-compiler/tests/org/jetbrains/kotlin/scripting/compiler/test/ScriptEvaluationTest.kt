@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsol
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
 import org.jetbrains.kotlin.scripting.compiler.test.dependenciesResolver
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream

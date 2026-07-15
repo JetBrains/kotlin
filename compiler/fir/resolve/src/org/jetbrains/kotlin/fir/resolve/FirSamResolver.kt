@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -207,7 +207,7 @@ class FirSamResolver(
             source = fakeSource
             name = syntheticFunctionSymbol.name
             origin = FirDeclarationOrigin.SamConstructor
-            status = firRegularClass.status.copy(modality = Modality.FINAL)
+            status = classSymbol.resolvedStatus.copy(modality = Modality.FINAL)
             isLocal = firRegularClass.isLocal
             this.symbol = syntheticFunctionSymbol
             typeParameters += newTypeParameters.map { it.build() }
@@ -249,9 +249,7 @@ class FirSamResolver(
     }
 
     fun buildSamConstructorForTypeAlias(typeAliasSymbol: FirTypeAliasSymbol): FirNamedFunctionSymbol? {
-        val type =
-            typeAliasSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType()
-
+        val type = typeAliasSymbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return null
         val expansionRegularClass = type.lookupTag.toRegularClassSymbol()?.fir ?: return null
         val samConstructorForClass = getSamConstructor(expansionRegularClass) ?: return null
 
@@ -367,14 +365,14 @@ private fun FirRegularClass.getSingleAbstractMethodOrNull(): FirNamedFunction? {
 
     val classUseSiteMemberScope = this.unsubstitutedScope(
         withForcedTypeCalculator = false,
-        memberRequiredPhase = null,
+        memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
     for (candidateName in classUseSiteMemberScope.getCallableNames()) {
         if (metIncorrectMember) break
 
         classUseSiteMemberScope.processPropertiesByName(candidateName) {
-            if (it is FirPropertySymbol && it.fir.resolvedIsAbstract) {
+            if (it is FirPropertySymbol && it.isAbstract) {
                 metIncorrectMember = true
             }
         }

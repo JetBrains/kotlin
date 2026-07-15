@@ -24,16 +24,19 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestDataAssertions;
-import org.junit.runners.model.MultipleFailureException;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static kotlin.test.AssertionsKt.assertFalse;
+import static kotlin.test.AssertionsKt.assertTrue;
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectInstances;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class DirectiveTestUtils {
 
@@ -158,7 +161,7 @@ public class DirectiveTestUtils {
             String functionName = arguments.getFirst();
             CallCounter counter = CallCounter.countCalls(ast);
             int actualCount = counter.getUnqualifiedCallsCount(functionName);
-            assertEquals("Function " + functionName, expectedCount, actualCount);
+            assertEquals(expectedCount, actualCount, "Function " + functionName);
         }
     };
 
@@ -228,9 +231,9 @@ public class DirectiveTestUtils {
         private void assertExistence() {
             String message = getTextForError();
             if (shouldCheckForExistence) {
-                assertTrue(message, isElementExists);
+                assertTrue(isElementExists, message);
             } else {
-                assertFalse(message, isElementExists);
+                assertFalse(isElementExists, message);
             }
         }
     }
@@ -266,14 +269,14 @@ public class DirectiveTestUtils {
                 String message = "Function " + functionName + " contains " + actualCount +
                                  " nodes of type " + klass.getName() +
                                  ", but expected count is " + expectedCount;
-                assertEquals(message, expectedCount, actualCount);
+                assertEquals(expectedCount, actualCount, message);
             } else if (maxCountStr != null) {
                 int expectedCount = Integer.valueOf(maxCountStr);
 
                 String message = "Function " + functionName + " contains " + actualCount +
                                  " nodes of type " + klass.getName() +
                                  ", but expected max is " + expectedCount;
-                assertTrue(message, expectedCount >= actualCount);
+                assertTrue(expectedCount >= actualCount, message);
 
             } else {
                 throw new IllegalArgumentException("'max' or 'count' argument should be provided");
@@ -415,9 +418,9 @@ public class DirectiveTestUtils {
             String fieldName = arguments.getPositionalArgument(0);
             QualifiedReferenceCollector collector = new QualifiedReferenceCollector(fieldName);
             ast.accept(collector);
-            assertTrue("No reference to field '" + fieldName + "' found", collector.hasReferences);
-            assertTrue("There are references to field '" + fieldName + "' not qualified by 'this' literal",
-                       collector.allReferencesQualifiedByThis);
+            assertTrue(collector.hasReferences, "No reference to field '" + fieldName + "' found");
+            assertTrue(collector.allReferencesQualifiedByThis,
+                       "There are references to field '" + fieldName + "' not qualified by 'this' literal");
         }
     };
 
@@ -461,8 +464,8 @@ public class DirectiveTestUtils {
             JsFunction function = AstSearchUtil.getFunction(ast, functionName);
             Set<JsName> freeVars = CollectUtilsKt.collectFreeVariables(function);
             for (JsName freeVar : freeVars) {
-                assertTrue("Function " + functionName + " captures free variable " + freeVar.getIdent(),
-                           except.contains(freeVar.getIdent()));
+                assertTrue(except.contains(freeVar.getIdent()),
+                           "Function " + functionName + " captures free variable " + freeVar.getIdent());
             }
         }
     };
@@ -488,7 +491,7 @@ public class DirectiveTestUtils {
                     break;
             }
 
-            assertTrue("Function " + functionName + " does not declare variable " + varName, varDeclared[0]);
+            assertTrue(varDeclared[0], "Function " + functionName + " does not declare variable " + varName);
         }
     };
 
@@ -531,12 +534,8 @@ public class DirectiveTestUtils {
             @NotNull File sourceFile,
             @NotNull String sourceCode,
             @NotNull TargetBackend targetBackend
-    ) throws Exception {
-        List<Throwable> assertionErrors = new ArrayList<>();
-        for (DirectiveHandler handler : DIRECTIVE_HANDLERS) {
-            handler.process(ast, sourceFile, sourceCode, targetBackend, assertionErrors);
-        }
-        MultipleFailureException.assertEmpty(assertionErrors);
+    ) {
+        Assertions.assertAll(DIRECTIVE_HANDLERS.stream().map((handler -> () -> handler.process(ast, sourceFile, sourceCode, targetBackend))));
     }
 
     public static void checkFunctionContainsNoCalls(JsNode node, String functionName, @NotNull Set<String> exceptFunctionNames)
@@ -546,7 +545,7 @@ public class DirectiveTestUtils {
         int callsCount = counter.getTotalCallsCount();
 
         String errorMessage = functionName + " contains calls";
-        assertEquals(errorMessage, 0, callsCount);
+        assertEquals(0, callsCount, errorMessage);
     }
 
     @NotNull
@@ -561,25 +560,26 @@ public class DirectiveTestUtils {
             throws Exception {
         PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(findScope(node, scope));
         if (!isGetAllowed) {
-            assertFalse("property getter for `" + propertyName + "`"  + " in scope: " + scope + " is called",
-                        counter.hasUnqualifiedReads(propertyName));
+            assertFalse(counter.hasUnqualifiedReads(propertyName),
+                        "property getter for `" + propertyName + "`"  + " in scope: " + scope + " is called");
         }
         if (!isSetAllowed) {
-            assertFalse("property setter for `" + propertyName + "`"  + " in scope: " + scope + " is called",
-                        counter.hasUnqualifiedWrites(propertyName));
+            assertFalse(counter.hasUnqualifiedWrites(propertyName),
+                        "property setter for `" + propertyName + "`"  + " in scope: " + scope + " is called");
         }
     }
 
     private static void checkPropertyReadCount(JsNode node, String propertyName, String scope, int expectedCount) throws Exception {
         PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(findScope(node, scope));
-        assertEquals("Property read count: " + propertyName + " in scope: " + scope,
-                     expectedCount, counter.unqualifiedReadCount(propertyName));
+        assertEquals(expectedCount, counter.unqualifiedReadCount(propertyName),
+                     "Property read count: " + propertyName + " in scope: " + scope);
     }
 
     private static void checkPropertyWriteCount(JsNode node, String propertyName, String scope, int expectedCount) throws Exception {
         PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(findScope(node, scope));
-        assertEquals("Property write count: " + propertyName + " in scope: " + scope,
-                     expectedCount, counter.unqualifiedWriteCount(propertyName));
+        assertEquals(expectedCount, counter.unqualifiedWriteCount(propertyName),
+                     "Property write count: " + propertyName + " in scope: " + scope
+        );
     }
 
     public static void checkFunctionNotCalled(@NotNull JsNode node, @NotNull String functionName, @Nullable String exceptFunction)
@@ -590,8 +590,8 @@ public class DirectiveTestUtils {
         int functionCalledCount = counter.getQualifiedCallsCount(functionName);
 
         String errorMessage = "inline function `" + functionName + "` is called";
-        assertEquals(errorMessage, 0, functionCalledCount);
-        assertEquals("Not all excluded scopes found", excludedScopes.size(), counter.getExcludedScopeOccurrenceCount());
+        assertEquals(0, functionCalledCount, errorMessage);
+        assertEquals(excludedScopes.size(), counter.getExcludedScopeOccurrenceCount(), "Not all excluded scopes found");
     }
 
     public static void checkCalledInScope(
@@ -601,7 +601,7 @@ public class DirectiveTestUtils {
             boolean checkQualifier
     ) throws Exception {
         String errorMessage = functionName + " is not called inside " + scopeFunctionName;
-        assertFalse(errorMessage, isCalledInScope(node, functionName, scopeFunctionName, checkQualifier));
+        assertFalse(isCalledInScope(node, functionName, scopeFunctionName, checkQualifier), errorMessage);
     }
 
     public static void checkNotCalledInScope(
@@ -611,7 +611,7 @@ public class DirectiveTestUtils {
             boolean checkQualifier
     ) throws Exception {
         String errorMessage = functionName + " is called inside " + scopeFunctionName;
-        assertTrue(errorMessage, isCalledInScope(node, functionName, scopeFunctionName, checkQualifier));
+        assertTrue(isCalledInScope(node, functionName, scopeFunctionName, checkQualifier), errorMessage);
     }
 
     private static boolean isCalledInScope(
@@ -668,8 +668,7 @@ public class DirectiveTestUtils {
         void process(@NotNull JsNode ast,
                 @NotNull File sourceFile,
                 @NotNull String sourceCode,
-                @NotNull TargetBackend targetBackend,
-                List<Throwable> assertionErrors
+                @NotNull TargetBackend targetBackend
         ) throws Exception {
             List<String> directiveEntries = findLinesWithPrefixesRemoved(sourceCode, directive);
             for (String directiveEntry : directiveEntries) {
@@ -678,11 +677,7 @@ public class DirectiveTestUtils {
                     containsBackend(targetBackend, IGNORED_BACKENDS, arguments, false)) {
                     continue;
                 }
-                try {
-                    processEntry(ast, arguments);
-                } catch (AssertionError e) {
-                    assertionErrors.add(e);
-                }
+                processEntry(ast, arguments);
             }
         }
 

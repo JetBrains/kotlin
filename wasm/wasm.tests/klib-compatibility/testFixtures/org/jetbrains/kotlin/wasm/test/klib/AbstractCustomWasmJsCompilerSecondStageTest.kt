@@ -21,11 +21,10 @@ import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
-import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
+import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
@@ -69,13 +68,8 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
         useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
         useDirectives(WasmEnvironmentConfigurationDirectives)
         defaultDirectives {
-            if (customWasmJsCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
-                // We need to set the custom LV to let `UnsupportedFeaturesTestConfigurator` skip tests with
-                // the language features that are not supported in the given custom LV.
-                setupCustomLanguageVersionForKlibCompatibilityTest(customWasmJsCompilerSettings.defaultLanguageVersion)
+            setupCustomLVForKlibForwardCompatibilityTest(customWasmJsCompilerSettings.defaultLanguageVersion)
 
-                LANGUAGE with "+ExportKlibToOlderAbiVersion"
-            }
 //            +WITH_STDLIB
         }
 

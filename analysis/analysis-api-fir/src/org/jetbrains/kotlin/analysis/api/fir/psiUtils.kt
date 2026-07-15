@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.ifNoStatusCompilerPluginPresent
-import org.jetbrains.kotlin.analysis.api.fir.symbols.isTypeAliasedConstructor
+import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -55,6 +52,7 @@ private val allowedFakeElementKinds: Set<KtFakeSourceElementKind> =
         KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor,
         KtFakeSourceElementKind.SamConstructor,
         KtFakeSourceElementKind.JavaRecordComponentFunction,
+        KtFakeSourceElementKind.ReceiverFromType,
     )
 
 @OptIn(SuspiciousFakeSourceCheck::class)
@@ -73,8 +71,11 @@ private fun isAllowedFakeElementKind(kind: KtFakeSourceElementKind): Boolean =
 internal fun FirElement.findPsi(): PsiElement? =
     getAllowedPsi()
 
-@KaImplementationDetail
 internal fun KaFirSymbol<*>.findPsi(): PsiElement? {
+    if (this is KaFirPsiSymbol<*, *>) {
+        backingPsi?.let { return it }
+    }
+
     return firSymbol.findPsi(analysisSession.analysisScope)
 }
 

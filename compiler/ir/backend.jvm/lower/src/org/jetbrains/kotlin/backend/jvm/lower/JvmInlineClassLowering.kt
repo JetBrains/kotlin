@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -787,7 +789,32 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                 parameters.any { it.type.isInlineClassType() } &&
                 !constructedClass.isInlineClass
 
+    // Copy real defaults only when lowering the non-exposed constructor itself, fixing up the stub.
+    private fun IrConstructor.copyDefaultValuesFromOriginalConstructorReplacingStubs(original: IrConstructor) {
+        val typeParameterSubstitution = original.typeParameters.zip(typeParameters).toMap()
+        val valueParameterSubstitution = original.parameters.zip(parameters).associate { [originalParameter, replacementParameter] ->
+            originalParameter.symbol to replacementParameter
+        }
+
+        for ([originalParameter, replacementParameter] in original.parameters.zip(parameters)) {
+            val originalDefault = originalParameter.defaultValue
+            replacementParameter.defaultValue = if (originalDefault == null) {
+                null
+            } else {
+                factory.createExpressionBody(
+                    startOffset = originalDefault.startOffset,
+                    endOffset = originalDefault.endOffset,
+                    expression = originalDefault.expression.deepCopyWithSymbols(
+                        initialParent = this,
+                        createTypeRemapper = { IrTypeParameterRemapper(typeParameterSubstitution) },
+                    ).transform(DefaultValueParameterRemapper, valueParameterSubstitution),
+                )
+            }
+        }
+    }
+
     private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration> {
+        replacement.copyDefaultValuesFromOriginalConstructorReplacingStubs(function)
         replacement.parameters.forEach {
             it.defaultValue?.patchDeclarationParents(replacement)
             it.transformChildrenVoid()
@@ -956,5 +983,12 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         val replacement = getReflectionReplacement() ?: return super.visitRawFunctionReference(expression)
         expression.symbol = replacement.symbol
         return super.visitRawFunctionReference(expression)
+    }
+}
+
+private object DefaultValueParameterRemapper : IrTransformer<Map<IrValueParameterSymbol, IrValueParameter>>() {
+    override fun visitGetValue(expression: IrGetValue, data: Map<IrValueParameterSymbol, IrValueParameter>): IrExpression {
+        val newParameter = data[expression.symbol] ?: return expression
+        return IrGetValueImpl(expression.startOffset, expression.endOffset, newParameter.type, newParameter.symbol, expression.origin)
     }
 }

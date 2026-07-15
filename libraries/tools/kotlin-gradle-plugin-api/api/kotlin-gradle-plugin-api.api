@@ -139,6 +139,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptExtensionCon
 	public abstract fun getShowProcessorStats ()Z
 	public abstract fun getStrictMode ()Z
 	public abstract fun getStripMetadata ()Z
+	public abstract fun getStubGenerationScheme ()Lorg/gradle/api/provider/Property;
 	public abstract fun getUseBuildCache ()Z
 	public abstract fun getUseLightAnalysis ()Z
 	public abstract fun javacOptions (Lkotlin/jvm/functions/Function1;)V
@@ -164,6 +165,13 @@ public final class org/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig$DefaultIm
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptJavacOption {
 	public abstract fun option (Ljava/lang/String;)V
 	public abstract fun option (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KaptStubGenerationScheme : java/lang/Enum {
+	public static final field DIRECT Lorg/jetbrains/kotlin/gradle/dsl/KaptStubGenerationScheme;
+	public static final field JTREE Lorg/jetbrains/kotlin/gradle/dsl/KaptStubGenerationScheme;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KaptStubGenerationScheme;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/KaptStubGenerationScheme;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension : org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension {

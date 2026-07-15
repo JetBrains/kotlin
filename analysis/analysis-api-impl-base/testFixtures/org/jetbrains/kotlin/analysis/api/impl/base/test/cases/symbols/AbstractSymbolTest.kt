@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseIllegalPsiException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer.Companion.isCacheable
@@ -14,6 +17,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERER_OPTION
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.RENDER_IS_PUBLIC_API
+import org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol
+import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClassifierBodyRenderer
@@ -45,6 +50,7 @@ import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.util.concurrent.ExecutionException
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.javaField
+import kotlin.test.assertEquals
 import kotlin.test.fail
 
 abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
@@ -205,6 +211,20 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
     context(_: KaSession)
     private fun checkSymbol(symbol: KaSymbol, disablePsiBasedLogic: Boolean) {
+        val realPsi = symbol.realPsi
+        if (!disablePsiBasedLogic && realPsi != null && realPsi !is PsiPackage) {
+            val recreatedSymbol = when (realPsi) {
+                is KtFile -> realPsi.symbol
+                is KtDeclaration -> realPsi.symbol
+                is KtTypeReference -> ((realPsi.parent as KtCallableDeclaration).symbol as KaCallableSymbol).receiverParameter
+                is PsiClass -> realPsi.namedClassSymbol
+                is PsiMember -> realPsi.callableSymbol
+                else -> error("Unexpected ${realPsi::class.simpleName} realPsi for ${symbol::class.simpleName}")
+            }
+
+            assertEquals<KaSymbol?>(symbol, recreatedSymbol)
+        }
+
         /**
          * [KaSymbol] members can rebuild the backingPsi from the FIR symbol
          * even if the backing PSI was dropped for the containing symbol.

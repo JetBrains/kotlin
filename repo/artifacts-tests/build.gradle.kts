@@ -26,7 +26,7 @@ findProperty("deployVersion")?.let {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         workingDir = rootDir
 
         @OptIn(TemporaryTestFederationApi::class)

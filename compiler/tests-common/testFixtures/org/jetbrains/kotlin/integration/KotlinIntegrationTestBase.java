@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.integration;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.process.*;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -161,7 +158,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         return distPath != null ? new File(distPath).getParentFile() : new File(KtTestUtil.getHomeDirectory());
     }
 
-    private static class OutputListener extends ProcessAdapter {
+    private static class OutputListener implements ProcessListener {
         private final StringBuilder out;
         private final StringBuilder err;
 
@@ -182,8 +179,5 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
                 out.append(event.getText());
             }
         }
-
-        @Override
-        public void processTerminated(@NotNull ProcessEvent event) {}
     }
 }

@@ -17,7 +17,6 @@
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
-import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -196,7 +195,7 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateFileCheckTestsKt", generateTestsInBuildDirectory = true, configureTestDataCollection = {
         filePatterns.set(listOf("**/*.ll"))
     })
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         if (HostManager.hostIsMingw) {
             enabled = false
         } else {

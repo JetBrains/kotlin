@@ -96,7 +96,6 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
 
     testImplementation(testFixtures(project(":js:js.tests")))
-    testImplementation(libs.junit4)
     testImplementation(kotlinTest())
 
     // Dependencies for Kotlin/Native test infra:
@@ -168,8 +167,6 @@ dependencies {
     }
 
     testImplementation("org.jetbrains.kotlinx:atomicfu:0.25.0")
-
-    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 optInToExperimentalCompilerApi()
@@ -189,7 +186,7 @@ optInToK1Deprecation()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         useJUnitPlatform {
             // Exclude all tests with the "atomicfu-native" tag. They should be launched by another test task.
             excludeTags("atomicfu-native")

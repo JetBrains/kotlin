@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.extensions
 
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -14,11 +13,7 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.IrProvider
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.*
@@ -36,11 +31,6 @@ open class IrPluginContextImpl(
     private val st: ReferenceSymbolTable,
     override val irBuiltIns: IrBuiltIns,
     val linker: IrProvider,
-    @property:Deprecated(
-        "Consider using diagnosticReporter instead. See https://youtrack.jetbrains.com/issue/KT-78277 for more details",
-        level = DeprecationLevel.WARNING
-    )
-    override val messageCollector: MessageCollector,
     diagnosticReporter: DiagnosticReporter = DiagnosticsCollectorImpl(),
 ) : IrPluginContext {
     override val afterK2: Boolean = false

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,17 +7,12 @@ package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbolBase
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNoTypeArgumentsOnRhsError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 
 internal interface ConeDiagnosticPointer {
     companion object {
@@ -47,7 +42,7 @@ private class ConeCannotInferTypeParameterTypeDiagnosticPointer(
     private val reason = coneDiagnostic.reason
 
     override fun restore(session: KaFirSession): ConeDiagnostic? {
-        val typeParameterSymbol = with(session) { typeParameterPointer.restoreSymbol() } as? KaFirTypeParameterSymbol ?: return null
+        val typeParameterSymbol = with(session) { typeParameterPointer.restoreSymbol() } as? KaFirTypeParameterSymbolBase<*> ?: return null
         return ConeCannotInferTypeParameterType(typeParameterSymbol.firSymbol, reason)
     }
 }

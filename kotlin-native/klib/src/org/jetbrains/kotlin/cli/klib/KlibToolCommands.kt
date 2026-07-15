@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.DumpIrReferenceRenderingAsSignatureStrategy
-import org.jetbrains.kotlin.backend.common.IrSignaturesExtractor
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
+import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -28,6 +29,9 @@ import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
 import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.hasAbi
+import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
@@ -56,11 +60,17 @@ internal sealed class KlibToolCommand(
 
     protected fun KotlinIrSignatureVersion?.checkSupportedInLibrary(library: KotlinLibrary): Boolean {
         if (this != null) {
+            if (library.isCInteropLibrary()) {
+                // C-interop libraries basically support all versions of signatures,
+                // as the signatures are anyway generated on the fly.
+                return true
+            }
+
             val supportedSignatureVersions = library.versions.irSignatureVersions
             if (this !in supportedSignatureVersions) {
                 output.logError(
-                    "Signature version ${this.number} is not supported in library ${library.path}." +
-                                        " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}"
+                        "Signature version ${this.number} is not supported in library ${library.path}." +
+                                " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}"
                 )
                 return false
             }
@@ -99,7 +109,7 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
         }.sorted()
 
         val manifestProperties: SortedMap<String, String> = args.library.manifestProperties.entries
-            .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
+                .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
 
         output.appendLine("Full path: ${args.library.path.toRealPath()}")
         output.appendLine("Module name (metadata): ${metadataHeader.moduleName}")
@@ -172,14 +182,14 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
         linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
 
         val dumpOptions = DumpIrTreeOptions(
-            printSignatures = true,
-            filePathRenderer = { _, fullPath ->
-                // Similar to logic in IrFileEntryPathRelativizer.getRelativePath()
-                args.relativePathBases.firstNotNullOfOrNull { pathPrefix ->
-                    runIf(fullPath.startsWith(pathPrefix)) { fullPath.removePrefix(pathPrefix) }
-                } ?: fullPath
-            },
-            referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(KonanManglerIr)
+                printSignatures = true,
+                filePathRenderer = { _, fullPath ->
+                    // Similar to logic in IrFileEntryPathRelativizer.getRelativePath()
+                    args.relativePathBases.firstNotNullOfOrNull { pathPrefix ->
+                        runIf(fullPath.startsWith(pathPrefix)) { fullPath.removePrefix(pathPrefix) }
+                    } ?: fullPath
+                },
+                referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(KonanManglerIr)
         )
 
         output.append(irFragment.dump(dumpOptions))
@@ -255,8 +265,8 @@ internal class DumpAbi(output: KlibToolOutput, args: ParsedArguments) : KlibTool
             val abiSignatureVersion = AbiSignatureVersion.resolveByVersionNumber(signatureVersion.number)
             if (!abiSignatureVersion.isSupportedByAbiReader) {
                 output.logError(
-                    "Signature version ${signatureVersion.number} is not supported by the KLIB ABI reader." +
-                            " Supported versions: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
+                        "Signature version ${signatureVersion.number} is not supported by the KLIB ABI reader." +
+                                " Supported versions: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
                 )
                 return
             }
@@ -264,19 +274,19 @@ internal class DumpAbi(output: KlibToolOutput, args: ParsedArguments) : KlibTool
             abiSignatureVersion
         } ?: run {
             val versionsSupportedByAbiReader: Map<Int, AbiSignatureVersion> = AbiSignatureVersion.allSupportedByAbiReader
-                .associateBy { it.versionNumber }
+                    .associateBy { it.versionNumber }
 
             val abiSignatureVersion = args.library.versions.irSignatureVersions
-                .map { it.number }
-                .sortedDescending()
-                .firstNotNullOfOrNull { versionsSupportedByAbiReader[it] }
+                    .map { it.number }
+                    .sortedDescending()
+                    .firstNotNullOfOrNull { versionsSupportedByAbiReader[it] }
 
             if (abiSignatureVersion == null) {
                 output.logError(
-                    "There is no signature version that would be both supported in library ${args.library.path}" +
-                            " and by the KLIB ABI reader. Supported versions in the library:" +
-                            " ${args.library.versions.irSignatureVersions.joinToString { it.number.toString() }}" +
-                            ". Supported versions by the KLIB ABI reader: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
+                        "There is no signature version that would be both supported in library ${args.library.path}" +
+                                " and by the KLIB ABI reader. Supported versions in the library:" +
+                                " ${args.library.versions.irSignatureVersions.joinToString { it.number.toString() }}" +
+                                ". Supported versions by the KLIB ABI reader: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
                 )
                 return
             }
@@ -285,15 +295,15 @@ internal class DumpAbi(output: KlibToolOutput, args: ParsedArguments) : KlibTool
         }
 
         LibraryAbiRenderer.render(
-            libraryAbi = LibraryAbiReader.readAbiInfo(args.library.path.absolute().toFile()),
-            output = output,
-            settings = AbiRenderingSettings(
-                renderedSignatureVersion = abiSignatureVersion,
-                renderManifest = false,
-                renderDeclarations = true,
-                indentationString = "    ",
+                libraryAbi = LibraryAbiReader.readAbiInfo(args.library.path.absolute().toFile()),
+                output = output,
+                settings = AbiRenderingSettings(
+                        renderedSignatureVersion = abiSignatureVersion,
+                        renderManifest = false,
+                        renderDeclarations = true,
+                        indentationString = "    ",
 
-                )
+                        )
         )
     }
 }
@@ -304,25 +314,22 @@ internal class DumpMetadata(output: KlibToolOutput, args: ParsedArguments) : Kli
     }
 }
 
-internal class DumpMetadataSignatures(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
+internal class DumpSignatures(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        // Don't call `checkSupportedInLibrary()` - the signatures are anyway generated on the fly.
+        if (!args.signatureVersion.checkSupportedInLibrary(args.library)) return
 
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
-        val module = ModuleDescriptorLoader(output).load(args.library) ?: return
+        val signaturesExtractor = when {
+            args.library.isCInteropLibrary() -> IdSignaturesExtractorFromCInteropKlib(args.library)
+            args.library.ir != null -> IdSignaturesExtractorFromRegularKlib(args.library)
+            else -> {
+                output.logError("This library does not have IR and is not a C-interop library: ${args.library.path}")
+                return
+            }
+        }
 
-        DescriptorSignaturesRenderer(output, idSignatureRenderer).render(module)
-    }
-}
-
-internal class DumpIrSignatures(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
-    override fun execute() {
-        if (!checkLibraryHasIr(args.library) || !args.signatureVersion.checkSupportedInLibrary(args.library)) return
-
-        val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
-
-        val signatures = with(IrSignaturesExtractor(args.library)) {
+        val signatures = with(signaturesExtractor) {
             if (args.onlyTopLevelSignatures) extractOnlyTopLevelPublicSignatures() else extractAllPublicSignatures()
         }
 

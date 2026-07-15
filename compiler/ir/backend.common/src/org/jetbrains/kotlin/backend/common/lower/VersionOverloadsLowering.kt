@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
@@ -63,7 +66,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
             for ([index, parameter] in function.parameters.withIndex()) {
                 val version = when {
                     parameter.kind != IrParameterKind.Regular -> null
-                    parameter.defaultValue == null -> null
+                    !parameter.hasDefaultValue() -> null
                     else -> {
                         val annotation = parameter.getAnnotation(StandardNames.FqNames.introducedAt)
                         annotation?.getConstArgument<String>("version")

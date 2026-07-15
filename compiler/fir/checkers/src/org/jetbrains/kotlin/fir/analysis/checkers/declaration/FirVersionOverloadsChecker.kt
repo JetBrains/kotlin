@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -17,25 +16,26 @@ import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isCopyMethod
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.getStringArgument
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.correspondingProperty
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator.DoNothing
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
+import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -64,11 +64,9 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
         val paramVersions = computeAndCheckParameterVersions(declaration)
 
         val dependencyChecker = DependencyChecker(context, reporter, paramVersions)
-        val complexExpressionChecker = ComplexExpressionChecker(context, reporter)
         for (param in declaration.valueParameters) {
             val defaultValue = param.defaultValue ?: continue
             defaultValue.accept(dependencyChecker, paramVersions[param.symbol])
-            defaultValue.accept(complexExpressionChecker)
         }
     }
 
@@ -85,12 +83,6 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
         // check the requirements for a declaration with some @IntroducedAt
         val containingClassSymbol = declaration.getContainingClassSymbol()
         when {
-            !declaration.isFinal ->
-                reporter.reportOn(
-                    declaration.source,
-                    FirErrors.INVALID_VERSIONING_ON_NONFINAL_FUNCTION,
-                    SourceElementPositioningStrategies.DECLARATION_NAME
-                )
             declaration.isLocal ->
                 reporter.reportOn(
                     declaration.source,
@@ -118,6 +110,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun computeAndCheckParameterVersions(declaration: FirFunction): Map<FirCallableSymbol<*>, MavenComparableVersion> {
         val containingClassSymbol = declaration.getContainingClassSymbol()
+        val classScope = containingClassSymbol?.defaultType()?.scope(callableCopyTypeCalculator = DoNothing, requiredMembersPhase = null)
 
         var highestVersionUntilNow: MavenComparableVersion? = null
         val paramVersions = mutableMapOf<FirCallableSymbol<*>, MavenComparableVersion>()
@@ -139,14 +132,31 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
             // update version map and check arguments
             paramVersions[param.symbol] = version
 
+            var hasDefaultValue = param.defaultValue != null ||
+                    (declaration.symbol.getSingleMatchedExpectForActualOrNull()?.valueParameterSymbols?.getOrNull(i)?.hasDefaultValue == true)
+            if (!hasDefaultValue && classScope != null && declaration is FirNamedFunction) {
+                classScope.processFunctionsByName(declaration.nameOrSpecialName) {}
+
+                @OptIn(ScopeFunctionRequiresPrewarm::class)
+                classScope.processOverriddenFunctions(declaration.symbol) l@{ overridden ->
+                    val overriddenWithDefault = overridden.getSingleMatchedExpectForActualOrNull() ?: overridden
+                    val overriddenParam = overriddenWithDefault.valueParameterSymbols.getOrNull(i) ?: return@l ProcessorAction.NEXT
+                    if (overriddenParam.hasDefaultValue) {
+                        hasDefaultValue = true
+                        return@l ProcessorAction.STOP
+                    }
+                    ProcessorAction.NEXT
+                }
+            }
+
             when {
                 param.isVararg ->
                     reporter.reportOn(versionAnnotation.source ?: param.source, FirErrors.INVALID_VERSIONING_ON_VARARG)
 
-                param.isVal && declaration is FirConstructor && containingClassSymbol?.isInlineOrValue == true ->
+                declaration is FirConstructor && param.correspondingProperty != null && containingClassSymbol?.isInlineOrValue == true ->
                     reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER)
 
-                param.defaultValue == null && !declaration.isActual ->
+                !hasDefaultValue ->
                     reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_NON_OPTIONAL)
             }
 
@@ -194,23 +204,6 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
                     )
                 }
             }
-        }
-    }
-
-    private class ComplexExpressionChecker(
-        val context: CheckerContext,
-        val reporter: DiagnosticReporter
-    ) : FirDefaultVisitorVoid() {
-        override fun visitElement(element: FirElement) {
-            element.acceptChildren(this)
-        }
-
-        override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression) {
-            anonymousObjectExpression.tooComplex()
-        }
-
-        fun FirElement.tooComplex() {
-            reporter.reportOn(source, FirErrors.VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION, context)
         }
     }
 

@@ -1,4 +1,5 @@
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: Person
   classKind: CLASS
@@ -15,6 +16,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: Person
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
