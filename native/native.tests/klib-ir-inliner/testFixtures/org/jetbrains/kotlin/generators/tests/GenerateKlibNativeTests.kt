@@ -93,7 +93,11 @@ fun main(args: Array<String>) {
 
         // Dump KLIB IR tests
         testGroup(testsRoot, "native/native.tests/testData/klib/dump-ir") {
-            testClass<AbstractNativeKlibDumpIrTest> {
+            testClass<AbstractNativeKlibDumpIrTest>(
+                annotations = listOf(
+                    provider<UseDummyTestCaseGroupProvider>(),
+                )
+            ) {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }

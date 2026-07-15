@@ -104,7 +104,7 @@ abstract class AbstractKlibToolDumpHandler(
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper()
 
     final override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
-        val dump = makeDump(info.outputFile) ?: return
+        val dump = makeDump(info.outputFile, module) ?: return
         dumper.builderForModule(module.name).appendLine(dump)
     }
 
@@ -125,5 +125,5 @@ abstract class AbstractKlibToolDumpHandler(
     }
 
     /** Returns the text of the dump, if dump is available for the given type of KLIB. */
-    protected abstract fun makeDump(klib: File): String?
+    protected abstract fun makeDump(klib: File, module: TestModule): String?
 }

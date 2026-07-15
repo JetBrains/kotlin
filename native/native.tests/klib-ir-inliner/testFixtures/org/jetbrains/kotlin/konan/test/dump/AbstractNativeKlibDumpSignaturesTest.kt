@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpSignatures
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 import java.io.File
@@ -30,7 +31,7 @@ private class KlibToolSignaturesDumpHandler(
     override val signatureVersion: KotlinIrSignatureVersion,
     private val onlyTopLevelSignatures: Boolean,
 ) : AbstractKlibToolDumpHandler(testServices, suffix = if (onlyTopLevelSignatures) "tl" else null) {
-    override fun makeDump(klib: File) = KLIB(klib).dumpSignatures(
+    override fun makeDump(klib: File, module: TestModule) = KLIB(klib).dumpSignatures(
         testServices.testRunSettings.get<KotlinNativeClassLoader>().classLoader,
         signatureVersion,
         onlyTopLevelSignatures,

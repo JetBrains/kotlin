@@ -92,7 +92,8 @@ fun File.dumpMetadata(
 
 fun TestCompilationArtifact.KLIB.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
-): String = klibFile.dumpIr(kotlinNativeClassLoader)
+    absolutePathPrefixes: List<String> = emptyList(),
+): String = klibFile.dumpIr(kotlinNativeClassLoader, absolutePathPrefixes)
 
 fun File.dumpIr(
     kotlinNativeClassLoader: ClassLoader,

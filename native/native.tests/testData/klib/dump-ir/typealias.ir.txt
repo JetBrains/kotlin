@@ -1,5 +1,5 @@
-MODULE_FRAGMENT name:<typealias.kt>
-  FILE fqName:test fileName:typealias.kt
+MODULE_FRAGMENT name:<main>
+  FILE fqName:test fileName:/typealias.kt
     CLASS CLASS name:ClassName signature:test/ClassName|null[0] modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.ClassName
       CONSTRUCTOR signature:test/ClassName.<init>|<init>(){}[0] visibility:public returnType:test.ClassName [primary]
