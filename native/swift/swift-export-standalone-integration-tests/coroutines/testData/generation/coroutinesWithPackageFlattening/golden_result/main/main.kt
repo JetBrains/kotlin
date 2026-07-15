@@ -21,7 +21,7 @@ public fun flattened_testSuspendFunction(continuation: kotlin.native.internal.Na
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }

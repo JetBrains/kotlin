@@ -184,7 +184,7 @@ internal open class SirFunctionFromKtSymbol(
                     val methodName = this@SirFunctionFromKtSymbol.name
                     val tryPrefix = when {
                         isAsync -> "try await "
-                        errorType != SirType.never -> "try! "
+                        errorType != SirType.never -> "try "
                         else -> ""
                     }
                     if (params.any { it.isVariadic }) {

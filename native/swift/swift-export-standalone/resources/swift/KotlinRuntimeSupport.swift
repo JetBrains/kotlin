@@ -1,4 +1,5 @@
 @_implementationOnly import KotlinRuntimeSupportBridge
+import Foundation
 import KotlinRuntime
 
 public struct KotlinError: Error & CustomStringConvertible {
@@ -12,6 +13,37 @@ public struct KotlinError: Error & CustomStringConvertible {
         return __root____getExceptionMessage__TypesOfArguments__ExportedKotlinPackages_kotlin_Exception__(self.wrapped.__externalRCRef())
             ?? "KotlinException(\(self.wrapped.description))"
     }
+}
+
+package func kotlinThrowableRCRef(for error: any Error) -> UnsafeMutableRawPointer {
+    if let kotlinBase = error as? KotlinRuntime.KotlinBase, let throwableRef = SwiftError_retainedThrowableRef(kotlinBase.__externalRCRef()) {
+        return throwableRef
+    }
+
+    if let kotlinError = error as? KotlinError,
+       let throwableRef = SwiftError_retainedThrowableRef(kotlinError.wrapped.__externalRCRef()) {
+        return throwableRef
+    }
+    let errorObject = error as AnyObject
+    return SwiftError_create(Unmanaged.passUnretained(errorObject).toOpaque())
+}
+
+package func raiseKotlinError(_ outError: UnsafeMutableRawPointer?) throws {
+    guard let outError = outError else { return }
+    if let boxedError = SwiftError_unwrapBoxOrNull(outError) {
+        let swiftError = Unmanaged<AnyObject>.fromOpaque(boxedError).takeUnretainedValue() as! any Error
+        KotlinBridgeable_disposeRef(outError)
+        throw swiftError
+    }
+    let wrapper = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: outError)!
+    throw (wrapper as? any Error) ?? KotlinError(wrapped: wrapper)
+}
+
+package func swiftError(fromKotlinThrowable wrapper: KotlinRuntime.KotlinBase) -> any Error {
+    if let boxedError = SwiftError_unwrapBoxOrNull(wrapper.__externalRCRef()) {
+        return Unmanaged<AnyObject>.fromOpaque(boxedError).takeUnretainedValue() as! any Error
+    }
+    return (wrapper as? any Error) ?? KotlinError(wrapped: wrapper)
 }
 
 public protocol SealedType {

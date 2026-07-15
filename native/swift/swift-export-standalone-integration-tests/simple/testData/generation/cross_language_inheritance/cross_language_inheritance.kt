@@ -52,3 +52,11 @@ interface Boxed<T> {
     // property `_direct` witness.
     val boxLabel: String get() = "boxLabel"
 }
+
+// A throwing (`@Throws`) open method with a non-Unit return: its reverse bridge carries a Swift-thrown
+// error back to Kotlin through an out-error slot (the mirror of the forward `_out_error` channel), and
+// the non-Unit return exercises the scalar catch-path default.
+open class ThrowingMembers {
+    @Throws(Throwable::class)
+    open fun compute(x: Int): String = "computed: $x"
+}

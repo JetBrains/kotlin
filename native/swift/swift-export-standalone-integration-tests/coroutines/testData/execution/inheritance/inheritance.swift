@@ -119,9 +119,9 @@ func swiftSuspendOverrideCanThrow() async throws {
     }
 }
 
-// A Swift override that throws an error carrying an explicit message: the message must survive the
-// Swift -> Kotlin -> Swift round trip. The Swift `Error` type itself does not survive (it is bridged
-// through `NSError`/`SwiftException`), so we assert on the message we put in `NSLocalizedDescriptionKey`.
+// A Swift override that throws: with RCRef error carriage the Swift error round-trips
+// Swift -> Kotlin -> Swift back to ITSELF (the reverse bridge boxes it as a Kotlin `SwiftError`; the
+// forward bridge unwraps that box), so both its identity (`NSError`) and message survive.
 @Test
 func swiftSuspendOverrideThrowMessageSurvivesRoundTrip() async throws {
     class SwiftThrower: AsyncThrower {
@@ -136,6 +136,7 @@ func swiftSuspendOverrideThrowMessageSurvivesRoundTrip() async throws {
 
     if case let .failure(e) = result {
         #expect(!(e is CancellationError))
+        #expect(e is NSError, "the Swift override's error identity must survive the round trip")
         #expect(String(describing: e).contains("swift-boom-42"), "the Swift override's error message must survive the round trip")
     } else {
         Issue.record("expected the Swift override's error to propagate to the Kotlin caller")
@@ -143,7 +144,7 @@ func swiftSuspendOverrideThrowMessageSurvivesRoundTrip() async throws {
 }
 
 // Same as above, but for a Swift override of a Kotlin `suspend` *interface* method: the interface
-// reverse bridge's exception channel must carry the error message too.
+// reverse bridge's exception channel must carry the error identity and message too.
 @Test
 func swiftSuspendInterfaceOverrideThrowMessageSurvives() async throws {
     class ThrowingSpeaker: AsyncSpeakerBase {
@@ -158,25 +159,17 @@ func swiftSuspendInterfaceOverrideThrowMessageSurvives() async throws {
 
     if case let .failure(e) = result {
         #expect(!(e is CancellationError))
+        #expect(e is NSError, "the interface override's error identity must survive the round trip")
         #expect(String(describing: e).contains("interface-boom"), "the interface override's error message must survive the round trip")
     } else {
         Issue.record("expected the Swift interface override's error to propagate")
     }
 }
 
-// A Swift override that calls `super`, where the Kotlin super implementation throws. The Kotlin-origin
-// exception flows out through the Swift override frame (Kotlin -> Swift via the `_direct` forward bridge,
-// then Swift -> Kotlin via the reverse bridge's exception channel) back to the original caller, where it
-// surfaces as a thrown, non-cancellation error.
-//
-// KNOWN GAP: the original Kotlin message ("kotlin-boom") does NOT survive this Kotlin -> Swift -> Kotlin
-// double-cross. A single forward crossing preserves the message (cf. `testThrowing`), but here the Kotlin
-// exception is wrapped as a Swift `KotlinError` on the way out and then re-bridged to `NSError` on the way
-// back; `KotlinError` does not expose the underlying message via `CustomNSError`/`LocalizedError`, so the
-// caller only sees a generic `KotlinError` ("...KotlinRuntimeSupport.KotlinError error 1..."). We therefore
-// only assert that a non-cancellation error propagates.
-// TODO: tighten to assert the message contains "kotlin-boom" once Kotlin exception identity/message is
-//  preserved across the round trip (would require `KotlinError` to conform to `CustomNSError`).
+// A Swift override that calls `super`, where the Kotlin super implementation throws. With RCRef error
+// carriage the ORIGINAL Kotlin exception round-trips Kotlin -> Swift(super) -> Kotlin -> Swift with its
+// identity AND message intact: forward it is thrown transparently as the exported `AsyncException`;
+// reverse `kotlinThrowableRCRef` recognizes the Kotlin throwable coming home and re-raises the original.
 @Test
 func swiftSuspendOverrideRethrowsKotlinSuperException() async throws {
     class PassThrough: AsyncThrower {
@@ -191,6 +184,8 @@ func swiftSuspendOverrideRethrowsKotlinSuperException() async throws {
 
     if case let .failure(e) = result {
         #expect(!(e is CancellationError), "a non-cancellation error must propagate out through the Swift override frame")
+        #expect(e is AsyncException, "the original Kotlin exception type must survive the round trip")
+        #expect(String(describing: e).contains("kotlin-boom"), "the original Kotlin exception message must survive the round trip")
     } else {
         Issue.record("expected the Kotlin super exception to propagate")
     }
@@ -322,6 +317,39 @@ func swiftSuspendOverrideCustomErrorSurvivesCancellation() async throws {
         #expect(String(describing: e).contains("uncooperative-boom"))
     } else {
         Issue.record("expected the override's custom error to propagate, got \(result)")
+    }
+}
+
+// Forward transparency: a pure Kotlin `suspend` fn that throws must surface to a Swift `async` caller as
+// its concrete exported exception type (pattern-matchable), not an opaque wrapper.
+@Test
+func swiftAsyncCatchesConcreteKotlinException() async throws {
+    do {
+        _ = try await callBoom(t: AsyncThrower())
+        Issue.record("expected AsyncException to be thrown")
+    } catch let e as AsyncException {
+        #expect(String(describing: e).contains("kotlin-boom"))
+    }
+}
+
+// A Swift value-type error thrown by an override must round-trip Swift -> Kotlin -> Swift back to itself
+// (boxed as a Kotlin `SwiftError` on the way in, unwrapped on the way out).
+@Test
+func swiftAsyncErrorRoundTripsBackToSwift() async throws {
+    struct MySwiftError: Error, Equatable { let code: Int }
+    final class Thrower: AsyncThrower, @unchecked Sendable {
+        override func boom() async throws -> String { throw MySwiftError(code: 42) }
+    }
+
+    let result = await Task<String, any Error>.detached {
+        try await callBoom(t: Thrower())
+    }.result
+
+    if case let .failure(e) = result {
+        #expect(e is MySwiftError, "a Swift value-type error must round-trip back to Swift as itself")
+        #expect((e as? MySwiftError)?.code == 42)
+    } else {
+        Issue.record("expected the Swift value-type error to propagate")
     }
 }
 

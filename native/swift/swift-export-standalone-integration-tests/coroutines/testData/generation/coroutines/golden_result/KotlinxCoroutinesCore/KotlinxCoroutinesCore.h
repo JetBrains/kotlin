@@ -25,7 +25,7 @@ void * _Nullable kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift(void
 
 _Bool KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(void * pointerToBlock, _Bool _1);
 
-_Bool KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(void * pointerToBlock, NSError * _Nullable _1);
+_Bool KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(void * pointerToBlock, void * _Nullable _1);
 
 void * kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(_Bool (^function)(void * _Nullable , void *, void *, void *));
 

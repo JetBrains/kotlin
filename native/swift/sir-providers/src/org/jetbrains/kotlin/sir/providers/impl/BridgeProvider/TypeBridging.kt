@@ -49,7 +49,7 @@ internal fun asyncContinuationBridges(
     // exception
     // A `null` exception is used to signal a cancellation, see `suspendSwiftCoroutine`.
     AsCovariantBlock(
-        parameters = listOf(AsObjCBridged(SirSwiftModule.error.nominalType().optional(), CType.NSError.nullable)),
+        parameters = listOf(AsOptionalWrapper(AsError())),
         returnType = AsVoid,
     ),
     // cancellation
@@ -136,6 +136,7 @@ internal fun bridgeAsNSCollectionElement(type: SirType): BidirectionalBridge = w
     is AsBlockPointerInCollection,
     is AsObjCBridged,
     AsOutError,
+    is AsError,
     AsVoid,
         -> bridge
 }
@@ -147,7 +148,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
     return when (val subtype = type.typeDeclaration) {
         SirSwiftModule.unsafeMutableRawPointer -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
         SirSwiftModule.never -> AsNothing
-        SirSwiftModule.error -> AsObjCBridged(SirSwiftModule.error.nominalType(), CType.NSError)
+        SirSwiftModule.error -> AsError()
 
         SirSwiftModule.optional -> when (val bridge = bridgeType(type.typeArguments.first(), position)) {
             is AsObject,
@@ -158,6 +159,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
             is AsContravariantBlock,
             is AsCovariantBlock,
             is AsInvariantBlock,
+            is AsError,
             is SirCustomTypeTranslatorImpl.RangeBridge
                 -> AsOptionalWrapper(bridge)
 
@@ -418,6 +420,40 @@ internal sealed interface Bridge {
                     "$swiftFqName.__createClassWrapper(externalRCRef: $valueExpression)"
                 }
             }
+        }
+    }
+
+    /**
+     * Bridge between swift errors and kotlin throwables
+     *
+     * Unlike a borrowing [AsObject] parameter, the CONSUMER owns and disposes the `+1` ref the producer created, in both directions
+     */
+    class AsError(override val swiftType: SirType = SirSwiftModule.error.nominalType()) : BidirectionalBridge {
+        override val kotlinType = KotlinType.KotlinObject
+        override val cType = CType.Object
+
+        override val inKotlinSources = object : ValueConversion {
+            // reverse: Kotlin CONSUMES a Swift-produced Throwable RCRef (owns the +1 -> deref + release + dispose)
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "throwableFromReverseBridge($valueExpression)"
+
+            // forward: Kotlin PRODUCES the ref from the thrown Throwable
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            // reverse: Swift PRODUCES the ref from the caught Error
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "KotlinRuntimeSupport.kotlinThrowableRCRef(for: $valueExpression)"
+
+            // forward: Swift CONSUMES the ref -> concrete/transparent Error (adopts+disposes via __createClassWrapper)
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "KotlinRuntimeSupport.swiftError(fromKotlinThrowable: ${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createClassWrapper(externalRCRef: $valueExpression)!)"
         }
     }
 
@@ -915,6 +951,7 @@ internal sealed interface Bridge {
                     wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
                             wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsTypedFlow ||
                             wrappedObject is AsContravariantBlock || wrappedObject is AsInvariantBlock ||
+                            wrappedObject is AsError ||
                             wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
                 )
                 return valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
@@ -926,7 +963,7 @@ internal sealed interface Bridge {
                 return when (wrappedObject) {
                     is AsObjCBridged, is AsCovariantBlock, is AsInvariantBlock ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTypedFlow, is SirCustomTypeTranslatorImpl.RangeBridge ->
+                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTypedFlow, is AsError, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res?: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"

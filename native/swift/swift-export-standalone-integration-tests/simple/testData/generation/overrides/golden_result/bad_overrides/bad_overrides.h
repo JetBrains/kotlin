@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 int32_t weird_A_bar_get__reverse_swift(void * self);
 
-_Bool weird_A_throws__reverse_swift(void * self);
+_Bool weird_A_throws__reverse_swift(void * self, void *_Nullable * _Nonnull _out_error);
 
 int32_t weird_A_bar_get(void * self);
 

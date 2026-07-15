@@ -24,7 +24,7 @@ internal external fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArgumen
 public suspend fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>, value: kotlin.Any?): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
-    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -39,7 +39,7 @@ internal external fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArg
 public suspend fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>, value: kotlin.Any?): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
-    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -142,8 +142,8 @@ public fun KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__T
 @ExportedBridge("KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
 public fun KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<platform.Foundation.NSError>(_1)
-    val _result = run { (__pointerToBlock as Function1<platform.Foundation.NSError?, Unit>).invoke(___1) }
+    val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else throwableFromReverseBridge(_1)
+    val _result = run { (__pointerToBlock as Function1<kotlin.Throwable?, Unit>).invoke(___1) }
     return run { _result; true }
 }
 
@@ -152,7 +152,7 @@ public fun kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Opt
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(function);
         suspend { arg0: kotlin.Any? ->
-            suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+            suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
                 val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
                 val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
                 val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
@@ -180,7 +180,7 @@ public fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_O
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -206,7 +206,7 @@ public fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swi
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }

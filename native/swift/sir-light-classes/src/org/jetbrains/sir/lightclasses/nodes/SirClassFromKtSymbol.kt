@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.providers.*
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.updateImportFor
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.swiftFqName
@@ -151,7 +153,9 @@ internal abstract class SirAbstractClassFromKtSymbol(
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
         val isUnavailable = this.isUnavailable
-        ktSymbol.superTypes
+        val errorConformance = SirSwiftModule.error.takeIf { ktSymbol.classId == StandardClassIds.Throwable }
+
+        listOfNotNull(errorConformance) + ktSymbol.superTypes
             .asSequence()
             .filterIsInstance<KaClassType>()
             .mapNotNull { it.expandedSymbol }

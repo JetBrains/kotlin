@@ -173,6 +173,34 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
         }
     }
 }
+open class ThrowingMembers: KotlinRuntime.KotlinBase {
+    public init() {
+        let __kt = __root___ThrowingMembers_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___ThrowingMembers_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    open func compute(
+        x: Swift.Int32
+    ) throws -> Swift.String {
+        if Self.self == main.ThrowingMembers.self {
+            var _out_error: UnsafeMutableRawPointer? = nil
+            let _result = ThrowingMembers_compute__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), x, &_out_error)
+            try KotlinRuntimeSupport.raiseKotlinError(_out_error)
+            return _result
+        } else {
+            var _out_error: UnsafeMutableRawPointer? = nil
+            let _result = ThrowingMembers_compute__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), x, &_out_error)
+            try KotlinRuntimeSupport.raiseKotlinError(_out_error)
+            return _result
+        }
+    }
+}
 @_documentation(visibility: internal)
 extension main.Boxed where Self : main.__Boxed {
     public var boxLabel: Swift.String {
@@ -405,4 +433,16 @@ package func Greeter_salutation__reverse_swift(_ `self`: Swift.UnsafeMutableRawP
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Greeter
     let _result: Swift.String = _self.salutation()
     return _result
+}
+
+@_cdecl("ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift")
+package func ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ x: Swift.Int32, _ _out_error: Swift.UnsafeMutablePointer<Swift.UnsafeMutableRawPointer?>) -> Swift.String {
+    let _self = main.ThrowingMembers.__createClassWrapper(externalRCRef: `self`)!
+    do {
+        let _result: Swift.String = try _self.compute(x: x)
+        return _result
+    } catch {
+        _out_error.pointee = KotlinRuntimeSupport.kotlinThrowableRCRef(for: error)
+        return ""
+    }
 }
