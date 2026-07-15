@@ -17,6 +17,11 @@ import java.util.Base64
 
 data class AndroidRuntimeTestResult(val testName: String, val failureText: String?, val elapsedTimeMs: Long)
 
+interface AndroidRuntimeTestListener {
+    fun testStarted(testName: String) {}
+    fun testFinished(result: AndroidRuntimeTestResult) {}
+}
+
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) : AutoCloseable {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -73,15 +78,19 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    fun runTests(flavorsToRun: List<String>): Map<String, AndroidRuntimeTestResult> {
-        val result: Map<String, AndroidRuntimeTestResult>
-        runBlocking {
-            result = runTestsInStartedEmulator(flavorsToRun)
+    fun runTestsAsync(
+        flavorsToRun: List<String>,
+        listener: AndroidRuntimeTestListener,
+    ): Deferred<Map<String, AndroidRuntimeTestResult>> {
+        return scope.async {
+            runTestsInStartedEmulator(flavorsToRun, listener)
         }
-        return result
     }
 
-    private suspend fun runTestsInStartedEmulator(flavorsToRun: List<String>): Map<String, AndroidRuntimeTestResult> {
+    private suspend fun runTestsInStartedEmulator(
+        flavorsToRun: List<String>,
+        listener: AndroidRuntimeTestListener,
+    ): Map<String, AndroidRuntimeTestResult> {
         assertNotEquals(0L, flavorsToRun.size.toLong(), "There are no generated Android test flavors to run")
         check(isStarted) { "Android emulator is not started" }
         val emulator = emulator ?: error("Android emulator is not created")
@@ -93,8 +102,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             for (flavor in flavorsToRun) {
                 installAndroidDebugTestWithRetry(gradleRunner, emulator, flavor)
                 val className = flavor.capitalizeAsciiOnly()
-                val flavorResults = runTestsOnEmulator(emulator, className)
-                reportElapsedTimes(flavor, flavorResults)
+                val flavorResults = runTestsOnEmulator(emulator, className, listener)
                 for (result in flavorResults) {
                     check(allResults.put(result.testName, result) == null) {
                         "Duplicate Android runtime result for ${result.testName}"
@@ -108,104 +116,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
 
         return allResults
-    }
-
-    private fun processReport(resultOutput: String, suiteName: String): List<AndroidRuntimeTestResult> {
-        try {
-            val testCases = parseInstrumentationOutput(resultOutput)
-            assertNotEquals(0L, testCases.size.toLong(), "There is no test results in report for $suiteName")
-            return testCases
-        } catch (e: Throwable) {
-            throw RuntimeException("Can't parse test results for $suiteName\n$resultOutput", e)
-        }
-    }
-
-    private fun parseInstrumentationOutput(output: String): List<AndroidRuntimeTestResult> {
-        val casePrefix = "KOTLIN_BOX_CASE|"
-        val markerPrefix = casePrefix.substringBefore('|')
-        val statusFail = "FAIL"
-        val lines = extractResultSection(output)
-        val results = arrayListOf<AndroidRuntimeTestResult>()
-        val logicalLines = arrayListOf<String>()
-        var pendingLine: StringBuilder? = null
-
-        for (line in lines) {
-            val startsWithMarker = line.startsWith(markerPrefix) || line.startsWith("KOTLIN_BOX_RESULTS_END")
-            if (startsWithMarker) {
-                pendingLine?.let { logicalLines.add(it.toString()) }
-                pendingLine = StringBuilder(line)
-                continue
-            }
-
-            if (pendingLine == null) {
-                pendingLine = StringBuilder(line)
-                continue
-            }
-
-            // Non-marker line is a continuation:
-            // - if previous logical line started with marker => payload split
-            // - if previous logical line did not start with marker => marker itself was split
-            if (line.isNotBlank()) {
-                pendingLine.append(line.trim())
-            }
-        }
-
-        pendingLine?.let { logicalLines.add(it.toString()) }
-
-        for (line in logicalLines) {
-            val markerIndex = line.indexOf(casePrefix)
-            if (markerIndex == -1) continue
-
-            val payload = line.substring(markerIndex)
-            val chunks = payload.split("|", limit = 5)
-            if (chunks.size < 4) continue
-
-            val testName = chunks[1]
-            val status = chunks[2]
-            val elapsedTimeMs = chunks[3].toLong()
-            val failureText = if (status == statusFail && chunks.size == 5) {
-                String(Base64.getDecoder().decode(chunks[4].replace("\\s+".toRegex(), "")))
-            } else {
-                null
-            }
-
-            results += AndroidRuntimeTestResult(testName, failureText, elapsedTimeMs)
-        }
-
-        return results
-    }
-
-    private fun extractResultSection(output: String): List<String> {
-        val resultBegin = "KOTLIN_BOX_RESULTS_BEGIN"
-        val resultEnd = "KOTLIN_BOX_RESULTS_END"
-
-        val lines = output.lines()
-        val resultLines = arrayListOf<String>()
-        var collecting = false
-
-        for (rawLine in lines) {
-            val beginIdx = rawLine.indexOf(resultBegin)
-            if (beginIdx != -1) {
-                collecting = true
-                resultLines.add(rawLine.substring(beginIdx))
-                continue
-            }
-
-            if (!collecting) continue
-
-            val line = if (rawLine.startsWith("INSTRUMENTATION_RESULT: stream=")) {
-                rawLine.removePrefix("INSTRUMENTATION_RESULT: stream=")
-            } else {
-                rawLine
-            }
-            resultLines.add(line)
-
-            if (line.contains(resultEnd)) {
-                break
-            }
-        }
-
-        return resultLines
     }
 
     private suspend fun installAndroidDebugTestWithRetry(
@@ -241,11 +151,20 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    private suspend fun runTestsOnEmulator(emulator: Emulator, className: String): List<AndroidRuntimeTestResult> {
+    private suspend fun runTestsOnEmulator(
+        emulator: Emulator,
+        className: String,
+        listener: AndroidRuntimeTestListener,
+    ): List<AndroidRuntimeTestResult> {
         val platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea")
+        val statusParser = InstrumentationStatusParser(listener)
         try {
-            val resultOutput = emulator.runTestsViaInstrumentation("org.jetbrains.kotlin.android.tests.$className")
-            return processReport(resultOutput, className)
+            emulator.runTestsViaInstrumentation(
+                "org.jetbrains.kotlin.android.tests.$className",
+                stdoutProcessor = statusParser::append,
+            )
+            statusParser.flush()
+            return statusParser.results(className)
         } finally {
             if (platformPrefixProperty != null) {
                 System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, platformPrefixProperty)
@@ -255,16 +174,111 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    private fun reportElapsedTimes(flavor: String, results: List<AndroidRuntimeTestResult>) {
-        println("Android runtime elapsed times for flavor $flavor:")
-        for (result in results) {
-            println("  ${result.testName}: ${result.elapsedTimeMs} ms")
-        }
-    }
-
     private suspend fun throwIfBackgroundProcessFailed() {
         emulatorJob?.let { if (it.isCompleted) it.await() }
         logcatJob?.let { if (it.isCompleted) it.await() }
+    }
+
+    private class InstrumentationStatusParser(
+        private val listener: AndroidRuntimeTestListener,
+    ) {
+        private val pendingText = StringBuilder()
+        private val statusValues = linkedMapOf<String, String>()
+        private val results = linkedMapOf<String, AndroidRuntimeTestResult>()
+        private var lastStatusKey: String? = null
+
+        fun append(chunk: String) {
+            pendingText.append(chunk)
+            while (true) {
+                val lineEnd = pendingText.indexOf("\n")
+                if (lineEnd == -1) return
+
+                val line = pendingText.substring(0, lineEnd).trimEnd('\r')
+                pendingText.delete(0, lineEnd + 1)
+                processLine(line)
+            }
+        }
+
+        fun flush() {
+            if (pendingText.isNotEmpty()) {
+                processLine(pendingText.toString().trimEnd('\r'))
+                pendingText.clear()
+            }
+        }
+
+        fun results(suiteName: String): List<AndroidRuntimeTestResult> {
+            assertNotEquals(0L, results.size.toLong(), "There is no test results in status output for $suiteName")
+            return results.values.toList()
+        }
+
+        private fun processLine(line: String) {
+            when {
+                line.startsWith(INSTRUMENTATION_STATUS_PREFIX) -> {
+                    val payload = line.removePrefix(INSTRUMENTATION_STATUS_PREFIX)
+                    val separatorIndex = payload.indexOf('=')
+                    if (separatorIndex == -1) {
+                        lastStatusKey = null
+                        return
+                    }
+
+                    val key = payload.substring(0, separatorIndex)
+                    val value = payload.substring(separatorIndex + 1)
+                    statusValues[key] = value
+                    lastStatusKey = key
+                }
+
+                line.startsWith(INSTRUMENTATION_STATUS_CODE_PREFIX) -> {
+                    reportStatusBlock()
+                    statusValues.clear()
+                    lastStatusKey = null
+                }
+
+                line.isNotBlank() && lastStatusKey != null -> {
+                    val key = lastStatusKey ?: return
+                    statusValues[key] = statusValues.getValue(key) + line.trim()
+                }
+            }
+        }
+
+        private fun reportStatusBlock() {
+            when (statusValues[EVENT_KEY]) {
+                EVENT_STARTED -> {
+                    val testName = statusValues[TEST_NAME_KEY] ?: return
+                    listener.testStarted(testName)
+                }
+
+                EVENT_FINISHED -> {
+                    val testName = statusValues[TEST_NAME_KEY] ?: return
+                    val status = statusValues[STATUS_KEY] ?: return
+                    val elapsedTimeMs = statusValues[ELAPSED_TIME_MS_KEY]?.toLongOrNull() ?: return
+                    val failureText = statusValues[FAILURE_PAYLOAD_KEY]?.let { payload ->
+                        String(Base64.getDecoder().decode(payload.replace("\\s+".toRegex(), "")))
+                    }
+                    val result = AndroidRuntimeTestResult(
+                        testName,
+                        failureText.takeIf { status == STATUS_FAIL },
+                        elapsedTimeMs,
+                    )
+                    check(results.put(result.testName, result) == null) {
+                        "Duplicate Android runtime status result for ${result.testName}"
+                    }
+                    listener.testFinished(result)
+                }
+            }
+        }
+
+        companion object {
+            private const val INSTRUMENTATION_STATUS_PREFIX = "INSTRUMENTATION_STATUS: "
+            private const val INSTRUMENTATION_STATUS_CODE_PREFIX = "INSTRUMENTATION_STATUS_CODE: "
+            private const val EVENT_KEY = "kotlinBoxEvent"
+            private const val EVENT_STARTED = "started"
+            private const val EVENT_FINISHED = "finished"
+            private const val TEST_NAME_KEY = "testName"
+            private const val STATUS_KEY = "status"
+            private const val STATUS_FAIL = "FAIL"
+            private const val ELAPSED_TIME_MS_KEY = "elapsedTimeMs"
+            private const val FAILURE_PAYLOAD_KEY = "failurePayloadBase64"
+        }
     }
 
     override fun close() {

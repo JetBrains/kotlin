@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 public class KotlinBoxInstrumentation extends Instrumentation {
     private static final String ARG_CLASS = "class";
+    private static final int STATUS_CODE_IN_PROGRESS = 0;
     private Bundle startArguments;
 
     @Override
@@ -25,7 +26,7 @@ public class KotlinBoxInstrumentation extends Instrumentation {
         Bundle args = startArguments;
         String suiteClass = args != null ? args.getString(ARG_CLASS) : null;
 
-        KotlinBoxResultCollector collector = new KotlinBoxResultCollector();
+        KotlinBoxResultCollector collector = new KotlinBoxResultCollector(new StatusReporter(this));
         int resultCode = Activity.RESULT_OK;
 
         try {
@@ -41,8 +42,35 @@ public class KotlinBoxInstrumentation extends Instrumentation {
             resultCode = Activity.RESULT_CANCELED;
         }
 
-        Bundle result = new Bundle();
-        result.putString(REPORT_KEY_STREAMRESULT, collector.render());
-        finish(resultCode, result);
+        finish(resultCode, new Bundle());
+    }
+
+    private static final class StatusReporter implements KotlinBoxResultCollector.Listener {
+        private final KotlinBoxInstrumentation instrumentation;
+
+        private StatusReporter(KotlinBoxInstrumentation instrumentation) {
+            this.instrumentation = instrumentation;
+        }
+
+        @Override
+        public void testStarted(String name) {
+            Bundle status = new Bundle();
+            status.putString(KotlinBoxResultCollector.EVENT_KEY, KotlinBoxResultCollector.EVENT_STARTED);
+            status.putString(KotlinBoxResultCollector.TEST_NAME_KEY, name);
+            instrumentation.sendStatus(STATUS_CODE_IN_PROGRESS, status);
+        }
+
+        @Override
+        public void testFinished(String name, String statusText, long elapsedTimeMs, String failurePayloadBase64) {
+            Bundle status = new Bundle();
+            status.putString(KotlinBoxResultCollector.EVENT_KEY, KotlinBoxResultCollector.EVENT_FINISHED);
+            status.putString(KotlinBoxResultCollector.TEST_NAME_KEY, name);
+            status.putString(KotlinBoxResultCollector.STATUS_KEY, statusText);
+            status.putString(KotlinBoxResultCollector.ELAPSED_TIME_MS_KEY, Long.toString(elapsedTimeMs));
+            if (failurePayloadBase64 != null) {
+                status.putString(KotlinBoxResultCollector.FAILURE_PAYLOAD_KEY, failurePayloadBase64);
+            }
+            instrumentation.sendStatus(STATUS_CODE_IN_PROGRESS, status);
+        }
     }
 }

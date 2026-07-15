@@ -9,24 +9,34 @@ import android.util.Base64;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 public class KotlinBoxResultCollector {
-    public static final String RESULT_BEGIN = "KOTLIN_BOX_RESULTS_BEGIN";
-    public static final String RESULT_END = "KOTLIN_BOX_RESULTS_END";
-    public static final String CASE_PREFIX = "KOTLIN_BOX_CASE|";
     public static final String STATUS_OK = "OK";
     public static final String STATUS_FAIL = "FAIL";
+    public static final String EVENT_KEY = "kotlinBoxEvent";
+    public static final String EVENT_STARTED = "started";
+    public static final String EVENT_FINISHED = "finished";
+    public static final String TEST_NAME_KEY = "testName";
+    public static final String STATUS_KEY = "status";
+    public static final String ELAPSED_TIME_MS_KEY = "elapsedTimeMs";
+    public static final String FAILURE_PAYLOAD_KEY = "failurePayloadBase64";
 
-    private final List<Entry> entries = new ArrayList<>();
+    private final Listener listener;
+
+    public KotlinBoxResultCollector(Listener listener) {
+        this.listener = listener;
+    }
+
+    public void recordStart(String name) {
+        listener.testStarted(name);
+    }
 
     public void recordSuccess(String name) {
         recordSuccess(name, -1L);
     }
 
     public void recordSuccess(String name, long elapsedTimeMs) {
-        entries.add(new Entry(name, STATUS_OK, elapsedTimeMs, null));
+        listener.testFinished(name, STATUS_OK, elapsedTimeMs, null);
     }
 
     public void recordFailure(String name, String context, Throwable throwable) {
@@ -34,21 +44,7 @@ public class KotlinBoxResultCollector {
     }
 
     public void recordFailure(String name, String context, Throwable throwable, long elapsedTimeMs) {
-        entries.add(new Entry(name, STATUS_FAIL, elapsedTimeMs, encodeFailure(context, throwable)));
-    }
-
-    public String render() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(RESULT_BEGIN).append('\n');
-        for (Entry entry : entries) {
-            sb.append(CASE_PREFIX).append(entry.name).append('|').append(entry.status).append('|').append(entry.elapsedTimeMs);
-            if (entry.failurePayloadBase64 != null) {
-                sb.append('|').append(entry.failurePayloadBase64);
-            }
-            sb.append('\n');
-        }
-        sb.append(RESULT_END).append('\n');
-        return sb.toString();
+        listener.testFinished(name, STATUS_FAIL, elapsedTimeMs, encodeFailure(context, throwable));
     }
 
     private static String encodeFailure(String context, Throwable throwable) {
@@ -62,17 +58,9 @@ public class KotlinBoxResultCollector {
         return Base64.encodeToString(sw.toString().getBytes(), Base64.NO_WRAP);
     }
 
-    private static final class Entry {
-        private final String name;
-        private final String status;
-        private final long elapsedTimeMs;
-        private final String failurePayloadBase64;
+    public interface Listener {
+        void testStarted(String name);
 
-        private Entry(String name, String status, long elapsedTimeMs, String failurePayloadBase64) {
-            this.name = name;
-            this.status = status;
-            this.elapsedTimeMs = elapsedTimeMs;
-            this.failurePayloadBase64 = failurePayloadBase64;
-        }
+        void testFinished(String name, String status, long elapsedTimeMs, String failurePayloadBase64);
     }
 }

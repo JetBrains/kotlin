@@ -102,6 +102,7 @@ class UnitTestFileWriter(
         p.println("System.out.println(\"Running... $testName\");")
         p.println("{")
         p.pushIndent()
+        p.println("collector.recordStart(\"$testName\");")
         p.println("long startedAtMs = System.currentTimeMillis();")
         p.println("try {")
         p.pushIndent()

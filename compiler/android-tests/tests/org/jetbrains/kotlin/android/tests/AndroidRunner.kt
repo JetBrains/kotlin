@@ -18,18 +18,17 @@ package org.jetbrains.kotlin.android.tests
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.util.io.FileUtil
-import org.junit.jupiter.api.AfterAll
+import kotlinx.coroutines.*
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.fail
-import org.junit.jupiter.api.DynamicContainer
-import org.junit.jupiter.api.DynamicNode
-import org.junit.jupiter.api.DynamicTest
-import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
+@ExtendWith(AndroidRuntimeReportExtension::class)
 @Execution(ExecutionMode.SAME_THREAD)
 class AndroidRunner {
     companion object {
@@ -99,8 +98,8 @@ class AndroidRunner {
         private val plan: AndroidTestPlan
     ) {
         private val plannedTestNames = plan.tests.mapTo(linkedSetOf()) { it.info.name }
-        private var cachedResults: Result<Map<String, AndroidRuntimeTestResult>>? = null
         private var cachedRunner: Result<CodegenTestsOnAndroidRunner>? = null
+        private var runtimeRun: RuntimeRun? = null
 
         fun close() {
             cachedRunner?.getOrNull()?.close()
@@ -111,9 +110,13 @@ class AndroidRunner {
         }
 
         fun assertPassed(test: AndroidPlannedTest) {
-            val result = results()[test.info.name] ?: fail<AndroidRuntimeTestResult>(
-                "No Android runtime result for ${test.info.name} (${test.info.file.path})"
-            )
+            val result = runBlocking {
+                runtimeRun().awaitStarted(test)
+                AndroidRuntimeReport.publishStarted(test)
+                runtimeRun().awaitFinished(test).also {
+                    AndroidRuntimeReport.publishFinished(test, it)
+                }
+            }
             val failureText = result.failureText
             if (failureText != null) {
                 fail<Unit>("Android runtime failure for ${test.info.name} (${test.info.file.path}):\n$failureText")
@@ -121,22 +124,12 @@ class AndroidRunner {
         }
 
         fun assertNoUnexpectedResults() {
-            val unexpectedTestNames = results().keys - plannedTestNames
+            val unexpectedTestNames = runBlocking {
+                runtimeRun().awaitResults().keys - plannedTestNames
+            }
             if (unexpectedTestNames.isNotEmpty()) {
                 fail<Unit>("Unexpected Android runtime results: ${unexpectedTestNames.joinToString()}")
             }
-        }
-
-        private fun results(): Map<String, AndroidRuntimeTestResult> {
-            val cached = cachedResults
-            if (cached != null) return cached.getOrThrow()
-
-            val result = runCatching {
-                println("Run tests on Android...")
-                emulatorRunner().runTests(plan.flavorsToRun)
-            }
-            cachedResults = result
-            return result.getOrThrow()
         }
 
         private fun emulatorRunner(): CodegenTestsOnAndroidRunner {
@@ -149,6 +142,135 @@ class AndroidRunner {
             }
             cachedRunner = result
             return result.getOrThrow()
+        }
+
+        private fun runtimeRun(): RuntimeRun {
+            runtimeRun?.let { return it }
+
+            println("Run tests on Android...")
+            return RuntimeRun(plan, emulatorRunner()).also {
+                runtimeRun = it
+            }
+        }
+
+        private class RuntimeRun(
+            private val plan: AndroidTestPlan,
+            runner: CodegenTestsOnAndroidRunner,
+        ) {
+            private val started = plan.tests.associate { it.info.name to CompletableDeferred<Unit>() }
+            private val finished = plan.tests.associate { it.info.name to CompletableDeferred<AndroidRuntimeTestResult>() }
+
+            private val asyncResults: Deferred<Map<String, AndroidRuntimeTestResult>> = runner.runTestsAsync(
+                plan.flavorsToRun,
+                object : AndroidRuntimeTestListener {
+                    override fun testStarted(testName: String) {
+                        started[testName]?.complete(Unit)
+                    }
+
+                    override fun testFinished(result: AndroidRuntimeTestResult) {
+                        started[result.testName]?.complete(Unit)
+                        finished[result.testName]?.complete(result)
+                    }
+                }
+            )
+
+            init {
+                asyncResults.invokeOnCompletion { cause ->
+                    if (cause != null) {
+                        completePendingExceptionally(cause)
+                    } else {
+                        completeMissingResults()
+                    }
+                }
+            }
+
+            suspend fun awaitStarted(test: AndroidPlannedTest) {
+                started.getValue(test.info.name).await()
+            }
+
+            suspend fun awaitFinished(test: AndroidPlannedTest): AndroidRuntimeTestResult {
+                return finished.getValue(test.info.name).await()
+            }
+
+            suspend fun awaitResults(): Map<String, AndroidRuntimeTestResult> {
+                return asyncResults.await()
+            }
+
+            private fun completePendingExceptionally(cause: Throwable) {
+                for (job in started.values) {
+                    job.completeExceptionally(cause)
+                }
+                for (job in finished.values) {
+                    job.completeExceptionally(cause)
+                }
+            }
+
+            private fun completeMissingResults() {
+                for (job in started.values) {
+                    job.complete(Unit)
+                }
+                for (test in plan.tests) {
+                    finished.getValue(test.info.name).completeExceptionally(
+                        AssertionError("No Android runtime result for ${test.info.name} (${test.info.file.path})")
+                    )
+                }
+            }
+        }
+    }
+}
+
+private object AndroidRuntimeReport {
+    private val currentContext = ThreadLocal<ExtensionContext>()
+
+    fun <T> withContext(extensionContext: ExtensionContext, action: () -> T): T {
+        val previous = currentContext.get()
+        currentContext.set(extensionContext)
+        return try {
+            action()
+        } finally {
+            if (previous == null) {
+                currentContext.remove()
+            } else {
+                currentContext.set(previous)
+            }
+        }
+    }
+
+    fun publishStarted(test: AndroidPlannedTest) {
+        publish(
+            mapOf(
+                "androidRuntimeEvent" to "started",
+                "testName" to test.info.name,
+                "testFile" to test.info.file.path,
+            )
+        )
+    }
+
+    fun publishFinished(test: AndroidPlannedTest, result: AndroidRuntimeTestResult) {
+        publish(
+            mapOf(
+                "androidRuntimeEvent" to "finished",
+                "testName" to test.info.name,
+                "testFile" to test.info.file.path,
+                "status" to if (result.failureText == null) "OK" else "FAIL",
+                "elapsedTimeMs" to result.elapsedTimeMs.toString(),
+            )
+        )
+    }
+
+    private fun publish(values: Map<String, String>) {
+        currentContext.get()?.publishReportEntry(values)
+    }
+}
+
+internal class AndroidRuntimeReportExtension : InvocationInterceptor {
+    override fun interceptDynamicTest(
+        invocation: InvocationInterceptor.Invocation<Void>,
+        invocationContext: DynamicTestInvocationContext,
+        extensionContext: ExtensionContext,
+    ) {
+        AndroidRuntimeReport.withContext(extensionContext) {
+            invocation.proceed()
         }
     }
 }
