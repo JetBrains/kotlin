@@ -19,7 +19,7 @@ extension ExportedKotlinPackages.weird {
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             var __error: UnsafeMutableRawPointer? = nil
             weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt, &__error)
-            guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
+            try KotlinRuntimeSupport.raiseKotlinError(__error)
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -35,12 +35,12 @@ extension ExportedKotlinPackages.weird {
             if Self.self == ExportedKotlinPackages.weird.A.self {
                 var _out_error: UnsafeMutableRawPointer? = nil
                 let _result = weird_A_throws(self.__externalRCRef(), &_out_error)
-                guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
+                try KotlinRuntimeSupport.raiseKotlinError(_out_error)
                 return { _result; return () }()
             } else {
                 var _out_error: UnsafeMutableRawPointer? = nil
                 let _result = weird_A_throws_direct(self.__externalRCRef(), &_out_error)
-                guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
+                try KotlinRuntimeSupport.raiseKotlinError(_out_error)
                 return { _result; return () }()
             }
         }
@@ -81,8 +81,13 @@ package func weird_A_bar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPoin
 }
 
 @_cdecl("weird_A_throws__reverse_swift")
-package func weird_A_throws__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+package func weird_A_throws__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ _out_error: Swift.UnsafeMutablePointer<Swift.UnsafeMutableRawPointer?>) -> Swift.Bool {
     let _self = ExportedKotlinPackages.weird.A.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.Void = try! _self.throws()
-    return { _result; return true }()
+    do {
+        let _result: Swift.Void = try _self.throws()
+        return { _result; return true }()
+    } catch {
+        _out_error.pointee = KotlinRuntimeSupport.kotlinThrowableRCRef(for: error)
+        return false
+    }
 }

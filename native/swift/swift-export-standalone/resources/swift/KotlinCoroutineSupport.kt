@@ -10,7 +10,6 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.native.internal.ExportedBridge
 import kotlin.plus
-import platform.Foundation.NSError
 
 @OptIn(InternalCoroutinesApi::class)
 private fun Job.invokeOnCancelling(block: (CancellationException) -> Unit) {
@@ -55,7 +54,7 @@ class SwiftJob private constructor() : Job by Job() {
 @OptIn(InternalCoroutinesApi::class)
 public fun <T> swiftCoroutine(
     continuation: (T) -> Unit,
-    exception: (Any?) -> Unit,
+    exception: (Throwable?) -> Unit,
     cancellation: SwiftJob,
     block: suspend CoroutineScope.() -> T
 ) {
@@ -71,15 +70,15 @@ public fun <T> swiftCoroutine(
 }
 
 public suspend fun <T> suspendSwiftCoroutine(
-    block: ((T) -> Unit, (NSError?) -> Unit, SwiftJob) -> Unit
+    block: ((T) -> Unit, (Throwable?) -> Unit, SwiftJob) -> Unit
 ): T {
     val cancellation = SwiftJob(coroutineContext.job)
     return suspendCoroutine { cont ->
         val continuation: (T) -> Unit = { _result ->
             cont.resume(_result)
         }
-        val exception: (NSError?) -> Unit = { _error ->
-            cont.resumeWithException(_error?.let(::SwiftException) ?: CancellationException("Cancelled using CancellationError in Swift"))
+        val exception: (Throwable?) -> Unit = { _error ->
+            cont.resumeWithException(_error ?: CancellationException("Cancelled using CancellationError in Swift"))
         }
         block(continuation, exception, cancellation)
     }

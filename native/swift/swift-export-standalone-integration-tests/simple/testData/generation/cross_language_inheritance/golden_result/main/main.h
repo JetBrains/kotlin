@@ -45,6 +45,8 @@ _Bool Greeter_mood_set__TypesOfArguments__Swift_String____reverse_swift(void * s
 
 NSString * Greeter_salutation__reverse_swift(void * self);
 
+NSString * ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t x, void *_Nullable * _Nonnull _out_error);
+
 NSString * AbstractBase_abstractMethod(void * self);
 
 int32_t AbstractBase_concreteMethod(void * self);
@@ -119,6 +121,10 @@ _Bool Greeter_mood_set__TypesOfArguments__Swift_String__(void * self, NSString *
 
 NSString * Greeter_salutation(void * self);
 
+NSString * ThrowingMembers_compute__TypesOfArguments__Swift_Int32__(void * self, int32_t x, void *_Nullable * _Nonnull _out_error);
+
+NSString * ThrowingMembers_compute__TypesOfArguments__Swift_Int32___direct(void * self, int32_t x, void *_Nullable * _Nonnull _out_error);
+
 void * __root___Base_init_allocate();
 
 _Bool __root___Base_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -126,5 +132,9 @@ _Bool __root___Base_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoi
 void * __root___GreeterBase_init_allocate();
 
 _Bool __root___GreeterBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___ThrowingMembers_init_allocate();
+
+_Bool __root___ThrowingMembers_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 NS_ASSUME_NONNULL_END

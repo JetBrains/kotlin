@@ -235,7 +235,7 @@ internal abstract class SirAbstractGetter(
                     add(proxy.createDirectDispatchForwardBridge("<get-$propName>", forwardCall))
                 }
                 if (variable.accessorNeedsReverseBridge()) {
-                    val tryPrefix = if (errorType != SirType.never) "try! " else ""
+                    val tryPrefix = if (errorType != SirType.never) "try " else ""
                     val swiftName = variable.name
                     addAll(
                         proxy.createReverseSirBridges(

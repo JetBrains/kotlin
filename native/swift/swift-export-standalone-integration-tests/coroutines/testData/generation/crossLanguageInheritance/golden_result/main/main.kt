@@ -22,7 +22,7 @@ internal external fun AsyncAbstractBase_abstractGreet__reverse_swift(self: kotli
 @BindReverseBridgeToMethod(AsyncAbstractBase::class, "abstractGreet")
 public suspend fun AsyncAbstractBase_abstractGreet__reverse(self: AsyncAbstractBase): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -36,7 +36,7 @@ internal external fun AsyncAbstractBase_concreteGreet__reverse_swift(self: kotli
 @BindReverseBridgeToMethod(AsyncAbstractBase::class, "concreteGreet")
 public suspend fun AsyncAbstractBase_concreteGreet__reverse(self: AsyncAbstractBase): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -50,7 +50,7 @@ internal external fun AsyncBase_count__reverse_swift(self: kotlin.native.interna
 @BindReverseBridgeToMethod(AsyncBase::class, "count")
 public suspend fun AsyncBase_count__reverse(self: AsyncBase): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return suspendSwiftCoroutine { continuation: Function1<Int, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<Int, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -65,7 +65,7 @@ internal external fun AsyncBase_greet__TypesOfArguments__Swift_String____reverse
 public suspend fun AsyncBase_greet__TypesOfArguments__Swift_String____reverse(self: AsyncBase, name: kotlin.String): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __name = name.objcPtr()
-    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -90,7 +90,7 @@ internal external fun AsyncDefaulter_describe__reverse_swift(self: kotlin.native
 @BindReverseBridgeToMethod(AsyncDefaulter::class, "describe")
 public suspend fun AsyncDefaulter_describe__reverse(self: AsyncDefaulter): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -104,7 +104,7 @@ internal external fun AsyncDefaulter_tag__reverse_swift(self: kotlin.native.inte
 @BindReverseBridgeToMethod(AsyncDefaulter::class, "tag")
 public suspend fun AsyncDefaulter_tag__reverse(self: AsyncDefaulter): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -119,7 +119,7 @@ internal external fun AsyncGreeterBase_greet__TypesOfArguments__Swift_String____
 public suspend fun AsyncGreeterBase_greet__TypesOfArguments__Swift_String____reverse(self: AsyncGreeterBase, name: kotlin.String): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __name = name.objcPtr()
-    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -133,7 +133,7 @@ internal external fun AsyncGreeterBase_salutation__reverse_swift(self: kotlin.na
 @BindReverseBridgeToMethod(AsyncGreeterBase::class, "salutation")
 public suspend fun AsyncGreeterBase_salutation__reverse(self: AsyncGreeterBase): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -148,7 +148,7 @@ internal external fun AsyncGreeter_greet__TypesOfArguments__Swift_String____reve
 public suspend fun AsyncGreeter_greet__TypesOfArguments__Swift_String____reverse(self: AsyncGreeter, name: kotlin.String): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __name = name.objcPtr()
-    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -162,7 +162,7 @@ internal external fun AsyncGreeter_salutation__reverse_swift(self: kotlin.native
 @BindReverseBridgeToMethod(AsyncGreeter::class, "salutation")
 public suspend fun AsyncGreeter_salutation__reverse(self: AsyncGreeter): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<kotlin.String, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -183,7 +183,7 @@ public fun AsyncAbstractBase_abstractGreet(self: kotlin.native.internal.NativePt
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -208,7 +208,7 @@ public fun AsyncAbstractBase_concreteGreet(self: kotlin.native.internal.NativePt
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -233,7 +233,7 @@ public fun AsyncAbstractBase_concreteGreet_direct(self: kotlin.native.internal.N
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -258,7 +258,7 @@ public fun AsyncBase_count(self: kotlin.native.internal.NativePtr, continuation:
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -283,7 +283,7 @@ public fun AsyncBase_count_direct(self: kotlin.native.internal.NativePtr, contin
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -309,7 +309,7 @@ public fun AsyncBase_greet__TypesOfArguments__Swift_String__(self: kotlin.native
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -335,7 +335,7 @@ public fun AsyncBase_greet__TypesOfArguments__Swift_String___direct(self: kotlin
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -360,7 +360,7 @@ public fun AsyncBase_notOpen(self: kotlin.native.internal.NativePtr, continuatio
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -401,7 +401,7 @@ public fun AsyncDefaulter_describe(self: kotlin.native.internal.NativePtr, conti
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -426,7 +426,7 @@ public fun AsyncDefaulter_describe_direct(self: kotlin.native.internal.NativePtr
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -451,7 +451,7 @@ public fun AsyncDefaulter_tag(self: kotlin.native.internal.NativePtr, continuati
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -477,7 +477,7 @@ public fun AsyncGreeterBase_greet__TypesOfArguments__Swift_String__(self: kotlin
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -503,7 +503,7 @@ public fun AsyncGreeterBase_greet__TypesOfArguments__Swift_String___direct(self:
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -528,7 +528,7 @@ public fun AsyncGreeterBase_salutation(self: kotlin.native.internal.NativePtr, c
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -553,7 +553,7 @@ public fun AsyncGreeterBase_salutation_direct(self: kotlin.native.internal.Nativ
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -579,7 +579,7 @@ public fun AsyncGreeter_greet__TypesOfArguments__Swift_String__(self: kotlin.nat
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -604,7 +604,7 @@ public fun AsyncGreeter_salutation(self: kotlin.native.internal.NativePtr, conti
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -653,8 +653,8 @@ public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
 public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<platform.Foundation.NSError>(_1)
-    val _result = run { (__pointerToBlock as Function1<platform.Foundation.NSError?, Unit>).invoke(___1) }
+    val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else throwableFromReverseBridge(_1)
+    val _result = run { (__pointerToBlock as Function1<kotlin.Throwable?, Unit>).invoke(___1) }
     return run { _result; true }
 }
 

@@ -2,6 +2,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(AbstractBase::class, "4main12AbstractBaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Base::class, "4main4BaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(GreeterBase::class, "4main11GreeterBaseC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ThrowingMembers::class, "4main15ThrowingMembersC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Boxed::class, "_Boxed")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Defaulter::class, "_Defaulter")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Greeter::class, "_Greeter")
@@ -226,6 +227,20 @@ public fun Greeter_salutation__reverse(self: Greeter): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = Greeter_salutation__reverse_swift(__self)
     return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, x: Int, _out_error: kotlinx.cinterop.CPointer<kotlinx.cinterop.COpaquePointerVar>): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(ThrowingMembers::class, "compute")
+public fun ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse(self: ThrowingMembers, x: Int): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    return kotlinx.cinterop.memScoped {
+        val _out_error = alloc<kotlinx.cinterop.COpaquePointerVar>()
+        val _result = ThrowingMembers_compute__TypesOfArguments__Swift_Int32____reverse_swift(__self, x, _out_error.ptr)
+        throwErrorFromReverseBridge(_out_error.value)
+        interpretObjCPointer<kotlin.String>(_result)
+    }
 }
 
 @ExportedBridge("AbstractBase_abstractMethod")
@@ -497,6 +512,34 @@ public fun Greeter_salutation(self: kotlin.native.internal.NativePtr): kotlin.na
     return _result.objcPtr()
 }
 
+@ExportedBridge("ThrowingMembers_compute__TypesOfArguments__Swift_Int32__")
+public fun ThrowingMembers_compute__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, x: Int, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ThrowingMembers
+    val __x = x
+    val ___out_error = _out_error
+    try {
+        val _result = run { __self.compute(__x) }
+        return _result.objcPtr()
+    } catch (error: Throwable) {
+        ___out_error.value = StableRef.create(error).asCPointer()
+        return kotlin.native.internal.NativePtr.NULL
+    }
+}
+
+@ExportedBridge("ThrowingMembers_compute__TypesOfArguments__Swift_Int32___direct", nonVirtualTargetMethod = "compute")
+public fun ThrowingMembers_compute__TypesOfArguments__Swift_Int32___direct(self: kotlin.native.internal.NativePtr, x: Int, _out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ThrowingMembers
+    val __x = x
+    val ___out_error = _out_error
+    try {
+        val _result = run { __self.compute(__x) }
+        return _result.objcPtr()
+    } catch (error: Throwable) {
+        ___out_error.value = StableRef.create(error).asCPointer()
+        return kotlin.native.internal.NativePtr.NULL
+    }
+}
+
 @ExportedBridge("__root___Base_init_allocate")
 public fun __root___Base_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<Base>() }
@@ -520,5 +563,18 @@ public fun __root___GreeterBase_init_allocate(): kotlin.native.internal.NativePt
 public fun __root___GreeterBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val _result = run { kotlin.native.internal.initInstance(____kt, GreeterBase()) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___ThrowingMembers_init_allocate")
+public fun __root___ThrowingMembers_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<ThrowingMembers>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___ThrowingMembers_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___ThrowingMembers_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, ThrowingMembers()) }
     return run { _result; true }
 }

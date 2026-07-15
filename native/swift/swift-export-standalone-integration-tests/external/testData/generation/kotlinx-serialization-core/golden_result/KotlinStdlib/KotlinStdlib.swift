@@ -4463,7 +4463,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
-    open class Throwable: KotlinRuntime.KotlinBase {
+    open class Throwable: KotlinRuntime.KotlinBase, Swift.Error {
         open var message: Swift.String? {
             get {
                 if Self.self == ExportedKotlinPackages.kotlin.Throwable.self {
