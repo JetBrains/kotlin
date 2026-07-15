@@ -34,6 +34,7 @@ dependencies {
     implementation(project(":kotlin-build-common"))
     implementation(project(":compiler:javac-wrapper"))
     implementation(project(":kotlin-util-klib-metadata"))
+    implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:java-direct"))
 
     compileOnly(toolsJarApi())
