@@ -121,17 +121,14 @@ class JavaClassifierTypeOverAst(
                 findInheritedTypeParameter(parts[0])?.let { return it }
             }
 
-            // In-scope navigation, kept as a distinct pass *before* the [resolve] fallback below —
-            // NOT redundant with it. Resolve the head via [findClassInCurrentScope], then walk each
-            // remaining part with [declaredOrFullyInherited] (declared members plus fully-inherited
-            // member types from any supertype representation). This pass is load-bearing because:
-            //  - it does not depend on a `FirSession` symbol provider, whereas [resolve]'s
-            //    class-existence probe does (which also helps with parser-only tests);
-            //  - even with a session present it resolves in-scope references straight from the
-            //    AST/model, avoiding a symbol-provider round-trip per segment.
-            // A missing segment off an in-scope head is a hard miss (`return null`, JLS 6.5.2):
-            // once `parts[0]` is a class in scope, the tail must be its member type, so we do not
-            // fall through to [resolve]'s package/import reinterpretation of the whole reference.
+            // In-scope (AST/model) navigation, kept as a distinct pass *before* the [resolve]
+            // fallback below:
+            //  - it needs no `FirSession` symbol provider, unlike [resolve]'s class-existence probe
+            //    (so it also serves parser-only tests);
+            //  - even with a session it avoids a symbol-provider round-trip per segment.
+            // A missing segment off an in-scope head is a hard miss (`return null`, JLS 6.5.2): once
+            // `parts[0]` is a class in scope, the tail must be its member type, so we do not fall
+            // through to [resolve]'s package/import reinterpretation of the whole reference.
             var current: JavaClassifier? = findClassInCurrentScope(Name.identifier(parts[0]))
 
             if (current is JavaClass) {
