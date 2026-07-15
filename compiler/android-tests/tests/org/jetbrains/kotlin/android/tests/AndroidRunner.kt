@@ -33,12 +33,18 @@ import java.nio.file.Paths
 @Execution(ExecutionMode.SAME_THREAD)
 class AndroidRunner {
     companion object {
-        private lateinit var pathManager: PathManager
+        private var pathManager: PathManager? = null
+        private var runtimeResults: AndroidRuntimeResultsCache? = null
 
         @JvmStatic
         @AfterAll
         fun tearDown() {
-            FileUtil.delete(File(pathManager.tmpFolder))
+            try {
+                runtimeResults?.close()
+            } finally {
+                runtimeResults = null
+                pathManager?.tmpFolder?.let { FileUtil.delete(File(it)) }
+            }
         }
     }
 
@@ -49,8 +55,9 @@ class AndroidRunner {
         ).toFile()
         println("Created temporary folder for running android tests: ${tmpFolder.absolutePath}")
         pathManager = PathManager(tmpFolder.absolutePath)
-        val plan = CodegenTestsOnAndroidGenerator.discover(pathManager)
-        val runtimeResults = AndroidRuntimeResultsCache(pathManager, plan)
+        val plan = CodegenTestsOnAndroidGenerator.discover(pathManager!!)
+        val runtimeResults = AndroidRuntimeResultsCache(pathManager!!, plan)
+        AndroidRunner.runtimeResults = runtimeResults
         return listOf(
             DynamicContainer.dynamicContainer(
                 "Discovery",
@@ -67,6 +74,12 @@ class AndroidRunner {
                         plan.compile(test)
                     }
                 }
+            ),
+            DynamicContainer.dynamicContainer(
+                "Emulator",
+                listOf(DynamicTest.dynamicTest("Start Android emulator") {
+                    runtimeResults.startEmulator()
+                })
             ),
             DynamicContainer.dynamicContainer(
                 "Runtime",
@@ -87,6 +100,15 @@ class AndroidRunner {
     ) {
         private val plannedTestNames = plan.tests.mapTo(linkedSetOf()) { it.info.name }
         private var cachedResults: Result<Map<String, AndroidRuntimeTestResult>>? = null
+        private var cachedRunner: Result<CodegenTestsOnAndroidRunner>? = null
+
+        fun close() {
+            cachedRunner?.getOrNull()?.close()
+        }
+
+        fun startEmulator() {
+            emulatorRunner()
+        }
 
         fun assertPassed(test: AndroidPlannedTest) {
             val result = results()[test.info.name] ?: fail<AndroidRuntimeTestResult>(
@@ -110,11 +132,22 @@ class AndroidRunner {
             if (cached != null) return cached.getOrThrow()
 
             val result = runCatching {
-                plan.generateUnitTestFiles()
                 println("Run tests on Android...")
-                CodegenTestsOnAndroidRunner.runTestsInEmulator(pathManager, plan.flavorsToRun)
+                emulatorRunner().runTests(plan.flavorsToRun)
             }
             cachedResults = result
+            return result.getOrThrow()
+        }
+
+        private fun emulatorRunner(): CodegenTestsOnAndroidRunner {
+            val cached = cachedRunner
+            if (cached != null) return cached.getOrThrow()
+
+            val result = runCatching {
+                plan.generateUnitTestFiles()
+                CodegenTestsOnAndroidRunner.startEmulator(pathManager)
+            }
+            cachedRunner = result
             return result.getOrThrow()
         }
     }
