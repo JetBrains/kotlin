@@ -19,7 +19,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.backendThreads = from.backendThreads
     to.buildFile = from.buildFile
     to.classpath = from.classpath
-    to.commonFragmentsMetadataDestination = from.commonFragmentsMetadataDestination
     to.defaultScriptExtension = from.defaultScriptExtension
     to.destination = from.destination
     to.disableStandardScript = from.disableStandardScript

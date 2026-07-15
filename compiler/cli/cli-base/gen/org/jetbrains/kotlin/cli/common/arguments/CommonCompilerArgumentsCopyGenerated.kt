@@ -55,7 +55,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.firAggressivePruning = from.firAggressivePruning
     to.fragmentDependencies = from.fragmentDependencies.copyOf()
     to.fragmentFriendDependencies = from.fragmentFriendDependencies.copyOf()
-    to.fragmentIncrementalClasspath = from.fragmentIncrementalClasspath.copyOf()
     to.fragmentRefines = from.fragmentRefines.copyOf()
     to.fragmentSources = from.fragmentSources.copyOf()
     to.fragments = from.fragments.copyOf()

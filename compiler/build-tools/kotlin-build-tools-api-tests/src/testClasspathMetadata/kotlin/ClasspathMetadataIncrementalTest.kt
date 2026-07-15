@@ -156,16 +156,7 @@ private fun configureKmpJvmFragments(enableClasspathMetadata: Boolean): (JvmComp
             add("-Xfragment-refines=${fragmentRefines.joinToString(",")}")
         }
         add("-Xfragment-sources=${fragmentSources.joinToString(",")}")
-        if (enableClasspathMetadata) {
-            add("-Xuse-ic-classpath-metadata=true")
-            val metadataDestination = builder.destinationDirectory.parent.resolve("metadata-jvm").toFile()
-            add("-Xcommon-fragments-metadata-destination=${metadataDestination.absolutePath}")
-            val fragmentClasspath = metadataDestination.listFiles().orEmpty()
-                .joinToString(",") { "${it.name}:${it.absolutePath}" }
-            if (fragmentClasspath.isNotEmpty()) {
-                add("-Xfragment-incremental-classpath=$fragmentClasspath")
-            }
-        }
+        add("-Xuse-ic-classpath-metadata=$enableClasspathMetadata")
     }
 
     builder.compilerArguments.applyArgumentStrings(args)
