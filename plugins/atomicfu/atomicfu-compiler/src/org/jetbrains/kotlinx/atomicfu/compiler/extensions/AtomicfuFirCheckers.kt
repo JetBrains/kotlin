@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.atomicfu.compiler.diagnostic
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
@@ -18,6 +19,9 @@ class AtomicfuFirCheckers(session: FirSession) : FirAdditionalCheckersExtension(
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val propertyCheckers: Set<FirPropertyChecker>
             get() = setOf(AtomicfuPropertyChecker)
+
+        override val functionCheckers: Set<FirFunctionChecker>
+            get() = setOf(AtomicfuFunctionChecker)
     }
 
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
@@ -29,7 +33,6 @@ class AtomicfuFirCheckers(session: FirSession) : FirAdditionalCheckersExtension(
 
     override val typeCheckers: TypeCheckers = object : TypeCheckers() {
         override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker>
-            get() = setOf(
-            )
+            get() = setOf()
     }
 }

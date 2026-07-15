@@ -52,6 +52,12 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   }
 
   @Test
+  @TestMetadata("IllegalFunctions.kt")
+  public void testIllegalFunctions() {
+    run("IllegalFunctions.kt");
+  }
+
+  @Test
   @TestMetadata("NoBackingField.kt")
   public void testNoBackingField() {
     run("NoBackingField.kt");
