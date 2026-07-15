@@ -29,8 +29,12 @@ class UnitTestFileWriter(
     companion object {
         private const val TESTS_PER_CHUNK = 128
 
+        internal fun testNameForFileName(fileName: String): String {
+            return "test" + NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)))
+        }
+
         internal fun generateTestName(fileName: String, generatedTestNames: MutableSet<String>): String {
-            var result = "test" + NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)))
+            var result = testNameForFileName(fileName)
 
             var i = 0
             while (generatedTestNames.contains(result)) {
