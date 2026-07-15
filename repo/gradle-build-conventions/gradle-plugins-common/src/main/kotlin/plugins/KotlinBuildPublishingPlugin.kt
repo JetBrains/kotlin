@@ -193,6 +193,14 @@ fun Project.configureDefaultPublishing(
         dependsOn(tasks.named("publishToMavenLocal"))
     }
 
+    tasks.register("writePublishedMark") {
+        dependsOn(tasks.named("publish"))
+        val publishedMarkFile = layout.buildDirectory.file("published.txt")
+        outputs.file(publishedMarkFile)
+        doLast {
+            publishedMarkFile.get().asFile.writeText("")
+        }
+    }
     tasks.register("writeLocalPublishedMark") {
         dependsOn(tasks.named("publishToMavenLocal"))
         val publishedMarkFile = layout.buildDirectory.file("localPublished.txt")
@@ -201,8 +209,10 @@ fun Project.configureDefaultPublishing(
             publishedMarkFile.get().asFile.writeText("")
         }
     }
+    val publishedMark = configurations.consumable("publishedMark")
     val localPublishedMark = configurations.consumable("localPublishedMark")
     artifacts {
+        add(publishedMark.name, tasks.named("writePublishedMark"))
         add(localPublishedMark.name, tasks.named("writeLocalPublishedMark"))
     }
 }
