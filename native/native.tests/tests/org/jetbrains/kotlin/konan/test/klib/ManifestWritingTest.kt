@@ -204,6 +204,30 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
             enabledLanguageFeature.name
         )
         checkPropertyAndValue(manifestProperties, KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES, poisoningFeature.name, null)
+
+        JUnit5Assertions.assertEquals(
+            "2",
+            manifestProperties.getProperty(KLIB_PROPERTY_METADATA_FLAGS)
+        ) { "Enabling a poisoning feature must set the PRE_RELEASE bit (0x2) in `$KLIB_PROPERTY_METADATA_FLAGS`" }
+    }
+
+    @Test
+    fun testMetadataFlags() {
+        val compilationResult = compileLibrary(
+            testRunSettings,
+            stubSourceFile,
+            packed = false,
+            freeCompilerArgs = emptyList()
+        )
+
+        val klib = compilationResult.assertSuccess().resultingArtifact.klibFile
+        val manifestFile = File(klib, "default/manifest")
+        val manifestProperties = manifestFile.bufferedReader().use { reader -> Properties().apply { load(reader) } }
+
+        JUnit5Assertions.assertEquals(
+            "0",
+            manifestProperties.getProperty(KLIB_PROPERTY_METADATA_FLAGS)
+        ) { "Default compilation must write `$KLIB_PROPERTY_METADATA_FLAGS` with no flags set" }
     }
 
     @Test
