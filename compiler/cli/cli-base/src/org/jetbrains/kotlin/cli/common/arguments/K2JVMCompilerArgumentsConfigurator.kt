@@ -38,6 +38,7 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
             putAnalysisFlag(JvmAnalysisFlags.implicitJvmExposeBoxed, jvmExposeBoxed)
             putAnalysisFlag(AnalysisFlags.allowUnstableDependencies, allowUnstableDependencies)
             putAnalysisFlag(JvmAnalysisFlags.outputBuiltinsMetadata, outputBuiltinsMetadata)
+            putAnalysisFlag(AnalysisFlags.kmpJvmIncrementalCompilationEnabled, useIcClasspathMetadata && multiPlatform)
         }
     }
 
