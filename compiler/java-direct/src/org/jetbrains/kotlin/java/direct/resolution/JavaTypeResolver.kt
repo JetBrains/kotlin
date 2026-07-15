@@ -72,7 +72,7 @@ internal fun resolveQualifiedNameToClassIdFromParts(
         val outerClassId = if (outerParts.size > 1) {
             resolveQualifiedNameToClassIdFromParts(outerParts, fullResolution)
         } else {
-            resolveSimpleNameToClassIdImpl(outerParts[0], fullResolution = fullResolution)
+            resolveSimpleNameToClassIdImpl(outerParts[0], fullResolution)
         }
 
         if (outerClassId != null) {
@@ -562,8 +562,19 @@ internal fun getFirstStarImportCandidate(simpleName: String): ClassId? {
 }
 
 context(c: JavaResolutionContext)
-private fun fqNameToClassId(fqName: FqName): ClassId =
-    fqNameInPackageToClassId(fqName, c.packageFqName)
+private fun fqNameToClassId(fqName: FqName): ClassId {
+    val fqnString = fqName.asString()
+    val pkgString = c.packageFqName.asString()
+    val className = if (pkgString.isEmpty()) {
+        fqnString
+    } else if (fqnString.startsWith(pkgString) && fqnString.length > pkgString.length && fqnString[pkgString.length] == '.') {
+        fqnString.substring(pkgString.length + 1)
+    } else {
+        fqnString
+    }
+    return ClassId(c.packageFqName, FqName(className), isLocal = false)
+}
+
 
 /**
  * Resolves a FqName to a ClassId by trying all package/class splits from longest package to

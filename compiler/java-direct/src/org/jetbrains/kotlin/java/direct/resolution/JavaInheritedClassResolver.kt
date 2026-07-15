@@ -127,18 +127,3 @@ private fun isInheritedNestedClassAccessible(innerClassId: ClassId): Boolean {
         else -> true
     }
 }
-
-internal fun fqNameInPackageToClassId(fqName: FqName, packageFqName: FqName): ClassId {
-    val fqnString = fqName.asString()
-    val pkgString = packageFqName.asString()
-
-    val className = if (pkgString.isEmpty()) {
-        fqnString
-    } else if (fqnString.startsWith(pkgString) && fqnString.length > pkgString.length && fqnString[pkgString.length] == '.') {
-        fqnString.substring(pkgString.length + 1)
-    } else {
-        fqnString
-    }
-
-    return ClassId(packageFqName, FqName(className), isLocal = false)
-}

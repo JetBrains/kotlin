@@ -115,8 +115,7 @@ class JavaClassifierTypeOverAst(
                 // were reordered after the nested-class lookup below.
                 findTypeParameter(parts[0])?.let { return it }
                 // 2. Inner/local class names (shadow INHERITED outer type params)
-                val localClass = findClassInCurrentScope(parts[0])
-                if (localClass != null) return localClass
+                val localClass = findClassInCurrentScope(parts[0])?.let { return it }
                 // 3. INHERITED type parameters from outer class (low priority — shadowed by inner classes)
                 findInheritedTypeParameter(parts[0])?.let { return it }
             }
@@ -126,10 +125,7 @@ class JavaClassifierTypeOverAst(
             //  - it needs no `FirSession` symbol provider, unlike [resolve]'s class-existence probe
             //    (so it also serves parser-only tests);
             //  - even with a session it avoids a symbol-provider round-trip per segment.
-            // A missing segment off an in-scope head is a hard miss (`return null`, JLS 6.5.2): once
-            // `parts[0]` is a class in scope, the tail must be its member type, so we do not fall
-            // through to [resolve]'s package/import reinterpretation of the whole reference.
-            var current: JavaClassifier? = findClassInCurrentScope(Name.identifier(parts[0]))
+            var current: JavaClassifier? = findClassInCurrentScope(parts[0])
 
             if (current is JavaClass) {
                 for (i in 1 until parts.size) {
