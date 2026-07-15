@@ -196,7 +196,6 @@ abstract class IrBuiltIns : SymbolFinderHolder {
     abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
 
     abstract val operatorsPackageFragment: IrExternalPackageFragment
-    abstract val kotlinInternalPackageFragment: IrExternalPackageFragment
 
     val moduleFragment: IrModuleFragment
         get() = operatorsPackageFragment.module

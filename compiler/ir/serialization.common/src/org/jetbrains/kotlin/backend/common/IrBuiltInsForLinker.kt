@@ -31,9 +31,6 @@ class IrBuiltInsForLinker(
     override val operatorsPackageFragment: IrExternalPackageFragment = createEmptyExternalPackageFragment(
         fqName = StandardClassIds.BASE_INTERNAL_IR_PACKAGE
     )
-    override val kotlinInternalPackageFragment: IrExternalPackageFragment = createEmptyExternalPackageFragment(
-        fqName = StandardClassIds.BASE_INTERNAL_PACKAGE
-    )
 
     private fun createEmptyExternalPackageFragment(fqName: FqName): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), fqName, builtInsModule)

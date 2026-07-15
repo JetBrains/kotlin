@@ -264,8 +264,6 @@ object TestIrBuiltins : IrBuiltIns() {
 
     override val operatorsPackageFragment: IrExternalPackageFragment
         get() = missingBuiltIn()
-    override val kotlinInternalPackageFragment: IrExternalPackageFragment
-        get() = missingBuiltIn()
 
     private fun builtinClass(name: String) = object {
         val klass = irFactory.buildClass {

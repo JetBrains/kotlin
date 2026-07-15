@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -68,10 +67,6 @@ class IrBuiltInsOverDescriptors(
     override val irFactory: IrFactory = symbolTable.irFactory
 
     private val builtInsModule = builtIns.builtInsModule
-
-    private val kotlinInternalPackage = StandardClassIds.BASE_INTERNAL_PACKAGE
-    override val kotlinInternalPackageFragment =
-        createEmptyExternalPackageFragment(IrModuleFragmentImpl(builtInsModule), kotlinInternalPackage)
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
 
