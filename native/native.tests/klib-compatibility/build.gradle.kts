@@ -182,7 +182,6 @@ customFirstStageTest("2.4.0")
 
 /* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
 // TODO: Keep updating two following compiler versions to be the previous and latest ones.
-customSecondStageTest("2.3.0")
 customSecondStageTest("2.4.0")
 // add `customSecondStageTest("2.5.0-Beta1")`, as soon it is released, and remove 2.3.0
 
