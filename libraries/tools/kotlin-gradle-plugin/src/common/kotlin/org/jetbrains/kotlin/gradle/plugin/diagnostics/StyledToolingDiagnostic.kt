@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.TerminalColorSupport.Termi
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.TerminalColorSupport.TerminalStyle.orange
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.TerminalColorSupport.TerminalStyle.red
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.TerminalColorSupport.TerminalStyle.yellow
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.*
 
 /**
  * Represents diagnostic icons used to indicate the severity level of diagnostics.
@@ -67,7 +67,7 @@ internal interface PlainTextToolingDiagnostic : ToolingDiagnosticOutput
 private abstract class AbstractToolingDiagnostic(
     val diagnostic: ToolingDiagnostic,
     val showEmoji: Boolean,
-    val severity: ToolingDiagnostic.Severity
+    val severity: KotlinToolingDiagnosticsSeverity,
 ) : ToolingDiagnosticOutput {
     override val name: String by lazy { buildName() }
     override val message: String
@@ -137,7 +137,7 @@ private abstract class AbstractToolingDiagnostic(
 private class DefaultStyledToolingDiagnostic(
     diagnostic: ToolingDiagnostic,
     showEmoji: Boolean,
-    severity: ToolingDiagnostic.Severity = diagnostic.severity
+    severity: KotlinToolingDiagnosticsSeverity = diagnostic.severity,
 ) : AbstractToolingDiagnostic(diagnostic, showEmoji, severity), StyledToolingDiagnostic {
 
     override fun buildName() = super.buildName()
@@ -179,7 +179,7 @@ private class DefaultStyledToolingDiagnostic(
         }.trimEnd()
     }
 
-    private fun String.applyColor(severity: ToolingDiagnostic.Severity) = when (severity) {
+    private fun String.applyColor(severity: KotlinToolingDiagnosticsSeverity) = when (severity) {
         WARNING -> yellow()
         STRONG_WARNING, ERROR, FATAL -> red()
     }
@@ -211,7 +211,7 @@ private class DefaultStyledToolingDiagnostic(
 private class DefaultPlainToolingDiagnostic(
     diagnostic: ToolingDiagnostic,
     showEmoji: Boolean,
-    severity: ToolingDiagnostic.Severity = diagnostic.severity
+    severity: KotlinToolingDiagnosticsSeverity = diagnostic.severity,
 ) : AbstractToolingDiagnostic(diagnostic, showEmoji, severity), PlainTextToolingDiagnostic
 
 /**
@@ -221,7 +221,10 @@ private class DefaultPlainToolingDiagnostic(
  * @return A `StyledToolingDiagnostic` instance containing the styled representation of the `ToolingDiagnostic`.
  * @return A styled diagnostic representation as a [StyledToolingDiagnostic].
  */
-internal fun ToolingDiagnostic.styled(showEmoji: Boolean = true, severity: ToolingDiagnostic.Severity? = null): StyledToolingDiagnostic =
+internal fun ToolingDiagnostic.styled(
+    showEmoji: Boolean = true,
+    severity: KotlinToolingDiagnosticsSeverity? = null,
+): StyledToolingDiagnostic =
     DefaultStyledToolingDiagnostic(this, showEmoji, severity ?: this.severity)
 
 /**
@@ -231,5 +234,8 @@ internal fun ToolingDiagnostic.styled(showEmoji: Boolean = true, severity: Tooli
  * @return A `PlainTextToolingDiagnostic` instance representing the diagnostic in plain text format.
  * @return A plain text representation of the [ToolingDiagnostic].
  */
-internal fun ToolingDiagnostic.plain(showEmoji: Boolean = false, severity: ToolingDiagnostic.Severity? = null): PlainTextToolingDiagnostic =
+internal fun ToolingDiagnostic.plain(
+    showEmoji: Boolean = false,
+    severity: KotlinToolingDiagnosticsSeverity? = null,
+): PlainTextToolingDiagnostic =
     DefaultPlainToolingDiagnostic(this, showEmoji, severity ?: this.severity)

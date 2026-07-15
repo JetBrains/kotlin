@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import java.net.URI
 
 internal abstract class ToolingDiagnosticFactory(
-    private val predefinedSeverity: ToolingDiagnostic.Severity,
+    private val predefinedSeverity: KotlinToolingDiagnosticsSeverity,
     private val predefinedGroup: DiagnosticGroup,
 ) {
     open val id: String = this::class.simpleName!!
@@ -29,7 +29,7 @@ internal abstract class ToolingDiagnosticFactory(
      */
     protected fun build(
         idSuffix: String = "",
-        severity: ToolingDiagnostic.Severity? = null,
+        severity: KotlinToolingDiagnosticsSeverity? = null,
         group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
         builder: ToolingDiagnostics.TitleStep.() -> ToolingDiagnostics.NoOpStep,
@@ -62,7 +62,7 @@ internal abstract class ToolingDiagnosticFactory(
         solutions: List<String>,
         documentationUrl: URI? = null,
         documentationHint: (String) -> String = { "See $it for more details." },
-        severity: ToolingDiagnostic.Severity? = null,
+        severity: KotlinToolingDiagnosticsSeverity? = null,
         group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
     ) = build(idSuffix, severity, group, throwable) {
@@ -95,7 +95,7 @@ internal abstract class ToolingDiagnosticFactory(
         solution: String,  // Single solution overload
         documentationUrl: URI? = null,
         documentationHint: (String) -> String = { "See $it for more details." },
-        severity: ToolingDiagnostic.Severity? = null,
+        severity: KotlinToolingDiagnosticsSeverity? = null,
         group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
     ) = buildDiagnostic(
@@ -148,7 +148,7 @@ internal object ToolingDiagnostics {
     private data class BuilderState(
         val id: String,
         val group: DiagnosticGroup,
-        val severity: ToolingDiagnostic.Severity,
+        val severity: KotlinToolingDiagnosticsSeverity,
         val throwable: Throwable?,
         val title: String? = null,
         val descriptionBuilder: (() -> String)? = null,
@@ -163,7 +163,7 @@ internal object ToolingDiagnostics {
     private class BuilderImpl(
         id: String,
         group: DiagnosticGroup,
-        severity: ToolingDiagnostic.Severity,
+        severity: KotlinToolingDiagnosticsSeverity,
         throwable: Throwable? = null,
     ) : TitleStep, DescriptionStep, SolutionStep, OptionalStep, NoOpStep {
         private var state = BuilderState(
@@ -183,6 +183,7 @@ internal object ToolingDiagnostics {
         override fun description(value: String) = apply {
             state = state.copy(descriptionBuilder = { value })
         }
+
         override fun descriptionBuilder(value: () -> String) = apply {
             state = state.copy(descriptionBuilder = value)
         }
@@ -236,7 +237,7 @@ internal object ToolingDiagnostics {
     internal fun diagnostic(
         id: String,
         group: DiagnosticGroup,
-        severity: ToolingDiagnostic.Severity,
+        severity: KotlinToolingDiagnosticsSeverity,
         throwable: Throwable? = null,
         builder: TitleStep.() -> NoOpStep,
     ) = BuilderImpl(id, group, severity, throwable).apply { builder() }.build()
