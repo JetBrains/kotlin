@@ -7,7 +7,7 @@ in its structure to the standard `kotlinc` distribution.
 
 ## Distribution layout
 
-The distribution is produced in [prepare/compiler-native-image/build/dist/kotlinc-native-image](build/dist/kotlinc-native-image) directory and
+The distribution is produced in [prepare/compiler-native-image/build/dist](build/dist) directory and
 has the following structure:
 
 * `bin/kotlinc-native-image[.exe]` &mdash; native binary;
@@ -29,6 +29,11 @@ Produce a native image distribution:
 ./gradlew :kotlin-compiler-native-image:kotlincNativeImageDist
 ```
 
+You can also produce native image distribution release artifacts in
+[prepare/compiler-native-image/build/artifacts](build/artifacts) via:
+```
+./gradlew :kotlin-compiler-native-image:kotlincNativeImageArtifacts
+```
 
 ## Running
 

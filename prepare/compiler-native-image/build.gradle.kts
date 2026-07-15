@@ -1,4 +1,5 @@
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.crypto.checksum.Checksum
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.javaToolchains
 import org.gradle.kotlin.dsl.register
@@ -15,6 +16,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check-v2")
+    alias(libs.plugins.gradle.crypto.checksum)
 }
 
 val nativeImageClasspath by configurations.creating {
@@ -123,6 +125,8 @@ projectTests {
     withMockJdkRuntime()
 }
 
+val currentOs = OperatingSystem.current()
+
 val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     description = "Build a native image of the kotlin-compiler-embeddable"
 
@@ -133,7 +137,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
         .withNormalizer(ClasspathNormalizer::class)
         .withPropertyName("nativeImageClasspath")
 
-    val isWindows = OperatingSystem.current().isWindows
+    val isWindows = currentOs.isWindows
     val mainClass = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
     val outputFile = layout.buildDirectory.file("bin/kotlinc-native-image")
     // Graal will automatically append .exe extension to the `outputFile`, but we need
@@ -168,12 +172,18 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     }
 }
 
+val nativeImageDistSbomTask = configureSbom(
+    target = "NativeImageDist",
+    documentName = "Kotlin Compiler Native Image Distribution",
+    gradleConfigurations = setOf(nativeImageClasspath.name),
+)
+
 val kotlincNativeImageDist = tasks.register<Copy>("kotlincNativeImageDist") {
     description = "Build the kotlin-compiler-embeddable native distribution"
     duplicatesStrategy = DuplicatesStrategy.FAIL
     rename(quote("-${version}"), "")
     rename(quote("-${bootstrapKotlinVersion}"), "")
-    destinationDir = layout.buildDirectory.dir("dist/kotlinc-native-image").get().asFile
+    destinationDir = layout.buildDirectory.dir("dist").get().asFile
     val wrapperScriptFiles = files("bin/kotlinc-native-image.sh", "bin/kotlinc-native-image.bat")
     into("bin") {
         from(kotlincNativeImageTask)
@@ -198,6 +208,61 @@ val kotlincNativeImageDist = tasks.register<Copy>("kotlincNativeImageDist") {
             unix("rw-r--r--")
         }
     }
+}
+
+val nativeImageArchiveBaseName = run {
+    val osName = when {
+        currentOs.isWindows -> "windows"
+        currentOs.isMacOsX -> "macos"
+        else -> "linux"
+    }
+    val arch = when (val osArch = System.getProperty("os.arch")) {
+        "aarch64", "arm64" -> "aarch64"
+        "x86_64", "amd64" -> "x86_64"
+        else -> error("Unsupported native-image host architecture: $osArch")
+    }
+    "kotlin-native-image-$osName-$arch-${project.version}"
+}
+val nativeImageArchiveExtension = if (currentOs.isWindows) "zip" else "tar.gz"
+
+fun AbstractArchiveTask.configureNativeImageArchive() {
+    description = "Packs the native image distribution into the publishable release archive"
+    from(kotlincNativeImageDist) {
+        into(nativeImageArchiveBaseName)
+    }
+    archiveFileName.set("$nativeImageArchiveBaseName.$nativeImageArchiveExtension")
+    destinationDirectory.set(layout.buildDirectory.map { it.dir("archives") })
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
+}
+
+val kotlincNativeImageArchive = when {
+    currentOs.isWindows -> tasks.register<Zip>("kotlincNativeImageArchive") {
+        configureNativeImageArchive()
+    }
+    else -> tasks.register<Tar>("kotlincNativeImageArchive") {
+        compression = Compression.GZIP
+        configureNativeImageArchive()
+    }
+}
+
+val kotlincNativeImageChecksum = tasks.register<Checksum>("kotlincNativeImageChecksum") {
+    description = "Writes the SHA-256 checksum of the native image archive"
+    inputFiles.setFrom(kotlincNativeImageArchive.map { it.archiveFile })
+    outputDirectory.set(layout.buildDirectory.map { it.dir("checksum") })
+    checksumAlgorithm.set(Checksum.Algorithm.SHA256)
+}
+
+val kotlincNativeImageArtifacts = tasks.register<Sync>("kotlincNativeImageArtifacts") {
+    description = "Assembles artifacts for the native image distribution"
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    val archiveBaseName = nativeImageArchiveBaseName
+    from(kotlincNativeImageArchive)
+    from(kotlincNativeImageChecksum)
+    from(nativeImageDistSbomTask) {
+        rename { "$archiveBaseName.spdx.json" }
+    }
+    into(layout.buildDirectory.dir("artifacts"))
 }
 
 fun ProjectTestsExtension.nativeImageTestTask(name: String, body: Test.() -> Unit): TaskProvider<out Task> =
