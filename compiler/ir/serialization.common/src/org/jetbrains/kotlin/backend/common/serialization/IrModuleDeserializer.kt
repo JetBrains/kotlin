@@ -295,7 +295,6 @@ class IrModuleDeserializerWithBuiltIns(
         syntheticFunctionClassGenerator.typeSystem = IrTypeSystemContextImpl(irBuiltIns)
         @OptIn(UnstableBuiltInsApi::class)
         irBuiltIns.functionFactory = syntheticFunctionClassGenerator
-        syntheticProvider.finish()
     }
 
     override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
