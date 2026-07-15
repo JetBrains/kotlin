@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
@@ -58,6 +59,13 @@ object AtomicfuPropertyChecker: FirPropertyChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 declaration.source,
                 AtomicfuErrors.ATOMIC_PROPERTIES_SHOULD_BE_VAL,
+                declaration.source.text.toString()
+            )
+        }
+        if (!declaration.hasBackingField) {
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD,
                 declaration.source.text.toString()
             )
         }

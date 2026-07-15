@@ -50,4 +50,10 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   public void testErrorProneAtomicReferenceArguments() {
     run("errorProneAtomicReferenceArguments.kt");
   }
+
+  @Test
+  @TestMetadata("NoBackingField.kt")
+  public void testNoBackingField() {
+    run("NoBackingField.kt");
+  }
 }

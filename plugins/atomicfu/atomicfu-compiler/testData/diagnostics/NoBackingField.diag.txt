@@ -1,0 +1,47 @@
+/NoBackingField.kt:6:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelAI: AtomicInt get() = atomic(0)'` as a property with a backing field.
+
+/NoBackingField.kt:7:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelAL: AtomicLong get() = atomic(0L)'` as a property with a backing field.
+
+/NoBackingField.kt:8:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelAR: AtomicRef<Any?> get() = atomic("")'` as a property with a backing field.
+
+/NoBackingField.kt:9:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelAB: AtomicBoolean get() = atomic(true)'` as a property with a backing field.
+
+/NoBackingField.kt:11:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelAIA: AtomicIntArray get() = AtomicIntArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:12:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelALA: AtomicLongArray get() = AtomicLongArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:13:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelABA: AtomicBooleanArray get() = AtomicBooleanArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:14:9: error: Atomic properties must have a backing field.
+Consider declaring `'private val topLevelARA: AtomicArray<Any?> get() = atomicArrayOfNulls(1)'` as a property with a backing field.
+
+/NoBackingField.kt:17:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val ai: AtomicInt get() = atomic(0)'` as a property with a backing field.
+
+/NoBackingField.kt:18:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val al: AtomicLong get() = atomic(0L)'` as a property with a backing field.
+
+/NoBackingField.kt:19:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val ar: AtomicRef<Any?> get() = atomic("")'` as a property with a backing field.
+
+/NoBackingField.kt:20:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val ab: AtomicBoolean get() = atomic(true)'` as a property with a backing field.
+
+/NoBackingField.kt:22:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val aia: AtomicIntArray get() = AtomicIntArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:23:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val ala: AtomicLongArray get() = AtomicLongArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:24:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val aba: AtomicBooleanArray get() = AtomicBooleanArray(1)'` as a property with a backing field.
+
+/NoBackingField.kt:25:13: error: Atomic properties must have a backing field.
+Consider declaring `'private val ara: AtomicArray<Any?> get() = atomicArrayOfNulls(1)'` as a property with a backing field.

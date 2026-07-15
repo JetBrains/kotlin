@@ -15,6 +15,7 @@ object AtomicfuErrors : KtDiagnosticsContainer() {
     val PUBLIC_ATOMICS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val PUBLISHED_API_ATOMICS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val ATOMIC_PROPERTIES_SHOULD_BE_VAL by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = AtomicfuErrorMessages
 }

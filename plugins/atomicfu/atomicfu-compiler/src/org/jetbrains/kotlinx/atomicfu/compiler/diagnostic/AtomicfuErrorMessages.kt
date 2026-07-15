@@ -61,6 +61,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
             "public var a: T by _a \n" +
             "```\n"
 
+    private const val ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD_MESSAGE = "Atomic properties must have a backing field.\n" +
+            "Consider declaring `''{0}''` as a property with a backing field."
+
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
@@ -70,6 +73,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_PROPERTIES_SHOULD_BE_VAL, ATOMIC_PROEPRTIES_SHOULD_BE_VAL_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD, ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD_MESSAGE, Renderers.TO_STRING
         )
     }
 
