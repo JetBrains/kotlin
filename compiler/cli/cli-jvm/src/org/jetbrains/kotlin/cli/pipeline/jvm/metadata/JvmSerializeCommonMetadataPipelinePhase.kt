@@ -9,11 +9,15 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibInMemorySerializerPhase
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.metadataTracker
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
+import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
+import org.jetbrains.kotlin.util.metadataVersion
 import java.io.File
 
 internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFrontendPipelineArtifact>(
@@ -27,23 +31,44 @@ internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFront
     }
 
     private fun serializeFragmentsIfNeeded(input: JvmFrontendPipelineArtifact) {
-        val configuration = input.configuration
         val commonFragmentOutputs = input.frontendOutput.outputs.dropLast(1)
         if (commonFragmentOutputs.isEmpty()) return
 
-        for (output in commonFragmentOutputs) {
-            val inputForPhase = MetadataFrontendPipelineArtifact(
-                AllModulesFrontendOutput(listOf(output)),
-                configuration = configuration,
-                sourceFiles = input.sourceFiles,
-            )
-            val moduleName = output.session.moduleData.name.asStringStripSpecialMarkers()
+        val configuration = input.configuration
+        val metadataTracker = configuration.metadataTracker ?: return
+        val metadataVersion = configuration.metadataVersion()
+        val languageVersionSettings = configuration.languageVersionSettings
+        val exportKDoc = languageVersionSettings.supportsFeature(LanguageFeature.ExportKDocDocumentationToKlib)
 
-            configuration.metadataTracker?.let { tracker ->
-                MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase).firMetadata.fragments.flatten().forEach { firFile ->
-                    firFile.path?.let { tracker.report(moduleName, File(it), firFile.content) }
+        commonFragmentOutputs.forEach { output ->
+            val moduleName = output.session.moduleData.name.asStringStripSpecialMarkers()
+            val firResult = AllModulesFrontendOutput(listOf(output))
+
+            firResult.outputs.forEach { (session, scopeSession, fir) ->
+                val serializerExtension = FirKLibSerializerExtension(
+                    session = session,
+                    scopeSession = scopeSession,
+                    firProvider = session.firProvider,
+                    metadataVersion = metadataVersion,
+                    exportKDoc = exportKDoc,
+                    additionalMetadataProvider = null,
+                )
+
+                fir.forEach { firFile ->
+                    val sourceFile = firFile.sourceFile?.path?.let { File(it) } ?: return@forEach
+                    val packageFragment = serializeSingleFirFile(
+                        firFile,
+                        session,
+                        scopeSession,
+                        actualizedExpectDeclarations = null,
+                        serializerExtension,
+                        languageVersionSettings,
+                    )
+
+                    metadataTracker.report(moduleName, sourceFile, packageFragment.toByteArray())
                 }
             }
         }
     }
 }
+
