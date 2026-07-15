@@ -128,7 +128,6 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
                 sourceDependencies,
                 moduleDependencies,
                 friendDependencies,
-                incrementalDependencies = emptyMap(),
             )
         }
 
