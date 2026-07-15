@@ -44,6 +44,18 @@ internal class TypeExporter(
 
     context(_: KaSession)
     internal fun exportType(type: KaType, inlineClassesShouldBeUnboxed: Boolean = false): ExportedType {
+        val abbreviation = type.abbreviation
+        val typeToProcess = when (val symbol = abbreviation?.symbol) {
+            is KaTypeAliasSymbol if symbol.isEffectivelyExported(config) -> abbreviation
+            else -> type
+        }
+
+        return exportTypeOrAlias(typeToProcess, inlineClassesShouldBeUnboxed)
+    }
+
+
+    context(_: KaSession)
+    private fun exportTypeOrAlias(type: KaType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
         if (type is KaDynamicType || type in currentlyProcessedTypes)
             return Primitive.Any
 
@@ -202,8 +214,16 @@ internal class TypeExporter(
                 }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
             }
             is KaTypeAliasSymbol -> {
-                // TODO(KT-49795): Don't expand, export as a type alias reference instead.
-                exportType(type.fullyExpandedType)
+                if (isExported) {
+                    ClassType(
+                        name = symbol.getExportedFqName(shouldIncludePackage = config.generateNamespacesForPackages, config),
+                        arguments = exportAllTypeArguments(type),
+                        classId = symbol.classId,
+                    )
+                } else {
+                    // Non-exported aliases (e.g. @JsExport.Ignore, private) keep being expanded to their underlying type.
+                    exportType(type.fullyExpandedType)
+                }
             }
             is KaAnonymousObjectSymbol -> ErrorType("Anonymous objects are not supported")
         }

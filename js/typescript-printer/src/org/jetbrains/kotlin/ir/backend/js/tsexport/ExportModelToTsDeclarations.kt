@@ -96,6 +96,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     private fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): String =
         attributes.toTypeScript(indent) + indent + when (this) {
             is ErrorDeclaration -> generateTypeScriptString()
+            is ExportedTypeAlias -> generateTypeScriptString(indent, prefix)
             is ExportedConstructor -> generateTypeScriptString(indent)
             is ExportedConstructSignature -> generateTypeScriptString(indent)
             is ExportedNamespace -> generateTypeScriptString(indent, prefix)
@@ -371,6 +372,11 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         val objectMetadata = ExportedNamespace(name, listOf(generateMetadataNamespace(metadataMembers))).toTypeScript(indent, prefix)
 
         return "$objectClass\n$objectMetadata${generateDefaultExportIfNeed(name, indent)}"
+    }
+
+    private fun ExportedTypeAlias.generateTypeScriptString(indent: String, prefix: String): String {
+        val renderedTypeParameters = renderTypeParameters(typeParameters, includeVariance = true)
+        return "${prefix}type $name$renderedTypeParameters = ${aliasedType.toTypeScript(indent)};"
     }
 
     private fun ExportedRegularClass.generateTypeScriptString(indent: String, prefix: String): String {

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Primitive
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedTypeParameter
@@ -63,6 +64,7 @@ internal fun TypeParameterScope(
     superTypeApproximator: SuperTypeApproximator,
     outerScope: TypeParameterScope = emptyMap(),
     renameOuterTypeParameters: Boolean = false,
+    inheritedBounds: Map<KaTypeParameterSymbol, List<KaType>> = emptyMap(),
 ): TypeParameterScope {
     val newTypeParameters = container.typeParameters
     if (!renameOuterTypeParameters && newTypeParameters.isEmpty()) return outerScope
@@ -101,7 +103,7 @@ internal fun TypeParameterScope(
                 break
             }
             i += 1
-            val constraints = tp.upperBounds
+            val constraints = (tp.upperBounds + inheritedBounds[tp].orEmpty())
                 .mapNotNull {
                     val exportedType = TypeExporter(config, this, transitivelyExportedClasses, superTypeApproximator).exportType(it)
                     if (exportedType is ExportedType.ErrorType) return@mapNotNull null
