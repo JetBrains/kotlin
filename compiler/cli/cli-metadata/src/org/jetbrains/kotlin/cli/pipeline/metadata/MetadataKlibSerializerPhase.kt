@@ -32,7 +32,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
     override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataInMemorySerializationArtifact {
         (val firResult = frontendOutput, val configuration, val _ = sourceFiles) = input
         val metadataVersion = configuration.metadataVersion()
-        val fragments = mutableMapOf<String, MutableList<SerializedFirFile>>()
+        val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 
         val analysisResult = firResult.outputs
         for (output in analysisResult) {
@@ -53,7 +53,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
                     languageVersionSettings,
                 )
                 fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }
-                    .add(SerializedFirFile(firFile.name, packageFragment.toByteArray(), firFile.sourceFile?.path))
+                    .add(packageFragment.toByteArray())
             }
         }
 
@@ -65,7 +65,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
         }
 
         val fragmentNames = mutableListOf<String>()
-        val fragmentParts = mutableListOf<List<SerializedFirFile>>()
+        val fragmentParts = mutableListOf<List<ByteArray>>()
 
         for ([fqName, fragment] in fragments.entries.sortedBy { it.key }) {
             fragmentNames += fqName
@@ -74,7 +74,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
         }
 
         val module = header.build().toByteArray()
-        val serializedMetadata = SerializedFirMetadata(module, fragmentParts, fragmentNames, metadataVersion.toArray())
+        val serializedMetadata = SerializedMetadata(module, fragmentParts, fragmentNames, metadataVersion.toArray())
         return MetadataInMemorySerializationArtifact(serializedMetadata, configuration)
     }
 }
