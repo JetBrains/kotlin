@@ -68,7 +68,7 @@ class AndroidRunner {
             ),
             DynamicContainer.dynamicContainer(
                 "Compilation",
-                plan.tests.map { test ->
+                plan.flavorContainers { test ->
                     DynamicTest.dynamicTest(test.displayName) {
                         plan.compile(test)
                     }
@@ -82,7 +82,7 @@ class AndroidRunner {
             ),
             DynamicContainer.dynamicContainer(
                 "Runtime",
-                plan.tests.map<AndroidPlannedTest, DynamicNode> { test ->
+                plan.flavorContainers { test ->
                     DynamicTest.dynamicTest(test.displayName) {
                         runtimeResults.assertPassed(test)
                     }
@@ -91,6 +91,16 @@ class AndroidRunner {
                 }
             )
         )
+    }
+
+    private fun AndroidTestPlan.flavorContainers(testFactory: (AndroidPlannedTest) -> DynamicTest): List<DynamicNode> {
+        val testsByFlavor = tests.groupBy { it.flavorName }
+        return flavorsToRun.map { flavorName ->
+            DynamicContainer.dynamicContainer(
+                flavorName,
+                testsByFlavor.getValue(flavorName).map(testFactory)
+            )
+        }
     }
 
     private class AndroidRuntimeResultsCache(
@@ -241,6 +251,7 @@ private object AndroidRuntimeReport {
             mapOf(
                 "androidRuntimeEvent" to "started",
                 "testName" to test.info.name,
+                "flavorName" to test.flavorName,
                 "testFile" to test.info.file.path,
             )
         )
@@ -251,6 +262,7 @@ private object AndroidRuntimeReport {
             mapOf(
                 "androidRuntimeEvent" to "finished",
                 "testName" to test.info.name,
+                "flavorName" to test.flavorName,
                 "testFile" to test.info.file.path,
                 "status" to if (result.failureText == null) "OK" else "FAIL",
                 "elapsedTimeMs" to result.elapsedTimeMs.toString(),
