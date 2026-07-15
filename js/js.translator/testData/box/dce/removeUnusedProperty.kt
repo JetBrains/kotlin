@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JS_IR
 // ONLY_IR_DCE
+// CHECK_OPTIMIZED_JS
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
 
@@ -12,11 +13,17 @@ object B {
     var value = 5
 }
 
+object BwithEffects {
+    var value = someEffectfulFunction()
+}
+
+// FUNCTION_HAS_EFFECTS: function withIndirectEffects WRITE
 fun withIndirectEffects(): Int {
     someEffectfulFunction()
     return 5
 }
 
+// FUNCTION_HAS_EFFECTS: function withGlobalMutation WRITE
 fun withGlobalMutation(): Int {
     B.value += 6
     return 512
@@ -24,19 +31,33 @@ fun withGlobalMutation(): Int {
 
 class C(var v: Int = 42)
 
+// FUNCTION_HAS_EFFECTS: function withParameterMutation WRITE
 fun withParameterMutation(c: C): Int {
     c.v += 128
     return 256
 }
 
+// FUNCTION_HAS_EFFECTS: function withLocalMutation PURE
 fun withLocalMutation(): Int {
     var x = 5
     x += 6
     return 128
 }
 
+// FUNCTION_HAS_EFFECTS: function withGlobalRead READ
+fun withGlobalRead(): Int {
+    return B.value
+}
+
+// FUNCTION_HAS_EFFECTS: function withGlobalReadButEffects WRITE
+fun withGlobalReadButEffects(): Int {
+    return BwithEffects.value
+}
+
+// FUNCTION_HAS_EFFECTS: function empty PURE
 fun empty(): Int = 1024
 
+// FUNCTION_HAS_EFFECTS: class A WRITE
 class A {
     var x = 1
     var y = 42
@@ -46,8 +67,11 @@ class A {
     var b = withParameterMutation(C())
     var c = withLocalMutation()
     var d = empty()
+    var e = withGlobalRead()
+    var f = withGlobalReadButEffects()
 }
 
+// FUNCTION_HAS_EFFECTS: function createAndUse WRITE
 @JsExport
 fun createAndUse(): A {
     val a = A()
@@ -73,8 +97,8 @@ function box() {
         return `expected to only have one field left (have ${ps.length}: ${ps})`;
     if (a[ps[0]] !== 3)
         return `expected the 'x' field to have the value 3, have ${a[ps[0]]}`;
-    if (effectCount !== 2)
-        return `expected effectCount to be exactly 4, have ${effectCount}`;
+    if (effectCount !== 3)
+        return `expected effectCount to be exactly 3, have ${effectCount}`;
     // const ctor = a.prototype.constructor.toString();
     const ctor = Object.getPrototypeOf(a).constructor.toString();
     if (!ctor.includes("withGlobalMutation("))

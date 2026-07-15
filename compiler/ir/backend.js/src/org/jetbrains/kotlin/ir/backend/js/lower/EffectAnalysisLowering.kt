@@ -15,13 +15,16 @@ import org.jetbrains.kotlin.ir.backend.js.setMaxEffects
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FIELD_FOR_OBJECT_INSTANCE
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrConstantValue
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
+import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
@@ -48,6 +51,13 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
     class BodyVisitor : IrVisitor<Unit, IrFunction>() {
         val alreadyVisited = hashSetOf<IrFunction>()
 
+        fun IrFunction.isConstructor(): IrClass? = when {
+            this is IrConstructor -> constructedClass
+            origin == ES6_CONSTRUCTOR_REPLACEMENT -> parent as IrClass
+            origin == ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT -> parent as IrClass
+            else -> null
+        }
+
         fun visit(owner: IrFunction) {
             if (alreadyVisited.contains(owner)) return
             alreadyVisited.add(owner)
@@ -59,30 +69,51 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
             element.acceptChildren(this, data)
         }
 
-        private fun isLocal(expression: IrExpression, owner: IrDeclaration): Boolean {
-            return when (expression) {
-                is IrGetValue -> expression.symbol.owner.parent == owner
-                is IrConstantValue -> true
-                else -> false
-            }
-        }
-
-        override fun visitExpression(expression: IrExpression, data: IrFunction) {
-            super.visitExpression(expression, data)
-            if (!isLocal(expression, data)) {
+        override fun visitGetValue(expression: IrGetValue, data: IrFunction) {
+            super.visitGetValue(expression, data)
+            if (expression.symbol.owner.parent != data) {
                 data.setMaxEffects(EffectsKind.READ)
             }
         }
 
+        override fun visitGetField(expression: IrGetField, data: IrFunction) {
+            super.visitGetField(expression, data)
+            data.setMaxEffects(EffectsKind.READ)
+        }
+
+        override fun visitFunctionReference(expression: IrFunctionReference, data: IrFunction) {
+            super.visitFunctionReference(expression, data)
+            if (expression.symbol.owner != data) {
+                data.setMaxEffects(EffectsKind.READ)
+            }
+        }
+
+        override fun visitVariable(declaration: IrVariable, data: IrFunction) {
+            if (declaration.origin == ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT) {
+                // don't check children
+                // these origin checks are to prevent functions that use object's from always being WRITE
+                return
+            }
+            super.visitVariable(declaration, data)
+        }
+
         override fun visitSetField(expression: IrSetField, data: IrFunction) {
-            if (data is IrConstructor) {
+            val constructedClass = data.isConstructor()
+            if (constructedClass != null) {
                 val receiver = expression.receiver
                 if (receiver is IrGetValue) {
-                    if (receiver.symbol == data.constructedClass.thisReceiver!!.symbol) {
+                    if (receiver.symbol == constructedClass.thisReceiver!!.symbol) {
+                        expression.acceptChildren(this, data)
+                        return
+                    }
+                    if (receiver.symbol.owner.origin == ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT) {
                         expression.acceptChildren(this, data)
                         return
                     }
                 }
+            }
+            if (expression.symbol.owner.origin == FIELD_FOR_OBJECT_INSTANCE) {
+                return
             }
             data.setMaxEffects(EffectsKind.WRITE)
         }
