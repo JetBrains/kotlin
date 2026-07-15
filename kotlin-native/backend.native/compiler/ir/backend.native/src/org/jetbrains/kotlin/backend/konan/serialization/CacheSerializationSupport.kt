@@ -427,7 +427,6 @@ internal abstract class IdSignatureAwareSerializer<T : FileAwareSerializedData> 
             ::serializeString,
             protoIdSignatureMap,
             protoIdSignatureArray,
-            serializeForKlibAbi_2_3 = false,
         )
         items.forEach { idSignatureSerializer.protoIdSignature(signatureOf(it)) }
 

@@ -20,7 +20,6 @@ class IdSignatureSerializer(
     private val serializeDebugInfo: (String) -> Int,
     private val protoIdSignatureMap: MutableMap<IdSignature, Int>,
     private val protoIdSignatureArray: ArrayList<ProtoIdSignature>,
-    private val serializeForKlibAbi_2_3: Boolean,
 ) {
 
     private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map { serializeString(it) }
@@ -30,11 +29,7 @@ class IdSignatureSerializer(
         proto.addAllDeclarationFqName(serializeFqName(signature.declarationFqName))
 
         signature.id?.let {
-            if (serializeForKlibAbi_2_3) {
-                proto.memberUniqIdPre240 = it
-            } else {
-                proto.memberUniqId = it
-            }
+            proto.memberUniqId = it
         }
         if (signature.mask != 0L) {
             proto.flags = signature.mask
