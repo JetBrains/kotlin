@@ -1,5 +1,5 @@
 library {
-  // module name: <data_class.kt>
+  // module name: <main>
 
   library fragment {
     // package name: test

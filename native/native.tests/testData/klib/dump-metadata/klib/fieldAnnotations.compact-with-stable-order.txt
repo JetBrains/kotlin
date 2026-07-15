@@ -4,13 +4,8 @@ library {
   library fragment {
     // package name: test
 
-    // class name: test/Ann
     // class name: test/A
-
-    public final annotation class test/Ann : kotlin/Annotation {
-
-      public constructor()
-    }
+    // class name: test/Ann
 
     public final class test/A : kotlin/Any {
 
@@ -25,6 +20,11 @@ library {
       public final /* delegated */ var y: kotlin/Int
         public final /* non-default */ get
         public final /* non-default */ set(<set-?>: kotlin/Int)
+    }
+
+    public final annotation class test/Ann : kotlin/Annotation {
+
+      public constructor()
     }
 
     package {

@@ -86,7 +86,11 @@ fun main(args: Array<String>) {
 
         // Dump KLIB metadata tests
         testGroup(testsRoot, "native/native.tests/testData/klib/dump-metadata") {
-            testClass<AbstractNativeKlibDumpMetadataTest> {
+            testClass<AbstractNativeKlibDumpMetadataTest>(
+                annotations = listOf(
+                    provider<UseDummyTestCaseGroupProvider>(),
+                )
+            ) {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }

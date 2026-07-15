@@ -1,5 +1,5 @@
 library {
-  // module name: <Classes.kt>
+  // module name: <main>
 
   library fragment {
     // package name: <root>

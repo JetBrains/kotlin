@@ -1,5 +1,5 @@
 library {
-  // module name: <enum.kt>
+  // module name: <main>
 
   library fragment {
     // package name: test

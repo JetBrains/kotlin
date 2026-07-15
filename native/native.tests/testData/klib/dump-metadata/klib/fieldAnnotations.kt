@@ -1,5 +1,3 @@
-// KT-57135 K2 dosen't take into account `field` target on annotation for property
-// MUTED
 package test
 
 annotation class Ann

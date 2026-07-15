@@ -1,5 +1,5 @@
 library {
-  // module name: <Enum.kt>
+  // module name: <main>
 
   library fragment {
     // package name: <root>

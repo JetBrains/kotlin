@@ -1,5 +1,5 @@
 library {
-  // module name: <annotations_source_retention.kt>
+  // module name: <main>
 
   library fragment {
     // package name: test
