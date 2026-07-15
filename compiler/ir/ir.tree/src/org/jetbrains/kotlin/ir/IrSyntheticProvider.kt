@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinsPackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
@@ -25,14 +23,12 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
-@OptIn(InternalSymbolFinderAPI::class)
 class IrSyntheticProvider(
     module: IrModuleFragment,
     private val symbolTable: SymbolTable,
@@ -65,8 +61,6 @@ class IrSyntheticProvider(
     private val stringType = stringClass.defaultTypeWithoutArguments
     private val nothingClass = symbolTable.referenceClass(StandardClassIds.Nothing.toIdSignature())
     private val nothingType = nothingClass.defaultTypeWithoutArguments
-
-    private val intrinsicConstAnnotation = symbolTable.referenceClass(StandardClassIds.Annotations.IntrinsicConstEvaluation.toIdSignature())
 
     private val primitiveTypeToIrType: Map<PrimitiveType, IrType> = mapOf(
         PrimitiveType.BOOLEAN to booleanType,
@@ -257,44 +251,11 @@ class IrSyntheticProvider(
         }
     }
 
-    private fun intrinsicConstAnnotationCall(): IrAnnotation {
-        return IrAnnotationImpl(
-            startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET,
-            type = IrSimpleTypeImpl(
-                classifier = intrinsicConstAnnotation,
-                nullability = SimpleTypeNullability.DEFINITELY_NOT_NULL,
-                arguments = emptyList(),
-                annotations = emptyList()
-            ),
-            symbol = intrinsicConstAnnotation.owner.primaryConstructor!!.symbol,
-            typeArgumentsCount = 0,
-            constructorTypeArgumentsCount = 0,
-            origin = null
-        )
-    }
-
     private fun createOperatorsPackageFragment(module: IrModuleFragment): IrExternalPackageFragment {
         val packageDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(module.descriptor, StandardClassIds.BASE_INTERNAL_IR_PACKAGE)
         val packageSymbol = IrExternalPackageFragmentSymbolImpl(packageDescriptor)
 
         return IrExternalPackageFragmentImpl(packageSymbol, packageDescriptor.fqName, module)
-    }
-
-    public fun finish() {
-        fun IrSimpleFunctionSymbol.applyIntrinsicConstAnnotation(): IrSimpleFunctionSymbol {
-            return apply {
-                owner.annotations += intrinsicConstAnnotationCall()
-            }
-        }
-
-        ieee754equalsFunByOperandType.values.forEach { it.applyIntrinsicConstAnnotation() }
-        eqeqSymbol.applyIntrinsicConstAnnotation()
-        andandSymbol.applyIntrinsicConstAnnotation()
-        ororSymbol.applyIntrinsicConstAnnotation()
-        lessFunByOperandType.values.forEach { it.applyIntrinsicConstAnnotation() }
-        lessOrEqualFunByOperandType.values.forEach { it.applyIntrinsicConstAnnotation() }
-        greaterOrEqualFunByOperandType.values.forEach { it.applyIntrinsicConstAnnotation() }
-        greaterFunByOperandType.values.forEach { it.applyIntrinsicConstAnnotation() }
     }
 
     companion object {

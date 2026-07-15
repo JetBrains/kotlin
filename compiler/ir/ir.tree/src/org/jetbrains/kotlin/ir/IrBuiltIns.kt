@@ -201,19 +201,6 @@ abstract class IrBuiltIns : SymbolFinderHolder {
     val moduleFragment: IrModuleFragment
         get() = operatorsPackageFragment.module
 
-    protected fun createIntrinsicConstEvaluationClass(): IrClass {
-        return irFactory.buildClass {
-            name = StandardClassIds.Annotations.IntrinsicConstEvaluation.shortClassName
-            kind = ClassKind.ANNOTATION_CLASS
-            modality = Modality.FINAL
-        }.apply {
-            parent = kotlinInternalPackageFragment
-            createThisReceiverParameter()
-            addConstructor { isPrimary = true }
-            addFakeOverrides(IrTypeSystemContextImpl(this@IrBuiltIns))
-        }
-    }
-
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")
         val BUILTIN_OPERATOR = IrDeclarationOriginImpl("OPERATOR")
