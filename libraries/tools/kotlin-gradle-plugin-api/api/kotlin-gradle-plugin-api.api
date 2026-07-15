@@ -1372,6 +1372,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/K
 	public abstract fun getSeverity ()Lorg/gradle/api/provider/Property;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsAdditionalData : org/gradle/api/problems/AdditionalData {
+	public abstract fun getSeverity ()Lorg/gradle/api/provider/Property;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity : java/lang/Enum {
 	public static final field ERROR Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
 	public static final field FATAL Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;

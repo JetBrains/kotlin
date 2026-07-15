@@ -93,7 +93,7 @@ internal abstract class DefaultProblemsReporter @Inject constructor(
 
 private fun ProblemSpec.defaultSpecConfiguration(
     diagnostic: ToolingDiagnostic,
-    @Suppress("unused_parameter") severity: KotlinToolingDiagnosticsSeverity,
+    severity: KotlinToolingDiagnosticsSeverity,
 ): ProblemSpec {
     return details(diagnostic.message)
         .apply {
@@ -104,6 +104,9 @@ private fun ProblemSpec.defaultSpecConfiguration(
             diagnostic.documentation?.let {
                 documentedAt(it.url)
             }
+        }
+        .additionalData(KotlinToolingDiagnosticsAdditionalData::class.java) {
+            it.severity.value(severity).finalizeValue()
         }
 }
 
