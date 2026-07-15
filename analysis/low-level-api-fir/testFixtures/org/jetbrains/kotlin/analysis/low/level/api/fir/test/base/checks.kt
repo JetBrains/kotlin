@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.backReferences.checkFirFileBackReferences
+import org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.checkRootDeclarationReferences
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id.checkSymbolIdConstraints
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers.LLDistinctSourceElementsChecker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers.LLFirFileBackReferenceChecker
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers.LLRootDeclarationReferenceChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers.LLSymbolIdConstraintsChecker
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.frontend.fir.checkDistinctSourceElements
 fun TestConfigurationBuilder.configureFirConsistencyChecks() {
     useAfterAnalysisCheckers(::LLDistinctSourceElementsChecker)
     useAfterAnalysisCheckers(::LLSymbolIdConstraintsChecker)
-    useAfterAnalysisCheckers(::LLFirFileBackReferenceChecker)
+    useAfterAnalysisCheckers(::LLRootDeclarationReferenceChecker)
 }
 
 /**
@@ -46,6 +46,6 @@ fun checkFirConsistency(
     checkDistinctSourceElements(firFiles) { _, _ -> "Duplicate source elements ${lazyLocationDescription()}" }
     checkSymbolIdConstraints(firFiles) { "Symbol ID constraint violation ${lazyLocationDescription()}" }
     firFiles.forEach { firFile ->
-        checkFirFileBackReferences(firFile) { "FIR file back reference violation ${lazyLocationDescription()}" }
+        checkRootDeclarationReferences(firFile) { "FIR file back reference violation ${lazyLocationDescription()}" }
     }
 }

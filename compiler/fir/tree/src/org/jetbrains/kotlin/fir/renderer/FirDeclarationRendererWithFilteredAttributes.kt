@@ -16,9 +16,11 @@ class FirDeclarationRendererWithFilteredAttributes : FirDeclarationRendererWithA
             "SourceElementKey",
             "KlibSourceFile",
             "KlibFileAnnotationsKey",
-            // "Back references to FIR" (KT-70517): the back reference to the containing FIR file is infrastructure and must not appear in
-            // FIR dumps (see `backReferencedFirFile`).
-            "FirFileBackReferenceKey",
+
+            // In the Analysis API, the root declaration reference of each FIR declaration is already automatically checked in tests, so
+            // there is no need of adding it to test output. Furthermore, only the Analysis API assigns these back references, so test
+            // output would differ between compiler and Analysis API tests.
+            "RootDeclarationKey",
         )
     }
 }

@@ -46,8 +46,8 @@ internal class ModuleFileCacheImpl(override val moduleComponents: LLFirModuleRes
     override fun getCachedFirFile(ktFile: KtFile): FirFile? = firFileCache.getIfPresent(ktFile)
 
     override fun getContainerFirFile(declaration: FirDeclaration): FirFile? {
-        // TODO (marco): Is this legal? Is it even a shortcut given that the attribute access probably also is a map access?
-//        declaration.backReferencedFirFile?.let { return it }
+        // TODO (marco): Is it even a shortcut given that the attribute access probably also is a map access?
+//        declaration.rootDeclaration?.let { if (it is FirFile) return it }
 
         val ktFile = declaration.psi?.containingFile as? KtFile ?: return null
 

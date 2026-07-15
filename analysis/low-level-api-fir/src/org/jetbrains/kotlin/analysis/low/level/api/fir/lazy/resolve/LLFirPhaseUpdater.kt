@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.rootDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.body
-import org.jetbrains.kotlin.analysis.low.level.api.fir.backReferences.backReferencedFirFile
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -17,7 +17,7 @@ internal object LLFirPhaseUpdater {
         updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
 
         if (newPhase == FirResolvePhase.BODY_RESOLVE) {
-            val transformer = LocalElementPhaseUpdatingTransformer((target as? FirDeclaration)?.backReferencedFirFile)
+            val transformer = LocalElementPhaseUpdatingTransformer((target as? FirDeclaration)?.rootDeclaration)
             updateDeclarationSignatureBody(target, transformer)
 
             when (target) {
@@ -41,7 +41,7 @@ internal object LLFirPhaseUpdater {
      * Updates the state of the [target] declaration with a partially analyzed body.
      */
     fun updatePartiallyAnalyzedDeclarationContent(target: FirDeclaration, updateSignatureBody: Boolean, statementRange: IntRange) {
-        val transformer = LocalElementPhaseUpdatingTransformer(target.backReferencedFirFile)
+        val transformer = LocalElementPhaseUpdatingTransformer(target.rootDeclaration)
         if (updateSignatureBody) {
             updateDeclarationSignatureBody(target, transformer)
         }
@@ -128,7 +128,7 @@ internal object LLFirPhaseUpdater {
     }
 }
 
-private class LocalElementPhaseUpdatingTransformer(private val firFile: FirFile?) : FirVisitorVoid() {
+private class LocalElementPhaseUpdatingTransformer(private val rootDeclaration: FirDeclaration?) : FirVisitorVoid() {
     override fun visitElement(element: FirElement) {
         if (element is FirElementWithResolveState) {
             @OptIn(ResolveStateAccess::class)
@@ -141,8 +141,8 @@ private class LocalElementPhaseUpdatingTransformer(private val firFile: FirFile?
         //
         // CAUTION: This is a quick workaround in response to the problems described above, found in a few failing tests, and might not be
         // the best solution.
-        if (firFile != null && element is FirDeclaration) {
-            element.backReferencedFirFile = firFile
+        if (rootDeclaration != null && element is FirDeclaration) {
+            element.rootDeclaration = rootDeclaration
         }
 
         element.acceptChildren(this)

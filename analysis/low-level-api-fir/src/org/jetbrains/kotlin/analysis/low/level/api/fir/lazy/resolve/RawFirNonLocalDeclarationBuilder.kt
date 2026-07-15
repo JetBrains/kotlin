@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.backReferences.assignFirFileBackReferences
-import org.jetbrains.kotlin.analysis.low.level.api.fir.backReferences.backReferencedFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.assignRootDeclarationReferencesFrom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.*
@@ -96,13 +95,10 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
 
             val result = builder.moveNext(designation.path.iterator(), containingDeclaration = null)
 
-            // "Back references to FIR" (KT-70517): the non-local declaration already carries a back reference to its FIR file (assigned
-            // when the raw FIR file was built). Propagate it to all (local) declarations created while (re)building the body, since those
-            // nodes are transplanted into the live FIR tree.
-            val firFile = builder.originalDeclaration.backReferencedFirFile ?: designation.fileOrNull
-            if (firFile != null) {
-                assignFirFileBackReferences(result, firFile)
-            }
+            // The non-local declaration already carries a back reference to its FIR file (assigned when the raw FIR file was built).
+            // We propagate it to all (local) declarations created while (re)building the body, since those nodes are transplanted into the
+            // live FIR tree.
+            assignRootDeclarationReferencesFrom(result, builder.originalDeclaration)
 
             return result
         }
