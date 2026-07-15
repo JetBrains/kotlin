@@ -40,8 +40,8 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
                 "create", "avd", "--force", "-n", AVD_NAME, "-p", pathManager.getAndroidAvdRoot(), "-k"
             )
 
-            // Allow override of system image via system property
-            val overrideImage = System.getProperty("kotlin.android.avd.systemImage")
+            // Allow override of system image via the Gradle project property forwarded to the test JVM.
+            val overrideImage = System.getProperty("kotlin.test.android.avd.systemImage")
             if (overrideImage != null && !overrideImage.isEmpty()) {
                 commandLine.addParameter(overrideImage)
             } else if (platform == X86) {

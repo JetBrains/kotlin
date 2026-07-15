@@ -80,8 +80,14 @@ projectTests {
             systemProperty("kotlin.test.android.teamcity", true)
         }
 
-        project.findProperty("kotlin.test.android.path.filter")?.let {
-            systemProperty("kotlin.test.android.path.filter", it.toString())
+        for (propertyName in listOf(
+            "kotlin.test.android.path.filter",
+            "kotlin.test.android.compilation.parallelism",
+            "kotlin.test.android.avd.systemImage",
+        )) {
+            project.providers.gradleProperty(propertyName).orNull?.let {
+                systemProperty(propertyName, it)
+            }
         }
 
         androidSdkProvisioner {
