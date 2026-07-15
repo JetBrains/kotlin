@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.assignRootDeclarationReferences
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.FirElement
@@ -133,8 +134,13 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractAnalysisApiBasedTe
         }
 
         val session = FirSessionFactoryHelper.createEmptySession()
+
+        /**
+         * It would be better to use [org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade.buildFirFileUncached] here, but
+         * since [session] is a custom empty session, we cannot get a resolution facade for it.
+         */
         val firBuilder = PsiRawFirBuilder(session, scopeProvider)
-        val original = firBuilder.buildFirFile(file)
+        val original = firBuilder.buildFirFile(file).also { it.assignRootDeclarationReferences() }
 
         val designationBuilder = DesignationBuilder(elementToBuild)
         original.accept(designationBuilder)

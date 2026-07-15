@@ -11,6 +11,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeParameter
 import com.intellij.psi.impl.compiled.ClsElementImpl
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -105,6 +107,18 @@ class LLResolutionFacade internal constructor(
     internal fun getOrBuildFirFile(ktFile: KtFile): FirFile {
         val moduleComponents = getModuleComponentsForElement(ktFile)
         return moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+    }
+
+    /**
+     * Builds a [FirFile] for [ktFile] and returns it in the [raw FIR phase][FirResolvePhase.RAW_FIR] *without caching it*.
+     *
+     * This function is only suitable for tests that want to operate on an uncached FIR file. It is not safe for production as its use is
+     * inefficient and may lead to duplicate FIR symbols.
+     */
+    @TestOnly
+    fun buildFirFileUncached(ktFile: KtFile, bodyBuildingMode: BodyBuildingMode): FirFile {
+        val moduleComponents = getModuleComponentsForElement(ktFile)
+        return moduleComponents.firFileBuilder.buildRawFirFile(ktFile, bodyBuildingMode)
     }
 
     private fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {

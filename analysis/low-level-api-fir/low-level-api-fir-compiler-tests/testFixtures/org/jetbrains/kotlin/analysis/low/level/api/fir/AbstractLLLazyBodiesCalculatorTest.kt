@@ -14,14 +14,12 @@ import org.jetbrains.kotlin.analysis.test.framework.utils.ignoreExceptionIfIgnor
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.FirLazyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.utils.replSnippetDelegatedPropertyCopies
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
-import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -62,25 +60,19 @@ abstract class AbstractLLLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTest
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         mainModule.testModule.directives.ignoreExceptionIfIgnoreDirectivePresent(Directives.IGNORE_BODY_CALCULATOR) {
             withResolutionFacade(mainFile) { resolutionFacade ->
-                val session = resolutionFacade.useSiteFirSession
-                val provider = session.kotlinScopeProvider
-
-                val laziedFirFile = PsiRawFirBuilder(
-                    session,
-                    provider,
-                    bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
-                ).buildFirFile(mainFile)
+                val laziedFirFile = resolutionFacade.buildFirFileUncached(
+                    mainFile,
+                    bodyBuildingMode = BodyBuildingMode.LAZY_BODIES,
+                )
 
                 FirLazyBodiesCalculator.calculateAllLazyExpressionsInFile(laziedFirFile)
                 laziedFirFile.accept(lazyChecker)
                 val laziedFirFileDump = FirRenderer().renderElementAsString(laziedFirFile)
 
-                val fullFirFile = PsiRawFirBuilder(
-                    session,
-                    provider,
-                    bodyBuildingMode = BodyBuildingMode.NORMAL
-                ).buildFirFile(mainFile)
-
+                val fullFirFile = resolutionFacade.buildFirFileUncached(
+                    mainFile,
+                    bodyBuildingMode = BodyBuildingMode.NORMAL,
+                )
                 val fullFirFileDump = FirRenderer().renderElementAsString(fullFirFile)
 
                 Assertions.assertEquals(/* expected = */ fullFirFileDump, /* actual = */ laziedFirFileDump)
