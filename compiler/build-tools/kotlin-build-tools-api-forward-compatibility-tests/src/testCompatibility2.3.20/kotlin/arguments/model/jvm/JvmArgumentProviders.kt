@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JDK_RELEASE
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JSPECIFY_ANNOTATIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JSR305
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_KLIB
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_LAMBDAS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_MODULE_PATH
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_NULLABILITY_ANNOTATIONS
@@ -285,26 +284,6 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
         invalidRawValues = listOf("non-existent-value"),
         valueString = { value -> value },
         expectedArgumentStringsFor = { value -> listOf("-Xsupport-compatqual-checker-framework-annotations=$value") },
-    ),
-    JvmArgumentTestDescriptor(
-        argumentName = "Xklib",
-        argument = X_KLIB,
-        argumentValues = listOf(
-            listOf(
-                testBaseDir.resolve("path/to/lib1.klib"),
-                testBaseDir.resolve("path/to/lib2.klib"),
-                testBaseDir.resolve("path/to/lib3.klib"),
-            ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
-        ),
-        argumentRawValues = listOf(
-            listOf(
-                testBaseDir.resolve("path/to/lib1.klib"),
-                testBaseDir.resolve("path/to/lib2.klib"),
-                testBaseDir.resolve("path/to/lib3.klib"),
-            ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
-        ),
-        valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xklib=$value") },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xjava-source-roots",

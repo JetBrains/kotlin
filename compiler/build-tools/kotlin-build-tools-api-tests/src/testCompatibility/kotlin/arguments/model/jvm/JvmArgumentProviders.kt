@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JDK_RELEASE
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JSPECIFY_ANNOTATIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JSR305
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_KLIB
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_LAMBDAS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_MODULE_PATH
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_NULLABILITY_ANNOTATIONS
@@ -302,28 +301,6 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
         runsNullableTest = true,
         valueString = { value -> value?.stringValue },
         expectedArgumentStringsFor = { value -> listOf("-Xsupport-compatqual-checker-framework-annotations=$value") },
-    ),
-    JvmArgumentTestDescriptor(
-        argumentName = "Xklib",
-        argument = X_KLIB,
-        argumentValues = listOf(
-            listOf(
-                testBaseDir.resolve("path/to/lib1.klib"),
-                testBaseDir.resolve("path/to/lib2.klib"),
-                testBaseDir.resolve("path/to/lib3.klib"),
-            )
-        ),
-        argumentRawValues = listOf(
-            listOf(
-                testBaseDir.resolve("path/to/lib1.klib"),
-                testBaseDir.resolve("path/to/lib2.klib"),
-                testBaseDir.resolve("path/to/lib3.klib"),
-            ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
-        ),
-        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with${File.pathSeparator}separator"))),
-        runsNullableTest = true,
-        valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
-        expectedArgumentStringsFor = { value -> listOf("-Xklib=$value") },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xjava-source-roots",
