@@ -21,10 +21,10 @@ interface FirComplementarySymbolsCalculator : FirSessionComponent {
 }
 
 class FirDefaultComplementarySymbolsCalculator(private val session: FirSession) : FirComplementarySymbolsCalculator {
-    private val allSubclassesCache: FirCache<FirClassSymbol<*>, Set<FirClassSymbol<*>>, MutableSet<FirClassSymbol<*>>> =
+    private val allSubclassesCache: FirCache<FirClassSymbol<*>, Set<FirClassSymbol<*>>, MutableSet<FirClassSymbol<*>>?> =
         session.firCachesFactory.createCache { symbol, visited ->
             when {
-                !visited.add(symbol) -> emptySet()
+                visited != null && !visited.add(symbol) -> emptySet()
                 symbol !is FirRegularClassSymbol -> setOf(symbol)
                 symbol.fir.modality == Modality.SEALED -> buildSet {
                     if (symbol.fir.isJavaNonAbstractSealed == true) {
@@ -33,7 +33,7 @@ class FirDefaultComplementarySymbolsCalculator(private val session: FirSession) 
 
                     symbol.fir.getSealedClassInheritors(session).forEach {
                         val symbol = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol ?: return@forEach
-                        this += allSubclassesCache.getValue(symbol, visited)
+                        addAll(allSubclassesCache.getValue(symbol, mutableSetOf(symbol)))
                     }
                 }
                 else -> setOf(symbol)
@@ -41,7 +41,7 @@ class FirDefaultComplementarySymbolsCalculator(private val session: FirSession) 
         }
 
     override fun collectAllSubclassesFor(symbol: FirClassSymbol<*>, session: FirSession): Set<FirClassSymbol<*>> =
-        allSubclassesCache.getValue(symbol, mutableSetOf())
+        allSubclassesCache.getValue(symbol, context = null)
 }
 
 val FirSession.complementarySymbolsCalculator: FirComplementarySymbolsCalculator by FirSession.sessionComponentAccessor()
