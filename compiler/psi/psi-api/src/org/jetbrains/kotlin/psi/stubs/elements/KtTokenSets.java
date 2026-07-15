@@ -6,31 +6,29 @@
 package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 
 public interface KtTokenSets {
+    @NotNull
     TokenSet DECLARATION_TYPES =
             TokenSet.create(
                     CLASS, OBJECT_DECLARATION, FUN, PROPERTY, DESTRUCTURING_DECLARATION,
                     TYPEALIAS, CLASS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY
             );
 
-    TokenSet DECLARATION_AND_COMPANION_BLOCK_TYPES =
-            TokenSet.orSet(DECLARATION_TYPES, TokenSet.create(COMPANION_BLOCK));
-
-    TokenSet SUPER_TYPE_LIST_ENTRIES = TokenSet.create(DELEGATED_SUPER_TYPE_ENTRY, SUPER_TYPE_CALL_ENTRY, SUPER_TYPE_ENTRY);
-
-    TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE, INTERSECTION_TYPE);
-
-    TokenSet INSIDE_DIRECTIVE_EXPRESSIONS = TokenSet.create(REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
+    @NotNull TokenSet DECLARATION_AND_COMPANION_BLOCK_TYPES = TokenSet.orSet(DECLARATION_TYPES, TokenSet.create(COMPANION_BLOCK));
+    @NotNull TokenSet SUPER_TYPE_LIST_ENTRIES = TokenSet.create(DELEGATED_SUPER_TYPE_ENTRY, SUPER_TYPE_CALL_ENTRY, SUPER_TYPE_ENTRY);
+    @NotNull TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE, INTERSECTION_TYPE);
+    @NotNull TokenSet INSIDE_DIRECTIVE_EXPRESSIONS = TokenSet.create(REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
 
     // typeArguments? valueArguments : typeArguments : arrayAccess
-    TokenSet POSTFIX_OPERATIONS = TokenSet.create(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS);
+    @NotNull TokenSet POSTFIX_OPERATIONS = TokenSet.create(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS);
+    @NotNull TokenSet PREFIX_OPERATIONS = TokenSet.create(KtTokens.MINUS, KtTokens.PLUS, KtTokens.MINUSMINUS, KtTokens.PLUSPLUS, KtTokens.EXCL);
 
-    TokenSet PREFIX_OPERATIONS = TokenSet.create(KtTokens.MINUS, KtTokens.PLUS, KtTokens.MINUSMINUS, KtTokens.PLUSPLUS, KtTokens.EXCL);
-
+    @NotNull
     TokenSet CONSTANT_EXPRESSIONS = TokenSet.create(
             NULL,
             BOOLEAN_CONSTANT,
