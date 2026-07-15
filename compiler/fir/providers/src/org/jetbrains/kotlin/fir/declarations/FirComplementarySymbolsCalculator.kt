@@ -15,29 +15,32 @@ import org.jetbrains.kotlin.fir.isJavaNonAbstractSealed
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.utils.SmartSet
 
 interface FirComplementarySymbolsCalculator : FirSessionComponent {
     fun collectAllSubclassesFor(symbol: FirClassSymbol<*>, session: FirSession): Set<FirClassSymbol<*>>
 }
 
 class FirDefaultComplementarySymbolsCalculator(private val session: FirSession) : FirComplementarySymbolsCalculator {
-    private val allSubclassesCache: FirCache<FirClassSymbol<*>, Set<FirClassSymbol<*>>, MutableSet<FirClassSymbol<*>>> =
+    private val allSubclassesCache: FirCache<FirClassSymbol<*>, SmartSet<FirClassSymbol<*>>, MutableSet<FirClassSymbol<*>>> =
         session.firCachesFactory.createCache { symbol, visited ->
+            val result = SmartSet.create<FirClassSymbol<*>>()
             when {
-                !visited.add(symbol) -> emptySet()
-                symbol !is FirRegularClassSymbol -> setOf(symbol)
-                symbol.fir.modality == Modality.SEALED -> buildSet {
+                !visited.add(symbol) -> {}
+                symbol !is FirRegularClassSymbol -> result.add(symbol)
+                symbol.fir.modality == Modality.SEALED -> {
                     if (symbol.fir.isJavaNonAbstractSealed == true) {
-                        add(symbol)
+                        result.add(symbol)
                     }
 
                     symbol.fir.getSealedClassInheritors(session).forEach {
                         val symbol = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol ?: return@forEach
-                        this += allSubclassesCache.getValue(symbol, visited)
+                        result.addAll(allSubclassesCache.getValue(symbol, visited))
                     }
                 }
-                else -> setOf(symbol)
+                else -> result.add(symbol)
             }
+            result
         }
 
     override fun collectAllSubclassesFor(symbol: FirClassSymbol<*>, session: FirSession): Set<FirClassSymbol<*>> =
