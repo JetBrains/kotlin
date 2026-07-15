@@ -7,6 +7,6 @@ Each pattern directive should be on a separate line, with empty lines allowed be
 
 # TODOs
 
-Pattern: *.kt
-
 When adding a TODO, make sure include a YouTrack issue number (KT-XXXXX) in the description.
+
+Pattern: *.kt

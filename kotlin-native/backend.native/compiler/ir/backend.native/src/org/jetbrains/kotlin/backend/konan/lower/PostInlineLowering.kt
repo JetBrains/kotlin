@@ -122,8 +122,6 @@ internal class PostInlineLowering(val context: NativeBackendContext) : BodyLower
                 }
 
                 if (symbols.asserts.contains(expression.symbol) && !context.config.assertsEnabled) {
-                    // While the call argument might have side effects, removing them when asserts are disabled
-                    // matches the function contract.
                     return data.at(expression).irComposite {}
                 }
 
