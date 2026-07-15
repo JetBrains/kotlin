@@ -22,6 +22,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
+import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -43,15 +45,15 @@ import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import javax.inject.Inject
 
 @CacheableTask
-abstract class KaptGenerateStubsTask @Inject constructor(
+abstract class BaseKaptTask @Inject constructor(
     project: Project,
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory,
-) : BaseKaptTask(
-    project,
+) : KotlinCompile(
+    objectFactory.KotlinJvmCompilerOptionsDefault(project),
     workerExecutor,
     objectFactory
-), KaptGenerateStubs {
+), BaseKapt {
 
     // Bug in Gradle - without this override Gradle complains @Internal is not
     // compatible with @Classpath and @Incremental annotations
@@ -65,20 +67,23 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:Internal
     override val multiplatformStructure: K2MultiplatformStructure get() = super.multiplatformStructure
 
-    /* Used as input as empty kapt classpath should not trigger stub generation, but a non-empty one should. */
-    @Input
-    fun getIfKaptClasspathIsPresent() = !kaptClasspath.isEmpty
+//    /* Used as input as empty kapt classpath should not trigger stub generation, but a non-empty one should. */
+//    @Input
+//    fun getIfKaptClasspathIsPresent() = !kaptClasspath.isEmpty
 
-    /**
-     * Changes in this additional sources will trigger stubs regeneration,
-     * but the sources themselves will not be used to find kapt annotations and generate stubs.
-     */
-    @get:InputFiles
-    @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:Incremental
-    abstract val additionalSources: ConfigurableFileCollection
+    @get:Input
+    abstract val verbose: Property<Boolean>
+
+//    /**
+//     * Changes in this additional sources will trigger stubs regeneration,
+//     * but the sources themselves will not be used to find kapt annotations and generate stubs.
+//     */
+//    @get:InputFiles
+//    @get:IgnoreEmptyDirectories
+//    @get:NormalizeLineEndings
+//    @get:PathSensitive(PathSensitivity.RELATIVE)
+//    @get:Incremental
+//    abstract val additionalSources: ConfigurableFileCollection
 
     override fun skipCondition(): Boolean = sources.isEmpty && javaSources.isEmpty
 
@@ -93,8 +98,8 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:Internal
     override val scriptSources: FileCollection = objectFactory.fileCollection()
 
-    @get:Internal
-    abstract val kotlinCompileDestinationDirectory: DirectoryProperty
+//    @get:Internal
+//    abstract val kotlinCompileDestinationDirectory: DirectoryProperty
 
     override val incrementalProps: List<FileCollection>
         get() = listOf(
@@ -141,6 +146,20 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
         sources { args ->
             args.freeArgs += (scriptSources.asFileTree.files + javaSources.files + sources.asFileTree.files).map { it.absolutePath }
+        }
+    }
+
+    companion object {
+        private const val KAPT_VERBOSE_OPTION_NAME = "kapt.verbose"
+
+        internal fun queryKaptVerboseProperty(
+            project: Project,
+        ): Provider<Boolean> {
+            return project
+                .providers
+                .gradleProperty(KAPT_VERBOSE_OPTION_NAME)
+                .map { it.toString().toBoolean() }
+                .orElse(false)
         }
     }
 }

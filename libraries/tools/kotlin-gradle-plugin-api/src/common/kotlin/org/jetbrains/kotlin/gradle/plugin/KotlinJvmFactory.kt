@@ -11,8 +11,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
-import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 /**
@@ -167,7 +167,7 @@ interface KotlinJvmFactory {
      * @since 1.7.0
      */
     @Deprecated("Replaced with 'registerKaptTask(taskName, kaptExtension)'")
-    fun registerKaptTask(taskName: String): TaskProvider<out Kapt>
+    fun registerKaptTask(taskName: String): TaskProvider<out BaseKapt>
 
     /**
      * Registers a new kapt task with the given [taskName].
@@ -182,7 +182,7 @@ interface KotlinJvmFactory {
     fun registerKaptTask(
         taskName: String,
         kaptExtension: KaptExtensionConfig,
-    ): TaskProvider<out Kapt>
+    ): TaskProvider<out BaseKapt>
 
     /**
      * Adds a compiler plugin dependency to this project.

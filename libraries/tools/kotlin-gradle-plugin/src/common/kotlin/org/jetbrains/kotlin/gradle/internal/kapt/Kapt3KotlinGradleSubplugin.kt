@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
@@ -25,9 +26,8 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.configuration.KaptAptTaskConfig
+import org.jetbrains.kotlin.gradle.tasks.configuration.KaptAptConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
-import org.jetbrains.kotlin.gradle.tasks.configuration.KaptWithoutKotlincConfig
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.ByteArrayOutputStream
@@ -133,10 +133,8 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
 
     private fun Kapt3SubpluginContext.getKaptIncrementalDataDir() = temporaryKaptDirectory("incrementalData")
 
-    private fun Kapt3SubpluginContext.getKaptIncrementalAnnotationProcessingCache() = temporaryKaptDirectory("incApCache")
-
     private fun Kapt3SubpluginContext.temporaryKaptDirectory(
-        name: String
+        name: String,
     ) = project.layout.buildDirectory.dir("tmp/kapt3/$name/$sourceSetName")
 
     internal inner class Kapt3SubpluginContext(
@@ -146,7 +144,7 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
         val sourceSetName: String,
         val kotlinCompilation: KotlinCompilation<*>,
         val kaptExtension: KaptExtension,
-        val kaptClasspathConfigurations: List<Configuration>
+        val kaptClasspathConfigurations: List<Configuration>,
     ) {
         val sourcesOutputDir = project.getKaptGeneratedSourcesDirectory(sourceSetName)
         val kotlinSourcesOutputDir = project.getKaptGeneratedKotlinSourcesDirectory(sourceSetName)
@@ -159,7 +157,7 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
     }
 
     override fun applyToCompilation(
-        kotlinCompilation: KotlinCompilation<*>
+        kotlinCompilation: KotlinCompilation<*>,
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
 
@@ -241,18 +239,18 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
     }
 
     private fun Kapt3SubpluginContext.createKaptKotlinTask(
-        generateStubsTask: TaskProvider<KaptGenerateStubsTask>
+        generateStubsTask: TaskProvider<KaptGenerateStubsTask>,
     ): TaskProvider<out KaptAptTask> {
         val taskName = kotlinCompile.kaptTaskName
-        val taskConfigAction = KaptAptTaskConfig(
-            kotlinCompilation.project,
+        val taskConfigAction = KaptAptConfig(
+            kotlinCompilation,
             generateStubsTask,
-            kaptExtension
         )
 
         val kaptClasspathConfiguration = project.configurations.createResolvable("kaptClasspath_$taskName").apply {
             setInvisibleIfSupported()
         }.setExtendsFrom(kaptClasspathConfigurations)
+
         taskConfigAction.configureTaskProvider { taskProvider ->
             taskProvider.dependsOn(generateStubsTask)
 
@@ -283,9 +281,10 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
                 }
             }
         }
-        taskConfigAction.configureTask { task ->
+        taskConfigAction.configureTask { task: KaptAptTask ->
             task.stubsDir.set(getKaptStubsDir())
             task.destinationDir.set(sourcesOutputDir)
+            task.destinationDirectory.set(kotlinSourcesOutputDir)
             task.kotlinSourcesDestinationDir.set(kotlinSourcesOutputDir)
             task.classesDir.set(classesOutputDir)
 
@@ -293,11 +292,11 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
                 task.defaultJavaSourceCompatibility.set(javaCompile.map { it.sourceCompatibility })
             }
 
-            task.incAptCache.value(
-                KaptProperties.isIncrementalKapt(project).flatMap {
-                    if (it) getKaptIncrementalAnnotationProcessingCache() else project.provider { null }
-                }
-            ).disallowChanges()
+//            task.incAptCache.value(
+//                KaptProperties.isIncrementalKapt(project).flatMap {
+//                    if (it) getKaptIncrementalAnnotationProcessingCache() else project.provider<Directory?> { null }
+//                }
+//            ).disallowChanges()
 
             task.kaptClasspath.from(kaptClasspathConfiguration).disallowChanges()
             task.kaptExternalClasspath.from(
@@ -391,7 +390,7 @@ internal val TaskProvider<out KotlinJvmCompile>.kaptTaskName
 
 internal fun getKaptTaskName(
     kotlinCompileName: String,
-    prefix: String
+    prefix: String,
 ): String {
     return if (kotlinCompileName.startsWith("compile")) {
         // Replace compile*Kotlin to kapt*Kotlin
@@ -488,7 +487,7 @@ private object KaptWithAndroid {
     // Avoid loading the BaseVariant type at call sites and instead lazily load it when evaluation reaches it in the body using inline:
     @Suppress("NOTHING_TO_INLINE", "TYPEALIAS_EXPANSION_DEPRECATION")
     inline fun androidVariantData(
-        context: Kapt3GradleSubplugin.Kapt3SubpluginContext
+        context: Kapt3GradleSubplugin.Kapt3SubpluginContext,
     ): DeprecatedAndroidBaseVariant? = context.variantData as? DeprecatedAndroidBaseVariant
 
     @Suppress("NOTHING_TO_INLINE")
@@ -497,7 +496,7 @@ private object KaptWithAndroid {
         kapt3SubpluginContext: Kapt3GradleSubplugin.Kapt3SubpluginContext,
         project: Project,
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variantData: DeprecatedAndroidBaseVariant,
-        kaptTask: TaskProvider<out BaseKaptTask>
+        kaptTask: TaskProvider<out KaptAptTask>,
     ) {
         val kaptSourceOutput = project.fileTree(kapt3SubpluginContext.sourcesOutputDir).builtBy(kaptTask)
         kaptSourceOutput.include("**/*.java")
@@ -510,7 +509,7 @@ private object KaptWithAndroid {
     }
 }
 
-internal fun registerGeneratedJavaSource(kaptTask: TaskProvider<out BaseKaptTask>, javaTaskProvider: TaskProvider<out AbstractCompile>) {
+internal fun registerGeneratedJavaSource(kaptTask: TaskProvider<out KaptAptTask>, javaTaskProvider: TaskProvider<out AbstractCompile>) {
     javaTaskProvider.configure { javaTask ->
         val generatedJavaSources = javaTask.project.fileTree(kaptTask.flatMap { it.destinationDir })
         generatedJavaSources.include("**/*.java")

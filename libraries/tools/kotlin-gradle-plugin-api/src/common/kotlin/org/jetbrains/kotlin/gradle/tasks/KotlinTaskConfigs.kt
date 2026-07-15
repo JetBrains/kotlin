@@ -182,25 +182,21 @@ interface KotlinJvmCompile : BaseKotlinCompile,
  *
  * This task is a part of [Kotlin/Kapt](https://kotlinlang.org/docs/kapt.html).
  */
-interface KaptGenerateStubs : KotlinJvmCompile {
+interface KaptGenerateStubs : BaseKapt {
     /**
      * The directory where generated stubs can be found.
      */
     @get:OutputDirectory
-    val stubsDir: DirectoryProperty
+    override val stubsDir: DirectoryProperty
 
-    /**
-     * Allows adding artifacts (accepted by [JVM classpath](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/classpath.html))
-     * containing implementation of Java [annotation processor](https://jcp.org/en/jsr/detail?id=269).
-     *
-     * Configure this property with the same artifacts as its related [Kapt] task.
-     */
-    @get:Internal("Not an input, just passed as kapt args. ")
-    val kaptClasspath: ConfigurableFileCollection
-
-}
-
-interface KaptApt : KaptGenerateStubs {
+//    /**
+//     * Allows adding artifacts (accepted by [JVM classpath](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/classpath.html))
+//     * containing implementation of Java [annotation processor](https://jcp.org/en/jsr/detail?id=269).
+//     *
+//     * Configure this property with the same artifacts as its related [Kapt] task.
+//     */
+//    @get:Internal("Not an input, just passed as kapt args. ")
+//    val kaptClasspath: ConfigurableFileCollection
 
 }
 
@@ -209,8 +205,7 @@ interface KaptApt : KaptGenerateStubs {
  *
  * **Note:** Always run this task after its related [KaptGenerateStubs] and [KotlinJvmCompile] tasks.
  */
-interface BaseKapt : Task,
-    UsesKotlinJavaToolchain {
+interface BaseKapt : KotlinJvmCompile {
 
     // part of kaptClasspath consisting from external artifacts only
     // basically kaptClasspath = kaptExternalClasspath + artifacts built locally
@@ -221,13 +216,38 @@ interface BaseKapt : Task,
     @get:Classpath
     val kaptExternalClasspath: ConfigurableFileCollection
 
+
     /**
-     * The names of Gradle's [org.gradle.api.artifacts.Configuration] that contains all the annotation processor artifacts
-     * used to configure [kaptClasspath].
+     * The directory where the generated related [KaptGenerateStubs] task stub can be found.
      */
     @get:Internal
-    val kaptClasspathConfigurationNames: ListProperty<String>
+    val stubsDir: DirectoryProperty
 
+    /**
+     * Allows adding artifacts (usually JAR files)
+     * that contain the implementation of the Java [annotation processor](https://jcp.org/en/jsr/detail?id=269).
+     *
+     * Should be configured with the same artifacts as in the related [KaptGenerateStubs] task.
+     */
+    @get:Classpath
+    val kaptClasspath: ConfigurableFileCollection
+
+//    // Needed for the model builder
+//    /**
+//     * Specifies the name of [org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet] for which task is
+//     * doing annotation processing.
+//     */
+//    @get:Internal
+//    val sourceSetName: Property<String>
+
+
+}
+
+/**
+ * Represents a [BaseKapt] task whose implementation is running [Kotlin/Kapt](https://kotlinlang.org/docs/kapt.html)
+ * directly (without using the Kotlin compiler).
+ */
+interface KaptApt : BaseKapt {
     /**
      * The output directory containing the caches necessary to support incremental annotation processing.
      */
@@ -272,21 +292,6 @@ interface BaseKapt : Task,
     val annotationProcessorOptionsProviders: ListProperty<CommandLineArgumentProvider>
 
     /**
-     * The directory where the generated related [KaptGenerateStubs] task stub can be found.
-     */
-    @get:Internal
-    val stubsDir: DirectoryProperty
-
-    /**
-     * Allows adding artifacts (usually JAR files)
-     * that contain the implementation of the Java [annotation processor](https://jcp.org/en/jsr/detail?id=269).
-     *
-     * Should be configured with the same artifacts as in the related [KaptGenerateStubs] task.
-     */
-    @get:Classpath
-    val kaptClasspath: ConfigurableFileCollection
-
-    /**
      * The directory that contains the compiled related [KotlinJvmCompile] task classes.
      */
     @get:Internal
@@ -297,14 +302,6 @@ interface BaseKapt : Task,
      */
     @get:Internal("Task implementation adds correct input annotation.")
     val classpath: ConfigurableFileCollection
-
-    // Needed for the model builder
-    /**
-     * Specifies the name of [org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet] for which task is
-     * doing annotation processing.
-     */
-    @get:Internal
-    val sourceSetName: Property<String>
 
     /**
      * Contains all Java source code used in this compilation
@@ -334,13 +331,6 @@ interface BaseKapt : Task,
      */
     @get:Internal("Used to compute javac option.")
     val defaultJavaSourceCompatibility: Property<String>
-}
-
-/**
- * Represents a [BaseKapt] task whose implementation is running [Kotlin/Kapt](https://kotlinlang.org/docs/kapt.html)
- * directly (without using the Kotlin compiler).
- */
-interface Kapt : BaseKapt {
 
     /**
      * Add JDK classes to the [BaseKapt.classpath].
@@ -358,4 +348,11 @@ interface Kapt : BaseKapt {
      */
     @get:Classpath
     val kaptJars: ConfigurableFileCollection
+
+    /**
+     * The names of Gradle's [org.gradle.api.artifacts.Configuration] that contains all the annotation processor artifacts
+     * used to configure [kaptClasspath].
+     */
+    @get:Internal
+    val kaptClasspathConfigurationNames: ListProperty<String>
 }

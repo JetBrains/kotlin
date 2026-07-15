@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.internal.KaptAptTask
 import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
@@ -24,7 +25,7 @@ class KaptConfigurationIT : KGPBaseTest() {
         project("kapt2/simple", gradleVersion) {
             gradleProperties.appendText("\nkapt.verbose=true")
             buildScriptInjection {
-                project.tasks.withType(BaseKapt::class.java).configureEach {
+                project.tasks.withType(KaptAptTask::class.java).configureEach {
                     @Suppress("DEPRECATION")
                     it.annotationProcessorOptionProviders.add(
                         listOf(CommandLineArgumentProvider { listOf("-Aoption1=kt58009", "-Aoption2=kt58009") })

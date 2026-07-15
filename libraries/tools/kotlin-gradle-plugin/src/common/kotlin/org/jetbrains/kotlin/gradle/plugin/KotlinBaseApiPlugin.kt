@@ -13,17 +13,18 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.KaptAptTask
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
-import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAgpCompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTargetForJvm
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKaptConfig
+import org.jetbrains.kotlin.gradle.tasks.configuration.KaptAptConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
-import org.jetbrains.kotlin.gradle.tasks.configuration.KaptWithoutKotlincConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
 import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.injected
@@ -143,7 +144,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         taskName: String,
         compileTask: TaskProvider<out KotlinJvmCompile>,
         kaptExtension: KaptExtensionConfig,
-        explicitApiMode: Provider<ExplicitApiMode>
+        explicitApiMode: Provider<ExplicitApiMode>,
     ): TaskProvider<out KaptGenerateStubs> {
         val taskConfig = KaptGenerateStubsConfig(
             myProject,
@@ -151,7 +152,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
             kaptExtension
         )
 
-        val kaptGenerateStubsTask =  myProject.registerTask(
+        val kaptGenerateStubsTask = myProject.registerTask(
             taskName,
             KaptGenerateStubsTask::class.java,
             listOf(myProject)
@@ -161,23 +162,24 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
 
         kaptGenerateStubsTask.configure {
             val compileTaskCompilerOptions = compileTask.get().compilerOptions
-            KaptGenerateStubsConfig.syncOptionsFromCompileTask(compileTaskCompilerOptions, it)
+            BaseKaptConfig.syncOptionsFromCompileTask(compileTaskCompilerOptions, it)
         }
 
         return kaptGenerateStubsTask
     }
 
     @Deprecated("Replaced with 'registerKaptTask(taskName, kaptExtension)'")
-    override fun registerKaptTask(taskName: String): TaskProvider<out Kapt> {
+    override fun registerKaptTask(taskName: String): TaskProvider<out BaseKapt> {
         return registerKaptTask(taskName, kaptExtension)
     }
 
     override fun registerKaptTask(
         taskName: String,
         kaptExtension: KaptExtensionConfig,
-    ): TaskProvider<out Kapt> {
-        val kaptTaskConfiguration = KaptWithoutKotlincConfig(myProject, kaptExtension)
-        return myProject.registerTask(taskName, KaptWithoutKotlincTask::class.java, emptyList()).also {
+    ): TaskProvider<out BaseKapt> {
+        @Suppress("DEPRECATION") val extension = kotlinExtension
+        val kaptTaskConfiguration = KaptAptConfig(myProject, providerFactory.provider { extension.explicitApi }, kaptExtension)
+        return myProject.registerTask(taskName, KaptAptTask::class.java, emptyList()).also {
             kaptTaskConfiguration.execute(it)
         }
     }
