@@ -15,23 +15,26 @@ plugins {
 }
 
 val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
-val assignmentCompilerPlugin = configurations.dependencyScope("assignmentCompilerPlugin")
-val serializationCompilerPlugin = configurations.dependencyScope("serializationCompilerPlugin")
-val serializationCore = configurations.dependencyScope("serializationCore")
-val pluginSandbox = configurations.dependencyScope("pluginSandbox")
-
 val noArgCompilerPluginResolvable = configurations.resolvable("noArgCompilerPluginResolvable") {
     extendsFrom(noArgCompilerPlugin.get())
 }
+
+val assignmentCompilerPlugin = configurations.dependencyScope("assignmentCompilerPlugin")
 val assignmentCompilerPluginResolvable = configurations.resolvable("assignmentCompilerPluginResolvable") {
     extendsFrom(assignmentCompilerPlugin.get())
 }
+
+val serializationCompilerPlugin = configurations.dependencyScope("serializationCompilerPlugin")
 val serializationCompilerPluginResolvable = configurations.resolvable("serializationCompilerPluginResolvable") {
     extendsFrom(serializationCompilerPlugin.get())
 }
+
+val serializationCore = configurations.dependencyScope("serializationCore")
 val serializationCoreResolvable = configurations.resolvable("serializationCoreResolvable") {
     extendsFrom(serializationCore.get())
 }
+
+val pluginSandbox = configurations.dependencyScope("pluginSandbox")
 val pluginSandboxResolvable = configurations.resolvable("pluginSandboxResolvable") {
     extendsFrom(pluginSandbox.get())
 }
@@ -86,7 +89,7 @@ val unpackedResourcesResolvable by configurations.resolvable("unpackedResourcesR
 
 dependencies {
     api(kotlinStdlib())
-    api(project(":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests:shared"))
+    api(project(":compiler:build-tools:kotlin-build-tools-api-forward-tests:shared"))
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
     api(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
     api(platform(libs.junit.bom))
@@ -127,8 +130,8 @@ val KotlinToolingVersion.sourceSetName get() = "shared" + this.toString().replac
 
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
 val JS_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.jsStdlibClasspath"
-val WASM_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.wasmStdlibClasspath"
-val METADATA_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.metadataStdlibClasspath"
+val WASM_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.wasmStdlibClasspath"
+val METADATA_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.metadataStdlibClasspath"
 
 fun JvmTestSuite.ensureExecutedAgainstExpectedBuildToolsApiVersion(version: KotlinToolingVersion) {
     targets.all {
@@ -190,8 +193,8 @@ fun JvmTestSuite.addSnapshotBuildToolsImpl() {
         testTask.configure {
             addClasspathProperty(buildToolsApiImplResolvable.get(), COMPILER_CLASSPATH_PROPERTY)
             addClasspathProperty(jsStdlibImplResolvable.get(), JS_STDLIB_CLASSPATH_PROPERTY)
-            addClasspathProperty(wasmStdlibImplResolvable.get(), WASM_STDLIB_CLASSSPATH_PROPERTY)
-            addClasspathProperty(metadataStdlibImplResolvable.get(), METADATA_STDLIB_CLASSSPATH_PROPERTY)
+            addClasspathProperty(wasmStdlibImplResolvable.get(), WASM_STDLIB_CLASSPATH_PROPERTY)
+            addClasspathProperty(metadataStdlibImplResolvable.get(), METADATA_STDLIB_CLASSPATH_PROPERTY)
             addClasspathProperty(unpackedResourcesResolvable, "kotlin.test.templates.classpath")
         }
     }
@@ -307,7 +310,7 @@ testing {
                 runtimeOnly(libs.junit.platform.launcher)
 
                 implementation(project())
-                implementation(project(":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests:shared"))
+                implementation(project(":compiler:build-tools:kotlin-build-tools-api-forward-tests:shared"))
                 implementation(project(":kotlin-tooling-core"))
                 implementation(project(":compiler:test-security-manager"))
                 implementation(project(":compiler:arguments"))
