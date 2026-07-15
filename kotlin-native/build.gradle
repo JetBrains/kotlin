@@ -368,7 +368,7 @@ targetList.each { target ->
 
                 def cacheFlavor = UtilsKt.cacheFlavor(target, optimizationsEnabled)
                 def cacheName = NativeDistribution.cacheDirectoryName("stdlib", !optimizationsEnabled)
-                from(project(":kotlin-native:runtime").layout.buildDirectory.dir("cache/$target/$cacheFlavor/$cacheName")) {
+                from(project(":kotlin-native:runtime").isolated.projectDirectory.dir("build/cache/$target/$cacheFlavor/$cacheName")) {
                     include('**')
                 }
             }

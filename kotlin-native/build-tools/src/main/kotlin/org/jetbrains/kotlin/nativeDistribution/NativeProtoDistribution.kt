@@ -13,4 +13,4 @@ import org.gradle.api.Project
  * Only [konan.properties][NativeDistribution.konanProperties] is available inside it.
  */
 val Project.nativeProtoDistribution: NativeDistribution
-    get() = NativeDistribution(project(":kotlin-native").layout.projectDirectory)
+    get() = NativeDistribution(project(":kotlin-native").isolated.projectDirectory)
