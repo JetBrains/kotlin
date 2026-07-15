@@ -65,15 +65,14 @@ fun main(args: Array<String>) {
         if (value != null) append(" (actual value: $value)")
         else append(" (attribute is not found)")
     }
-    // KTI-3420/Broken-MavenTest-after-bumping-to-Language-Version-2.5 (waiting for next bootstrap)
-    // val incorrectVersionValues = versionValues.filterValues { it != KOTLIN_VERSION_VALUE }
-    // if (incorrectVersionValues.isNotEmpty()) {
-    //     errors.appendLine("Manifests at these locations do not have the correct value of the $KOTLIN_VERSION attribute ($KOTLIN_VERSION_VALUE). " +
-    //                     "Please ensure that kotlin_language_version in libraries/build.gradle corresponds to the value in kotlin.KotlinVersion:")
-    //     incorrectVersionValues.entries.joinTo(errors, "\n", transform = ::renderEntry)
-    //     errors.appendLine()
-    //     errors.appendLine()
-    // }
+    val incorrectVersionValues = versionValues.filterValues { it != KOTLIN_VERSION_VALUE }
+    if (incorrectVersionValues.isNotEmpty()) {
+        errors.appendLine("Manifests at these locations do not have the correct value of the $KOTLIN_VERSION attribute ($KOTLIN_VERSION_VALUE). " +
+                        "Please ensure that kotlin_language_version in libraries/build.gradle corresponds to the value in kotlin.KotlinVersion:")
+        incorrectVersionValues.entries.joinTo(errors, "\n", transform = ::renderEntry)
+        errors.appendLine()
+        errors.appendLine()
+    }
 
     val incorrectRuntimeComponentValues = runtimeComponentValues.filterValues { it != KOTLIN_RUNTIME_COMPONENT_VALUE }
     if (incorrectRuntimeComponentValues.isNotEmpty()) {
