@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -41,6 +42,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
 
     @DisplayName("Non-incremental in-process compilation test with cancellation")
     @Test
+    @Disabled("Needs to be disabled until 2.4.20-Beta2")
     fun nonIncrementalInProcessWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
@@ -108,6 +110,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
 
     @DisplayName("Incremental in-process compilation test with cancellation")
     @Test
+    @Disabled("Needs to be disabled until 2.4.20-Beta2")
     fun incrementalInProcessWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
@@ -125,6 +128,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @OptIn(ExperimentalAtomicApi::class)
     @DisplayName("Incremental daemon compilation test with cancellation")
     @Test
+    @Disabled("Needs to be disabled until 2.4.20-Beta2")
     fun incrementalDaemonWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
