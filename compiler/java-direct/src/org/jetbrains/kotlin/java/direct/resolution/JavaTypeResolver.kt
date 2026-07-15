@@ -59,13 +59,10 @@ internal fun resolveQualifiedNameToClassIdFromParts(
     parts: List<String>,
     fullResolution: Boolean,
 ): ClassId? {
-    // Try every split point of `parts` into an outer-class prefix and a nested-class tail, from
-    // the shortest outer prefix up. Every split is tried (not just the last one, `outerParts =
-    // parts[0..n-2]`) because the outer/nested boundary is not known up front: for `a.b.C.D` the
-    // outer class might be `a.b.C` (tail `D`) or `a.b` might be the package with `C.D` a two-part
-    // nested chain. Each candidate outer prefix is resolved with the same rules (recursively for
-    // multi-part prefixes), so JLS 6.5.2 is respected — a nested-class interpretation wins as soon
-    // as the outer prefix resolves to a class in scope.
+    // Try each split of `parts` into an outer-class prefix and a nested tail, shortest prefix first.
+    // The boundary isn't known up front (for `a.b.C.D`, `a.b` could be the package or `a.b.C` the
+    // outer class), so every split is tried; each prefix resolves by the same rules (recursively when
+    // multi-part). Per JLS 6.5.2, the first prefix resolving to a class in scope wins.
     require(parts.size > 1)
     for (i in 1 until parts.size) {
         val outerParts = parts.subList(0, i)
@@ -84,17 +81,11 @@ internal fun resolveQualifiedNameToClassIdFromParts(
             val nestedClassId = ClassId(outerClassId.packageFqName, nestedClassName, isLocal = false)
             if (classExists(nestedClassId, fullResolution)) return nestedClassId
 
-            // Nested class not directly declared — search the outer class's supertypes for an
-            // inherited inner class. Handles cases like `SimpleFunctionDescriptor.CopyBuilder`,
-            // where `CopyBuilder` is declared in the `FunctionDescriptor` superinterface but
-            // referenced via the subtype `SimpleFunctionDescriptor`.
-            //
-            // Restricted to a single inherited segment. A tail of size >= 2 (e.g. resolving
-            // `Outer.CopyBuilder.Deeper`) is reached one recursion level down: the split at the
-            // next `i` resolves `outerClassId` for the prefix `Outer.CopyBuilder` via the recursive
-            // `resolveQualifiedNameToClassIdFromParts` call above, and that call's own loop hits its
-            // `i` where `nestedParts == [CopyBuilder]` (size 1) and performs the inherited lookup
-            // there. So every "outer class plus one inherited segment" sub-problem is still covered.
+            // Not directly declared — search the outer class's supertypes for an inherited inner
+            // class (e.g. `SimpleFunctionDescriptor.CopyBuilder`, where `CopyBuilder` comes from the
+            // `FunctionDescriptor` superinterface). Restricted to a single tail segment; longer tails
+            // (`Outer.CopyBuilder.Deeper`) are covered one recursion level down, where the prefix
+            // `Outer.CopyBuilder` resolves and its own loop reaches a size-1 tail.
             if (fullResolution && nestedParts.size == 1) {
                 val inherited = findInheritedNestedClass(outerClassId, nestedParts[0])
                 if (inherited != null) return inherited
