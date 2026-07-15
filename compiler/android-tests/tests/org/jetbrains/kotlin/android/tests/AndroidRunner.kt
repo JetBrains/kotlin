@@ -19,12 +19,18 @@ package org.jetbrains.kotlin.android.tests
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.util.io.FileUtil
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicNode
+import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
+@Execution(ExecutionMode.SAME_THREAD)
 class AndroidRunner {
     companion object {
         private lateinit var pathManager: PathManager
@@ -43,8 +49,73 @@ class AndroidRunner {
         ).toFile()
         println("Created temporary folder for running android tests: ${tmpFolder.absolutePath}")
         pathManager = PathManager(tmpFolder.absolutePath)
-        CodegenTestsOnAndroidGenerator.generate(pathManager)
-        println("Run tests on Android...")
-        return CodegenTestsOnAndroidRunner.runTestsInEmulator(pathManager)
+        val plan = CodegenTestsOnAndroidGenerator.discover(pathManager)
+        val runtimeResults = AndroidRuntimeResultsCache(pathManager, plan)
+        return listOf(
+            DynamicContainer.dynamicContainer(
+                "Discovery",
+                listOf(DynamicTest.dynamicTest("Discovered ${plan.tests.size} Android box tests") {
+                    if (plan.tests.isEmpty()) {
+                        fail("There are no Android box tests to run")
+                    }
+                })
+            ),
+            DynamicContainer.dynamicContainer(
+                "Compilation",
+                plan.tests.map { test ->
+                    DynamicTest.dynamicTest(test.displayName) {
+                        plan.compile(test)
+                    }
+                }
+            ),
+            DynamicContainer.dynamicContainer(
+                "Runtime",
+                plan.tests.map<AndroidPlannedTest, DynamicNode> { test ->
+                    DynamicTest.dynamicTest(test.displayName) {
+                        runtimeResults.assertPassed(test)
+                    }
+                } + DynamicTest.dynamicTest("No unexpected Android test results") {
+                    runtimeResults.assertNoUnexpectedResults()
+                }
+            )
+        )
+    }
+
+    private class AndroidRuntimeResultsCache(
+        private val pathManager: PathManager,
+        private val plan: AndroidTestPlan
+    ) {
+        private val plannedTestNames = plan.tests.mapTo(linkedSetOf()) { it.info.name }
+        private var cachedResults: Result<Map<String, AndroidRuntimeTestResult>>? = null
+
+        fun assertPassed(test: AndroidPlannedTest) {
+            val result = results()[test.info.name] ?: fail<AndroidRuntimeTestResult>(
+                "No Android runtime result for ${test.info.name} (${test.info.file.path})"
+            )
+            val failureText = result.failureText
+            if (failureText != null) {
+                fail<Unit>("Android runtime failure for ${test.info.name} (${test.info.file.path}):\n$failureText")
+            }
+        }
+
+        fun assertNoUnexpectedResults() {
+            val unexpectedTestNames = results().keys - plannedTestNames
+            if (unexpectedTestNames.isNotEmpty()) {
+                fail<Unit>("Unexpected Android runtime results: ${unexpectedTestNames.joinToString()}")
+            }
+        }
+
+        private fun results(): Map<String, AndroidRuntimeTestResult> {
+            val cached = cachedResults
+            if (cached != null) return cached.getOrThrow()
+
+            val result = runCatching {
+                plan.generateUnitTestFiles()
+                println("Run tests on Android...")
+                CodegenTestsOnAndroidRunner.runTestsInEmulator(pathManager, plan.flavorsToRun)
+            }
+            cachedResults = result
+            return result.getOrThrow()
+        }
     }
 }

@@ -19,12 +19,9 @@ import org.jetbrains.kotlin.android.tests.run.ProcessFailedException
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.Assertions.fail
-import org.junit.jupiter.api.DynamicContainer
-import org.junit.jupiter.api.DynamicNode
-import org.junit.jupiter.api.DynamicTest
-import java.io.File
 import java.util.Base64
+
+data class AndroidRuntimeTestResult(val testName: String, val failureText: String?)
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
     private fun detectArch(): String {
@@ -36,9 +33,9 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    private suspend fun runTestsInEmulator(): List<DynamicNode> {
-        val allTests = mutableListOf<DynamicNode>()
-        val flavorsToRun = generatedFlavorsToRun()
+    private suspend fun runTestsInEmulator(flavorsToRun: List<String>): Map<String, AndroidRuntimeTestResult> {
+        assertNotEquals(0L, flavorsToRun.size.toLong(), "There are no generated Android test flavors to run")
+        val allResults = linkedMapOf<String, AndroidRuntimeTestResult>()
 
         val emulatorType = detectArch()
         println("Using $emulatorType emulator!")
@@ -64,8 +61,11 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                     for (flavor in flavorsToRun) {
                         installAndroidDebugTestWithRetry(gradleRunner, emulator, flavor)
                         val className = flavor.capitalizeAsciiOnly()
-                        val dynamicTests = runTestsOnEmulator(emulator, className)
-                        allTests.add(DynamicContainer.dynamicContainer(className, dynamicTests))
+                        for (result in runTestsOnEmulator(emulator, className)) {
+                            check(allResults.put(result.testName, result) == null) {
+                                "Duplicate Android runtime result for ${result.testName}"
+                            }
+                        }
                     }
                 } finally {
                     withContext(NonCancellable) {
@@ -83,24 +83,10 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             }
         }
 
-        return allTests
+        return allResults
     }
 
-    private fun generatedFlavorsToRun(): List<String> {
-        val generatedFlavors = possibleFlavorsToRun.filter { generatedSuiteFile(it).isFile }
-        assertNotEquals(0L, generatedFlavors.size.toLong(), "There are no generated Android test flavors to run")
-        return generatedFlavors
-    }
-
-    private fun generatedSuiteFile(flavor: String): File {
-        val className = flavor.capitalizeAsciiOnly()
-        return File(
-            pathManager.srcFolderInAndroidTmpFolder,
-            "androidTest$className/java/${CodegenTestsOnAndroidGenerator.testClassPackage.replace('.', '/')}/$className.java"
-        )
-    }
-
-    private fun processReport(resultOutput: String, suiteName: String): List<DynamicTest> {
+    private fun processReport(resultOutput: String, suiteName: String): List<AndroidRuntimeTestResult> {
         try {
             val testCases = parseInstrumentationOutput(resultOutput)
             assertNotEquals(0L, testCases.size.toLong(), "There is no test results in report for $suiteName")
@@ -110,12 +96,12 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    private fun parseInstrumentationOutput(output: String): List<DynamicTest> {
+    private fun parseInstrumentationOutput(output: String): List<AndroidRuntimeTestResult> {
         val casePrefix = "KOTLIN_BOX_CASE|"
         val markerPrefix = casePrefix.substringBefore('|')
         val statusFail = "FAIL"
         val lines = extractResultSection(output)
-        val dynamicTests = arrayListOf<DynamicTest>()
+        val results = arrayListOf<AndroidRuntimeTestResult>()
         val logicalLines = arrayListOf<String>()
         var pendingLine: StringBuilder? = null
 
@@ -158,14 +144,10 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                 null
             }
 
-            dynamicTests.add(DynamicTest.dynamicTest(testName) {
-                if (failureText != null) {
-                    fail(failureText)
-                }
-            })
+            results += AndroidRuntimeTestResult(testName, failureText)
         }
 
-        return dynamicTests
+        return results
     }
 
     private fun extractResultSection(output: String): List<String> {
@@ -234,7 +216,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    private suspend fun runTestsOnEmulator(emulator: Emulator, className: String): List<DynamicTest> {
+    private suspend fun runTestsOnEmulator(emulator: Emulator, className: String): List<AndroidRuntimeTestResult> {
         val platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea")
         try {
             val resultOutput = emulator.runTestsViaInstrumentation("org.jetbrains.kotlin.android.tests.$className")
@@ -251,15 +233,11 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
     companion object {
         private const val INSTALL_ATTEMPTS = 2
 
-        private val possibleFlavorsToRun: List<String> = listOf(
-            "common0", "common1", "common2", "common3", "common4", "reflect0",
-        )
-
         @JvmStatic
-        fun runTestsInEmulator(pathManager: PathManager): List<DynamicNode> {
-            val result: List<DynamicNode>
+        fun runTestsInEmulator(pathManager: PathManager, flavorsToRun: List<String>): Map<String, AndroidRuntimeTestResult> {
+            val result: Map<String, AndroidRuntimeTestResult>
             runBlocking {
-                result = CodegenTestsOnAndroidRunner(pathManager).runTestsInEmulator()
+                result = CodegenTestsOnAndroidRunner(pathManager).runTestsInEmulator(flavorsToRun)
             }
             return result
         }
