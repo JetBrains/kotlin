@@ -1,3 +1,7 @@
+import org.gradle.kotlin.dsl.invoke
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
@@ -41,7 +45,45 @@ val compatibilityTestsVersions = listOf(
     KotlinToolingVersion(2, 4, 0, null),
 )
 
+val KotlinToolingVersion.sourceSetName get() = "shared" + this.toString().replace(".", "_").replace("-", "_")
+
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
+
+fun JvmTestSuite.ensureExecutedAgainstExpectedBuildToolsApiVersion(version: KotlinToolingVersion) {
+    targets.all {
+        projectTests {
+            testTask.configure {
+                // the check is required for the case when Gradle substitutes external dependencies with project ones
+                doFirst {
+                    check(
+                        classpath.files.any { "kotlin-build-tools-api-${version}.jar" in it.name }
+                    ) {
+                        "runtime classpath must contain kotlin-build-tools-api-$version.jar but was: ${classpath.joinToString()}"
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun SourceSet.configureCompatibilitySourceDirectories(testSuiteName: String) {
+    java.setSrcDirs(
+        listOf(
+            layout.projectDirectory.dir("src/$testSuiteName/java"),
+        )
+    )
+    kotlin.setSrcDirs(
+        listOf(
+            layout.projectDirectory.dir("src/$testSuiteName/java"),
+            layout.projectDirectory.dir("src/$testSuiteName/kotlin"),
+        )
+    )
+    resources.setSrcDirs(
+        listOf(
+            layout.projectDirectory.dir("src/$testSuiteName/resources"),
+        )
+    )
+}
 
 fun JvmTestSuite.addSnapshotBuildToolsImpl() {
     targets.all {
@@ -51,40 +93,67 @@ fun JvmTestSuite.addSnapshotBuildToolsImpl() {
     }
 }
 
-fun JvmTestSuite.addSpecificBuildToolsApi(version: String) {
+fun JvmTestSuite.addSpecificBuildToolsApi(version: KotlinToolingVersion) {
     dependencies {
         implementation("org.jetbrains.kotlin:kotlin-build-tools-api:${version}")
+        implementation(sourceSets.getByName(version.sourceSetName).output)
+    }
+}
+
+
+for (apiVersion in compatibilityTestsVersions) {
+    sourceSets {
+        apiVersion.sourceSetName {
+            kotlin.srcDir("src/shared$apiVersion/kotlin")
+            resources.srcDir("src/shared$apiVersion/resources")
+        }
+    }
+    dependencies {
+        "${apiVersion.sourceSetName}CompileOnly"(project())
+        "${apiVersion.sourceSetName}CompileOnly"("org.jetbrains.kotlin:kotlin-build-tools-api:${apiVersion}")
+        "${apiVersion.sourceSetName}CompileOnly"(project(":kotlin-tooling-core"))
+        "${apiVersion.sourceSetName}CompileOnly"(libs.junit.jupiter.engine)
+        "${apiVersion.sourceSetName}CompileOnly"(libs.junit.jupiter.params)
     }
 }
 
 testing {
     suites {
         for (apiVersion in compatibilityTestsVersions) {
-            register<JvmTestSuite>("testCompatibility${apiVersion}") {
+            register<JvmTestSuite>("testForwardCompatibility${apiVersion}") {
                 addSnapshotBuildToolsImpl()
-                addSpecificBuildToolsApi(apiVersion.toString())
-                targets.all {
-                    projectTests {
-                        testTask(taskName = testTask.name, skipInLocalBuild = false) {
-                            systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                            systemProperty(
-                                "kotlin.daemon.custom.run.files.path.for.tests",
-                                "build/daemon"
-                            )
-                        }
-                    }
-                }
+                addSpecificBuildToolsApi(apiVersion)
+                sources.configureCompatibilitySourceDirectories("testForwardCompatibility$apiVersion")
+                ensureExecutedAgainstExpectedBuildToolsApiVersion(apiVersion)
             }
+        }
+        withType<JvmTestSuite>().configureEach configureSuit@{
+            dependencies {
+                useJUnitJupiter(libs.versions.junit5.get())
+                runtimeOnly(libs.junit.platform.launcher)
 
-            withType<JvmTestSuite>().configureEach configureSuit@{
-                dependencies {
-                    useJUnitJupiter(libs.versions.junit5.get())
-                    runtimeOnly(libs.junit.platform.launcher)
+                implementation(project())
+                implementation(project(":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests:shared"))
+                implementation(project(":kotlin-tooling-core"))
+                implementation(project(":compiler:test-security-manager"))
+                implementation(project(":compiler:arguments"))
+            }
+            targets.all {
+                projectTests {
+                    testTask(
+                        taskName = testTask.name,
+                        javaLauncher = JdkMajorVersion.JDK_1_8,
+                        skipInLocalBuild = false
+                    ) {
+                        @OptIn(TemporaryTestFederationApi::class)
+                        smokeTestConfig = SmokeTestConfig.RunAllTests
 
-                    implementation(project())
-                    implementation(project(":kotlin-tooling-core"))
-                    implementation(project(":compiler:test-security-manager"))
-                    implementation(project(":compiler:arguments"))
+                        systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+                        systemProperty(
+                            "kotlin.daemon.custom.run.files.path.for.tests",
+                            "build/daemon"
+                        )
+                    }
                 }
             }
         }
