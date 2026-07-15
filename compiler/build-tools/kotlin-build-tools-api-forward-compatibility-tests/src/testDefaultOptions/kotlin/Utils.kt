@@ -3,12 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests
+package org.jetbrains.kotlin.buildtools.forward.tests.defaults
 
-import org.junit.jupiter.api.io.TempDir
-import java.nio.file.Path
-
-abstract class BaseCompilationTest {
-    @TempDir
-    lateinit var workingDirectory: Path
-}
+val DefaultCompilerMessageRendererClassName = "org.jetbrains.kotlin.buildtools.internal.DefaultCompilerMessageRenderer"
