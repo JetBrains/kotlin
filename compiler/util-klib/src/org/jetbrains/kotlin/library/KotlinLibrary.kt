@@ -78,6 +78,11 @@ const val KLIB_PROPERTY_MANUALLY_ALTERED_LANGUAGE_FEATURES = "language_features"
  */
 const val KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES = "poisoning_language_features"
 
+/**
+ *  Bitmask of all set metadata flags
+ */
+const val KLIB_PROPERTY_METADATA_FLAGS = "metadata_flags"
+
 
 /**
  * Abstractions for getting access to the information stored inside of Kotlin/Native library.
