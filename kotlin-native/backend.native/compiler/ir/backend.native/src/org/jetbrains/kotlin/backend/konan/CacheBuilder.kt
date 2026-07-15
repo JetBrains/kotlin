@@ -254,13 +254,17 @@ class CacheBuilder(
                     val actualContentHash = SerializedIrFileFingerprint(library, fileIndex).fileFingerprint
                     // Missing metadata (a cache produced by a compiler older than 2.2.20) means the file has to be rebuilt.
                     val previousContentHash = cache.getMetadataOrNull(cachedFile)?.hash
-                    if (previousContentHash != actualContentHash)
+                    // A recorded dependency on a library that is not among the resolved libraries anymore
+                    // (e.g. the module was removed from the project after the cache had been built, KT-61644)
+                    // also means the file has to be rebuilt (the cache references a missing library which would lead
+                    // to a linkage error otherwise); there is nothing to propagate through such an edge.
+                    val [knownDependencies, removedDependencies] = cache.getFileDependencies(cachedFile)
+                            .partition { it.libName in uniqueNameToLibrary }
+                    if (previousContentHash != actualContentHash || removedDependencies.isNotEmpty())
                         changedFiles.add(libraryFile)
 
-                    val dependencies = cache.getFileDependencies(cachedFile)
-                    for (dependency in dependencies) {
-                        val dependentLibrary = uniqueNameToLibrary[dependency.libName]
-                                ?: error("Unknown dependent library ${dependency.libName}")
+                    for (dependency in knownDependencies) {
+                        val dependentLibrary = uniqueNameToLibrary[dependency.libName]!!
                         when (val kind = dependency.kind) {
                             is DependenciesTracker.DependencyKind.WholeModule ->
                                 reversedWholeLibraryDependencies.getOrPut(dependentLibrary) { mutableListOf() }.add(libraryFile)
