@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import java.util.Base64
 
-data class AndroidRuntimeTestResult(val testName: String, val failureText: String?)
+data class AndroidRuntimeTestResult(val testName: String, val failureText: String?, val elapsedTimeMs: Long)
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
     private fun detectArch(): String {
@@ -61,7 +61,9 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                     for (flavor in flavorsToRun) {
                         installAndroidDebugTestWithRetry(gradleRunner, emulator, flavor)
                         val className = flavor.capitalizeAsciiOnly()
-                        for (result in runTestsOnEmulator(emulator, className)) {
+                        val flavorResults = runTestsOnEmulator(emulator, className)
+                        reportElapsedTimes(flavor, flavorResults)
+                        for (result in flavorResults) {
                             check(allResults.put(result.testName, result) == null) {
                                 "Duplicate Android runtime result for ${result.testName}"
                             }
@@ -106,7 +108,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         var pendingLine: StringBuilder? = null
 
         for (line in lines) {
-            val startsWithMarker = line.startsWith(markerPrefix)
+            val startsWithMarker = line.startsWith(markerPrefix) || line.startsWith("KOTLIN_BOX_RESULTS_END")
             if (startsWithMarker) {
                 pendingLine?.let { logicalLines.add(it.toString()) }
                 pendingLine = StringBuilder(line)
@@ -138,13 +140,14 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
             val testName = chunks[1]
             val status = chunks[2]
-            val failureText = if (status == statusFail && chunks.size == 4) {
-                String(Base64.getDecoder().decode(chunks[3].replace("\\s+".toRegex(), "")))
+            val elapsedTimeMs = chunks[3].toLong()
+            val failureText = if (status == statusFail && chunks.size == 5) {
+                String(Base64.getDecoder().decode(chunks[4].replace("\\s+".toRegex(), "")))
             } else {
                 null
             }
 
-            results += AndroidRuntimeTestResult(testName, failureText)
+            results += AndroidRuntimeTestResult(testName, failureText, elapsedTimeMs)
         }
 
         return results
@@ -227,6 +230,13 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             } else {
                 System.clearProperty(PlatformUtils.PLATFORM_PREFIX_KEY)
             }
+        }
+    }
+
+    private fun reportElapsedTimes(flavor: String, results: List<AndroidRuntimeTestResult>) {
+        println("Android runtime elapsed times for flavor $flavor:")
+        for (result in results) {
+            println("  ${result.testName}: ${result.elapsedTimeMs} ms")
         }
     }
 

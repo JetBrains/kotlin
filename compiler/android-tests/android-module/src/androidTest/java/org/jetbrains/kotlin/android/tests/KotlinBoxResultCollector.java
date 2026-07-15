@@ -22,18 +22,26 @@ public class KotlinBoxResultCollector {
     private final List<Entry> entries = new ArrayList<>();
 
     public void recordSuccess(String name) {
-        entries.add(new Entry(name, STATUS_OK, null));
+        recordSuccess(name, -1L);
+    }
+
+    public void recordSuccess(String name, long elapsedTimeMs) {
+        entries.add(new Entry(name, STATUS_OK, elapsedTimeMs, null));
     }
 
     public void recordFailure(String name, String context, Throwable throwable) {
-        entries.add(new Entry(name, STATUS_FAIL, encodeFailure(context, throwable)));
+        recordFailure(name, context, throwable, -1L);
+    }
+
+    public void recordFailure(String name, String context, Throwable throwable, long elapsedTimeMs) {
+        entries.add(new Entry(name, STATUS_FAIL, elapsedTimeMs, encodeFailure(context, throwable)));
     }
 
     public String render() {
         StringBuilder sb = new StringBuilder();
         sb.append(RESULT_BEGIN).append('\n');
         for (Entry entry : entries) {
-            sb.append(CASE_PREFIX).append(entry.name).append('|').append(entry.status);
+            sb.append(CASE_PREFIX).append(entry.name).append('|').append(entry.status).append('|').append(entry.elapsedTimeMs);
             if (entry.failurePayloadBase64 != null) {
                 sb.append('|').append(entry.failurePayloadBase64);
             }
@@ -57,11 +65,13 @@ public class KotlinBoxResultCollector {
     private static final class Entry {
         private final String name;
         private final String status;
+        private final long elapsedTimeMs;
         private final String failurePayloadBase64;
 
-        private Entry(String name, String status, String failurePayloadBase64) {
+        private Entry(String name, String status, long elapsedTimeMs, String failurePayloadBase64) {
             this.name = name;
             this.status = status;
+            this.elapsedTimeMs = elapsedTimeMs;
             this.failurePayloadBase64 = failurePayloadBase64;
         }
     }
