@@ -227,26 +227,21 @@ open class IrFileSerializer(
         saveOriginIndex(originIndex)
     }
 
-    private enum class IrCoordinatesKind {
-        // Coordinates are encoded as absolute offset in the containing source file.
-        Global,
-        // Coordinates are encoded relatively to the parent IR element.
-        // Here, "parent" means the physical parent node in the IR tree structure. In case of declarations, it may be different than the
-        // higher-level notion of IrDeclaration.parent.
-        Local,
-    }
-
-    private fun serializeCoordinates(start: Int, end: Int, parent: IrElement?): Pair<IrCoordinatesKind, Long> {
-        val kind = IrCoordinatesKind.Local
-
+    /**
+     * Encodes the coordinates relatively to the parent IR element.
+     *
+     * Here, "parent" means the physical parent node in the IR tree structure. In case of declarations, it may be different than the
+     * higher-level notion of IrDeclaration.parent.
+     */
+    private fun serializeCoordinates(start: Int, end: Int, parent: IrElement?): Long {
         if (settings.publicAbiOnly && !isInsideInline) {
-            return kind to 0
+            return 0
         }
 
         // As IrType's themselves don't have coordinates and their instances can appear multiple times in the IR tree,
         // it is quite meaningless to store coordinates of anything inside them - namely, type's annotations and their arguments.
         if (isSerializingIrType) {
-            return kind to 0
+            return 0
         }
 
         var serStart = start
@@ -267,21 +262,10 @@ open class IrFileSerializer(
             }
         }
 
-        requireNotNull(parent) { "Cannot serialize coordinates in a local mode as there is no parent node provided" }
+        requireNotNull(parent) { "Cannot serialize coordinates as there is no parent node provided" }
         serStart -= parent.startOffset
         serEnd -= parent.startOffset
-        return kind to BinaryCoordinatesEncoding.encode(serStart, serEnd, useZigZag = true)
-    }
-
-    private inline fun serializeAndSetCoordinates(
-        setGlobalCoordinatesField: (Long) -> Unit, setLocalCoordinatesField: (Long) -> Unit,
-        start: Int, end: Int, parent: IrElement?,
-    ) {
-        val [coordinatesKind, coordinates] = serializeCoordinates(start, end, parent)
-        when (coordinatesKind) {
-            IrCoordinatesKind.Global -> setGlobalCoordinatesField(coordinates)
-            IrCoordinatesKind.Local -> setLocalCoordinatesField(coordinates)
-        }
+        return BinaryCoordinatesEncoding.encode(serStart, serEnd, useZigZag = true)
     }
 
     /* ------- Strings ---------------------------------------------------------- */
@@ -651,10 +635,7 @@ open class IrFileSerializer(
             addAllTypeArgument(serializeTypeArguments(annotation))
             serializeIrStatementOrigin(annotation.origin, ::setOriginName)
 
-            val [coordinatesKind, coordinates] = serializeCoordinates(annotation.startOffset, annotation.endOffset, parent)
-            if (coordinatesKind == IrCoordinatesKind.Local) {
-                setLocalCoordinates(coordinates)
-            }
+            setLocalCoordinates(serializeCoordinates(annotation.startOffset, annotation.endOffset, parent))
         }.build()
 
     private fun serializeFunctionExpression(functionExpression: IrFunctionExpression): ProtoFunctionExpression =
@@ -845,10 +826,7 @@ open class IrFileSerializer(
 
     private fun serializeSpreadElement(element: IrSpreadElement, parent: IrVararg): ProtoSpreadElement {
         val proto = ProtoSpreadElement.newBuilder()
-        serializeAndSetCoordinates(
-            proto::setGlobalCoordinates, proto::setLocalCoordinates,
-            element.startOffset, element.endOffset, parent
-        )
+        proto.setLocalCoordinates(serializeCoordinates(element.startOffset, element.endOffset, parent))
 
         proto.setExpression(serializeExpression(element.expression, element))
         return proto.build()
@@ -1086,10 +1064,7 @@ open class IrFileSerializer(
         val proto = ProtoExpression.newBuilder()
         if (expression != null) {
             proto.setType(serializeIrType(expression.type))
-            serializeAndSetCoordinates(
-                proto::setGlobalCoordinates, proto::setLocalCoordinates,
-                expression.startOffset, expression.endOffset, parent
-            )
+            proto.setLocalCoordinates(serializeCoordinates(expression.startOffset, expression.endOffset, parent))
         }
 
         when (expression) {
@@ -1146,10 +1121,7 @@ open class IrFileSerializer(
             // Both IrExpression and IrDeclaration have their own coordinate fields, the one on ProtoStatement is ignored for them.
             // Coordinates of IrExpressionBody are derived from the wrapped IrExpression, and those on ProtoStatement are ignored as well.
         } else {
-            serializeAndSetCoordinates(
-                proto::setGlobalCoordinates, proto::setLocalCoordinates,
-                statement.startOffset, statement.endOffset, parent
-            )
+            proto.setLocalCoordinates(serializeCoordinates(statement.startOffset, statement.endOffset, parent))
         }
 
         when (statement) {
@@ -1184,10 +1156,7 @@ open class IrFileSerializer(
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, parent: IrElement?, flags: Long?): ProtoDeclarationBase {
         return with(ProtoDeclarationBase.newBuilder()) {
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol, isDeclared = true)
-            serializeAndSetCoordinates(
-                this::setGlobalCoordinates, this::setLocalCoordinates,
-                declaration.startOffset, declaration.endOffset, parent
-            )
+            setLocalCoordinates(serializeCoordinates(declaration.startOffset, declaration.endOffset, parent))
             addAllAnnotation(serializeAnnotations(declaration.annotations, declaration))
             flags?.let { setFlags(it) }
             originName = serializeIrDeclarationOrigin(declaration.origin)
