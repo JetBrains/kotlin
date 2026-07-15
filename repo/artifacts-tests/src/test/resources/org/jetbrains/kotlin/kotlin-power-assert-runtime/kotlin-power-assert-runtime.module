@@ -904,56 +904,6 @@
             }
         },
         {
-            "name": "watchosArm32ApiElements-published",
-            "attributes": {
-                "org.gradle.category": "library",
-                "org.gradle.usage": "kotlin-api",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "watchos_arm32"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-watchosarm32/ArtifactsTest.version/kotlin-power-assert-runtime-watchosarm32-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-watchosarm32",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
-            "name": "watchosArm32MetadataElements-published",
-            "attributes": {
-                "org.gradle.category": "library",
-                "org.gradle.usage": "kotlin-metadata",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "watchos_arm32"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-watchosarm32/ArtifactsTest.version/kotlin-power-assert-runtime-watchosarm32-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-watchosarm32",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
-            "name": "watchosArm32SourcesElements-published",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "sources",
-                "org.gradle.usage": "kotlin-runtime",
-                "org.gradle.jvm.environment": "non-jvm",
-                "org.jetbrains.kotlin.platform.type": "native",
-                "org.jetbrains.kotlin.native.target": "watchos_arm32"
-            },
-            "available-at": {
-                "url": "../../kotlin-power-assert-runtime-watchosarm32/ArtifactsTest.version/kotlin-power-assert-runtime-watchosarm32-ArtifactsTest.version.module",
-                "group": "org.jetbrains.kotlin",
-                "module": "kotlin-power-assert-runtime-watchosarm32",
-                "version": "ArtifactsTest.version"
-            }
-        },
-        {
             "name": "watchosArm64ApiElements-published",
             "attributes": {
                 "org.gradle.category": "library",

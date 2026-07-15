@@ -205,22 +205,6 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun iosSimulatorArm64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = iosSimulatorArm64 { configure.execute(this) }
 
-    fun watchosArm32(
-        name: String = "watchosArm32",
-        configure: KotlinNativeTarget.() -> Unit = { }
-    ): KotlinNativeTarget
-
-    fun watchosArm32() = watchosArm32("watchosArm32") { }
-
-    fun watchosArm32(name: String) = watchosArm32(name) { }
-
-    fun watchosArm32(
-        name: String,
-        configure: Action<KotlinNativeTarget>
-    ) = watchosArm32(name) { configure.execute(this) }
-
-    fun watchosArm32(configure: Action<KotlinNativeTarget>) = watchosArm32 { configure.execute(this) }
-
     fun watchosArm64(
         name: String = "watchosArm64",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -583,17 +567,6 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("iosSimulatorArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
-            project,
-            configure
-        )
-
-    override fun watchosArm32(
-        name: String,
-        configure: KotlinNativeTarget.() -> Unit
-    ): KotlinNativeTarget =
-        configureOrCreate(
-            name,
-            presets.getByName("watchosArm32") as KotlinNativeTargetPreset,
             project,
             configure
         )

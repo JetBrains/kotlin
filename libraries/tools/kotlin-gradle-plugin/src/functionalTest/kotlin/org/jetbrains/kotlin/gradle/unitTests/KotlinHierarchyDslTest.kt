@@ -81,12 +81,12 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("watchosArm32Main", "watchosArm64Main", "watchosDeviceArm64Main", "watchosSimulatorArm64Main"),
+            stringSetOf("watchosArm64Main", "watchosDeviceArm64Main", "watchosSimulatorArm64Main"),
             kotlin.dependingSourceSetNames("watchosMain")
         )
 
         assertEquals(
-            stringSetOf("watchosArm32Test", "watchosArm64Test", "watchosDeviceArm64Test", "watchosSimulatorArm64Test"),
+            stringSetOf("watchosArm64Test", "watchosDeviceArm64Test", "watchosSimulatorArm64Test"),
             kotlin.dependingSourceSetNames("watchosTest")
         )
 
@@ -170,7 +170,6 @@ class KotlinHierarchyDslTest {
                 │   │   │   ├── tvosArm64Main
                 │   │   │   └── tvosSimulatorArm64Main
                 │   │   └── watchosMain
-                │   │       ├── watchosArm32Main
                 │   │       ├── watchosArm64Main
                 │   │       ├── watchosDeviceArm64Main
                 │   │       └── watchosSimulatorArm64Main
@@ -208,7 +207,6 @@ class KotlinHierarchyDslTest {
                 │   │   │   ├── tvosArm64Test
                 │   │   │   └── tvosSimulatorArm64Test
                 │   │   └── watchosTest
-                │   │       ├── watchosArm32Test
                 │   │       ├── watchosArm64Test
                 │   │       ├── watchosDeviceArm64Test
                 │   │       └── watchosSimulatorArm64Test
@@ -588,7 +586,6 @@ class KotlinHierarchyDslTest {
                         tvosArm64Main,
                         tvosSimulatorArm64Main,
                         watchosMain,
-                        watchosArm32Main,
                         watchosArm64Main,
                         watchosDeviceArm64Main,
                         watchosSimulatorArm64Main,
@@ -621,7 +618,6 @@ class KotlinHierarchyDslTest {
                         tvosArm64Test,
                         tvosSimulatorArm64Test,
                         watchosTest,
-                        watchosArm32Test,
                         watchosArm64Test,
                         watchosDeviceArm64Test,
                         watchosSimulatorArm64Test,

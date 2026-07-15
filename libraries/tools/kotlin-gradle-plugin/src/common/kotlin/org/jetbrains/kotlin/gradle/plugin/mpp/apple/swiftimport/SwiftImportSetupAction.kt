@@ -781,7 +781,6 @@ private fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (th
     KonanTarget.TVOS_SIMULATOR_ARM64,
     KonanTarget.TVOS_X64,
         -> SwiftPMDependency.Platform.tvOS
-    KonanTarget.WATCHOS_ARM32,
     KonanTarget.WATCHOS_ARM64,
     KonanTarget.WATCHOS_DEVICE_ARM64,
     KonanTarget.WATCHOS_SIMULATOR_ARM64,

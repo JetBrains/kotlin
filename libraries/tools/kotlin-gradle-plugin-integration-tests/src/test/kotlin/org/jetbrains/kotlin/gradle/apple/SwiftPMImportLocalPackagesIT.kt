@@ -790,9 +790,6 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                         watchosSimulatorArm64(),
                         watchosDeviceArm64(),
                     )
-                    if (isXcodeLessThan27) {
-                        targets.add(watchosArm32())
-                    }
                     targets.forEach {
                         it.binaries.framework {
                             baseName = "Shared"

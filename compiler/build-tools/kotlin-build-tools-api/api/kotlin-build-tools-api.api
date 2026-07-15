@@ -374,7 +374,6 @@ public final class org/jetbrains/kotlin/buildtools/api/abi/KlibTargetType : java
 	public static final field TVOS_X64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
 	public static final field WASM_JS Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
 	public static final field WASM_WASI Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
-	public static final field WATCHOS_ARM32 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
 	public static final field WATCHOS_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
 	public static final field WATCHOS_DEVICE_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
 	public static final field WATCHOS_SIMULATOR_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;

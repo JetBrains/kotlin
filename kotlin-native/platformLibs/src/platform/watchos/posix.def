@@ -19,7 +19,6 @@ linkerOpts = -ldl -lresolv
 excludedFunctions = acl_valid_link_np pfctlinput profil unwhiteout zopen getdirentries \
                     uuid_generate_early_random setgrfile \
                     getcontext makecontext setcontext swapcontext
-excludedFunctions.watchos_arm32 = longjmperror
 excludedFunctions.watchos_arm64 = longjmperror
 excludedFunctions.watchos_device_arm64 = longjmperror
 excludedFunctions.watchos_simulator_arm64 = longjmperror \

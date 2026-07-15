@@ -31,7 +31,6 @@ enum class StringListMetrics(
                 "ios_arm64",
                 "ios_simulator_arm64",
                 "ios_x64",
-                "watchos_arm32",
                 "watchos_arm64",
                 "watchos_x64",
                 "watchos_simulator_arm64",
@@ -76,6 +75,6 @@ enum class StringListMetrics(
 
 
     companion object {
-        const val VERSION = 2
+        const val VERSION = 3
     }
 }

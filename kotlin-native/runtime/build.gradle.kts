@@ -105,7 +105,7 @@ bitcode {
                 "TARGET_OS_IPHONE" to "1",
                 "TARGET_OS_TV" to "1",
             )
-            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
                 "TARGET_OS_EMBEDDED" to "1",
                 "TARGET_OS_IPHONE" to "1",
                 "TARGET_OS_WATCH" to "1",

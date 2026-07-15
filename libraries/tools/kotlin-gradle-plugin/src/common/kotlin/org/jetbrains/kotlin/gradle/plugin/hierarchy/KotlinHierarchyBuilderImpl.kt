@@ -197,10 +197,6 @@ private class KotlinHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_SIMULATOR_ARM64
     }
 
-    override fun withWatchosArm32() = withTargets {
-        it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_ARM32
-    }
-
     override fun withWatchosArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_ARM64
     }

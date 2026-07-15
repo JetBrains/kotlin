@@ -22,7 +22,6 @@ object PlatformWidthIndex {
         LeafCommonizerTarget(KonanTarget.IOS_ARM64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.IOS_X64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.IOS_SIMULATOR_ARM64) to PlatformIntWidth.LONG,
-        LeafCommonizerTarget(KonanTarget.WATCHOS_ARM32) to PlatformIntWidth.INT,
         LeafCommonizerTarget(KonanTarget.WATCHOS_ARM64) to PlatformIntWidth.INT,
         LeafCommonizerTarget(KonanTarget.WATCHOS_X64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.WATCHOS_SIMULATOR_ARM64) to PlatformIntWidth.LONG,
