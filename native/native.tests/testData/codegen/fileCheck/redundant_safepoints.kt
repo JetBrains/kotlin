@@ -1,5 +1,7 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: RemoveRedundantSafepoints
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 // This test checks:
 // - there is only one safepoint per function

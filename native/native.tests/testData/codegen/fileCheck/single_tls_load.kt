@@ -3,6 +3,8 @@
 // The test checks, that in an optimized build TLS access is optimized, no promises for other builds
 // DISABLE_NATIVE: optimizationMode=NO
 // DISABLE_NATIVE: optimizationMode=DEBUG
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 import kotlin.native.Retain

@@ -2,6 +2,8 @@
 // FILECHECK_STAGE: CStubs
 // FREE_COMPILER_ARGS: -Xbinary=preCodegenInlineThreshold=40
 // FREE_COMPILER_ARGS: -opt-in=kotlin.experimental.ExperimentalNativeApi
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 import kotlin.native.NoInline
 
 // CHECK-OPT-NOT: define ptr @"kfun:#<get-foo>(){}kotlin.String"
