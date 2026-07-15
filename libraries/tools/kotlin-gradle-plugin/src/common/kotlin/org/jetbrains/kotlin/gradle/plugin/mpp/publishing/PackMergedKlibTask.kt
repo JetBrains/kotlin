@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.artifacts.transform.TransformSpec
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
@@ -41,12 +42,15 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataTransformAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -71,10 +75,15 @@ internal const val KAR_ARTIFACT_TYPE = "kar"
  * These attributes are only used to force the [KarToPlatformKlibTransformation] in resolvable configurations.
  * They are not used in consumable configurations and are never published (cf. 'uklibStateAttribute').
  */
-internal val karStateAttribute = Attribute.of("org.jetbrains.kotlin.karState", String::class.java)
+internal val karStateAttribute = Attribute.of("org.jetbrains.kotlin.kar.state", String::class.java)
+internal val karStateCompressed = "compressed"
 internal val karStatePacked = "packed"
 internal val karStateUnpacked = "unpacked"
 internal val karStateProcessed = "processed"
+
+internal val karCompressionMethodAttribute = Attribute.of("org.jetbrains.kotlin.kar.compression.method", String::class.java)
+internal val karCompressionMethodNone = "none"
+internal val karCompressionMethodXZ = "xz"
 
 /**
  * Path of a given target's klib inside the merged klib archive.
@@ -106,7 +115,7 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
         }
     }
 
-    val packTask = tasks.register(PACK_KAR_TASK_NAME, Zip::class.java) { zip ->
+    val packTask = tasks.register(PACK_KAR_TASK_NAME, PackKarTask::class.java) { zip ->
         compileKlibTasks.forEach { (target, compileTaskProvider) ->
             val compileTask = compileTaskProvider?.get() ?: return@forEach
             val platformPath = target.mergedKlibPlatformPath ?: return@forEach
@@ -173,6 +182,15 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
         outgoing.artifact(packTask)
         attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        attributes.attribute(karCompressionMethodAttribute, karCompressionMethodXZ)
+    }
+
+    project.launch {
+        multiplatformExtension.awaitSourceSets().forEach { sourceSet ->
+            sourceSet.internal.resolvableMetadataConfiguration.apply {
+                attributes.attribute(karStateAttribute, karStatePacked)
+            }
+        }
     }
 
     configureKarKlibTransformation()
@@ -194,8 +212,9 @@ internal val Project.packMergedKlibTask: TaskProvider<Task>
  *   klib matching the consumer's platform type and konan target from the merged klib.
  */
 internal fun Project.configureKarKlibTransformation() {
-    dependencies.artifactTypes.maybeCreate(KAR_ARTIFACT_TYPE)
-        .attributes.attribute(karStateAttribute, karStatePacked)
+    dependencies.artifactTypes.maybeCreate(KAR_ARTIFACT_TYPE).apply {
+        attributes.attribute(karStateAttribute, karStateCompressed)
+    }
 
     multiplatformExtension.targets.configureEach { target ->
         val platformPath = target.mergedKlibPlatformPath ?: return@configureEach
@@ -205,9 +224,22 @@ internal fun Project.configureKarKlibTransformation() {
 }
 
 private fun KotlinTarget.registerUnpackMergedKlibTransform(platformPath: String) {
+    project.dependencies.registerTransform(XZDecompressAction::class.java) { spec ->
+        spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, KAR_ARTIFACT_TYPE)
+        spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, KAR_ARTIFACT_TYPE)
+
+        spec.from.attribute(karStateAttribute, karStateCompressed)
+        spec.to.attribute(karStateAttribute, karStatePacked)
+
+        spec.from.attribute(karCompressionMethodAttribute, karCompressionMethodXZ)
+        spec.to.attribute(karCompressionMethodAttribute, karCompressionMethodNone)
+    }
+
     project.dependencies.registerTransform(UnzipTransform::class.java) { spec ->
         spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, KAR_ARTIFACT_TYPE)
         spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, KAR_ARTIFACT_TYPE)
+
+        spec.from.attribute(karCompressionMethodAttribute, karCompressionMethodNone)
 
         spec.from.attribute(karStateAttribute, karStatePacked)
         spec.to.attribute(karStateAttribute, karStateUnpacked)
@@ -248,10 +280,14 @@ private fun <T : Any> TransformSpec<*>.attributeForBothEnds(attribute: Attribute
 private fun KotlinTarget.requestProcessedKar() {
     compilations.configureEach { compilation ->
         val configurations = compilation.internal.configurations
-        configurations.compileDependencyConfiguration
-            .attributes.attribute(karStateAttribute, karStateProcessed)
-        configurations.runtimeDependencyConfiguration
-            ?.attributes?.attribute(karStateAttribute, karStateProcessed)
+
+        configurations.compileDependencyConfiguration.apply {
+            attributes.attribute(karStateAttribute, karStateProcessed)
+        }
+
+        configurations.runtimeDependencyConfiguration?.apply {
+            attributes.attribute(karStateAttribute, karStateProcessed)
+        }
     }
 }
 
@@ -299,6 +335,8 @@ private fun Project.configureTransformActionFromKarToPsm() {
         }
         transform.from.apply {
             attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            attributes.attribute(karStateAttribute, karStatePacked)
+            attributes.attribute(karCompressionMethodAttribute, karCompressionMethodNone)
         }
         transform.to.apply {
             attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))

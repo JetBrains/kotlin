@@ -736,6 +736,7 @@ dependencies {
 
     implementation(libs.android.gradle.plugin.gradle)
     implementation(libs.android.gradle.plugin.gradle.api)
+    implementation(libs.org.tukaani.xz)
     compileOnly(libs.android.tools.common)
     implementation(gradleKotlinDsl())
     implementation(project(":kotlin-gradle-plugin-tcs-android"))

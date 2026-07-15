@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_FALLBACK_VARIANT
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.karCompressionMethodAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.karCompressionMethodXZ
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.packMergedKlibTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -79,6 +81,7 @@ internal fun KotlinTargetSoftwareComponent(
                 )
                 if (kotlinUsageContext.artifacts.any { it.extension == "klib" }) {
                     outgoing.artifact(project.packMergedKlibTask)
+                    attributes.attribute(karCompressionMethodAttribute, karCompressionMethodXZ)
                 } else {
                     artifacts.addAll(kotlinUsageContext.artifacts)
                 }
