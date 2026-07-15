@@ -36,7 +36,7 @@ import java.io.File
 
 fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
-    createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
+    createMetadataVersion: ((IntArray) -> BinaryVersion)? = null,
 ) {
     treatWarningsAsErrors = arguments.allWarningsAsErrors
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
@@ -118,6 +118,7 @@ fun CompilerConfiguration.setupMetadataVersion(
         }
     }
 }
+
 fun CommonCompilerArgumentsConfigurator.Reporter.Companion.fromConfiguration(configuration: CompilerConfiguration): CommonCompilerArgumentsConfigurator.Reporter {
     return object : CommonCompilerArgumentsConfigurator.Reporter {
         override fun reportWarning(message: String) {
@@ -402,7 +403,6 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
             sourceDependencies = emptyMap(),
             moduleDependencies = emptyMap(),
             friendDependencies = emptyMap(),
-            incrementalDependencies = emptyMap(),
         )
     }
 
@@ -488,7 +488,6 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val moduleDependencies = buildFragmentDependencyMap(arguments.fragmentDependencies, FRAGMENT_DEPENDENCIES_ARG_NAME)
     val friendDependencies = buildFragmentDependencyMap(arguments.fragmentFriendDependencies, FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME)
-    val incrementalDependencies = buildFragmentDependencyMap(arguments.fragmentIncrementalClasspath, FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME)
 
-    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies, friendDependencies, incrementalDependencies)
+    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies, friendDependencies)
 }
