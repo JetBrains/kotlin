@@ -187,7 +187,12 @@ fun IrClassSymbol.hasEqualClassId(classId: ClassId): Boolean {
     }
 }
 
-fun List<IrAnnotation>.hasAnnotation(classId: ClassId): Boolean = any { it.classId == classId }
+fun List<IrAnnotation>.hasAnnotation(classId: ClassId): Boolean =
+    // Note: check can be simplified to just classId comparison after IrAnnotation node migration is complete KT-74200.
+    hasAnnotation(
+        // Getting classId from an unbound annotation will throw an exception, go along the path where this is worked around.
+        classId.asSingleFqName()
+    )
 
 fun List<IrAnnotation>.hasAnnotation(fqName: FqName): Boolean =
     any { it.isAnnotationWithEqualFqName(fqName) }
