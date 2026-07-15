@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
+import java.io.File
 import java.util.Base64
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
@@ -37,6 +38,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
     private suspend fun runTestsInEmulator(): List<DynamicNode> {
         val allTests = mutableListOf<DynamicNode>()
+        val flavorsToRun = generatedFlavorsToRun()
 
         val emulatorType = detectArch()
         println("Using $emulatorType emulator!")
@@ -82,6 +84,20 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
 
         return allTests
+    }
+
+    private fun generatedFlavorsToRun(): List<String> {
+        val generatedFlavors = possibleFlavorsToRun.filter { generatedSuiteFile(it).isFile }
+        assertNotEquals(0L, generatedFlavors.size.toLong(), "There are no generated Android test flavors to run")
+        return generatedFlavors
+    }
+
+    private fun generatedSuiteFile(flavor: String): File {
+        val className = flavor.capitalizeAsciiOnly()
+        return File(
+            pathManager.srcFolderInAndroidTmpFolder,
+            "androidTest$className/java/${CodegenTestsOnAndroidGenerator.testClassPackage.replace('.', '/')}/$className.java"
+        )
     }
 
     private fun processReport(resultOutput: String, suiteName: String): List<DynamicTest> {
@@ -235,7 +251,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
     companion object {
         private const val INSTALL_ATTEMPTS = 2
 
-        private val flavorsToRun: List<String> = listOf(
+        private val possibleFlavorsToRun: List<String> = listOf(
             "common0", "common1", "common2", "common3", "common4", "reflect0",
         )
 
