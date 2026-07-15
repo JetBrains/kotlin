@@ -36,6 +36,18 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-15 — Nameless Java method recovered as a constructor (`testNamelessInJava`)
+- **Change**: `JavaClassOverAst.constructors` required a constructor `METHOD` node to have both no
+  return `TYPE` **and** an `IDENTIFIER`, so a malformed nameless declaration like `void () {}`
+  (its `void` is an error element, not a return type) was dropped; with no explicit constructor a
+  public default constructor was synthesized, so `class K : Nameless()` saw a visible constructor and
+  produced no diagnostic. PSI (same syntax parser) treats any no-return-type method as a
+  (package-private) constructor, suppressing the default one → `INVISIBLE_REFERENCE`. Dropped the
+  `IDENTIFIER` requirement so constructor detection mirrors PSI's `getReturnTypeElement() == null`.
+- **Files**: `model/JavaClassOverAst.kt` (constructors filter). Test data unchanged (shared golden).
+- **Tests**: full box+phased suite 2839/2839 (0 FAILED); `JavaParsingTest`/`JavaLightTreeTest` green.
+- **Result**: regression fixed (new test from master merge; SDK 261 golden).
+
 ### 2026-07-14 — Skip inaccessible inherited nested classes (IJ-FP regression: `testIntellij_exceptionAnalyzer`)
 - **Change**: `walkSupertypeClassIds` accepted the first inherited nested class of a matching simple
   name regardless of accessibility, so a package-private nested type in a supertype from another

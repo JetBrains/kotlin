@@ -308,11 +308,13 @@ class JavaClassOverAst(
         }
 
     override val constructors: Collection<JavaConstructor>
+        // A constructor is a METHOD node with no return TYPE (mirrors PSI's
+        // `getReturnTypeElement() == null`); the name is irrelevant. A malformed nameless
+        // declaration like `void () {}` — whose `void` is an error element, not a return type —
+        // is therefore a (package-private) constructor, matching PSI and suppressing the
+        // synthesized default constructor.
         get() = tree.getChildrenByType(node, JavaSyntaxElementType.METHOD)
-            .filter {
-                tree.findChildByType(it, JavaSyntaxElementType.TYPE) == null &&
-                        tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER) != null
-            }
+            .filter { tree.findChildByType(it, JavaSyntaxElementType.TYPE) == null }
             .map { JavaConstructorOverAst(it, tree, this) }
 
     override val recordComponents: Collection<JavaRecordComponent>
