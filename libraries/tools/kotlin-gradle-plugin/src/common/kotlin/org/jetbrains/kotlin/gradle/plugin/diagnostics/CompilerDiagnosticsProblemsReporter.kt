@@ -11,9 +11,9 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.problems.ProblemId
 import org.gradle.api.problems.ProblemSpec
 import org.gradle.api.problems.Problems
-import org.gradle.api.problems.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactories
+import org.jetbrains.kotlin.gradle.tasks.CompilationErrorException
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
@@ -41,7 +41,6 @@ internal abstract class DefaultCompilerDiagnosticsProblemsReporter @Inject const
         location: CompilerMessageRenderer.SourceLocation?,
         diagnosticId: String?,
     ) {
-        val gradleSeverity = severity.toGradleSeverity() ?: return
         val diagnosticGroup = severity.toDiagnosticGroup()
         val problemId = ProblemId.create(
             severity.resolvedProblemId(diagnosticId),
@@ -49,15 +48,24 @@ internal abstract class DefaultCompilerDiagnosticsProblemsReporter @Inject const
             diagnosticGroup.toProblemGroup(),
         )
 
+        fun ProblemSpec.populateSpec() = contextualLabel(severity.toDisplayName())
+            .details(message)
+            .applySourceLocation(location)
+            .additionalData(KotlinCompilerDiagnosticAdditionalData::class.java) { data ->
+                data.severity.value(severity).finalizeValue()
+            }
+
         try {
-            problems.reporter.report(problemId) {
-                // Fixed by KT-87509
-                @Suppress("DEPRECATION")
-                it
-                    .contextualLabel(severity.toDisplayName())
-                    .details(message)
-                    .severity(gradleSeverity)
-                    .applySourceLocation(location)
+            when(severity) {
+                // It is expected that error messages are coming within task action, and it is ok to throw failing the build
+                // Anyway compilation task will fail
+                CompilerMessageRenderer.Severity.ERROR -> problems.reporter
+                    .throwing(CompilationErrorException(message), problemId) {
+                        it.populateSpec()
+                    }
+                else -> problems.reporter.report(problemId) {
+                    it.populateSpec()
+                }
             }
         } catch (e: NoSuchMethodError) {
             logger.error("Can't invoke reporter method:", e)
@@ -113,12 +121,6 @@ internal fun CompilerMessageRenderer.Severity.resolvedProblemId(diagnosticId: St
 
 internal fun CompilerMessageRenderer.Severity.resolvedDisplayName(diagnosticId: String?): String =
     diagnosticId?.let { "Kotlin compiler: $it" } ?: toDisplayName()
-
-internal fun CompilerMessageRenderer.Severity.toGradleSeverity(): Severity? = when (this) {
-    CompilerMessageRenderer.Severity.ERROR -> Severity.ERROR
-    CompilerMessageRenderer.Severity.WARNING -> Severity.WARNING
-    CompilerMessageRenderer.Severity.INFO, CompilerMessageRenderer.Severity.DEBUG -> null
-}
 
 internal fun ProblemSpec.applySourceLocation(location: CompilerMessageRenderer.SourceLocation?): ProblemSpec {
     if (location == null) return this
