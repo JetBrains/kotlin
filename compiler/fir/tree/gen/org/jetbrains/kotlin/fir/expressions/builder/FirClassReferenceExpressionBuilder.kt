@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 class FirClassReferenceExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var classTypeRef: FirTypeRef
 
     override fun build(): FirClassReferenceExpression {

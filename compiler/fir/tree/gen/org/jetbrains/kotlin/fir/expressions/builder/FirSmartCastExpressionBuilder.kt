@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.SmartcastStability
 @FirBuilderDsl
 class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var originalExpression: FirExpression
     lateinit var upperTypesFromSmartCast: Collection<ConeKotlinType>
     lateinit var lowerTypesFromSmartCast: Collection<DfaType>

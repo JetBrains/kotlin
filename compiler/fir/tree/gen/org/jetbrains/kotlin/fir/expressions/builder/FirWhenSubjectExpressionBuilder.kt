@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 @FirBuilderDsl
 class FirWhenSubjectExpressionBuilder : FirQualifiedAccessExpressionBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     override var source: KtSourceElement? = null
-    override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = []
     var contextSensitiveAlternative: FirPropertyAccessExpression? = null
     lateinit var calleeReference: FirNamedReference
 
@@ -47,10 +47,10 @@ class FirWhenSubjectExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fir
 
 
     @Deprecated("Modification of 'contextArguments' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override val contextArguments: MutableList<FirExpression> = mutableListOf()
+    override val contextArguments: MutableList<FirExpression> = []
 
     @Deprecated("Modification of 'typeArguments' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
+    override val typeArguments: MutableList<FirTypeProjection> = []
 
     @Deprecated("Modification of 'explicitReceiver' has no impact for FirWhenSubjectExpressionBuilder", level = DeprecationLevel.HIDDEN)
     override var explicitReceiver: FirExpression?

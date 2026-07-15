@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 @FirBuilderDsl
 class FirMultiDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
-    val delegatedConstructorCalls: MutableList<FirDelegatedConstructorCall> = mutableListOf()
+    val delegatedConstructorCalls: MutableList<FirDelegatedConstructorCall> = []
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirMultiDelegatedConstructorCall {
@@ -33,7 +33,7 @@ class FirMultiDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder, F
     }
 
     @Deprecated("Modification of 'annotations' has no impact for FirMultiDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
 
     @Deprecated("Modification of 'coneTypeOrNull' has no impact for FirMultiDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
     override var coneTypeOrNull: ConeKotlinType?

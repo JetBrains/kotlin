@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 class FirBlockBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    val statements: MutableList<FirStatement> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
+    val statements: MutableList<FirStatement> = []
 
     override fun build(): FirBlock {
         return FirBlockImpl(

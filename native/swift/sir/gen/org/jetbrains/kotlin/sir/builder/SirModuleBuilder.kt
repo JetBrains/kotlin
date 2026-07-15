@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.sir.impl.SirModuleImpl
 
 @SirBuilderDsl
 class SirModuleBuilder {
-    val declarations: MutableList<SirDeclaration> = mutableListOf()
+    val declarations: MutableList<SirDeclaration> = []
     lateinit var name: String
-    val imports: MutableList<SirImport> = mutableListOf()
+    val imports: MutableList<SirImport> = []
 
     fun build(): SirModule {
         return SirModuleImpl(

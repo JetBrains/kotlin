@@ -19,11 +19,11 @@ class SirVariableBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
     var isOverride: Boolean = false
     var isInstance: Boolean = true
     var modality: SirModality = SirModality.UNSPECIFIED
-    val bridges: MutableList<SirBridge> = mutableListOf()
+    val bridges: MutableList<SirBridge> = []
     var isConstant: Boolean = false
     lateinit var name: String
     lateinit var type: SirType

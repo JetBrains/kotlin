@@ -20,53 +20,53 @@ class CompositeDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Boo
     constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
-        field: MutableSet<FirBasicDeclarationChecker> = mutableSetOf()
+        field: MutableSet<FirBasicDeclarationChecker> = []
     override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
-        field: MutableSet<FirCallableDeclarationChecker> = mutableSetOf()
+        field: MutableSet<FirCallableDeclarationChecker> = []
     override val functionCheckers: Set<FirFunctionChecker>
-        field: MutableSet<FirFunctionChecker> = mutableSetOf()
+        field: MutableSet<FirFunctionChecker> = []
     override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
-        field: MutableSet<FirNamedFunctionChecker> = mutableSetOf()
+        field: MutableSet<FirNamedFunctionChecker> = []
     override val propertyCheckers: Set<FirPropertyChecker>
-        field: MutableSet<FirPropertyChecker> = mutableSetOf()
+        field: MutableSet<FirPropertyChecker> = []
     override val classLikeCheckers: Set<FirClassLikeChecker>
-        field: MutableSet<FirClassLikeChecker> = mutableSetOf()
+        field: MutableSet<FirClassLikeChecker> = []
     override val classCheckers: Set<FirClassChecker>
-        field: MutableSet<FirClassChecker> = mutableSetOf()
+        field: MutableSet<FirClassChecker> = []
     override val regularClassCheckers: Set<FirRegularClassChecker>
-        field: MutableSet<FirRegularClassChecker> = mutableSetOf()
+        field: MutableSet<FirRegularClassChecker> = []
     override val constructorCheckers: Set<FirConstructorChecker>
-        field: MutableSet<FirConstructorChecker> = mutableSetOf()
+        field: MutableSet<FirConstructorChecker> = []
     override val fileCheckers: Set<FirFileChecker>
-        field: MutableSet<FirFileChecker> = mutableSetOf()
+        field: MutableSet<FirFileChecker> = []
     override val scriptCheckers: Set<FirScriptChecker>
-        field: MutableSet<FirScriptChecker> = mutableSetOf()
+        field: MutableSet<FirScriptChecker> = []
     override val replSnippetCheckers: Set<FirReplSnippetChecker>
-        field: MutableSet<FirReplSnippetChecker> = mutableSetOf()
+        field: MutableSet<FirReplSnippetChecker> = []
     override val typeParameterCheckers: Set<FirTypeParameterChecker>
-        field: MutableSet<FirTypeParameterChecker> = mutableSetOf()
+        field: MutableSet<FirTypeParameterChecker> = []
     override val typeAliasCheckers: Set<FirTypeAliasChecker>
-        field: MutableSet<FirTypeAliasChecker> = mutableSetOf()
+        field: MutableSet<FirTypeAliasChecker> = []
     override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker>
-        field: MutableSet<FirAnonymousFunctionChecker> = mutableSetOf()
+        field: MutableSet<FirAnonymousFunctionChecker> = []
     override val propertyAccessorCheckers: Set<FirPropertyAccessorChecker>
-        field: MutableSet<FirPropertyAccessorChecker> = mutableSetOf()
+        field: MutableSet<FirPropertyAccessorChecker> = []
     override val backingFieldCheckers: Set<FirBackingFieldChecker>
-        field: MutableSet<FirBackingFieldChecker> = mutableSetOf()
+        field: MutableSet<FirBackingFieldChecker> = []
     override val valueParameterCheckers: Set<FirValueParameterChecker>
-        field: MutableSet<FirValueParameterChecker> = mutableSetOf()
+        field: MutableSet<FirValueParameterChecker> = []
     override val enumEntryCheckers: Set<FirEnumEntryChecker>
-        field: MutableSet<FirEnumEntryChecker> = mutableSetOf()
+        field: MutableSet<FirEnumEntryChecker> = []
     override val anonymousObjectCheckers: Set<FirAnonymousObjectChecker>
-        field: MutableSet<FirAnonymousObjectChecker> = mutableSetOf()
+        field: MutableSet<FirAnonymousObjectChecker> = []
     override val anonymousInitializerCheckers: Set<FirAnonymousInitializerChecker>
-        field: MutableSet<FirAnonymousInitializerChecker> = mutableSetOf()
+        field: MutableSet<FirAnonymousInitializerChecker> = []
     override val receiverParameterCheckers: Set<FirReceiverParameterChecker>
-        field: MutableSet<FirReceiverParameterChecker> = mutableSetOf()
+        field: MutableSet<FirReceiverParameterChecker> = []
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
-        field: MutableSet<FirControlFlowChecker> = mutableSetOf()
+        field: MutableSet<FirControlFlowChecker> = []
     override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker>
-        field: MutableSet<AbstractFirPropertyInitializationChecker> = mutableSetOf()
+        field: MutableSet<AbstractFirPropertyInitializationChecker> = []
 
     @CheckersComponentInternal
     fun register(checkers: DeclarationCheckers) {

@@ -39,13 +39,13 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     override lateinit var returnTypeRef: FirTypeRef
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val valueParameters: MutableList<FirValueParameter> = []
     override var body: FirBlock? = null
     var contractDescription: FirContractDescription? = null
     lateinit var symbol: FirPropertyAccessorSymbol
     lateinit var propertySymbol: FirPropertySymbol
     var isGetter: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirPropertyAccessor {
@@ -85,7 +85,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
         }
 
     @Deprecated("Modification of 'contextParameters' has no impact for FirPropertyAccessorBuilder", level = DeprecationLevel.HIDDEN)
-    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = []
 }
 
 @OptIn(ExperimentalContracts::class)

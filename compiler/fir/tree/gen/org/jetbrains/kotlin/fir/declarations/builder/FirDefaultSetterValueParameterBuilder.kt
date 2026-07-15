@@ -32,7 +32,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var symbol: FirValueParameterSymbol
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
 

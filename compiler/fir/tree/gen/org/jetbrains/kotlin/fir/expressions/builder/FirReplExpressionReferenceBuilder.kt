@@ -42,7 +42,7 @@ class FirReplExpressionReferenceBuilder : FirAnnotationContainerBuilder, FirExpr
         }
 
     @Deprecated("Modification of 'annotations' has no impact for FirReplExpressionReferenceBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
 }
 
 @OptIn(ExperimentalContracts::class)

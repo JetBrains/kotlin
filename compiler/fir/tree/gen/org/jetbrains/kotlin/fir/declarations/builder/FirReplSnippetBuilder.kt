@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 class FirReplSnippetBuilder : FirAnnotationContainerBuilder {
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
     lateinit var symbol: FirReplSnippetSymbol
     lateinit var source: KtSourceElement
-    val receivers: MutableList<FirScriptReceiverParameter> = mutableListOf()
+    val receivers: MutableList<FirScriptReceiverParameter> = []
     lateinit var snippetClass: FirRegularClass
     lateinit var evalFunctionSymbol: FirNamedFunctionSymbol
 
