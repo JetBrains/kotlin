@@ -198,7 +198,7 @@ internal abstract class TestsProblemsReporter : ProblemsReporter {
         options: ToolingDiagnosticRenderingOptions,
     ) {
         val renderedDiagnostic = diagnostic.renderReportedDiagnostic(logger, options) ?: return
-        if (renderedDiagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
+        if (renderedDiagnostic.severity == KotlinToolingDiagnosticsSeverity.FATAL) {
             throw diagnostic.createAnExceptionForFatalDiagnostic(options)
         }
     }

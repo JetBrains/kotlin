@@ -75,7 +75,7 @@ internal abstract class DefaultProblemsReporter @Inject constructor(
     private fun fillSpec(
         spec: ProblemSpec,
         diagnostic: ToolingDiagnostic,
-        severity: ToolingDiagnostic.Severity,
+        severity: KotlinToolingDiagnosticsSeverity,
         throwable: KotlinDiagnosticsException?
     ) {
         spec
@@ -91,12 +91,11 @@ internal abstract class DefaultProblemsReporter @Inject constructor(
     }
 }
 
-// Default setup for all gradle variants since 8.6
-internal fun ProblemSpec.defaultSpecConfiguration(diagnostic: ToolingDiagnostic, severity: ToolingDiagnostic.Severity): ProblemSpec {
-    // Fixed by KT-87509
-    @Suppress("DEPRECATION")
+private fun ProblemSpec.defaultSpecConfiguration(
+    diagnostic: ToolingDiagnostic,
+    @Suppress("unused_parameter") severity: KotlinToolingDiagnosticsSeverity,
+): ProblemSpec {
     return details(diagnostic.message)
-        .severity(severity.problemSeverity)
         .apply {
             diagnostic.solutions.forEach {
                 solution(it)
@@ -114,9 +113,3 @@ internal fun DiagnosticGroup.toProblemGroup(): ProblemGroup = ProblemGroup.creat
     displayName,
     parent?.toProblemGroup()
 )
-
-internal val ToolingDiagnostic.Severity.problemSeverity: Severity
-    get() = when (this) {
-        ToolingDiagnostic.Severity.WARNING -> Severity.WARNING
-        else -> Severity.ERROR
-    }

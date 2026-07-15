@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.gradle.internal.isInIdeaEnvironment
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.STRONG_WARNING
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.*
 import org.jetbrains.kotlin.gradle.utils.ConfigurationCacheOpaqueValueSource
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.Serializable
@@ -73,7 +71,7 @@ internal class ToolingDiagnosticRenderingOptions(
         }
     }
 
-    fun effectiveSeverity(severity: ToolingDiagnostic.Severity): ToolingDiagnostic.Severity? {
+    fun effectiveSeverity(severity: KotlinToolingDiagnosticsSeverity): KotlinToolingDiagnosticsSeverity? {
         return if (ignoreWarningMode) {
             severity
         } else {

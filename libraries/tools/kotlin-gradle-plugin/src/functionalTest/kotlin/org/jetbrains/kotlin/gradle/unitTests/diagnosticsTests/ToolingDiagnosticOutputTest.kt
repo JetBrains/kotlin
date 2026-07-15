@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.TerminalColorSupport.TerminalStyle.blue
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.TerminalColorSupport.TerminalStyle.bold
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.TerminalColorSupport.TerminalStyle.green
@@ -30,7 +31,7 @@ class ToolingDiagnosticOutputTest {
         val diagnostic = ToolingDiagnostic(
             identifier = ToolingDiagnostic.ID("KT-1234", "Test Diagnostic", DiagnosticGroup.Kgp.Deprecation),
             message = "Detailed error description",
-            severity = ToolingDiagnostic.Severity.WARNING,
+            severity = KotlinToolingDiagnosticsSeverity.WARNING,
             solutions = listOf("Try this fix"),
         )
 
@@ -47,7 +48,7 @@ class ToolingDiagnosticOutputTest {
         val diagnostic = ToolingDiagnostic(
             identifier = ToolingDiagnostic.ID("KT-5678", "Sample Diagnostic", DiagnosticGroup.Kgp.Misconfiguration),
             message = "Test error message",
-            severity = ToolingDiagnostic.Severity.ERROR,
+            severity = KotlinToolingDiagnosticsSeverity.ERROR,
             solutions = listOf("First solution", "Second solution"),
         )
 
@@ -80,7 +81,7 @@ class ToolingDiagnosticOutputTest {
         val diagnostic = ToolingDiagnostic(
             identifier = ToolingDiagnostic.ID("KT-9999", "Minimal Test", DiagnosticGroup.Kgp.Experimental),
             message = messageWithCode,
-            severity = ToolingDiagnostic.Severity.WARNING,
+            severity = KotlinToolingDiagnosticsSeverity.WARNING,
             solutions = listOf("Fix the code")
         )
 
@@ -108,7 +109,7 @@ class ToolingDiagnosticOutputTest {
         val diagnostic = ToolingDiagnostic(
             identifier = ToolingDiagnostic.ID("KT-9999", "Minimal Test", DiagnosticGroup.Kgp.Misconfiguration),
             message = "Critical error occurred",
-            severity = ToolingDiagnostic.Severity.FATAL,
+            severity = KotlinToolingDiagnosticsSeverity.FATAL,
             solutions = listOf("Fix the code")
         )
 
@@ -124,7 +125,7 @@ class ToolingDiagnosticOutputTest {
         val diagnostic = ToolingDiagnostic(
             identifier = ToolingDiagnostic.ID("KT-9999", "Minimal Test", DiagnosticGroup.Kgp.Misconfiguration),
             message = "Configuration warning",
-            severity = ToolingDiagnostic.Severity.WARNING,
+            severity = KotlinToolingDiagnosticsSeverity.WARNING,
             solutions = listOf("Fix the code"),
             documentation = ToolingDiagnostic.Documentation(
                 url = "https://kotlinlang.org/docs/home.html",
