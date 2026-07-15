@@ -552,26 +552,15 @@ private fun checkCCallModeCompatibility(
     }
 }
 
-// TODO (KT-84721): Reconsider how exactly the export in P.V. feature should work in further versions (ex: 2.5.0) if we decide to upgrade LLVM.
-private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments) {
-    val klibAbiCompatibilityLevel = cinteropArguments.klibAbiCompatibilityLevel
-    val cCallMode = cinteropArguments.cCallMode
-
-    when (klibAbiCompatibilityLevel) {
-        KlibAbiCompatibilityLevel.ABI_LEVEL_2_3 -> {
-            check(cCallMode == CCallMode.DIRECT) {
-                "-$CCALL_MODE ${cCallMode.name.lowercase()} is not supported in combination with -$KLIB_ABI_COMPATIBILITY_LEVEL ${klibAbiCompatibilityLevel}\n" +
-                        "Please use -$KLIB_ABI_COMPATIBILITY_LEVEL ${KlibAbiCompatibilityLevel.LATEST_STABLE} or specify -$CCALL_MODE ${CCallMode.DIRECT.name.lowercase()}"
+private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments) =
+        when (val klibAbiCompatibilityLevel = cinteropArguments.klibAbiCompatibilityLevel) {
+            KlibAbiCompatibilityLevel.ABI_LEVEL_2_4 -> {
+                warn("-$KLIB_ABI_COMPATIBILITY_LEVEL $klibAbiCompatibilityLevel will trigger generating KLIB compatible with KLIB ABI version $klibAbiCompatibilityLevel. This is an experimental feature.")
             }
-
-            warn("-$KLIB_ABI_COMPATIBILITY_LEVEL $klibAbiCompatibilityLevel will trigger generating KLIB compatible with KLIB ABI version $klibAbiCompatibilityLevel. This is an experimental feature.")
+            KlibAbiCompatibilityLevel.ABI_LEVEL_2_5 -> {
+                // No specific restrictions for now.
+            }
         }
-
-        KlibAbiCompatibilityLevel.ABI_LEVEL_2_4, KlibAbiCompatibilityLevel.ABI_LEVEL_2_5 -> {
-            // No specific restrictions for now.
-        }
-    }
-}
 
 private fun compileSources(
         nativeLibsDir: String,

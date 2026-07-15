@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.config
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 enum class KlibAbiCompatibilityLevel(val major: Int, val minor: Int) {
-    ABI_LEVEL_2_3(2, 3),
     ABI_LEVEL_2_4(2, 4),
     ABI_LEVEL_2_5(2, 5),
     ;

@@ -1,9 +1,0 @@
-language = Objective-C
----
-@interface Base
--(instancetype) init;
--(void) overriddenFunction;
--(void) nonOverriddenFunction;
-@property int overriddenProperty;
-@property int nonOverriddenProperty;
-@end

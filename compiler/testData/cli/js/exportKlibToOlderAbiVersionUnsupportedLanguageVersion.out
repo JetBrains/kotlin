@@ -7,7 +7,7 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-error: exporting KLIBs in older ABI format is only supported for the following language versions: 2.3, 2.4. The current language version is 2.2
+error: exporting KLIBs in older ABI format is only supported for the following language versions: 2.4. The current language version is 2.2
 warning: following manually enabled features will force generation of pre-release binaries: ExportKlibToOlderAbiVersion
 warning: the argument '-Xir-produce-klib-dir' is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
 COMPILATION_ERROR

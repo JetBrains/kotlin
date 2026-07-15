@@ -121,10 +121,6 @@ class ObjCInteropFacade(
                     add("-Xklib-abi-compatibility-level")
                     add("${it.major}.${it.minor}")
                 }
-                if (!this.contains("-Xccall-mode")) {
-                    add("-Xccall-mode")
-                    add("direct")
-                }
             }
             add("-libraryPath")
             add(expectedArtifact.klibFile.parentFile.absolutePath)
