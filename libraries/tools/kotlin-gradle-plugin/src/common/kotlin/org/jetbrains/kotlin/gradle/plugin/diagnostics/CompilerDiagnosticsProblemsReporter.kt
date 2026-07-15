@@ -56,16 +56,17 @@ internal abstract class DefaultCompilerDiagnosticsProblemsReporter @Inject const
             }
 
         try {
-            when(severity) {
+            when (severity) {
                 // It is expected that error messages are coming within task action, and it is ok to throw failing the build
                 // Anyway compilation task will fail
                 CompilerMessageRenderer.Severity.ERROR -> problems.reporter
                     .throwing(CompilationErrorException(message), problemId) {
                         it.populateSpec()
                     }
-                else -> problems.reporter.report(problemId) {
+                CompilerMessageRenderer.Severity.WARNING -> problems.reporter.report(problemId) {
                     it.populateSpec()
                 }
+                else -> Unit
             }
         } catch (e: NoSuchMethodError) {
             logger.error("Can't invoke reporter method:", e)
