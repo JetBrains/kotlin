@@ -9,7 +9,7 @@ dependencies {
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
     compileOnly(libs.junit.jupiter.params)
-    compileOnly("org.jetbrains.kotlin:kotlin-build-tools-api:2.3.0")
+    compileOnly("org.jetbrains.kotlin:kotlin-build-tools-api:2.4.0")
 }
 
 sourceSets {

@@ -38,8 +38,6 @@ kotlin {
 }
 
 val compatibilityTestsVersions = listOf(
-    KotlinToolingVersion(2, 3, 0, null),
-    KotlinToolingVersion(2, 3, 20, null),
     KotlinToolingVersion(2, 4, 0, null),
 )
 
