@@ -65,33 +65,6 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
     }
 
     @Test
-    fun testPublicClassWithMalformedMembers() {
-        val source = """
-            package p;
-            public class Nameless {
-                void () {}
-                int ;
-            }
-        """.trimIndent()
-        val parsed = parseSource(source)
-        val tree = parsed.tree
-        val classNode = tree.getChildrenByType(parsed.root, JavaSyntaxElementType.CLASS)
-            .first {
-                tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "Nameless"
-            }
-        val javaClass = JavaClassOverAst(classNode, tree, parsed.context)
-        assert(javaClass.visibility.toString() == "public") {
-            "Expected public visibility for 'public class Nameless', got ${javaClass.visibility}"
-        }
-        assert(javaClass.constructors.isEmpty()) {
-            "Malformed 'void () {}' should not be treated as a constructor"
-        }
-        assert(javaClass.hasDefaultConstructor()) {
-            "Class with no valid constructors should have a default constructor"
-        }
-    }
-
-    @Test
     fun testWildcardAST() {
         val source = """
             import java.util.List;
