@@ -115,6 +115,12 @@ public class LLSerializationBlackBoxTestGenerated extends AbstractLLSerializatio
     }
 
     @Test
+    @TestMetadata("encodeDefaultArrayContentEquals.kt")
+    public void testEncodeDefaultArrayContentEquals() {
+      run("encodeDefaultArrayContentEquals.kt");
+    }
+
+    @Test
     @TestMetadata("enumsAreCached.kt")
     public void testEnumsAreCached() {
       run("enumsAreCached.kt");
