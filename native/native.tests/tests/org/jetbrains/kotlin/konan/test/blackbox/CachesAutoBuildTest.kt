@@ -113,6 +113,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
                 listOf(
                     "-Xauto-cache-from=${autoCacheFrom.absolutePath}",
                     "-Xauto-cache-dir=${autoCacheDir.absolutePath}",
+                    "-Xbinary=enableReleaseBinaryCache=true"
                 ) + cacheDirectories.map { "-Xcache-directory=${it.absolutePath}" } + additionalArgs
             ),
             *dependencies
