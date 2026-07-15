@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
+// FULL_JDK
+
 // FILE: lib.kt
 val x: String = computeX()
 
@@ -12,17 +14,24 @@ fun computeY(): String = "2"
 fun box() : String {
     try {
         x
-        return "FAIL 1"
-    } catch(t: Error) {
+        return "FAIL 1.1"
+    } catch(t: Error /* ExceptionInInitializerError */) {
         val cause = t.cause
-        if (cause !is IllegalStateException) return "FAIL 2"
-        if (cause.message != "1") return "FAIL 3"
+        if (cause !is IllegalStateException) return "FAIL 1.2: cause must be IllegalStateException, was ${cause?.let { it::class }}"
+        if (cause.message != "1") return "FAIL 1.3: message must be '1', was '${cause.message}'"
     }
     try {
         y
-        return "FAIL 4"
-    } catch(t: Error) {
-        // On JVM < 20, t.cause is null, but on JVM >= 20, it's ExceptionInInitializerError.
+        return "FAIL 2.1"
+    } catch(t: Error /* NoClassDefFoundError */) {
+        if (BACKEND_UNDER_TEST != "ANDROID") {
+            val expectedMessage = when (BACKEND_UNDER_TEST) {
+                "JVM_IR" -> "Could not initialize class LibKt"
+                "NATIVE" -> "There was an error during file or class initialization"
+                else -> "Could not initialize file"
+            }
+            if (t.message != expectedMessage) return "FAIL 2.2: message must be '$expectedMessage', was '${t.message}'"
+        }
     }
     return "OK"
 }
