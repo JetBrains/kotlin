@@ -172,8 +172,8 @@ MODULE_FRAGMENT name:<lib2>
             WHEN type=kotlin.Unit origin=null
               BRANCH
                 if: CALL 'kotlin.internal.ir/EQEQEQ|EQEQEQ(kotlin.Any?;kotlin.Any?){}[0]' type=kotlin.Boolean origin=EQEQEQ
-                  ARG arg0: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.equals' type=lib2.SealedInterface.Object origin=null
-                  ARG arg1: GET_VAR 'other: kotlin.Any? declared in lib2.SealedInterface.Object.equals' type=kotlin.Any? origin=null
+                  ARG 1: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.equals' type=lib2.SealedInterface.Object origin=null
+                  ARG 2: GET_VAR 'other: kotlin.Any? declared in lib2.SealedInterface.Object.equals' type=kotlin.Any? origin=null
                 then: RETURN type=kotlin.Nothing from='lib2/SealedInterface.Object.equals|equals(kotlin.Any?){}[0]'
                   CONST Boolean type=kotlin.Boolean value=true
             WHEN type=kotlin.Unit origin=null

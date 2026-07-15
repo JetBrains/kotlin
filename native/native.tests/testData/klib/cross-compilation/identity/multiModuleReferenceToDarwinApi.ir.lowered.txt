@@ -19,7 +19,7 @@ MODULE_FRAGMENT name:<app>
           VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Boolean [val]
             TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
               CALL 'kotlin.internal.ir/EQEQ|EQEQ(kotlin.Any?;kotlin.Any?){}[0]' type=kotlin.Boolean origin=EQEQ
-                ARG arg0: BLOCK type=kotlin.Int origin=INLINE_ARGS_CONTAINER
+                ARG 1: BLOCK type=kotlin.Int origin=INLINE_ARGS_CONTAINER
                   VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.ULong [val]
                     TYPE_OP type=kotlin.ULong origin=IMPLICIT_CAST typeOperand=kotlin.ULong
                       CALL 'platform.Foundation/NSString.length.<get-length>|objc:length#Accessor[100]' type=kotlin.ULong origin=GET_PROPERTY
@@ -35,7 +35,7 @@ MODULE_FRAGMENT name:<app>
                           CALL 'kotlin/Long.toInt|toInt(){}[0]' type=kotlin.Int origin=null
                             ARG 1: CALL 'kotlin/ULong.data.<get-data>|<get-data>(){}[0]' type=kotlin.Long origin=GET_PROPERTY
                               ARG 1: GET_VAR 'val this: kotlin.ULong [val] declared in app.main' type=kotlin.ULong origin=IMPLICIT_ARGUMENT
-                ARG arg1: CONST Int type=kotlin.Int value=0
+                ARG 2: CONST Int type=kotlin.Int value=0
           RETURNABLE_BLOCK type=kotlin.Unit origin=null
             INLINED_BLOCK type=kotlin.Unit origin=null
               inlinedFunctionSymbol: kotlin/check|check(kotlin.Boolean){}[0]
