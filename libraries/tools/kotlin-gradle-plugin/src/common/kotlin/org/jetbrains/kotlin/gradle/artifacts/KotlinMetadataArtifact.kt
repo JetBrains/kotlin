@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInt
 
 internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements, _ ->
     if (target !is KotlinMetadataTarget) return@KotlinTargetArtifact
-    if (true) return@KotlinTargetArtifact // obviously a todo
 
     apiElements.attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
     apiElements.attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))

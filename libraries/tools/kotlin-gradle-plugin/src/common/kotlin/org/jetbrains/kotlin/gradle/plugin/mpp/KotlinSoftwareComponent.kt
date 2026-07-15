@@ -83,6 +83,7 @@ abstract class KotlinSoftwareComponent(
         // FIXME: Remove this, for now we definitely want to continue publishing existing KMP publication together with Uklib variants
         // if (onlyPublishUklib) return
 
+        /* disabled in favor of kar publication
         mutableSetOf<DefaultKotlinUsageContext>().apply {
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
@@ -107,6 +108,9 @@ abstract class KotlinSoftwareComponent(
                 )
             }
         }
+
+         */
+        emptySet()
     }
 
 

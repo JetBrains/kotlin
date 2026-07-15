@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.artifacts.publishedMetadataCompilations
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.metadataDescriptor
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage
@@ -45,10 +46,12 @@ import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataTransformAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.usageByName
@@ -178,11 +181,23 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
         }
     }
 
-    project.configurations.getByName(metadataTarget.internal.apiElementsConfigurationName).apply {
+    val metadataApiElementsPublished = project.configurations.create(
+        publishedConfigurationName(metadataTarget.internal.apiElementsConfigurationName)
+    ).apply {
+        extendsFrom(project.configurations.getByName(metadataTarget.internal.apiElementsConfigurationName))
+
         outgoing.artifact(packTask)
         attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
         attributes.attribute(karCompressionMethodAttribute, karCompressionMethodXZ)
+        isCanBeConsumed = false
+        isCanBeResolved = false
+        isCanBeDeclared = true
+    }
+
+    project.multiplatformExtension.publishing.adhocSoftwareComponent.addVariantsFromConfiguration(metadataApiElementsPublished) { details ->
+        details.mapToMavenScope(KotlinUsageContext.MavenScope.COMPILE.name)
     }
 
     project.launch {
