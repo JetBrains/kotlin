@@ -184,10 +184,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             processFiles(files, holders, commonFlavor, reflectionFlavor)
         }
 
-        holders.values.forEach {
-            it.writeFilesOnDisk()
-        }
-
         commonFlavor.printStatistics()
         reflectionFlavor.printStatistics()
     }
@@ -196,19 +192,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         private val flavorConfig: FlavorConfig,
         private val configuration: CompilerConfiguration
     ) {
-        private val rawFiles = arrayListOf<TestClassInfo>()
-        private val unitTestDescriptions = arrayListOf<TestInfo>()
-
-        private fun shouldWriteFilesOnDisk(): Boolean = rawFiles.size > 300
-
-        fun writeFilesOnDiskIfNeeded() {
-            if (shouldWriteFilesOnDisk()) {
-                writeFilesOnDisk()
-            }
-        }
-
-        fun writeFilesOnDisk() {
-            val disposable = Disposer.newDisposable("Disposable for ${FilesWriter::class.qualifiedName}.writeFilesOnDisk")
+        fun addTest(testFiles: List<TestClassInfo>, info: TestInfo) {
+            val disposable = Disposer.newDisposable("Disposable for ${FilesWriter::class.qualifiedName}.addTest")
 
             @OptIn(CoreEnvironmentDeprecation::class)
             val environment = KotlinCoreEnvironment.createForTests(
@@ -224,17 +209,15 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
             try {
                 writeFiles(
-                    rawFiles.map {
+                    testFiles.map {
                         try {
                             CodegenTestFiles.create(it.name, it.content, environment.project).psiFile
                         } catch (e: Throwable) {
                             throw RuntimeException("Error on processing ${it.name}:\n${it.content}", e)
                         }
-                    }, environment, unitTestDescriptions
+                    }, environment, info
                 )
             } finally {
-                rawFiles.clear()
-                unitTestDescriptions.clear()
                 disposeRootInWriteAction(disposable)
             }
         }
@@ -242,14 +225,14 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         private fun writeFiles(
             filesToCompile: List<KtFile>,
             environment: KotlinCoreEnvironment,
-            unitTestDescriptions: ArrayList<TestInfo>
+            unitTestDescription: TestInfo
         ) {
             if (filesToCompile.isEmpty()) return
 
             val flavorName = flavorConfig.getFlavorForNewFiles(filesToCompile.size)
 
             val outputDir = File(pathManager.getOutputForCompiledFiles(flavorName))
-            println("Generating ${filesToCompile.size} from ${unitTestDescriptions.joinToString { it.fqName.asString() }} files into ${outputDir.name}, configuration: '${environment.configuration}'...")
+            println("Generating ${filesToCompile.size} from ${unitTestDescription.fqName} files into ${outputDir.name}...")
 
             val state = GenerationUtils.compileFiles(filesToCompile, environment)
 
@@ -264,7 +247,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     generatedTestNames
                 )
             }
-            unitTestFileWriter.addTests(unitTestDescriptions)
+            unitTestFileWriter.addTests(listOf(unitTestDescription))
             state.factory.writeAllTo(outputDir)
         }
 
@@ -274,10 +257,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     testClassPackage.replace(".", "/") + "/"
         }
 
-        fun addTest(testFiles: List<TestClassInfo>, info: TestInfo) {
-            rawFiles.addAll(testFiles)
-            unitTestDescriptions.add(info)
-        }
     }
 
     @OptIn(TestInfrastructureInternals::class)
@@ -288,10 +267,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         commonFlavor: FlavorConfig,
         reflectionFlavor: FlavorConfig
     ) {
-        holders.values.forEach {
-            it.writeFilesOnDiskIfNeeded()
-        }
-
         for (file in files) {
             if (file.isDirectory) {
                 val listFiles = file.listFiles()
