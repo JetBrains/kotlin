@@ -69,7 +69,7 @@ class AndroidRunner {
             DynamicContainer.dynamicContainer(
                 "Compilation",
                 plan.flavorContainers { _, tests ->
-                    tests.map { test ->
+                    tests.directoryContainers { test ->
                         DynamicTest.dynamicTest(test.displayName) {
                             plan.compile(test)
                         }
@@ -94,7 +94,7 @@ class AndroidRunner {
                         },
                         DynamicContainer.dynamicContainer(
                             "Tests",
-                            tests.map { test ->
+                            tests.directoryContainers { test ->
                                 DynamicTest.dynamicTest(test.displayName) {
                                     runtimeResults.assertPassed(test)
                                 }
@@ -115,6 +115,56 @@ class AndroidRunner {
                 flavorName,
                 containerFactory(flavorName, testsByFlavor.getValue(flavorName))
             )
+        }
+    }
+
+    private fun List<AndroidPlannedTest>.directoryContainers(testFactory: (AndroidPlannedTest) -> DynamicTest): List<DynamicNode> {
+        val root = DirectoryNode("")
+        for (test in this) {
+            root.add(relativeDirectorySegments(test), test)
+        }
+        return root.children.values.map { it.toDynamicNode(testFactory) } + root.tests.map(testFactory)
+    }
+
+    private fun relativeDirectorySegments(test: AndroidPlannedTest): List<String> {
+        val relativePath = FileUtil.toSystemIndependentName(test.info.file.relativeTo(AndroidPlannedTest.ROOT_PATH).parent ?: "")
+        val segments = relativePath.split('/').filter { it.isNotEmpty() }
+        return if (segments.firstOrNull() == "codegen") segments.drop(1) else segments
+    }
+
+    private class DirectoryNode(
+        private val name: String,
+    ) {
+        val children = linkedMapOf<String, DirectoryNode>()
+        val tests = arrayListOf<AndroidPlannedTest>()
+
+        fun add(segments: List<String>, test: AndroidPlannedTest) {
+            if (segments.isEmpty()) {
+                tests += test
+                return
+            }
+
+            children.getOrPut(segments.first()) { DirectoryNode(segments.first()) }.add(segments.drop(1), test)
+        }
+
+        fun toDynamicNode(testFactory: (AndroidPlannedTest) -> DynamicTest): DynamicNode {
+            val compressed = compressed()
+            return DynamicContainer.dynamicContainer(
+                compressed.name,
+                compressed.children.values.map { it.toDynamicNode(testFactory) } + compressed.tests.map(testFactory)
+            )
+        }
+
+        private fun compressed(): DirectoryNode {
+            var result = this
+            while (result.tests.isEmpty() && result.children.size == 1) {
+                val child = result.children.values.single()
+                result = DirectoryNode(result.name + "/" + child.name).also {
+                    it.children.putAll(child.children)
+                    it.tests.addAll(child.tests)
+                }
+            }
+            return result
         }
     }
 

@@ -79,7 +79,7 @@ internal data class AndroidPlannedTest(
     val configuration: CompilerConfiguration,
     val moduleName: String,
 ) {
-    val displayName: String get() = "${info.name} - ${FileUtil.toSystemIndependentName(info.file.relativeTo(ROOT_PATH).path)}"
+    val displayName: String get() = info.name
 
     companion object {
         val ROOT_PATH: File by lazy { Path("../testData").toAbsolutePath().toFile() }
