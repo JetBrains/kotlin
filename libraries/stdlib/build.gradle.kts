@@ -389,6 +389,9 @@ kotlin {
             kotlin {
                 srcDir("common/src")
                 srcDir(files("src").builtBy(prepareCommonSources))
+
+                // It's added separately
+                exclude("kotlin/unsigned/UnsignedCommon.kt")
             }
         }
         commonTest {
@@ -400,10 +403,18 @@ kotlin {
                 srcDir("test")
             }
         }
+        val nonWasmUnsignedCommon by creating {
+            dependsOn(commonMain.get())
+            kotlin {
+                srcDir("src/kotlin/unsigned")
+                include("UnsignedCommon.kt")
+            }
+        }
         val jvmCompileOnlyDeclarations = getByName("jvmCompileOnlyDeclarations") {
             kotlin.srcDir("jvm/compileOnly")
         }
         val jvmMain = getByName("jvmMain") {
+            dependsOn(nonWasmUnsignedCommon)
             project.configurations.getByName("jvmMainCompileOnly")
             dependencies {
                 api("org.jetbrains:annotations:13.0")
@@ -467,7 +478,12 @@ kotlin {
         val jsMain = getByName("jsMain") {
             dependsOn(webMain)
             dependsOn(commonNonJvmMain)
+<<<<<<< HEAD
             val prepareJsIrMainSources = tasks.register("prepareJsIrMainSources", Sync::class)
+=======
+            dependsOn(nonWasmUnsignedCommon)
+            val prepareJsIrMainSources by tasks.registering(Sync::class)
+>>>>>>> 28b06c5c73ea (fixup! [stdlib] Eliminate platform-specific Unsigned* files for the sake of explicit actualization)
             kotlin {
                 srcDir(prepareJsIrMainSources.requiredForImport())
                 srcDir("$jsDir/builtins")
@@ -614,6 +630,7 @@ kotlin {
                 dependsOn(nativeWasmMain)
                 dependsOn(nativeWasmWasiMain)
                 dependsOn(nativeKotlinTestCommon)
+                dependsOn(nonWasmUnsignedCommon)
                 kotlin {
                     srcDir("$rootDir/kotlin-native/runtime/src/main/kotlin")
                     srcDir("$rootDir/kotlin-native/Interop/Runtime/src/main/kotlin")

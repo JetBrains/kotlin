@@ -4937,15 +4937,6 @@ public fun UShortArray.toTypedArray(): Array<UShort> {
 }
 
 /**
- * Returns an array of UByte containing all of the elements of this generic array.
- */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-public fun Array<out UByte>.toUByteArray(): UByteArray {
-    return UByteArray(size) { index -> this[index] }
-}
-
-/**
  * Returns an array of type [UByteArray], which is a copy of this array where each element is an unsigned reinterpretation
  * of the corresponding element of this array.
  */
@@ -4957,12 +4948,12 @@ public inline fun ByteArray.toUByteArray(): UByteArray {
 }
 
 /**
- * Returns an array of UInt containing all of the elements of this generic array.
+ * Returns an array of UByte containing all of the elements of this generic array.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Array<out UInt>.toUIntArray(): UIntArray {
-    return UIntArray(size) { index -> this[index] }
+public fun Array<out UByte>.toUByteArray(): UByteArray {
+    return UByteArray(size) { index -> this[index] }
 }
 
 /**
@@ -4977,12 +4968,12 @@ public inline fun IntArray.toUIntArray(): UIntArray {
 }
 
 /**
- * Returns an array of ULong containing all of the elements of this generic array.
+ * Returns an array of UInt containing all of the elements of this generic array.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Array<out ULong>.toULongArray(): ULongArray {
-    return ULongArray(size) { index -> this[index] }
+public fun Array<out UInt>.toUIntArray(): UIntArray {
+    return UIntArray(size) { index -> this[index] }
 }
 
 /**
@@ -4997,12 +4988,12 @@ public inline fun LongArray.toULongArray(): ULongArray {
 }
 
 /**
- * Returns an array of UShort containing all of the elements of this generic array.
+ * Returns an array of ULong containing all of the elements of this generic array.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Array<out UShort>.toUShortArray(): UShortArray {
-    return UShortArray(size) { index -> this[index] }
+public fun Array<out ULong>.toULongArray(): ULongArray {
+    return ULongArray(size) { index -> this[index] }
 }
 
 /**
@@ -5014,6 +5005,15 @@ public fun Array<out UShort>.toUShortArray(): UShortArray {
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.toUShortArray(): UShortArray {
     return UShortArray(this.copyOf())
+}
+
+/**
+ * Returns an array of UShort containing all of the elements of this generic array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun Array<out UShort>.toUShortArray(): UShortArray {
+    return UShortArray(size) { index -> this[index] }
 }
 
 /**

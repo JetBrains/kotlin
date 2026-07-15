@@ -80,7 +80,7 @@ internal constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     @Suppress("OVERRIDE_BY_INLINE")
     public actual override inline operator fun compareTo(other: ULong): Int =
-        wasm_u64_compareTo(this.data, other.data)
+        ulongCompare(this.data, other.data)
 
     /** Adds the other value to this value. */
     @kotlin.internal.InlineOnly
@@ -176,7 +176,7 @@ internal constructor(
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun div(other: ULong): ULong =
-        ULong(wasm_i64_div_u(this.data, other.data))
+        ulongDivide(this, other)
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -216,7 +216,7 @@ internal constructor(
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun rem(other: ULong): ULong =
-        ULong(wasm_i64_rem_u(this.data, other.data))
+        ulongRemainder(this, other)
 
     /**
      * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
@@ -504,7 +504,7 @@ internal constructor(
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
     public actual inline fun toFloat(): Float =
-        wasm_f32_convert_i64_u(this.data)
+        ulongToFloat(this.data)
 
     /**
      * Converts this [ULong] value to [Double].
@@ -516,11 +516,11 @@ internal constructor(
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
     public actual inline fun toDouble(): Double =
-        wasm_f64_convert_i64_u(this.data)
+        ulongToDouble(this.data)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun toString(): String =
-        utoa64(this)
+        ulongToString(data)
 
     @kotlin.internal.InlineOnly
     internal actual inline fun toStringWithBase(radix: Int): String =
@@ -592,7 +592,7 @@ public actual inline fun Long.toULong(): ULong =
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
 public actual inline fun Float.toULong(): ULong =
-    ULong(wasm_i64_trunc_sat_f32_u(this))
+    floatToULong(this)
 
 /**
  * Converts this [Double] value to [ULong].
@@ -604,4 +604,4 @@ public actual inline fun Float.toULong(): ULong =
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
 public actual inline fun Double.toULong(): ULong =
-    ULong(wasm_i64_trunc_sat_f64_u(this))
+    doubleToULong(this)

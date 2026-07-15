@@ -6802,6 +6802,7 @@ final fun kotlin/doubleToULong(kotlin/Double): kotlin/ULong // kotlin/doubleToUL
 final fun kotlin/uintCompare(kotlin/Int, kotlin/Int): kotlin/Int // kotlin/uintCompare|uintCompare(kotlin.Int;kotlin.Int){}[0]
 final fun kotlin/uintDivide(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/uintDivide|uintDivide(kotlin.UInt;kotlin.UInt){}[0]
 final fun kotlin/uintRemainder(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/uintRemainder|uintRemainder(kotlin.UInt;kotlin.UInt){}[0]
+final fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|uintToDouble(kotlin.Int){}[0]
 final fun kotlin/ulongCompare(kotlin/Long, kotlin/Long): kotlin/Int // kotlin/ulongCompare|ulongCompare(kotlin.Long;kotlin.Long){}[0]
 final fun kotlin/ulongDivide(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin/ulongDivide|ulongDivide(kotlin.ULong;kotlin.ULong){}[0]
 final fun kotlin/ulongRemainder(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin/ulongRemainder|ulongRemainder(kotlin.ULong;kotlin.ULong){}[0]
@@ -9791,9 +9792,6 @@ final fun kotlin/isAssertionArgumentEvaluationEnabled(): kotlin/Boolean // kotli
 
 // Targets: [native, wasmJs, wasmWasi]
 final fun kotlin/isAssertionThrowingErrorEnabled(): kotlin/Boolean // kotlin/isAssertionThrowingErrorEnabled|isAssertionThrowingErrorEnabled(){}[0]
-
-// Targets: [native, wasmJs, wasmWasi]
-final fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|uintToDouble(kotlin.Int){}[0]
 
 // Targets: [native, wasmJs, wasmWasi]
 final inline fun (kotlin.text/StringBuilder).kotlin.text/deleteCharAt(kotlin/Int): kotlin.text/StringBuilder // kotlin.text/deleteCharAt|deleteCharAt@kotlin.text.StringBuilder(kotlin.Int){}[0]
@@ -14512,58 +14510,10 @@ final fun <#A: kotlin/Enum<#A>> kotlin.wasm.internal/enumValuesIntrinsic(): kotl
 final fun kotlin.wasm.internal/findAssociatedObject(kotlin.reflect/KClass<*>, kotlin.reflect/KClass<*>): kotlin/Any? // kotlin.wasm.internal/findAssociatedObject|findAssociatedObject(kotlin.reflect.KClass<*>;kotlin.reflect.KClass<*>){}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_f32_convert_i32_u(kotlin/Int): kotlin/Float // kotlin.wasm.internal/wasm_f32_convert_i32_u|wasm_f32_convert_i32_u(kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_f32_convert_i64_u(kotlin/Long): kotlin/Float // kotlin.wasm.internal/wasm_f32_convert_i64_u|wasm_f32_convert_i64_u(kotlin.Long){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_f64_convert_i32_u(kotlin/Int): kotlin/Double // kotlin.wasm.internal/wasm_f64_convert_i32_u|wasm_f64_convert_i32_u(kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_f64_convert_i64_u(kotlin/Long): kotlin/Double // kotlin.wasm.internal/wasm_f64_convert_i64_u|wasm_f64_convert_i64_u(kotlin.Long){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i32_div_u(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.wasm.internal/wasm_i32_div_u|wasm_i32_div_u(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i32_ge_s(kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.wasm.internal/wasm_i32_ge_s|wasm_i32_ge_s(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i32_ge_u(kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.wasm.internal/wasm_i32_ge_u|wasm_i32_ge_u(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i32_le_u(kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.wasm.internal/wasm_i32_le_u|wasm_i32_le_u(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i32_rem_u(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.wasm.internal/wasm_i32_rem_u|wasm_i32_rem_u(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i32_trunc_sat_f32_u(kotlin/Float): kotlin/Int // kotlin.wasm.internal/wasm_i32_trunc_sat_f32_u|wasm_i32_trunc_sat_f32_u(kotlin.Float){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i32_trunc_sat_f64_u(kotlin/Double): kotlin/Int // kotlin.wasm.internal/wasm_i32_trunc_sat_f64_u|wasm_i32_trunc_sat_f64_u(kotlin.Double){}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.internal/wasm_i64_ctz(kotlin/Long): kotlin/Long // kotlin.wasm.internal/wasm_i64_ctz|wasm_i64_ctz(kotlin.Long){}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i64_div_u(kotlin/Long, kotlin/Long): kotlin/Long // kotlin.wasm.internal/wasm_i64_div_u|wasm_i64_div_u(kotlin.Long;kotlin.Long){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i64_extend_i32_u(kotlin/Int): kotlin/Long // kotlin.wasm.internal/wasm_i64_extend_i32_u|wasm_i64_extend_i32_u(kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i64_ge_u(kotlin/Long, kotlin/Long): kotlin/Boolean // kotlin.wasm.internal/wasm_i64_ge_u|wasm_i64_ge_u(kotlin.Long;kotlin.Long){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i64_le_u(kotlin/Long, kotlin/Long): kotlin/Boolean // kotlin.wasm.internal/wasm_i64_le_u|wasm_i64_le_u(kotlin.Long;kotlin.Long){}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.internal/wasm_i64_popcnt(kotlin/Long): kotlin/Long // kotlin.wasm.internal/wasm_i64_popcnt|wasm_i64_popcnt(kotlin.Long){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i64_rem_u(kotlin/Long, kotlin/Long): kotlin/Long // kotlin.wasm.internal/wasm_i64_rem_u|wasm_i64_rem_u(kotlin.Long;kotlin.Long){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.internal/wasm_i64_shl(kotlin/Long, kotlin/Long): kotlin/Long // kotlin.wasm.internal/wasm_i64_shl|wasm_i64_shl(kotlin.Long;kotlin.Long){}[0]
@@ -14575,12 +14525,6 @@ final fun kotlin.wasm.internal/wasm_i64_shr_s(kotlin/Long, kotlin/Long): kotlin/
 final fun kotlin.wasm.internal/wasm_i64_shr_u(kotlin/Long, kotlin/Long): kotlin/Long // kotlin.wasm.internal/wasm_i64_shr_u|wasm_i64_shr_u(kotlin.Long;kotlin.Long){}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i64_trunc_sat_f32_u(kotlin/Float): kotlin/Long // kotlin.wasm.internal/wasm_i64_trunc_sat_f32_u|wasm_i64_trunc_sat_f32_u(kotlin.Float){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i64_trunc_sat_f64_u(kotlin/Double): kotlin/Long // kotlin.wasm.internal/wasm_i64_trunc_sat_f64_u|wasm_i64_trunc_sat_f64_u(kotlin.Double){}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.unsafe/componentModelRealloc(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlin.wasm.unsafe/componentModelRealloc|componentModelRealloc(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 
 // Targets: [wasmJs, wasmWasi]
@@ -14588,6 +14532,24 @@ final fun kotlin.wasm.unsafe/createAllocatorInTheNewScope(): kotlin.wasm.unsafe/
 
 // Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.unsafe/freeAllComponentModelReallocAllocatedMemory() // kotlin.wasm.unsafe/freeAllComponentModelReallocAllocatedMemory|freeAllComponentModelReallocAllocatedMemory(){}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final fun kotlin/floatToUInt(kotlin/Float): kotlin/UInt // kotlin/floatToUInt|floatToUInt(kotlin.Float){}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final fun kotlin/floatToULong(kotlin/Float): kotlin/ULong // kotlin/floatToULong|floatToULong(kotlin.Float){}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final fun kotlin/uintToFloat(kotlin/Int): kotlin/Float // kotlin/uintToFloat|uintToFloat(kotlin.Int){}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final fun kotlin/uintToLong(kotlin/Int): kotlin/Long // kotlin/uintToLong|uintToLong(kotlin.Int){}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final fun kotlin/uintToULong(kotlin/Int): kotlin/ULong // kotlin/uintToULong|uintToULong(kotlin.Int){}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final fun kotlin/ulongToFloat(kotlin/Long): kotlin/Float // kotlin/ulongToFloat|ulongToFloat(kotlin.Long){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final inline fun (kotlin/Long).kotlin/countOneBits(): kotlin/Int // kotlin/countOneBits|countOneBits@kotlin.Long(){}[0]
@@ -15315,6 +15277,18 @@ final fun kotlin.js/parseInt(kotlin/String): kotlin/Int // kotlin.js/parseInt|pa
 final fun kotlin.js/parseInt(kotlin/String, kotlin/Int = ...): kotlin/Int // kotlin.js/parseInt|parseInt(kotlin.String;kotlin.Int){}[0]
 
 // Targets: [js]
+final fun kotlin/jsDoubleToUInt(kotlin/Double): kotlin/UInt // kotlin/jsDoubleToUInt|jsDoubleToUInt(kotlin.Double){}[0]
+
+// Targets: [js]
+final fun kotlin/jsUintCompare(kotlin/Int, kotlin/Int): kotlin/Int // kotlin/jsUintCompare|jsUintCompare(kotlin.Int;kotlin.Int){}[0]
+
+// Targets: [js]
+final fun kotlin/jsUintDivide(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/jsUintDivide|jsUintDivide(kotlin.UInt;kotlin.UInt){}[0]
+
+// Targets: [js]
+final fun kotlin/jsUintRemainder(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/jsUintRemainder|jsUintRemainder(kotlin.UInt;kotlin.UInt){}[0]
+
+// Targets: [js]
 final inline fun (kotlin.js/RegExpMatch).kotlin.js/asArray(): kotlin/Array<out kotlin/String?> // kotlin.js/asArray|asArray@kotlin.js.RegExpMatch(){}[0]
 
 // Targets: [js]
@@ -15861,7 +15835,7 @@ final inline fun kotlin.math/truncate(kotlin/Double): kotlin/Double // kotlin.ma
 final inline fun kotlin.math/truncate(kotlin/Float): kotlin/Float // kotlin.math/truncate|truncate(kotlin.Float){}[0]
 
 // Targets: [js]
-final inline fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|uintToDouble(kotlin.Int){}[0]
+final inline fun kotlin/jsUintToDouble(kotlin/Int): kotlin/Double // kotlin/jsUintToDouble|jsUintToDouble(kotlin.Int){}[0]
 
 // Targets: [js]
 final suspend fun <#A: kotlin/Any?> kotlin.js/returnIfSuspended(kotlin/Any?): #A // kotlin.js/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
