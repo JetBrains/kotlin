@@ -285,7 +285,7 @@ abstract class KotlinCompile @Inject constructor(
                         args.fragmentFriendDependencies = emptyArray()
                     }
                     if (isIncrementalCompilationEnabled() && enableUnsafeIncrementalCompilationForMultiplatform.get() && enableJvmClasspathMetadata.get()) {
-                        args.applyJvmClasspathMetadata()
+                        args.useIcClasspathMetadata = true
                     }
                 } else {
                     args.commonSources = commonSourceSet.asFileTree.toPathsArray()
@@ -300,20 +300,6 @@ abstract class KotlinCompile @Inject constructor(
             }
 
             args.freeArgs += (scriptSourcesFiles + javaSourcesFiles + sourcesFiles).map { it.absolutePath }
-        }
-    }
-
-    private fun K2JVMCompilerArguments.applyJvmClasspathMetadata() {
-        useIcClasspathMetadata = true
-
-        val metadataJvmDestinationFile = taskBuildCacheableOutputDirectory.file("metadata-jvm").get().asFile
-        commonFragmentsMetadataDestination = metadataJvmDestinationFile.absolutePath
-        if (metadataJvmDestinationFile.exists()) {
-            fragmentIncrementalClasspath = metadataJvmDestinationFile
-                .listFiles()
-                .orEmpty()
-                .map { path -> "${path.name}:${path.absolutePath}" }
-                .toTypedArray()
         }
     }
 

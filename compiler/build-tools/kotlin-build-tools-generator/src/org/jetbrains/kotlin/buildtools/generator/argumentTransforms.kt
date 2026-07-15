@@ -68,7 +68,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xseparate-kmp-compilation")
             drop("Xdirect-java-actualization")
             drop("Xfragment-friend-dependency")
-            drop("Xfragment-incremental-classpath")
 
             // "wrong" metadata in argument description - argument existed before, but was added to argument description in 2.3.0
             fix("XXdump-model") { it.copy(releaseVersionsMetadata = it.releaseVersionsMetadata.copy(introducedVersion = KotlinReleaseVersion.v2_3_0)) }
@@ -124,7 +123,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             override("Xjsr305", CustomCompilerArguments.jsr305Factory)
 
             // KMP related
-            drop("Xcommon-fragments-metadata-destination")
             drop("Xuse-ic-classpath-metadata")
         }
         with(removedJvmCompilerArguments) {

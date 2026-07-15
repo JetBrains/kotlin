@@ -967,20 +967,6 @@ The default value is 'inline'.""",
         )
     }
 
-    @OptIn(ExperimentalArgumentApi::class)
-    compilerArgument {
-        name = "Xcommon-fragments-metadata-destination"
-        description = """
-            Specifies the destination for common fragments metadata.
-            This metadata is used solely for incremental compilation and should not be used directly.
-        """.trimIndent().asReleaseDependent()
-        valueType = PathType.defaultNull
-        argumentType = StringType.defaultNull
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_4_20,
-        )
-    }
-
     compilerArgument {
         name = "Xuse-ic-classpath-metadata"
         description = """

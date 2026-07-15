@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ASSERTIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_BACKEND_THREADS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_BUILD_FILE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_COMMON_FRAGMENTS_METADATA_DESTINATION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_COMPILE_BUILTINS_AS_PART_OF_STDLIB
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_COMPILE_JAVA
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_DEBUG
@@ -203,7 +202,6 @@ internal class JvmCompilerArgumentsImpl(
     if (X_ASSERTIONS in this) { arguments.assertionsMode = get(X_ASSERTIONS)?.stringValue}
     if (X_BACKEND_THREADS in this) { arguments.backendThreads = get(X_BACKEND_THREADS).toString()}
     if (X_BUILD_FILE in this) { arguments.buildFile = get(X_BUILD_FILE)}
-    if (X_COMMON_FRAGMENTS_METADATA_DESTINATION in this) { arguments.commonFragmentsMetadataDestination = get(X_COMMON_FRAGMENTS_METADATA_DESTINATION)}
     try { if (X_COMPILE_BUILTINS_AS_PART_OF_STDLIB in this) { arguments.setUsingReflection("expectBuiltinsAsPartOfStdlib", get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_BUILTINS_AS_PART_OF_STDLIB. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.20""").initCause(e) }
     try { if (X_COMPILE_JAVA in this) { arguments.setUsingReflection("compileJava", get(X_COMPILE_JAVA))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_JAVA. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     if (X_DEBUG in this) { arguments.enableDebugMode = get(X_DEBUG)}
@@ -294,7 +292,6 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_ASSERTIONS] = arguments.assertionsMode?.let { AssertionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::assertionsMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xassertions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_BACKEND_THREADS] = arguments.backendThreads.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
     try { this[X_BUILD_FILE] = arguments.buildFile } catch (_: NoSuchMethodError) {  }
-    try { this[X_COMMON_FRAGMENTS_METADATA_DESTINATION] = arguments.commonFragmentsMetadataDestination } catch (_: NoSuchMethodError) {  }
     try { this[X_COMPILE_BUILTINS_AS_PART_OF_STDLIB] = arguments.getUsingReflection<Boolean>("expectBuiltinsAsPartOfStdlib") } catch (_: NoSuchMethodError) {  }
     try { this[X_COMPILE_JAVA] = arguments.getUsingReflection<Boolean>("compileJava") } catch (_: NoSuchMethodError) {  }
     try { this[X_DEBUG] = arguments.enableDebugMode } catch (_: NoSuchMethodError) {  }
@@ -382,7 +379,6 @@ internal class JvmCompilerArgumentsImpl(
     if (X_ANNOTATIONS_IN_METADATA in this) { arguments.annotationsInMetadata = get(X_ANNOTATIONS_IN_METADATA)}
     if (X_ASSERTIONS in this) { arguments.assertionsMode = get(X_ASSERTIONS)?.stringValue}
     if (X_BUILD_FILE in this) { arguments.buildFile = get(X_BUILD_FILE)}
-    if (X_COMMON_FRAGMENTS_METADATA_DESTINATION in this) { arguments.commonFragmentsMetadataDestination = get(X_COMMON_FRAGMENTS_METADATA_DESTINATION)}
     try { if (X_COMPILE_BUILTINS_AS_PART_OF_STDLIB in this) { arguments.setUsingReflection("expectBuiltinsAsPartOfStdlib", get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_BUILTINS_AS_PART_OF_STDLIB. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.20""").initCause(e) }
     try { if (X_COMPILE_JAVA in this) { arguments.setUsingReflection("compileJava", get(X_COMPILE_JAVA))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_JAVA. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     if (X_DEBUG in this) { arguments.enableDebugMode = get(X_DEBUG)}
@@ -523,9 +519,6 @@ internal class JvmCompilerArgumentsImpl(
         JvmCompilerArgument("X_BACKEND_THREADS")
 
     public val X_BUILD_FILE: JvmCompilerArgument<String?> = JvmCompilerArgument("X_BUILD_FILE")
-
-    public val X_COMMON_FRAGMENTS_METADATA_DESTINATION: JvmCompilerArgument<String?> =
-        JvmCompilerArgument("X_COMMON_FRAGMENTS_METADATA_DESTINATION")
 
     public val X_COMPILE_BUILTINS_AS_PART_OF_STDLIB: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB")

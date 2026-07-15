@@ -165,10 +165,6 @@ where advanced options include:
                              Declare common klib friend dependencies for the specific fragment.
                              This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-  -Xfragment-incremental-classpath=<fragment name>:<path>
-                             Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.
-                             This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
-                               dependencies from the platform specific incremental service.
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>
