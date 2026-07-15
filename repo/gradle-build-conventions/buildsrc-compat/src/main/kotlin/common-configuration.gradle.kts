@@ -119,7 +119,7 @@ fun Project.configureKotlinCompilationOptions() {
                 val commonCompilerArgs = provider {
                     listOfNotNull(
                         "-opt-in=kotlin.RequiresOptIn",
-                        "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
+                        "-progressive".takeIf { project.kotlinBuildProperties.booleanProperty("test.progressive.mode", false).get() },
                         "-Xdont-warn-on-error-suppression",
                         "-Xcontext-parameters", // KT-72222
                         "-Xexplicit-backing-fields".takeUnless { skipNewLanguageFeatures }, // KT-14663
