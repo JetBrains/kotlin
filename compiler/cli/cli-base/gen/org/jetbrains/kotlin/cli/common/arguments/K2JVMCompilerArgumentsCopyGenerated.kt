@@ -19,7 +19,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.backendThreads = from.backendThreads
     to.buildFile = from.buildFile
     to.classpath = from.classpath
-    to.commonFragmentsMetadataDestination = from.commonFragmentsMetadataDestination
     to.defaultScriptExtension = from.defaultScriptExtension
     to.destination = from.destination
     to.disableStandardScript = from.disableStandardScript
@@ -77,9 +76,9 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.suppressDeprecatedJvmTargetWarning = from.suppressDeprecatedJvmTargetWarning
     to.suppressMissingBuiltinsError = from.suppressMissingBuiltinsError
     to.typeEnhancementImprovementsInStrictMode = from.typeEnhancementImprovementsInStrictMode
+    to.useClasspathMetadata = from.useClasspathMetadata
     to.useFastJarFileSystem = from.useFastJarFileSystem
     to.useInlineScopesNumbers = from.useInlineScopesNumbers
-    to.useClasspathMetadata = from.useClasspathMetadata
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme
     to.useTypeTable = from.useTypeTable

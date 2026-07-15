@@ -18,15 +18,11 @@ package org.jetbrains.kotlin.cli
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
-import kotlinx.metadata.klib.KlibMetadataVersion
-import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.library.components.metadata
-import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -35,10 +31,8 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertNotNull
 import java.io.File
 import java.util.concurrent.TimeUnit
-import kotlin.metadata.isExpect
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
     private fun runProcess(
@@ -728,114 +722,4 @@ Caused by: java.lang.AssertionError: assert
         runProcess("kapt", "-version", expectedStderr = info)
     }
 
-    @Test
-    fun testCommonFragmentsMetadataDestination() {
-        val metadataDir = compileSimpleCommonPlatformProject()
-
-        val library = KlibLoader { libraryPaths(metadataDir.resolve("common").absolutePath) }.load().librariesStdlibFirst.single()
-        val klibMetadata = library.metadata
-        val module = KlibModuleMetadata.readStrict(object : KlibModuleMetadata.MetadataLibraryProvider {
-            override val moduleHeaderData: ByteArray = klibMetadata.moduleHeaderData
-            override val metadataVersion: KlibMetadataVersion =
-                KlibMetadataVersion(library.versions.metadataVersion!!.toArray())
-
-            override fun packageMetadataParts(fqName: String): Set<String> =
-                klibMetadata.getPackageFragmentNames(fqName)
-
-            override fun packageMetadata(fqName: String, partName: String): ByteArray =
-                klibMetadata.getPackageFragment(fqName, partName)
-        })
-
-        val someClass = module.fragments.flatMap { it.classes }.singleOrNull { it.name == "Some" }
-        assertNotNull(someClass) { "Class 'Some' must be present in the common-fragments metadata" }
-        requireNotNull(someClass)
-        assertTrue(someClass.isExpect) { "Class 'Some' must be marked as expect" }
-        assertTrue(someClass.functions.any { it.name == "foo" })
-        assertFalse(someClass.functions.any { it.name == "bar" })
-    }
-
-    /*
-     * Ideally, the JVM KMP IC should be tested using IC test infrastructure, but
-     * until the BTA part is implemented, this test is the best effort of testing
-     * the compiler behavior
-     */
-    @Test
-    fun testDummyFragmentIncrementalClasspathTest() {
-        val metadataDir = compileSimpleCommonPlatformProject()
-        val newCommonKt = tmpdir.resolve("new-common.kt").apply {
-            writeText(
-                """
-                    fun test(x: Some) {
-                        x.foo() // should be visible
-                        x.bar() // should not be visible
-                        baz() // should be visible
-                    }
-                """.trimIndent()
-            )
-        }
-        val newClassesDir = tmpdir.resolve("new-classes")
-        runProcess(
-            "kotlinc-jvm",
-            newCommonKt.absolutePath,
-            K2JVMCompilerArguments::destination.cliArgument, newClassesDir.absolutePath,
-            K2JVMCompilerArguments::multiPlatform.cliArgument,
-            K2JVMCompilerArguments::expectActualClasses.cliArgument,
-            K2JVMCompilerArguments::incrementalCompilation.cliArgument,
-            K2JVMCompilerArguments::fragments.cliArgument("common,platform"),
-            K2JVMCompilerArguments::fragmentSources.cliArgument("common:${newCommonKt.absolutePath}"),
-            K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
-            K2JVMCompilerArguments::fragmentIncrementalClasspath.cliArgument("common:${metadataDir.resolve("common").absolutePath}"),
-
-            expectedExitCode = 1,
-            expectedStderr = $$"""
-                $TMP_DIR$/new-common.kt:3:7: error: unresolved reference 'bar' on receiver of type 'Some'.
-                    x.bar() // should not be visible
-                      ^^^
-            """.trimIndent()
-        )
-    }
-
-    /**
-     * @return metadata output directory
-     */
-    private fun compileSimpleCommonPlatformProject(): File {
-        val commonKt = tmpdir.resolve("common.kt").apply {
-            writeText(
-                """
-                    expect class Some {
-                        fun foo()
-                    }
-                    
-                    internal fun baz() {}
-                """.trimIndent()
-            )
-        }
-        val platformKt = tmpdir.resolve("platform.kt").apply {
-            writeText(
-                """
-                    actual class Some {
-                        actual fun foo() {}
-                        fun bar() {}
-                    }
-                """.trimIndent()
-            )
-        }
-
-        val classesDir = tmpdir.resolve("classes")
-        val metadataDir = tmpdir.resolve("common-metadata")
-
-        runProcess(
-            "kotlinc-jvm",
-            commonKt.absolutePath,
-            platformKt.absolutePath,
-            K2JVMCompilerArguments::destination.cliArgument, classesDir.absolutePath,
-            K2JVMCompilerArguments::multiPlatform.cliArgument,
-            K2JVMCompilerArguments::expectActualClasses.cliArgument,
-            K2JVMCompilerArguments::fragments.cliArgument("common,platform"),
-            K2JVMCompilerArguments::fragmentSources.cliArgument("common:${commonKt.absolutePath},platform:${platformKt.absolutePath}"),
-            K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
-            K2JVMCompilerArguments::commonFragmentsMetadataDestination.cliArgument(metadataDir.absolutePath),
-        )
-        return metadataDir
-    }
 }

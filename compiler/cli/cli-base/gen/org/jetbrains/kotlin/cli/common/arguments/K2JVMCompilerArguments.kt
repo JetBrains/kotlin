@@ -110,17 +110,6 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xcommon-fragments-metadata-destination",
-        description = """Specifies the destination for common fragments metadata.
-This metadata is used solely for incremental compilation and should not be used directly.""",
-    )
-    var commonFragmentsMetadataDestination: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xdebug",
         description = """Enable debug mode for compilation.
 Currently this includes spilling all variables in a suspending context regardless of whether they are alive.

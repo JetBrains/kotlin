@@ -1071,23 +1071,6 @@ The argument should be used only if the new compilation scheme is enabled with -
     }
 
     compilerArgument {
-        name = "Xfragment-incremental-classpath"
-        compilerName = "fragmentIncrementalClasspath"
-        valueDescription = "<fragment name>:<path>".asReleaseDependent()
-        description = """
-            Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.    
-            This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
-              dependencies from the platform specific incremental service.
-        """.trimIndent().asReleaseDependent()
-        valueType = StringArrayType.defaultNull
-        delimiter = KotlinCompilerArgument.Delimiter.None
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_4_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xseparate-kmp-compilation"
         compilerName = "separateKmpCompilationScheme"
         description =

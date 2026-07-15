@@ -61,7 +61,6 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.headerMode, headerMode)
             putAnalysisFlag(AnalysisFlags.headerModeType, headerModeType)
             putAnalysisFlag(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
-            putAnalysisFlag(AnalysisFlags.kmpJvmIncrementalCompilationEnabled, fragmentIncrementalClasspath.isNotEmpty() && multiPlatform)
             fillWarningLevelMap(arguments, reporter)
             ReturnValueCheckerMode.fromString(returnValueChecker)?.also { putAnalysisFlag(AnalysisFlags.returnValueCheckerMode, it) }
                 ?: reporter.reportError(

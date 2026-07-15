@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.REMOVED_CLI_ARG
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENTS_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_DEPENDENCIES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME
-import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_REFINES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_SOURCES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.arguments.*
@@ -302,7 +301,6 @@ private object FragmentArgs {
     val FRAGMENT_SOURCES_ARG_NAME = CommonCompilerArguments::fragmentSources.cliArgument
     val FRAGMENT_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentDependencies.cliArgument
     val FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentFriendDependencies.cliArgument
-    val FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME = CommonCompilerArguments::fragmentIncrementalClasspath.cliArgument
 }
 
 private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
@@ -459,9 +457,6 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     }
     if (arguments.fragmentFriendDependencies.isNotEmpty() && !arguments.separateKmpCompilationScheme) {
         reportError("$FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
-    }
-    if (arguments.fragmentIncrementalClasspath.isNotEmpty() && arguments.incrementalCompilation != true) {
-        reportError("$FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME flag could be used only with ${CommonCompilerArguments::incrementalCompilation.cliArgument}")
     }
 
     fun buildFragmentDependencyMap(arguments: Array<String>?, argumentName: String): Map<HmppCliModule, MutableList<String>> {

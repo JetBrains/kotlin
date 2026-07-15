@@ -176,10 +176,6 @@ object JVMConfigurationKeys {
     @JvmField
     val IGNORED_ANNOTATIONS_FOR_BRIDGES = CompilerConfigurationKey.create<List<String>>("IGNORED_ANNOTATIONS_FOR_BRIDGES")
 
-    // Path to outputs of common fragments metadata for KMP JVM IC
-    @JvmField
-    val COMMON_FRAGMENTS_OUTPUT_DIR = CompilerConfigurationKey.create<File>("COMMON_FRAGMENTS_OUTPUT_DIR")
-
     @JvmField
     val METADATA_TRACKER = CompilerConfigurationKey.create<JvmMetadataTracker>("METADATA_TRACKER")
 
@@ -375,10 +371,6 @@ var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
 var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
     get() = getList(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)
     set(value) { put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, value) }
-
-var CompilerConfiguration.commonFragmentsOutputDir: File?
-    get() = get(JVMConfigurationKeys.COMMON_FRAGMENTS_OUTPUT_DIR)
-    set(value) { putIfNotNull(JVMConfigurationKeys.COMMON_FRAGMENTS_OUTPUT_DIR, value) }
 
 var CompilerConfiguration.metadataTracker: JvmMetadataTracker?
     get() = get(JVMConfigurationKeys.METADATA_TRACKER)

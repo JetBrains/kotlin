@@ -20,9 +20,6 @@ where advanced options include:
                              0 means use one thread per processor core.
                              The default value is 1.
   -Xbuild-file=<path>        Path to the .xml build file to compile.
-  -Xcommon-fragments-metadata-destination
-                             Specifies the destination for common fragments metadata.
-                             This metadata is used solely for incremental compilation and should not be used directly.
   -Xdebug                    Enable debug mode for compilation.
                              Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
                              If API Level >= 2.2 -- no-op.
@@ -134,6 +131,8 @@ where advanced options include:
                              See KT-45671 for more details.
   -Xuse-14-inline-classes-mangling-scheme
                              Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30.
+  -Xuse-classpath-metadata   Use classpath metadata for incremental compilation.
+                             This is used solely for incremental compilation and should not be used directly.
   -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
   -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
@@ -224,10 +223,6 @@ where advanced options include:
                              Declare common klib friend dependencies for the specific fragment.
                              This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-  -Xfragment-incremental-classpath=<fragment name>:<path>
-                             Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.
-                             This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
-                               dependencies from the platform specific incremental service.
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>
