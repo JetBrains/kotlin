@@ -12,6 +12,7 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly("com.jetbrains.intellij.platform:concurrency:$intellijVersion") { isTransitive = false }
 
     testImplementation(testFixtures(project(":native:native.tests")))
     testFixturesImplementation(testFixtures(project(":native:native.tests")))
