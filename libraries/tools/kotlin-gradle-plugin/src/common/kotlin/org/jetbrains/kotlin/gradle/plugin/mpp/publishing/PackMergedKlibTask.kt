@@ -28,6 +28,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
+import org.gradle.util.GradleVersion
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.artifacts.metadataFragmentIdentifier
 import org.jetbrains.kotlin.gradle.artifacts.metadataPublishedArtifacts
@@ -193,7 +194,10 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
         attributes.attribute(karCompressionMethodAttribute, karCompressionMethodXZ)
         isCanBeConsumed = false
         isCanBeResolved = false
-        isCanBeDeclared = true
+
+        if (GradleVersion.current() >= GradleVersion.version("8.2")) {
+            isCanBeDeclared = true
+        }
     }
 
     project.multiplatformExtension.publishing.adhocSoftwareComponent.addVariantsFromConfiguration(metadataApiElementsPublished) { details ->
