@@ -121,19 +121,22 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
 /**
  * Creates a PSI element from a textual [pattern] with `$0`, `$1`, … placeholders replaced by the corresponding [args].
  *
- * The pattern is a piece of Kotlin source with numbered placeholders; each placeholder is substituted by the matching argument (an
- * expression or type reference is spliced in as PSI, a [String] or [Name] as text), and the resulting text is parsed by [factory]. This
- * produces more readable element construction than manual string concatenation, and it preserves the PSI identity of spliced-in elements.
+ * The pattern is a piece of Kotlin source with numbered placeholders. [String] and [Name] arguments are inserted as text before [factory]
+ * parses the pattern. PSI arguments are represented by parseable placeholder text and then structurally replace the corresponding nodes
+ * in the parsed result instead of being rendered as text.
  *
  * Supported argument types are [KtExpression], [KtTypeReference], [String], [Name],
  * and [PsiChildRange][org.jetbrains.kotlin.psi.psiUtil.PsiChildRange].
  *
+ * For example, `psiFactory.createExpressionByPattern("$0 + $1", left, right)` creates an addition expression whose operands have the PSI
+ * structure of `left` and `right`.
+ *
  * Prefer the specialized entry points ([KtPsiFactory.createExpressionByPattern] and friends) when creating a known kind of element.
  *
  * @param reformat whether to reformat the created element according to the code style
- * @param factory parses the substituted pattern text into the target element
- * @throws IllegalArgumentException if an argument is of an unsupported type, or the number of arguments does not match the number
- * of placeholders
+ * @param factory parses the pattern with textual arguments and PSI placeholder text inserted
+ * @throws IllegalArgumentException if the pattern is malformed, an argument is unsupported, the argument and placeholder counts differ,
+ * or a parsed placeholder cannot be matched to the expected PSI element type
  */
 fun <TElement : KtElement> createByPattern(
     pattern: String,
@@ -361,7 +364,10 @@ class BuilderByPattern<TElement> {
         return this
     }
 
-    /** Appends the given [expressions] as arguments, joined by [separator]. */
+    /**
+     * Appends the given [expressions], placing [separator] between each pair of iterable positions. A `null` position emits no expression
+     * but still participates in separator placement, so `null` entries can produce leading, trailing, or repeated separators.
+     */
     fun appendExpressions(expressions: Iterable<KtExpression?>, separator: String = ","): BuilderByPattern<TElement> {
         for ([index, expression] in expressions.withIndex()) {
             if (index > 0) {
