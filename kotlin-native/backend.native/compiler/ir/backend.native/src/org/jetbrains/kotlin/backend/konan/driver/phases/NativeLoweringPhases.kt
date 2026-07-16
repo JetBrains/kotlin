@@ -183,21 +183,10 @@ private val forLoopsPhase = createFileLoweringPhase(
         prerequisite = setOf(functionsWithoutBoundCheck)
 )
 
-private val flattenStringConcatenationPhase = createFileLoweringPhase(
-        ::FlattenStringConcatenationLowering,
-        name = "FlattenStringConcatenationLowering",
-)
-
 private val stringConcatenationPhase = createFileLoweringPhase(
-        ::StringConcatenationLowering,
+        ::NativeStringConcatenationLowering,
         name = "StringConcatenation",
-        prerequisite = setOf(flattenStringConcatenationPhase, forLoopsPhase)
-)
-
-private val stringConcatenationTypeNarrowingPhase = createFileLoweringPhase(
-        ::StringConcatenationTypeNarrowing,
-        name = "StringConcatenationTypeNarrowing",
-        prerequisite = setOf(stringConcatenationPhase)
+        prerequisite = setOf(forLoopsPhase)
 )
 
 private val kotlinNothingValueExceptionPhase = createFileLoweringPhase(
@@ -655,9 +644,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         finallyBlocksPhase,
         computeTypesPhase, // Inliner erases generics. Trying to restore some of the information and simplify IR.
         forLoopsPhase,
-        flattenStringConcatenationPhase,
         stringConcatenationPhase,
-        stringConcatenationTypeNarrowingPhase.takeIf { this.optimizationsEnabled },
         defaultParameterExtentPhase,
         innerClassPhase,
         dataClassesPhase,

@@ -156,6 +156,62 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
 
             return arguments
         }
+
+        /** Flattens and folds [expression] when it represents a string concatenation, or returns it unchanged otherwise. */
+        fun flattenExpression(context: CommonBackendContext, expression: IrExpression): IrExpression =
+            if (isStringConcatenationExpression(expression) || expression is IrCall && expression.isSpecialToStringCall)
+                expression.run {
+                    IrStringConcatenationImpl(
+                        startOffset,
+                        endOffset,
+                        type,
+                        collectStringConcatenationArguments(this)
+                    ).tryToFold(context)
+                }
+            else expression
+
+        private fun IrStringConcatenation.tryToFold(context: CommonBackendContext): IrExpression {
+            val folded = mutableListOf<IrExpression>()
+            for (next in this.arguments) {
+                val last = folded.lastOrNull()
+                when {
+                    next !is IrConst -> folded += next
+                    last !is IrConst -> folded += IrConstImpl.string(
+                        next.startOffset, next.endOffset, context.irBuiltIns.stringType, constToString(next)
+                    )
+                    else -> folded[folded.size - 1] = IrConstImpl.string(
+                        // Inlined strings may have `last.startOffset > next.endOffset`
+                        min(last.startOffset, next.startOffset), max(last.endOffset, next.endOffset),
+                        context.irBuiltIns.stringType,
+                        constToString(last) + constToString(next)
+                    )
+                }
+            }
+            return folded.singleOrNull() as? IrConst
+                ?: IrStringConcatenationImpl(this.startOffset, this.endOffset, this.type, folded)
+        }
+
+        private fun constToString(const: IrConst): String {
+            return normalizeUnsignedValue(const).toString()
+        }
+
+        private fun normalizeUnsignedValue(const: IrConst): Any? {
+            // Unsigned constants are represented through signed constants with a different IrType
+            if (const.type.isUnsigned()) {
+                when (val kind = const.kind) {
+                    is IrConstKind.Byte ->
+                        return (const.value as Byte).toUByte()
+                    is IrConstKind.Short ->
+                        return (const.value as Short).toUShort()
+                    is IrConstKind.Int ->
+                        return (const.value as Int).toUInt()
+                    is IrConstKind.Long ->
+                        return (const.value as Long).toULong()
+                    else -> {}
+                }
+            }
+            return const.value
+        }
     }
 
     override fun lower(irFile: IrFile) {
@@ -164,62 +220,8 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
 
     override fun visitExpression(expression: IrExpression): IrExpression {
         // Only modify/flatten string concatenation expressions.
-        val transformedExpression =
-            if (isStringConcatenationExpression(expression) || expression is IrCall && expression.isSpecialToStringCall)
-                expression.run {
-                    IrStringConcatenationImpl(
-                        startOffset,
-                        endOffset,
-                        type,
-                        collectStringConcatenationArguments(this)
-                    ).tryToFold()
-                }
-            else expression
-
+        val transformedExpression = flattenExpression(context, expression)
         transformedExpression.transformChildrenVoid(this)
         return transformedExpression
-    }
-
-    private fun IrStringConcatenation.tryToFold(): IrExpression {
-        val folded = mutableListOf<IrExpression>()
-        for (next in this.arguments) {
-            val last = folded.lastOrNull()
-            when {
-                next !is IrConst -> folded += next
-                last !is IrConst -> folded += IrConstImpl.string(
-                    next.startOffset, next.endOffset, context.irBuiltIns.stringType, constToString(next)
-                )
-                else -> folded[folded.size - 1] = IrConstImpl.string(
-                    // Inlined strings may have `last.startOffset > next.endOffset`
-                    min(last.startOffset, next.startOffset), max(last.endOffset, next.endOffset),
-                    context.irBuiltIns.stringType,
-                    constToString(last) + constToString(next)
-                )
-            }
-        }
-        return folded.singleOrNull() as? IrConst
-            ?: IrStringConcatenationImpl(this.startOffset, this.endOffset, this.type, folded)
-    }
-
-    private fun constToString(const: IrConst): String {
-        return normalizeUnsignedValue(const).toString()
-    }
-
-    private fun normalizeUnsignedValue(const: IrConst): Any? {
-        // Unsigned constants are represented through signed constants with a different IrType
-        if (const.type.isUnsigned()) {
-            when (val kind = const.kind) {
-                is IrConstKind.Byte ->
-                    return (const.value as Byte).toUByte()
-                is IrConstKind.Short ->
-                    return (const.value as Short).toUShort()
-                is IrConstKind.Int ->
-                    return (const.value as Int).toUInt()
-                is IrConstKind.Long ->
-                    return (const.value as Long).toULong()
-                else -> {}
-            }
-        }
-        return const.value
     }
 }
