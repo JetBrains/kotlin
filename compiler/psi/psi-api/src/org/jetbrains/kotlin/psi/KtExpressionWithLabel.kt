@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Represents an expression that may carry a label reference introduced with `@`, such as a labeled `break`/`continue`, a qualified
- * `return`, or a qualified `this`/`super`.
+ * Represents an expression that may contain a label qualifier. A [KtLabeledExpression] declares a label with `label@`, while labeled
+ * `break`/`continue`, qualified `return`, and qualified `this`/`super` expressions reference one with `@label`.
  *
  * ### Example:
  *
@@ -37,14 +37,14 @@ import org.jetbrains.kotlin.name.Name
 open class KtExpressionWithLabel(node: ASTNode) : KtExpressionImpl(node) {
 
     /**
-     * Returns the label reference (the part after `@`), or `null` if this expression has no label.
+     * The label's simple-name expression, or `null` if this expression has no label.
      */
     fun getTargetLabel(): KtSimpleNameExpression? {
         return labelQualifier?.findChildByType(KtNodeTypes.LABEL)
     }
 
     /**
-     * The container node that wraps the label (`label@`), or `null` if this expression has no label.
+     * The container node that wraps the label qualifier (`label@` or `@label`), or `null` if this expression has no label.
      */
     val labelQualifier: KtContainerNode?
         get() = findChildByType(KtNodeTypes.LABEL_QUALIFIER)
