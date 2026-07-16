@@ -747,7 +747,10 @@ fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
     }?.first as KtExpression? ?: this
 }
 
-/** Returns `true` if this element is an anonymous function (a `fun` without a name). */
+/**
+ * Returns `true` if this element is an anonymous function — a `fun` expression without a name, as in `val predicate = fun(x: Int): Boolean
+ * = x > 0`.
+ */
 fun PsiElement.isFunctionalExpression(): Boolean = this is KtNamedFunction && nameIdentifier == null
 
 private val BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN = Regex("([a-zA-Z0-9_]|[^\\p{ASCII}]).*")
