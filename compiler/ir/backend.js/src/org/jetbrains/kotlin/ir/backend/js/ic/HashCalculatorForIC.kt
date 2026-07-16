@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.library.impl.buffer
@@ -156,42 +155,25 @@ private class HashCalculatorForIC(private val checkForClassStructuralChanges: Bo
 internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
     private val hashCalculator = HashCalculatorForIC(checkForClassStructuralChanges)
 
-    fun calculateConfigHash(config: CompilerConfiguration, artifactConfiguration: WebArtifactConfiguration): ICHash {
+    fun calculateConfigHash(
+        invalidatingKeys: ICCacheInvalidatingKeys,
+        config: CompilerConfiguration,
+        artifactConfiguration: WebArtifactConfiguration
+    ): ICHash {
         hashCalculator.update(KotlinCompilerVersion.VERSION)
 
-        val booleanKeys = listOf(
-            JSConfigurationKeys.SOURCE_MAP,
-            JSConfigurationKeys.USE_ES6_CLASSES,
-            JSConfigurationKeys.GENERATE_POLYFILLS,
-            JSConfigurationKeys.GENERATE_DTS,
-            JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION,
-            JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS,
-            JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT,
-            JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR,
-            JSConfigurationKeys.OPTIMIZE_GENERATED_JS,
-        )
-        hashCalculator.updateConfigKeys(config, booleanKeys) { value: Boolean ->
+        hashCalculator.updateConfigKeys(config, invalidatingKeys.booleanKeys) { value: Boolean ->
             hashCalculator.update(if (value) 1 else 0)
         }
 
-        val enumKeys = listOf(
-            JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES,
-            JSConfigurationKeys.SOURCEMAP_NAMES_POLICY,
-        )
-        hashCalculator.updateConfigKeys(config, enumKeys) { value: Enum<*> ->
+        hashCalculator.updateConfigKeys(config, invalidatingKeys.enumKeys) { value: Enum<*> ->
             hashCalculator.update(value.ordinal)
         }
 
         hashCalculator.update(artifactConfiguration.moduleKind.ordinal)
         hashCalculator.update(artifactConfiguration.granularity.ordinal)
 
-        hashCalculator.updateConfigKeys(
-            config,
-            listOf(
-                JSConfigurationKeys.SOURCE_MAP_PREFIX,
-                JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS
-            )
-        ) { value: String ->
+        hashCalculator.updateConfigKeys(config, invalidatingKeys.stringKeys) { value: String ->
             hashCalculator.update(value)
         }
 
