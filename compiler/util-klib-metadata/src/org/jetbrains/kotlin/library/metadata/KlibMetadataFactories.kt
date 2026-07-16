@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
-import org.jetbrains.kotlin.library.metadata.impl.KlibMetadataDeserializedPackageFragmentsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.library.metadata.impl.KlibModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
@@ -38,17 +37,11 @@ class KlibMetadataFactories(
     val DefaultDescriptorFactory: KlibModuleDescriptorFactory = KlibModuleDescriptorFactoryImpl(createBuiltIns)
 
     /**
-     * The default [KlibMetadataDeserializedPackageFragmentsFactory] factory instance.
-     */
-    val DefaultPackageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory =
-        KlibMetadataDeserializedPackageFragmentsFactoryImpl()
-
-    /**
      * The default [KlibMetadataModuleDescriptorFactory] factory instance.
      */
     val DefaultDeserializedDescriptorFactory: KlibMetadataModuleDescriptorFactory =
         createDefaultKonanDeserializedModuleDescriptorFactory(
-            DefaultDescriptorFactory, DefaultPackageFragmentsFactory
+            DefaultDescriptorFactory
         )
 
     /**
@@ -59,12 +52,10 @@ class KlibMetadataFactories(
 
     fun createDefaultKonanDeserializedModuleDescriptorFactory(
         descriptorFactory: KlibModuleDescriptorFactory,
-        packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
     ): KlibMetadataModuleDescriptorFactory =
         @OptIn(K1Deprecation::class)
         KlibMetadataModuleDescriptorFactoryImpl(
             descriptorFactory,
-            packageFragmentsFactory,
             flexibleTypeDeserializer,
             additionalClassPartsProvider,
             fictitiousClassDescriptorFactories,
