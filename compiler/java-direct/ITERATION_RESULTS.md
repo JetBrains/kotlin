@@ -36,6 +36,30 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-16 — Remove the loose `probeFqnSplits` fallback: commit to the leftmost type like javac
+- **Change**: `resolveQualifiedNameToClassIdFromParts` no longer retries a failed name as a plain
+  `package.Class` split. Like javac (JLS 6.5.4/6.5.5), once a leftmost type is found the
+  interpretation is committed: a failed member-type descent returns the *nonexistent* nested id of
+  the committed prefix (full resolution), which stays unresolved downstream — red code, exactly as
+  javac reports on a package/type name clash (JLS 6.1). The reentrance-safe flavor returns `null`
+  instead, so supertype-walk seeding is never poisoned by a dangling id. `probeFqnSplits` deleted.
+- **Tests**: the strict behavior conflicts with the PSI Java model (which loosely resolves the
+  package interpretation), so the two tests pinning the loose behavior moved out of the shared
+  roots: `qualifiedNamePackageClassClash.kt` deleted from the shared roots and recreated with
+  javac-strict expectations in the new java-direct-owned `testData/diagnostics` root (wired into
+  `TestGenerator`); the pre-existing `javac/qualifiedExpression/PackageVsClass2.kt` — verified
+  against real javac to be red code ("cannot find symbol: class b, location: class a") — is
+  skipped via the new `SkipTestsPinningPsiJavaModelDeviationsMetaConfigurator` and mirrored
+  strictly in the same root. Strict diagnostics: `MISSING_DEPENDENCY_CLASS` on the call whose Java
+  signature uses the clash name + `UNRESOLVED_REFERENCE` on members of the unresolved type.
+- **Files**: `resolution/JavaTypeResolver.kt` (−32/+18), `testFixtures/…/components.kt`,
+  `testFixtures/…/AbstractJavaUsingAstTest.kt`, `testFixtures/…/TestGenerator.kt`,
+  `build.gradle.kts` (own testdata root registered); Scenario D refreshed in `ReadMe.md` and
+  `implDocs/RESOLUTION_SCHEMA.md`.
+- **Result**: the module is now javac-conformant on qualified-name resolution — the last
+  deliberate JLS deviation (KT-87813's unsound loose fallback) is gone. Full module suite green
+  (box + phased, 0 FAILED; the skipped PSI-pinning test is mirrored strictly).
+
 ### 2026-07-16 — Rewrite `resolveQualifiedNameToClassIdFromParts` as a left-to-right JLS 6.5.4 pass
 - **Change**: replaced the recursive try-every-split loop (outer-prefix enumeration + per-prefix
   recursion, O(n²) probes) with a single non-recursive left-to-right pass that mirrors javac's

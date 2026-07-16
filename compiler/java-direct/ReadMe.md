@@ -143,8 +143,7 @@ supertypes are declined here and handed to the `ClassId` path.
 ### Scenario D — Qualified / nested name to `ClassId` (JLS 6.5.5)
 
 Entry: `JavaTypeResolver.resolve` (dotted name) → `resolveQualifiedNameToClassIdFromParts`.
-A single left-to-right pass mirroring javac's PackageOrTypeName classification (JLS 6.5.4),
-plus a loose package-interpretation fallback:
+A single left-to-right pass mirroring javac's PackageOrTypeName classification (JLS 6.5.4):
 
 1. **Leftmost type** (JLS 6.5.4): the first segment as a simple type name in scope (Scenario B);
    failing that, the package prefix grows one segment at a time until a segment names a
@@ -152,13 +151,15 @@ plus a loose package-interpretation fallback:
 2. **Member-type descent** (JLS 6.5.5.2): each remaining segment must be a member type of the
    previous one — declared, or inherited from its supertypes (`findInheritedNestedClass`,
    supertype walk + finder).
-3. **Fallback** to plain package/class splits longest-package-first (`probeFqnSplits`), reached
-   only when the JLS pass fails. It diverges from javac (which reports an error) exactly on a
-   package/type name clash, resolving the package interpretation for PSI parity
-   (`qualifiedNamePackageClassClash.kt`, KT-87813).
 
-Corner cases: `Map.Entry`-style inherited nested classes; FQN split order in the fallback
-mirrors FIR's `findClassId`.
+Like javac, the leftmost-type interpretation is committed: a failed descent returns the
+(nonexistent) nested id of the committed prefix, which stays unresolved downstream — red code.
+On a package/type name clash (JLS 6.1) the shadowing type therefore wins, matching javac and
+diverging from the PSI Java model, which loosely resolves the package interpretation; such
+tests live in the java-direct-owned `testData/diagnostics` root
+(`qualifiedNamePackageClassClash.kt`, `PackageVsClass2.kt`; KT-87813).
+
+Corner cases: `Map.Entry`-style inherited nested classes.
 
 ### Scenario E — Inherited member type via supertypes
 

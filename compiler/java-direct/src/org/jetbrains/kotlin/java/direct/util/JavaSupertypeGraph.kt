@@ -257,7 +257,7 @@ internal class JavaSupertypeGraph(
     }
 
     // Emit candidate ClassIds for an imported FqName, longest-package-first (mirrors
-    // probeFqnSplits in JavaTypeResolver.kt); the wrong split has no symbol-provider entry
+    // resolveAsClassId in JavaTypeResolver.kt); the wrong split has no symbol-provider entry
     // and is dropped downstream.
     private fun fqNameSplitCandidates(fqName: FqName): List<ClassId> {
         val parts = fqName.pathSegments().map { it.asString() }

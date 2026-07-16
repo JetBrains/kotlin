@@ -214,7 +214,7 @@ not by keeping this whole scenario source-only.
 
 Entry: `JavaTypeResolver.resolve` (dotted name) → `resolveQualifiedNameToClassIdFromParts`.
 A single left-to-right, non-recursive pass mirroring javac's PackageOrTypeName classification
-(JLS 6.5.4), plus a loose package-interpretation fallback:
+(JLS 6.5.4):
 
 1. **Leftmost type** (JLS 6.5.4): the first segment as a simple type name in scope (Scenario B);
    failing that, the package prefix grows one segment at a time until a segment names a
@@ -231,14 +231,21 @@ A single left-to-right, non-recursive pass mirroring javac's PackageOrTypeName c
    `collectInheritedInnerClasses`-based re-entrance fallback for a guard-skip on this step was
    removed as dead code once this step became un-guard-skippable — it was also source-only, the
    same cross-origin ambiguity blind spot fixed elsewhere in this scenario.
-3. **Fallback** to plain package/class splits longest-package-first (`probeFqnSplits`), reached
-   only when the JLS pass fails. It diverges from javac (which reports an error) exactly on a
-   package/type name clash (JLS 6.1), resolving the package interpretation for PSI parity —
-   pinned by `qualifiedNamePackageClassClash.kt` (KT-87813).
+
+Like javac, the leftmost-type interpretation is committed: when the descent fails (full
+resolution), the function returns the *nonexistent* nested id of the committed prefix instead of
+retrying the name as a plain `package.Class` split — the id has no symbol, so the reference stays
+unresolved downstream (red code). On a package/type name clash (JLS 6.1) the shadowing type
+therefore wins, matching javac and diverging from the PSI Java model, which loosely resolves the
+package interpretation; such tests are skipped for java-direct
+(`SkipTestsPinningPsiJavaModelDeviationsMetaConfigurator`) and mirrored by javac-strict copies in
+the java-direct-owned `testData/diagnostics` root (`qualifiedNamePackageClassClash.kt`,
+`PackageVsClass2.kt`; KT-87813). The reentrance-safe flavor (`fullResolution = false`) returns
+`null` instead of a dangling id, so supertype-walk seeding is never poisoned by a nonexistent
+class.
 
 Corner cases: `Map.Entry`-style inherited nested classes (the descent probes declared-then-
-inherited at *every* segment, so multi-segment tails after an inherited hop work too); FQN split
-order in the fallback mirrors FIR's `findClassId`.
+inherited at *every* segment, so multi-segment tails after an inherited hop work too).
 
 ### Scenario E — Inherited member type via supertypes
 
@@ -278,7 +285,7 @@ supertypes are all walked uniformly, with no representation-specific arm:
   class's own `implements` clause to its own inherited (through two supertypes) nested class,
   which only resolves if the raw-AST-text seed is used instead of the guarded
   `directSupertypeClassIds(containingClass)`.
-  `JavaTypeResolver.findInheritedNestedClass` (Scenario D step 3, the `Outer.Nested` qualified
+  `JavaTypeResolver.findInheritedNestedClass` (Scenario D step 2, the `Outer.Nested` qualified
   shape) is this same function's other caller: it materializes `outerClassId` via
   `classifierAdapterFor` (Scenario A step 4) and passes the result as `containingClass`, so it
   inherits the same raw-AST-text safety instead of needing its own seed/BFS pair

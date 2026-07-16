@@ -22,6 +22,9 @@ fun main(args: Array<String>) {
                     "testData/diagnostics/tests",
                     "testData/diagnostics/testsWithAnyBackend",
                     "testData/diagnostics/testsWithStdLib",
+                    // Module-owned diagnostics tests whose expectations deviate from the PSI Java
+                    // model (which runs the shared roots above through its own suites).
+                    "java-direct/testData/diagnostics",
                 ).forEach { testDataRoot ->
                     model(
                         testDataRoot,

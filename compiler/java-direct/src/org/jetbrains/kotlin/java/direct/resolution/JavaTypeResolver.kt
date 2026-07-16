@@ -60,12 +60,11 @@ internal fun resolve(name: String): ClassId? {
  *  - each segment after the leftmost type must be a member type of the previous one (JLS
  *    6.5.5.2): declared, or — with [fullResolution] — inherited from its supertypes.
  *
- * A deviation from strict JLS: when the pass above fails, the whole name is retried as a plain
- * `package.Class` split via [probeFqnSplits]. The two disagree only on a package/type name
- * clash (discouraged by JLS 6.1), where javac commits to the shadowing type and reports an
- * error, but the PSI Java model resolves the package interpretation; see
- * `qualifiedNamePackageClassClash.kt`.
- * TODO: investigate possible consequences (KT-87813)
+ * Like javac, once a leftmost type is found the interpretation is committed: if the descent
+ * then fails, the name is NOT retried as a plain `package.Class` split. On a package/type name
+ * clash (discouraged by JLS 6.1) the shadowing type therefore wins and the reference stays
+ * unresolved (red code), matching javac and diverging from the PSI Java model, which resolves
+ * the package interpretation — pinned by `qualifiedNamePackageClassClash.kt`.
  *
  * [fullResolution] controls whether inherited-inner-class lookup is enabled; `false` selects the
  * reentrance-safe flavor used as a fallback from [resolveInheritedInnerClassToClassId].
@@ -87,21 +86,29 @@ internal fun resolveQualifiedNameToClassIdFromParts(
         next++
     }
 
+    var current = classId ?: return null // no segment names a type in scope
+
     // Member-type descent (JLS 6.5.5.2). The inherited lookup covers names like
     // `SimpleFunctionDescriptor.CopyBuilder`, where `CopyBuilder` comes from the
     // `FunctionDescriptor` superinterface of the resolved prefix.
-    while (classId != null && next < parts.size) {
-        val declared = classId.createNestedClassId(Name.identifier(parts[next]))
-        classId = when {
+    while (next < parts.size) {
+        val declared = current.createNestedClassId(Name.identifier(parts[next]))
+        current = when {
             classExists(declared, fullResolution) -> declared
-            fullResolution -> findInheritedNestedClass(classId, parts[next])
-            else -> null
+            // Commit like javac: the leftmost-type interpretation is final, so a failed descent
+            // yields the (nonexistent) nested id of the committed prefix — e.g. on a package/type
+            // name clash `pkg.clash.Nested`, where the class `pkg.clash` shadows the package
+            // (JLS 6.1), this returns the dangling ClassId(pkg, clash.Nested), which stays
+            // unresolved downstream — red code, as javac reports (`qualifiedNamePackageClassClash.kt`).
+            fullResolution -> findInheritedNestedClass(current, parts[next])
+                ?: return parts.subList(next, parts.size).fold(current) { id, segment -> id.createNestedClassId(Name.identifier(segment)) }
+            // The reentrance-safe flavor seeds supertype walks; a dangling id would silently
+            // poison the walk, so fail the resolution instead.
+            else -> return null
         }
         next++
     }
-    if (classId != null) return classId
-
-    return probeFqnSplits(parts, fullResolution)
+    return current
 }
 
 /**
@@ -608,21 +615,3 @@ private fun resolveAsClassId(fqName: FqName, fullResolution: Boolean): ClassId? 
     return null
 }
 
-/**
- * Probes every package/class split of [parts] from longest package prefix down to the root
- * package, returning the first [ClassId] accepted by the class-existence probe. This is the
- * `package.Class` fallback of [resolveQualifiedNameToClassIdFromParts]; [resolveAsClassId] runs
- * the same longest-package-first split for a single [FqName].
- */
-context(c: JavaResolutionContext)
-private fun probeFqnSplits(parts: List<String>, fullResolution: Boolean): ClassId? {
-    if (parts.isEmpty()) return null
-    for (classStartIndex in (parts.size - 1) downTo 0) {
-        val packageFqName = if (classStartIndex == 0) FqName.ROOT
-        else FqName.fromSegments(parts.subList(0, classStartIndex))
-        val relativeClassName = FqName.fromSegments(parts.subList(classStartIndex, parts.size))
-        val candidate = ClassId(packageFqName, relativeClassName, isLocal = false)
-        if (classExists(candidate, fullResolution)) return candidate
-    }
-    return null
-}

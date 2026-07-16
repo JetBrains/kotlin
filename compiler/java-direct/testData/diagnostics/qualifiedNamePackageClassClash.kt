@@ -1,8 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_JAVAC
 
-// javac divergence — a qualified type name whose prefix is BOTH a class and a package
-// (a discouraged "package/type name clash", JLS 6.1).
+// A qualified type name whose prefix is BOTH a class and a package (a discouraged
+// "package/type name clash", JLS 6.1).
 //
 // `pkg.clash` is declared twice:
 //   * as a top-level class     `pkg/clash.java`        -> class  `pkg.clash`
@@ -10,17 +10,17 @@
 //
 // The Java method `Provider.get()` returns the qualified type name `pkg.clash.Nested`.
 //
-// Strict JLS 6.5.4.2/6.5.5 (javac): resolving `pkg.clash.Nested` commits to the *type*
+// Strict JLS 6.5.4.2/6.5.5 (and javac): resolving `pkg.clash.Nested` commits to the *type*
 // `pkg.clash` at the leftmost point the qualifier becomes a type, then requires `Nested`
 // to be a member type of it. It is not, so javac rejects `Provider.get()` with
 // "cannot find symbol: class Nested, location: class clash" (the package `pkg.clash` is
 // shadowed by the class of the same name).
 //
-// Both the PSI Java model and java-direct are LOOSE here: they fall back to the package
-// interpretation and resolve `pkg.clash.Nested` to the top-level class `Nested` in package
-// `pkg.clash`. This test pins that PSI == java-direct agreement — both diverge from javac
-// identically — so `Provider.get()` returns `Nested` and `onlyOnNested()` resolves, while
-// the class-only member `onlyOnClashClass()` does NOT.
+// java-direct follows javac: the committed interpretation stays unresolved, so `Provider.get()`
+// has an unresolved return type and neither member call resolves (red code). This diverges from
+// the PSI Java model, which loosely falls back to the package interpretation and resolves
+// `pkg.clash.Nested` to the top-level class `Nested` — which is why this test lives in the
+// java-direct-owned testdata root rather than the shared diagnostics roots (KT-87813).
 
 // FILE: pkg/clash.java
 package pkg;
@@ -49,8 +49,8 @@ package main
 import user.Provider
 
 fun test(p: Provider) {
-    p.get().onlyOnNested()
-    p.get().<!UNRESOLVED_REFERENCE!>onlyOnClashClass<!>()
+    p.<!MISSING_DEPENDENCY_CLASS!>get<!>().<!UNRESOLVED_REFERENCE!>onlyOnNested<!>()
+    p.<!MISSING_DEPENDENCY_CLASS!>get<!>().<!UNRESOLVED_REFERENCE!>onlyOnClashClass<!>()
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */
