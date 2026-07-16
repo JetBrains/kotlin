@@ -105,6 +105,7 @@ internal class JvmSourcesToCompileCalculator(
     companion object {
         private val fullRebuildOnSpecificFilesChangeReasons: Map<String, BuildAttribute> = mapOf(
             "module-info.java" to BuildAttribute.MODULE_INFO_CHANGED,
+            "package-info.java" to BuildAttribute.PACKAGE_INFO_CHANGED,
         )
     }
 }
