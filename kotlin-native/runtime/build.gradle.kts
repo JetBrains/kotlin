@@ -188,7 +188,7 @@ bitcode {
             sourceSets {}
         }
 
-        if (!project.hasProperty("disableBreakpad")) {
+        if (!project.providers.gradleProperty("disableBreakpad").isPresent) {
             module("breakpad") {
                 srcRoot.fileProvider(unpackBreakpad.map { it.destinationDir })
                 val sources = listOf(
@@ -621,7 +621,7 @@ bitcode {
             }
         }
 
-        if (!project.hasProperty("disableBreakpad")) {
+        if (!project.providers.gradleProperty("disableBreakpad").isPresent) {
             module("impl_crashHandler") {
                 srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
                 // Cannot use output of `unpackBreakpad` to support Gradle Configuration Cache working before `unpackBreakpad`
