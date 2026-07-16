@@ -23,8 +23,11 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.SealedNonOptInClass::class, "22ExportedKotlinPackages3orgO6kotlinO3fooO6commonE19SealedNonOptInClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.SealedOptInClass::class, "22ExportedKotlinPackages3orgO6kotlinO3fooO6commonE16SealedOptInClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.InterfaceC::class, "_InterfaceC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.QueryResult::class, "_QueryResult")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.SealedInterfaceA::class, "_SealedInterfaceA")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.SealedInterfaceB::class, "_SealedInterfaceB")
+@file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.QueryResult.AsyncValue::class, "6common61_ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValueC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.QueryResult.Value::class, "6common56_ExportedKotlinPackages_org_kotlin_foo_QueryResult_ValueC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
@@ -188,4 +191,46 @@ public fun org_kotlin_foo_NonSealedOptInClass_init_initialize__TypesOfArguments_
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val _result = run { kotlin.native.internal.initInstance(____kt, org.kotlin.foo.NonSealedOptInClass()) }
     return run { _result; true }
+}
+
+@ExportedBridge("org_kotlin_foo_QueryResult_AsyncValue_init_allocate")
+public fun org_kotlin_foo_QueryResult_AsyncValue_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<org.kotlin.foo.QueryResult.AsyncValue<kotlin.Any?>>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_foo_QueryResult_AsyncValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun org_kotlin_foo_QueryResult_AsyncValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val _result = run { kotlin.native.internal.initInstance(____kt, org.kotlin.foo.QueryResult.AsyncValue<kotlin.Any?>(__value)) }
+    return run { _result; true }
+}
+
+@ExportedBridge("org_kotlin_foo_QueryResult_AsyncValue_value_get")
+public fun org_kotlin_foo_QueryResult_AsyncValue_value_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as org.kotlin.foo.QueryResult.AsyncValue<kotlin.Any?>
+    val _result = run { __self.value }
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_foo_QueryResult_Value_init_allocate")
+public fun org_kotlin_foo_QueryResult_Value_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<org.kotlin.foo.QueryResult.Value<kotlin.Any?>>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_foo_QueryResult_Value_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun org_kotlin_foo_QueryResult_Value_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val _result = run { kotlin.native.internal.initInstance(____kt, org.kotlin.foo.QueryResult.Value<kotlin.Any?>(__value)) }
+    return run { _result; true }
+}
+
+@ExportedBridge("org_kotlin_foo_QueryResult_Value_value_get")
+public fun org_kotlin_foo_QueryResult_Value_value_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as org.kotlin.foo.QueryResult.Value<kotlin.Any?>
+    val _result = run { __self.value }
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

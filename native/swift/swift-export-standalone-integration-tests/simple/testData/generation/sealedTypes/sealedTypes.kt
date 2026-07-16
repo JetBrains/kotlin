@@ -87,6 +87,14 @@ class MyClassB {
     sealed class Inner : MySealedClass()
 }
 
+// FILE: generic_interface.kt
+package org.kotlin.foo
+
+sealed interface QueryResult<T> {
+    class Value<T>(val value: T) : QueryResult<T>
+    class AsyncValue<T>(val value: T) : QueryResult<T>
+}
+
 // FIXME: platform test are not supported right now, enable in KT-86819
 // DISABLED MODULE: platform()()(common)
 // TARGET_PLATFORM: Native

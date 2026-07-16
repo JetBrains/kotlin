@@ -273,7 +273,9 @@ private sealed class SirSealedTypeFunction : SirFunction(), SirFromKtSymbol<KaNa
 }
 
 private val KaClassSymbol?.isSealed: Boolean
-    get() = this?.modality == KaSymbolModality.SEALED
+    get() = this?.modality == KaSymbolModality.SEALED &&
+            // Exclude generic interfaces as in SirAbstractClassFromKtSymbol::protocols
+            (this.classKind != KaClassKind.INTERFACE || this.typeParameters.isEmpty())
 
 private val SirDeclaration.propagatedAttributes: List<SirAttribute>
     get() = attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI }

@@ -51,4 +51,16 @@ void * org_kotlin_foo_NonSealedOptInClass_init_allocate();
 
 _Bool org_kotlin_foo_NonSealedOptInClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+void * org_kotlin_foo_QueryResult_AsyncValue_init_allocate();
+
+_Bool org_kotlin_foo_QueryResult_AsyncValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * __kt, void * _Nullable value);
+
+void * _Nullable org_kotlin_foo_QueryResult_AsyncValue_value_get(void * self);
+
+void * org_kotlin_foo_QueryResult_Value_init_allocate();
+
+_Bool org_kotlin_foo_QueryResult_Value_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * __kt, void * _Nullable value);
+
+void * _Nullable org_kotlin_foo_QueryResult_Value_value_get(void * self);
+
 NS_ASSUME_NONNULL_END
