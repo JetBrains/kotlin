@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 // TODO: extract PSI-independent parts, specifically coordinate classes
 
-/**
- * Utilities for rendering the source location of PSI elements as human-readable strings for use in diagnostic and log
- * messages.
- */
+/** Utilities for rendering the source location of PSI elements as human-readable strings for use in diagnostic and log messages. */
 public class PsiDiagnosticUtils {
     /**
      * Returns a human-readable description of the source location of the given {@code element} (its file plus
