@@ -68,6 +68,12 @@ internal class PwRunnerSpec(
     val launchArgs: List<String>,
     val launchEnvironmentVariables: Map<String, String>,
     val customBrowserExecutable: Path?,
+    val debugOptions: PwDebugOptions?,
+)
+
+internal class PwDebugOptions(
+    // IntelliJ starts a Chromium remote-debug configuration on this port before Gradle launches Playwright.
+    val remoteDebuggingPort: Int?,
 )
 
 /**
@@ -230,9 +236,20 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             PwBrowserKind.WEBKIT -> playwright.webkit()
         }
         val launchOptions = BrowserType.LaunchOptions()
-            .setHeadless(runner.headless)
+            .setHeadless(runner.debugOptions == null && runner.headless)
             .apply {
-                if (runner.launchArgs.isNotEmpty()) setArgs(runner.launchArgs)
+                val debugPort = runner.debugOptions?.remoteDebuggingPort
+                val launchArgs = if (debugPort != null) {
+                    // The IDE debugger speaks CDP here; non-Chromium runners are converted before reaching the executor.
+                    check(runner.browserKind == PwBrowserKind.CHROMIUM) {
+                        "IntelliJ browser test debugging for Playwright is supported only with Chromium runners"
+                    }
+                    runner.launchArgs.withRemoteDebuggingPort(debugPort)
+                } else {
+                    runner.launchArgs
+                }
+
+                if (launchArgs.isNotEmpty()) setArgs(launchArgs)
                 if (runner.launchEnvironmentVariables.isNotEmpty()) setEnv(runner.launchEnvironmentVariables)
                 if (runner.customBrowserExecutable != null) setExecutablePath(runner.customBrowserExecutable)
             }
@@ -243,7 +260,6 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         browser.use {
             val page = browser.newPage()
             page.use {
-                page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
                 var finished = false
                 page.onConsoleMessage {
                     if (it.text().startsWith(runner.finishMarker)) {
@@ -264,5 +280,20 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
     override fun stopNow() {
         // TODO: implement stop now now support
         log.warn("Playwright executor doesn't support immediate stop")
+    }
+
+    private fun List<String>.withRemoteDebuggingPort(port: Int): List<String> {
+        // User-provided CDP flags would conflict with the IDE-allocated port, so normalize them here.
+        val args = mutableListOf<String>()
+        var skipNext = false
+        for (arg in this) {
+            when {
+                skipNext -> skipNext = false
+                arg == "--remote-debugging-port" -> skipNext = true
+                arg.startsWith("--remote-debugging-port=") -> Unit
+                else -> args.add(arg)
+            }
+        }
+        return args + "--remote-debugging-port=$port"
     }
 }

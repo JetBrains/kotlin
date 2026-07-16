@@ -20,12 +20,16 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERSION
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import java.io.File
 import java.net.URI
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -231,6 +235,65 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val webkit2Runner = inputs.webkitRunners.get().find { it.name.get() == "webki2" }!!
         assertEquals(mockLocation4, webkit2Runner.testsLocation.get())
     }
+
+    // These tests pin the IDE debug contract without launching a real Playwright browser.
+    @Test
+    fun `playwright debug url uses runtime url`() {
+        val setup = buildBrowserTestProject {
+            chromium()
+        }
+        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
+        val location = mockLocation(setup.project, URI("http://localhost:12345/test.html"))
+        framework.frameworkTaskInputs.chromiumRunners.get().single().testsLocation.set(location)
+
+        val debugUrl = framework.buildDebugUrl(setup.jsBrowserTestTask)
+
+        assertEquals("http://localhost:12345/test.html", debugUrl.toString().substringBefore("?"))
+    }
+
+    @Test
+    fun `playwright intellij debug falls back to chromium for firefox runner`() {
+        val setup = buildBrowserTestProject {
+            firefox("selected") {
+                it.launchArgs.set(listOf("-devtools"))
+                it.launchEnvironmentVariables.set(mapOf("FIREFOX_DEBUG" to "1"))
+            }
+        }
+        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
+        val location = mockLocation(setup.project, URI("http://localhost:12345/test.html"))
+        framework.frameworkTaskInputs.firefoxRunners.get().single().testsLocation.set(location)
+
+        val installTask = assertIs<PlaywrightBrowserInstall>(
+            setup.project.tasks.getByName("kotlinInstallPlaywrightBrowsers")
+        )
+        assertEquals(setOf("firefox"), installTask.browsers.get().toSet())
+
+        setup.jsBrowserTestTask.debug = true
+
+        assertEquals(setOf("firefox", "chromium"), installTask.browsers.get().toSet())
+
+        val npmToolingEnv = setup.project.layout.buildDirectory.dir("test-npm-tooling").get().asFile
+        npmToolingEnv.resolve("node_modules/playwright-core/cli.js").apply {
+            parentFile.mkdirs()
+            writeText("")
+        }
+        framework.npmToolingEnvDir.set(npmToolingEnv)
+        framework.debugPort.set(32123)
+
+        val spec = framework.createTestExecutionSpec(
+            task = setup.jsBrowserTestTask,
+            launchOpts = setup.project.objects.processLaunchOptions(),
+            nodeJsArgs = mutableListOf(),
+            debug = setup.jsBrowserTestTask.debug,
+        )
+        val runner = spec.runners.single()
+
+        assertEquals("selected", runner.name)
+        assertEquals(PwBrowserKind.CHROMIUM, runner.browserKind)
+        assertEquals(emptyList(), runner.launchArgs)
+        assertEquals(emptyMap(), runner.launchEnvironmentVariables)
+        assertEquals(32123, runner.debugOptions?.remoteDebuggingPort)
+    }
 }
 
 private class BrowserTestProject(
@@ -264,4 +327,23 @@ private fun buildBrowserTestProject(configure: KotlinJsBrowserTestDsl.() -> Unit
     }
     project.evaluate()
     return BrowserTestProject(project, testDsl)
+}
+
+private fun mockLocation(project: ProjectInternal, uri: URI): KotlinJsTestsLocation = object : KotlinJsTestsLocation {
+    override val bundleLocation: Provider<Directory>
+        get() = project.layout.buildDirectory.dir("mock-browser-test-bundle")
+
+    override val testHtmlFileName: Provider<String>
+        get() = project.providers.provider { "test.html" }
+
+    override val url: Provider<URI>
+        get() = project.providers.provider { uri }
+}
+
+private fun decodeKotlinTestConfig(uri: URI): String {
+    val encodedConfig = uri.rawQuery
+        .split("&")
+        .single { it.startsWith("kotlinTestConfig=") }
+        .substringAfter("=")
+    return URLDecoder.decode(encodedConfig, StandardCharsets.UTF_8)
 }

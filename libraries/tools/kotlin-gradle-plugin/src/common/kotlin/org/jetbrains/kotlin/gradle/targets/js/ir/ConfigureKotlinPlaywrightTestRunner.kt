@@ -45,17 +45,18 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val testTaskProvider = testRun.executionTask
 
+        val declaredPlaywrightBrowsers = browserTestDsl.allBrowserRunners.map { runners ->
+            runners.values.map { it.playwrightBrowserName() }.toSet()
+        }
         val playwrightBrowserInstallTask = project.registerTask<PlaywrightBrowserInstall>(
             "kotlinInstallPlaywrightBrowsers", listOf(testCompilation)
         ) {
-            it.browsers.set(browserTestDsl.allBrowserRunners.map { it.values.map {
-                when (it) {
-                    is KotlinFirefoxTestRunner -> "firefox"
-                    is KotlinWebkitTestRunner -> "webkit"
-                    is KotlinChromiumTestRunner -> "chromium"
-                    else -> throw IllegalArgumentException("Unsupported browser runner: ${it::class.simpleName}")
-                }
-            }.toSet() })
+            it.browsers.set(project.providers.provider {
+                val browsers = declaredPlaywrightBrowsers.get()
+                // Ultimate marks the test task as debug during configuration; the install task runs before jsBrowserTest.
+                // Debug attaches through Chromium CDP even when the declared Playwright runner is Firefox/WebKit.
+                if (testTaskProvider.get().debug) browsers + "chromium" else browsers
+            })
         }
 
         testTaskProvider.configure { testTask ->
@@ -97,6 +98,14 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         }
     }
 }
+
+private fun KotlinBrowserTestRunnerDsl.playwrightBrowserName(): String =
+    when (this) {
+        is KotlinFirefoxTestRunner -> "firefox"
+        is KotlinWebkitTestRunner -> "webkit"
+        is KotlinChromiumTestRunner -> "chromium"
+        else -> throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
+    }
 
 private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     runner: KotlinBrowserTestRunnerDsl,
