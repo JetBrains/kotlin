@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.dependencies.checker
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.backend.common.dependencies.AnonymousInitializerIndex
 import org.jetbrains.kotlin.backend.common.dependencies.ClinitIndex
+import org.jetbrains.kotlin.backend.common.dependencies.ConstructorLikeIndex
 import org.jetbrains.kotlin.backend.common.dependencies.DependencyGraph
 import org.jetbrains.kotlin.backend.common.dependencies.EnumEntryIndex
 import org.jetbrains.kotlin.backend.common.dependencies.FunctionIndex
@@ -38,8 +39,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.util.callableId
-import org.jetbrains.kotlin.name.CallableId
 import kotlin.sequences.forEach
 
 object StaticInitializationChecker : IrGenerationExtension {
@@ -83,7 +82,7 @@ object StaticInitializationChecker : IrGenerationExtension {
     }
 
     context(reporter: IrDiagnosticReporter, containingFile: IrFile)
-    private fun reportResultAndPossibleUninitialization(result: AnalysisResult): Boolean {
+    private fun reportResultAndPossibleUninitialization(result: AnalysisResult, reportDeadlocks: Boolean = true): Boolean {
         val [type, accesses] = result
         when (type) {
             is InitializationCycleAccessResult.UninitializedPropertyAccess -> accesses.forEach {
@@ -121,11 +120,18 @@ object StaticInitializationChecker : IrGenerationExtension {
                                 .report(ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS, parent.name, node.symbol)
                         }
                     }
+                    is ConstructorLikeIndex<*> -> {
+                        val parent = type.entity.parentEnclosingEntityOrSelf
+                        accesses.forEach {
+                            reporter.at(it.sourceElement(), it, containingFile)
+                                .report(ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS, parent.name, node.symbol)
+                        }
+                    }
                 }
-            is InitializationCycleAccessResult.DeadlockInducingConstructorCall -> accesses.forEach {
+            is InitializationCycleAccessResult.DeadlockInducingConstructorCall if reportDeadlocks -> accesses.forEach {
                 reporter.at(it.sourceElement(), it, containingFile).report(
                     CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS,
-                    type.node.symbol.owner.callableId.classId?.relativeClassName ?: CallableId(type.node.symbol.owner.name).asSingleFqName()
+                    type.node.className
                 )
             }
             else -> {}
@@ -147,7 +153,7 @@ object StaticInitializationChecker : IrGenerationExtension {
 
     context(reporter: IrDiagnosticReporter, containingFile: IrFile)
     private fun DependencyGraphAnalyzer.checkObjectConstructor(enclosingEntity: EnclosingEntity.Object) =
-        analyze(enclosingEntity.beginInitializationIndex).forEach { reportResultAndPossibleUninitialization(it) }
+        analyze(enclosingEntity.beginInitializationIndex).forEach { reportResultAndPossibleUninitialization(it, false) }
 
     context(reporter: IrDiagnosticReporter, containingFile: IrFile)
     private fun DependencyGraphAnalyzer.checkAccessesInInitializer(initializerNode: AnonymousInitializerIndex) =

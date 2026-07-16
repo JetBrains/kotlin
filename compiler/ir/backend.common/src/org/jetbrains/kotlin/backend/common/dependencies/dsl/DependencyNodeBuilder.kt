@@ -16,12 +16,13 @@ import org.jetbrains.kotlin.backend.common.dependencies.DependencyNode
 import org.jetbrains.kotlin.backend.common.dependencies.DependencyNodeIndex
 import org.jetbrains.kotlin.backend.common.dependencies.EndInstanceInitializationIndex
 import org.jetbrains.kotlin.backend.common.dependencies.EndStaticInitializationIndex
-import org.jetbrains.kotlin.backend.common.dependencies.FunctionIndex
+import org.jetbrains.kotlin.backend.common.dependencies.FunctionLikeIndex
 import org.jetbrains.kotlin.backend.common.dependencies.IsCalledBy
 import org.jetbrains.kotlin.backend.common.dependencies.IsReferencedBy
 import org.jetbrains.kotlin.backend.common.dependencies.MayHappenBefore
 import org.jetbrains.kotlin.backend.common.dependencies.MustHappenBefore
 import org.jetbrains.kotlin.backend.common.dependencies.PropertyIndex
+import org.jetbrains.kotlin.backend.common.dependencies.logic.CallSiteVisitor
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.asFileEntity
 import org.jetbrains.kotlin.backend.common.dependencies.util.beginInitializationIndex
@@ -46,7 +47,7 @@ inline fun DependencyGraph.buildGraph(worklist: Deque<DependencyNodeIndex>, init
     DependencyGraphBuilder(this, worklist).apply(init)
 }
 
-class DependencyGraphBuilderContext(val dependencyGraph: DependencyGraph, val worklist: Deque<DependencyNodeIndex>) {
+internal class DependencyGraphBuilderContext(val dependencyGraph: DependencyGraph, val worklist: Deque<DependencyNodeIndex>) {
     internal val dirtyNodes: MutableSet<DependencyNodeIndex> = mutableSetOf()
 
     fun reset() {
@@ -60,6 +61,8 @@ sealed class DependencyNodeBuilder(internal val context: DependencyGraphBuilderC
     val dependencyGraph: DependencyGraph get() = context.dependencyGraph
 
     val worklist: Deque<DependencyNodeIndex> get() = context.worklist
+
+    abstract val callSiteVisitor: CallSiteVisitor
 
     fun DependencyNodeIndex.buildNode() {
         context.dependencyGraph.getOrCreate(this) {
@@ -80,6 +83,14 @@ sealed class DependencyNodeBuilder(internal val context: DependencyGraphBuilderC
 
     fun IrClass.postponeInitSubgraph() = symbol.postponeInitSubgraph()
 
+    inline fun IrClassSymbol.buildInitSubgraph(crossinline init: InstanceInitializationSubgraphBuilder.() -> Unit = {}) {
+        InstanceInitializationSubgraphBuilder(this@DependencyNodeBuilder, this).apply {
+            BeginInstanceInitializationIndex(this@buildInitSubgraph).buildSubgraphNode()
+            init()
+            EndInstanceInitializationIndex(this@buildInitSubgraph).buildSubgraphNode()
+        }
+    }
+
     private fun addEdge(edge: DependencyEdge): Boolean {
         val addedFrom = context.dependencyGraph[edge.from]?.insertOutgoingEdge(edge) ?: false
         val addedTo = context.dependencyGraph[edge.to]?.insertIncomingEdge(edge) ?: false
@@ -89,7 +100,7 @@ sealed class DependencyNodeBuilder(internal val context: DependencyGraphBuilderC
     }
 
     context(at: IrExpression?)
-    infix fun DependencyNodeIndex.calls(from: FunctionIndex<*>): Boolean = let { index ->
+    infix fun DependencyNodeIndex.calls(from: FunctionLikeIndex<*>): Boolean = let { index ->
         when {
             from != index && from in context.dependencyGraph && index in context.dependencyGraph ->
                 addEdge(IsCalledBy(from, index, at))
@@ -128,8 +139,10 @@ sealed class DependencyNodeBuilder(internal val context: DependencyGraphBuilderC
 @DependencyGraphBuilderDsl
 class DependencyGraphBuilder(
     dependencyGraph: DependencyGraph,
-    worklist: Deque<DependencyNodeIndex>
+    worklist: Deque<DependencyNodeIndex>,
 ) : DependencyNodeBuilder(DependencyGraphBuilderContext(dependencyGraph, worklist)) {
+
+    override val callSiteVisitor: CallSiteVisitor = CallSiteVisitor(dependencyGraph.module, this)
 
     inline fun <D : IrSymbolOwner, E : EnclosingEntity<D>> E.buildClinitSubgraph(crossinline init: StaticInitializationSubgraphBuilder<D, E>.() -> Unit = {}) {
         // Build the subgraph using the initializer
@@ -137,14 +150,6 @@ class DependencyGraphBuilder(
             beginInitializationIndex.buildSubgraphNode()
             init()
             endInitializationIndex.buildSubgraphNode()
-        }
-    }
-
-    inline fun IrClassSymbol.buildInitSubgraph(crossinline init: InstanceInitializationSubgraphBuilder.() -> Unit = {}) {
-        InstanceInitializationSubgraphBuilder(this@DependencyGraphBuilder, this).apply {
-            BeginInstanceInitializationIndex(this@buildInitSubgraph).buildSubgraphNode()
-            init()
-            EndInstanceInitializationIndex(this@buildInitSubgraph).buildSubgraphNode()
         }
     }
 
@@ -191,6 +196,8 @@ sealed class DependencySubgraphBuilder(
     delegate: DependencyNodeBuilder,
     startWith: DependencyNodeIndex
 ) : DependencyNodeBuilder(delegate.context) {
+
+    override val callSiteVisitor: CallSiteVisitor = delegate.callSiteVisitor
 
     private val outerSubgraphBuilder: DependencySubgraphBuilder? = delegate as? DependencySubgraphBuilder
     var lastConstructedNode: DependencyNodeIndex = startWith

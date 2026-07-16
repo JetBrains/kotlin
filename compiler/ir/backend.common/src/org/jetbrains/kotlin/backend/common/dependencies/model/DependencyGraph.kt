@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity
 import org.jetbrains.kotlin.backend.common.dependencies.util.SetMultimap
 import org.jetbrains.kotlin.backend.common.dependencies.util.TraversalOrder
 import org.jetbrains.kotlin.backend.common.dependencies.util.setMultimapOf
+import org.jetbrains.kotlin.backend.common.dependencies.util.stronglyConnectedComponents
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import java.util.LinkedList
-import kotlin.collections.plusAssign
 import kotlin.sequences.forEach
 
 class DependencyGraph(val module: IrModuleFragment) : Set<DependencyNode> {
@@ -51,32 +50,21 @@ class DependencyGraph(val module: IrModuleFragment) : Set<DependencyNode> {
     companion object {
 
         context(graph: DependencyGraph)
-        fun Set<DependencyNode>.stronglyConnectedComponents(): List<Set<DependencyNode>> {
-            val visited = mutableSetOf<DependencyNode>()
-            val sorted = LinkedList<DependencyNode>()
-            this@stronglyConnectedComponents.forEach { node ->
-                node.happensBeforeDescendants(visited, TraversalOrder.PostOrder) { it in this && !it.isComposite }
-                    .forEach(sorted::push)
-            }
-            visited.clear()
+        operator fun EnclosingEntity<*>.contains(node: DependencyNodeIndex): Boolean = node in graph.entities[this]
 
-            val result = LinkedList<Set<DependencyNode>>()
-            while (sorted.isNotEmpty()) {
-                val current = sorted.pop()
-                if (current !in visited) {
-                    val component = mutableSetOf<DependencyNode>()
-                    current.happensBeforeAncestors(visited, TraversalOrder.PostOrder) { it in this && !it.isComposite }
-                        .forEach { component += it }
-                    result += component
+        fun DependencyGraph.stronglyConnectedComponents(nodes: Set<DependencyNode>): List<Set<DependencyNode>> =
+            nodes.stronglyConnectedComponents(
+                ancestors = { node, visited ->
+                    node.happensBeforeAncestors(visited, TraversalOrder.PostOrder) { it in this && !it.isComposite }
+                },
+                descendants = { node, visited ->
+                    node.happensBeforeDescendants(visited, TraversalOrder.PostOrder) { it in this && !it.isComposite }
                 }
-            }
-
-            return result
-        }
+            )
 
         context(graph: DependencyGraph)
         fun Set<DependencyNode>.condenseCycles(): Unit =
-            this@condenseCycles.stronglyConnectedComponents().forEach { component ->
+            graph.stronglyConnectedComponents(this).forEach { component ->
                 if (component.size == 1) return@forEach
                 // Preserve the flat structure of SCCs
                 val indices = sequence {
@@ -100,7 +88,7 @@ class DependencyGraph(val module: IrModuleFragment) : Set<DependencyNode> {
                     subgraphFlow = setMultimapOf<DependencyNodeIndex, HappensBeforeEdge>().apply {
                         component.forEach { node ->
                             when (node) {
-                                is UnitNode -> node.happensAfterFlow.filter { it.holdsInAllExecutions }.forEach { edge ->
+                                is UnitNode -> node.outgoingHappensBeforeFlow.filter { it.holdsInAllExecutions }.forEach { edge ->
                                     edge.to.unwrap().forEach { target ->
                                         put(node.index, MustHappenBefore(node.index, target))
                                     }
@@ -108,7 +96,7 @@ class DependencyGraph(val module: IrModuleFragment) : Set<DependencyNode> {
                                 is CompositeNode -> node.index.unwrap().forEach { index ->
                                     // Invariant: all subgraph edges have a single source and target index
                                     node.subgraphFlowFrom(index).forEach { put(index, it) }
-                                    node.happensAfterFlow.filter { it.holdsInAllExecutions }.forEach { edge ->
+                                    node.outgoingHappensBeforeFlow.filter { it.holdsInAllExecutions }.forEach { edge ->
                                         val sources = edge.from.unwrap()
                                         val targets = edge.to.unwrap()
                                         sources.forEach { source ->
@@ -145,7 +133,7 @@ class DependencyGraph(val module: IrModuleFragment) : Set<DependencyNode> {
             // For each node in the set that was condensed, ...
             scc.forEach { node ->
                 // For each incoming happens-before edge, ...
-                node.happensBeforeFlow.forEach { edge ->
+                node.incomingHappensBeforeFlow.forEach { edge ->
                     when (edge) {
                         // Insert the call edge to the new condensed node (implicitly handles self-loops)
                         is IsCalledBy -> into.insertIncomingEdge(edge)
@@ -166,7 +154,7 @@ class DependencyGraph(val module: IrModuleFragment) : Set<DependencyNode> {
                     }
                 }
                 // For each outgoing happens-before edge,
-                node.happensAfterFlow.forEach { edge ->
+                node.outgoingHappensBeforeFlow.forEach { edge ->
                     when (edge) {
                         // Insert the call edge to the new condensed node (implicitly handles self-loops)
                         is IsCalledBy -> into.insertOutgoingEdge(edge)
@@ -187,8 +175,9 @@ class DependencyGraph(val module: IrModuleFragment) : Set<DependencyNode> {
                         }
                     }
                 }
-                // For each information edges, simply insert them to the condensed node
-                node.informationFlow.forEach { into.insertIncomingEdge(it) }
+                // For each information edge, simply insert them to the condensed node
+                node.incomingInformationFlow.forEach { into.insertIncomingEdge(it) }
+                node.outgoingInformationFlow.forEach { into.insertOutgoingEdge(it) }
                 // For each merged edge, also insert them to the condensed node and the source/target nodes
                 incomingMergedMustFlow.forEach { [index, edge] ->
                     into.insertIncomingEdge(edge)

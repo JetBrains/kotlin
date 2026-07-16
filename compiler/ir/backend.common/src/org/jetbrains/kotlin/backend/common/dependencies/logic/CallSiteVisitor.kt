@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.dependencies.DependencyNodeIndex
 import org.jetbrains.kotlin.backend.common.dependencies.DependencyNodeIndex.Companion.enclosingEntity
 import org.jetbrains.kotlin.backend.common.dependencies.FunctionIndex
 import org.jetbrains.kotlin.backend.common.dependencies.PropertyIndex
-import org.jetbrains.kotlin.backend.common.dependencies.dsl.DependencyGraphBuilder
+import org.jetbrains.kotlin.backend.common.dependencies.dsl.DependencyNodeBuilder
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.asClassEntity
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.asEnumEntryEntity
@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.util.constructedClass
@@ -73,15 +72,13 @@ import org.jetbrains.kotlin.ir.util.isGetter
 import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import kotlin.collections.forEach
 import kotlin.let
 
-internal class CallSiteVisitor(
+class CallSiteVisitor(
     private val module: IrModuleFragment,
-    private val visitedFiles: Set<IrFileSymbol>,
-    private val graphBuilder: DependencyGraphBuilder,
+    private val nodeBuilder: DependencyNodeBuilder,
 ) : IrVisitor<Unit, CallSiteVisitor.CallSiteVisitContext>() {
 
     data class CallSiteVisitContext(
@@ -95,25 +92,22 @@ internal class CallSiteVisitor(
     private inline fun <D : IrDeclaration> D.visit(
         data: CallSiteVisitContext,
         crossinline symbolSupplier: (D) -> IrBindableSymbol<*, D>,
-        crossinline block: context(CallSiteVisitContext, D) DependencyGraphBuilder.() -> Unit
+        crossinline block: context(CallSiteVisitContext, D) DependencyNodeBuilder.() -> Unit
     ) = when {
-        symbolSupplier(this) in module -> context(data, this@visit) { graphBuilder.block() }
+        symbolSupplier(this) in module -> context(data, this@visit) { nodeBuilder.block() }
         else -> {}
     }
 
     private inline fun <E : IrElement> E.visit(
         data: CallSiteVisitContext,
-        crossinline block: context(CallSiteVisitContext, E) DependencyGraphBuilder.() -> Unit
-    ) = context(data, this@visit) { graphBuilder.block() }
+        crossinline block: context(CallSiteVisitContext, E) DependencyNodeBuilder.() -> Unit
+    ) = context(data, this@visit) { nodeBuilder.block() }
 
     context(context: CallSiteVisitContext)
     private fun IrElement.visitRecursively() = accept(this@CallSiteVisitor, context)
 
-    private val <D : IrDeclaration> IrBindableSymbol<*, D>.inVisitedFiles: Boolean
-        get() = owner.fileOrNull?.let { it.symbol in visitedFiles } ?: false
-
     context(context: CallSiteVisitContext, reference: IrExpression?)
-    private fun DependencyGraphBuilder.referenceNode(node: AccessibleIndex) {
+    private fun DependencyNodeBuilder.referenceNode(node: AccessibleIndex) {
         node.buildNode()
         context.accessingNode references node
         val possiblyInitializedEndNode = node.lazilyInitialized?.endInitializationIndex ?: return
@@ -124,9 +118,9 @@ internal class CallSiteVisitor(
     }
 
     context(context: CallSiteVisitContext, callSite: IrExpression?)
-    private fun DependencyGraphBuilder.callNode(node: FunctionIndex<*>) {
+    private fun DependencyNodeBuilder.callNode(node: FunctionIndex<*>) {
         node.buildNode()
-        if (!node.symbol.inVisitedFiles) node.symbol.postponeFileEntity()
+        node.symbol.postponeFileEntity()
         context.accessingNode calls node
         if (node !is FunctionIndex.Constructor) {
             val enclosingEntity = node.lazilyInitialized?.parentEnclosingEntityOrSelf ?: return
@@ -187,38 +181,24 @@ internal class CallSiteVisitor(
                 context(null) { callNode(defaultedNode.functionIndex) }
                 return@visit
             }
-            if (declaration.isPrimary && !data.materializeOnlyConstructorArguments) {
+            if (declaration.isPrimary) {
                 declaration.parentClassOrNull?.asClassEntity()?.let { classEntity ->
-                    classEntity.endInitializationIndex mayHappenBefore data.accessingNode
-                }
-            }
-            val materializeEverythingContext = CallSiteVisitContext(data.accessingNode)
-            declaration.body?.statements?.forEach { statement ->
-                when (statement) {
-                    is IrDelegatingConstructorCall -> statement.visitRecursively()
-                    is IrBlock -> {
-                        context(materializeEverythingContext) {
-                            statement.statements.dropLast(1).forEach { it.visitRecursively() }
-                        }
-                        when (val last = statement.statements.lastOrNull()) {
-                            null -> {}
-                            is IrDelegatingConstructorCall -> last.visitRecursively()
-                            else -> context(materializeEverythingContext) { last.visitRecursively() }
-                        }
+                    if (data.accessingNode != classEntity.beginInitializationIndex) {
+                        classEntity.endInitializationIndex mayHappenBefore data.accessingNode
                     }
-                    else -> context(materializeEverythingContext) { statement.visitRecursively() }
                 }
             }
+            declaration.body?.visitRecursively()
         }
 
     context(context: CallSiteVisitContext, access: A)
-    private inline fun <D : IrDeclaration, S : IrBindableSymbol<*, D>, A : IrDeclarationReference> DependencyGraphBuilder.accessNode(
+    private inline fun <D : IrDeclaration, S : IrBindableSymbol<*, D>, A : IrDeclarationReference> DependencyNodeBuilder.accessNode(
         symbol: S,
         dispatchReceiverSupplier: D.(A) -> IrExpression? = { null },
         extensionReceiverSupplier: D.(A) -> IrExpression? = { null },
         superQualifierSupplier: (A) -> IrClassSymbol?,
-        crossinline staticAccess: context(CallSiteVisitContext, A) DependencyGraphBuilder.(S, EnclosingEntity<*>) -> Unit,
-        crossinline instanceAccess: context(CallSiteVisitContext, A) DependencyGraphBuilder.(S) -> Unit,
+        crossinline staticAccess: context(CallSiteVisitContext, A) DependencyNodeBuilder.(S, EnclosingEntity<*>) -> Unit,
+        crossinline instanceAccess: context(CallSiteVisitContext, A) DependencyNodeBuilder.(S) -> Unit,
     ) {
         // If the callable is an extension, visit the extension receiver for dependencies
         symbol.owner.extensionReceiverSupplier(access)?.visitRecursively()
@@ -254,14 +234,14 @@ internal class CallSiteVisitor(
         if (expression.symbol !in module) return@visit
         val objectEntity = expression.symbol.asObjectEntity() ?: return@visit
         if (objectEntity.isNotPrivate) referenceNode(objectEntity.beginInitializationIndex)
-        if (!objectEntity.symbol.inVisitedFiles) objectEntity.symbol.postponeFileEntity()
+        objectEntity.symbol.postponeFileEntity()
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: CallSiteVisitContext): Unit = expression.visit(data) {
         if (expression.symbol !in module) return@visit
         val enumEntryEntity = expression.symbol.asEnumEntryEntity()
         referenceNode(enumEntryEntity.beginInitializationIndex)
-        if (enumEntryEntity.symbol.inVisitedFiles) enumEntryEntity.symbol.postponeFileEntity()
+        enumEntryEntity.symbol.postponeFileEntity()
     }
 
     private fun FunctionIndex<*>.defaultedOrSelf(parameters: Set<IrValueParameterSymbol>): FunctionIndex<*> = when (this) {
@@ -273,7 +253,7 @@ internal class CallSiteVisitor(
      * Visits arguments of the given function call
      */
     context(context: CallSiteVisitContext, functionCall: T)
-    private fun <T : IrFunctionAccessExpression> DependencyGraphBuilder.visitArguments(symbol: IrFunctionSymbol) {
+    private fun <T : IrFunctionAccessExpression> DependencyNodeBuilder.visitArguments(symbol: IrFunctionSymbol) {
         symbol.owner.parameters.zip(functionCall.arguments) { parameter, argument ->
             if (parameter.kind == IrParameterKind.DispatchReceiver || parameter.kind == IrParameterKind.ExtensionReceiver) return@zip
             if (parameter.isInlineParameter() && argument is IrFunctionExpression) {
@@ -372,7 +352,7 @@ internal class CallSiteVisitor(
                     }
                 }
             )
-            if (!symbol.inVisitedFiles) symbol.postponeFileEntity()
+            symbol.postponeFileEntity()
         }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: CallSiteVisitContext): Unit = expression.visit(data) {
@@ -385,7 +365,7 @@ internal class CallSiteVisitor(
             if (argument == null) parameter.symbol else null
         }.filterNotNull().toSet()
         callNode(FunctionIndex.Constructor(symbol).defaultedOrSelf(defaultParameters))
-        if (!symbol.inVisitedFiles) symbol.postponeFileEntity()
+        symbol.postponeFileEntity()
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: CallSiteVisitContext): Unit =
@@ -396,16 +376,8 @@ internal class CallSiteVisitor(
             val defaultParameters = symbol.owner.parameters.zip(expression.arguments) { parameter, argument ->
                 if (argument == null) parameter.symbol else null
             }.filterNotNull().toSet()
-            if (data.materializeOnlyConstructorArguments) {
-                // Default parameters are independent expressions
-                context(CallSiteVisitContext(data.accessingNode)) {
-                    defaultParameters.forEach { it.closestOverriddenDefaultParameter?.owner?.defaultValue?.visitRecursively() }
-                }
-                // The only way to properly materialize the edges to the accessing node is to fully recurse into the construction call chain
-                symbol.owner.visitRecursively()
-            } else {
-                callNode(FunctionIndex.Constructor(symbol).defaultedOrSelf(defaultParameters))
-            }
+            callNode(FunctionIndex.Constructor(symbol).defaultedOrSelf(defaultParameters))
+            symbol.postponeFileEntity()
         }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: CallSiteVisitContext) = expression.visit(data) {

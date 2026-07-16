@@ -6,22 +6,33 @@
 package org.jetbrains.kotlin.backend.common.dependencies.model
 
 import org.jetbrains.kotlin.backend.common.dependencies.AccessibleIndex
+import org.jetbrains.kotlin.backend.common.dependencies.AnonymousInitializerIndex
+import org.jetbrains.kotlin.backend.common.dependencies.BeginStaticInitializationIndex
 import org.jetbrains.kotlin.backend.common.dependencies.CompositeNode
 import org.jetbrains.kotlin.backend.common.dependencies.CompositeNode.Companion.subgraphFlowDescendants
+import org.jetbrains.kotlin.backend.common.dependencies.ConstructorLikeIndex
 import org.jetbrains.kotlin.backend.common.dependencies.DeclarationIndex
 import org.jetbrains.kotlin.backend.common.dependencies.DependencyEdge.Companion.component2
 import org.jetbrains.kotlin.backend.common.dependencies.DependencyGraph
+import org.jetbrains.kotlin.backend.common.dependencies.DependencyNode.Companion.informationDescendants
 import org.jetbrains.kotlin.backend.common.dependencies.DependencyNodeIndex
 import org.jetbrains.kotlin.backend.common.dependencies.DependencyNodeIndex.Companion.enclosingEntity
 import org.jetbrains.kotlin.backend.common.dependencies.FunctionIndex
 import org.jetbrains.kotlin.backend.common.dependencies.InformationEdge.Companion.component1
 import org.jetbrains.kotlin.backend.common.dependencies.InformationEdge.Companion.component3
 import org.jetbrains.kotlin.backend.common.dependencies.InitializationCycleAccessResult
+import org.jetbrains.kotlin.backend.common.dependencies.PropertyIndex
 import org.jetbrains.kotlin.backend.common.dependencies.model.AnalysisResult.Companion.with
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.isNotPrivate
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.parentEnclosingEntityOrSelf
+import org.jetbrains.kotlin.backend.common.dependencies.util.TraversalOrder
+import org.jetbrains.kotlin.backend.common.dependencies.util.stronglyConnectedComponents
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import kotlin.collections.forEach
+import kotlin.sequences.emptySequence
 import kotlin.sequences.forEach
 
 data class AnalysisResult(val type: InitializationCycleAccessResult, val accesses: Set<IrElement>) {
@@ -30,9 +41,14 @@ data class AnalysisResult(val type: InitializationCycleAccessResult, val accesse
     }
 }
 
+data class DeadlockNode(val entity: EnclosingEntity<*>) {
+    val incoming: MutableSet<DeadlockNode> = mutableSetOf()
+    val outgoing: MutableSet<DeadlockNode> = mutableSetOf()
+}
+
 class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
 
-    context(accessingEntity: EnclosingEntity<*>?, cycle: CompositeNode)
+    context(accessingEntity: EnclosingEntity<*>?, cycle: CompositeNode, mutuallyDependentEntities: Set<EnclosingEntity<*>>)
     private fun analyzeTransitively(
         initial: DependencyNodeIndex,
         node: DependencyNodeIndex,
@@ -66,7 +82,6 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
                 }
                 is InitializationCycleAccessResult.ReportedAndPoisoning -> yield(result)
                 is InitializationCycleAccessResult.Reported -> {
-                    println(result)
                     yield(result)
                     yieldAll(analyzeTransitively(initial, from, visited.toMutableSet()))
                 }
@@ -112,7 +127,7 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
 
     fun analyze(node: DependencyNodeIndex): Sequence<AnalysisResult> = (dependencyGraph[node] as? CompositeNode)?.let { cycle ->
         val accessingEntity = node.enclosingEntity
-        context(accessingEntity, cycle) {
+        context(accessingEntity, cycle, accessingEntity?.let { mutuallyDependentEntities(it) } ?: emptySet()) {
             val informationFlow = cycle.informationFlowInto(node)
             sequence {
                 for ([from, _, accesses] in informationFlow) {
@@ -136,7 +151,6 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
                         }
                         is InitializationCycleAccessResult.ReportedAndPoisoning -> yield(result with accesses)
                         is InitializationCycleAccessResult.Reported -> {
-                            println(result)
                             yield(result with accesses)
                             analyzeTransitively(node, from, mutableSetOf(node))
                                 .forEach { yield(it with accesses) }
@@ -148,15 +162,85 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
         }
     } ?: emptySequence()
 
-    fun mutuallyDependentEntities(enclosingEntity: EnclosingEntity<*>): Sequence<EnclosingEntity<*>> =
+    private val DependencyNodeIndex.canCauseDeadlock: Boolean
+        get() = this is PropertyIndex || this is AnonymousInitializerIndex || this is BeginStaticInitializationIndex<*> || this is ConstructorLikeIndex<*>
+
+    private fun Set<EnclosingEntity<*>>.buildDeadlockGraph(): Set<DeadlockNode> {
+        val nodes = mutableMapOf<EnclosingEntity<*>, DeadlockNode>()
+        // First, initialize all the possible nodes
+        forEach { entity ->
+            val reportedEntity = entity.parentEnclosingEntityOrSelf
+            nodes[reportedEntity] = DeadlockNode(reportedEntity)
+        }
+        // Second, materialize the deadlocking access dependencies between them
+        context(dependencyGraph) {
+            this@buildDeadlockGraph.forEach { entity ->
+                val reportedEntity = entity.parentEnclosingEntityOrSelf
+                val node = nodes[reportedEntity] ?: return@forEach
+                // We need to check the nodes of the actual entity, not the reported one
+                dependencyGraph[entity].filterIsInstance<AccessibleIndex>().forEach { index ->
+                    if (!index.canCauseDeadlock) return@forEach
+                    index.informationDescendants { descendant ->
+                        val descendantEntity = descendant.enclosingEntity?.parentEnclosingEntityOrSelf ?: return@informationDescendants true
+                        val descendantNode = nodes[descendantEntity] ?: return@informationDescendants false
+                        descendant.canCauseDeadlock && descendantNode !in node.outgoing
+                    }.forEach { descendant ->
+                        val descendantEntity = descendant.enclosingEntity?.parentEnclosingEntityOrSelf ?: return@forEach
+                        if (descendantEntity == reportedEntity) return@forEach
+                        val descendantNode = nodes[descendantEntity] ?: return@forEach
+                        if (descendant != index && descendant.canCauseDeadlock) {
+                            node.outgoing += descendantNode
+                            descendantNode.incoming += node
+                        }
+                    }
+                }
+            }
+        }
+        return nodes.values.toSet()
+    }
+
+    private val deadlockingComponentsCache: MutableMap<EnclosingEntity<*>, Set<EnclosingEntity<*>>?> = mutableMapOf()
+
+    private fun CompositeNode.precomputeDeadlockingComponents() {
+        val deadlockGraph = enclosingEntities.buildDeadlockGraph()
+        val components = deadlockGraph.stronglyConnectedComponents(
+            ancestors = { node, visited ->
+                TraversalOrder.PreOrder.traverse(
+                    start = node,
+                    visited = visited,
+                    neighbours = { it.incoming.asSequence() }
+                )
+            },
+            descendants = { node, visited ->
+                TraversalOrder.PreOrder.traverse(
+                    start = node,
+                    visited = visited,
+                    neighbours = { it.outgoing.asSequence() }
+                )
+            }
+        )
+        components.asSequence().forEach { component ->
+            component.takeIf { it.size > 1 }?.forEach { node ->
+                deadlockingComponentsCache[node.entity] = component.mapToSetOrEmpty { it.entity }
+            } ?: component.first().let {
+                // Could be the parent entity which was/will be added in a previous/following component
+                if (it.entity !in deadlockingComponentsCache) deadlockingComponentsCache[it.entity] = null
+            }
+        }
+    }
+
+    fun mutuallyDependentEntities(enclosingEntity: EnclosingEntity<*>): Set<EnclosingEntity<*>> =
         when {
-            enclosingEntity.isPrivate -> emptySequence()
-            else -> dependencyGraph[enclosingEntity].mapNotNull(dependencyGraph::get)
-                .filterIsInstance<CompositeNode>()
-                .flatMap { node ->
-                    node.enclosingEntities.asSequence()
-                        .map { it.parentEnclosingEntityOrSelf }
-                        .filter { it.isNotPrivate && it != enclosingEntity && it.endInitializationIndex in node }
-                }.distinct()
+            enclosingEntity.isPrivate -> emptySet()
+            else -> {
+                val reportedEntity = enclosingEntity.parentEnclosingEntityOrSelf
+                if (reportedEntity in deadlockingComponentsCache) return deadlockingComponentsCache[reportedEntity] ?: emptySet()
+                val cycle = dependencyGraph[enclosingEntity].mapNotNull(dependencyGraph::get)
+                    .firstIsInstanceOrNull<CompositeNode>() ?: return emptySet()
+                if (reportedEntity !in deadlockingComponentsCache) cycle.precomputeDeadlockingComponents()
+                deadlockingComponentsCache[reportedEntity]?.asSequence()
+                    ?.filter { it.isNotPrivate && it != reportedEntity }?.toSet()
+                    ?: emptySet()
+            }
         }
 }

@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isGetter
 import org.jetbrains.kotlin.ir.util.isSetter
+import java.util.LinkedList
+import kotlin.collections.plusAssign
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -33,6 +35,7 @@ import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.coroutines.resume
+import kotlin.sequences.forEach
 
 @RestrictsSuspension
 interface TraversalScope<T, R> {
@@ -167,6 +170,28 @@ sealed class TraversalOrder {
     }
 }
 
+inline fun <T> Set<T>.stronglyConnectedComponents(
+    ancestors: (T, MutableSet<T>) -> Sequence<T>,
+    descendants: (T, MutableSet<T>) -> Sequence<T>,
+): List<Set<T>> {
+    val visited = mutableSetOf<T>()
+    val sorted = LinkedList<T>()
+    forEach { element -> descendants(element, visited).forEach(sorted::push) }
+    visited.clear()
+
+    val result = LinkedList<Set<T>>()
+    while (sorted.isNotEmpty()) {
+        val current = sorted.pop()
+        if (current !in visited) {
+            val component = mutableSetOf<T>()
+            ancestors(current, visited).forEach { component += it }
+            result += component
+        }
+    }
+
+    return result
+}
+
 operator fun <E, M : MutableCollection<E>> M.plus(other: Iterable<E>): M = apply {
     other.forEach { add(it) }
 }
@@ -179,9 +204,9 @@ fun IrClassSymbol.collectEnumEntries(): List<IrEnumEntrySymbol> {
 
 val <D : IrDeclaration> IrBindableSymbol<*, D>.containingFileSymbol: IrFileSymbol? get() = owner.fileOrNull?.symbol
 
-val IrClassSymbol.isInitializedBySupertypes: Boolean
+val IrClassSymbol.isInitializedInterface: Boolean
     get() = owner.let {
-        !it.kind.isInterface || it.kind.isInterface && it.declarations.any { decl ->
+        it.kind.isInterface && it.declarations.any { decl ->
             decl is IrProperty && decl.hasCustomAccessors || decl is IrFunction && decl.body != null
         }
     }

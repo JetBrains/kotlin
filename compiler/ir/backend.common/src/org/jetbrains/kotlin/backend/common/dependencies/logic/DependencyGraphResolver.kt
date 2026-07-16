@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.dependencies.DeclarationIndex
 import org.jetbrains.kotlin.backend.common.dependencies.DependencyGraph
 import org.jetbrains.kotlin.backend.common.dependencies.DependencyNodeIndex
 import org.jetbrains.kotlin.backend.common.dependencies.EnumEntryIndex
+import org.jetbrains.kotlin.backend.common.dependencies.FakeInitializedInterfaceConstructorIndex
 import org.jetbrains.kotlin.backend.common.dependencies.PropertyIndex
 import org.jetbrains.kotlin.backend.common.dependencies.QualifierIndex
 import org.jetbrains.kotlin.backend.common.dependencies.TopLevelIndex
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Co
 import org.jetbrains.kotlin.backend.common.dependencies.util.BaseMultimap
 import org.jetbrains.kotlin.backend.common.dependencies.util.contains
 import org.jetbrains.kotlin.backend.common.dependencies.util.endInitializationIndex
-import org.jetbrains.kotlin.backend.common.dependencies.util.isInitializedBySupertypes
+import org.jetbrains.kotlin.backend.common.dependencies.util.isInitializedInterface
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.isTopLevel
@@ -76,17 +78,22 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) {
      * to and connect to those instead
      */
     private fun StaticInitializationSubgraphBuilder<*, *>.initializeDirectSupertypes(classSymbol: IrClassSymbol) {
-        classSymbol.owner.superTypes.forEach { superType ->
+        val classDecl = classSymbol.owner
+        classDecl.primaryConstructor?.accept(
+            callSiteVisitor,
+            CallSiteVisitor.CallSiteVisitContext(enclosingEntity.beginInitializationIndex)
+        )
+        classDecl.superTypes.forEach { superType ->
             val symbol = superType.classOrNull ?: return@forEach
-            // Skip library supertypes, as they cannot have mutual dependencies with the source types, interface types without
-            // default methods, and types which are declared outside the current module
-            if (symbol !in module || !symbol.isInitializedBySupertypes) return@forEach
-            val supertypeEntity = symbol.asClassEntity()
-            // We do not need to visit the supertype here, as it was either already visited
-            // or will be visited later (in this file or in a subseqently visited one)
-            val endNode = supertypeEntity.endInitializationIndex
-            endNode.buildNode()
-            endNode mustHappenBefore enclosingEntity.beginInitializationIndex
+            if (symbol in module && symbol.isInitializedInterface) {
+                val node = FakeInitializedInterfaceConstructorIndex(symbol)
+                node.buildNode()
+                node.symbol.postponeFileEntity()
+                context(null) { enclosingEntity.beginInitializationIndex calls node }
+                val endNode = node.lazilyInitialized.endInitializationIndex
+                endNode.buildNode()
+                endNode mayHappenBefore node
+            }
         }
     }
 
@@ -135,14 +142,11 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) {
         if (file !in dependencyGraph.module || !visitedFiles.add(file.symbol)) return pendingNodes.removeKey(file.symbol)
 
         dependencyGraph.buildGraph(worklist) {
-            val callSiteVisitor = CallSiteVisitor(
-                module = dependencyGraph.module,
-                visitedFiles = visitedFiles,
-                graphBuilder = this
-            )
 
             // Collect reachable roots from the given file
             buildFileEntity(file)
+
+            println(file.dump())
 
             while (worklist.isNotEmpty()) {
                 val current = worklist.removeFirst()

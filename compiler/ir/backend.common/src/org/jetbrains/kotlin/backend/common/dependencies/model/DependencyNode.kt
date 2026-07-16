@@ -13,25 +13,31 @@ import kotlin.collections.forEach
 import kotlin.collections.set
 import kotlin.let
 
-internal typealias InformationFlowMap = MutableMap<AccessibleIndex, InformationEdge>
+sealed class DependencyFlowMap<E : DependencyEdge> : MutableMap<DependencyNodeIndex, E> by mutableMapOf() {
 
-internal fun InformationFlowMap.insertEdge(edge: InformationEdge): Boolean =
-    this[edge.from]?.let { prev ->
-        prev.merge(edge)?.let {
-            this[edge.from] = it
-            true
-        } ?: false
-    } ?: (putIfAbsent(edge.from, edge) == null)
+    abstract fun insertEdge(edge: E, key: (E) -> DependencyNodeIndex): Boolean
 
-internal fun InformationFlowMap.removeEdge(edge: InformationEdge): Boolean = remove(edge.from, edge)
+    inline fun removeEdge(edge: E, key: (E) -> DependencyNodeIndex): Boolean = remove(key(edge), edge)
 
-internal typealias HappensBeforeFlowMap = MutableMap<DependencyNodeIndex, HappensBeforeEdge>
+    class HappensBeforeFlowMap : DependencyFlowMap<HappensBeforeEdge>() {
+        @Suppress("OVERRIDE_BY_INLINE")
+        override inline fun insertEdge(edge: HappensBeforeEdge, key: (HappensBeforeEdge) -> DependencyNodeIndex): Boolean =
+            putIfAbsent(key(edge), edge) == null
+    }
 
-internal inline fun HappensBeforeFlowMap.insertEdge(edge: HappensBeforeEdge, key: (DependencyEdge) -> DependencyNodeIndex): Boolean =
-    putIfAbsent(key(edge), edge) == null
-
-internal inline fun HappensBeforeFlowMap.removeEdge(edge: HappensBeforeEdge, key: (DependencyEdge) -> DependencyNodeIndex): Boolean =
-    remove(key(edge), edge)
+    class InformationFlowMap : DependencyFlowMap<InformationEdge>() {
+        @Suppress("OVERRIDE_BY_INLINE")
+        override inline fun insertEdge(edge: InformationEdge, key: (InformationEdge) -> DependencyNodeIndex): Boolean {
+            val key = key(edge)
+            return this[key]?.let { prev ->
+                prev.merge(edge)?.let {
+                    this[key] = it
+                    true
+                } ?: false
+            } ?: (putIfAbsent(key, edge) == null)
+        }
+    }
+}
 
 sealed class DependencyNode {
 
@@ -39,49 +45,51 @@ sealed class DependencyNode {
 
     abstract val isComposite: Boolean
 
-    protected val incomingHappensBeforeFlow: HappensBeforeFlowMap = mutableMapOf()
+    protected val incomingHappensBeforeFlowMap: DependencyFlowMap.HappensBeforeFlowMap = DependencyFlowMap.HappensBeforeFlowMap()
 
-    protected val outgoingHappensBeforeFlow: HappensBeforeFlowMap = mutableMapOf()
+    protected val outgoingHappensBeforeFlowMap: DependencyFlowMap.HappensBeforeFlowMap = DependencyFlowMap.HappensBeforeFlowMap()
 
-    val happensBeforeFlow: Sequence<HappensBeforeEdge> get() = incomingHappensBeforeFlow.asSequence().map { it.value }
+    val incomingHappensBeforeFlow: Sequence<HappensBeforeEdge> get() = incomingHappensBeforeFlowMap.asSequence().map { it.value }
 
-    val happensAfterFlow: Sequence<HappensBeforeEdge> get() = outgoingHappensBeforeFlow.asSequence().map { it.value }
+    val outgoingHappensBeforeFlow: Sequence<HappensBeforeEdge> get() = outgoingHappensBeforeFlowMap.asSequence().map { it.value }
 
-    abstract val informationFlow: Sequence<InformationEdge>
+    abstract val incomingInformationFlow: Sequence<InformationEdge>
+
+    abstract val outgoingInformationFlow: Sequence<InformationEdge>
 
     context(graph: DependencyGraph)
-    val happenBefore: Sequence<DependencyNode> get() = incomingHappensBeforeFlow.asSequence().mapNotNull { graph[it.key] }
+    val happenBefore: Sequence<DependencyNode> get() = incomingHappensBeforeFlowMap.asSequence().mapNotNull { graph[it.key] }
 
     context(graph: DependencyGraph)
-    val happenAfter: Sequence<DependencyNode> get() = outgoingHappensBeforeFlow.asSequence().mapNotNull { graph[it.key] }
+    val happenAfter: Sequence<DependencyNode> get() = outgoingHappensBeforeFlowMap.asSequence().mapNotNull { graph[it.key] }
 
     open fun insertIncomingEdge(edge: DependencyEdge): Boolean =
         when (edge) {
-            is HappensBeforeEdge -> incomingHappensBeforeFlow.insertEdge(edge, DependencyEdge::from)
+            is HappensBeforeEdge -> incomingHappensBeforeFlowMap.insertEdge(edge, DependencyEdge::from)
             else -> false
         }
 
     open fun removeIncomingEdge(edge: DependencyEdge): Boolean =
         when (edge) {
-            is HappensBeforeEdge -> incomingHappensBeforeFlow.removeEdge(edge, DependencyEdge::from)
+            is HappensBeforeEdge -> incomingHappensBeforeFlowMap.removeEdge(edge, DependencyEdge::from)
             else -> false
         }
 
     open fun insertOutgoingEdge(edge: DependencyEdge): Boolean =
         when (edge) {
-            is HappensBeforeEdge -> outgoingHappensBeforeFlow.insertEdge(edge, DependencyEdge::to)
+            is HappensBeforeEdge -> outgoingHappensBeforeFlowMap.insertEdge(edge, DependencyEdge::to)
             else -> false
         }
 
     open fun removeOutgoingEdge(edge: DependencyEdge): Boolean =
         when (edge) {
-            is HappensBeforeEdge -> outgoingHappensBeforeFlow.removeEdge(edge, DependencyEdge::to)
+            is HappensBeforeEdge -> outgoingHappensBeforeFlowMap.removeEdge(edge, DependencyEdge::to)
             else -> false
         }
 
     open fun reset() {
-        incomingHappensBeforeFlow.clear()
-        outgoingHappensBeforeFlow.clear()
+        incomingHappensBeforeFlowMap.clear()
+        outgoingHappensBeforeFlowMap.clear()
     }
 
     companion object {
@@ -93,7 +101,7 @@ sealed class DependencyNode {
             crossinline predicate: (DependencyNode) -> Boolean = { true }
         ): Sequence<DependencyNode> =
             traversalOrder.traverse(
-                start = this@happensBeforeAncestors,
+                start = this,
                 visited = visited,
                 predicate = predicate,
                 neighbours = { it.happenBefore }
@@ -106,45 +114,108 @@ sealed class DependencyNode {
             crossinline predicate: (DependencyNode) -> Boolean = { true }
         ): Sequence<DependencyNode> =
             traversalOrder.traverse(
-                start = this@happensBeforeDescendants,
+                start = this,
                 visited = visited,
                 predicate = predicate,
                 neighbours = { it.happenAfter }
+            )
+
+        context(graph: DependencyGraph)
+        internal inline fun DependencyNodeIndex.informationAncestors(
+            visited: MutableSet<DependencyNodeIndex> = mutableSetOf(),
+            traversalOrder: TraversalOrder = TraversalOrder.PreOrder,
+            crossinline predicate: (DependencyNodeIndex) -> Boolean = { true },
+        ): Sequence<DependencyNodeIndex> =
+            traversalOrder.traverse(
+                start = this,
+                visited = visited,
+                predicate = predicate,
+                neighbours = {
+                    when (val node = graph[it]) {
+                        null -> emptySequence()
+                        is UnitNode -> node.incomingInformationFlow.map(DependencyEdge::from)
+                        is CompositeNode -> node.informationFlowInto(it).map(DependencyEdge::from)
+                    }
+                }
+            )
+
+        context(graph: DependencyGraph)
+        internal inline fun DependencyNodeIndex.informationDescendants(
+            visited: MutableSet<DependencyNodeIndex> = mutableSetOf(),
+            traversalOrder: TraversalOrder = TraversalOrder.PreOrder,
+            crossinline predicate: (DependencyNodeIndex) -> Boolean = { true },
+        ): Sequence<DependencyNodeIndex> =
+            traversalOrder.traverse(
+                start = this,
+                visited = visited,
+                predicate = predicate,
+                neighbours = {
+                    when (val node = graph[it]) {
+                        null -> emptySequence()
+                        is UnitNode -> node.outgoingInformationFlow.map(DependencyEdge::to)
+                        is CompositeNode -> node.informationFlowFrom(it).map(DependencyEdge::to)
+                    }
+                }
             )
     }
 }
 
 data class UnitNode(override val index: DependencyNodeIndex) : DependencyNode() {
     val enclosingEntity: EnclosingEntity<*>? = index.enclosingEntity
-    private val incomingInformationFlow: InformationFlowMap = mutableMapOf()
+    private val incomingInformationFlowMap: DependencyFlowMap.InformationFlowMap = DependencyFlowMap.InformationFlowMap()
 
-    override val informationFlow: Sequence<InformationEdge> get() = incomingInformationFlow.asSequence().map { it.value }
+    private val outgoingInformationFlowMap: DependencyFlowMap.InformationFlowMap = DependencyFlowMap.InformationFlowMap()
+
+    override val incomingInformationFlow: Sequence<InformationEdge> get() = incomingInformationFlowMap.asSequence().map { it.value }
+
+    override val outgoingInformationFlow: Sequence<InformationEdge> get() = outgoingInformationFlowMap.asSequence().map { it.value }
 
     override val isComposite: Boolean = false
 
     override fun insertIncomingEdge(edge: DependencyEdge): Boolean =
         when (edge) {
             is IsCalledBy -> {
-                incomingHappensBeforeFlow.insertEdge(edge, DependencyEdge::from)
-                incomingInformationFlow.insertEdge(edge)
+                incomingHappensBeforeFlowMap.insertEdge(edge, DependencyEdge::from)
+                incomingInformationFlowMap.insertEdge(edge, DependencyEdge::from)
             }
-            is InformationEdge -> incomingInformationFlow.insertEdge(edge)
+            is InformationEdge -> incomingInformationFlowMap.insertEdge(edge, DependencyEdge::from)
             else -> super.insertIncomingEdge(edge)
         }
 
     override fun removeIncomingEdge(edge: DependencyEdge): Boolean =
         when (edge) {
             is IsCalledBy -> {
-                incomingHappensBeforeFlow.removeEdge(edge, DependencyEdge::from)
-                incomingInformationFlow.removeEdge(edge)
+                incomingHappensBeforeFlowMap.removeEdge(edge, DependencyEdge::from)
+                incomingInformationFlowMap.removeEdge(edge, DependencyEdge::from)
             }
-            is InformationEdge -> incomingInformationFlow.removeEdge(edge)
+            is InformationEdge -> incomingInformationFlowMap.removeEdge(edge, DependencyEdge::from)
             else -> super.removeIncomingEdge(edge)
+        }
+
+    override fun insertOutgoingEdge(edge: DependencyEdge): Boolean =
+        when (edge) {
+            is IsCalledBy -> {
+                outgoingHappensBeforeFlowMap.insertEdge(edge, DependencyEdge::to)
+                outgoingInformationFlowMap.insertEdge(edge, DependencyEdge::to)
+            }
+            is InformationEdge -> outgoingInformationFlowMap.insertEdge(edge, DependencyEdge::to)
+            else -> super.insertOutgoingEdge(edge)
+        }
+
+    override fun removeOutgoingEdge(edge: DependencyEdge): Boolean =
+        when (edge) {
+            is IsCalledBy -> {
+                outgoingHappensBeforeFlowMap.removeEdge(edge, DependencyEdge::to)
+                outgoingInformationFlowMap.removeEdge(edge, DependencyEdge::to)
+            }
+            is InformationEdge -> outgoingInformationFlowMap.removeEdge(edge, DependencyEdge::to)
+            else -> super.removeOutgoingEdge(edge)
         }
 
     override fun reset() {
         super.reset()
-        incomingInformationFlow.clear()
+        incomingInformationFlowMap.clear()
+        outgoingInformationFlowMap.clear()
     }
 }
 
@@ -156,12 +227,23 @@ data class CompositeNode(
 
     val enclosingEntities: Set<EnclosingEntity<*>> get() = entities.keys
 
-    private val incomingInformationFlow: MutableMap<DependencyNodeIndex, InformationFlowMap> = mutableMapOf()
+    private val incomingInformationFlowMap: MutableMap<DependencyNodeIndex, DependencyFlowMap.InformationFlowMap> = mutableMapOf()
 
-    override val informationFlow: Sequence<InformationEdge> get() = asSequence().flatMap { informationFlowInto(it) }
+    private val outgoingInformationFlowMap: MutableMap<DependencyNodeIndex, DependencyFlowMap.InformationFlowMap> = mutableMapOf()
 
-    fun informationFlowInto(index: DependencyNodeIndex): Sequence<InformationEdge> =
-        incomingInformationFlow[index]?.asSequence()?.map { it.value } ?: emptySequence()
+    override val incomingInformationFlow: Sequence<InformationEdge> get() = asSequence().flatMap { informationFlowInto(it) }
+
+    override val outgoingInformationFlow: Sequence<InformationEdge> get() = asSequence().flatMap { informationFlowFrom(it) }
+
+    fun informationFlowInto(index: DependencyNodeIndex): Sequence<InformationEdge> {
+        if (index !in this) return emptySequence()
+        return incomingInformationFlowMap[index]?.asSequence()?.map { it.value } ?: emptySequence()
+    }
+
+    fun informationFlowFrom(index: DependencyNodeIndex): Sequence<InformationEdge> {
+        if (index !in this) return emptySequence()
+        return outgoingInformationFlowMap[index]?.asSequence()?.map { it.value } ?: emptySequence()
+    }
 
     fun subgraphFlowFrom(index: DependencyNodeIndex): Sequence<HappensBeforeEdge> = subgraphFlow[index].asSequence()
 
@@ -181,49 +263,75 @@ data class CompositeNode(
     override fun insertIncomingEdge(edge: DependencyEdge): Boolean =
         when (edge) {
             is IsCalledBy -> {
-                if (edge.from !in this) incomingHappensBeforeFlow.insertEdge(edge, DependencyEdge::from)
-                incomingInformationFlow.getOrPut(edge.to) { mutableMapOf() }.insertEdge(edge)
+                if (edge.from !in this) incomingHappensBeforeFlowMap.insertEdge(edge, DependencyEdge::from)
+                incomingInformationFlowMap.getOrPut(edge.to) { DependencyFlowMap.InformationFlowMap() }
+                    .insertEdge(edge, DependencyEdge::from)
             }
-            is InformationEdge -> incomingInformationFlow.getOrPut(edge.to) { mutableMapOf() }.insertEdge(edge)
+            is InformationEdge -> incomingInformationFlowMap.getOrPut(edge.to) { DependencyFlowMap.InformationFlowMap() }
+                .insertEdge(edge, DependencyEdge::from)
             else -> super.insertIncomingEdge(edge)
         }
 
-    override fun removeIncomingEdge(edge: DependencyEdge): Boolean =
-        when (edge) {
-            is IsCalledBy -> {
-                if (edge.from !in this) incomingHappensBeforeFlow.removeEdge(edge, DependencyEdge::from)
-                incomingInformationFlow[edge.from]?.let {
-                    val result = it.removeEdge(edge)
-                    if (it.isEmpty()) incomingInformationFlow.remove(edge.from)
-                    result
-                } ?: false
-            }
-            is InformationEdge -> incomingInformationFlow[edge.from]?.let {
-                val result = it.removeEdge(edge)
-                if (it.isEmpty()) incomingInformationFlow.remove(edge.from)
-                result
-            } ?: false
-            else -> super.removeIncomingEdge(edge)
+    private inline fun removeEdge(
+        edge: DependencyEdge,
+        happensBeforeFlowMap: DependencyFlowMap.HappensBeforeFlowMap,
+        informationFlowMap: MutableMap<DependencyNodeIndex, DependencyFlowMap.InformationFlowMap>,
+        containedNode: (DependencyEdge) -> DependencyNodeIndex,
+        indexedNode: (DependencyEdge) -> DependencyNodeIndex,
+        superCall: (DependencyEdge) -> Boolean
+    ): Boolean = when (edge) {
+        is IsCalledBy -> {
+            if (indexedNode(edge) !in this) happensBeforeFlowMap.removeEdge(edge, indexedNode)
+            val flowMap = informationFlowMap[containedNode(edge)] ?: return false
+            val result = flowMap.removeEdge(edge, indexedNode)
+            if (flowMap.isEmpty()) informationFlowMap.remove(containedNode(edge))
+            result
         }
+        is InformationEdge -> {
+            val flowMap = informationFlowMap[containedNode(edge)] ?: return false
+            val result = flowMap.removeEdge(edge, indexedNode)
+            if (flowMap.isEmpty()) informationFlowMap.remove(containedNode(edge))
+            result
+        }
+        else -> superCall(edge)
+    }
+
+    override fun removeIncomingEdge(edge: DependencyEdge): Boolean = removeEdge(
+        edge = edge,
+        happensBeforeFlowMap = incomingHappensBeforeFlowMap,
+        informationFlowMap = incomingInformationFlowMap,
+        containedNode = DependencyEdge::to,
+        indexedNode = DependencyEdge::from,
+        superCall = { super.removeIncomingEdge(it) }
+    )
 
     override fun insertOutgoingEdge(edge: DependencyEdge): Boolean =
         when (edge) {
-            is IsCalledBy if edge.to !in this -> outgoingHappensBeforeFlow.insertEdge(edge, DependencyEdge::to)
-            is HappensBeforeEdge -> outgoingHappensBeforeFlow.insertEdge(edge, DependencyEdge::to)
-            else -> false
+            is IsCalledBy -> {
+                if (edge.to !in this) outgoingHappensBeforeFlowMap.insertEdge(edge, DependencyEdge::to)
+                outgoingInformationFlowMap.getOrPut(edge.from) { DependencyFlowMap.InformationFlowMap() }
+                    .insertEdge(edge, DependencyEdge::to)
+            }
+            is InformationEdge -> outgoingInformationFlowMap.getOrPut(edge.from) { DependencyFlowMap.InformationFlowMap() }
+                .insertEdge(edge, DependencyEdge::to)
+            else -> super.insertOutgoingEdge(edge)
         }
 
-    override fun removeOutgoingEdge(edge: DependencyEdge): Boolean =
-        when (edge) {
-            is IsCalledBy if edge.to !in this -> outgoingHappensBeforeFlow.removeEdge(edge, DependencyEdge::to)
-            is HappensBeforeEdge -> outgoingHappensBeforeFlow.removeEdge(edge, DependencyEdge::to)
-            else -> false
-        }
+    override fun removeOutgoingEdge(edge: DependencyEdge): Boolean = removeEdge(
+        edge = edge,
+        happensBeforeFlowMap = outgoingHappensBeforeFlowMap,
+        informationFlowMap = outgoingInformationFlowMap,
+        containedNode = DependencyEdge::from,
+        indexedNode = DependencyEdge::to,
+        superCall = { super.removeOutgoingEdge(it) }
+    )
 
     override fun reset() {
         super.reset()
-        incomingInformationFlow.forEach { it.value.clear() }
-        incomingInformationFlow.clear()
+        incomingInformationFlowMap.forEach { it.value.clear() }
+        incomingInformationFlowMap.clear()
+        outgoingInformationFlowMap.forEach { it.value.clear() }
+        outgoingInformationFlowMap.clear()
     }
 
     companion object {
@@ -233,6 +341,26 @@ data class CompositeNode(
                 start = this@subgraphFlowDescendants,
                 predicate = { it in cycle },
                 neighbours = { cycle.subgraphFlowFrom(it).map(DependencyEdge::to) }
+            )
+
+        context(cycle: CompositeNode)
+        inline fun DependencyNodeIndex.cycleInformationAncestors(
+            crossinline predicate: (DependencyNodeIndex) -> Boolean = { true }
+        ): Sequence<DependencyNodeIndex> =
+            TraversalOrder.PreOrder.traverse(
+                start = this@cycleInformationAncestors,
+                predicate = { it in cycle && predicate(it) },
+                neighbours = { cycle.informationFlowInto(it).map(DependencyEdge::from) }
+            )
+
+        context(cycle: CompositeNode)
+        inline fun DependencyNodeIndex.cycleInformationDescendants(
+            crossinline predicate: (DependencyNodeIndex) -> Boolean = { true }
+        ): Sequence<DependencyNodeIndex> =
+            TraversalOrder.PreOrder.traverse(
+                start = this@cycleInformationDescendants,
+                predicate = { it in cycle && predicate(it) },
+                neighbours = { cycle.informationFlowFrom(it).map(DependencyEdge::to) }
             )
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.dependencies
 
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity
+import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.asClassEntity
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.asEntity
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.isNotPrivate
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.parentEnclosingEntityOrSelf
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -54,7 +56,7 @@ sealed interface InitializationCycleAccessResult {
 
     data class InaccessibleEntityAccess(val entity: EnclosingEntity<*>, val node: AccessibleIndex) : ReportedAndPoisoning()
 
-    data class DeadlockInducingConstructorCall(val node: FunctionIndex.Constructor) : Reported
+    data class DeadlockInducingConstructorCall(val node: ConstructorLikeIndex<*>) : Reported
 
     data object PropagatesTransitiveDependencies : InitializationCycleAccessResult
 }
@@ -71,7 +73,8 @@ sealed interface DependencyNodeIndex {
                 is EndStaticInitializationIndex<*> -> enclosingEntity
                 is PropertyIndex -> enclosingEntity
                 is AnonymousInitializerIndex -> enclosingEntity
-                is FunctionIndex<*> -> lazilyInitialized
+                is ConstructorLikeIndex<*> -> lazilyInitialized
+                is FunctionIndex<*> -> lazilyInitialized?.parentEnclosingEntityOrSelf
                 else -> null
             }
     }
@@ -80,7 +83,7 @@ sealed interface DependencyNodeIndex {
 sealed interface AccessibleIndex : DependencyNodeIndex {
     val lazilyInitialized: EnclosingEntity<*>?
 
-    context(accessingEntity: EnclosingEntity<*>?, cycle: CompositeNode?)
+    context(_: EnclosingEntity<*>?, _: Set<EnclosingEntity<*>>)
     val accessAnalysisResult: InitializationCycleAccessResult? get() = null
 }
 
@@ -106,7 +109,7 @@ data class PropertyIndex(
     override val lazilyInitialized: EnclosingEntity<*>? = enclosingEntity?.parentEnclosingEntityOrSelf
         .takeIf { !isConst && !symbol.isPrivate }
 
-    context(_: EnclosingEntity<*>?, _: CompositeNode?)
+    context(_: EnclosingEntity<*>?, _: Set<EnclosingEntity<*>>)
     override val accessAnalysisResult: InitializationCycleAccessResult?
         get() = when {
             !isConst && hasInitializer && !hasFunctionType -> InitializationCycleAccessResult.UninitializedPropertyAccess(this)
@@ -143,11 +146,27 @@ data class AnonymousInitializerIndex(
     override fun toString(): String = "${symbol.owner.parentClassOrNull?.classId?.relativeClassName?.let { "$it." } ?: ""}<init_block>"
 }
 
-sealed class FunctionIndex<D : IrFunction> : DeclarationIndex<D>, AccessibleIndex {
-    abstract override val symbol: IrBindableSymbol<*, D>
+sealed interface FunctionLikeIndex<D : IrDeclarationWithName> : DeclarationIndex<D>, AccessibleIndex {
+    context(_: EnclosingEntity<*>?, _: Set<EnclosingEntity<*>>)
+    override val accessAnalysisResult: InitializationCycleAccessResult? get() = InitializationCycleAccessResult.PropagatesTransitiveDependencies
+}
 
-    context(enclosingEntity: EnclosingEntity<*>?, cycle: CompositeNode?)
-    override val accessAnalysisResult: InitializationCycleAccessResult get() = InitializationCycleAccessResult.PropagatesTransitiveDependencies
+sealed interface ConstructorLikeIndex<D : IrDeclarationWithName> : FunctionLikeIndex<D> {
+
+    val className: FqName
+
+    context(accessingEntity: EnclosingEntity<*>?, mutuallyDependentEntities: Set<EnclosingEntity<*>>)
+    override val accessAnalysisResult: InitializationCycleAccessResult
+        get() = when {
+            lazilyInitialized?.let { accessingEntity?.parentEnclosingEntityOrSelf != it && it in mutuallyDependentEntities && it.isNotPrivate } == true -> {
+                InitializationCycleAccessResult.DeadlockInducingConstructorCall(this)
+            }
+            else -> InitializationCycleAccessResult.PropagatesTransitiveDependencies
+        }
+}
+
+sealed class FunctionIndex<D : IrFunction> : FunctionLikeIndex<D> {
+    abstract override val symbol: IrBindableSymbol<*, D>
 
     override fun toString(): String =
         "${symbol.owner.callableId.classId?.relativeClassName?.asString() ?: ""}.${symbol.owner.name.asString()}()"
@@ -157,21 +176,12 @@ sealed class FunctionIndex<D : IrFunction> : DeclarationIndex<D>, AccessibleInde
         override val lazilyInitialized: EnclosingEntity<*>? = null,
     ) : FunctionIndex<IrSimpleFunction>()
 
-    data class Constructor(override val symbol: IrConstructorSymbol) : FunctionIndex<IrConstructor>() {
-
+    data class Constructor(override val symbol: IrConstructorSymbol) : FunctionIndex<IrConstructor>(), ConstructorLikeIndex<IrConstructor> {
         override val lazilyInitialized: EnclosingEntity<*>? = symbol.owner.takeIf { it.isPrimary }
-            ?.parentClassOrNull?.symbol?.asEntity(true)
+            ?.parentClassOrNull?.symbol?.asClassEntity()
 
-        context(accessingEntity: EnclosingEntity<*>?, cycle: CompositeNode?)
-        override val accessAnalysisResult: InitializationCycleAccessResult
-            get() {
-                return when {
-                    lazilyInitialized?.let { accessingEntity?.parentEnclosingEntityOrSelf != it && /*it in cycle &&*/ it.isNotPrivate } == true -> {
-                        InitializationCycleAccessResult.DeadlockInducingConstructorCall(this)
-                    }
-                    else -> InitializationCycleAccessResult.PropagatesTransitiveDependencies
-                }
-            }
+        override val className: FqName =
+            symbol.owner.parentClassOrNull?.classId?.relativeClassName ?: FqName.topLevel(symbol.owner.name)
     }
 
     data class MemberFunction(
@@ -191,12 +201,15 @@ data class DefaultedFunctionIndex<D : IrFunction>(
 ) : FunctionIndex<D>() {
     override val symbol: IrBindableSymbol<*, D> get() = functionIndex.symbol
 
-    // It is redundant to create another edge from the lazily initialized entity of the original function node to this node,
-    // the cycle is already subsumed by the original function node
+    // It is redundant to create another edge from the lazily initialized entity of the original function node to this node
+    // as the cycle is already subsumed by the original function node (if applicable)
     override val lazilyInitialized: EnclosingEntity<*>? = null
+}
 
-    context(_: EnclosingEntity<*>?, _: CompositeNode?)
-    override val accessAnalysisResult: InitializationCycleAccessResult get() = functionIndex.accessAnalysisResult
+data class FakeInitializedInterfaceConstructorIndex(override val symbol: IrClassSymbol) : ConstructorLikeIndex<IrClass> {
+    override val lazilyInitialized: EnclosingEntity<*> = symbol.asClassEntity()
+
+    override val className: FqName = symbol.owner.classId?.relativeClassName ?: FqName.topLevel(symbol.owner.name)
 }
 
 sealed class BeginStaticInitializationIndex<D : IrSymbolOwner> : DependencyNodeIndex {
@@ -224,7 +237,7 @@ data class QualifierIndex(
 
     override val lazilyInitialized: EnclosingEntity<*>? = enclosingEntity.takeIf { it.isNotPrivate }?.parentEnclosingEntityOrSelf
 
-    context(_: EnclosingEntity<*>?, _: CompositeNode?)
+    context(_: EnclosingEntity<*>?, _: Set<EnclosingEntity<*>>)
     override val accessAnalysisResult: InitializationCycleAccessResult get() = InitializationCycleAccessResult.PropagatesTransitiveDependencies
 }
 
@@ -234,7 +247,7 @@ data class EnumEntryIndex(
 
     override val lazilyInitialized: EnclosingEntity<*>? = enclosingEntity.parentEnclosingEntity.takeIf { it.isNotPrivate }
 
-    context(_: EnclosingEntity<*>?, _: CompositeNode?)
+    context(_: EnclosingEntity<*>?, _: Set<EnclosingEntity<*>>)
     override val accessAnalysisResult: InitializationCycleAccessResult
         get() = InitializationCycleAccessResult.UninitializedEnumEntryAccess(this)
 }

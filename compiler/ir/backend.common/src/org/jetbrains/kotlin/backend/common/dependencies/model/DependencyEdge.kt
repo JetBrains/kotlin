@@ -63,11 +63,11 @@ data class IsReferencedBy(
 }
 
 data class IsCalledBy(
-    override val from: FunctionIndex<*>,
+    override val from: FunctionLikeIndex<*>,
     override val to: DependencyNodeIndex,
     override val accessSources: Set<IrElement> = emptySet(),
 ) : InformationEdge, HappensBeforeEdge {
-    constructor(from: FunctionIndex<*>, to: DependencyNodeIndex, accessSource: IrElement?) : this(
+    constructor(from: FunctionLikeIndex<*>, to: DependencyNodeIndex, accessSource: IrElement?) : this(
         from = from,
         to = to,
         accessSources = SmartSet.create<IrElement>().also { it.addIfNotNull(accessSource) }
