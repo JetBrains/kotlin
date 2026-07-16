@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -26,7 +25,6 @@ import java.lang.ref.SoftReference
 
 open class KlibMetadataDeserializedPackageFragment(
     fqName: FqName,
-    private val library: KotlinLibrary,
     private val metadata: KlibMetadataComponent,
     storageManager: StorageManager,
     module: ModuleDescriptor,
@@ -50,14 +48,11 @@ open class KlibMetadataDeserializedPackageFragment(
     }
 
     override val proto: ProtoBuf.PackageFragment
-        get() {
-            return protoForNames
-        }
+        get() = protoForNames
 }
 
 class BuiltInKlibMetadataDeserializedPackageFragment(
     fqName: FqName,
-    library: KotlinLibrary,
     metadata: KlibMetadataComponent,
     storageManager: StorageManager,
     module: ModuleDescriptor,
@@ -65,7 +60,6 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
     containerSource: KlibDeserializedContainerSource
 ) : KlibMetadataDeserializedPackageFragment(
     fqName = fqName,
-    library = library,
     metadata = metadata,
     storageManager = storageManager,
     module = module,
