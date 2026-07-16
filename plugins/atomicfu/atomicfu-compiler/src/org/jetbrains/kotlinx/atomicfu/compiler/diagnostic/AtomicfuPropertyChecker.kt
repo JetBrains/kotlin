@@ -14,11 +14,16 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.text
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicfuStandardClassIds
 
 private const val KOTLINX_ATOMICFU = "kotlinx.atomicfu"
 private const val PUBLISHED_API = "kotlin.PublishedApi"
@@ -37,6 +42,14 @@ object AtomicfuPropertyChecker: FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         if (!declaration.isKotlinxAtomicfu()) return
+        if (declaration.isLocal) {
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.ATOMIC_LOCALS_ARE_FORBIDDEN,
+                declaration.source.text.toString()
+            )
+            return
+        }
         val containingClassSymbol = declaration.dispatchReceiverType?.toClassLikeSymbol()
         if (declaration.visibility.isPublicAPI &&
             (containingClassSymbol == null || containingClassSymbol.isPublic())) {

@@ -1,3 +1,5 @@
+/ErrorProneAtomicRefPrimitives.kt:9:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val a = atomic<Int>(127)'`.
+
 /ErrorProneAtomicRefPrimitives.kt:10:5: warning: This call may have inconsistent results because 'AtomicRef' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
 
 /ErrorProneAtomicRefPrimitives.kt:10:21: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
@@ -9,6 +11,10 @@
 /ErrorProneAtomicRefPrimitives.kt:11:21: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
 
 /ErrorProneAtomicRefPrimitives.kt:11:26: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
+/ErrorProneAtomicRefPrimitives.kt:13:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val aa: AtomicRef<Int>'`.
+
+/ErrorProneAtomicRefPrimitives.kt:20:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val aa: AtomicfuAtomicReference<Int>'`.
 
 /ErrorProneAtomicRefPrimitives.kt:22:5: warning: This call may have inconsistent results because 'AtomicRef' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
 

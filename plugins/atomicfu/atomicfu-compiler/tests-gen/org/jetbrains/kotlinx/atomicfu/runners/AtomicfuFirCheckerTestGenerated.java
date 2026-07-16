@@ -58,6 +58,12 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   }
 
   @Test
+  @TestMetadata("IllegalContextForAtomics.kt")
+  public void testIllegalContextForAtomics() {
+    run("IllegalContextForAtomics.kt");
+  }
+
+  @Test
   @TestMetadata("IllegalFunctions.kt")
   public void testIllegalFunctions() {
     run("IllegalFunctions.kt");
