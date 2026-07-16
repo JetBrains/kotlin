@@ -48,4 +48,17 @@ class CrossPlatformNonIncrementalCompilationTest : BaseCompilationTest() {
             }
         }
     }
+
+    @DisplayName("A missing classpath dependency fails the compilation on all platforms")
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun missingClasspathDependencyFailsCompilationAllPlatforms(project: ProjectCreator) {
+        project {
+            // module-2 references `Bar` from module-1; without the dependency the reference is unresolved.
+            val consumer = module("basic-multimodule-project/module-2")
+            consumer.compile {
+                expectFail()
+                assertLogContainsPatterns(LogLevel.ERROR, ".*[Uu]nresolved reference.*Bar.*".toRegex())
+            }
+        }
+    }
 }
