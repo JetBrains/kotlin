@@ -61,6 +61,11 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         flow.backwardsAliasMap[underlyingVariable] = flow.backwardsAliasMap[underlyingVariable]?.adding(alias) ?: persistentSetOf(alias)
     }
 
+    fun addOneWayAlias(flow: MutableFlow, alias: RealVariable, underlyingVariable: RealVariable) {
+        if (underlyingVariable == alias) return // x = x
+        flow.oneWayAliasMap[underlyingVariable] = flow.oneWayAliasMap[underlyingVariable]?.adding(alias) ?: persistentSetOf(alias)
+    }
+
     fun addTypeStatement(flow: MutableFlow, statement: TypeStatement): TypeStatement? {
         if (statement.isEmpty) return null
         val variable = statement.variable
@@ -234,6 +239,8 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                 assert(variable !in backwardsAliasMap)
                 assert(variable !in implications)
                 assert(variable !in approvedTypeStatements)
+                assert(variable !in oneWayAliasMap)
+                assert(oneWayAliasMap.none { (value) -> variable in value })
             }
             val siblings = backwardsAliasMap.getValue(original)
             if (siblings.size > 1) {
@@ -245,18 +252,36 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                 addLocalVariableAlias(this, replacement, original)
             }
         } else {
-            val aliases = backwardsAliasMap.remove(variable)
+            val backwardsAliases = backwardsAliasMap.remove(variable)
             // If asked to remove the variable but there are aliases, replace with a new representative for the alias group instead.
-            val replacementOrNext = replacement ?: aliases?.first()
+            val replacementOrNext = replacement ?: backwardsAliases?.first()
             variableStorage.replaceReceiverReferencesInMembers(variable, replacementOrNext) { old, new -> replaceVariable(old, new) }
             implications.replaceVariable(variable, replacementOrNext)
             approvedTypeStatements.replaceVariable(variable, replacementOrNext)
-            if (aliases != null && replacementOrNext != null) {
+
+            if (backwardsAliases != null && replacementOrNext != null) {
                 directAliasMap -= replacementOrNext
-                val withoutSelf = aliases - replacementOrNext
+                val withoutSelf = backwardsAliases - replacementOrNext
                 if (withoutSelf.isNotEmpty()) {
                     withoutSelf.associateWithTo(directAliasMap) { replacementOrNext }
                     backwardsAliasMap[replacementOrNext] = backwardsAliasMap[replacementOrNext]?.addingAll(withoutSelf) ?: withoutSelf
+                }
+            }
+
+            val oneWayAliases = oneWayAliasMap.remove(variable)
+            if (oneWayAliases != null && replacementOrNext != null) {
+                val withoutSelf = oneWayAliases - replacementOrNext
+                if (withoutSelf.isNotEmpty()) {
+                    oneWayAliasMap[replacementOrNext] = oneWayAliasMap[replacementOrNext]?.addingAll(withoutSelf) ?: withoutSelf
+                }
+            }
+            for ([anotherVariable, aliases] in oneWayAliasMap) {
+                if (variable in aliases) {
+                    val withoutSelf = (aliases - variable)
+                    when {
+                        replacementOrNext != null -> oneWayAliasMap[anotherVariable] = withoutSelf.adding(replacementOrNext)
+                        withoutSelf.isNotEmpty() -> oneWayAliasMap[anotherVariable] = withoutSelf
+                    }
                 }
             }
         }
