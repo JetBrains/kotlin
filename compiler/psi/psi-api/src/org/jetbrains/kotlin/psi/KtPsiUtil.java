@@ -824,9 +824,9 @@ public class KtPsiUtil {
     }
 
     /**
-     * Traverses the subtree of {@code root}, collecting the outermost descendants that satisfy {@code predicate} (not
-     * descending into a matching element), and returns the {@code first} or last such element, or {@code null} if there
-     * is none.
+     * Traverses {@code root} and its subtree, collecting the outermost elements that satisfy {@code predicate} without
+     * descending into a match. Returns the first or last match in depth-first traversal order, as selected by
+     * {@code first}, or {@code null} if there is none. If {@code root} matches, it is the only result.
      */
     @Nullable
     public static KtElement getOutermostDescendantElement(

@@ -289,8 +289,8 @@ private fun KtAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<KtAnn
 // -------- Recursive tree visiting --------------------------------------------------------------------------------------------------------
 
 /**
- * Returns a recursive visitor that calls [block] on each descendant of type [T]. Calls happen in DFS-exit order, so deeper nodes are
- * visited before their ancestors.
+ * Returns a recursive visitor that calls [block] on each visited element of type [T], including the element passed to `accept`. Calls
+ * happen in DFS-exit order, so deeper nodes are visited before their ancestors.
  */
 inline fun <reified T : KtElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): KtVisitorVoid {
     return object : KtTreeVisitorVoid() {
@@ -304,7 +304,8 @@ inline fun <reified T : KtElement> forEachDescendantOfTypeVisitor(noinline block
 }
 
 /**
- * Returns a recursive visitor that maps each descendant of type [T] via [map] and adds all results to [accumulator].
+ * Returns a recursive visitor that maps each visited element of type [T], including the element passed to `accept`, and adds all results
+ * to [accumulator] in DFS-exit order.
  */
 inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
     accumulator: MutableCollection<R>,

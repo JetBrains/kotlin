@@ -279,7 +279,7 @@ inline fun <reified T : PsiElement> PsiElement.getTopmostParentOfType(): T? {
     return PsiTreeUtil.getTopmostParentOfType(this, T::class.java)
 }
 
-/** Returns the first descendant of type [T], or `null` if there is none. */
+/** Returns the first direct child of type [T], or `null` if there is none. */
 inline fun <reified T : PsiElement> PsiElement.getChildOfType(): T? {
     return PsiTreeUtil.getChildOfType(this, T::class.java)
 }
@@ -331,16 +331,18 @@ fun <T : PsiElement> T.getIfChildIsInBranches(element: PsiElement, branches: T.(
 }
 
 /**
- * Returns the nearest ancestor of type [T] for which this element lies within the subtree selected by [branch], or `null`. When [strict] is
- * `false`, this element itself is also considered.
+ * Checks the nearest element of type [T] and returns it if this element lies within the subtree selected by [branch]. If that candidate's
+ * branch does not contain this element, returns `null` without checking higher ancestors. When [strict] is `false`, this element itself is
+ * also considered as the candidate.
  */
 inline fun <reified T : PsiElement> PsiElement.getParentOfTypeAndBranch(strict: Boolean = false, noinline branch: T.() -> PsiElement?): T? {
     return getParentOfType<T>(strict)?.getIfChildIsInBranch(this, branch)
 }
 
 /**
- * Returns the nearest ancestor of type [T] for which this element lies within any subtree selected by [branches], or `null`. When [strict]
- * is `false`, this element itself is also considered.
+ * Checks the nearest element of type [T] and returns it if this element lies within any subtree selected by [branches]. If none of that
+ * candidate's branches contain this element, returns `null` without checking higher ancestors. When [strict] is `false`, this element
+ * itself is also considered as the candidate.
  */
 inline fun <reified T : PsiElement> PsiElement.getParentOfTypeAndBranches(
     strict: Boolean = false,
@@ -400,14 +402,14 @@ fun PsiElement.getExplicitReceiverOfDotQualified(): PsiElement? =
 
 // -------------------- Recursive tree visiting --------------------------------------------------------------------------------------------
 
-/** Applies [action] to every descendant of type [T], in post-order. */
+/** Applies [action] to this element and every descendant of type [T], in post-order (children before parents). */
 inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline action: (T) -> Unit) {
     forEachDescendantOfType({ true }, action)
 }
 
 /**
- * Applies [action] to every descendant of type [T], in post-order, descending into a subtree only when [canGoInside] returns `true` for
- * its root.
+ * Applies [action] to this element and every descendant of type [T], in post-order. [canGoInside] controls whether each visited element's
+ * children are traversed; the element itself is still passed to [action] when it is a [T], even if [canGoInside] returns `false` for it.
  */
 inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
@@ -427,14 +429,14 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
     })
 }
 
-/** Applies [action] to every descendant of type [T], in pre-order (parent before children). */
+/** Applies [action] to this element and every descendant of type [T], in pre-order (parents before children). */
 inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfTypeInPreorder(noinline action: (T) -> Unit) {
     forEachDescendantOfTypeInPreorder({ true }, action)
 }
 
 /**
- * Applies [action] to every descendant of type [T], in pre-order, descending into a subtree only when [canGoInside] returns `true` for
- * its root.
+ * Applies [action] to this element and every descendant of type [T], in pre-order. [canGoInside] controls whether each visited element's
+ * children are traversed; the element itself is still passed to [action] when it is a [T], even if [canGoInside] returns `false` for it.
  */
 inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfTypeInPreorder(
     crossinline canGoInside: (PsiElement) -> Boolean,
@@ -454,12 +456,15 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfTypeInPreorder
     })
 }
 
-/** Returns `true` if any descendant of type [T] satisfies [predicate]. */
+/** Returns `true` if this element or any descendant of type [T] satisfies [predicate]. */
 inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean = { true }): Boolean {
     return findDescendantOfType(predicate) != null
 }
 
-/** Returns `true` if any descendant of type [T] satisfies [predicate], descending only where [canGoInside] allows. */
+/**
+ * Returns `true` if this element or any descendant of type [T] satisfies [predicate]. [canGoInside] controls traversal into children but
+ * does not prevent the current element from being tested.
+ */
 inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
     noinline predicate: (T) -> Boolean = { true }
@@ -467,13 +472,17 @@ inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(
     return findDescendantOfType(canGoInside, predicate) != null
 }
 
-/** Returns the first descendant of type [T] satisfying [predicate], or `null` if there is none. */
+/**
+ * Returns the first element of type [T] in a pre-order traversal of this element and its descendants that satisfies [predicate], or `null`
+ * if there is none.
+ */
 inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinline predicate: (T) -> Boolean = { true }): T? {
     return findDescendantOfType({ true }, predicate)
 }
 
 /**
- * Returns the first descendant of type [T] satisfying [predicate], descending only where [canGoInside] allows, or `null` if there is none.
+ * Returns the first element of type [T] in a pre-order traversal of this element and its descendants that satisfies [predicate], or
+ * `null`. [canGoInside] controls traversal into children but does not prevent the current element from being tested.
  */
 inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
@@ -500,6 +509,8 @@ inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
 /**
  * Throws if this element belongs to a compiled file that is backed by a stub. Loading decompiled text is slow and should be avoided; stubs
  * should be used instead. Called by the descendant-traversal helpers as a guard.
+ *
+ * @throws IllegalStateException if this element belongs to a compiled, stub-backed file
  */
 fun PsiElement.checkDecompiledText() {
     val file = containingFile
@@ -508,18 +519,24 @@ fun PsiElement.checkDecompiledText() {
     }
 }
 
-/** Collects all descendants of type [T] satisfying [predicate] into a list. */
+/** Collects this element and all descendants of type [T] satisfying [predicate] into a list in post-order. */
 inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
     return collectDescendantsOfType({ true }, predicate)
 }
 
-/** Collects all descendants of type [T] satisfying [predicate] into a list, descending only where [canGoInside] allows. */
+/**
+ * Collects this element and all descendants of type [T] satisfying [predicate] into a list in post-order. [canGoInside] controls traversal
+ * into children but does not prevent the current element from being collected.
+ */
 inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
     noinline predicate: (T) -> Boolean = { true }
 ): List<T> = collectDescendantsOfTypeTo(ArrayList(), canGoInside, predicate)
 
-/** Collects all descendants of type [T] satisfying [predicate] into [to], descending only where [canGoInside] allows. */
+/**
+ * Adds this element and all descendants of type [T] satisfying [predicate] to [to] in post-order. [canGoInside] controls traversal into
+ * children but does not prevent the current element from being added.
+ */
 inline fun <reified T : PsiElement, C : MutableCollection<T>> PsiElement.collectDescendantsOfTypeTo(
     to: C,
     crossinline canGoInside: (PsiElement) -> Boolean,
