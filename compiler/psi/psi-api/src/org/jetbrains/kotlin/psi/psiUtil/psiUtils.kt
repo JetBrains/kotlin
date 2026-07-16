@@ -334,6 +334,25 @@ fun <T : PsiElement> T.getIfChildIsInBranches(element: PsiElement, branches: T.(
  * Checks the nearest element of type [T] and returns it if this element lies within the subtree selected by [branch]. If that candidate's
  * branch does not contain this element, returns `null` without checking higher ancestors. When [strict] is `false`, this element itself is
  * also considered as the candidate.
+ *
+ * ### Example:
+ *
+ * Given the PSI for:
+ *
+ * ```kotlin
+ * if (outerCondition) {
+ *     if (innerCondition) {
+ *         handleInner()
+ *     } else {
+ *         handleFallback()
+ *     }
+ * }
+ * ```
+ *
+ * If `fallbackCall` is the [KtCallExpression] for `handleFallback()`,
+ * `fallbackCall.getParentOfTypeAndBranch<KtIfExpression> { getThen() }` returns `null`. The nearest [KtIfExpression] is the inner one, and
+ * `handleFallback()` is in its `else` branch. The search does not continue to the outer `if`, despite the call also being inside the outer
+ * `then` branch.
  */
 inline fun <reified T : PsiElement> PsiElement.getParentOfTypeAndBranch(strict: Boolean = false, noinline branch: T.() -> PsiElement?): T? {
     return getParentOfType<T>(strict)?.getIfChildIsInBranch(this, branch)
@@ -410,6 +429,40 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline 
 /**
  * Applies [action] to this element and every descendant of type [T], in post-order. [canGoInside] controls whether each visited element's
  * children are traversed; the element itself is still passed to [action] when it is a [T], even if [canGoInside] returns `false` for it.
+ *
+ * ### Example:
+ *
+ * Given `outerClass` representing:
+ *
+ * ```kotlin
+ * class Outer {
+ *     class Inner
+ * }
+ * ```
+ *
+ * The receiver participates in both traversal orders:
+ *
+ * ```kotlin
+ * val postOrder = mutableListOf<String>()
+ * outerClass.forEachDescendantOfType<KtClass> { postOrder += it.name.orEmpty() }
+ * check(postOrder == listOf("Inner", "Outer"))
+ *
+ * val preOrder = mutableListOf<String>()
+ * outerClass.forEachDescendantOfTypeInPreorder<KtClass> { preOrder += it.name.orEmpty() }
+ * check(preOrder == listOf("Outer", "Inner"))
+ * ```
+ *
+ * Returning `false` from [canGoInside] prevents traversal into the element's children, but does not prevent the element itself from being
+ * passed to [action]:
+ *
+ * ```kotlin
+ * val pruned = mutableListOf<String>()
+ * outerClass.forEachDescendantOfType<KtClass>(
+ *     canGoInside = { it !== outerClass },
+ *     action = { pruned += it.name.orEmpty() },
+ * )
+ * check(pruned == listOf("Outer"))
+ * ```
  */
 inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
