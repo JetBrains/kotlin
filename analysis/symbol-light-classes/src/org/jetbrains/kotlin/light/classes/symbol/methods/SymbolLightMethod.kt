@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
-import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -32,6 +30,7 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSuspendContinuationParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightValueParameter
+import org.jetbrains.kotlin.light.classes.symbol.sourceRealPsi
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -68,8 +67,8 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         containingClass = containingClass,
         methodIndex = methodIndex,
         valueParameterPickMask = valueParameterPickMask,
-        functionDeclaration = functionSymbol.sourcePsiSafe(),
-        kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
+        functionDeclaration = functionSymbol.sourceRealPsi(),
+        kotlinOrigin = functionSymbol.sourceRealPsi() ?: lightMemberOrigin?.originalElement ?: (functionSymbol.realPsi as? KtDeclaration),
         isJvmExposedBoxed = isJvmExposedBoxed,
     )
 

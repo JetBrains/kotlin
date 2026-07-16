@@ -67,9 +67,9 @@ internal class SymbolLightAccessorMethod private constructor(
         containingClass,
         methodIndex = if (propertyAccessorSymbol is KaPropertyGetterSymbol) METHOD_INDEX_FOR_GETTER else METHOD_INDEX_FOR_SETTER,
         isGetter = propertyAccessorSymbol is KaPropertyGetterSymbol,
-        propertyAccessorDeclaration = propertyAccessorSymbol.sourcePsiSafe(),
+        propertyAccessorDeclaration = propertyAccessorSymbol.sourceRealPsi(),
         propertyAccessorSymbolPointer = propertyAccessorSymbol.createPointer(),
-        containingPropertyDeclaration = containingPropertySymbol.sourcePsiSafe(),
+        containingPropertyDeclaration = containingPropertySymbol.sourceRealPsi(),
         containingPropertySymbolPointer = containingPropertySymbol.createPointer(),
         isTopLevel = isTopLevel,
         suppressStatic = suppressStatic,
@@ -547,7 +547,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
         context(context: Context)
         private fun getLightMemberOriginForAccessor(accessor: KaPropertyAccessorSymbol): LightMemberOriginForDeclaration? {
-            val originalElement = property.psiSafe<KtDeclaration>() ?: return null
+            val originalElement = (property.realPsi as? KtDeclaration) ?: return null
 
             return when (property.origin) {
                 KaSymbolOrigin.SOURCE -> {
@@ -574,7 +574,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     LightMemberOriginForDeclaration(
                         originalElement = originalElement,
                         originKind = JvmDeclarationOriginKind.OTHER,
-                        auxiliaryOriginalElement = accessor.sourcePsiSafe<KtDeclaration>() ?: sourcePsiFromProperty()
+                        auxiliaryOriginalElement = accessor.sourceRealPsi<KtDeclaration>() ?: sourcePsiFromProperty()
                     )
                 }
 

@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.light.classes.symbol.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
+import org.jetbrains.kotlin.light.classes.symbol.sourceRealPsi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -500,7 +501,9 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
 
     if (property.origin.cannotHasBackingField() || property.isStatic) return false
     if (property.isLateInit || property.isDelegated || property.primaryConstructorParameter != null) return true
-    val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
+    // `anchorPsi` (rather than `realPsi`) is used deliberately: this is a best-effort syntactic heuristic that must also
+    // inspect approximate PSI (e.g. the fake source element of a script's `$$result` property) to match legacy behavior.
+    val hasBackingFieldByPsi: Boolean? = property.anchorPsi?.hasBackingField()
     if (hasBackingFieldByPsi == false) {
         return hasBackingFieldByPsi
     }
@@ -616,7 +619,7 @@ internal fun KaSession.createInnerClasses(
     val result = SmartList<SymbolLightClassBase>()
 
     declarationContainer.staticDeclaredMemberScope.classifiers.filterIsInstance<KaNamedClassSymbol>().mapNotNullTo(result) {
-        val classOrObjectDeclaration = it.sourcePsiSafe<KtClassOrObject>()
+        val classOrObjectDeclaration = it.sourceRealPsi<KtClassOrObject>()
         if (classOrObjectDeclaration != null) {
             classOrObjectDeclaration.toLightClass() as? SymbolLightClassBase
         } else {
@@ -754,7 +757,7 @@ internal fun KaSession.hasValueClassInSignature(
 }
 
 internal fun KaSession.hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {
-    val psiDeclaration = callableSymbol.psi as? KtCallableDeclaration
+    val psiDeclaration = callableSymbol.realPsi as? KtCallableDeclaration
     val shouldCheckType = psiDeclaration == null || psiDeclaration.typeReference != null
     // Only explicitly declared types can be checked to avoid contract violations
     return shouldCheckType && typeForValueClass(callableSymbol.returnType)

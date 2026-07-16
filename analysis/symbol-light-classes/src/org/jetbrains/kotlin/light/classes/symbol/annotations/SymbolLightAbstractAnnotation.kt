@@ -79,7 +79,7 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
                     ?.valueParameters
                     ?.find { it.name.identifierOrNullIfSpecial == attributeName }
 
-                when (val psi = valueParameter?.psi) {
+                when (val psi = valueParameter?.anchorPsi) {
                     is KtParameter -> {
                         psi.defaultValue?.let { defaultValue ->
                             val annotationValue = defaultValue.evaluateAsAnnotationValue()?.toLightClassAnnotationValue(useSiteModule)

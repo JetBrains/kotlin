@@ -43,7 +43,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
         classSymbol: SType,
         manager: PsiManager,
     ) : this(
-        classOrObjectDeclaration = classSymbol.sourcePsiSafe(),
+        classOrObjectDeclaration = classSymbol.sourceRealPsi(),
         classSymbolPointer = kotlin.run {
             @Suppress("UNCHECKED_CAST")
             classSymbol.createPointer() as KaSymbolPointer<SType>

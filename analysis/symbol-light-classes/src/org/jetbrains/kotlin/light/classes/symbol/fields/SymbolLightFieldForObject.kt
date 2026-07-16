@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.*
@@ -45,7 +44,7 @@ internal class SymbolLightFieldForObject private constructor(
         containingClass = containingClass,
         name = name,
         lightMemberOrigin = lightMemberOrigin,
-        kotlinOrigin = objectSymbol.sourcePsiSafe(),
+        kotlinOrigin = objectSymbol.sourceRealPsi(),
         objectSymbolPointer = objectSymbol.createPointer(),
         isCompanion = isCompanion,
     )

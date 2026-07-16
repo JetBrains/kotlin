@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_DEFAULT_CTOR
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
+import org.jetbrains.kotlin.light.classes.symbol.sourceRealPsi
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -219,7 +219,7 @@ internal class SymbolLightConstructor private constructor(
             isJvmExposedBoxed: Boolean,
         ): KtLightMethod = noArgConstructor(
             visibility = primaryConstructor.visibility.asJavaVisibilityModifier(),
-            declaration = primaryConstructor.sourcePsiSafe(),
+            declaration = primaryConstructor.sourceRealPsi(),
             methodIndex = METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
             isJvmExposedBoxed = isJvmExposedBoxed,
             functionSymbolPointer = primaryConstructor.createPointer(),

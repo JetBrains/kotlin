@@ -36,6 +36,17 @@ internal fun <L : Any> L.invalidAccess(): Nothing =
 internal fun KaSession.getContainingSymbolsWithSelf(symbol: KaDeclarationSymbol): Sequence<KaDeclarationSymbol> =
     generateSequence(symbol) { it.containingDeclaration }
 
+/**
+ * The [realPsi][KaSymbol.realPsi] of type [T] if this symbol is declared in Kotlin or Java sources, or `null` for any other origin.
+ *
+ * Light classes must not use a decompiled/library element as their source origin, so the lookup is restricted to source origins.
+ * This is the light-classes replacement for the deprecated `KaSymbol.sourcePsiSafe`.
+ */
+internal inline fun <reified T : PsiElement> KaSymbol.sourceRealPsi(): T? {
+    if (origin != KaSymbolOrigin.SOURCE && origin != KaSymbolOrigin.JAVA_SOURCE) return null
+    return realPsi as? T
+}
+
 internal fun KaSession.mapType(
     type: KaType,
     psiContext: PsiElement,
