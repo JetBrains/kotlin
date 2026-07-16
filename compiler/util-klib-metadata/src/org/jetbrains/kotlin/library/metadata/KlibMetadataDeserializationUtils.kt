@@ -14,7 +14,10 @@ fun parsePackageFragment(packageMetadata: ByteArray): ProtoBuf.PackageFragment =
 fun parseModuleHeader(libraryMetadata: ByteArray): KlibMetadataProtoBuf.Header =
     KlibMetadataProtoBuf.Header.parseFrom(libraryMetadata, KlibMetadataSerializerProtocol.extensionRegistry)
 
-@Deprecated("Restored to keep ABI compatibility with kotlinx-benchmark Gradle plugin (KT-71414)", level = DeprecationLevel.HIDDEN)
+@Deprecated(
+    "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882.",
+    level = DeprecationLevel.HIDDEN
+)
 interface PackageAccessHandler
 
 /**
