@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.kdoc.psi.api
 
 import com.intellij.psi.PsiDocCommentBase
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 
@@ -25,7 +26,7 @@ interface KDoc : PsiDocCommentBase, KDocElement {
     /** Returns all sections of this KDoc, starting with the [default section][getDefaultSection]. */
     fun getAllSections(): List<KDocSection>
 
-    /** Returns the section with the given [name], or `null` if this KDoc has no such section. */
+    /** Returns the section named [name] (a tag's [KDocTag.getName]), or `null` if this KDoc has no such section. */
     fun findSectionByName(name: String): KDocSection?
 
     /** Returns the first section for the given block [tag], or `null` if there is none. */
