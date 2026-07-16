@@ -427,7 +427,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                         continue
                     }
 
-                    patchFilesAndAddTest(file, module, services, filesHolder, pathManager)
+                    patchFilesAndAddTest(file, module, services, filesHolder)
                 }
             }
         }
