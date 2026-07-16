@@ -7,4 +7,7 @@ compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:3:19: warning: Java type mi
 compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:4:5: warning: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'String?'.
     annotated.nullable().length
     ^^^^^^^^^^^^^^^^^^^^
+compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:4:26: warning: unused return value of 'length'.
+    annotated.nullable().length
+                         ^^^^^^
 OK

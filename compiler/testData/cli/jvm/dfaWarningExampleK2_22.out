@@ -1,2 +1,5 @@
 warning: language version 2.2 is deprecated and its support will be removed in a future version of Kotlin. Update the version to 2.3.
+compiler/testData/cli/jvm/dfaWarningExampleK2.kt:3:25: warning: unused return value of 'length'.
+        (arg as String).length
+                        ^^^^^^
 OK

@@ -988,7 +988,7 @@ with bodies.""",
         valueDescription = "{check|full|disable}",
         description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
     )
-    var returnValueChecker: String = "disable"
+    var returnValueChecker: String = "check"
         set(value) {
             checkFrozen()
             field = value

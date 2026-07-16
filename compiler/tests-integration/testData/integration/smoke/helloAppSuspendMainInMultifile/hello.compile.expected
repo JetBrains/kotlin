@@ -1,1 +1,6 @@
+ERR:
+hello.kt:25:5: warning: unused return value of 'thread'.
+    thread(isDaemon = true) {
+    ^^^^^^
+
 Return code: 0
