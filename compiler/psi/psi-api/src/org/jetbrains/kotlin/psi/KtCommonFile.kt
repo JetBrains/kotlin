@@ -110,9 +110,9 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         }
 
     /**
-     * The fully qualified name of the file's package, always computed from the PSI tree.
+     * A compatibility alias for [packageFqName] that may use the stub-based fast path despite its historical name.
      *
-     * @deprecated use [packageFqName], which also benefits from the stub-based fast path.
+     * @deprecated use [packageFqName]
      */
     @Deprecated("Use 'packageFqName' property instead", ReplaceWith("packageFqName"))
     val packageFqNameByTree: FqName
@@ -147,9 +147,9 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         }
 
     /**
-     * Whether this file is a Kotlin script, determined from the PSI tree.
+     * A compatibility alias for [isScript] that may use the stub-based fast path despite its historical name.
      *
-     * @deprecated use [isScript], which also benefits from the stub-based fast path.
+     * @deprecated use [isScript]
      */
     @Deprecated("Use 'isScript()' instead", ReplaceWith("isScript()"))
     val isScriptByTree: Boolean
@@ -314,8 +314,8 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     fun isScript(): Boolean = isScript ?: greenStub?.isScript() ?: (script != null)
 
     /**
-     * Returns `true` if this file declares top-level callables (functions or properties) or is a script, that is, if it contributes a file
-     * facade class. Expected (`expect`) declarations are not counted.
+     * Returns `true` if this file declares top-level callables (functions or properties), a type alias, or a script, that is, if it
+     * contributes a file facade class. Expected (`expect`) declarations are not counted.
      */
     fun hasTopLevelCallables(): Boolean {
         hasTopLevelCallables?.let { return it }

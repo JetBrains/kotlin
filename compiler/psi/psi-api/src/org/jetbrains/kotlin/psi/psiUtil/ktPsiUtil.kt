@@ -180,7 +180,10 @@ fun KtElement.blockExpressionsOrSingle(): Sequence<KtElement> =
 /** Returns the last statement if this expression is a block, otherwise this expression itself. */
 fun KtExpression.lastBlockStatementOrThis(): KtExpression = (this as? KtBlockExpression)?.statements?.lastOrNull() ?: this
 
-/** Returns the range of statements between the braces of this block, excluding the braces and outer whitespace. */
+/**
+ * Returns the range of direct PSI children between this block's braces after excluding outer whitespace. The range may contain comments
+ * and other non-statement elements. Returns an empty range if either brace is missing or no non-whitespace content remains.
+ */
 fun KtBlockExpression.contentRange(): PsiChildRange {
     val lBrace = this.lBrace ?: return PsiChildRange.EMPTY
     val rBrace = this.rBrace ?: return PsiChildRange.EMPTY
@@ -420,7 +423,9 @@ internal fun KtDeclaration.isImplicitlyActualDeclaration(): Boolean = when (this
 
 internal fun KtClass.allowsImplicitlyActualConstructor() = isAnnotation() || isValue() || isInline()
 
-/** Returns `true` if this declaration declares context parameters. */
+/**
+ * Returns `true` if this callable, class, or object declares at least one legacy context receiver. Named context parameters are ignored.
+ */
 fun KtElement.isContextualDeclaration(): Boolean {
     val contextReceivers = when (this) {
         is KtCallableDeclaration -> contextReceivers
@@ -749,8 +754,8 @@ fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
 }
 
 /**
- * Returns `true` if this element is an anonymous function — a `fun` expression without a name, as in `val predicate = fun(x: Int): Boolean
- * = x > 0`.
+ * Returns `true` if this element is an anonymous function, such as the `fun` expression in
+ * `val predicate = fun(x: Int): Boolean = x > 0`.
  */
 fun PsiElement.isFunctionalExpression(): Boolean = this is KtNamedFunction && nameIdentifier == null
 
@@ -996,8 +1001,8 @@ fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
 fun KtFile.getFileOrScriptDeclarations() = if (isScript()) script!!.declarations else declarations
 
 /**
- * Returns the enclosing `as`/`as?` (binary-with-type) expression that this expression is the operand of through a possibly-qualified call,
- * or `null`.
+ * Returns the `as`/`as?` expression whose left-hand side is a call with this expression as its direct child, normally its callee. The call
+ * may be the selector of a qualified expression, and the call or qualified expression may be parenthesized. Returns `null` otherwise.
  */
 fun KtExpression.getBinaryWithTypeParent(): KtBinaryExpressionWithTypeRHS? {
     val callExpression = parent as? KtCallExpression ?: return null
@@ -1042,7 +1047,10 @@ fun getTrailingCommaByElementsList(elementList: PsiElement?): PsiElement? {
 val KtNameReferenceExpression.isUnderscoreInBackticks
     get() = getReferencedName() == "`_`"
 
-/** Returns the innermost non-nullable type element by stripping any nesting of nullable types, or `null`. */
+/**
+ * Returns this type after stripping all outer [KtNullableType] layers. Returns `null` only if a nullable-type node is malformed and has no
+ * inner type.
+ */
 tailrec fun KtTypeElement.unwrapNullability(): KtTypeElement? {
     return when (this) {
         is KtNullableType -> this.innerType?.unwrapNullability()

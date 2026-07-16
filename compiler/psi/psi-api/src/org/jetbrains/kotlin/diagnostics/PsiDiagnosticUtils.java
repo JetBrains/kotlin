@@ -85,8 +85,9 @@ public class PsiDiagnosticUtils {
     }
 
     /**
-     * Converts a character {@code offset} within {@code document} to a {@link LineAndColumn}, or a position with an
-     * unknown line (line {@code -1}) if {@code document} is {@code null} or empty.
+     * Converts a character {@code offset} within {@code document} to a {@link LineAndColumn}. If {@code document} is
+     * {@code null} or empty, the line is {@code -1} and the column field contains the original {@code offset}.
+     * For a nonempty document, {@code offset} is expected to be within its text.
      */
     @NotNull
     public static LineAndColumn offsetToLineAndColumn(@Nullable Document document, int offset) {
@@ -132,7 +133,8 @@ public class PsiDiagnosticUtils {
         }
 
         /**
-         * Returns the 1-based column number.
+         * Returns the 1-based column number when the line is known. When the line is unknown, this value is the source
+         * offset or a negative sentinel instead.
          */
         public int getColumn() {
             return column;
