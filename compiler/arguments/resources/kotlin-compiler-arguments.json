@@ -5792,7 +5792,7 @@
                                 "valueInVersions": []
                             },
                             "defaultValue": {
-                                "current": "disable",
+                                "current": "check",
                                 "valueInVersions": []
                             }
                         },
@@ -5813,7 +5813,7 @@
                                 "valueInVersions": []
                             },
                             "defaultValue": {
-                                "current": "disable",
+                                "current": "check",
                                 "valueInVersions": []
                             }
                         },
