@@ -60,7 +60,8 @@ public class KtLambdaExpression extends LazyParseablePsiElement implements KtExp
     }
 
     /**
-     * Returns {@code true} if the lambda declares an explicit return type (only possible for an anonymous function, not a lambda literal).
+     * Returns {@code true} if the underlying function literal has a return type reference. Valid lambda syntax cannot declare an explicit
+     * return type, so this can only be {@code true} for inconsistent PSI.
      */
     public boolean hasDeclaredReturnType() {
         return getFunctionLiteral().getTypeReference() != null;

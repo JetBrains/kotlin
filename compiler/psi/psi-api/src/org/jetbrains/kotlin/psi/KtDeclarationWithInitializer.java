@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.psi;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a declaration that can be assigned an initializer with {@code =}, such as a property, a local variable, or an enum entry.
+ * Represents a declaration that can have an expression after {@code =}, such as a property, a destructuring declaration, a named function,
+ * or a property accessor.
  *
  * <h3>Example:</h3>
  * <pre>{@code

@@ -54,8 +54,8 @@ public class KtWhenEntry extends KtElementImpl {
     }
 
     /**
-     * Returns the comma-separated conditions of this branch. Empty for the {@code else} branch; a single-element array for a normal branch,
-     * or several elements when the branch lists multiple conditions.
+     * Returns the comma-separated conditions of this branch in source order. The array is empty for an {@code else} branch and contains one
+     * or more elements for any other branch.
      */
     @NotNull
     public KtWhenCondition[] getConditions() {
