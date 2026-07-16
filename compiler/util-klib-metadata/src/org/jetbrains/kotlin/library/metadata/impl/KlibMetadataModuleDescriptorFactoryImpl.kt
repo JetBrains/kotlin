@@ -238,7 +238,6 @@ private fun createDeserializedPackageFragments(
             if (isBuiltInModule)
                 BuiltInKlibMetadataDeserializedPackageFragment(
                     fqName = packageFqName,
-                    library = library,
                     metadata = metadata,
                     storageManager = storageManager,
                     module = moduleDescriptor,
@@ -248,7 +247,6 @@ private fun createDeserializedPackageFragments(
             else
                 KlibMetadataDeserializedPackageFragment(
                     fqName = packageFqName,
-                    library = library,
                     metadata = metadata,
                     storageManager = storageManager,
                     module = moduleDescriptor,
