@@ -92,6 +92,10 @@ fun KtElement.getQualifiedElementSelector(): KtElement? {
 /**
  * Returns the receiver this name is applied to, considering qualified expressions, binary/unary operators, and qualified user types, or
  * `null` if this name has no receiver.
+ *
+ * For example, the receiver of `b` in `a.b` is `a`, the receiver of the `+` operator in `a + b` is `a`, the receiver of the `++` operator
+ * in `a++` is `a`, and the receiver of `B` in the user type `A.B` is `A`. A bare, unqualified name has no receiver, so the result
+ * is `null`.
  */
 fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
     val parent = parent
