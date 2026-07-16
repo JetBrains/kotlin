@@ -282,28 +282,6 @@ fun main(args: Array<String>) {
                     excludedPattern = excludedFirTestdataPattern,
                 )
             }
-
-            testClass<AbstractJsDiagnosticWithIrInlinerTestBase>(suiteTestClassName = "JsDiagnosticsWithIrInlinerTestGenerated") {
-                model(
-                    relativeRootPath = "klibSerializationTests",
-                    pattern = "^([^_](.+))\\.kt$",
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-                model(
-                    relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
-                    pattern = "^([^_](.+))\\.kt$",
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-                model(
-                    relativeRootPath = "testsWithAnyBackend",
-                    pattern = "^([^_](.+))\\.kt$",
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-                model(
-                    relativeRootPath = "irInliner",
-                    pattern = "^([^_](.+))\\.kt$",
-                )
-            }
         }
 
         testGroup(testsRoot, "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
