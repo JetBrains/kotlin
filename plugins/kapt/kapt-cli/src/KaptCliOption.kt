@@ -121,6 +121,7 @@ enum class KaptCliOption(
         "apOption",
         ":<key>=<value>",
         "Annotation processor options",
+        allowMultipleOccurrences = true,
         cliToolOption = CliToolOption("-Kapt-option", KEY_VALUE)
     ),
 
@@ -128,6 +129,7 @@ enum class KaptCliOption(
         "javacOption",
         ":<key>=<value>",
         "Javac options",
+        allowMultipleOccurrences = true,
         cliToolOption = CliToolOption("-Kapt-javac-option", KEY_VALUE)
     ),
 

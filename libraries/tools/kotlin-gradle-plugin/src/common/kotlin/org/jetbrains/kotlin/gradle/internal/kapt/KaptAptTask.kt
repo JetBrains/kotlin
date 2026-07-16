@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.work.Incremental
@@ -35,10 +33,10 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.KaptCompilerPlugin
+import org.jetbrains.kotlin.buildtools.api.jvm.KaptDetectMemoryLeaksMode
 import org.jetbrains.kotlin.buildtools.api.jvm.kaptCompilerPlugin
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.compilerRunner.btapi.UsesBuildSessionService
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
@@ -54,6 +52,7 @@ import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.util.jar.JarFile
 import javax.inject.Inject
+import kotlin.apply
 
 @CacheableTask
 abstract class KaptAptTask @Inject constructor(
@@ -74,6 +73,8 @@ abstract class KaptAptTask @Inject constructor(
     @get:Internal
     abstract var isIncrementalKapt: Boolean
 
+    override fun isIncrementalCompilationEnabled(): Boolean = false
+
     /**
      * [K2MultiplatformStructure] is not required for Kapt stubs
      */
@@ -92,7 +93,7 @@ abstract class KaptAptTask @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     override val source: ConfigurableFileCollection = objectFactory.fileCollection()
 
-//    override fun skipCondition(): Boolean = sources.isEmpty && javaSources.isEmpty
+    override fun skipCondition(): Boolean = annotationProcessorFqNames.get().isEmpty() && kaptClasspath.isEmpty()
 
     // Task need to run even if there is no Kotlin sources, but only Java
     @get:Incremental
@@ -116,8 +117,8 @@ abstract class KaptAptTask @Inject constructor(
             classpathSnapshotProperties.classpathSnapshot
         )
 
-    @get:Classpath
-    abstract val compilerClasspath: ConfigurableFileCollection
+//    @get:Classpath
+//    abstract val compilerClasspath: ConfigurableFileCollection
 
     @get:PathSensitive(PathSensitivity.NONE)
     @get:Incremental
@@ -190,7 +191,7 @@ abstract class KaptAptTask @Inject constructor(
     }
 
     protected fun getIncrementalChanges(inputChanges: InputChanges): KaptIncrementalChanges {
-        return if (incremental) {
+        return if (isIncrementalKapt) {
             findClasspathChanges(inputChanges)
         } else {
             cleanOutputsAndLocalState()
@@ -326,7 +327,7 @@ abstract class KaptAptTask @Inject constructor(
             }
 
             val pluginOptionsWithKapt = pluginOptions.toSingleCompilerPluginOptions()
-                .withWrappedKaptOptions(withApClasspath = kaptClasspath)
+//                .withWrappedKaptOptions(withApClasspath = kaptClasspath)
 
             args.pluginOptions = (pluginOptionsWithKapt.arguments).toTypedArray()
 
@@ -375,6 +376,9 @@ abstract class KaptAptTask @Inject constructor(
     @get:Input
     val kaptProcessJvmArgs: ListProperty<String> = objectFactory.listPropertyWithConvention(emptyList())
 
+    @get:Internal
+    var detectMemoryLeaks: String = "default"
+
     @Deprecated(
         "Use annotationProcessorOptionsProviders instead. Scheduled for removal in Kotlin 2.4.",
         replaceWith = ReplaceWith("annotationProcessorOptionsProviders")
@@ -385,7 +389,7 @@ abstract class KaptAptTask @Inject constructor(
         // Skip annotation processing if no annotation processors were provided.
         onlyIf { task ->
             with(task as KaptAptTask) {
-                val isRunTask = !(annotationProcessorFqNames.get().isEmpty() && kaptClasspath.isEmpty())
+                val isRunTask = !(skipCondition())
                 if (!isRunTask) task.logger.info("No annotation processors provided. Skip KAPT processing.")
                 isRunTask
             }
@@ -438,7 +442,7 @@ abstract class KaptAptTask @Inject constructor(
 
         val kaptArgs = buildSessionService.get().getOrCreateBuildSession(
             classLoadersCachingService.get(),
-            compilerClasspath.toList()
+            defaultCompilerClasspath.toList()
         ).kotlinToolchains.jvm.kaptCompilerPlugin(kaptJars.files.map(File::toPath)) {
             this[KaptCompilerPlugin.VERBOSE] = verbose.get()
             this[KaptCompilerPlugin.STUBS_OUTPUT_DIR] = stubsDir.get().asFile.toPath()
@@ -456,6 +460,8 @@ abstract class KaptAptTask @Inject constructor(
                 this[KaptCompilerPlugin.AptPhase.ANNOTATION_PROCESSOR_CLASSPATH] = this@KaptAptTask.kaptClasspath.files.map(File::toPath)
                 this[KaptCompilerPlugin.AptPhase.APT_OPTIONS] = getAnnotationProcessorOptions()
                 this[KaptCompilerPlugin.AptPhase.JAVAC_OPTIONS] = javacOptions.get()
+                this[KaptCompilerPlugin.AptPhase.DETECT_MEMORY_LEAKS] =
+                    KaptDetectMemoryLeaksMode.values().first { it.name.equals(detectMemoryLeaks, ignoreCase = true) }
             }.build()
         }
 

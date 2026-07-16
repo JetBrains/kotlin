@@ -66,6 +66,11 @@ internal class KaptAptConfig : BaseKaptConfig<KaptAptTask> {
             task.classpath.from(
                 kaptGenerateStubsTask.map { it.libraries }
             )
+            task.libraries.from(
+                kaptGenerateStubsTask.map { it.libraries }
+            )
+            task.javaOutputDir.set(kaptGenerateStubsTask.flatMap { it.javaOutputDir })
+
             task.compiledSources
                 .from(
                     kaptGenerateStubsTask.flatMap { it.kotlinCompileDestinationDirectory },
@@ -125,9 +130,11 @@ internal class KaptAptConfig : BaseKaptConfig<KaptAptTask> {
                 )
                 task.classpathStructure.from(kaptClasspathSnapshot)
 
-                task.incAptCache.value(KaptProperties.isIncrementalKapt(project).flatMap {
-                    if (it) task.taskBuildLocalStateDirectory.dir("incAptCache") else project.provider<Directory?> { null }
-                }).disallowChanges()
+                task.detectMemoryLeaks = ext.detectMemoryLeaks
+
+//                task.incAptCache.value(KaptProperties.isIncrementalKapt(project).flatMap {
+//                    if (it) task.taskBuildLocalStateDirectory.dir("incAptCache") else project.provider<Directory?> { null }
+//                }).disallowChanges()
 //                task.localStateDirectories.from({ task.incAptCache.orNull })
                 task.onlyIf {
                     it as KaptAptTask

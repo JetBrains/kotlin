@@ -27,4 +27,9 @@ public enum class KaptDetectMemoryLeaksMode {
      * No detection.
      */
     NONE,
+    ;
+
+    override fun toString(): String {
+        return name.lowercase()
+    }
 }

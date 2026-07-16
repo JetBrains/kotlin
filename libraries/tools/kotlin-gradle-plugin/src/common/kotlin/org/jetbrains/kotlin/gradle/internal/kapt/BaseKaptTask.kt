@@ -123,7 +123,7 @@ abstract class BaseKaptTask @Inject constructor(
             }
 
             val pluginOptionsWithKapt = pluginOptions.toSingleCompilerPluginOptions()
-                .withWrappedKaptOptions(withApClasspath = kaptClasspath)
+//                .withWrappedKaptOptions(withApClasspath = kaptClasspath)
 
             args.pluginOptions = (pluginOptionsWithKapt.arguments).toTypedArray()
 

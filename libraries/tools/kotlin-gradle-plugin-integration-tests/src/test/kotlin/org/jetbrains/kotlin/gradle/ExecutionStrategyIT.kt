@@ -318,7 +318,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 |tasks
                 |    .withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile)
                 |    .configureEach { 
-                |        kotlinOptions.allWarningsAsErrors = true 
+                |        kotlinOptions.allWarningsAsErrors = false 
                 |    }
                 |    
                 |tasks

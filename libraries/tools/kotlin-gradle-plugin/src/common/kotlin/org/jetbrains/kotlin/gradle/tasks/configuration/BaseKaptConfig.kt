@@ -50,7 +50,7 @@ internal abstract class BaseKaptConfig<TASK : BaseKaptTask> : BaseKotlinCompileC
     private fun configureFromExtension(kaptExtension: KaptExtensionConfig) {
         configureTask { task ->
             task.verbose.set(BaseKaptTask.queryKaptVerboseProperty(project))
-            if (kaptExtension is KaptExtension) {
+            if (kaptExtension is KaptExtension && task is KaptGenerateStubsTask) {
                 task.pluginOptions.add(buildOptions(kaptExtension, task))
             }
 
@@ -87,37 +87,6 @@ internal abstract class BaseKaptConfig<TASK : BaseKaptTask> : BaseKotlinCompileC
     }
 
     companion object {
-        internal fun wireJavaAndKotlinOutputs(
-            project: Project,
-            javaCompileTask: TaskProvider<out AbstractCompile>,
-            kotlinCompileTask: TaskProvider<out KotlinJvmCompile>,
-        ) {
-            project.whenKaptEnabled {
-                val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
-                project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
-                    if (task.name == kaptGenerateStubsTaskName) {
-                        task.javaOutputDir.set(javaCompileTask.flatMap { it.destinationDirectory })
-                        task.kotlinCompileDestinationDirectory.set(kotlinCompileTask.flatMap { it.destinationDirectory })
-                    }
-                }
-            }
-        }
-
-        internal fun configureLibraries(
-            project: Project,
-            kotlinCompileTask: TaskProvider<out KotlinJvmCompile>,
-            vararg paths: Any,
-        ) {
-            project.whenKaptEnabled {
-                val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
-                project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
-                    if (task.name == kaptGenerateStubsTaskName) {
-                        task.libraries.from(paths)
-                    }
-                }
-            }
-        }
-
         internal fun configureUseModuleDetection(
             project: Project,
             kotlinCompileTask: TaskProvider<out KotlinJvmCompile>,

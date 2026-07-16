@@ -133,6 +133,8 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
 
     private fun Kapt3SubpluginContext.getKaptIncrementalDataDir() = temporaryKaptDirectory("incrementalData")
 
+    private fun Kapt3SubpluginContext.getKaptIncrementalAnnotationProcessingCache() = temporaryKaptDirectory("incApCache")
+
     private fun Kapt3SubpluginContext.temporaryKaptDirectory(
         name: String,
     ) = project.layout.buildDirectory.dir("tmp/kapt3/$name/$sourceSetName")
@@ -292,11 +294,11 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
                 task.defaultJavaSourceCompatibility.set(javaCompile.map { it.sourceCompatibility })
             }
 
-//            task.incAptCache.value(
-//                KaptProperties.isIncrementalKapt(project).flatMap {
-//                    if (it) getKaptIncrementalAnnotationProcessingCache() else project.provider<Directory?> { null }
-//                }
-//            ).disallowChanges()
+            task.incAptCache.value(
+                KaptProperties.isIncrementalKapt(project).flatMap {
+                    if (it) getKaptIncrementalAnnotationProcessingCache() else project.provider<Directory?> { null }
+                }
+            ).disallowChanges()
 
             task.kaptClasspath.from(kaptClasspathConfiguration).disallowChanges()
             task.kaptExternalClasspath.from(

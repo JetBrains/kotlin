@@ -45,6 +45,8 @@ class KaptOptions(
     val separateClassloaderForProcessors: Set<String>,
     val processorsStatsReportFile: File?,
     val fileReadHistoryReportFile: File?
+
+
 ) : KaptFlags {
     override fun get(flag: KaptFlag) = flags[flag]
 
@@ -209,6 +211,12 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
 
     appendLine("AP options: $processingOptions")
     appendLine("Javac options: $javacOptions")
+
+    appendLine("compileClasspath: $compileClasspath")
+    appendLine("javaSourceRoots=$javaSourceRoots")
+    appendLine("processingClasspath=$processingClasspath")
+    appendLine("processingClasspath=$processingClasspath")
+
 
     appendLine("[incremental apt] Changed files: $changedFiles")
     appendLine("[incremental apt] Compiled sources directories: ${compiledSources.joinToString()}")

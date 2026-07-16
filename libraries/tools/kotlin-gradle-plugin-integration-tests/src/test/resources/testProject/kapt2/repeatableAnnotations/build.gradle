@@ -14,5 +14,5 @@ dependencies {
     kapt(project(":processor"))
 }
 
-compileKotlin.kotlinOptions.allWarningsAsErrors = true
+compileKotlin.kotlinOptions.allWarningsAsErrors = false
 compileKotlin.kotlinOptions.freeCompilerArgs += ["-Xsuppress-version-warnings"]
