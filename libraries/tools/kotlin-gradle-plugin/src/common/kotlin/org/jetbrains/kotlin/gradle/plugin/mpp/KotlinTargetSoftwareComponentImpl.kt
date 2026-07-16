@@ -41,24 +41,11 @@ internal fun KotlinTargetSoftwareComponent(
     kotlinComponent: KotlinTargetComponent,
 ): KotlinTargetSoftwareComponent {
 
-    val adhocVariant = if (
-        target.platformType in listOf(androidJvm, jvm) || target.project.multiplatformExtensionOrNull == null) {
-        (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java).adhoc(kotlinComponent.name)
-    } else {
-        target.project.multiplatformExtension.publishing.adhocSoftwareComponent
-    }
+    val adhocVariant = (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java).adhoc(kotlinComponent.name)
 
     /* Launch configuration */
     target.project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
         kotlinComponent.internal.usages.forEach { kotlinUsageContext ->
-
-            if (target !is KotlinJvmTarget &&
-                kotlinUsageContext.attributes.getAttribute(Category.CATEGORY_ATTRIBUTE).name == Category.DOCUMENTATION
-            ) {
-                return@forEach
-            }
-
-
             /* Explicitly typing 'Project' to avoid smart cast from 'target.project as ProjectInternal' */
             //
             val project: Project = target.project
@@ -79,12 +66,7 @@ internal fun KotlinTargetSoftwareComponent(
                     project.providers,
                     dest = this
                 )
-                if (kotlinUsageContext.artifacts.any { it.extension == "klib" }) {
-                    outgoing.artifact(project.packMergedKlibTask)
-                    attributes.attribute(karCompressionMethodAttribute, karCompressionMethodXZ)
-                } else {
-                    artifacts.addAll(kotlinUsageContext.artifacts)
-                }
+                artifacts.addAll(kotlinUsageContext.artifacts)
             }
 
             adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->

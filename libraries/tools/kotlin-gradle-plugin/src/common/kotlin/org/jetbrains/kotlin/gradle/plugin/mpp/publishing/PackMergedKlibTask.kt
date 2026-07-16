@@ -75,6 +75,8 @@ import javax.inject.Inject
 private const val PACK_KAR_TASK_NAME = "packKar"
 internal const val KAR_ARTIFACT_TYPE = "kar"
 
+interface const val KAR_CONFIGURATION = "kotlinArchive"
+
 /**
  * These attributes are only used to force the [KarToPlatformKlibTransformation] in resolvable configurations.
  * They are not used in consumable configurations and are never published (cf. 'uklibStateAttribute').
@@ -182,15 +184,10 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
         }
     }
 
-    val metadataApiElementsPublished = project.configurations.create(
-        publishedConfigurationName(metadataTarget.internal.apiElementsConfigurationName)
-    ).apply {
+    project.configurations.create(KAR_CONFIGURATION).apply {
         extendsFrom(project.configurations.getByName(metadataTarget.internal.apiElementsConfigurationName))
 
         outgoing.artifact(packTask)
-        attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
         attributes.attribute(karCompressionMethodAttribute, karCompressionMethodXZ)
         isCanBeConsumed = false
         isCanBeResolved = false
@@ -198,10 +195,6 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
         if (GradleVersion.current() >= GradleVersion.version("8.2")) {
             isCanBeDeclared = true
         }
-    }
-
-    project.multiplatformExtension.publishing.adhocSoftwareComponent.addVariantsFromConfiguration(metadataApiElementsPublished) { details ->
-        details.mapToMavenScope(KotlinUsageContext.MavenScope.COMPILE.name)
     }
 
     project.launch {

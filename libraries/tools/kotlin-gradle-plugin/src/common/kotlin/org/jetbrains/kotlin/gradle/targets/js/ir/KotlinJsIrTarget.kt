@@ -105,18 +105,17 @@ internal constructor(
             )
         )
 
-        val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
+        val result = createKotlinVariant(componentName, usageContexts)
 
         setOf(result)
     }
 
     override fun createKotlinVariant(
-        componentName: String,
-        compilation: KotlinCompilation<*>,
+        componentName: String?,
         usageContexts: Set<DefaultKotlinUsageContext>,
     ): KotlinVariant {
-        return super.createKotlinVariant(componentName, compilation, usageContexts).apply {
-            artifactTargetName = wasmDecamelizedDefaultNameOrNull() ?: componentName
+        return super.createKotlinVariant(componentName, usageContexts).apply {
+            artifactTargetName = wasmDecamelizedDefaultNameOrNull() ?: componentName!!
         }
     }
 

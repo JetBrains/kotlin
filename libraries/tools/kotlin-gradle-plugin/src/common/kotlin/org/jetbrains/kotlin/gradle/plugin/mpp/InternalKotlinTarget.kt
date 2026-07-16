@@ -13,8 +13,22 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.extrasStoredFuture
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
+
+enum class KotlinTargetPublicationLayout {
+    IN_ROOT_COMPONENT,
+    SEPARATE_ARTIFACT_IN_ROOT,
+    IN_SEPARATE_COMPONENT;
+}
+
+val KotlinTarget.publicationLayout: KotlinTargetPublicationLayout
+    get() = when (this) {
+        is KotlinJvmTarget, is KotlinAndroidTarget, is KotlinWithJavaTarget<*, *> -> KotlinTargetPublicationLayout.IN_SEPARATE_COMPONENT
+        is KotlinMetadataTarget -> KotlinTargetPublicationLayout.IN_ROOT_COMPONENT
+        else -> KotlinTargetPublicationLayout.IN_ROOT_COMPONENT
+    }
 
 internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
     var isSourcesPublishable: Boolean

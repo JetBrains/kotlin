@@ -92,7 +92,7 @@ abstract class KotlinNativeTarget @Inject constructor(
             )
         )
 
-        val result = createKotlinVariant(targetName, mainCompilation, mutableUsageContexts)
+        val result = createKotlinVariant(targetName, mutableUsageContexts)
 
         setOf(result)
     }
