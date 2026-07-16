@@ -16,9 +16,8 @@ data class ConeTypeParameterLookupTagImpl(
 ) : ConeTypeParameterLookupTag(), TypeParameterMarker {
     constructor(typeParameterSymbol: FirTypeParameterSymbol) : this(typeParameterSymbol.symbolId)
 
-    // TODO (marco): Deprecate this in favor of `symbol`.
     val typeParameterSymbol: FirTypeParameterSymbol
-        get() = symbol
+        get() = typeParameterSymbolId.symbol
 
     override val name: Name get() = typeParameterSymbol.name
 }
