@@ -1,5 +1,7 @@
-// ISSUE: KT-68975
-// Test must become non-compilable after KT-66181
+// ISSUE: KT-68975, KT-66181
+// LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization
+// LANGUAGE: -IrCrossModuleInlinerBeforeKlibSerialization
+// See counterpart test with IR inliner in compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/lambdaCrossInline.kt
 // KJS_WITH_FULL_RUNTIME
 external fun p(s: String, n: () -> String): String
 

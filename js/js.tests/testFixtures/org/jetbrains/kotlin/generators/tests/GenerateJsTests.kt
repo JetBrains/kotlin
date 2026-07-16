@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
             testClass<AbstractJsKlibSyntheticAccessorTest> {
                 model()
             }
-            testClass<AbstractJsKlibSyntheticAccessorsBoxWithInlinedFunInKlibTest>(
+            testClass<AbstractJsKlibSyntheticAccessorsBoxTest>(
                 suiteTestClassName = "JsKlibSyntheticAccessorsBoxTestGenerated"
             ) {
                 model()
@@ -144,9 +144,6 @@ fun main(args: Array<String>) {
             testClass<AbstractJsLineNumberTest> {
                 model()
             }
-            testClass<AbstractJsLineNumberWithInlinedFunInKlibTest> {
-                model()
-            }
         }
 
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest0") {
@@ -156,37 +153,22 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsCodegenBoxTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("boxInline")
             }
 
             testClass<AbstractFirJsLightTreeHeaderModeCodegenTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
-            testClass<AbstractJsCodegenBoxWithInlinedFunInKlibTest> {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-            }
-
-            testClass<AbstractJsCodegenBoxInlineWithInlinedFunInKlibTest> {
-                model("boxInline")
-            }
-
             testClass<AbstractJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
             }
 
-            testClass<AbstractJsCodegenInlineTest> {
-                model("boxInline")
-            }
-
-            testClass<AbstractJsCodegenInlineWithInlinedFunInKlibTest> {
-                model("boxInline")
-            }
-
-            testClass<AbstractJsCodegenSplittingWithInlinedFunInKlibTest> {
+            testClass<AbstractJsCodegenSplittingTest> {
                 model("box")
             }
 
-            testClass<AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest> {
+            testClass<AbstractJsCodegenSplittingInlineTest> {
                 model("boxInline")
             }
 
@@ -195,10 +177,6 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJsCodegenWasmJsInteropTest> {
-                model("boxWasmJsInterop")
-            }
-
-            testClass<AbstractJsCodegenWasmJsInteropWithInlinedFunInKlibTest> {
                 model("boxWasmJsInterop")
             }
 
@@ -217,15 +195,7 @@ fun main(args: Array<String>) {
                 model("stepping")
             }
 
-            testClass<AbstractJsSteppingWithInlinedFunInKlibTest> {
-                model("stepping")
-            }
-
             testClass<AbstractJsSteppingSplitTest> {
-                model("stepping")
-            }
-
-            testClass<AbstractJsSteppingSplitWithInlinedFunInKlibTest> {
                 model("stepping")
             }
         }
