@@ -227,7 +227,7 @@ val testJsFile = testDataDir.resolve("test.js")
 val packageJsonFile = testDataDir.resolve("package.json")
 val packageLockJsonFile = testDataDir.resolve("package-lock.json")
 
-val prepareNpmTestData by task<Copy> {
+val prepareNpmTestData = tasks.register<Copy>("prepareNpmTestData") {
     from(testJsFile)
     from(packageJsonFile)
     from(packageLockJsonFile)
@@ -282,7 +282,7 @@ val toolsDirectory = layout.buildDirectory.dir("tools")
 
 val jsShellDirectory = toolsDirectory.map { it.dir("JsShell").asFile }
 val jsShellUnpackedDirectory = jsShellDirectory.map { it.resolve("jsshell-$jsShellSuffix-${jsShellVersion.get()}") }
-val unzipJsShell by task<Copy> {
+val unzipJsShell = tasks.register<Copy>("unzipJsShell") {
     dependsOn(jsShell)
     from {
         zipTree(jsShell.singleFile)
@@ -290,7 +290,7 @@ val unzipJsShell by task<Copy> {
     into(jsShellUnpackedDirectory)
 }
 
-val unzipWasmEdge by task<UnzipWasmEdge> {
+val unzipWasmEdge = tasks.register<UnzipWasmEdge>("unzipWasmEdge") {
     from.setFrom(wasmEdge)
 
     val currentOsTypeForConfigurationCache = currentOsType.name
@@ -302,7 +302,7 @@ val unzipWasmEdge by task<UnzipWasmEdge> {
 }
 
 val jscDirectory = toolsDirectory.map { it.dir("JavaScriptCore").asFile }
-val unzipJsc by task<UnzipJsc> {
+val unzipJsc = tasks.register<UnzipJsc>("unzipJsc") {
     from.setFrom(jsc)
 
     into.fileProvider(jscDirectory.map { it.resolve("jsc-$jscOsDependentClassifier-$jscOsDependentRevision") })
@@ -311,7 +311,7 @@ val unzipJsc by task<UnzipJsc> {
     getIsLinux.set(isLinux)
 }
 
-val createJscRunner by task<CreateJscRunner> {
+val createJscRunner = tasks.register<CreateJscRunner>("createJscRunner") {
     osTypeName.set(currentOsType.name)
 
     val runnerFileName = if (currentOsType.name == OsName.WINDOWS) "runJsc.cmd" else "runJsc"
@@ -321,7 +321,7 @@ val createJscRunner by task<CreateJscRunner> {
     inputDirectory.set(unzipJsc.flatMap { it.into })
 }
 
-val unzipWasmtime by task<UnzipWasmtime> {
+val unzipWasmtime = tasks.register<UnzipWasmtime>("unzipWasmtime") {
     from.setFrom(wasmtime)
 
     val currentOsTypeForConfigurationCache = currentOsType.name

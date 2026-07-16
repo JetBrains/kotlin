@@ -257,7 +257,7 @@ val distSbomTask = configureSbom(
     )
 )
 
-val packCompiler by task<Jar> {
+val packCompiler = tasks.register<Jar>("packCompiler") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
     archiveClassifier.set("before-proguard")
@@ -299,7 +299,7 @@ val packCompiler by task<Jar> {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val proguard = tasks.register<CacheableProguardTask>("proguard") {
     dependsOn(packCompiler)
 
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))

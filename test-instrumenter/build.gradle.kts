@@ -34,7 +34,7 @@ dependencies {
     implementation(libs.bytebuddy)
 }
 
-val agentJar by task<ShadowJar> {
+val agentJar = tasks.register<ShadowJar>("agentJar") {
     archiveClassifier = "agent"
     from(sourceSets.main.map { it.output })
     configurations = project.configurations.runtimeClasspath.map { listOf(it) }
@@ -44,7 +44,7 @@ val agentJar by task<ShadowJar> {
     }
 }
 
-val bootClasspathJar by task<Jar> {
+val bootClasspathJar = tasks.register<Jar>("bootClasspathJar") {
     archiveClassifier = "boot-classpath"
     from(sourceSets["bootClasspath"].output)
 }

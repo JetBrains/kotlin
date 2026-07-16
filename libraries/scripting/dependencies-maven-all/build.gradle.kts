@@ -79,7 +79,7 @@ val mavenPackagesToRelocate = listOf(
     "org.sonatype"
 )
 
-val relocatedJar by task<ShadowJar> {
+val relocatedJar = tasks.register<ShadowJar>("relocatedJar") {
     configurations = listOf(embedded)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
@@ -94,7 +94,7 @@ val relocatedJar by task<ShadowJar> {
     }
 }
 
-val normalizeComponentsXmlEndings by tasks.registering {
+val normalizeComponentsXmlEndings = tasks.register("normalizeComponentsXmlEndings") {
     dependsOn(relocatedJar)
     val outputFile = layout.buildDirectory.file("$name/${ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH}")
     val relocatedJarFile = relocatedJar.map { it.singleOutputFile(layout) }
@@ -112,7 +112,7 @@ val normalizeComponentsXmlEndings by tasks.registering {
     }
 }
 
-val normalizedJar by task<Jar> {
+val normalizedJar = tasks.register<Jar>("normalizeJar") {
     dependsOn(relocatedJar)
     dependsOn(normalizeComponentsXmlEndings)
 
@@ -131,7 +131,7 @@ val normalizedJar by task<Jar> {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val proguard = tasks.register<CacheableProguardTask>("proguard") {
     dependsOn(normalizedJar)
     configuration("dependencies-maven.pro")
 
@@ -165,7 +165,7 @@ val proguard by task<CacheableProguardTask> {
     )
 }
 
-val resultJar by task<Jar> {
+val resultJar = tasks.register<Jar>("resultJar") {
     val pack = if (kotlinBuildProperties.proguard) proguard else normalizedJar
     dependsOn(pack)
     setupPublicJar(jarBaseName)

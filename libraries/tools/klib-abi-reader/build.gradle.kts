@@ -40,7 +40,7 @@ dependencies {
 
 publish()
 
-val relocatedJar by task<ShadowJar> {
+val relocatedJar = tasks.register<ShadowJar>("relocatedJar") {
     configurations = listOf(embedded)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
@@ -53,7 +53,7 @@ val relocatedJar by task<ShadowJar> {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val proguard = tasks.register<CacheableProguardTask>("proguard") {
     dependsOn(relocatedJar)
     configuration("klib-abi-reader.pro")
 
@@ -80,7 +80,7 @@ val proguard by task<CacheableProguardTask> {
     )
 }
 
-val resultJar by task<Jar> {
+val resultJar = tasks.register<Jar>("resultJar") {
     val pack = if (kotlinBuildProperties.proguard) proguard else relocatedJar
     dependsOn(pack)
     setupPublicJar(jarBaseName)
