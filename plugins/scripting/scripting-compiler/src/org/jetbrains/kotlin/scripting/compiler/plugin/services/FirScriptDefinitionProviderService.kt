@@ -79,6 +79,16 @@ class FirScriptDefinitionProviderService(
         // if the cache is not configured, returns base configuration. This is used for accessing configuration during refinement, see collectAndResolveScriptAnnotationsViaFir
         val hostBasedCache = refinedCompilationConfigurationCache ?: return getBaseConfiguration(sourceCode)
         return hostBasedCache.getRefinedCompilationConfiguration(sourceCode) ?: run {
+            if (sourceCode is KtFileScriptSource) {
+                @Suppress("DEPRECATION")
+                configurationProvider?.getScriptCompilationConfiguration(sourceCode)?.let {
+                    when (it) {
+                        is ResultWithDiagnostics.Success -> it.value.configuration?.asSuccess()
+                        is ResultWithDiagnostics.Failure -> it
+                    }
+                }
+            } else null
+        } ?: run {
             getBaseConfiguration(sourceCode)?.onSuccess {
                 (it.refineAllForK2(
                     sourceCode,
