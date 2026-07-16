@@ -51,8 +51,8 @@ public interface KtPureClassOrObject extends KtPureElement, KtDeclarationContain
     boolean hasExplicitPrimaryConstructor();
 
     /**
-     * Returns {@code true} if this class or object has a primary constructor, whether written explicitly or implied by the absence of
-     * secondary constructors.
+     * Returns {@code true} if this class or object has an explicit primary constructor or has no secondary constructors. Consequently, this
+     * can be {@code true} for an object and when {@link #getPrimaryConstructor()} is {@code null}.
      */
     boolean hasPrimaryConstructor();
 

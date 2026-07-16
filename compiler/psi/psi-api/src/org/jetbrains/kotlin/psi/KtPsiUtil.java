@@ -285,7 +285,11 @@ public class KtPsiUtil {
         }
     }
 
-    /** Returns {@code true} if {@code declaration} is a variable declaration that can be safely removed or replaced with {@code _}. */
+    /**
+     * Returns {@code true} if {@code declaration} has a PSI form supported by unused-variable cleanup: a property can be removed and a
+     * destructuring entry can be replaced with {@code _}. This is a syntactic classification; it does not determine whether the declaration
+     * is unused or whether removing it preserves behavior.
+     */
     public static boolean isRemovableVariableDeclaration(@NotNull KtDeclaration declaration) {
         if (!(declaration instanceof KtVariableDeclaration)) return false;
         if (declaration instanceof KtProperty) return true;
@@ -341,7 +345,10 @@ public class KtPsiUtil {
         return condition != null && condition.getNode().getElementType() == KtNodeTypes.BOOLEAN_CONSTANT;
     }
 
-    /** Returns {@code true} if {@code declaration} has no body (and is therefore abstract). */
+    /**
+     * Returns {@code true} if {@code declaration} has no body expression. This is a syntactic check; it does not inspect the
+     * {@code abstract} modifier or determine whether the declaration is semantically abstract.
+     */
     public static boolean isAbstract(@NotNull KtDeclarationWithBody declaration) {
         return declaration.getBodyExpression() == null;
     }
