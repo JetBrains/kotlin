@@ -209,5 +209,8 @@ interface MyInterface {
     fun optInFun(): Unit
 
     @MyOptInApi
+    fun optInFunWithDefault(): Unit = TODO()
+
+    @MyOptInApi
     var optInProp: String
 }

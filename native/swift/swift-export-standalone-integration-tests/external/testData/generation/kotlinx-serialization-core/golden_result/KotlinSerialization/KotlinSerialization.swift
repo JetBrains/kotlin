@@ -3209,10 +3209,29 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 extension ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public var annotations: [any ExportedKotlinPackages.kotlin.Annotation] {
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        get {
+            return kotlinx_serialization_descriptors_SerialDescriptor_annotations_get_direct(self.__externalRCRef()) as! Swift.Array<any ExportedKotlinPackages.kotlin.Annotation>
+        }
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     public var elementsCount: Swift.Int32 {
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         get {
             fatalError("'elementsCount' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+    }
+    public var isInline: Swift.Bool {
+        get {
+            return kotlinx_serialization_descriptors_SerialDescriptor_isInline_get_direct(self.__externalRCRef())
+        }
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public var isNullable: Swift.Bool {
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        get {
+            return kotlinx_serialization_descriptors_SerialDescriptor_isNullable_get_direct(self.__externalRCRef())
         }
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
@@ -3227,25 +3246,6 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescrip
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         get {
             fatalError("'serialName' is an @_spi requirement that must be implemented by Swift conformers")
-        }
-    }
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public var annotations: [any ExportedKotlinPackages.kotlin.Annotation] {
-        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-        get {
-            return kotlinx_serialization_descriptors_SerialDescriptor_annotations_get_direct(self.__externalRCRef()) as! Swift.Array<any ExportedKotlinPackages.kotlin.Annotation>
-        }
-    }
-    public var isInline: Swift.Bool {
-        get {
-            return kotlinx_serialization_descriptors_SerialDescriptor_isInline_get_direct(self.__externalRCRef())
-        }
-    }
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public var isNullable: Swift.Bool {
-        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-        get {
-            return kotlinx_serialization_descriptors_SerialDescriptor_isNullable_get_direct(self.__externalRCRef())
         }
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
@@ -3393,10 +3393,6 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder {
     typealias Companion = KotlinSerialization._ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder_Companion
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public func decodeSequentially() -> Swift.Bool {
-        fatalError("'decodeSequentially' is an @_spi requirement that must be implemented by Swift conformers")
-    }
     public func decodeCollectionSize(
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     ) -> Swift.Int32 {
@@ -3500,13 +3496,6 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeEncoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeEncoder {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder {
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public func shouldEncodeElementDefault(
-        descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-        index: Swift.Int32
-    ) -> Swift.Bool {
-        fatalError("'shouldEncodeElementDefault' is an @_spi requirement that must be implemented by Swift conformers")
-    }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     public func shouldEncodeElementDefault(
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
@@ -3673,14 +3662,6 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Encoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._Encoder {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder {
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public func encodeNotNullMark() -> Swift.Void {
-        fatalError("'encodeNotNullMark' is an @_spi requirement that must be implemented by Swift conformers")
-    }
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public func encodeNull() -> Swift.Void {
-        fatalError("'encodeNull' is an @_spi requirement that must be implemented by Swift conformers")
-    }
     public func beginCollection(
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
         collectionSize: Swift.Int32
@@ -3690,6 +3671,10 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder {
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     public func encodeNotNullMark() -> Swift.Void {
         return { kotlinx_serialization_encoding_Encoder_encodeNotNullMark_direct(self.__externalRCRef()); return () }()
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public func encodeNull() -> Swift.Void {
+        fatalError("'encodeNull' is an @_spi requirement that must be implemented by Swift conformers")
     }
 }
 @_cdecl("kotlinx_serialization_DeserializationStrategy_descriptor_get__reverse_swift")
