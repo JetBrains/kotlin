@@ -132,12 +132,12 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("Verify metadata header merge preserves packages of files not recompiled")
-    fun testMetadataHeaderMergePreservesUntouchedPackages(gradleVersion: GradleVersion) {
+    @DisplayName("Verify incremental compilation preserves packages of files not recompiled")
+    fun testIncrementalCompilationPreservesUntouchedPackages(gradleVersion: GradleVersion) {
         project(
             projectName = "empty", gradleVersion = gradleVersion, buildOptions = defaultBuildOptions.copy(jvmClasspathMetadata = true)
         ) {
-            setupMetadataHeaderTestProject()
+            setupMultiPackageProject()
 
             build("compileKotlinJvm") {
                 assertTasksExecuted(":compileKotlinJvm")
@@ -178,12 +178,12 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("Verify obsolete package data in metadata header does not break incremental compilation")
-    fun testObsoletePackageInMetadataHeaderDoesNotBreakIncrementalCompilation(gradleVersion: GradleVersion) {
+    @DisplayName("Verify removed package does not break incremental compilation")
+    fun testRemovedPackageDoesNotBreakIncrementalCompilation(gradleVersion: GradleVersion) {
         project(
             projectName = "empty", gradleVersion = gradleVersion, buildOptions = defaultBuildOptions.copy(jvmClasspathMetadata = true)
         ) {
-            setupMetadataHeaderTestProject()
+            setupMultiPackageProject()
 
             build("compileKotlinJvm") {
                 assertTasksExecuted(":compileKotlinJvm")
@@ -221,7 +221,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
         }
     }
 
-    private fun TestProject.setupMetadataHeaderTestProject() {
+    private fun TestProject.setupMultiPackageProject() {
         addKgpToBuildScriptCompilationClasspath()
         buildScriptInjection {
             project.applyMultiplatform {
