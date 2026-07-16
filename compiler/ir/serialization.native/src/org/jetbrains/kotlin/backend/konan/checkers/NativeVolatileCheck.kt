@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.checkers
 
 import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
 import org.jetbrains.kotlin.backend.common.checkers.at
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -29,10 +30,22 @@ object NativeVolatileCheck : NativeKlibExpressionsChecker<IrCall> {
         "ATOMIC_SET_FIELD",
     )
 
+    private val atomicFunctionNames = setOf(
+        "compareAndSetField",
+        "compareAndExchangeField",
+        "getAndSetField",
+        "getAndAddField",
+        "atomicGetField",
+        "atomicSetField",
+    )
+
     private val typedIntrinsicAnnotation = FqName("kotlin.native.internal.TypedIntrinsic")
 
     fun IrFunctionAccessExpression.isVolatileIntrinsic(): Boolean {
-        if (!symbol.isBound) return false
+        if (!symbol.isBound) {
+            val signature = symbol.signature?.asPublic() ?: return false
+            return signature.packageFqName() == StandardNames.CONCURRENT_PACKAGE_FQ_NAME && signature.declarationFqName in atomicFunctionNames
+        }
         val owner = symbol.owner
         val annotation = owner.annotations.findAnnotation(typedIntrinsicAnnotation)
         val value = annotation?.getConstArgument<String>("kind") ?: return false
@@ -40,7 +53,19 @@ object NativeVolatileCheck : NativeKlibExpressionsChecker<IrCall> {
     }
 
     override fun check(expression: IrCall, context: CommonKlibDiagnosticContext, reporter: IrDiagnosticReporter) {
+        fun report() {
+            val expressionToReportOn = if (context.inlineBlockStack.isNotEmpty()) context.inlineBlockStack.first() else expression
+            reporter
+                .at(expressionToReportOn, context)
+                .report(NativeKlibErrors.LEAKED_VOLATILE_FIELD, expression)
+        }
+
         if (!expression.isVolatileIntrinsic()) return
+
+        // Given call is volatile intrinsic, and it came from another module (because it is unbound)
+        if (!expression.symbol.isBound) {
+            return report()
+        }
 
         val extensionReceiverIndex = expression.symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
         require(extensionReceiverIndex != -1) { "Extension receiver index not found for call ${expression.render()}" }
@@ -51,10 +76,7 @@ object NativeVolatileCheck : NativeKlibExpressionsChecker<IrCall> {
         val declarationFile = property.getPackageFragment()
 
         if (declarationFile != context.containingFile) {
-            val expressionToReportOn = if (context.inlineBlockStack.isNotEmpty()) context.inlineBlockStack.first() else expression
-            reporter
-                .at(expressionToReportOn, context)
-                .report(NativeKlibErrors.LEAKED_VOLATILE_FIELD, expression)
+            report()
         }
     }
 }
