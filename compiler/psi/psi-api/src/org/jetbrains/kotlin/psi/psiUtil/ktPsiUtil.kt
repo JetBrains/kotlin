@@ -501,7 +501,10 @@ fun KtStringTemplateExpression.getContentRange(): TextRange {
 /**
  * Returns `true` if this expression can be the callee of a call with the same name.
  *
- * `this` in `this(args)` is not considered a callee, and `name` in `name++` is not considered a callee either.
+ * For example, `foo` is a callee in both `foo()` and `foo(args)`, the `+` operator reference is a callee in `a + b`, and the type name is a
+ * callee in a constructor call such as `Foo()`.
+ *
+ * By contrast, `this` in `this(args)` is not considered a callee, and `name` in `name++` is not considered a callee either.
  */
 fun KtSimpleNameExpression.isCallee(): Boolean {
     val parent = parent
