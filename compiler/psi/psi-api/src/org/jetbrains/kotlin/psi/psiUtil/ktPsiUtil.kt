@@ -206,6 +206,18 @@ fun KtClass.isAbstract(): Boolean = isInterface() || hasModifier(KtTokens.ABSTRA
  * Returns the unqualified names indexed as this class's superclass names. For names that might be imported through an alias, this includes
  * both the original and aliased names; reference resolution during inheritor search disambiguates them.
  *
+ * ### Example:
+ *
+ * Given `derivedClass` representing:
+ *
+ * ```kotlin
+ * import library.Base as Alias
+ *
+ * class Derived : Alias
+ * ```
+ *
+ * `derivedClass.getSuperNames()` returns `listOf("Alias", "Base")`.
+ *
  * @return the list of possible superclass names
  */
 fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.getSuperNames(): List<String> {
@@ -335,6 +347,24 @@ fun KtDeclarationWithBody.isLegacyContractPresentPsiCheck(): Boolean {
 /**
  * Best-effort PSI check for whether this function's body begins with a `contract { ... }` call, taking into account whether contracts are
  * allowed on member functions via [isAllowedOnMembers]. `false` is definitive; `true` is not a guarantee.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * @OptIn(kotlin.contracts.ExperimentalContracts::class)
+ * fun declaredContract() {
+ *     kotlin.contracts.contract { returns() }
+ * }
+ *
+ * private fun contract() {}
+ *
+ * fun sameNameOnly() {
+ *     contract()
+ * }
+ * ```
+ *
+ * This check returns `true` for both `declaredContract` and `sameNameOnly`: it recognizes the first call by its PSI shape and name without
+ * resolving which `contract` function is called.
  */
 fun KtNamedFunction.isContractPresentPsiCheck(isAllowedOnMembers: Boolean): Boolean {
     val contractAllowedHere =
@@ -379,7 +409,21 @@ fun KtElement.isFirstStatement(): Boolean {
 // ----------- Other -----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Returns the declarations of this class or object, including primary-constructor `val`/`var` property parameters for a class.
+ * Returns the body declarations of this class or object in source order, followed by the class's primary-constructor `val`/`var` property
+ * parameters in parameter order.
+ *
+ * ### Example:
+ *
+ * Given `accountClass` representing:
+ *
+ * ```kotlin
+ * class Account(val id: Int, name: String) {
+ *     fun save() {}
+ * }
+ * ```
+ *
+ * `accountClass.effectiveDeclarations().mapNotNull { it.name }` returns `listOf("save", "id")`: `id` is included because it declares a
+ * property, while the ordinary constructor parameter `name` is not.
  */
 fun KtClassOrObject.effectiveDeclarations(): List<KtDeclaration> {
     return when (this) {
@@ -443,6 +487,18 @@ fun KtClassOrObject.isObjectLiteral(): Boolean = this is KtObjectDeclaration && 
  *
  * Ordinary parameters and context parameters live in separate lists, each indexed from zero, so the returned index does not correspond to
  * the parameter's position in the JVM method signature or any combined ordering.
+ *
+ * ### Example:
+ *
+ * Given the parameters in:
+ *
+ * ```kotlin
+ * context(logger: Logger, transaction: Transaction)
+ * fun process(first: String, second: Int) {}
+ * ```
+ *
+ * `logger.parameterIndex()` and `first.parameterIndex()` both return `0`; `transaction.parameterIndex()` and `second.parameterIndex()` both
+ * return `1`.
  */
 //TODO: strange method, and not only Kotlin specific (also Java)
 fun PsiElement.parameterIndex(): Int {
@@ -770,7 +826,26 @@ fun canPlaceAfterSimpleNameEntry(element: PsiElement?): Boolean {
     return !BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN.matches(entryText)
 }
 
-/** Returns the enclosing classes that this element can access an outer instance of, from innermost to outermost. */
+/**
+ * Returns the enclosing classes that this element can access an outer instance of, from innermost to outermost.
+ *
+ * ### Example:
+ *
+ * Given `targetFunction` representing `target` in:
+ *
+ * ```kotlin
+ * class Outer {
+ *     class Boundary {
+ *         inner class Inner {
+ *             fun target() {}
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * `targetFunction.nonStaticOuterClasses().mapNotNull { it.name }.toList()` returns `listOf("Inner", "Boundary")`. The sequence stops at
+ * `Boundary` because it is not an `inner` class, so its instances do not retain an `Outer` instance.
+ */
 fun KtElement.nonStaticOuterClasses(): Sequence<KtClass> {
     return generateSequence(containingClass()) { if (it.isInner()) it.containingClass() else null }
 }
@@ -816,6 +891,17 @@ fun KtFunctionLiteral.getOrCreateParameterList(): KtParameterList =
 /**
  * Returns the label (explicit or the enclosing call's name) and the call that this lambda is passed to, as a pair. Either component may be
  * `null` if it cannot be determined.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * items.forEach { println(it) }
+ * items.forEach itemLoop@ { println(it) }
+ * val standalone = { println("done") }
+ * ```
+ *
+ * For the first function literal, this returns the inferred label `forEach` and its call. For the explicitly labeled literal, it returns
+ * `itemLoop` and the call. For the literal assigned to `standalone`, it returns `(null, null)`.
  */
 fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
     val literalParent = (this.parent as KtLambdaExpression).parent
@@ -1003,6 +1089,17 @@ fun KtFile.getFileOrScriptDeclarations() = if (isScript()) script!!.declarations
 /**
  * Returns the `as`/`as?` expression whose left-hand side is a call with this expression as its direct child, normally its callee. The call
  * may be the selector of a qualified expression, and the call or qualified expression may be parenthesized. Returns `null` otherwise.
+ *
+ * ### Example:
+ *
+ * Given the PSI for:
+ *
+ * ```kotlin
+ * val result = (service.load()) as Result
+ * ```
+ *
+ * Calling this function on the `load` callee reference returns the full `(service.load()) as Result` cast expression. Calling it on the
+ * `service` receiver returns `null` because the receiver is not a direct child of the call expression.
  */
 fun KtExpression.getBinaryWithTypeParent(): KtBinaryExpressionWithTypeRHS? {
     val callExpression = parent as? KtCallExpression ?: return null

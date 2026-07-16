@@ -393,6 +393,22 @@ public class KtPsiUtil {
      * Note: a class declared inside a {@code companion { }} block (which is invalid code) is treated as nested
      * directly in the class that owns the block.
      *
+     * <h3>Example:</h3>
+     * <pre>{@code
+     * class Top {
+     *     class Nested
+     *
+     *     fun build() {
+     *         class Local {
+     *             inner class InsideLocal
+     *         }
+     *     }
+     * }
+     * }</pre>
+     *
+     * <p>For these declarations, {@code getOutermostClassOrObject(nested)} returns {@code top}, while calls for {@code local} and
+     * {@code insideLocal} both return {@code local}. The search does not cross the local-class boundary.
+     *
      * @param classOrObject the class to start the search from
      * @return the outermost enclosing class; never {@code null} — at minimum {@code classOrObject} itself
      */
@@ -807,6 +823,22 @@ public class KtPsiUtil {
      * Traverses {@code root} and its subtree, collecting the outermost elements that satisfy {@code predicate} without descending into a
      * match. Returns the first or last match in depth-first traversal order, as selected by {@code first}, or {@code null} if there is
      * none. If {@code root} matches, it is the only result.
+     *
+     * <h3>Example:</h3>
+     * <pre>{@code
+     * class First {
+     *     class Nested
+     * }
+     * class Second
+     * }</pre>
+     *
+     * <p>Given the containing {@code file}, the following searches return {@code First} and {@code Second}, respectively:
+     * <pre>{@code
+     * KtElement firstClass = getOutermostDescendantElement(file, true, element -> element instanceof KtClass);
+     * KtElement lastClass = getOutermostDescendantElement(file, false, element -> element instanceof KtClass);
+     * }</pre>
+     *
+     * <p>{@code Nested} is not considered because the traversal does not descend into {@code First} after it matches.
      */
     @Nullable
     public static KtElement getOutermostDescendantElement(
@@ -1023,6 +1055,16 @@ public class KtPsiUtil {
     /**
      * Returns the nearest enclosing call-like expression that {@code expression} is an operand or argument of, looking through parentheses,
      * casts, argument lists, lambdas, and labels, or {@code null} if there is none.
+     *
+     * <h3>Example:</h3>
+     * <pre>{@code
+     * consume((value as String))
+     * consume(left + right)
+     * }</pre>
+     *
+     * <p>For the first statement, calling this method on the {@code value} expression returns the {@code consume(...)} call because
+     * casts and parentheses are skipped. For the second statement, calling it on {@code left} returns the nearer binary expression
+     * {@code left + right} rather than the outer {@code consume(...)} call.
      */
     @Nullable
     public static KtExpression getParentCallIfPresent(@NotNull KtExpression expression) {
