@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import kotlinx.serialization.Serializable
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.json.AbsoluteFileSerializer
@@ -42,23 +40,20 @@ internal val ExportCommonSourceSetsMetadataLocations = KotlinProjectSetupCorouti
         SOURCE_SETS_METADATA_LOCATIONS_KEY,
         metadataApiElements,
         locationsProvider,
+        SourceSetMetadataLocations.serializer(),
         taskDependencies
     )
 }
 
 @Serializable
 internal class SourceSetMetadataLocations(
-    @get:Internal
     val locationBySourceSetName: Map<String, @Serializable(with = AbsoluteFileSerializer::class) File>
-) : KotlinShareableDataAsSecondaryVariant {
-    @get:InputFiles
-    val locations: Collection<File> get() = locationBySourceSetName.values
-}
+) : KotlinShareableDataAsSecondaryVariant
 
 internal fun KotlinSecondaryVariantsDataSharing.consumeCommonSourceSetMetadataLocations(
     from: Configuration,
 ): KotlinProjectSharedDataProvider<SourceSetMetadataLocations> = consume(
     SOURCE_SETS_METADATA_LOCATIONS_KEY,
     from,
-    SourceSetMetadataLocations::class.java
+    SourceSetMetadataLocations.serializer()
 )

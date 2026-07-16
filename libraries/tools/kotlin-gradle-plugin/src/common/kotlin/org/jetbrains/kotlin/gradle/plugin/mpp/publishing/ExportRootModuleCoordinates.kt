@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.publishing
 
 import kotlinx.serialization.Serializable
 import org.gradle.api.Project
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
@@ -27,13 +25,8 @@ import org.jetbrains.kotlin.gradle.utils.currentBuildId
  */
 @Serializable
 internal data class KotlinProjectCoordinatesData(
-    @get:Input
     val buildPath: String,
-
-    @get:Input
     val projectPath: String,
-
-    @get:Nested
     val moduleId: ModuleDependencyIdentifier,
 ) : KotlinShareableDataAsSecondaryVariant
 
@@ -46,14 +39,20 @@ internal val ExportRootModuleCoordinates = KotlinProjectSetupCoroutine {
 
     val metadataApiElements = configurations.getByName(metadataTarget.apiElementsConfigurationName)
     val coordinates = collectKotlinProjectCoordinates()
-    projectDataSharingService.shareDataFromProvider(PROJECT_DATA_SHARING_KEY, metadataApiElements, provider { coordinates })
+    projectDataSharingService.shareDataFromProvider(
+        PROJECT_DATA_SHARING_KEY,
+        metadataApiElements,
+        provider { coordinates },
+        KotlinProjectCoordinatesData.serializer()
+    )
 }
 
-internal fun KotlinSecondaryVariantsDataSharing.consumeRootModuleCoordinates(sourceSet: InternalKotlinSourceSet) = consume(
-    PROJECT_DATA_SHARING_KEY,
-    sourceSet.resolvableMetadataConfiguration,
-    KotlinProjectCoordinatesData::class.java
-)
+internal fun KotlinSecondaryVariantsDataSharing.consumeRootModuleCoordinates(sourceSet: InternalKotlinSourceSet) =
+    consume(
+        PROJECT_DATA_SHARING_KEY,
+        sourceSet.resolvableMetadataConfiguration,
+        KotlinProjectCoordinatesData.serializer()
+    )
 
 private suspend fun Project.collectKotlinProjectCoordinates(): KotlinProjectCoordinatesData {
     return KotlinProjectCoordinatesData(
