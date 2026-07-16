@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.internal
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -172,7 +173,13 @@ internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondar
         if (!file.exists()) return null
 
         val content = file.readText()
-        return runCatching { KgpJson.default.decodeFromString(serializer, content) }.getOrNull()
+        return try {
+            KgpJson.default.decodeFromString(serializer, content)
+        } catch (_: SerializationException) {
+            // An artifact with our key/attribute exists but does not deserialize (e.g. a foreign or
+            // incompatible producer). Skip it rather than failing the consumer; other failures propagate.
+            null
+        }
     }
 }
 
