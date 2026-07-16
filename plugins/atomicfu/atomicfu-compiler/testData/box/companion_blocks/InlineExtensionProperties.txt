@@ -1,0 +1,21 @@
+@kotlin.Metadata
+public final class InlineExtensionPropertiesKt {
+    // source: 'InlineExtensionProperties.kt'
+    private synthetic final static field cA: java.util.concurrent.atomic.AtomicInteger
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getCA(): java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static method getTwiceAsLarge$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int): int
+    private synthetic final static method getTwiceAsLarge$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object): int
+    private synthetic final static method getTwiceAsLarge$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger): int
+}
+
+@kotlin.Metadata
+public final class Outer {
+    // source: 'InlineExtensionProperties.kt'
+    private synthetic final static field a: java.util.concurrent.atomic.AtomicInteger
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getA(): java.util.concurrent.atomic.AtomicInteger
+    public final static method test(): void
+}
