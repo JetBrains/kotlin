@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeHoldsInEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.roots.rootDeclarationAssignmentService
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentParent
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferReceiverParameterType
@@ -487,6 +488,14 @@ class FirCallCompleter(
                         isCrossinline = false
                         isNoinline = false
                         isVararg = false
+                    }.also { valueParameter ->
+                        // TODO (marco): Workaround for missing back reference assignments for this from the Analysis API side.
+                        //  Cause: This value parameter is missing a back reference assignment, potentially because `LLFirPhaseUpdater`
+                        //  doesn't hit for it. Maybe because the value parameter is already in `BODY_RESOLVE` or contained in an element
+                        //  which didn't change phase or isn't visited?
+                        //  In general, do we go back to the drawing board for HOW we assign back references consistently across the board?
+                        //  How can we *efficiently* cover declarations such as this one?
+                        session.rootDeclarationAssignmentService?.assignRootDeclarationReferencesFrom(valueParameter, lambda)
                     }
                 }
                 else -> null
