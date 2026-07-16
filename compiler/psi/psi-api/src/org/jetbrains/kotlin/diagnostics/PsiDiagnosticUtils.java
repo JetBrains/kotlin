@@ -175,14 +175,14 @@ public class PsiDiagnosticUtils {
         }
 
         /**
-         * Returns the start position of the range.
+         * Returns the start position of the range (inclusive).
          */
         public LineAndColumn getStart() {
             return start;
         }
 
         /**
-         * Returns the end position of the range.
+         * Returns the end position of the range, exclusive: the position just past the last character of the range.
          */
         public LineAndColumn getEnd() {
             return end;
