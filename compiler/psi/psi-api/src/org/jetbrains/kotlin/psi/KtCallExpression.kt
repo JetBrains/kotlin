@@ -48,9 +48,11 @@ open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallE
     }
 
     /**
-     * Normally there should be only one (or zero) function literal arguments. The returned value is a list for better handling of a
-     * commonly made mistake of a function taking a lambda and returning another function. Most users can simply ignore lists of more than
-     * one element.
+     * Returns the trailing lambda arguments of this call — lambdas passed outside the value-argument parentheses, as in `foo { ... }`.
+     *
+     * Normally there is only one (or zero) such argument. The return type is a list only to gracefully handle the common mistake of calling
+     * a function that takes a lambda and itself returns a function, as in `foo { } { }`; most callers can simply ignore lists with more
+     * than one element.
      */
     override fun getLambdaArguments(): List<KtLambdaArgument> {
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.LAMBDA_ARGUMENT)
