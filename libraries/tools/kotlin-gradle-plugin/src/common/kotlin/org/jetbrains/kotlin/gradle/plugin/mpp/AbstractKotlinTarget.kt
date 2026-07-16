@@ -111,7 +111,7 @@ abstract class AbstractKotlinTarget(
                 val metadataTarget =
                     kotlinExtension.targets.getByName(KotlinMetadataTarget.METADATA_TARGET_NAME) as AbstractKotlinTarget
 
-                KotlinVariantWithMetadataVariant(usageContexts, metadataTarget)
+                KotlinVariantWithMetadataVariant(this, usageContexts, metadataTarget)
             }
 
         result.componentName = componentName

@@ -96,10 +96,11 @@ open class KotlinVariantWithCoordinates(
     KotlinTargetComponentWithCoordinatesAndPublication /* Gradle 4.7+ API, don't use with older versions */
 
 class KotlinVariantWithMetadataVariant(
+    target: KotlinTarget,
     usages: Set<DefaultKotlinUsageContext>,
-    metadataTarget: AbstractKotlinTarget,
-) : KotlinVariantWithCoordinates(metadataTarget, usages), ComponentWithVariants {
-    override fun getVariants() = target.components
+    internal val metadataTarget: AbstractKotlinTarget,
+) : KotlinVariantWithCoordinates(target, usages), ComponentWithVariants {
+    override fun getVariants() = metadataTarget.components
 }
 
 class JointAndroidKotlinTargetComponent(
