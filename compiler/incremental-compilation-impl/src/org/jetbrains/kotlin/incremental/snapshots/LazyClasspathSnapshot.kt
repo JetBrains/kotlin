@@ -28,6 +28,7 @@ internal class LazyClasspathSnapshot(
 ) {
     private var currentClasspathSnapshot: List<AccessibleClassSnapshot>? = null
     private var currentModuleInfoHashes: Set<Long>? = null
+    private var currentPackageInfoHashes: Set<Long>? = null
     private var computedShrunkClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>? = null
     private var savedShrunkClasspathSnapshot: List<AccessibleClassSnapshot>? = null
 
@@ -43,12 +44,14 @@ internal class LazyClasspathSnapshot(
                 val classpathSnapshot =
                     CachedClasspathSnapshotSerializer.load(classpathSnapshotFiles.currentClasspathEntrySnapshotFiles, reporter)
                 currentModuleInfoHashes = classpathSnapshot.classpathEntrySnapshots.mapNotNullTo(mutableSetOf()) { it.moduleInfoHash }
+                currentPackageInfoHashes = classpathSnapshot.classpathEntrySnapshots.mapNotNullTo(mutableSetOf()) { it.packageInfoHash }
                 reporter.measure(metricToReportIfComputing.removeDuplicateClassesTag) {
                     classpathSnapshot.removeDuplicateAndInaccessibleClasses()
                 }
             }
             else -> {
                 currentModuleInfoHashes = emptySet()
+                currentPackageInfoHashes = emptySet()
                 emptyList()
             }
         }
@@ -61,6 +64,13 @@ internal class LazyClasspathSnapshot(
         currentModuleInfoHashes?.let { return it }
         getCurrentClasspathSnapshot(metricToReportIfComputing)
         return currentModuleInfoHashes!!
+    }
+
+    /** Combined hashes of the `package-info.class` files on the current classpath. */
+    fun getCurrentPackageInfoHashes(metricToReportIfComputing: LazySnapshotLoadingMetrics): Set<Long> {
+        currentPackageInfoHashes?.let { return it }
+        getCurrentClasspathSnapshot(metricToReportIfComputing)
+        return currentPackageInfoHashes!!
     }
 
     fun getComputedShrunkClasspathAgainstPreviousLookups(lookupStorage: LookupStorage, metricToReportIfComputing: LazySnapshotLoadingMetrics): List<AccessibleClassSnapshot> {

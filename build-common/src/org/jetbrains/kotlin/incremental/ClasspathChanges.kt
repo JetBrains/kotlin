@@ -46,6 +46,8 @@ class ClasspathSnapshotFiles(
 
     val previousModuleInfoHashesFile: File = File(classpathSnapshotDir, "module-info-hashes.bin")
 
+    val previousPackageInfoHashesFile: File = File(classpathSnapshotDir, "package-info-hashes.bin")
+
     companion object {
         private const val serialVersionUID = 0L
     }
