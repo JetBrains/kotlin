@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.CompilationMode
 import org.jetbrains.kotlin.incremental.javaInterop.JavaInteropCoordinator
 import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
+import java.io.File
 
 internal interface ImpactedFilesDeterminer {
     fun determineChangedAndImpactedSymbols(): ChangesEither
@@ -28,10 +29,17 @@ internal class JvmSourcesToCompileCalculator(
     private val dirtyFilesProvider: DirtyFilesProvider,
     private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
 ) {
+    private fun DeterminableFiles.Known.findFullRebuildReasonOnSpecificFilesChange(): BuildAttribute? {
+        modified.forEach { fullRebuildOnSpecificFilesChangeReasons[it.name]?.let { reason -> return reason } }
+        removed.forEach { fullRebuildOnSpecificFilesChangeReasons[it.name]?.let { reason -> return reason } }
+        return null
+    }
 
     private fun calculateSourcesToCompileImpl(
         impactedFilesDeterminer: ImpactedFilesDeterminer,
     ): CompilationMode {
+        changedFiles.findFullRebuildReasonOnSpecificFilesChange()?.let { return CompilationMode.Rebuild(it) }
+
         val changedAndImpactedSymbols = impactedFilesDeterminer.determineChangedAndImpactedSymbols()
 
         return when (changedAndImpactedSymbols) {
@@ -90,6 +98,12 @@ internal class JvmSourcesToCompileCalculator(
         )
         return calculateSourcesToCompileImpl(
             impactedFilesDeterminer,
+        )
+    }
+
+    companion object {
+        private val fullRebuildOnSpecificFilesChangeReasons: Map<String, BuildAttribute> = mapOf(
+            "module-info.java" to BuildAttribute.MODULE_INFO_CHANGED,
         )
     }
 }

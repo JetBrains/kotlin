@@ -41,6 +41,7 @@ enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: Stri
     UNSAFE_INCREMENTAL_CHANGE_KT_62686(BuildAttributeKind.REBUILD_REASON, "Incremental compilation might be incorrect (KT-62686)"),
     COMPILER_ARGS_CHANGED(BuildAttributeKind.REBUILD_REASON, "Compiler arguments changed"),
     INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED(BuildAttributeKind.REBUILD_REASON, "Incremental compilation configuration changed"),
+    MODULE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "module-info.java changed"),
     ;
 
     companion object {
