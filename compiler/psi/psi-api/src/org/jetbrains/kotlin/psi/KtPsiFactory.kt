@@ -121,8 +121,9 @@ class KtPsiFactory private constructor(
     }
 
     /**
-     * Creates an expression from the given [text]. Throws if the text cannot be parsed as a single expression whose text matches [text]
-     * exactly; use [createExpressionIfPossible] to get `null` instead.
+     * Creates an expression from the given [text]. Throws if no expression can be parsed. When JVM assertions are enabled, also fails if
+     * the parsed expression's text does not match [text] exactly; use [createExpressionIfPossible] for unconditional validation and a
+     * `null` result on failure.
      */
     fun createExpression(@NonNls text: String): KtExpression {
         val expression = doCreateExpression(text) ?: error("Failed to create expression from text: '$text'")
@@ -488,7 +489,10 @@ class KtPsiFactory private constructor(
         return createDeclaration(funDecl)
     }
 
-    /** Creates a callable reference expression from the given [text], or returns `null` if the text is not one. */
+    /**
+     * Creates an expression from [text] and returns it if it is a callable reference, or `null` if it is another kind of expression.
+     * Failure to parse an expression is handled as described by [createExpression].
+     */
     fun createCallableReferenceExpression(@NonNls text: String) = createExpression(text) as? KtCallableReferenceExpression
 
     /** Creates a secondary constructor from the given declaration text [decl]. */
@@ -609,6 +613,8 @@ class KtPsiFactory private constructor(
     /**
      * Creates a block string-template entry (`${...}`) wrapping the given [expression], for a string template whose interpolation prefix is
      * [prefixLength] dollar signs (for example, `$${...}` when [prefixLength] is `2`).
+     *
+     * @throws IllegalStateException if [prefixLength] is not positive
      */
     fun createMultiDollarBlockStringTemplateEntry(expression: KtExpression, prefixLength: Int): KtStringTemplateEntryWithExpression {
         checkInterpolationPrefixLength(prefixLength)
@@ -628,6 +634,8 @@ class KtPsiFactory private constructor(
     /**
      * Creates a simple-name string-template entry (`$name`) for the given [name], for a string template whose interpolation prefix is
      * [prefixLength] dollar signs (for example, `$$name` when [prefixLength] is `2`).
+     *
+     * @throws IllegalStateException if [prefixLength] is not positive
      */
     fun createMultiDollarSimpleNameStringTemplateEntry(@NonNls name: String, prefixLength: Int): KtSimpleNameStringTemplateEntry {
         checkInterpolationPrefixLength(prefixLength)
@@ -653,6 +661,8 @@ class KtPsiFactory private constructor(
     /**
      * Creates a string template with the given [content] whose interpolation prefix is [prefixLength] dollar signs. A raw (triple-quoted)
      * template is used when [content] spans multiple lines or [forceMultiQuoted] is `true`, and a regular (double-quoted) one otherwise.
+     *
+     * @throws IllegalStateException if [prefixLength] is not positive
      */
     fun createMultiDollarStringTemplate(
         @NonNls content: String,
@@ -737,7 +747,7 @@ class KtPsiFactory private constructor(
     fun createConstructorKeyword(): PsiElement =
         createClass("class A constructor()").primaryConstructor!!.getConstructorKeyword()!!
 
-    /** Creates a labeled expression with the given [labelName] (for example, `"loop@ 1"`). */
+    /** Creates a labeled expression from a label [labelName] such as `"loop"`; the resulting expression is `loop@ 1`. */
     fun createLabeledExpression(@NonNls labelName: String): KtLabeledExpression = createExpression("$labelName@ 1") as KtLabeledExpression
 
     /** Creates a [KtTypeCodeFragment] for the given [text], resolved in the given [context]. */
@@ -821,10 +831,12 @@ class KtPsiFactory private constructor(
     /**
      * A fluent builder for a class header string, assembled in a fixed order: modifiers, name, type parameters, base class, and type
      * constraints. Call [asString] to obtain the resulting header text, then pass it to [createClass] to build the PSI.
+     *
+     * Calls are expected in that order. Order violations are checked only when JVM assertions are enabled.
      */
     class ClassHeaderBuilder {
 
-        /** The stages of building a class header, enforced in order by the builder. */
+        /** The stages in the expected order for building a class header. */
         enum class State {
             MODIFIERS,
             NAME,
@@ -837,7 +849,10 @@ class KtPsiFactory private constructor(
         private val sb = StringBuilder()
         private var state = State.MODIFIERS
 
-        /** Appends a modifier. Must be called before [name]. */
+        /**
+         * Appends [modifier] verbatim. No separator is added between repeated calls, so callers must include any required whitespace.
+         * This is expected to be called before [name].
+         */
         fun modifier(@NonNls modifier: String): ClassHeaderBuilder {
             assert(state == State.MODIFIERS)
 
@@ -930,6 +945,8 @@ class KtPsiFactory private constructor(
     /**
      * A fluent builder for a function, constructor, or read-only property declaration string. The available steps and their order depend on
      * the [Target]; call [asString] to obtain the resulting text, then pass it to the matching `create*` method.
+     *
+     * Calls are expected in state order. Order and target violations are checked only when JVM assertions are enabled.
      */
     class CallableBuilder(private val target: Target) {
 
@@ -945,7 +962,7 @@ class KtPsiFactory private constructor(
             READ_ONLY_PROPERTY
         }
 
-        /** The stages of building a callable, enforced in order by the builder. */
+        /** The stages in the expected order for building a callable. */
         enum class State {
             MODIFIERS,
             NAME,
@@ -990,7 +1007,10 @@ class KtPsiFactory private constructor(
             Target.READ_ONLY_PROPERTY -> (if (breakLine) "\n" else " ") + "get()"
         }
 
-        /** Appends a modifier. Must be called before [typeParams]. */
+        /**
+         * Appends [modifier] verbatim. No separator is added between repeated calls, so callers must include any required whitespace.
+         * This is expected to be called before [typeParams].
+         */
         fun modifier(modifier: String): CallableBuilder {
             assert(state == State.MODIFIERS)
 
