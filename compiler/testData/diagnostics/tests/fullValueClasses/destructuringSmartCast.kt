@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +FullValueClasses +NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 // ISSUE: KT-87696
 
@@ -10,7 +10,7 @@ value class SmartToken(override val id: Int) : HasTokenId
 
 fun readAfterSmartCast(value: HasTokenId) {
     if (value is SmartToken) {
-        val (id) = <!COMPONENT_FUNCTION_MISSING!>value<!>
+        val (id) = value
     }
 }
 
