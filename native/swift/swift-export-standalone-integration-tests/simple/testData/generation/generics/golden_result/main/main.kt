@@ -13,6 +13,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(StringProducer::class, "4main14StringProducerC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(TripleBox::class, "4main9TripleBoxC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(A::class, "_A")
+@file:kotlin.native.internal.objc.BindClassToObjCName(AFactory::class, "_AFactory")
 @file:kotlin.native.internal.objc.BindClassToObjCName(B::class, "_B")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Consumer::class, "_Consumer")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ConsumerProducer::class, "_ConsumerProducer")
@@ -24,6 +25,16 @@ import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("AFactory_create__reverse_swift")
+internal external fun AFactory_create__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(AFactory::class, "create")
+public fun AFactory_create__reverse(self: AFactory<A<kotlin.Unit>>): A<kotlin.Any?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = AFactory_create__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as A<kotlin.Any?>
+}
 
 @ImportedBridge("A_foo_get__reverse_swift")
 internal external fun A_foo_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
@@ -85,6 +96,13 @@ public fun StringProducer_produce__reverse(self: StringProducer): kotlin.String 
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = StringProducer_produce__reverse_swift(__self)
     return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ExportedBridge("AFactory_create")
+public fun AFactory_create(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as AFactory<A<kotlin.Unit>>
+    val _result = run { __self.create() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("A_foo_get")

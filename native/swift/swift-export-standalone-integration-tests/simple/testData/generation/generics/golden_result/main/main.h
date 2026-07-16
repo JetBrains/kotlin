@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * AFactory_create__reverse_swift(void * self);
+
 void * _Nullable A_foo_get__reverse_swift(void * self);
 
 void * _Nullable B_foo_get__reverse_swift(void * self);
@@ -14,6 +16,8 @@ void * _Nullable Processor_process__TypesOfArguments__Swift_Optional_anyU20Kotli
 void * _Nullable Producer_produce__reverse_swift(void * self);
 
 NSString * StringProducer_produce__reverse_swift(void * self);
+
+void * AFactory_create(void * self);
 
 void * _Nullable A_foo_get(void * self);
 

@@ -64,6 +64,10 @@ interface B <T> {
     val foo: T
 }
 
+interface AFactory<T : A<Unit>> {
+    fun create(): T
+}
+
 class Demo: A<Int>, B<Int?> {
     override val foo = 5
 }

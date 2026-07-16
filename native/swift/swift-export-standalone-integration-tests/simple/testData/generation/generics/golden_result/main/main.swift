@@ -11,6 +11,9 @@ public protocol A: KotlinRuntime.KotlinBase, main._A {
         get
     }
 }
+public protocol AFactory: KotlinRuntime.KotlinBase, main._AFactory {
+    func create() -> any main.A
+}
 public protocol B: KotlinRuntime.KotlinBase, main._B {
     var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get
@@ -34,6 +37,9 @@ public protocol Producer: KotlinRuntime.KotlinBase, main._Producer {
 @objc(_A)
 public protocol _A {
 }
+@objc(_AFactory)
+public protocol _AFactory {
+}
 @objc(_B)
 public protocol _B {
 }
@@ -50,6 +56,8 @@ public protocol _Processor {
 public protocol _Producer {
 }
 public protocol __A: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __AFactory: KotlinRuntimeSupport._KotlinBridgeable {
 }
 public protocol __B: KotlinRuntimeSupport._KotlinBridgeable {
 }
@@ -397,6 +405,13 @@ extension main.A where Self : main.__A {
 }
 extension main.A {
 }
+extension main.AFactory where Self : main.__AFactory {
+    public func create() -> any main.A {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: AFactory_create(self.__externalRCRef())) as! any main.A
+    }
+}
+extension main.AFactory {
+}
 extension main.B where Self : main.__B {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
@@ -447,6 +462,8 @@ extension KotlinRuntimeSupport._KotlinExistential: main.A, main.__A where Wrappe
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.B, main.__B where Wrapped : main._B {
 }
+extension KotlinRuntimeSupport._KotlinExistential: main.AFactory, main.__AFactory where Wrapped : main._AFactory {
+}
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Producer {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Consumer {
@@ -459,6 +476,15 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._A {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._B {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._AFactory {
+}
+@_cdecl("AFactory_create__reverse_swift")
+package func AFactory_create__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.AFactory
+    let _result: any main.A = _self.create()
+    return _result.__externalRCRef()
+}
+
 @_cdecl("A_foo_get__reverse_swift")
 package func A_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.A
