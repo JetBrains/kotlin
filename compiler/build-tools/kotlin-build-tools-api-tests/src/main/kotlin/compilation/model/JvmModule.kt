@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfigurati
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.MODULE_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JDK_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.MODULE_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_REFLECT
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_STDLIB
@@ -25,14 +26,18 @@ import java.io.File
 import java.io.StringWriter
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.Locale
 import javax.tools.Diagnostic
 import javax.tools.DiagnosticCollector
 import javax.tools.JavaFileObject
 import javax.tools.ToolProvider
 import kotlin.io.path.createParentDirectories
+import kotlin.io.path.exists
 import kotlin.io.path.extension
+import kotlin.io.path.name
 import kotlin.io.path.pathString
+import kotlin.io.path.readText
 import kotlin.io.path.walk
 import kotlin.reflect.KClass
 
@@ -91,6 +96,7 @@ class JvmModule(
     ): CompilationResult {
         val allowedExtensions = setOf("kt", "kts", "java", "greet")
 
+        var configuredJdkHome: Path? = null
         val compilationOperation = kotlinToolchain.jvm.jvmCompilationOperation(
             sourcesDirectory.walk()
                 .filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }
@@ -102,6 +108,7 @@ class JvmModule(
             this.compilerArguments[NO_REFLECT] = true
             this.compilerArguments[NO_STDLIB] = true
             this.compilerArguments[CLASSPATH] = compileClasspath
+            configuredJdkHome = compilerArguments[JDK_HOME]
             when (compilerArguments[MODULE_NAME]) {
                 null -> compilerArguments[MODULE_NAME] = moduleName
                 EXPLICIT_NULL_MODULE_NAME_MARKER -> compilerArguments[MODULE_NAME] = null
@@ -109,7 +116,7 @@ class JvmModule(
             }
         }
 
-        return compilationOperation.let {
+        val kotlinCompilationResult = compilationOperation.let {
             compilationAction(it)
             val result = buildSession.executeOperation(it, strategyConfig, kotlinLogger)
             if (compileJavaSources && result == CompilationResult.COMPILATION_SUCCESS) {
@@ -120,6 +127,11 @@ class JvmModule(
             }
             result
         }
+
+        if (kotlinCompilationResult == CompilationResult.COMPILATION_SUCCESS) {
+            compileModuleInfoWithJavac(configuredJdkHome, kotlinLogger)
+        }
+        return kotlinCompilationResult
     }
 
     private fun compileJavaSourcesWithJavac(javaFiles: List<File>, kotlinLogger: TestKotlinLogger): Boolean {
@@ -153,6 +165,41 @@ class JvmModule(
         }
         return success
     }
+
+    /**
+     * Compiles this module's `module-info.java` (if present) and only it into [outputDirectory] with the `javac` from the given JDK.
+     *
+     * Separated from [compileJavaSourcesWithJavac] because it's using a different JDK and JPMS specific arguments.
+     */
+    private fun compileModuleInfoWithJavac(configuredJdkHome: Path?, kotlinLogger: TestKotlinLogger) {
+        val moduleInfoFile = sourcesDirectory.walk().firstOrNull { it.name == "module-info.java" } ?: return
+        val jdkHome = configuredJdkHome ?: Paths.get(System.getProperty("java.home"))
+        val jpmsModuleName = parseJavaModuleName(moduleInfoFile)
+            ?: error("Could not determine the JPMS module name declared in '$moduleInfoFile'")
+        val javac = sequenceOf("bin/javac", "bin/javac.exe").map { jdkHome.resolve(it) }.firstOrNull { it.exists() }
+            ?: error("Could not find 'javac' under JDK home '$jdkHome'")
+
+        val command = buildList {
+            add(javac.pathString)
+            add("-d"); add(outputDirectory.pathString)
+            if (compileClasspath.isNotEmpty()) {
+                add("--module-path"); add(compileClasspath.joinToString(File.pathSeparator) { it.pathString })
+            }
+            add("--patch-module"); add("$jpmsModuleName=${outputDirectory.pathString}")
+            add(moduleInfoFile.pathString)
+        }
+        val process = ProcessBuilder(command).redirectErrorStream(true).start()
+        val javacOutput = process.inputStream.bufferedReader().use { it.readText() }
+        if (process.waitFor() == 0) {
+            if (javacOutput.isNotBlank()) kotlinLogger.info(javacOutput)
+        } else {
+            error("javac failed to compile '$moduleInfoFile' (module-info.class not produced):\n$javacOutput")
+        }
+    }
+
+    // Matches `[open] module <qualified.name> {`. Test-data descriptors have no comments, so a simple scan is enough.
+    private fun parseJavaModuleName(moduleInfoFile: Path): String? =
+        Regex("""(?:^|\s)(?:open\s+)?module\s+([A-Za-z0-9_.]+)""").find(moduleInfoFile.readText())?.groupValues?.get(1)
 
     private fun generateClasspathSnapshot(dependency: Dependency): Path {
         val snapshotOperation = kotlinToolchain.jvm.classpathSnapshottingOperation(
