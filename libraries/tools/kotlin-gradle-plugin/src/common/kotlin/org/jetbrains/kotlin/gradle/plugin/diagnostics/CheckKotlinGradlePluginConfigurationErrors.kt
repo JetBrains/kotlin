@@ -45,7 +45,7 @@ internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask
         }
         if (errorDiagnostics.isNotEmpty()) {
             errorDiagnostics.reportProblems(reporter, options)
-            throw InvalidUserCodeException("Kotlin Gradle Plugin reported errors. Check the log for details")
+            throw InvalidUserCodeException("Kotlin Gradle Plugin reported errors. Check the Gradle Problems report or log for details")
         }
     }
 
@@ -75,14 +75,14 @@ internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(
             provider {
                 kotlinToolingDiagnosticsCollector
                     .getDiagnosticsForProject(path)
-                    .filter { it.severity == ToolingDiagnostic.Severity.ERROR }
+                    .filter { it.severity == KotlinToolingDiagnosticsSeverity.ERROR }
             }
         )
         task.strongWarningDiagnostics.set(
             provider {
                 kotlinToolingDiagnosticsCollector
                     .getDiagnosticsForProject(path)
-                    .filter { it.severity == ToolingDiagnostic.Severity.STRONG_WARNING }
+                    .filter { it.severity == KotlinToolingDiagnosticsSeverity.STRONG_WARNING }
             }
         )
         task.usesService(kotlinToolingDiagnosticsCollectorProvider)
