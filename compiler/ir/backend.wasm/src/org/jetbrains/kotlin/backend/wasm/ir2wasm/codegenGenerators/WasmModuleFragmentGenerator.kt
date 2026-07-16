@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
+import org.jetbrains.kotlin.backend.wasm.lower.WasmSuspendLambdaMergingLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
@@ -224,6 +225,9 @@ fun compileIrFile(
         // Multiple files may create classes with the same structure (e.g., Function1_bound1_I),
         // and we want to deduplicate them to a single canonical set of definitions.
         if (it is IrClass && it.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) {
+            linkerDataContext.addEquivalentType(it.name.asString(), it.symbol)
+        }
+        if (it is IrClass && it.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS) {
             linkerDataContext.addEquivalentType(it.name.asString(), it.symbol)
         }
     }
