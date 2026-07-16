@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 // DIAGNOSTICS: -ERROR_SUPPRESSION -NOTHING_TO_INLINE
+// LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 
 // MODULE: lib
 // FILE: lib.kt
@@ -42,13 +43,13 @@ fun box(): String {
       v
       ::v.<!LEAKED_VOLATILE_FIELD!>atomicGetField()<!>
       set(1)
-      compareAndSet(1, 2)
+      <!LEAKED_VOLATILE_FIELD!>compareAndSet(1, 2)<!>
 
       val c = C()
       c.v
       c::v.<!LEAKED_VOLATILE_FIELD!>compareAndExchangeField(0, 1)<!>
       c.getAndSet(2)
-      c.getAndAdd(3)
+      c.<!LEAKED_VOLATILE_FIELD!>getAndAdd(3)<!>
 
       return "OK"
 }
