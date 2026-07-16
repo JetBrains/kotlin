@@ -20,7 +20,12 @@ context(c: JavaResolutionContext)
 internal fun findTypeParameter(name: String): JavaTypeParameter? =
     c.scopeContext.typeParametersInScope[name]
 
-/** Returns type parameters with LOW priority (outer class inherited params, shadowed by inner class names). */
+/**
+ * Returns type parameters with LOW priority (outer class inherited params, shadowed by inner class
+ * names). The sole reader of [JavaScopeContext.inheritedTypeParametersInScope]; exists only for the
+ * PSI-parity quirk documented there and is removable with it.
+ * TODO: remove (KT-87797)
+ */
 context(c: JavaResolutionContext)
 internal fun findInheritedTypeParameter(name: String): JavaTypeParameter? =
     c.scopeContext.inheritedTypeParametersInScope[name]

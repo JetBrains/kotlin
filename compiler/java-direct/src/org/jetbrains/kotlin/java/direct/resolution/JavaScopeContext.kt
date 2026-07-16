@@ -24,7 +24,12 @@ internal class JavaScopeContext(
     val containingClass: JavaClass?,
     /** Type parameters with HIGH priority (method/class own params, win over inner class names). */
     val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
-    /** Type parameters with LOW priority (outer class inherited params, shadowed by inner class names). */
+    /**
+     * Type parameters with LOW priority (outer class inherited params, shadowed by inner class names).
+     *
+     * Exists solely for PSI parity described in [JavaClassOverAst.findInnerClassImpl]
+     * TODO: remove (KT-87797)
+     */
     val inheritedTypeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
 ) {
     /**
@@ -44,7 +49,9 @@ internal class JavaScopeContext(
     /**
      * Creates a new scope with INHERITED type parameters from an outer class (low priority).
      * Used for static nested types where outer class type params are visible but can be
-     * shadowed by inner class names of the static nested type itself.
+     * shadowed by inner class names of the static nested type itself. See
+     * [inheritedTypeParametersInScope] — this whole path exists only for PSI parity and is
+     * removable with it.
      */
     fun withInheritedTypeParameters(typeParams: List<JavaTypeParameter>): JavaScopeContext {
         if (typeParams.isEmpty()) return this

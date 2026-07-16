@@ -115,8 +115,10 @@ class JavaClassifierTypeOverAst(
                 // were reordered after the nested-class lookup below.
                 findTypeParameter(parts[0])?.let { return it }
                 // 2. Inner/local class names (shadow INHERITED outer type params)
-                val localClass = findClassInCurrentScope(parts[0])?.let { return it }
-                // 3. INHERITED type parameters from outer class (low priority — shadowed by inner classes)
+                findClassInCurrentScope(parts[0])?.let { return it }
+                // 3. INHERITED type parameters from outer class (low priority — shadowed by inner
+                // classes). PSI-parity-only; removable with the notion (see
+                // `JavaScopeContext.inheritedTypeParametersInScope`).
                 findInheritedTypeParameter(parts[0])?.let { return it }
             }
 

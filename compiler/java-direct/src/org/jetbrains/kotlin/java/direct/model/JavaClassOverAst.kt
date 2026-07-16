@@ -151,6 +151,8 @@ class JavaClassOverAst(
         // Per JLS 6.5.5/8.1.3 outer type params are not in scope in static nested types at
         // all, but PSI resolves them anyway (`JavaClassifierTypeImpl.computeResolveResult`)
         // and java-direct matches it — see `staticNestedTypeParamShadowsImportedClass.kt`.
+        // (see also comments to `JavaScopeContext.inheritedTypeParametersInScope`).
+        // TODO: remove (KT-87797)
         val contextForInner = if (innerIsEffectivelyStatic)
             resolutionContext.withContainingClass(this).withInheritedTypeParameters(typeParameters)
         else

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.Name
 
 /**
  * Stateless type-reference resolution for Java source files: the JLS 6.4.1 simple-name and
- * JLS 6.5.2 qualified-name dispatchers, supertype-`ClassId` walking, and the session-backed
+ * JLS 6.5.5/6.5.4 qualified-name dispatchers, supertype-`ClassId` walking, and the session-backed
  * probes, all operating on the given [JavaResolutionContext].
  */
 
@@ -48,8 +48,10 @@ internal fun resolve(name: String): ClassId? {
 }
 
 /**
- * Qualified-name resolution: JLS 6.5.2 priority (nested-class interpretation first, when the
- * outer is a class in scope), falling back to plain `package.Class` splits via [probeFqnSplits].
+ * Qualified type name resolution (JLS 6.5.5). The one thing computed here is where the package
+ * name ends and the class name begins — the PackageOrTypeName boundary of the qualifier (JLS
+ * 6.5.4): the nested-class interpretation is tried first (when the outer is a class in scope),
+ * falling back to plain `package.Class` splits via [probeFqnSplits].
  *
  * [fullResolution] controls whether inherited-inner-class lookup is enabled; `false` selects the
  * reentrance-safe flavor used as a fallback from [resolveInheritedInnerClassToClassId].
@@ -60,10 +62,14 @@ internal fun resolveQualifiedNameToClassIdFromParts(
     fullResolution: Boolean,
 ): ClassId? {
     // Try each split of `parts` into an outer-class prefix and a nested tail, shortest prefix first.
-    // The boundary isn't known up front (for `a.b.C.D`, the outer class could be `a.b.C` with tail
-    // `D`, or `a.b` with `C.D` a two-part nested tail), so every split is tried; each prefix resolves
-    // by the same rules (recursively when multi-part). Per JLS 6.5.2, the first prefix resolving to a
-    // class in scope wins.
+    // The boundary isn't known up front (for `a.b.C.D`, the outer could be `a.b.C` + tail `D`, or
+    // `a.b` + two-part tail `C.D`), so every split is tried; each prefix resolves by the same rules
+    // (recursively when multi-part). Per JLS 6.5.4, the leftmost prefix that is a class in scope wins.
+    //
+    // A deviation from strict JLS 6.5.4.2: fall back to `package.Class` splits via [probeFqnSplits].
+    // This diverges from javac only on a package/type name clash, resulting in red code.
+    // PSI behaves the same way, see `qualifiedNamePackageClassClash.kt`.
+    // TODO: investigate possible consequences (KT-87813)
     require(parts.size > 1)
     for (i in 1 until parts.size) {
         val outerParts = parts.subList(0, i)
@@ -94,8 +100,14 @@ internal fun resolveQualifiedNameToClassIdFromParts(
         }
     }
 
-    // Fall back: try as fully qualified name with different package/class splits
-    // (longest package to shortest).
+    // Fall back: treat `parts` as a plain fully-qualified name, probing package/class splits
+    // directly (longest package first). This is reached for any qualified name the loop above
+    // didn't resolve, and it succeeds for names whose whole package portion is 2+ pure-package
+    // segments, so no proper prefix is a class in scope.
+    //
+    // E.g. an inline `java.util.List` (parts = [java, util, List]) written in Java source: the loop
+    // tries outer `java` (a package, unresolved) then `java.util` (also a package, unresolved) and
+    // gives up; probeFqnSplits then finds ClassId(java.util, List).
     return probeFqnSplits(parts, fullResolution)
 }
 
@@ -605,11 +617,9 @@ private fun resolveAsClassId(fqName: FqName, fullResolution: Boolean): ClassId? 
 
 /**
  * Probes every package/class split of [parts] from longest package prefix down to the root
- * package, returning the first [ClassId] accepted by the class-existence probe.
- *
- * Mirrors the fallback branch of `findClassId(fqn, session, accept)` in
- * `compiler/fir/fir-jvm/.../JavaTypeConversion.kt`; kept as a local copy because `java-direct`
- * must not depend on `fir-jvm`. The two probe loops are intentionally identical.
+ * package, returning the first [ClassId] accepted by the class-existence probe. This is the
+ * `package.Class` fallback of [resolveQualifiedNameToClassIdFromParts]; [resolveAsClassId] runs
+ * the same longest-package-first split for a single [FqName].
  */
 context(c: JavaResolutionContext)
 private fun probeFqnSplits(parts: List<String>, fullResolution: Boolean): ClassId? {
