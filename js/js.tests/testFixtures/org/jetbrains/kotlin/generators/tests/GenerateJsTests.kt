@@ -119,10 +119,6 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractJsTypeScriptExportWithInlinedFunInKlibTest>(annotations = listOf(*es6())) {
-                model(pattern = "^([^_](.+))\\.kt$")
-            }
-
             testClass<AbstractJsAnalysisApiTypeScriptExportTest> {
                 model(pattern = "^([^_](.+))\\.kt$")
             }

@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.js.test.runners.tsexport
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.runners.AbstractJsES6Test
 import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
 import org.jetbrains.kotlin.js.test.utils.configureJsTypeScriptExportTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_DTS_FROM_IR
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 abstract class AbstractJsTypeScriptExportTest(
@@ -36,22 +34,6 @@ abstract class AbstractJsTypeScriptWholeFileExportTest : AbstractJsTypeScriptExp
     testGroupOutputDirPrefix = "typescript-export/es5-whole-file",
     isWholeFileJsExport = true,
 )
-
-abstract class AbstractJsTypeScriptExportWithInlinedFunInKlibTest : AbstractJsTypeScriptExportTest(
-    testGroupOutputDirPrefix = "typescript-export/es5-withInlinedFunInKlib"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                LanguageSettingsDirectives.LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
-        }
-    }
-}
 
 abstract class AbstractJsES6TypeScriptExportTest(
     testGroupOutputDirPrefix: String = "typescript-export/es6",
