@@ -369,6 +369,14 @@ object SAVE_CURRENT_MODULE_INFO_HASHES : GradleBuildTimeMetric(
     private fun readResolve(): Any = SAVE_CURRENT_MODULE_INFO_HASHES
 }
 
+object SAVE_CURRENT_PACKAGE_INFO_HASHES : GradleBuildTimeMetric(
+    SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION,
+    "Save current package-info files hashes",
+    name = "SAVE_CURRENT_PACKAGE_INFO_HASHES"
+) {
+    private fun readResolve(): Any = SAVE_CURRENT_PACKAGE_INFO_HASHES
+}
+
 object TASK_FINISH_LISTENER_NOTIFICATION :
     GradleBuildTimeMetric(readableString = "Task finish event notification", name = "TASK_FINISH_LISTENER_NOTIFICATION") {
     private fun readResolve(): Any = TASK_FINISH_LISTENER_NOTIFICATION

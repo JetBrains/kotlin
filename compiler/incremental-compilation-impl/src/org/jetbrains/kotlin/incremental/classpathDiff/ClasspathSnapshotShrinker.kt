@@ -302,6 +302,12 @@ internal fun shrinkAndSaveClasspathSnapshot(
                 lazyClasspathSnapshot.getCurrentModuleInfoHashes(LazySnapshotLoadingMetrics.AssertThatDataIsAlreadyComputed).toList()
             )
         }
+        reporter.measure(SAVE_CURRENT_PACKAGE_INFO_HASHES) {
+            ListExternalizer(LongExternalizer).saveToFile(
+                classpathChanges.classpathSnapshotFiles.previousPackageInfoHashesFile,
+                lazyClasspathSnapshot.getCurrentPackageInfoHashes(LazySnapshotLoadingMetrics.AssertThatDataIsAlreadyComputed).toList()
+            )
+        }
     }
 
     reporter.debug {

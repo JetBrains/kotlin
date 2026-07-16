@@ -47,4 +47,53 @@ class PackageInfoChangesTest : BaseCompilationTest() {
             assertCompiledSources("a.kt", "b.kt")
         }
     }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Adding an annotation to a dependency's package-info.java recompiles the consumer non-incrementally (externally tracked)")
+    @TestMetadata("ic-scenarios/dependency-package-info-modification")
+    fun testDependencyPackageInfoChangeCausesConsumerRecompilationExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val dependency = module(
+                moduleName = "ic-scenarios/dependency-package-info-modification/module-a",
+                compileJavaSources = true,
+            )
+            val consumer = module(
+                moduleName = "ic-scenarios/dependency-package-info-modification/module-b",
+                dependencies = listOf(dependency),
+            )
+            dependency.addAnnotationAndAssertConsumerRecompiles(consumer, strategyConfig)
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Adding an annotation to a dependency's package-info.java recompiles the consumer non-incrementally (internally tracked)")
+    @TestMetadata("ic-scenarios/dependency-package-info-modification")
+    fun testDependencyPackageInfoChangeCausesConsumerRecompilationInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val dependency = module(
+                moduleName = "ic-scenarios/dependency-package-info-modification/module-a",
+                compileJavaSources = true,
+            )
+            val consumer = trackedModule(
+                moduleName = "ic-scenarios/dependency-package-info-modification/module-b",
+                dependencies = listOf(dependency),
+            )
+            dependency.addAnnotationAndAssertConsumerRecompiles(consumer, strategyConfig)
+        }
+    }
+
+    private fun ScenarioModule.addAnnotationAndAssertConsumerRecompiles(
+        consumer: ScenarioModule,
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+    ) {
+        replaceFileWithVersion("package-info.java", "add-annotation")
+        compile()
+        consumer.compile {
+            assertLogContainsLines(
+                expectedLogLevelForRebuildReason(strategyConfig),
+                "Non-incremental compilation will be performed: ${BuildAttribute.DEPENDENCY_PACKAGE_INFO_CHANGED.readableString}"
+            )
+            assertCompiledSources("bpkg/UseA.kt", "bpkg/Other.kt")
+        }
+    }
 }

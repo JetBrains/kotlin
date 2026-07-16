@@ -63,12 +63,14 @@ object ClasspathEntrySnapshotExternalizer : DataExternalizer<ClasspathEntrySnaps
     override fun save(output: DataOutput, snapshot: ClasspathEntrySnapshot) {
         LinkedHashMapExternalizer(StringExternalizer, ClassSnapshotExternalizer).save(output, snapshot.classSnapshots)
         NullableValueExternalizer(LongExternalizer).save(output, snapshot.moduleInfoHash)
+        NullableValueExternalizer(LongExternalizer).save(output, snapshot.packageInfoHash)
     }
 
     override fun read(input: DataInput): ClasspathEntrySnapshot {
         return ClasspathEntrySnapshot(
             classSnapshots = LinkedHashMapExternalizer(StringExternalizer, ClassSnapshotExternalizer).read(input),
-            moduleInfoHash = NullableValueExternalizer(LongExternalizer).read(input)
+            moduleInfoHash = NullableValueExternalizer(LongExternalizer).read(input),
+            packageInfoHash = NullableValueExternalizer(LongExternalizer).read(input)
         )
     }
 }
