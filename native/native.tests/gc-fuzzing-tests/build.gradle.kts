@@ -32,19 +32,19 @@ projectTests {
         allowParallelExecution = false, // some tests may spawn quite a lot of threads
     ) {
         // If set, execute a single test with the given id instead of the fuzzing process.
-        project.findProperty("gcfuzzing.single.id")?.let {
+        project.providers.gradleProperty("gcfuzzing.single.id").orNull?.let {
             systemProperty("gcfuzzing.single.id", it)
         }
         // The timeout for a single fuzzer test. After the time is out the test will try to do one final GC a nd kill itself gracefully.
         // Should be lower than `kn.executionTimeout`.
-        project.findProperty("gcfuzzing.softTimeout")?.let {
+        project.providers.gradleProperty("gcfuzzing.softTimeout").orNull?.let {
             systemProperty("gcfuzzing.softTimeout", it)
         }
         // The total duration of spinning the `simpleFuzz` task.
         // The fuzzer will generate tests one after another until this timelimit is exceeded.
-        systemProperty("gcfuzzing.timelimit", project.findProperty("gcfuzzing.timelimit") ?: "1h")
+        systemProperty("gcfuzzing.timelimit", project.providers.gradleProperty("gcfuzzing.timelimit").getOrElse("1h"))
         // The initial seed for `simpleFuzz` generator.
-        systemProperty("gcfuzzing.seed", project.findProperty("gcfuzzing.seed") ?: Random.nextInt())
+        systemProperty("gcfuzzing.seed", project.providers.gradleProperty("gcfuzzing.seed").getOrElse(Random.nextInt().toString()))
         doNotTrackState(
             "Fuzzer is randomized + certain race conditions can manifest unreproducibly even from the fixed seed"
         )
