@@ -372,10 +372,13 @@ fun PsiChildRange.trimWhiteSpaces(): PsiChildRange {
 val UNWRAPPABLE_TOKEN_TYPES: Set<IElementType> = setOf(PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION)
 
 /**
- * Returns the left-hand-side source element if it is wrapped in parentheses, a label, or annotations.
+ * Returns the operand this operation applies to, but only when that operand is wrapped in parentheses, a label, or annotations; returns
+ * `null` otherwise.
  *
- * This should only be called for a source element corresponding to an assignment, augmented-assignment operator call, increment operator,
- * or decrement operator.
+ * The operand is the left-hand side of an assignment or augmented-assignment operator call (`(x) = ...`, `(x) += ...`), the base of a
+ * postfix increment or decrement (`(x)++`), or the operand of a prefix increment or decrement (`++(x)`).
+ *
+ * This should only be called for a source element corresponding to one of those constructs.
  */
 fun PsiElement.getAssignmentLhsIfUnwrappable(): PsiElement? =
     when {
