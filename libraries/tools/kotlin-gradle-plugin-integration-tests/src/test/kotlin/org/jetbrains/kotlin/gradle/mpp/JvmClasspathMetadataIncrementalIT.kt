@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.creating
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.invoke
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
 import kotlin.io.path.deleteExisting
 
 @MppGradlePluginTests
@@ -118,6 +122,79 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
                 fun foo() = bar(42)
                 """.trimIndent()
             }
+        }
+
+        kotlinSourcesDir("jvmMain").source("main.kt") {
+            $$"""
+            fun bar(i: Int) = "Int"
+
+            fun main() {
+                println("KMP output: ${foo()}")
+            }
+            """.trimIndent()
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Verify incremental compilation with JVM classpath metadata resolves correctly across two common modules")
+    fun testTwoCommonModulesWithJvmClasspathMetadata(gradleVersion: GradleVersion) {
+        project(
+            projectName = "empty", gradleVersion = gradleVersion, buildOptions = defaultBuildOptions.copy(jvmClasspathMetadata = true)
+        ) {
+            setupTwoCommonModulesProject()
+
+            build("jvmRun", "-DmainClass=MainKt") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertCompiledKotlinSources(
+                    expectedSources = relativeToProject(
+                        listOf(
+                            kotlinSourcesDir("commonMain").resolve("bar.kt"),
+                            kotlinSourcesDir("intermediateMain").resolve("foo.kt"),
+                            kotlinSourcesDir("jvmMain").resolve("main.kt"),
+                        )
+                    ), output = output
+                )
+                assertOutputContains("KMP output: Any")
+            }
+
+            kotlinSourcesDir("intermediateMain").resolve("foo.kt").modify { content ->
+                content.replace("fun foo() = bar(42)", "fun foo() = bar(41)")
+            }
+
+            build("jvmRun", "-DmainClass=MainKt") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertCompiledKotlinSources(
+                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("intermediateMain").resolve("foo.kt"))), output = output
+                )
+                assertOutputContains("KMP output: Any")
+            }
+        }
+    }
+
+    private fun TestProject.setupTwoCommonModulesProject() {
+        addKgpToBuildScriptCompilationClasspath()
+        buildScriptInjection {
+            project.applyMultiplatform {
+                jvm()
+                sourceSets {
+                    val intermediateMain = it.create("intermediateMain")
+                    intermediateMain.dependsOn(it.commonMain.get())
+                    it.jvmMain {
+                        dependsOn(intermediateMain)
+                    }
+                }
+            }
+        }
+        kotlinSourcesDir("commonMain").source("bar.kt") {
+            """
+            fun bar(a: Any) = "Any"
+            """.trimIndent()
+        }
+
+        kotlinSourcesDir("intermediateMain").source("foo.kt") {
+            """
+            fun foo() = bar(42)
+            """.trimIndent()
         }
 
         kotlinSourcesDir("jvmMain").source("main.kt") {
