@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.assertions
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+
+fun expectedLogLevelForRebuildReason(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
+    if (strategyConfig.second is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
 
 fun CompilationOutcome.assertLogContainsLines(logLevel: LogLevel, vararg expectedLines: String) {
     assertLogContainsLines(logLevel, expectedLines.toSet())
