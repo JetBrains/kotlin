@@ -17,6 +17,7 @@ import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
+// TODO KAR: We just quickly added support for the new kar file layout, cleanup.
 internal class CompositeMetadataArtifactImpl(
     override val moduleDependencyIdentifier: ModuleDependencyIdentifier,
     override val moduleDependencyVersion: String,
@@ -41,11 +42,7 @@ internal class CompositeMetadataArtifactImpl(
 
         /* Creating SourceSet instances eagerly, as they will only lazily access files */
         private val sourceSetsImpl = kotlinProjectStructureMetadata.sourceSetNames.associateWith { sourceSetName ->
-            SourceSetContentImpl(
-                this,
-                sourceSetName,
-                ArtifactFile(hostSpecificArtifactFilesBySourceSetName[sourceSetName] ?: primaryArtifactFile)
-            )
+            SourceSetContentImpl(this, sourceSetName, ArtifactFile(hostSpecificArtifactFilesBySourceSetName[sourceSetName] ?: primaryArtifactFile))
         }
 
         override val sourceSets: List<CompositeMetadataArtifactContent.SourceSetContent> =
@@ -70,9 +67,9 @@ internal class CompositeMetadataArtifactImpl(
         override val sourceSetName: String,
         private val artifactFile: ArtifactFile,
     ) : CompositeMetadataArtifactContent.SourceSetContent, Closeable {
-        private val isMKlib = artifactFile.file.extension == KAR_ARTIFACT_TYPE
+        private val isKar = artifactFile.file.extension == KAR_ARTIFACT_TYPE
 
-        val sourceSetPath = if (isMKlib) "metadata/$sourceSetName" else sourceSetName
+        val sourceSetPath = if (isKar) "metadata/$sourceSetName" else sourceSetName
 
         override val metadataBinary: CompositeMetadataArtifactContent.MetadataBinary? by lazy {
             /*
@@ -89,7 +86,7 @@ internal class CompositeMetadataArtifactImpl(
         override val cinteropMetadataBinaries: List<CompositeMetadataArtifactContent.CInteropMetadataBinary> by lazy {
             val cinteropMetadataDirectory = (kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
                 ?: return@lazy emptyList())
-                .let { originalDir -> if (isMKlib) "metadata/$originalDir" else originalDir }
+                .let { originalDir -> if (isKar) "metadata/$originalDir" else originalDir }
 
 
             val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(cinteropMetadataDirectory)
@@ -102,7 +99,7 @@ internal class CompositeMetadataArtifactImpl(
             cinteropLibraryNames.map { cinteropLibraryName ->
                 CInteropMetadataBinaryImpl(
                     this, cinteropLibraryName, artifactFile,
-                    metadataRootDirectory = if (isMKlib) "metadata/" else ""
+                    metadataRootDirectory = if (isKar) "metadata/" else ""
                 )
             }
         }
@@ -188,8 +185,7 @@ internal class CompositeMetadataArtifactImpl(
             }
 
             val sourceSetName = containingSourceSetContent.sourceSetName
-            val cinteropMetadataDirectory =
-                metadataRootDirectory + (kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
+            val cinteropMetadataDirectory = metadataRootDirectory + (kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
                     ?: error("Missing CInteropMetadataDirectory for SourceSet $sourceSetName"))
             val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(cinteropMetadataDirectory)
 
@@ -206,7 +202,7 @@ internal class CompositeMetadataArtifactImpl(
      * Interface to the underlying [zip][file] that only opens the file lazily and keeps references to
      * all [entries] and infers all potential directory paths (see [directoryPaths] and [containsKlibDirectory])
      */
-    private class ArtifactFile(internal val file: File) : Closeable {
+    private class ArtifactFile(val file: File) : Closeable {
 
         private var isClosed = false
 

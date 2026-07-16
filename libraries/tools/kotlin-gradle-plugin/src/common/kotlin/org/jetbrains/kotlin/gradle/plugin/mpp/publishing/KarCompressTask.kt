@@ -29,6 +29,7 @@ import org.gradle.work.DisableCachingByDefault
 import java.io.File
 import java.util.zip.Deflater
 
+// TODO KAR: Split into reasonable parts and cleanup
 @DisableCachingByDefault(because = "Packing a KAR archive is not worth caching")
 internal abstract class PackKarTask : AbstractArchiveTask() {
     override fun createCopyAction(): CopyAction = PackKarCopyAction(

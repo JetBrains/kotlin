@@ -120,7 +120,6 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, UklibPublicationSetupAction)
             register(project, UklibConsumptionSetupAction)
             register(project, KotlinMetadataCompilationTargetPlatformConfiguration)
-
             register(project, SetupMergedKlibTask)
         }
 

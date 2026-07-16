@@ -53,7 +53,6 @@ internal fun KotlinTarget.createPublishArtifact(
     val artifact = project.artifacts.add(primaryConfig.name, artifactTask) { artifact ->
         artifact.builtBy(artifactTask)
         artifact.type = artifactType
-        artifact.classifier = this@createPublishArtifact.targetName
     }
 
     elementsConfiguration.filterNotNull().forEach { configuration ->

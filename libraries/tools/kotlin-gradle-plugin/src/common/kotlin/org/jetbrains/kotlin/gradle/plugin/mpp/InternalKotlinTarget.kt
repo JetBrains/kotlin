@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 enum class KotlinTargetPublicationLayout {
     IN_ROOT_COMPONENT,
-    SEPARATE_ARTIFACT_IN_ROOT,
     IN_SEPARATE_COMPONENT;
 }
 
-val KotlinTarget.publicationLayout: KotlinTargetPublicationLayout
+// TODO KAR: Provide proper api to configure this
+internal val KotlinTarget.publicationLayout: KotlinTargetPublicationLayout
     get() = when (this) {
         is KotlinJvmTarget, is KotlinAndroidTarget, is KotlinWithJavaTarget<*, *> -> KotlinTargetPublicationLayout.IN_SEPARATE_COMPONENT
         is KotlinMetadataTarget -> KotlinTargetPublicationLayout.IN_ROOT_COMPONENT

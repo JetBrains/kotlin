@@ -12,7 +12,6 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.ComponentWithCoordinates
@@ -21,33 +20,33 @@ import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_FALLBACK_VARIANT
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.karCompressionMethodAttribute
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.karCompressionMethodXZ
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.packMergedKlibTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
+import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
+import org.jetbrains.kotlin.gradle.utils.isAllGradleProjectsEvaluated
+import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
+import org.jetbrains.kotlin.gradle.utils.projectPathCompat
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
+import kotlin.collections.forEach
 
 internal fun KotlinTargetSoftwareComponent(
     target: AbstractKotlinTarget,
     kotlinComponent: KotlinTargetComponent,
 ): KotlinTargetSoftwareComponent {
-
-    val adhocVariant = (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java).adhoc(kotlinComponent.name)
+    val softwareComponentFactory = (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java)
+    val adhocVariant = softwareComponentFactory.adhoc(kotlinComponent.name)
 
     /* Launch configuration */
     target.project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
         kotlinComponent.internal.usages.forEach { kotlinUsageContext ->
             /* Explicitly typing 'Project' to avoid smart cast from 'target.project as ProjectInternal' */
-            //
             val project: Project = target.project
             val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
             val configuration = project.configurations.maybeCreateDependencyScope(publishedConfigurationName) {
@@ -57,7 +56,7 @@ internal fun KotlinTargetSoftwareComponent(
                 } else {
                     extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
                 }
-
+                artifacts.addAll(kotlinUsageContext.artifacts)
                 // KT-64789: workaround for missing 'org.gradle.libraryelements' attribute on the kotlinUsageContext returned keys Set
                 // So far I don't know the reason why it appears only on the second call to `keySet()`
                 // Test failing without it - KotlinAndroidMppIT#testMppAndroidLibFlavorsPublication
@@ -66,7 +65,6 @@ internal fun KotlinTargetSoftwareComponent(
                     project.providers,
                     dest = this
                 )
-                artifacts.addAll(kotlinUsageContext.artifacts)
             }
 
             adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
@@ -97,7 +95,7 @@ private fun Configuration.filterOutNonResolvableDependenciesForStandardKmpResolu
 ) {
     val resolvableConfiguration = project.configurations.getByName(kotlinUsageContext.compilation.compileDependencyConfigurationName)
     val consumableConfiguration = project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName)
-    val isJvmOrAndroidPublication = kotlinUsageContext.compilation.platformType !in setOf(jvm, androidJvm)
+    val isJvmOrAndroidPublication = kotlinUsageContext.compilation.platformType !in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
 
     // TODO: Included builds
     dependencies.addAllLater(project.provider {
@@ -130,7 +128,7 @@ private fun Configuration.filterOutNonResolvableDependenciesForStandardKmpResolu
                 // requesting platform dependencies in non jvm compilations, but got kotlin/jvm variant -> unresolvable in standard KMP.
                 val kotlinPlatformTypeOfResolvedVariant = variantResult.attributes.getAttributeSafely(KotlinPlatformType.attribute)
                 if (isJvmOrAndroidPublication) {
-                    return@any kotlinPlatformTypeOfResolvedVariant == jvm.name
+                    return@any kotlinPlatformTypeOfResolvedVariant == KotlinPlatformType.jvm.name
                 }
 
                 false

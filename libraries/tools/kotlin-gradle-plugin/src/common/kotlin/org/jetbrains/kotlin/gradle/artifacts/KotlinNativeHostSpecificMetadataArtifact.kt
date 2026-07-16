@@ -77,7 +77,7 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
     project.addToAssemble(hostSpecificMetadataJar)
 
     project.artifacts.add(target.hostSpecificMetadataElementsConfigurationName, hostSpecificMetadataJar) { artifact ->
-        artifact.classifier = "${target.targetName}-metadata"
+        artifact.classifier = "metadata"
         artifact.builtBy(hostSpecificMetadataJar)
     }
 }

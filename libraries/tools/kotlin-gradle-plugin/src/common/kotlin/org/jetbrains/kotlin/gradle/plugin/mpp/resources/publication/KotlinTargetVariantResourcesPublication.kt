@@ -32,7 +32,6 @@ internal fun AbstractKotlinTarget.setUpResourcesVariant(
     if (project.multiplatformExtensionOrNull == null || !project.kotlinPropertiesProvider.mppResourcesPublication) return null
 
     var targetRegistersResourcesForPublication = false
-    // TODO: replace by KAR if needed
     val resourcesVariant = DefaultKotlinUsageContext(
         compilation = compilation,
         dependencyConfigurationName = resourcesElementsConfigurationName,

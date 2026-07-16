@@ -12,6 +12,8 @@ import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetPublicationLayout.IN_ROOT_COMPONENT
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetPublicationLayout.IN_SEPARATE_COMPONENT
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -92,6 +94,7 @@ abstract class KotlinNativeTarget @Inject constructor(
             )
         )
 
+
         val result = createKotlinVariant(targetName, mutableUsageContexts)
 
         setOf(result)
@@ -147,9 +150,8 @@ private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.
  * on *all* potential hosts. e.g. a set like (iosX64, macosX64) can only be built on macos hosts, and is therefore considered
  * 'host specific'.
  */
-@Suppress("UNUSED_PARAMETER")
-internal fun isHostSpecificKonanTargetsSet(@Suppress("unused") konanTargets: Iterable<KonanTarget>): Boolean = false
-//konanTargets.none { target -> target in targetsEnabledOnAllHosts }
+internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean =
+    konanTargets.none { target -> target in targetsEnabledOnAllHosts }
 
 private suspend fun <T> getHostSpecificElements(
     fragments: Iterable<T>,
@@ -164,6 +166,12 @@ internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSour
         getKonanTargets = { sourceSet ->
             sourceSet.internal.awaitPlatformCompilations()
                 .filterIsInstance<KotlinNativeCompilation>()
+                .filter { compilation ->
+                    when (compilation.target.publicationLayout) {
+                        IN_ROOT_COMPONENT -> false
+                        IN_SEPARATE_COMPONENT -> true
+                    }
+                }
                 .mapTo(mutableSetOf()) { it.konanTarget }
         }
     )

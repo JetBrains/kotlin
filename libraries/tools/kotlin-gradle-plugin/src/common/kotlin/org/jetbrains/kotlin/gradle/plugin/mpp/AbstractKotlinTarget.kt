@@ -136,7 +136,7 @@ abstract class AbstractKotlinTarget(
                 additionalConfigurationAttributes = karConfiguration.map { configuration -> configuration.attributes },
             )
         }
-        KotlinTargetPublicationLayout.SEPARATE_ARTIFACT_IN_ROOT, KotlinTargetPublicationLayout.IN_SEPARATE_COMPONENT -> {
+        KotlinTargetPublicationLayout.IN_SEPARATE_COMPONENT -> {
             DefaultKotlinUsageContext(
                 compilation = compilation,
                 mavenScope = mavenScope,
@@ -183,7 +183,7 @@ abstract class AbstractKotlinTarget(
         project.configurations.findByName(sourcesElementsConfigurationName) ?: return null
 
         val artifact = project.artifacts.add(sourcesElementsConfigurationName, sourcesJarTask) as ConfigurablePublishArtifact
-        artifact.classifier = dashSeparatedName(classifierPrefix, "${this.targetName}-sources")
+        artifact.classifier = dashSeparatedName(classifierPrefix, "sources")
 
         return DefaultKotlinUsageContext(
             compilation = producingCompilation,

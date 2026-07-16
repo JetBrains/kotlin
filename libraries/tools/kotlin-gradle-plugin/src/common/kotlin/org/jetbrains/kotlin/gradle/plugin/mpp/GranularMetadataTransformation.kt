@@ -166,11 +166,7 @@ internal class GranularMetadataTransformation(
         @get:Internal
         val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
     ) {
-        constructor(
-            project: Project,
-            kotlinSourceSet: KotlinSourceSet,
-            transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true,
-        ) : this(
+        constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
             build = project.currentBuild,
             sourceSetName = kotlinSourceSet.name,
             resolvedMetadataConfiguration = LazyResolvedConfigurationWithArtifacts(kotlinSourceSet.internal.resolvableMetadataConfiguration),
@@ -454,7 +450,7 @@ internal class GranularMetadataTransformation(
 
     private fun SourceSetVisibilityResult.getMetadataProviderForVisibleSourceSets(
         dependency: ResolvedDependencyResult,
-        projectStructureMetadata: KotlinProjectStructureMetadata,
+        projectStructureMetadata: KotlinProjectStructureMetadata
     ): MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider? {
         val module = dependency.selected
         val moduleId = module.id
