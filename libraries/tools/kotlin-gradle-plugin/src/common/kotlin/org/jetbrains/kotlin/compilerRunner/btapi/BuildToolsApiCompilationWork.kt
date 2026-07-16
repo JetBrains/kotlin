@@ -125,6 +125,9 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             )
 
             if (tryFallback) {
+                // We don't want to fail the build on Gradle 9.6+ because of error diagnostic from initial attempt
+                compilerMessageRenderer.lowerErrorSeveritiesToWarning()
+
                 val compilationResult = runner.performCompilation(
                     buildSession,
                     KotlinCompilerExecutionStrategy.IN_PROCESS,
