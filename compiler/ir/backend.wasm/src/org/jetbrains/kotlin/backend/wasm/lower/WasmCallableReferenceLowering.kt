@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.lower.getArity
 import org.jetbrains.kotlin.ir.backend.js.lower.getFlags
-import org.jetbrains.kotlin.ir.backend.js.utils.getInlineClassUnderlyingType
-import org.jetbrains.kotlin.ir.backend.js.utils.isInlineClass
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.irBlockBody
@@ -43,7 +41,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassParent
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -291,29 +288,8 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         }
     }
 
-    private fun IrType.eraseIfReferenceType(): IrType {
-        if (this.isPrimitiveType() || this.isUnsignedType()) return this
-        // Nullable types are boxed in Wasm, so they must be treated as reference types to avoid
-        // merging with the non-nullable variant. This applies particularly for the case of value
-        // classes which get inlined later.
-        if (this.isNullable()) return backendContext.irBuiltIns.anyNType
-        if (this.classifierOrNull is IrTypeParameterSymbol) {
-            // At the Wasm level, type parameters are passed as their upper bound, so erase them now
-            // to merge properly.
-            val typeParam = (this.classifierOrNull as IrTypeParameterSymbol).owner
-            return (typeParam.superTypes.firstOrNull() ?: backendContext.irBuiltIns.anyNType).eraseIfReferenceType()
-        }
-        val clazz = this.getClass() ?: return backendContext.irBuiltIns.anyNType
-        if (clazz.isInlineClass) {
-            val underlyingErased = getInlineClassUnderlyingType(clazz).eraseIfReferenceType()
-            return if (underlyingErased.isPrimitiveType() || underlyingErased.isUnsignedType()) {
-                this
-            } else {
-                backendContext.irBuiltIns.anyNType
-            }
-        }
-        return backendContext.irBuiltIns.anyNType
-    }
+    private fun IrType.eraseIfReferenceType(): IrType =
+        eraseIfReferenceType(backendContext.irBuiltIns.anyNType)
 
     override fun lower(irFile: IrFile) {
         // Clear the per-file cache for each new file
@@ -383,28 +359,6 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                 shouldNotBeCalled()
             }
         }, null)
-    }
-
-    private fun IrType.toTypeSignatureCode(): String = when {
-        this.isInt() -> "I"
-        this.isLong() -> "J"
-        this.isFloat() -> "F"
-        this.isDouble() -> "D"
-        this.isBoolean() -> "Z"
-        this.isChar() -> "C"
-        this.isByte() -> "B"
-        this.isShort() -> "S"
-        this.isUInt() -> "UI"
-        this.isULong() -> "UJ"
-        this.isUByte() -> "UB"
-        this.isUShort() -> "US"
-        this.getClass()?.isInlineClass == true -> {
-            // Only reached for value classes that ultimately wrap a primitive (reference-wrapping
-            // value classes are erased to anyNType by eraseIfReferenceType, so they land in "A").
-            // Use the FQN to avoid clashes between same-named classes in different packages.
-            "V${this.classOrNull?.owner?.fqNameWhenAvailable?.asString()?.replace('.', '_') ?: this.classOrNull?.owner?.name?.asString() ?: "0"}"
-        }
-        else -> "A" // anyNType (reference type)
     }
 
     // This key must faithfully reflect the class type as both this lowering and the linker use this

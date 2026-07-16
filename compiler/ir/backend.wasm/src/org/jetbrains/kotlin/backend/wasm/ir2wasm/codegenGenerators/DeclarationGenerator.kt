@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.isAbstractOrSealed
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.backend.wasm.lower.WasmSuspendLambdaMergingLowering
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
@@ -241,12 +242,12 @@ class DeclarationGenerator(
         declarationCodegenContext.defineFunction(declaration.symbol, function)
         multimoduleExportIfNeeded(declaration, function)
 
-        // Register callable reference class members for deduplication at link time.
-        // Multiple files may create classes with the same signature (e.g., Function1_bound1_I),
+        // Register callable reference and merged suspend lambda class members for deduplication at link time.
+        // Multiple files may create classes with the same signature (e.g., Function1_bound1_I, SuspendLambda_2AA),
         // and we want all calls to resolve to a single canonical set of functions.
         val parentClass = declaration.parentClassOrNull
-        if (parentClass != null && parentClass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) {
-            // Use the class name + function name as the equivalence key.
+        if (parentClass != null && (parentClass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL ||
+                    parentClass.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS)) {
             val equivalenceKey = "${parentClass.name.asString()}.${declaration.name.asString()}"
             linkerDataContext.addEquivalentFunction(equivalenceKey, declaration.symbol)
         }
@@ -383,10 +384,11 @@ class DeclarationGenerator(
         val symbol = klass.symbol
         val superType = klass.getSuperClass(irBuiltIns)?.symbol
 
-        // For callable reference classes, do not use the FQN to ensure deterministic names across
-        // files during link-time deduplication.
+        // For callable reference and merged suspend lambda classes, do not use the FQN to ensure
+        // deterministic names across files during link-time deduplication.
         val fqnShouldBeEmitted = (backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass) &&
-                                      klass.origin != WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL)
+                                      klass.origin != WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL &&
+                                      klass.origin != WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS)
         val qualifier =
             if (fqnShouldBeEmitted) {
                 (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
