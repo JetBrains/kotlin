@@ -36,6 +36,20 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-16 — Rewrite `resolveQualifiedNameToClassIdFromParts` as a left-to-right JLS 6.5.4 pass
+- **Change**: replaced the recursive try-every-split loop (outer-prefix enumeration + per-prefix
+  recursion, O(n²) probes) with a single non-recursive left-to-right pass that mirrors javac's
+  PackageOrTypeName classification: first segment as a simple type name in scope (JLS 6.5.4.1),
+  else grow the package prefix until a segment names a top-level type (JLS 6.5.4.2), then a
+  member-type descent probing declared-then-inherited at every segment (JLS 6.5.5.2). The loose
+  `probeFqnSplits` fallback survives, but is now reached only when the JLS pass fails — the sole
+  divergence from javac remains the package/type name clash pinned by
+  `qualifiedNamePackageClassClash.kt` (KT-87813).
+- **Files**: `resolution/JavaTypeResolver.kt` (−36/+28); Scenario D refreshed in `ReadMe.md` and
+  `implDocs/RESOLUTION_SCHEMA.md`.
+- **Tests**: box+phased suite green (0 FAILED); `JavaParsing*` unit tests green.
+- **Result**: simplification landed (behavior-preserving on the whole suite).
+
 ### 2026-07-15 — Drop redundant `JavaToKotlinClassMap` disjunct in `resolveFromJavaLang`
 - **Change**: `resolveFromJavaLang` accepted a name when either `JavaToKotlinClassMap.mapJavaToKotlin`
   hit **or** `classExists` was true; the map disjunct is dead. It only ever probes `ClassId(java.lang, X)`,

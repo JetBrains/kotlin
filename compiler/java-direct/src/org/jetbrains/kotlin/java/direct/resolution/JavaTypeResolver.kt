@@ -48,10 +48,24 @@ internal fun resolve(name: String): ClassId? {
 }
 
 /**
- * Qualified type name resolution (JLS 6.5.5). The one thing computed here is where the package
- * name ends and the class name begins — the PackageOrTypeName boundary of the qualifier (JLS
- * 6.5.4): the nested-class interpretation is tried first (when the outer is a class in scope),
- * falling back to plain `package.Class` splits via [probeFqnSplits].
+ * Qualified type name resolution (JLS 6.5.5): a single left-to-right pass that classifies the
+ * segments the way javac classifies a PackageOrTypeName qualifier (JLS 6.5.4), then descends
+ * into member types:
+ *
+ *  - the first segment is a type iff it resolves as a simple type name in scope (JLS 6.5.4.1) —
+ *    e.g. for `Map.Entry`, `Map` resolves via the `java.util.Map` import;
+ *  - otherwise the package prefix grows one segment at a time until a segment names a top-level
+ *    type in that package (JLS 6.5.4.2) — e.g. for an inline `java.util.List`, `java` and
+ *    `java.util` are packages and `List` is the type;
+ *  - each segment after the leftmost type must be a member type of the previous one (JLS
+ *    6.5.5.2): declared, or — with [fullResolution] — inherited from its supertypes.
+ *
+ * A deviation from strict JLS: when the pass above fails, the whole name is retried as a plain
+ * `package.Class` split via [probeFqnSplits]. The two disagree only on a package/type name
+ * clash (discouraged by JLS 6.1), where javac commits to the shadowing type and reports an
+ * error, but the PSI Java model resolves the package interpretation; see
+ * `qualifiedNamePackageClassClash.kt`.
+ * TODO: investigate possible consequences (KT-87813)
  *
  * [fullResolution] controls whether inherited-inner-class lookup is enabled; `false` selects the
  * reentrance-safe flavor used as a fallback from [resolveInheritedInnerClassToClassId].
@@ -61,53 +75,32 @@ internal fun resolveQualifiedNameToClassIdFromParts(
     parts: List<String>,
     fullResolution: Boolean,
 ): ClassId? {
-    // Try each split of `parts` into an outer-class prefix and a nested tail, shortest prefix first.
-    // The boundary isn't known up front (for `a.b.C.D`, the outer could be `a.b.C` + tail `D`, or
-    // `a.b` + two-part tail `C.D`), so every split is tried; each prefix resolves by the same rules
-    // (recursively when multi-part). Per JLS 6.5.4, the leftmost prefix that is a class in scope wins.
-    //
-    // A deviation from strict JLS 6.5.4.2: fall back to `package.Class` splits via [probeFqnSplits].
-    // This diverges from javac only on a package/type name clash, resulting in red code.
-    // PSI behaves the same way, see `qualifiedNamePackageClassClash.kt`.
-    // TODO: investigate possible consequences (KT-87813)
     require(parts.size > 1)
-    for (i in 1 until parts.size) {
-        val outerParts = parts.subList(0, i)
-        val nestedParts = parts.subList(i, parts.size)
 
-        val outerClassId = if (outerParts.size > 1) {
-            resolveQualifiedNameToClassIdFromParts(outerParts, fullResolution)
-        } else {
-            resolveSimpleNameToClassIdImpl(outerParts[0], fullResolution)
-        }
-
-        if (outerClassId != null) {
-            val nestedClassName = FqName.fromSegments(
-                outerClassId.relativeClassName.pathSegments().map { it.asString() } + nestedParts
-            )
-            val nestedClassId = ClassId(outerClassId.packageFqName, nestedClassName, isLocal = false)
-            if (classExists(nestedClassId, fullResolution)) return nestedClassId
-
-            // Not directly declared — search the outer class's supertypes for an inherited inner
-            // class (e.g. `SimpleFunctionDescriptor.CopyBuilder`, where `CopyBuilder` comes from the
-            // `FunctionDescriptor` superinterface). Restricted to a single tail segment; longer tails
-            // (`Outer.CopyBuilder.Deeper`) are covered one recursion level down, where the prefix
-            // `Outer.CopyBuilder` resolves and its own loop reaches a size-1 tail.
-            if (fullResolution && nestedParts.size == 1) {
-                val inherited = findInheritedNestedClass(outerClassId, nestedParts[0])
-                if (inherited != null) return inherited
-            }
-        }
+    // Leftmost type (JLS 6.5.4): the first segment as a simple type name in scope, else the
+    // shortest package prefix whose next segment names a top-level type.
+    var classId: ClassId? = resolveSimpleNameToClassIdImpl(parts[0], fullResolution)
+    var next = 1
+    while (classId == null && next < parts.size) {
+        val candidate = ClassId(FqName.fromSegments(parts.subList(0, next)), Name.identifier(parts[next]))
+        if (classExists(candidate, fullResolution)) classId = candidate
+        next++
     }
 
-    // Fall back: treat `parts` as a plain fully-qualified name, probing package/class splits
-    // directly (longest package first). This is reached for any qualified name the loop above
-    // didn't resolve, and it succeeds for names whose whole package portion is 2+ pure-package
-    // segments, so no proper prefix is a class in scope.
-    //
-    // E.g. an inline `java.util.List` (parts = [java, util, List]) written in Java source: the loop
-    // tries outer `java` (a package, unresolved) then `java.util` (also a package, unresolved) and
-    // gives up; probeFqnSplits then finds ClassId(java.util, List).
+    // Member-type descent (JLS 6.5.5.2). The inherited lookup covers names like
+    // `SimpleFunctionDescriptor.CopyBuilder`, where `CopyBuilder` comes from the
+    // `FunctionDescriptor` superinterface of the resolved prefix.
+    while (classId != null && next < parts.size) {
+        val declared = classId.createNestedClassId(Name.identifier(parts[next]))
+        classId = when {
+            classExists(declared, fullResolution) -> declared
+            fullResolution -> findInheritedNestedClass(classId, parts[next])
+            else -> null
+        }
+        next++
+    }
+    if (classId != null) return classId
+
     return probeFqnSplits(parts, fullResolution)
 }
 

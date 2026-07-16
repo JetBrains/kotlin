@@ -140,24 +140,25 @@ Corner case: the same-file supertype walk works on **raw AST text**
 `JavaInheritedMemberResolver`, to avoid re-entering type construction; package-qualified
 supertypes are declined here and handed to the `ClassId` path.
 
-### Scenario D — Qualified / nested name to `ClassId` (JLS 6.5.2)
+### Scenario D — Qualified / nested name to `ClassId` (JLS 6.5.5)
 
 Entry: `JavaTypeResolver.resolve` (dotted name) → `resolveQualifiedNameToClassIdFromParts`.
-Outer-class-first interpretation, with a memoized `tryResolve` cache for the recursive prefix
-probes.
+A single left-to-right pass mirroring javac's PackageOrTypeName classification (JLS 6.5.4),
+plus a loose package-interpretation fallback:
 
-1. For each split point `i`, resolve the `outerParts` prefix (recursively / as a simple name,
-   Scenario B) to an `outerClassId`.
-2. Form `outerClassId + nestedParts` and probe it; return on hit (direct nested class).
-3. On miss for a single nested segment, search supertypes of `outerClassId` for the inherited
-   nested class (`findInheritedNestedClass`, supertype walk + finder).
-4. Re-entrance-safe `Outer.Inner` finder fallback: when step 3 was short-circuited by the cycle
-   guard, re-probe `collectInheritedInnerClasses(outerClassId)[inner]` without the guard.
-5. Fallback to plain package/class splits longest-package-first (`probeFqnSplits`) — this is the
-   path fully-qualified names (`java.util.Map`) take.
+1. **Leftmost type** (JLS 6.5.4): the first segment as a simple type name in scope (Scenario B);
+   failing that, the package prefix grows one segment at a time until a segment names a
+   top-level type in it (`java.util.List` → packages `java`, `java.util`, type `List`).
+2. **Member-type descent** (JLS 6.5.5.2): each remaining segment must be a member type of the
+   previous one — declared, or inherited from its supertypes (`findInheritedNestedClass`,
+   supertype walk + finder).
+3. **Fallback** to plain package/class splits longest-package-first (`probeFqnSplits`), reached
+   only when the JLS pass fails. It diverges from javac (which reports an error) exactly on a
+   package/type name clash, resolving the package interpretation for PSI parity
+   (`qualifiedNamePackageClassClash.kt`, KT-87813).
 
-Corner cases: `Map.Entry`-style inherited nested classes; cycle-guard short-circuit recovery
-(step 4) limited to two-segment shape; FQN split order mirrors FIR's `findClassId`.
+Corner cases: `Map.Entry`-style inherited nested classes; FQN split order in the fallback
+mirrors FIR's `findClassId`.
 
 ### Scenario E — Inherited member type via supertypes
 

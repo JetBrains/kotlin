@@ -210,35 +210,35 @@ prior, second exception (same-file source objects needing to stay off the generi
 ladder to preserve identity) is now handled by `classifierAdapterFor`'s routing (Scenario A step 4),
 not by keeping this whole scenario source-only.
 
-### Scenario D — Qualified / nested name to `ClassId` (JLS 6.5.2)
+### Scenario D — Qualified / nested name to `ClassId` (JLS 6.5.5)
 
 Entry: `JavaTypeResolver.resolve` (dotted name) → `resolveQualifiedNameToClassIdFromParts`.
-Outer-class-first interpretation, with a memoized `tryResolve` cache for the recursive prefix
-probes.
+A single left-to-right, non-recursive pass mirroring javac's PackageOrTypeName classification
+(JLS 6.5.4), plus a loose package-interpretation fallback:
 
-1. For each split point `i`, resolve the `outerParts` prefix (recursively / as a simple name,
-   Scenario B) to an `outerClassId`.
-2. Form `outerClassId + nestedParts` and probe it; return on hit (direct nested class).
-3. On miss for a single nested segment, search supertypes of `outerClassId` for the inherited
-   nested class (`findInheritedNestedClass`, materializing `outerClassId` via `classifierAdapterFor`
-   and delegating to `resolveInheritedInnerClassToClassId`, Scenario E). Reading `outerClassId`'s
-   own supertypes from raw AST text this way (rather than seeding directly from
-   `directSupertypeClassIds(outerClassId)`) means this step can never be cycle-guard-skipped, even
-   when `outerClassId`'s own `SUPER_TYPES` phase is on the call stack — e.g. a qualified reference
-   to a class's own inherited nested class used as a generic argument in its own
+1. **Leftmost type** (JLS 6.5.4): the first segment as a simple type name in scope (Scenario B);
+   failing that, the package prefix grows one segment at a time until a segment names a
+   top-level type in it (`java.util.List` → packages `java`, `java.util`, type `List`).
+2. **Member-type descent** (JLS 6.5.5.2): each remaining segment must be a member type of the
+   previous one — declared (`createNestedClassId` + existence probe), or inherited from its
+   supertypes (`findInheritedNestedClass`, materializing the prefix class via
+   `classifierAdapterFor` and delegating to `resolveInheritedInnerClassToClassId`, Scenario E).
+   Reading the prefix class's own supertypes from raw AST text this way (rather than seeding
+   directly from `directSupertypeClassIds`) means this step can never be cycle-guard-skipped,
+   even when the prefix class's own `SUPER_TYPES` phase is on the call stack — e.g. a qualified
+   reference to a class's own inherited nested class used as a generic argument in its own
    extends/implements clause (`qualifiedInheritedNestedClassInOwnImplementsClause.kt`). A previous
    `collectInheritedInnerClasses`-based re-entrance fallback for a guard-skip on this step was
    removed as dead code once this step became un-guard-skippable — it was also source-only, the
    same cross-origin ambiguity blind spot fixed elsewhere in this scenario.
-4. Fallback to plain package/class splits longest-package-first (`probeFqnSplits`) — this is the
-   path fully-qualified names (`java.util.Map`) take.
+3. **Fallback** to plain package/class splits longest-package-first (`probeFqnSplits`), reached
+   only when the JLS pass fails. It diverges from javac (which reports an error) exactly on a
+   package/type name clash (JLS 6.1), resolving the package interpretation for PSI parity —
+   pinned by `qualifiedNamePackageClassClash.kt` (KT-87813).
 
-Corner cases: `Map.Entry`-style inherited nested classes; FQN split order mirrors FIR's
-`findClassId`. The `nestedParts.size == 1` restriction on step 3 is not a coverage gap: the outer
-`for` loop tries every split point, and each recursive call on a shrinking `outerParts` prefix is
-itself a fresh invocation whose own `parts`/`nestedParts` eventually telescopes down to size 1 on
-its own stack frame — so every "outer class plus one inherited segment" sub-problem is still
-reached, just one recursion level down.
+Corner cases: `Map.Entry`-style inherited nested classes (the descent probes declared-then-
+inherited at *every* segment, so multi-segment tails after an inherited hop work too); FQN split
+order in the fallback mirrors FIR's `findClassId`.
 
 ### Scenario E — Inherited member type via supertypes
 
