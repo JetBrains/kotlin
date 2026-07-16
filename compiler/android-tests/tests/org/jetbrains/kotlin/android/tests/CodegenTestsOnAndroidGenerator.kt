@@ -302,9 +302,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }
     }
 
-    private fun getFlavorUnitTestFolder(flavourName: String): String {
+    private fun getFlavorUnitTestFolder(flavorName: String): String {
         return pathManager.srcFolderInAndroidTmpFolder +
-                "/androidTest${flavourName.replaceFirstChar(Char::uppercaseChar)}/java/" +
+                "/androidTest${flavorName.replaceFirstChar(Char::uppercaseChar)}/java/" +
                 testClassPackage.replace(".", "/") + "/"
     }
 
