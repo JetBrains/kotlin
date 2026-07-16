@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
@@ -402,12 +402,18 @@ abstract class AbstractAtomicfuTransformer(
             val receiver = requireNotNull(expression.arguments[receiverParameter.indexInParameters]) {
                 "Expected receiver of the call ${expression.render()}, but found null."
             }
-            val receiverProperty = if (receiver is IrTypeOperatorCallImpl) receiver.argument else receiver // <get-_a>()
+            // With casts there are three things we need to worry about:
+            // - the actual receiver that was casted (findOriginalExpression looks it up)
+            // - the type of the cast
+            // - the expression type (which may differ from the cast type's type parameter)
+            // The latter may differ when receiver's cast has a projection type (`AtomicRef<out Any?>`),
+            // but the expression has an expanded type (`Array<Array<Any>>` instead of `out Any?`).
+            val receiverProperty = if (receiver is IrTypeOperatorCall) receiver.findOriginalExpression() else receiver // <get-_a>()
             if (!receiverProperty.type.isAtomicType()) return super.visitCall(expression, data)
-            val valueType = if (receiver is IrTypeOperatorCallImpl) {
+            val valueType = if (receiver is IrTypeOperatorCall) {
                 // val a = atomic<Any?>(null)
                 // (a as AtomicReference<Array<String>?>).getAndSet(arrayOf("aaa", "bbb"))
-                (receiver.type as IrSimpleType).arguments[0] as IrSimpleType
+                receiver.extractTypeFromCast()
             } else {
                 atomicfuSymbols.atomicToPrimitiveType(receiverProperty.type as IrSimpleType)
             }
@@ -434,7 +440,10 @@ abstract class AbstractAtomicfuTransformer(
                         functionName = functionName,
                         parentFunction = data
                     )
-                    return super.visitCall(loopCall, data)
+                    // If receiver type (valueType) and expression type don't match,
+                    // cast function type (which will be valueType, or Unit,
+                    // but in the latter case expression will have Unit type too) to the expression type.
+                    return super.visitExpression(builder.castOnTypeMismatch(loopCall, expression.type), data)
                 }
                 val atomicCall = builder.transformAtomicFunctionCall(
                     atomicHandler = atomicHandler,
@@ -444,7 +453,9 @@ abstract class AbstractAtomicfuTransformer(
                     callValueArguments = expression.nonDispatchArguments,
                     functionName = functionName
                 )
-                return super.visitExpression(atomicCall, data)
+                // If receiver type (valueType) and expression type don't match,
+                // cast function type (which will be valueType) to expression type.
+                return super.visitExpression(builder.castOnTypeMismatch(atomicCall, expression.type), data)
             }
             if (expression.symbol.owner.isInline && expression.symbol.owner.parameters.find { it.kind == IrParameterKind.ExtensionReceiver } != null) {
                 requireNotNull(data) { "Expected containing function of the call ${expression.render()}, but found null." }
@@ -458,6 +469,7 @@ abstract class AbstractAtomicfuTransformer(
                     originalAtomicExtension = declaration,
                     parentFunction = data
                 )
+                // Note that irCall always has an expression's type
                 return super.visitCall(irCall, data)
             }
             return super.visitCall(expression, data)
@@ -603,11 +615,53 @@ abstract class AbstractAtomicfuTransformer(
             return generateAtomicExtensionSignatureForAtomicHandler(atomicHandlerType, declaration)
         }
 
+        private fun IrTypeOperatorCall.extractTypeFromCast(): IrType {
+            val type = type as? IrSimpleType ?: error("Cast has unexpected type: ${render()}")
+            return when (val typeArgument = type.arguments[0]) {
+                is IrSimpleType -> typeArgument
+                is IrStarProjection -> irBuiltIns.anyNType
+                is IrTypeProjection -> if (typeArgument.variance == Variance.IN_VARIANCE) {
+                    irBuiltIns.anyType
+                } else {
+                    typeArgument.type
+                }
+            }
+        }
+
+        private fun IrTypeOperatorCall.findOriginalExpression(): IrExpression {
+            var expr = this.argument
+            while (expr is IrTypeOperatorCall) {
+                expr = expr.argument
+            }
+            return expr
+        }
+
+        private fun AbstractAtomicfuIrBuilder.castOnTypeMismatch(call: IrExpression, expectedType: IrType): IrExpression {
+            if (call.type == expectedType) return call
+            return irAs(call, expectedType)
+        }
+
         private fun getOrBuildAtomicHandler(atomicCallReceiver: IrExpression, parentFunction: IrFunction?): AtomicHandler<*> =
             when {
                 atomicCallReceiver is IrCall -> {
                     val isArrayReceiver = atomicCallReceiver.isArrayElementGetter()
-                    val getAtomicProperty = if (isArrayReceiver) atomicCallReceiver.arguments[0] as IrCall else atomicCallReceiver
+                    val getAtomicProperty = if (isArrayReceiver) {
+                        // That's an operation on an atomic array's element.
+                        // Instead of loading an element and calling an operation on it (which is impossible),
+                        // let's find an array's property and delegate a call to it.
+                        val argument0 = atomicCallReceiver.arguments[0]
+                        val receiver = if (argument0 is IrTypeOperatorCall) {
+                            argument0.findOriginalExpression()
+                        } else {
+                            argument0
+                        }
+                        check(receiver is IrCall) {
+                            "Expected IrCall receiver for the expression '${argument0?.render()}', got: ${receiver?.render()}"
+                        }
+                        receiver
+                    } else {
+                        atomicCallReceiver
+                    }
                     val atomicProperty = getAtomicProperty.getCorrespondingProperty()
                     /**
                      * NOTE about JVM backend incremental compilation:

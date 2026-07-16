@@ -1,0 +1,11 @@
+@kotlin.Metadata
+public final class CastWithTypeProjectionsKt {
+    // source: 'CastWithTypeProjections.kt'
+    private synthetic final static field ref: java.util.concurrent.atomic.AtomicReference
+    private synthetic final static field refArray: java.util.concurrent.atomic.AtomicReferenceArray
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getRef(): java.util.concurrent.atomic.AtomicReference
+    private synthetic final static method getRefArray(): java.util.concurrent.atomic.AtomicReferenceArray
+    public final static method test(): void
+}

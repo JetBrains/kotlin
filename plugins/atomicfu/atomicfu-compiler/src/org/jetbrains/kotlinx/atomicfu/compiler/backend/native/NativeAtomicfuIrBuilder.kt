@@ -62,7 +62,7 @@ class NativeAtomicfuIrBuilder(
         functionName: String,
         valueArguments: List<IrExpression?>,
         valueType: IrType,
-    ): IrCall =
+    ): IrExpression =
         when (atomicHandlerType) {
             AtomicHandlerType.ATOMIC_ARRAY -> {
                 invokeFunctionOnAtomicHandlerClass(getAtomicHandler, functionName, valueArguments, valueType)
@@ -79,8 +79,8 @@ class NativeAtomicfuIrBuilder(
                     "addAndGet" -> addAndGetField(getAtomicHandler, valueType, valueArguments[0])
                     "incrementAndGet" -> incrementAndGetField(getAtomicHandler, valueType)
                     "decrementAndGet" -> decrementAndGetField(getAtomicHandler, valueType)
-                    "plusAssign" -> getAndAddField(getAtomicHandler, valueType, valueArguments[0])
-                    "minusAssign" -> getAndAddField(getAtomicHandler, valueType, irUnaryMinus(valueArguments[0]))
+                    "plusAssign" -> getAndAddField(getAtomicHandler, valueType, valueArguments[0]).coerceToUnit()
+                    "minusAssign" -> getAndAddField(getAtomicHandler, valueType, irUnaryMinus(valueArguments[0])).coerceToUnit()
                     else -> error("Unsupported atomic function name $functionName")
                 }
             }

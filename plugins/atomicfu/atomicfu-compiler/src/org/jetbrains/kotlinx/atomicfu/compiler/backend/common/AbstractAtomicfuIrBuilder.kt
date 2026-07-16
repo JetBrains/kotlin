@@ -81,7 +81,7 @@ abstract class AbstractAtomicfuIrBuilder(
         functionName: String,
         valueArguments: List<IrExpression?>,
         valueType: IrType,
-    ): IrCall {
+    ): IrExpression {
         val atomicHandlerClassSymbol = (getAtomicHandler.type as IrSimpleType).classOrNull
             ?: error("Failed to obtain the ClassSymbol of the type ${getAtomicHandler.render()}.")
         val functionSymbol = when (functionName) {
@@ -99,7 +99,9 @@ abstract class AbstractAtomicfuIrBuilder(
             functionSymbol,
             listOf(getAtomicHandler) + modifiedArgs,
             valueType
-        )
+        ).let {
+            if (functionName == "plusAssign" || functionName == "minusAssign") it.coerceToUnit() else it
+        }
     }
 
     abstract fun invokeFunctionOnAtomicHandler(
@@ -108,7 +110,7 @@ abstract class AbstractAtomicfuIrBuilder(
         functionName: String,
         valueArguments: List<IrExpression?>,
         valueType: IrType,
-    ): IrCall
+    ): IrExpression
 
     fun irGetProperty(property: IrProperty, dispatchReceiver: IrExpression?) =
         irCall(property.getter?.symbol ?: error("Getter is not defined for the property ${property.atomicfuRender()}")).apply {
@@ -627,5 +629,15 @@ abstract class AbstractAtomicfuIrBuilder(
     private fun IrType.getFunctionReturnType(): IrType {
         require(isFunction()) { "Expected FunctionN type, but got: ${this.render()}" }
         return (this as IrSimpleType).arguments.last().typeOrFail
+    }
+
+    protected fun IrCall.coerceToUnit(): IrTypeOperatorCall {
+        return IrTypeOperatorCallImpl(
+            startOffset, endOffset,
+            irBuiltIns.unitType,
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+            irBuiltIns.unitType,
+            this
+        )
     }
 }

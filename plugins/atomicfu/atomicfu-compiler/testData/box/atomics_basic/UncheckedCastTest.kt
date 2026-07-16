@@ -3,6 +3,8 @@ import kotlin.test.*
 
 private val topLevelS = atomic<Any>(arrayOf("A", "B"))
 
+private inline fun <T> AtomicRef<T>.loadViaExtension(): T = value
+
 class UncheckedCastTest {
     private val s = atomic<Any>("AAA")
     private val bs = atomic<Any?>(null)
@@ -53,7 +55,7 @@ class UncheckedCastTest {
     fun testAtomicRefUncheckedCastGetAndUpdate() {
         bs.lazySet(arrayOf(arrayOf(Box(1), Box(2)), arrayOf(Box(3))))
         val res = (bs as AtomicRef<Array<Array<Box>>>).getAndUpdate { arrayOf(arrayOf(Box(4), Box(5)), arrayOf(Box(6))) }
-        assertEquals(2, (res as Array<Array<Box>>)[0][1]!!.b)
+        assertEquals(2, res[0][1]!!.b)
         assertEquals(5, bs.value[0][1]!!.b)
     }
 
@@ -62,8 +64,14 @@ class UncheckedCastTest {
         bs.lazySet(arrayOf(arrayOf(Box(1), Box(2)), arrayOf(Box(3))))
         assertEquals(2, (bs as AtomicRef<Array<Array<Box>>>).value[0][1]!!.b)
         val res = (bs as AtomicRef<Array<Array<Box>>>).updateAndGet { arrayOf(arrayOf(Box(4), Box(5)), arrayOf(Box(6))) }
-        assertEquals(6, (res as Array<Array<Box>>)[1][0]!!.b)
+        assertEquals(6, res[1][0]!!.b)
         assertEquals(6, bs.value[1][0]!!.b)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun testAtomicRefUncheckedCastExtensionCall() {
+        bs.lazySet(arrayOf(arrayOf(Box(1), Box(2)), arrayOf(Box(3))))
+        assertEquals(2, (bs as AtomicRef<Array<Array<Box>>>).loadViaExtension()[0][1].b)
     }
 }
 
@@ -77,5 +85,6 @@ fun box(): String {
     testClass.testAtomicRefUncheckedCastUpdate()
     testClass.testAtomicRefUncheckedCastGetAndUpdate()
     testClass.testAtomicRefUncheckedCastUpdateAndGet()
+    testClass.testAtomicRefUncheckedCastExtensionCall()
     return "OK"
 }
