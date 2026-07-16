@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // KT-86678: boxed Double NaN values must compare equal via ==/equals.
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.4
 
 fun box(): String {
     val a = Double.NaN                          // 0x7FF8000000000000

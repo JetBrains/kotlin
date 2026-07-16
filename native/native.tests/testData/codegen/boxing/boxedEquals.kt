@@ -1,5 +1,6 @@
 // KIND: STANDALONE
 // KT-87165: boxes identity: `===` and `identityHashCode`.
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.4
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 import kotlin.native.identityHashCode
