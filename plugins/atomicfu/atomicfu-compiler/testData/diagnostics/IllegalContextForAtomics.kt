@@ -24,15 +24,21 @@ fun localDeclarations() {
 }
 
 fun arrayOfAtomics() {
-    val a1 = arrayOf(atomic(0), atomic(1))
-    Array(42) { atomic("$it") }
-    val a3 = Array(1) { AtomicIntArray(10) }
+    val a1 = arrayOf(<!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(0)<!>, <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(1)<!>)
+    Array(42) { <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic("$it")<!> }
+    val a3 = Array(1) { <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>AtomicIntArray(10)<!> }
 }
 
-abstract class AbstractAtomicPropertyInCtor(private val <!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: AtomicInt = atomic(0))
+fun callWithoutAssignment() {
+    <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(42)<!>
+    <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomicArrayOfNulls<String?>(1)<!>
+    <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>AtomicBooleanArray(2)<!>
+}
+
+abstract class AbstractAtomicPropertyInCtor(private val <!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: AtomicInt = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(0)<!>)
 
 abstract class AbstractAtomicProperty {
     <!PUBLIC_ATOMICS_ARE_FORBIDDEN!>protected<!> abstract <!ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD!>val<!> a: AtomicInt
 }
 
-class AtomicInCtor(private val <!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: AtomicLong = atomic(0L))
+class AtomicInCtor(private val <!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: AtomicLong = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(0L)<!>)

@@ -30,9 +30,25 @@
 
 /IllegalContextForAtomics.kt:23:5: error: Local variables could not have kotlinx.atomicfu.Atomic* type: `'val naa: AtomicArray<Any?>? = null'`.
 
-/IllegalContextForAtomics.kt:32:57: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'private val a: AtomicInt = atomic(0)'`.
+/IllegalContextForAtomics.kt:27:22: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0)'`.
 
-/IllegalContextForAtomics.kt:35:5: error:
+/IllegalContextForAtomics.kt:27:33: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(1)'`.
+
+/IllegalContextForAtomics.kt:28:17: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic("$it")'`.
+
+/IllegalContextForAtomics.kt:29:25: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicIntArray(10)'`.
+
+/IllegalContextForAtomics.kt:33:5: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(42)'`.
+
+/IllegalContextForAtomics.kt:34:5: error: Atomic factories can only be called to initialize a property or as delegates: `'atomicArrayOfNulls<String?>(1)'`.
+
+/IllegalContextForAtomics.kt:35:5: error: Atomic factories can only be called to initialize a property or as delegates: `'AtomicBooleanArray(2)'`.
+
+/IllegalContextForAtomics.kt:38:57: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'private val a: AtomicInt = atomic(0)'`.
+
+/IllegalContextForAtomics.kt:38:72: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0)'`.
+
+/IllegalContextForAtomics.kt:41:5: error:
 To prevent atomic properties from being referenced outside the current Kotlin module, they must be declared as either private or internal. Note, that `@kotlin.PublishedApi` annotation, when applied to a class or a member with internal visibility, makes it effectively public.
 Consider setting the visibility of the property `'protected abstract val a: AtomicInt'` to private or internal or limit the scope of the containing class.
 Alternatively, if you need to expose the atomic property value to the public, you can use a delegated property declared within the same scope, e.g:
@@ -42,7 +58,9 @@ public val a: T by _a
 ```
 
 
-/IllegalContextForAtomics.kt:35:24: error: Atomic properties must have a backing field.
+/IllegalContextForAtomics.kt:41:24: error: Atomic properties must have a backing field.
 Consider declaring `'protected abstract val a: AtomicInt'` as a property with a backing field.
 
-/IllegalContextForAtomics.kt:38:32: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'private val a: AtomicLong = atomic(0L)'`.
+/IllegalContextForAtomics.kt:44:32: error: Function parameters could not have kotlinx.atomicfu.Atomic* type: `'private val a: AtomicLong = atomic(0L)'`.
+
+/IllegalContextForAtomics.kt:44:48: error: Atomic factories can only be called to initialize a property or as delegates: `'atomic(0L)'`.

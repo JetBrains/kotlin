@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -24,5 +25,6 @@ object AtomicfuErrors : KtDiagnosticsContainer() {
     // TODO: is it a proper strategy?
     val ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN by error1<KtCallableReferenceExpression, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val ATOMIC_LOCALS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY by error1<KtCallExpression, String>(SourceElementPositioningStrategies.DEFAULT)
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = AtomicfuErrorMessages
 }
