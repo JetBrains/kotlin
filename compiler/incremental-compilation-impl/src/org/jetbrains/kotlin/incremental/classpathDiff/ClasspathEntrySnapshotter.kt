@@ -9,7 +9,10 @@ import com.google.common.io.ByteStreams
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.*
+import org.jetbrains.kotlin.incremental.impl.hashToLong
+import java.io.ByteArrayOutputStream
 import java.io.Closeable
+import java.io.DataOutputStream
 import java.io.File
 import java.util.zip.ZipFile
 
@@ -35,6 +38,14 @@ object ClasspathEntrySnapshotter {
                 && !unixStyleRelativePath.startsWith("meta-inf/", ignoreCase = true)
     }
 
+    private fun isModuleInfoClassPath(unixStyleRelativePath: String): Boolean {
+        val path = unixStyleRelativePath.lowercase()
+        if (path == "module-info.class") return true
+        if (!path.startsWith("meta-inf/versions/") || !path.endsWith("/module-info.class")) return false
+        val version = path.removePrefix("meta-inf/versions/").removeSuffix("/module-info.class")
+        return version.toIntOrNull() != null
+    }
+
     fun snapshot(
         classpathEntry: File,
         settings: Settings,
@@ -57,8 +68,22 @@ object ClasspathEntrySnapshotter {
                 }
                 classListSnapshotter.snapshot()
             }
+            val moduleInfoPaths = directoryOrJarReader
+                .getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isModuleInfoClassPath(path) }
+            val moduleInfoHash = moduleInfoPaths.takeIf { it.isNotEmpty() }?.let { paths ->
+                // `paths` is already sorted by getUnixStyleRelativePaths, so the combined hash is deterministic.
+                val buffer = ByteArrayOutputStream()
+                DataOutputStream(buffer).use { out ->
+                    for (path in paths) {
+                        out.writeUTF(path)
+                        out.write(directoryOrJarReader.readBytes(path))
+                    }
+                }
+                buffer.toByteArray().hashToLong()
+            }
             return ClasspathEntrySnapshot(
-                classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
+                classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap()),
+                moduleInfoHash = moduleInfoHash,
             )
         }
     }
