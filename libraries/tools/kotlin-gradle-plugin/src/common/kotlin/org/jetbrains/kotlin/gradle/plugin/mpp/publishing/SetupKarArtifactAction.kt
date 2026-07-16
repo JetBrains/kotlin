@@ -50,9 +50,10 @@ import javax.inject.Inject
 
 // TODO KAR: Split and cleanup
 private const val PACK_KAR_TASK_NAME = "packKar"
-internal const val KAR_ARTIFACT_TYPE = "kar"
 
-interface const val KAR_CONFIGURATION = "kotlinArchive"
+// TODO KAR: Investigate the possibility of adding the .kar.xz
+internal const val KAR_ARTIFACT_TYPE = "kar"
+internal const val KAR_CONFIGURATION = "kotlinArchive"
 
 /**
  * These attributes are only used to force the [KarToPlatformKlibTransformation] in resolvable configurations.
@@ -68,14 +69,7 @@ internal val karCompressionMethodAttribute = Attribute.of("org.jetbrains.kotlin.
 internal val karCompressionMethodNone = "none"
 internal val karCompressionMethodXZ = "xz"
 
-/**
- * Path of a given target's klib inside the merged klib archive.
- *
- * The path is derived from attributes that producer and consumer share (platform type, konan target, wasm target type)
- * instead of the producer's target name, so that consumers can locate the klib without knowing how the producer
- * named its targets.
- */
-internal val KotlinTarget.mergedKlibPlatformPath: String?
+internal val KotlinTarget.karPlatformKlibPath: String?
     get() = when (this) {
         is KotlinNativeTarget -> "platform/${KotlinPlatformType.native.name}/${konanTarget.name}"
         is KotlinJsIrTarget -> when (wasmTargetType) {
@@ -86,7 +80,7 @@ internal val KotlinTarget.mergedKlibPlatformPath: String?
         else -> null
     }
 
-internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
+internal val SetupKarArtifactAction = KotlinProjectSetupCoroutine {
     Stage.AfterFinaliseCompilations.await()
 
     val extension = project.multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
@@ -101,7 +95,7 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
     val packTask = tasks.register(PACK_KAR_TASK_NAME, PackKarTask::class.java) { zip ->
         compileKlibTasks.forEach { (target, compileTaskProvider) ->
             val compileTask = compileTaskProvider?.get() ?: return@forEach
-            val platformPath = target.mergedKlibPlatformPath ?: return@forEach
+            val platformPath = target.karPlatformKlibPath ?: return@forEach
             zip.into(platformPath) { spec ->
                 zip.dependsOn(compileTask)
                 if (compileTask.produceUnpackagedKlib.get()) {
@@ -147,7 +141,7 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
             }
 
             packTask.configure { zip ->
-                zip.into("cinterops/${target.mergedKlibPlatformPath}/${outputFile.get().name}") { spec ->
+                zip.into("cinterops/${target.karPlatformKlibPath}/${outputFile.get().name}") { spec ->
                     spec.from(outputFile)
                 }
             }
@@ -187,26 +181,13 @@ internal val SetupMergedKlibTask = KotlinProjectSetupCoroutine {
 }
 
 
-internal val Project.packMergedKlibTask: TaskProvider<Task>
-    get() = tasks.named(PACK_KAR_TASK_NAME)
-
-
-/**
- * Allows platform compilations to consume merged klibs published by [org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetSoftwareComponent]:
- *
- * - At graph level, [MergedKlibUsageCompatibilityRule] lets configurations requesting e.g. 'kotlin-api'
- *   select variants published with the 'kotlin-api-merged' usage.
- * - At artifact level, '.mklib' artifacts carry [karStatePacked] while klib-consuming configurations
- *   request [karStateProcessed]; the mismatch forces [KarToPlatformKlibTransformation] which extracts the
- *   klib matching the consumer's platform type and konan target from the merged klib.
- */
 internal fun Project.configureKarKlibTransformation() {
     dependencies.artifactTypes.maybeCreate(KAR_ARTIFACT_TYPE).apply {
         attributes.attribute(karStateAttribute, karStateCompressed)
     }
 
     multiplatformExtension.targets.configureEach { target ->
-        val platformPath = target.mergedKlibPlatformPath ?: return@configureEach
+        val platformPath = target.karPlatformKlibPath ?: return@configureEach
         target.registerUnpackMergedKlibTransform(platformPath)
         target.requestProcessedKar()
     }
@@ -280,15 +261,8 @@ private fun KotlinTarget.requestProcessedKar() {
     }
 }
 
-/**
- * Extracts the klib stored under [Parameters.platformPath] from a merged klib archive
- * into an unpacked klib directory.
- */
-@DisableCachingByDefault(because = "Unpacking a merged klib is not worth caching")
-internal abstract class KarToPlatformKlibTransformation @Inject constructor(
-    private val fileOperations: FileSystemOperations,
-    private val archiveOperations: ArchiveOperations,
-) : TransformAction<KarToPlatformKlibTransformation.Parameters> {
+@DisableCachingByDefault(because = "Unpacking a .kar is not worth caching")
+internal abstract class KarToPlatformKlibTransformation : TransformAction<KarToPlatformKlibTransformation.Parameters> {
 
     interface Parameters : TransformParameters {
         @get:Input
