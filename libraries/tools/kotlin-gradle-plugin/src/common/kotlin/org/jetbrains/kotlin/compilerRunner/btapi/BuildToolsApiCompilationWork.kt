@@ -219,9 +219,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             }
             throw e
         } finally {
-            // Replay buffered compiler diagnostics on the worker thread (see ProblemsApiCompilerMessageRenderer).
-            compilerMessageRenderer.replayTo(compilerDiagnosticsProblemsReporter)
-
             val taskInfo = TaskExecutionInfo(
                 kotlinLanguageVersion = workArguments.kotlinLanguageVersion,
                 changedFiles = workArguments.incrementalCompilationEnvironment?.changedFiles,
@@ -245,6 +242,10 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo, icLogLines = printingLogger.capturedLines)
             TaskExecutionResults[workArguments.taskPath] = result
             backup?.deleteSnapshot()
+
+            // Replay buffered compiler diagnostics on the worker thread (see ProblemsApiCompilerMessageRenderer).
+            // Throws an exception on error, so should be last in `finally` block
+            compilerMessageRenderer.replayTo(compilerDiagnosticsProblemsReporter)
         }
     }
 
