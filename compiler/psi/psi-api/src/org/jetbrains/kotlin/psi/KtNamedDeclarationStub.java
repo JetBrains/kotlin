@@ -156,6 +156,12 @@ public abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> 
         SearchScope scope = super.getUseScope();
 
         KtClassOrObject classOrObject = KtPsiUtilKt.getContainingClassOrObject(this);
+        // Interfaces can be extended by non-private classes in the same file, even if the interface is private.
+        // This means declarations within such an interface might be accessible from other files.
+        if (classOrObject instanceof KtClass && ((KtClass) classOrObject).isInterface()) {
+            return scope;
+        }
+
         if (classOrObject != null) {
             scope = scope.intersectWith(classOrObject.getUseScope());
         }
