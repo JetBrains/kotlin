@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.isTopLevel
@@ -145,8 +144,6 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) {
 
             // Collect reachable roots from the given file
             buildFileEntity(file)
-
-            println(file.dump())
 
             while (worklist.isNotEmpty()) {
                 val current = worklist.removeFirst()
