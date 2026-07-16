@@ -236,23 +236,30 @@ class MainKtsIT {
                 )
             }
             val mainKtsJar = ForTestCompileRuntime.mainKtsJar()
+            val scriptPath = scr.platformIndependentPathString()
 
             runWithK2JVMCompiler(
-                scr.absolutePath,
+                scriptPath,
                 listOf("hello"),
                 classpath = listOf(mainKtsJar),
             )
 
             runWithK2JVMCompiler(
-                scr.absolutePath,
+                scriptPath,
                 listOf("hello"),
                 classpath = listOf(mainKtsJar),
                 additionalArgs = listOf("-Xuse-fir-lt=false"),
             )
 
             runWithKotlincAndMainKts(
-                scr.absolutePath,
+                scriptPath,
                 listOf("hello"),
+            )
+
+            runWithKotlincAndMainKts(
+                scriptPath,
+                listOf("hello"),
+                additionalArgs = listOf("-Xuse-fir-lt=false"),
             )
         }
     }
@@ -318,14 +325,16 @@ fun runWithKotlincAndMainKts(
     expectedOutPatterns: List<String> = emptyList(),
     expectedErrPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
-    cacheDir: Path? = null
+    cacheDir: Path? = null,
+    additionalArgs: List<String> = emptyList()
 ) {
     runWithKotlinc(
         scriptPath, expectedOutPatterns, expectedErrPatterns, expectedExitCode,
         classpath = listOf(
             ForTestCompileRuntime.mainKtsJar(),
         ),
-        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.toAbsolutePath()?.toString() ?: ""))
+        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.toAbsolutePath()?.toString() ?: "")),
+        additionalArgs = additionalArgs
     )
 }
 

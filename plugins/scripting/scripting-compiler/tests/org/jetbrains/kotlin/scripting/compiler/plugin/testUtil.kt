@@ -43,10 +43,17 @@ fun runWithKotlinc(
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
     classpath: List<File> = emptyList(),
-    additionalEnvVars: Iterable<Pair<String, String>>? = null
+    additionalEnvVars: Iterable<Pair<String, String>>? = null,
+    additionalArgs: List<String> = emptyList()
 ) {
+    val isWindows = System.getProperty("os.name").contains("windows", ignoreCase = true)
     runWithKotlinc(
-        arrayOf("-script", scriptPath),
+        arrayOf(
+            *additionalArgs.map {
+                if (isWindows && it.contains("=")) "\"$it\"" else it
+            }.toTypedArray(),
+            "-script", scriptPath
+        ),
         expectedOutPatterns, expectedErrPatterns, expectedExitCode, workDirectory, classpath, additionalEnvVars
     )
 }
