@@ -7,20 +7,14 @@ package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.AllCommonKlibCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.JS_KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.JS_LINKING
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.WASM_KLIB
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.WASM_LINKING
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.InvalidArgumentValueCommonKlibCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.InvalidRawValueCommonKlibCompilerArgumentsBtaV2StrategyAgnosticTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.NullableCommonKlibCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.*
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jsProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.wasmProject
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
@@ -190,9 +184,18 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
 
     private fun CommonKlibArgumentConfiguration<*>.assumeArgumentSupported() {
         assumeTrue(isPlatformSupported(), "Test requires selected platform BTA support")
+        val compilerVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
+
         assumeTrue(
-            kotlinToolchain.getCompilerVersion() >= availableSinceVersion.toString(),
-            "Test requires compiler version >= $availableSinceVersion"
+            compilerVersion >= KotlinToolingVersion(introducedVersion),
+            "Test requires compiler version >= $introducedVersion"
         )
+
+        if (removedVersion != null) {
+            assumeTrue(
+                compilerVersion < KotlinToolingVersion(removedVersion),
+                "Test requires compiler version < $removedVersion"
+            )
+        }
     }
 }

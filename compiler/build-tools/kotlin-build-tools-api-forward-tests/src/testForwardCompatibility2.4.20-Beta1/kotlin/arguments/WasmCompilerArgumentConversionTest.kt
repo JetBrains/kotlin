@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilation
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.wasmProject
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
@@ -148,9 +149,18 @@ internal class WasmCompilerArgumentConversionTest : BaseCompilationTest() {
 
     private fun WasmArgumentConfiguration<*>.assumeArgumentSupported() {
         assumeTrue(isPlatformSupported(), "Test requires selected platform BTA support")
+        val compilerVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
+
         assumeTrue(
-            kotlinToolchain.getCompilerVersion() >= availableSinceVersion.toString(),
-            "Test requires compiler version >= $availableSinceVersion"
+            compilerVersion >= KotlinToolingVersion(introducedVersion),
+            "Test requires compiler version >= $introducedVersion"
         )
+
+        if (removedVersion != null) {
+            assumeTrue(
+                compilerVersion < KotlinToolingVersion(removedVersion),
+                "Test requires compiler version < $removedVersion"
+            )
+        }
     }
 }

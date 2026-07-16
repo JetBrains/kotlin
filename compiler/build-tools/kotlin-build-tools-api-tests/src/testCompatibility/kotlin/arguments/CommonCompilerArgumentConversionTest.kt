@@ -168,9 +168,18 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     }
 
     private fun CommonArgumentConfiguration<*>.assumeArgumentSupported() {
+        val compilerVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
+
         assumeTrue(
-            kotlinToolchain.getCompilerVersion() >= argumentKey.availableSinceVersion.toString(),
-            "Test requires compiler version >= ${argumentKey.availableSinceVersion}"
+            compilerVersion >= KotlinToolingVersion(introducedVersion),
+            "Test requires compiler version >= $introducedVersion"
         )
+
+        if (removedVersion != null) {
+            assumeTrue(
+                compilerVersion < KotlinToolingVersion(removedVersion),
+                "Test requires compiler version < $removedVersion"
+            )
+        }
     }
 }
