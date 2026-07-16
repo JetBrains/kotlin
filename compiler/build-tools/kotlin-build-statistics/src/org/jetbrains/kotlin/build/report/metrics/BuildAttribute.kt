@@ -42,6 +42,7 @@ enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: Stri
     COMPILER_ARGS_CHANGED(BuildAttributeKind.REBUILD_REASON, "Compiler arguments changed"),
     INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED(BuildAttributeKind.REBUILD_REASON, "Incremental compilation configuration changed"),
     MODULE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "module-info.java changed"),
+    PACKAGE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "a package-info.java changed"),
     ;
 
     companion object {
