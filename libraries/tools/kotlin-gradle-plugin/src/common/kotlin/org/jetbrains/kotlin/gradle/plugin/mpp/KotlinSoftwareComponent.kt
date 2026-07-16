@@ -134,6 +134,7 @@ class DefaultKotlinUsageContext(
     override val dependencyConfigurationName: String,
     internal val overrideConfigurationArtifacts: SetProperty<PublishArtifact>? = null,
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
+    internal val overrideName: String? = null,
     internal val additionalConfigurationAttributes: Provider<AttributeContainer>? = null,
     override val includeIntoProjectStructureMetadata: Boolean = true,
     internal val publishOnlyIf: PublishOnlyIf = PublishOnlyIf { true },
@@ -145,7 +146,7 @@ class DefaultKotlinUsageContext(
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
-    override fun getName(): String = dependencyConfigurationName
+    override fun getName(): String = overrideName ?: dependencyConfigurationName
 
     private val configuration: Configuration
         get() = project.configurations.getByName(dependencyConfigurationName)

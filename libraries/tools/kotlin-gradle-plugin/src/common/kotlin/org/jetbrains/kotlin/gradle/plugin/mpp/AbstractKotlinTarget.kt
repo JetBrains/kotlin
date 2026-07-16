@@ -128,6 +128,9 @@ abstract class AbstractKotlinTarget(
             DefaultKotlinUsageContext(
                 compilation = compilation,
                 mavenScope = mavenScope,
+                // TODO: this is inconsistent we should either always use -publihsed or always regular.
+                // Probably configuration creation should be moved here.
+                overrideName = publishedConfigurationName(dependencyConfigurationName),
                 dependencyConfigurationName = dependencyConfigurationName,
                 overrideConfigurationArtifacts = project.setProperty { karConfiguration.get().artifacts },
                 additionalConfigurationAttributes = karConfiguration.map { configuration -> configuration.attributes },
