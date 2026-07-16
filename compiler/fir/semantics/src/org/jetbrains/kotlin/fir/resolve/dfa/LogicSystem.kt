@@ -58,6 +58,11 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     fun addLocalVariableAlias(flow: MutableFlow, alias: RealVariable, underlyingVariable: RealVariable) {
         if (underlyingVariable == alias) return // x = x
         flow.directAliasMap[alias] = underlyingVariable
+        addBackwardsAliasOnly(flow, alias, underlyingVariable)
+    }
+
+    fun addBackwardsAliasOnly(flow: MutableFlow, alias: RealVariable, underlyingVariable: RealVariable) {
+        if (underlyingVariable == alias) return // x = x
         flow.backwardsAliasMap[underlyingVariable] = flow.backwardsAliasMap[underlyingVariable]?.adding(alias) ?: persistentSetOf(alias)
     }
 
@@ -194,14 +199,14 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                 return@computeStatement // statements about alias == statements about aliased variable
             } else if (!union) {
                 // if (condition) { /* x: S1 */ } else { /* x: S2 */ } // -> x: S1 | S2
-                or(flows.mapTo(mutableSetOf()) { it.getTypeStatement(variable) ?: return@computeStatement })
+                or(flows.mapTo(mutableSetOf()) { it.getOwnTypeStatement(variable) ?: return@computeStatement })
             } else if (assignmentIndex[variable] == commonFlow.assignmentIndex[variable]) {
                 // callAllInSomeOrder({ /* x: S1 */ }, { /* x: S2 */ }) // -> x: S1 & S2
-                and(flows.mapNotNullTo(mutableSetOf()) { it.getTypeStatement(variable) })
+                and(flows.mapNotNullTo(mutableSetOf()) { it.getOwnTypeStatement(variable) })
             } else {
                 // callAllInSomeOrder({ x = ...; /* x: S1 */  }, { x = ...; /* x: S2 */ }, { /* x: S3 */ }) // -> x: S1 | S2
                 val byAssignment =
-                    flows.groupByTo(mutableMapOf(), { it.assignmentIndex[variable] ?: -1 }, { it.getTypeStatement(variable) })
+                    flows.groupByTo(mutableMapOf(), { it.assignmentIndex[variable] ?: -1 }, { it.getOwnTypeStatement(variable) })
                 // This throws out S3 from the above example, as the flow that makes that statement is unordered w.r.t. the other two:
                 byAssignment.remove(commonFlow.assignmentIndex[variable] ?: -1)
                 // In the above example each list in `byAssignment.values` only has one entry, but in general we can have something like

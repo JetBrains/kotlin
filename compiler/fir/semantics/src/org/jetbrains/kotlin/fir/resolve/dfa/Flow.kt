@@ -9,11 +9,26 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentHashMapOf
+import kotlinx.collections.immutable.persistentHashSetOf
+import org.jetbrains.kotlin.fir.DfaType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import kotlin.collections.get
 
 abstract class Flow {
     abstract val knownVariables: Set<DataFlowVariable>
     abstract fun unwrapVariable(variable: RealVariable): RealVariable
+
+    /**
+     * Collects all smartcast information available for [variable],
+     * including smart casts from one-way aliases to it.
+     *
+     * Avoid readding this information back into the [Flow] as it
+     * will produce redundant smart casts on [variable] itself.
+     * To merge flows or update the existing information, use [getOwnTypeStatement].
+     */
     abstract fun getTypeStatement(variable: DataFlowVariable): TypeStatement?
+    abstract fun getOwnTypeStatement(variable: DataFlowVariable): TypeStatement?
+
     abstract fun getImplications(variable: DataFlowVariable): Collection<Implication>?
 
     open fun unwrapVariable(variable: DataFlowVariable): DataFlowVariable =
@@ -46,6 +61,9 @@ class PersistentFlow internal constructor(
         directAliasMap[variable] ?: variable
 
     override fun getTypeStatement(variable: DataFlowVariable): TypeStatement? =
+        combineTypeStatements(variable, approvedTypeStatements, backwardsAliasMap)
+
+    override fun getOwnTypeStatement(variable: DataFlowVariable): TypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
 
     override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
@@ -101,6 +119,9 @@ class MutableFlow internal constructor(
         directAliasMap[variable] ?: variable
 
     override fun getTypeStatement(variable: DataFlowVariable): TypeStatement? =
+        combineTypeStatements(variable, approvedTypeStatements, backwardsAliasMap)
+
+    override fun getOwnTypeStatement(variable: DataFlowVariable): TypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
 
     override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
@@ -116,5 +137,33 @@ class MutableFlow internal constructor(
     )
 }
 
+private fun Flow.combineTypeStatements(
+    variable: DataFlowVariable,
+    approvedTypeStatements: Map<DataFlowVariable, PersistentTypeStatement>,
+    backwardsAliasMap: Map<RealVariable, PersistentSet<RealVariable>>,
+): TypeStatement? {
+    val unwrapped = unwrapVariable(variable)
+    val ownStatement = approvedTypeStatements[unwrapped]
+    val backwardsMapStatements = backwardsAliasMap[unwrapped]
+        ?.mapNotNull { if (unwrapVariable(it) == variable) null else approvedTypeStatements[it] }
+        ?.takeIf { it.isNotEmpty() }
+        ?: return ownStatement?.copy(variable = variable)
+
+    val combinedUpper = emptyPersistentHashSetBuilder<ConeKotlinType>()
+        .apply { ownStatement?.upperTypes?.let { addAll(it) } }
+    val combinedLower = emptyPersistentHashSetBuilder<DfaType>()
+        .apply { ownStatement?.lowerTypes?.let { addAll(it) } }
+
+    for ((upperTypes, lowerTypes) in backwardsMapStatements) {
+        combinedUpper.addAll(upperTypes)
+        combinedLower.addAll(lowerTypes)
+    }
+
+    return PersistentTypeStatement(variable, combinedUpper.build(), combinedLower.build())
+}
+
 private fun <K, V> emptyPersistentHashMapBuilder(): PersistentMap.Builder<K, V> =
     persistentHashMapOf<K, V>().builder()
+
+private fun <T> emptyPersistentHashSetBuilder(): PersistentSet.Builder<T> =
+    persistentHashSetOf<T>().builder()

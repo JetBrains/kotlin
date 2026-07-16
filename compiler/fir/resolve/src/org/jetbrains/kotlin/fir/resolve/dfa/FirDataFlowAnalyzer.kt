@@ -988,10 +988,10 @@ abstract class FirDataFlowAnalyzer(
             val variable = getLocal(symbol, create = false) ?: return@forEach
             // The statement about `variable` in `conditionEnterFlow` should be empty, so to obtain the new statement
             // we can simply add the now-known input to whatever was inferred from nothing so long as the value is the same.
-            val toAdd = logicSystem.or(loopEnterAndContinueFlows.map { it.getTypeStatement(variable) ?: return@forEach })
+            val toAdd = logicSystem.or(loopEnterAndContinueFlows.map { it.getOwnTypeStatement(variable) ?: return@forEach })
                 ?.takeIf { it.isNotEmpty } ?: return@forEach
             val newStatement = logicSystem.or(conditionExitAndBreakFlows.map {
-                val atExit = it.getTypeStatement(variable)
+                val atExit = it.getOwnTypeStatement(variable)
                 if (logicSystem.isSameValueIn(conditionEnterFlow, it, variable)) {
                     logicSystem.and(atExit, toAdd)
                 } else {
@@ -1480,17 +1480,14 @@ abstract class FirDataFlowAnalyzer(
         if (stability == SmartcastStability.STABLE_VALUE || stability == SmartcastStability.CAPTURED_VARIABLE) {
             val initializerVariable = flow.getVariableIfUsedOrReal(initializer)
             if (!hasExplicitType && initializerVariable is RealVariable &&
-                // It's impossible to reference implicit when subjects.
-                // With explicit local variables, we want to give the user an option to
-                // choose whether they want to access the variable with smartcasts
-                // or the original expression without them.
-                (property.isImplicitWhenSubjectVariable ||
-                        initializerVariable.getStability(flow, targetTypes = null) == SmartcastStability.STABLE_VALUE)
+                initializerVariable.getStability(flow, targetTypes = null) == SmartcastStability.STABLE_VALUE
             ) {
                 // val a = ...
                 // val b = a
                 // if (b != null) { /* a != null */ }
                 logicSystem.addLocalVariableAlias(flow, propertyVariable, initializerVariable)
+            } else if (property.isImplicitWhenSubjectVariable && initializerVariable is RealVariable) {
+                logicSystem.addBackwardsAliasOnly(flow, propertyVariable, initializerVariable)
             } else if (initializerVariable != null && (!property.isEffectivelyLocal || !property.isVar)) {
                 // Case 1:
                 //   val b = x is String // initializer is synthetic, condition is boolean
@@ -1958,8 +1955,8 @@ abstract class FirDataFlowAnalyzer(
         buildMap {
             parent.knownVariables.forEach {
                 if (unwrapVariable(it) != it) return@forEach // will add a statement for the aliased variable instead
-                val statement = parent.getTypeStatement(it)
-                if (statement != null && statement != getTypeStatement(it)) put(it, statement)
+                val statement = parent.getOwnTypeStatement(it)
+                if (statement != null && statement != getOwnTypeStatement(it)) put(it, statement)
             }
         }
 
