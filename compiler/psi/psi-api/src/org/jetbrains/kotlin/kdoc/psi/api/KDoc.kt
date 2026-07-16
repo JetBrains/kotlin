@@ -32,6 +32,10 @@ interface KDoc : PsiDocCommentBase, KDocElement {
     /** Returns the first section for the given block [tag], or `null` if there is none. */
     fun findSectionByTag(tag: KDocKnownTag): KDocSection?
 
-    /** Returns the section for the given block [tag] with the given [subjectName], or `null` if there is none. */
+    /**
+     * Returns the section for the given block [tag] with the given [subjectName], or `null` if there is none.
+     *
+     * The [subjectName] is the tag's subject; see [KDocTag.getSubjectName].
+     */
     fun findSectionByTag(tag: KDocKnownTag, subjectName: String): KDocSection?
 }
