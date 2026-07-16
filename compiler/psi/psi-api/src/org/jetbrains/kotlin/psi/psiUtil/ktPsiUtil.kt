@@ -355,7 +355,12 @@ fun KtQualifiedExpression.isContractDescriptionCallPsiCheck(): Boolean {
     return receiverExpressionOrNull?.text == "kotlin.contracts" && expression.isContractDescriptionCallPsiCheck()
 }
 
-/** Returns `true` if this element is the first statement of its enclosing block (also seeing through a dot qualifier). */
+/**
+ * Returns `true` if this element is the first statement of its enclosing block.
+ *
+ * If this element is the receiver of a dot-qualified expression, the check is applied to that whole expression instead. For example, `foo`
+ * returns `true` when `foo.bar()` is the first statement of the block.
+ */
 fun KtElement.isFirstStatement(): Boolean {
     var parent = parent
     var element = this
