@@ -68,12 +68,12 @@ fun KtBinaryExpression.tryFlattenStringConcatenationArguments(): List<KtStringTe
 }
 
 /**
- * Emulates recursion with an explicit stack to avoid stack overflows on large string-concatenation expressions such as `val x = "a0" + "a1"
- * + ... + "a9999"` (relatively common in machine-generated code).
+ * Returns all operands of this `+` (string concatenation) expression in source order, flattening operands that are themselves nested `+`
+ * expressions, or `null` if this expression is not such a string-literal concatenation.
  *
- * This method traverses this expression and tries to extract all string-template nodes. It returns the nested expressions in source order
- * if this [KtBinaryExpression] matches the string-literal concatenation pattern; otherwise, it returns `null`. Nested expressions are
- * processed iteratively by pushing nodes onto an input stack.
+ * When [fullFidelity] is `false`, only the string-template operands are returned. When it is `true`, the result also includes the `+`
+ * operation references and the hidden tokens (whitespace and comments) between operands, so the complete tree structure can
+ * be reconstructed.
  *
  * For example, `"a" + "b" + "c"` is represented as:
  *
@@ -82,9 +82,11 @@ fun KtBinaryExpression.tryFlattenStringConcatenationArguments(): List<KtStringTe
  *      '+'(1)     'c'
  *  'a'        'b'
  * ```
- * The method returns `'a', 'b', 'c'` when [fullFidelity] is `false`. When [fullFidelity] is `true`, it returns `'a', 'b', '+'(1), 'c',
- * '+'(0)` plus hidden tokens between them (whitespace or comments). Use the full-fidelity mode when callers need the complete
- * tree structure.
+ * The method returns `'a', 'b', 'c'` when [fullFidelity] is `false`, and `'a', 'b', '+'(1), 'c', '+'(0)` plus the hidden tokens between
+ * them when [fullFidelity] is `true`.
+ *
+ * Implementation note: recursion is emulated with an explicit stack to avoid stack overflows on large concatenations such as `val x = "a0"
+ * + "a1" + ... + "a9999"` (relatively common in machine-generated code).
  */
 @KtImplementationDetail
 private fun KtBinaryExpression.tryFlattenStringConcatenation(fullFidelity: Boolean): List<PsiElement>? {
