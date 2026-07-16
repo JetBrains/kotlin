@@ -44,6 +44,11 @@ data class AnalysisResult(val type: InitializationCycleAccessResult, val accesse
 data class DeadlockNode(val entity: EnclosingEntity<*>) {
     val incoming: MutableSet<DeadlockNode> = mutableSetOf()
     val outgoing: MutableSet<DeadlockNode> = mutableSetOf()
+
+    fun reset() {
+        incoming.clear()
+        outgoing.clear()
+    }
 }
 
 class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
@@ -219,10 +224,14 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
                 )
             }
         )
-        components.asSequence().forEach { component ->
+        components.forEach { component ->
             component.takeIf { it.size > 1 }?.forEach { node ->
-                deadlockingComponentsCache[node.entity] = component.mapToSetOrEmpty { it.entity }
+                deadlockingComponentsCache[node.entity] = component.mapToSetOrEmpty {
+                    it.reset()
+                    it.entity
+                }
             } ?: component.first().let {
+                it.reset()
                 // Could be the parent entity which was/will be added in a previous/following component
                 if (it.entity !in deadlockingComponentsCache) deadlockingComponentsCache[it.entity] = null
             }
@@ -243,4 +252,8 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
                     ?: emptySet()
             }
         }
+
+    fun reset() {
+        deadlockingComponentsCache.clear()
+    }
 }

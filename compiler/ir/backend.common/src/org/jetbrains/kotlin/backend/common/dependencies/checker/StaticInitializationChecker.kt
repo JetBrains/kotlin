@@ -64,6 +64,7 @@ object StaticInitializationChecker : IrGenerationExtension {
                 }
             }
         }
+        analyzer.reset()
     }
 
     private fun IrElement.sourceElement(): KtOffsetsOnlySourceElement? = when (this) {
