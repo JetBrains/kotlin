@@ -93,7 +93,8 @@ public interface KtPureClassOrObject extends KtPureElement, KtDeclarationContain
     List<KtSecondaryConstructor> getSecondaryConstructors();
 
     /**
-     * Returns the context receivers declared on this class or object, or an empty list if there are none.
+     * Returns the unnamed context receivers declared on this class or object, or an empty list if there are none. This is the legacy
+     * context-receiver API; named context parameters are exposed by {@link KtContextParameterList}.
      */
     @NotNull
     @ReadOnly
@@ -105,4 +106,3 @@ public interface KtPureClassOrObject extends KtPureElement, KtDeclarationContain
     @Nullable
     KtClassBody getBody();
 }
-

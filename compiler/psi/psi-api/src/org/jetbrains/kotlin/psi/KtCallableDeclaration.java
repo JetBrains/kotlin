@@ -59,8 +59,8 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
     KtTypeReference getReceiverTypeReference();
 
     /**
-     * Returns the context receivers declared in the {@code context(...)} clause of this callable, or an empty list if
-     * there are none.
+     * Returns the unnamed context receivers declared in the {@code context(...)} clause of this callable, or an empty list if there are
+     * none. This is the legacy context-receiver API; named context parameters are available from {@link #getContextParameters()}.
      *
      * @see KtContextReceiver
      * @see KtModifierList#getContextParameterList()

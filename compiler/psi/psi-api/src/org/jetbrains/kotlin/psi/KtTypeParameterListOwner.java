@@ -24,8 +24,9 @@ import java.util.List;
 /**
  * Represents a declaration that may declare type parameters, such as a class, function, or type alias.
  *
- * <p>Type parameters are declared in angle brackets right after the declaration keyword and name. Upper bounds may be
- * written inline or in a separate {@code where} clause, which is exposed via {@link #getTypeConstraintList()}.
+ * <p>Type parameters are declared in angle brackets. The list's position depends on the declaration: for example, it follows a class name
+ * but precedes a function name. Upper bounds may be written inline or in a separate {@code where} clause, which is exposed via
+ * {@link #getTypeConstraintList()}.
  *
  * <h3>Example:</h3>
  * <pre>{@code
