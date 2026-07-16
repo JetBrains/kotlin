@@ -298,19 +298,6 @@ fun Project.standardPublicJars() {
 fun Project.publish(moduleMetadata: Boolean = false, sbom: Boolean = true, configure: MavenPublication.() -> Unit = { }) {
     apply<KotlinBuildPublishingPlugin>()
 
-    tasks.register("writePublishedMark") {
-        dependsOn(tasks.named("publish"))
-        val publishedMarkFile = layout.buildDirectory.file("published.txt")
-        outputs.file(publishedMarkFile)
-        doLast {
-            publishedMarkFile.get().asFile.writeText("")
-        }
-    }
-    val publishedMark = configurations.consumable("publishedMark")
-    artifacts {
-        add(publishedMark.name, tasks.named("writePublishedMark"))
-    }
-
     if (!moduleMetadata) {
         tasks.withType<GenerateModuleMetadata> {
             enabled = false
