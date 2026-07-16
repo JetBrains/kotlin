@@ -860,7 +860,11 @@ fun KtCallExpression.addTypeArgument(typeArgument: KtTypeProjection) {
     KtPsiMutationService.getInstance().appendTypeArgument(this, typeArgument)
 }
 
-/** Returns `true` if this declaration has a body (a function or property that defines one). */
+/**
+ * Returns `true` if this declaration is a function or property that defines a body.
+ *
+ * Only [KtFunction] and [KtProperty] are considered; every other declaration, including a [KtPropertyAccessor], returns `false`.
+ */
 fun KtDeclaration.hasBody() = when (this) {
     is KtFunction -> hasBody()
     is KtProperty -> hasBody()
