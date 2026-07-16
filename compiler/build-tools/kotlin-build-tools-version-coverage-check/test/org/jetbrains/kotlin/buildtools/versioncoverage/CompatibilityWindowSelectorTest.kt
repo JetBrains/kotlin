@@ -64,6 +64,14 @@ internal class CompatibilityWindowSelectorTest {
     }
 
     @Test
+    @DisplayName("Backward: snapshot current in an unpublished minor version counts the window from its own minor version")
+    fun `backward - snapshot current in unpublished minor version counts window from current`() {
+        val all = listOf("1.9.0", "2.0.0", "2.1.0", "2.2.0", "2.3.0", "2.4.0").map { KotlinToolingVersion(it) }
+        val result = backwardSelector.select(all, KotlinToolingVersion("2.5.255-SNAPSHOT"))
+        assertEquals(listOf("2.2.0", "2.3.0", "2.4.0").map { KotlinToolingVersion(it) }.toSet(), result.toSet())
+    }
+
+    @Test
     @DisplayName("Backward: returns minor versions in descending order")
     fun `backward - minor versions sorted descending`() {
         val all = listOf("2.0.0", "2.1.0", "2.2.0", "2.3.0", "2.4.0").map { KotlinToolingVersion(it) }
