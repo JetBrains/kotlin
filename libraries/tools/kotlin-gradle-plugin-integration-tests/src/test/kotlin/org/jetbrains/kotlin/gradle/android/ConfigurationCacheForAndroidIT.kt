@@ -29,7 +29,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
-            "kapt2/android-dagger",
+            "kapt/android-dagger",
             gradleVersion,
             buildOptions = buildOptions(gradleVersion).copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location

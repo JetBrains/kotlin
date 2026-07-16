@@ -251,7 +251,7 @@ any distributions of the compiler, libraries or plugin:
       - License: Apache 2 ([license/third_party/testdata/dagger_license.txt][dagger])
       - Origin: Dagger, Copyright (C) 2013 Square, Inc.
 
- - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kapt2
+ - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kapt
       - License: Apache 2 ([license/third_party/testdata/dagger_license.txt][dagger])
       - Origin: Dagger, Copyright (C) 2013 Square, Inc.
 

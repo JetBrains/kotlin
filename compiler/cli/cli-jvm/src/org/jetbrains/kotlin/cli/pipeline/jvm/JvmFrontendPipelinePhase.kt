@@ -630,7 +630,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION
         }
 
-        // REPL and kapt2 update classpath dynamically
+        // REPL updates classpath dynamically
         val rootsIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true).apply {
             addIndex(JvmDependenciesIndexImpl(roots))
             indexedRoots.forEach {

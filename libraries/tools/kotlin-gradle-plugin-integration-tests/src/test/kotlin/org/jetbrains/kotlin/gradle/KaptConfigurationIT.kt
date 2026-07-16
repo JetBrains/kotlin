@@ -19,9 +19,9 @@ class KaptConfigurationIT : KGPBaseTest() {
 
     @DisplayName("KT-58009: both deprecated and the new API may populate kapt options")
     @GradleTest
-    @TestMetadata("kapt2/simple")
+    @TestMetadata("kapt/simple")
     fun kaptOptionsAreCombined(gradleVersion: GradleVersion) {
-        project("kapt2/simple", gradleVersion) {
+        project("kapt/simple", gradleVersion) {
             gradleProperties.appendText("\nkapt.verbose=true")
             buildScriptInjection {
                 project.tasks.withType(BaseKapt::class.java).configureEach {

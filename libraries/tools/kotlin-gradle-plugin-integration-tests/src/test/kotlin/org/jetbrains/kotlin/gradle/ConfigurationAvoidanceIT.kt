@@ -74,7 +74,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @DisplayName("KGP/Kapt does not eagerly configure any tasks")
     @GradleTest
     fun testKaptConfigurationAvoidance(gradleVersion: GradleVersion) {
-        project("kapt2/simple", gradleVersion) {
+        project("kapt/simple", gradleVersion) {
             assertEquals(
                 mapOf(":" to setOf("clean", "help")),
                 configuredTasks().buildAndReturn("--dry-run"),

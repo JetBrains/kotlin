@@ -313,7 +313,7 @@ class KaptAndroidIT : KaptBaseIT() {
         jdkVersion: JdkVersions.ProvidedJdk
     ) {
         project(
-            "kapt2/android-dagger",
+            "kapt/android-dagger",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
@@ -349,7 +349,7 @@ class KaptAndroidIT : KaptBaseIT() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
-            "kapt2/noProcessors",
+            "kapt/noProcessors",
             gradleVersion,
             buildOptions = defaultBuildOptions
                 .copy(

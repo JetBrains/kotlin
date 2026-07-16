@@ -195,7 +195,7 @@ class SubpluginsIT : KGPBaseTest() {
         providedJdk: JdkVersions.ProvidedJdk
     ) {
         project(
-            "kapt2/android-dagger",
+            "kapt/android-dagger",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = providedJdk.location
