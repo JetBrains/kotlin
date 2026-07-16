@@ -27,6 +27,7 @@ internal class LazyClasspathSnapshot(
     private val reporter: ClasspathSnapshotBuildReporter
 ) {
     private var currentClasspathSnapshot: List<AccessibleClassSnapshot>? = null
+    private var currentModuleInfoHashes: Set<Long>? = null
     private var computedShrunkClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>? = null
     private var savedShrunkClasspathSnapshot: List<AccessibleClassSnapshot>? = null
 
@@ -41,14 +42,25 @@ internal class LazyClasspathSnapshot(
                 val classpathSnapshotFiles = classpathChanges.classpathSnapshotFiles
                 val classpathSnapshot =
                     CachedClasspathSnapshotSerializer.load(classpathSnapshotFiles.currentClasspathEntrySnapshotFiles, reporter)
+                currentModuleInfoHashes = classpathSnapshot.classpathEntrySnapshots.mapNotNullTo(mutableSetOf()) { it.moduleInfoHash }
                 reporter.measure(metricToReportIfComputing.removeDuplicateClassesTag) {
                     classpathSnapshot.removeDuplicateAndInaccessibleClasses()
                 }
             }
-            else -> emptyList()
+            else -> {
+                currentModuleInfoHashes = emptySet()
+                emptyList()
+            }
         }
         currentClasspathSnapshot = computed
         return computed
+    }
+
+    /** Hashes of the JPMS `module-info.class` descriptors on the current classpath. */
+    fun getCurrentModuleInfoHashes(metricToReportIfComputing: LazySnapshotLoadingMetrics): Set<Long> {
+        currentModuleInfoHashes?.let { return it }
+        getCurrentClasspathSnapshot(metricToReportIfComputing)
+        return currentModuleInfoHashes!!
     }
 
     fun getComputedShrunkClasspathAgainstPreviousLookups(lookupStorage: LookupStorage, metricToReportIfComputing: LazySnapshotLoadingMetrics): List<AccessibleClassSnapshot> {

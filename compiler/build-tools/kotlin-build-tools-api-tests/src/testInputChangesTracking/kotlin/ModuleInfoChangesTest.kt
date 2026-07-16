@@ -62,6 +62,58 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
         }
     }
 
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Removing an 'exports' from a dependency's module-info.java recompiles and fails the consumer (externally tracked)")
+    @TestMetadata("ic-scenarios/dependency-module-info-modification")
+    fun testDependencyModuleInfoExportsRemovalFailsConsumerExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val dependency = module(
+                moduleName = "ic-scenarios/dependency-module-info-modification/module-a",
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            val consumer = module(
+                moduleName = "ic-scenarios/dependency-module-info-modification/module-b",
+                dependencies = listOf(dependency),
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            dependency.removeExportsAndAssertConsumerFails(consumer, strategyConfig)
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Removing an 'exports' from a dependency's module-info.java recompiles and fails the consumer (internally tracked)")
+    @TestMetadata("ic-scenarios/dependency-module-info-modification")
+    fun testDependencyModuleInfoExportsRemovalFailsConsumerInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val dependency = module(
+                moduleName = "ic-scenarios/dependency-module-info-modification/module-a",
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            val consumer = trackedModule(
+                moduleName = "ic-scenarios/dependency-module-info-modification/module-b",
+                dependencies = listOf(dependency),
+                compilationConfigAction = jpmsSupportConfigAction,
+            )
+            dependency.removeExportsAndAssertConsumerFails(consumer, strategyConfig)
+        }
+    }
+
+    private fun ScenarioModule.removeExportsAndAssertConsumerFails(
+        consumer: ScenarioModule,
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+    ) {
+        replaceFileWithVersion("module-info.java", "remove-exports")
+        compile()
+        consumer.compile {
+            expectFail()
+            assertLogContainsLines(
+                expectedLogLevelForRebuildReason(strategyConfig),
+                "Non-incremental compilation will be performed: ${BuildAttribute.DEPENDENCY_MODULE_INFO_CHANGED.readableString}"
+            )
+            assertCompiledSources("bpkg/UseA.kt", "bpkg/Other.kt")
+        }
+    }
+
     companion object {
         private val jpmsSupportConfigAction: (JvmCompilationOperation.Builder) -> Unit = {
             it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_9
