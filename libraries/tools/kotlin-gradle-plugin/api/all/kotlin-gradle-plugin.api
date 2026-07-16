@@ -1420,6 +1420,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/MetadataDependencyTran
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier$Companion;
+	public synthetic fun <init> (ILjava/lang/String;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
@@ -1428,6 +1430,22 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier :
 	public fun getModuleId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+	public static final synthetic fun write$Self (Lorg/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lorg/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/ModuleDependencyIdentifier$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/MppDependencyProjectStructureMetadataExtractor {

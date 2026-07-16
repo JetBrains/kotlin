@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.serializer
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -25,7 +22,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
@@ -60,15 +57,14 @@ internal class KotlinSecondaryVariantsDataSharing(
         key: String,
         outgoingConfiguration: Configuration,
         dataProvider: Provider<T>,
+        serializer: KSerializer<T>,
         taskDependencies: List<Any> = emptyList(),
     ) {
         val taskName = lowerCamelCaseName("export", key, "for", outgoingConfiguration.name)
         val task = project.locateOrRegisterTask<ExportKotlinProjectDataTask>(taskName, configureTask = {
             val fileName = "${key}_${outgoingConfiguration.name}.json"
 
-            @Suppress("UNCHECKED_CAST")
-            val taskOutputData = outputData as Property<T>
-            taskOutputData.set(dataProvider)
+            outputJson.set(dataProvider.map { KgpJson.default.encodeToString(serializer, it) })
 
             outputFile.set(project.layout.buildDirectory.file("kotlin/kotlin-project-shared-data/$fileName"))
             dependsOn(taskDependencies)
@@ -106,7 +102,7 @@ internal class KotlinSecondaryVariantsDataSharing(
     fun <T : KotlinShareableDataAsSecondaryVariant> consume(
         key: String,
         incomingConfiguration: Configuration,
-        clazz: Class<T>,
+        serializer: KSerializer<T>,
         componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
     ): KotlinProjectSharedDataProvider<T> {
         val lazyResolvedConfiguration = LazyResolvedConfigurationWithArtifacts(incomingConfiguration, configureArtifactView = {
@@ -117,7 +113,7 @@ internal class KotlinSecondaryVariantsDataSharing(
             attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, artifactTypeOfProjectSharedDataKey(key))
             if (componentFilter != null) this.componentFilter(componentFilter)
         })
-        return KotlinProjectSharedDataProvider(key, lazyResolvedConfiguration, clazz)
+        return KotlinProjectSharedDataProvider(key, lazyResolvedConfiguration, serializer)
     }
 
     /** Common attributes between producer and consumer */
@@ -140,12 +136,15 @@ private fun artifactTypeOfProjectSharedDataKey(key: String) = "kotlin-project-sh
  *
  * Data is meant to be extracted at Task Execution Phase.
  *
- * This class is Configuration Cache safe. It can be stored in a Task field.
+ * This class can be stored in a Task field as long as [serializer] is Configuration Cache safe. This holds for
+ * plugin-generated (`T.serializer()`), builtin, and stateless `object` serializers; a serializer that keeps live
+ * state (a thread, a stream, a class loader, ...) would fail Configuration Cache storage, because Gradle persists
+ * [serializer] as a bean.
  */
 internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondaryVariant>(
     private val key: String,
     private val lazyResolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
-    private val clazz: Class<T>,
+    private val serializer: KSerializer<T>,
 ) {
     val rootComponent: ResolvedComponentResult get() = lazyResolvedConfiguration.root
 
@@ -163,7 +162,6 @@ internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondar
         return artifact.parse()
     }
 
-    @OptIn(InternalSerializationApi::class)
     private fun ResolvedArtifactResult.parse(): T? {
         // In rare cases, for example when provided attributes and requested attributes didn't match at all.
         // Gradle will resolve into that variant.
@@ -177,12 +175,13 @@ internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondar
         if (!file.exists()) return null
 
         val content = file.readText()
-        val serializer = clazz.kotlin.serializer()
         return try {
             KgpJson.default.decodeFromString(serializer, content)
-        } catch (_: SerializationException) {
-            // An artifact with our key/attribute exists but does not deserialize (e.g. a foreign or
-            // incompatible producer). Skip it rather than failing the consumer; other failures propagate.
+        } catch (_: IllegalArgumentException) {
+            // The artifact matches our key/attribute but its payload isn't a valid [T] (e.g. a foreign or
+            // incompatible producer). decodeFromString reports this as SerializationException for malformed input
+            // or IllegalArgumentException for a decoded-but-invalid instance; the former is a subtype of the latter,
+            // so catching IllegalArgumentException covers both. Skip such artifacts; other failures (e.g. I/O) propagate.
             null
         }
     }
@@ -190,18 +189,14 @@ internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondar
 
 @DisableCachingByDefault(because = "Trivial operation")
 internal abstract class ExportKotlinProjectDataTask : DefaultTask() {
-    @get:Nested
-    abstract val outputData: Property<KotlinShareableDataAsSecondaryVariant>
+    @get:Input
+    abstract val outputJson: Property<String>
 
     @get:OutputFile
     abstract val outputFile: RegularFileProperty
 
-    @OptIn(InternalSerializationApi::class)
-    @Suppress("UNCHECKED_CAST")
     @TaskAction
     fun action() {
-        val data = outputData.get()
-        val serializer = data::class.serializer() as KSerializer<KotlinShareableDataAsSecondaryVariant>
-        outputFile.get().asFile.writeText(KgpJson.default.encodeToString(serializer, data))
+        outputFile.get().asFile.writeText(outputJson.get())
     }
 }
