@@ -432,7 +432,12 @@ fun KtElement.isContextualDeclaration(): Boolean {
 /** Returns `true` if this is the body of an object literal (`object : Foo { ... }`). */
 fun KtClassOrObject.isObjectLiteral(): Boolean = this is KtObjectDeclaration && isObjectLiteral()
 
-/** Returns the index of this parameter within its parameter list (Kotlin or Java), or `-1` if it is not a parameter. */
+/**
+ * Returns the index of this parameter within its own parameter list (Kotlin or Java), or `-1` if it is not a parameter.
+ *
+ * Ordinary parameters and context parameters live in separate lists, each indexed from zero, so the returned index does not correspond to
+ * the parameter's position in the JVM method signature or any combined ordering.
+ */
 //TODO: strange method, and not only Kotlin specific (also Java)
 fun PsiElement.parameterIndex(): Int {
     val parent = parent
