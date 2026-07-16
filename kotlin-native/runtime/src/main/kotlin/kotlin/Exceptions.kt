@@ -5,93 +5,6 @@
 
 package kotlin
 
-public actual open class Error : Throwable {
-
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
-
-    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
-
-    public actual constructor(cause: Throwable?) : super(cause)
-}
-
-public actual open class Exception : Throwable {
-
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
-
-    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
-
-    public actual constructor(cause: Throwable?) : super(cause)
-}
-
-public actual open class RuntimeException : Exception {
-
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
-
-    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
-
-    public actual constructor(cause: Throwable?) : super(cause)
-}
-
-public actual open class NullPointerException : RuntimeException {
-
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
-}
-
-public actual open class NoSuchElementException : RuntimeException {
-
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
-}
-
-public actual open class IllegalArgumentException : RuntimeException {
-
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
-
-    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
-
-    public actual constructor(cause: Throwable?) : super(cause)
-}
-
-public actual open class IllegalStateException : RuntimeException {
-
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
-
-    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
-
-    public actual constructor(cause: Throwable?) : super(cause)
-}
-
-public actual open class UnsupportedOperationException : RuntimeException {
-
-    public actual constructor()
-
-    public actual constructor(message: String?) : super(message)
-
-    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
-
-    public actual constructor(cause: Throwable?) : super(cause)
-}
-
-public actual open class IndexOutOfBoundsException : RuntimeException {
-
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
-}
-
 @Deprecated("Use IndexOutOfBoundsException instead.")
 @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public open class ArrayIndexOutOfBoundsException : IndexOutOfBoundsException {
@@ -101,25 +14,12 @@ public open class ArrayIndexOutOfBoundsException : IndexOutOfBoundsException {
     public constructor(message: String?) : super(message)
 }
 
-public actual open class ClassCastException : RuntimeException {
-
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
-}
-
 @PublishedApi
 internal open class TypeCastException : ClassCastException {
 
     constructor() : super()
 
     constructor(message: String?) : super(message)
-}
-
-public actual open class ArithmeticException : RuntimeException {
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
 }
 
 public actual open class AssertionError : Error {
@@ -160,21 +60,4 @@ public actual open class OutOfMemoryError : Error {
     public actual constructor() : super()
 
     public actual constructor(message: String?) : super(message)
-}
-
-public actual open class NumberFormatException : IllegalArgumentException {
-
-    public actual constructor() : super()
-
-    public actual constructor(message: String?) : super(message)
-}
-
-public actual open class ConcurrentModificationException actual constructor(message: String?, cause: Throwable?) :
-        RuntimeException(message, cause) {
-
-    public actual constructor() : this(null, null)
-
-    public actual constructor(message: String?) : this(message, null)
-
-    public actual constructor(cause: Throwable?) : this(null, cause)
 }
