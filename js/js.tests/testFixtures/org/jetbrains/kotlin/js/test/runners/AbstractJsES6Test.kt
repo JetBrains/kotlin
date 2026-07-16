@@ -28,6 +28,7 @@ abstract class AbstractJsES6Test(
                 +JsEnvironmentConfigurationDirectives.ES6_MODE
             }
         }
+        builder.configureLoweredIrDumpHandlers()
     }
 }
 
