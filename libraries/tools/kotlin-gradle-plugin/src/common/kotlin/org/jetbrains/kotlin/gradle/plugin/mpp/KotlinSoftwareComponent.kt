@@ -16,6 +16,7 @@ import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
@@ -133,7 +134,7 @@ class DefaultKotlinUsageContext(
     override val dependencyConfigurationName: String,
     internal val overrideConfigurationArtifacts: SetProperty<PublishArtifact>? = null,
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
-    internal val additionalConfigurationAttributes: AttributeContainer? = null,
+    internal val additionalConfigurationAttributes: Provider<AttributeContainer>? = null,
     override val includeIntoProjectStructureMetadata: Boolean = true,
     internal val publishOnlyIf: PublishOnlyIf = PublishOnlyIf { true },
 ) : KotlinUsageContext {
@@ -176,10 +177,10 @@ class DefaultKotlinUsageContext(
             dest = result,
             keys = filterOutNonPublishableAttributes(configurationAttributes.keySet())
         )
-        additionalConfigurationAttributes?.copyAttributesTo(
+        additionalConfigurationAttributes?.get()?.copyAttributesTo(
             project.providers,
             dest = result,
-            keys = filterOutNonPublishableAttributes(additionalConfigurationAttributes.keySet())
+            keys = filterOutNonPublishableAttributes(additionalConfigurationAttributes.get().keySet())
         )
 
         return result

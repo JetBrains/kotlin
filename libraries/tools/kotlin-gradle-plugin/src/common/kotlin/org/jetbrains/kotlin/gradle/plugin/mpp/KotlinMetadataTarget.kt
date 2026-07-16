@@ -97,15 +97,17 @@ abstract class KotlinMetadataTarget @Inject constructor(
      * Registration (during object init) of [sourcesJarTask] is required for cases when
      * user build scripts want to have access to sourcesJar task to configure it
      */
-    private val sourcesJarTask: TaskProvider<Jar> = sourcesJarTaskNamed(
-        taskName = "sourcesJar",
-        componentName = name,
-        project = project,
-        sourceSets = project.future {
-            allPublishableSourceSets().associate { it.name to it.defaultImpl.allKotlin }
-        },
-        artifactNameAppendix = name.toLowerCaseAsciiOnly()
-    )
+    private val sourcesJarTask: TaskProvider<Jar> by lazy {
+        sourcesJarTaskNamed(
+            taskName = "sourcesJar",
+            componentName = name,
+            project = project,
+            sourceSets = project.future {
+                allPublishableSourceSets().associate { it.name to it.defaultImpl.allKotlin }
+            },
+            artifactNameAppendix = name.toLowerCaseAsciiOnly()
+        )
+    }
 
     private suspend fun allPublishableSourceSets(): Set<KotlinSourceSet> {
         AfterFinaliseCompilations.await()

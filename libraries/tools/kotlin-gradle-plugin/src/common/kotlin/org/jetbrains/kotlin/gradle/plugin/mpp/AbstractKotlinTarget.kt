@@ -124,13 +124,13 @@ abstract class AbstractKotlinTarget(
         dependencyConfigurationName: String
     ) = when (publicationLayout) {
         KotlinTargetPublicationLayout.IN_ROOT_COMPONENT -> {
-            val karConfiguration = project.configurations.getByName(KAR_CONFIGURATION)
+            val karConfiguration = project.provider {  project.configurations.getByName(KAR_CONFIGURATION) }
             DefaultKotlinUsageContext(
                 compilation = compilation,
                 mavenScope = mavenScope,
                 dependencyConfigurationName = dependencyConfigurationName,
-                overrideConfigurationArtifacts = project.setProperty { karConfiguration.artifacts },
-                additionalConfigurationAttributes = karConfiguration.attributes,
+                overrideConfigurationArtifacts = project.setProperty { karConfiguration.get().artifacts },
+                additionalConfigurationAttributes = karConfiguration.map { configuration -> configuration.attributes },
             )
         }
         KotlinTargetPublicationLayout.SEPARATE_ARTIFACT_IN_ROOT, KotlinTargetPublicationLayout.IN_SEPARATE_COMPONENT -> {
