@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
+
 // FILE: test.kt
 
 data class D(val i: Int, val s: String)
@@ -148,7 +148,7 @@ fun box() {
 // test.kt:15 $box (6)
 // test.kt:16 $box (4, 6)
 // test.kt:17 $box (4, 6)
-// test.kt:18 $box (17, 9, 17, 12)
+// test.kt:18 $box (17, 9, 12)
 // test.kt:19 $box (4, 6)
 // test.kt:4 $D.<init> (13, 25, 39)
 // test.kt:19 $box (6)
@@ -165,7 +165,7 @@ fun box() {
 // test.kt:23 $box (4, 6)
 // test.kt:7 $E.toString (30, 34)
 // test.kt:23 $box (6)
-// test.kt:24 $box (19, 9, 19, 13)
+// test.kt:24 $box (19, 9, 13)
 // test.kt:25 $box (4, 6)
 // test.kt:10 $E.copy (17, 19, 22, 17)
 // test.kt:6 $E.<init> (13, 25, 39)
