@@ -750,7 +750,7 @@ tasks {
         from(jsJar)
         rename { _ -> "full-runtime.klib" }
         // some tests expect stdlib-js klib in this location
-        into(rootProject.layout.buildDirectory.dir("js-ir-runtime"))
+        into(rootProject.isolated.projectDirectory.dir("build/js-ir-runtime"))
     }
 
     val jsRearrangedSourcesJar by registering(Jar::class) {

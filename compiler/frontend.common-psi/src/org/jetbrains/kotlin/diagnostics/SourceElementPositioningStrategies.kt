@@ -156,6 +156,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.OPERATOR
     )
 
+    val REFERENCE_OR_OPERATOR = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.REFERENCE_OR_OPERATOR,
+        PositioningStrategies.REFERENCE_OR_OPERATOR
+    )
+
     val PARAMETER_DEFAULT_VALUE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.PARAMETER_DEFAULT_VALUE,
         PositioningStrategies.PARAMETER_DEFAULT_VALUE

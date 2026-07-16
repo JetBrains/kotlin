@@ -1,0 +1,5 @@
+/c.kt:20:11: warning: Type annotation class 'Anno' of the inferred type is inaccessible. Check the module classpath for missing or conflicting dependencies. This will become an error in language version 2.4. See: https://youtrack.jetbrains.com/issue/KT-80247
+
+/c.kt:22:15: warning: Type annotation class 'Anno' of the inferred type is inaccessible. Check the module classpath for missing or conflicting dependencies. This will become an error in language version 2.4. See: https://youtrack.jetbrains.com/issue/KT-80247
+
+/c.kt:27:19: warning: Type annotation class 'Anno' of the inferred type is inaccessible. Check the module classpath for missing or conflicting dependencies. This will become an error in language version 2.4. See: https://youtrack.jetbrains.com/issue/KT-80247

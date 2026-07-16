@@ -15,19 +15,19 @@ class C<T> {
 class D
 
 fun test() {
-    val d: D <!INITIALIZER_TYPE_MISMATCH("D; C<String>.D<Int>")!>=<!> C<String>().D<Int>()
-    val d2: D <!INITIALIZER_TYPE_MISMATCH("D; C<String>.D2<Int, Boolean>.E<Char, Long, Short>")!>=<!> C<String>().D2<Int, Boolean>().E<Char, Long, Short>()
-    val d3: D <!INITIALIZER_TYPE_MISMATCH("D; C.NonInner<String>")!>=<!> C.NonInner<String>()
+    val d: D = C<String>().<!INITIALIZER_TYPE_MISMATCH("D; C<String>.D<Int>")!>D<!><Int>()
+    val d2: D = C<String>().D2<Int, Boolean>().<!INITIALIZER_TYPE_MISMATCH("D; C<String>.D2<Int, Boolean>.E<Char, Long, Short>")!>E<!><Char, Long, Short>()
+    val d3: D = C.<!INITIALIZER_TYPE_MISMATCH("D; C.NonInner<String>")!>NonInner<!><String>()
 
     fun <X> genTest() {
         class Local
-        val d: D <!INITIALIZER_TYPE_MISMATCH("D; Local<X (of fun <X> genTest)>")!>=<!> Local()
+        val d: D = <!INITIALIZER_TYPE_MISMATCH("D; Local<X (of fun <X> genTest)>")!>Local<!>()
 
         class Local2<T> {
             inner class Inner
         }
 
-        val d2: D <!INITIALIZER_TYPE_MISMATCH("D; Local2<String, X (of fun <X> genTest)>.Inner")!>=<!> Local2<String>().Inner()
+        val d2: D = Local2<String>().<!INITIALIZER_TYPE_MISMATCH("D; Local2<String, X (of fun <X> genTest)>.Inner")!>Inner<!>()
     }
 }
 

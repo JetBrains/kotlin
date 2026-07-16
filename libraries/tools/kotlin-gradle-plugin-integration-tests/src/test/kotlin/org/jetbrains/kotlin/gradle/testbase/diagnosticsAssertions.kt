@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.internals.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import java.io.File
@@ -18,7 +19,7 @@ import kotlin.test.assertTrue
 internal fun BuildResult.assertHasDiagnostic(
     diagnosticFactory: ToolingDiagnosticFactory,
     withSubstring: String? = null,
-    expectedSeverity: ToolingDiagnostic.Severity? = null,
+    expectedSeverity: KotlinToolingDiagnosticsSeverity? = null,
 ) {
     output.assertHasDiagnostic(diagnosticFactory, withSubstring, expectedSeverity)
 }
@@ -30,7 +31,7 @@ internal fun BuildResult.assertNoDiagnostic(diagnosticFactory: ToolingDiagnostic
 internal fun String.assertHasDiagnostic(
     diagnosticFactory: ToolingDiagnosticFactory,
     withSubstring: String? = null,
-    expectedSeverity: ToolingDiagnostic.Severity? = null,
+    expectedSeverity: KotlinToolingDiagnosticsSeverity? = null,
 ) {
     val diagnosticsMessages = extractRenderedDiagnostics(diagnosticFactory, this, expectedSeverity)
     assertTrue(diagnosticsMessages.isNotEmpty(), "Diagnostic with id=${diagnosticFactory.id} not found. Full text output:\n\n" + this)
@@ -237,7 +238,7 @@ private val DIAGNOSTIC_START_REGEX = """\s*([we]:)?\s*\[\w+ \| \w+].*""".toRegex
 private fun extractRenderedDiagnostics(
     diagnostic: ToolingDiagnosticFactory,
     fromText: String,
-    expectedSeverity: ToolingDiagnostic.Severity? = null,
+    expectedSeverity: KotlinToolingDiagnosticsSeverity? = null,
 ): List<String> {
     var parsedPrefix = 0
 
@@ -253,7 +254,7 @@ private fun extractNextDiagnosticAndIndex(
     diagnostic: ToolingDiagnosticFactory,
     fromText: String,
     startIndex: Int,
-    expectedSeverity: ToolingDiagnostic.Severity? = null,
+    expectedSeverity: KotlinToolingDiagnosticsSeverity? = null,
 ): Pair<String, Int>? {
     val severitySuffix = expectedSeverity?.let { " | $it" } ?: ""
     val diagnosticStartIndex = fromText.indexOf("[${diagnostic.id}$severitySuffix", startIndex)

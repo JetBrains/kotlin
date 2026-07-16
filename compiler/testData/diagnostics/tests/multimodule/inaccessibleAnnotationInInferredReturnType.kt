@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidImplicitTypeAnnotationWithMissingDependency
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ForbidImplicitTypeAnnotationWithMissingDependency
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // ISSUE: KT-80247
 // MODULE: a
 // FILE: a.kt
@@ -16,14 +17,14 @@ fun interface Sam {
 
 // MODULE: c(b)
 // FILE: c.kt
-fun g() = <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>f<!>()
+fun g() = <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_WARNING!>f<!>()
 
-val sam = Sam <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{}<!>
+val sam = Sam <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_WARNING!>{}<!>
 
 fun local() {
     val x = f()
 
-    val sam = Sam <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{}<!>
+    val sam = Sam <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_WARNING!>{}<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, stringLiteral */

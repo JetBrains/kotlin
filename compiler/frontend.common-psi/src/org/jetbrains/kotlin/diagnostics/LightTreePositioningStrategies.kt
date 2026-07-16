@@ -388,6 +388,21 @@ object LightTreePositioningStrategies {
             }
     }
 
+    private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceIfShort(node: LighterASTNode): LighterASTNode? {
+        return when (node.tokenType) {
+            KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION -> selector(node)?.let { referenceIfShort(it) }
+            KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
+            KtNodeTypes.SAFE_ACCESS_EXPRESSION,
+                -> lastChildExpression(node)?.let { referenceIfShort(it) }
+            KtNodeTypes.CALL_EXPRESSION -> referenceExpression(node, locateReferencedName = true)
+            KtNodeTypes.ARRAY_ACCESS_EXPRESSION -> null
+            KtNodeTypes.REFERENCE_EXPRESSION -> node
+            KtNodeTypes.COLLECTION_LITERAL_EXPRESSION -> node
+            KtNodeTypes.THIS_EXPRESSION -> node
+            else -> null
+        }
+    }
+
     val VARIABLE_INITIALIZER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -395,6 +410,10 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
+            val last = tree.lastChildExpression(node)
+            if (last != null) {
+                tree.referenceIfShort(last)?.let { return markElement(it, startOffset, endOffset, tree, node) }
+            }
             val eqToken = tree.findChildByType(node, EQ)
             return if (eqToken != null) {
                 markElement(eqToken, startOffset, endOffset, tree, node)
@@ -596,6 +615,25 @@ object LightTreePositioningStrategies {
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
             return markElement(tree.operationReference(node) ?: node, startOffset, endOffset, tree, node)
+        }
+    }
+
+    val REFERENCE_OR_OPERATOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.BINARY_EXPRESSION) {
+                val lastChild = tree.lastChildExpression(node)
+                if (lastChild != null) {
+                    tree.referenceIfShort(lastChild)?.let {
+                        return markElement(it, startOffset, endOffset, tree, node)
+                    }
+                }
+            }
+            return OPERATOR.mark(node, startOffset, endOffset, tree)
         }
     }
 

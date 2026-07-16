@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.generators.evaluate
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.FqName
@@ -167,7 +169,50 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
         }
     }
 
+    binaryOperationsMap.addAll(getBinaryIrOperationMap())
+
     return Pair(unaryOperationsMap, binaryOperationsMap)
+}
+
+// These operations are required for IR evaluation.
+// In FIR evaluator they will be ignored because these calls are impossible to present in FIR.
+private fun getBinaryIrOperationMap(): List<Operation> {
+    val operationMap = mutableListOf<Operation>()
+
+    fun addOperation(function: String, type: String) {
+        val castType = if (type == "Any") "" else " as ${type}"
+
+        operationMap.add(
+            Operation(
+                className = null,
+                packageName = "kotlin.internal.ir",
+                name = function,
+                parameterTypes = listOf(type, type),
+                customExpression = "(left${castType}) ${getIrMethodSymbolByName(function)} (right$castType)"
+            )
+        )
+    }
+
+    val compareFunction = setOf(
+        BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL, BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL
+    )
+
+    for (function in compareFunction) {
+        for (type in PrimitiveType.NUMBER_TYPES.map { it.typeName.asString() }) {
+            addOperation(function, type)
+        }
+    }
+
+    addOperation(BuiltInOperatorNames.EQEQ, "Any")
+
+    addOperation(BuiltInOperatorNames.IEEE754_EQUALS, PrimitiveType.FLOAT.typeName.asString())
+    addOperation(BuiltInOperatorNames.IEEE754_EQUALS, PrimitiveType.DOUBLE.typeName.asString())
+
+    for (function in setOf(BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR)) {
+        addOperation(function, PrimitiveType.BOOLEAN.typeName.asString())
+    }
+
+    return operationMap
 }
 
 private fun generateHeader(p: Printer) {
@@ -234,7 +279,11 @@ private fun generateBinaryOp(
         for ([rightType, operations] in operationsOnThisLeftType.groupBy { (val parameters = parameterTypes) -> parameters[1] }) {
             p.println("${rightType.toCompilTimeTypeFormat()} -> when (name) {")
             p.pushIndent()
-            for ((val _ = packageName, val _ = className, val name, val _ = parameterTypes, val _ = isFunction, val _ = customExpression) in operations) {
+            for ((val _ = packageName, val _ = className, val name, val _ = parameterTypes, val _ = isFunction, val customExpr = customExpression) in operations) {
+                if (customExpr != null) {
+                    p.println("\"${name}\" -> return $customExpr")
+                    continue
+                }
                 val castToRightType = if (rightType == "Any" || rightType == "Any?") "" else " as ${rightType}"
                 p.println("\"${name}\" -> return (left as ${leftType}).${name}(right$castToRightType)")
             }
@@ -245,7 +294,6 @@ private fun generateBinaryOp(
         p.popIndent()
         p.println("}")
     }
-    p.println("else -> {}")
     p.popIndent()
     p.println("}")
     p.println("return null")
@@ -362,3 +410,18 @@ private fun String.toCompilTimeTypeFormat(): String {
 
 private val KotlinType.typeName: String
     get(): String = constructor.declarationDescriptor!!.name.asString()
+
+private fun getIrMethodSymbolByName(methodName: String): String? {
+    return when (methodName) {
+        BuiltInOperatorNames.LESS -> "<"
+        BuiltInOperatorNames.LESS_OR_EQUAL -> "<="
+        BuiltInOperatorNames.GREATER -> ">"
+        BuiltInOperatorNames.GREATER_OR_EQUAL -> ">="
+        BuiltInOperatorNames.EQEQ -> "=="
+        BuiltInOperatorNames.EQEQEQ -> "==="
+        BuiltInOperatorNames.IEEE754_EQUALS -> "=="
+        BuiltInOperatorNames.ANDAND -> "&&"
+        BuiltInOperatorNames.OROR -> "||"
+        else -> null
+    }
+}

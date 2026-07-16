@@ -356,6 +356,9 @@
       "type": "kotlinx.coroutines.channels.BufferedChannel"
     },
     {
+      "type": "kotlinx.coroutines.flow.StateFlowImpl"
+    },
+    {
       "type": "kotlinx.coroutines.internal.AtomicOp"
     },
     {
@@ -449,6 +452,10 @@
       "allDeclaredMethods": true
     },
     {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.RemovedCompilerArguments",
+      "allDeclaredMethods": true
+    },
+    {
       "type": "org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings",
       "fields": [
         {
@@ -466,6 +473,30 @@
       ]
     },
     {
+      "type": "org.jetbrains.kotlin.com.intellij.AbstractBundle",
+      "methods": [
+        {
+          "name": "getLazyMessage",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.Object[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.DynamicBundle",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.com.intellij.codeInsight.ContainerProvider"
     },
     {
@@ -473,6 +504,9 @@
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.codeInsight.multiverse.MultiverseEnabler"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.java.syntax.JavaSyntaxBundle"
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.lang.jvm.facade.JvmElementProvider"
@@ -494,6 +528,14 @@
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.openapi.util.SimpleModificationTracker"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.openapi.util.UserDataHolderBase",
+      "fields": [
+        {
+          "name": "value"
+        }
+      ]
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.openapi.vfs.PersistentFSConstants",
@@ -519,13 +561,33 @@
       "type": "org.jetbrains.kotlin.com.intellij.psi.compiled.ClassFileDecompilers$Decompiler"
     },
     {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.impl.java.stubs.JavaStubElementTypePsiElementMappingRegistry",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.com.intellij.psi.impl.source.JavaFileElementType"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.stubs.StubRegistryExtension"
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.util.KeyedLazyInstanceEP"
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.util.QueryExecutor"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.util.containers.LockFreeCopyOnWriteArrayList",
+      "fields": [
+        {
+          "name": "array"
+        }
+      ]
     },
     {
       "type": "org.jetbrains.kotlin.extensions.CompilerConfigurationExtension"
@@ -1461,9 +1523,84 @@
       ],
       "methods": [
         {
+          "name": "arrayBaseOffset",
+          "parameterTypes": [
+            "java.lang.Class"
+          ]
+        },
+        {
+          "name": "arrayIndexScale",
+          "parameterTypes": [
+            "java.lang.Class"
+          ]
+        },
+        {
+          "name": "compareAndSwapInt",
+          "parameterTypes": [
+            "java.lang.Object",
+            "long",
+            "int",
+            "int"
+          ]
+        },
+        {
+          "name": "compareAndSwapLong",
+          "parameterTypes": [
+            "java.lang.Object",
+            "long",
+            "long",
+            "long"
+          ]
+        },
+        {
+          "name": "compareAndSwapObject",
+          "parameterTypes": [
+            "java.lang.Object",
+            "long",
+            "java.lang.Object",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "getAndAddInt",
+          "parameterTypes": [
+            "java.lang.Object",
+            "long",
+            "int"
+          ]
+        },
+        {
+          "name": "getIntVolatile",
+          "parameterTypes": [
+            "java.lang.Object",
+            "long"
+          ]
+        },
+        {
+          "name": "getObjectVolatile",
+          "parameterTypes": [
+            "java.lang.Object",
+            "long"
+          ]
+        },
+        {
           "name": "invokeCleaner",
           "parameterTypes": [
             "java.nio.ByteBuffer"
+          ]
+        },
+        {
+          "name": "objectFieldOffset",
+          "parameterTypes": [
+            "java.lang.reflect.Field"
+          ]
+        },
+        {
+          "name": "putObjectVolatile",
+          "parameterTypes": [
+            "java.lang.Object",
+            "long",
+            "java.lang.Object"
           ]
         }
       ]
@@ -1547,6 +1684,12 @@
     },
     {
       "glob": "kotlin/reflect/reflect.kotlin_builtins"
+    },
+    {
+      "glob": "misc/registry.override.properties"
+    },
+    {
+      "glob": "misc/registry.properties"
     },
     {
       "glob": "org/jetbrains/kotlin/org/fusesource/jansi/internal/native/Mac/arm64/libjansi.jnilib"

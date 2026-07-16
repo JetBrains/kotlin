@@ -148,9 +148,7 @@ class KT56143CinteropConfigurationAttributes {
                     "Expected no non-packed variant on $cinteropApiElements"
                 )
             } else {
-                assertNotNull(nonPackedVariant) {
-                    "Expected non-packed variant on $cinteropApiElements"
-                }
+                assertNotNull(nonPackedVariant, "Expected non-packed variant on $cinteropApiElements")
                 checkConfigurationAttributes(nonPackedVariant, true, true)
             }
 

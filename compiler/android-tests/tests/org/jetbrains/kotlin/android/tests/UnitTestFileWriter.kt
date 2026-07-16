@@ -19,7 +19,6 @@ class TestInfo(val name: String, val fqName: FqName, val file: File)
 class UnitTestFileWriter(
     private val flavourFolder: String,
     private val flavourName: String,
-    private val generatedTestNames: MutableSet<String>
 ) {
     private data class GeneratedTest(
         val testName: String,
@@ -27,8 +26,23 @@ class UnitTestFileWriter(
         val filePath: String,
     )
 
-    private companion object {
-        const val TESTS_PER_CHUNK = 128
+    companion object {
+        private const val TESTS_PER_CHUNK = 128
+
+        internal fun testNameForFileName(fileName: String): String {
+            return "test" + NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)))
+        }
+
+        internal fun generateTestName(fileName: String, generatedTestNames: MutableSet<String>): String {
+            var result = testNameForFileName(fileName)
+
+            var i = 0
+            while (generatedTestNames.contains(result)) {
+                result += "_" + i++
+            }
+            generatedTestNames.add(result)
+            return result
+        }
     }
 
     private val infos = arrayListOf<TestInfo>()
@@ -42,7 +56,7 @@ class UnitTestFileWriter(
             val p = Printer(suite)
             val generatedTests = infos.map { info ->
                 GeneratedTest(
-                    testName = generateTestName(info.file.name),
+                    testName = info.name,
                     className = info.fqName.asString(),
                     filePath = StringUtil.escapeStringCharacters(info.file.path),
                 )
@@ -88,19 +102,12 @@ class UnitTestFileWriter(
         }
     }
 
-    private fun generateTestName(fileName: String): String {
-        var result = NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)))
-
-        var i = 0
-        while (generatedTestNames.contains(result)) {
-            result += "_" + i++
-        }
-        generatedTestNames.add(result)
-        return result
-    }
-
     private fun generateTestMethod(p: Printer, testName: String, className: String, filePath: String) {
-        p.println("System.out.println(\"Running... test$testName\");")
+        p.println("System.out.println(\"Running... $testName\");")
+        p.println("{")
+        p.pushIndent()
+        p.println("collector.recordStart(\"$testName\");")
+        p.println("long startedAtMs = System.currentTimeMillis();")
         p.println("try {")
         p.pushIndent()
         p.println("Object result = $className.box();")
@@ -109,11 +116,15 @@ class UnitTestFileWriter(
         p.println("throw new AssertionError(\"Expected 'OK', actual='\" + result + \"' (file: $filePath)\");")
         p.popIndent()
         p.println("}")
-        p.println("collector.recordSuccess(\"test$testName\");")
+        p.println("long elapsedMs = System.currentTimeMillis() - startedAtMs;")
+        p.println("collector.recordSuccess(\"$testName\", elapsedMs);")
         p.popIndent()
         p.println("} catch (Throwable t) {")
         p.pushIndent()
-        p.println("collector.recordFailure(\"test$testName\", \"File: $filePath\", t);")
+        p.println("long elapsedMs = System.currentTimeMillis() - startedAtMs;")
+        p.println("collector.recordFailure(\"$testName\", \"File: $filePath\", t, elapsedMs);")
+        p.popIndent()
+        p.println("}")
         p.popIndent()
         p.println("}")
         p.println()

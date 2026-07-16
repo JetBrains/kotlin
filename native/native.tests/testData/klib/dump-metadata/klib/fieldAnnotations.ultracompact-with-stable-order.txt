@@ -1,0 +1,16 @@
+public final class test/A : kotlin/Any
+public constructor test/A.<init>()
+public final var test/A.x: kotlin/Int
+public final /* getter */ test/A.x.<get-x>
+public final /* setter */ test/A.x.<set-x>
+public final /* delegated */ var test/A.y: kotlin/Int
+public final /* non-default */ /* getter */ test/A.y.<get-y>
+public final /* non-default */ /* setter */ test/A.y.<set-y>(<set-?>: kotlin/Int)
+public final annotation class test/Ann : kotlin/Annotation
+public constructor test/Ann.<init>()
+public final var test/x: kotlin/Int
+public final /* getter */ test/x.<get-x>
+public final /* setter */ test/x.<set-x>
+public final /* delegated */ var test/y: kotlin/Int
+public final /* non-default */ /* getter */ test/y.<get-y>
+public final /* non-default */ /* setter */ test/y.<set-y>(<set-?>: kotlin/Int)

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loadSizeInfo
+import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToManifest
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
@@ -52,6 +53,7 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
     }
 
     addLanguageFeaturesToManifest(manifestProperties, configuration.languageVersionSettings)
+    addMetadataFlagsToManifest(manifestProperties, configuration.languageVersionSettings)
 
     if (!dontCompressKlib) {
         if (!klibOutputFileName.endsWith(suffix)) {

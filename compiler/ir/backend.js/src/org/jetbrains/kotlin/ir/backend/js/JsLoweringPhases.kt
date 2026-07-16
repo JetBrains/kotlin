@@ -32,9 +32,7 @@ import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorL
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 private fun createValidateIrAfterInliningOnlyPrivateFunctions(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<LoweringContext> {
     return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
@@ -107,11 +105,7 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
 }
 
 private fun createConstEvaluationPhase(context: JsIrBackendContext): ConstEvaluationLowering {
-    val configuration = IrInterpreterConfiguration(
-        printOnlyExceptionMessage = true,
-        platform = JsPlatforms.defaultJsPlatform,
-    )
-    return ConstEvaluationLowering(context, configuration = configuration)
+    return ConstEvaluationLowering(context, isFloatingPointOptimizationEnabled = false)
 }
 
 fun jsLoweringsOfTheFirstPhase(

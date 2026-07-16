@@ -80,8 +80,14 @@ projectTests {
             systemProperty("kotlin.test.android.teamcity", true)
         }
 
-        project.findProperty("kotlin.test.android.path.filter")?.let {
-            systemProperty("kotlin.test.android.path.filter", it.toString())
+        for (propertyName in listOf(
+            "kotlin.test.android.path.filter",
+            "kotlin.test.android.compilation.parallelism",
+            "kotlin.test.android.avd.systemImage",
+        )) {
+            project.providers.gradleProperty(propertyName).orNull?.let {
+                systemProperty(propertyName, it)
+            }
         }
 
         androidSdkProvisioner {
@@ -97,9 +103,9 @@ projectTests {
         testData(project(":compiler").isolated, "testData/codegen/boxInline")
 
         addDirectoryProperty(project.layout.projectDirectory.dir("android-module").asFile, "kotlin.test.android.androidModule")
-        addDirectoryProperty(rootProject.layout.projectDirectory.dir("gradle/wrapper").asFile, "kotlin.test.android.gradleWrapper")
-        addFileProperty(rootProject.layout.projectDirectory.file("gradlew"), "kotlin.test.android.gradlew")
-        addFileProperty(rootProject.layout.projectDirectory.file("gradlew.bat"), "kotlin.test.android.gradlewBat")
+        addDirectoryProperty(rootProject.isolated.projectDirectory.dir("gradle/wrapper").asFile, "kotlin.test.android.gradleWrapper")
+        addFileProperty(rootProject.isolated.projectDirectory.file("gradlew"), "kotlin.test.android.gradlew")
+        addFileProperty(rootProject.isolated.projectDirectory.file("gradlew.bat"), "kotlin.test.android.gradlewBat")
     }
 
     withJvmStdlibAndReflect()

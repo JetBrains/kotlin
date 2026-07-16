@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
@@ -40,11 +41,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
 import org.jetbrains.kotlin.psi.psiUtil.inferClassIdByPsi
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -55,6 +58,21 @@ internal class KaFirExpressionTypeProvider(
 
     override fun expressionType(expression: KtExpression): KaType? = expression.withPsiValidityAssertion {
         expression.getExpressionTypeByPsiOrNull(noExpectedType = false)?.let { return it }
+
+        val unwrappedElement = expression.unwrap()
+
+        /** Assignment target handling requires the [FirElement] for the entire assignment call. */
+        val assignmentExpression = unwrappedElement.getAssignmentByLHS()
+        if (assignmentExpression != null) {
+            val fir = assignmentExpression.getOrBuildFir(resolutionFacade)
+            if (fir != null) {
+                return getAssignmentLhsType(
+                    lhsExpression = expression,
+                    fir = fir,
+                    isAugmented = assignmentExpression.operationToken != KtTokens.EQ
+                )
+            }
+        }
 
         // There are various cases where we have no corresponding fir due to invalid code
         // Some examples:
@@ -70,7 +88,7 @@ internal class KaFirExpressionTypeProvider(
         // private var
         // ```
         // Volatile does not have a corresponding element, so `FirFileImpl` is returned
-        val fir = expression.unwrap().getOrBuildFir(resolutionFacade) ?: return null
+        val fir = unwrappedElement.getOrBuildFir(resolutionFacade) ?: return null
         return try {
             getKtExpressionType(expression, fir)
         } catch (e: Exception) {
@@ -82,7 +100,7 @@ internal class KaFirExpressionTypeProvider(
     }
 
     private fun getKtExpressionType(expression: KtExpression, fir: FirElement): KaType? = when (fir) {
-        is FirFunctionCall -> getReturnTypeForArrayStyleAssignmentTarget(expression, fir) ?: fir.resolvedType.asKaType()
+        is FirFunctionCall -> getArrayElementIncrementDecrementExpressionType(expression, fir) ?: fir.resolvedType.asKaType()
         is FirSuperReceiverExpression -> {
             // For unresolved `super`, we manually create an intersection type so that IDE features like completion can work correctly.
             val containingClass = (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
@@ -160,28 +178,92 @@ internal class KaFirExpressionTypeProvider(
         }
     }
 
-    private fun getReturnTypeForArrayStyleAssignmentTarget(
-        expression: KtExpression,
-        fir: FirFunctionCall,
-    ): KaType? {
+    /**
+     * Compute type for the increment-decrement expression if its operand is the array access operation, e.g.:
+     *
+     * ```kotlin
+     * val a = arrayOf(1)
+     * val x = <expr>a[0]++</expr>
+     * ```
+     */
+    private fun getArrayElementIncrementDecrementExpressionType(expression: KtExpression, fir: FirFunctionCall): KaType? {
+        // ++foo[i], bar[j]-- or similar
+        if (expression !is KtUnaryExpression) return null
+        if (expression.baseExpression !is KtArrayAccessExpression) return null
+        if (expression.operationToken !in KtTokens.INCREMENT_AND_DECREMENT) return null
+
         // When we're in a call like `a[x] = y`, we want to get the `set` call's last argument's type.
         if (fir.calleeReference !is FirResolvedNamedReference || fir.calleeReference.name != OperatorNameConventions.SET) return null
 
-        when (expression) {
-            is KtArrayAccessExpression -> {
-                val assignment = expression.parent as? KtBinaryExpression ?: return null
-                if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
-                if (assignment.left != expression) return null
+        return getLastArgumentType(fir)
+    }
+
+    /**
+     * Compute the expression type of [lhsExpression], an assignment target, e.g.: `lhsExpression = ...`.
+     */
+    private fun getAssignmentLhsType(lhsExpression: KtExpression, fir: FirElement, isAugmented: Boolean): KaType? {
+        return when (fir) {
+            is FirFunctionCall -> {
+                getReturnTypeForPluginModifiedAssignment(fir)
+                    ?: getReturnTypeForArrayElementAssignmentTarget(lhsExpression, fir)
+                    ?: runIf(isAugmented) {
+                        // For non-augmented assignments, there is no 'get' call so the LHS expression type is undefined
+                        fir.explicitReceiver?.resolvedType?.asKaType()
+                    }
             }
-            is KtUnaryExpression -> {
-                if (expression.baseExpression !is KtArrayAccessExpression) return null
-                if (expression.operationToken !in KtTokens.INCREMENT_AND_DECREMENT) return null
+            is FirVariableAssignment -> {
+                fir.lValue.resolvedType.asKaType()
             }
-            else -> return null
+            else -> null
+        }
+    }
+
+    /**
+     * Compute return type for the 'assignment' plugin-altered assignment (see 'plugins/assign-plugin').
+     *
+     * Unlike the regular assignment, the assignment target points to the value wrapper (container), while 'expressionType' returns
+     * the unwrapped value type (`String` in the code snippet below):
+     *
+     * ```kotlin
+     * @ValueContainer
+     * class Container(private var storage: String) {
+     *     fun assign(value: String) { storage = value }
+     * }
+     *
+     * val property = Container("foo")
+     *
+     * fun test() {
+     *     <expr>property</expr> = "bar"
+     * }
+     * ```
+     */
+    private fun getReturnTypeForPluginModifiedAssignment(firCall: FirFunctionCall): KaType? {
+        if (firCall.calleeReference.source?.kind != KtFakeSourceElementKind.AssignmentPluginAltered) return null
+        val firArgument = firCall.resolvedArgumentMapping?.keys?.lastOrNull() ?: return null
+
+        val firEffectiveCall = when (firArgument) {
+            is FirFunctionCall if firArgument.source?.kind is KtFakeSourceElementKind.DesugaredAugmentedAssign -> firArgument
+            else -> firCall
         }
 
-        val setTargetParameterType = fir.argumentsToSubstitutedValueParameters()?.values?.lastOrNull()?.substitutedType ?: return null
-        return setTargetParameterType.asKaType()
+        return getLastArgumentType(firEffectiveCall)
+    }
+
+    /**
+     * Compute return type for the array element assignment target, e.g.:
+     *
+     * ```kotlin
+     * val foo = arrayOf(1, 2, 3)
+     * foo[0] = -1
+     * ```
+     */
+    private fun getReturnTypeForArrayElementAssignmentTarget(lhsExpression: KtExpression, firCall: FirFunctionCall): KaType? {
+        if (lhsExpression !is KtArrayAccessExpression) return null
+        return getLastArgumentType(firCall)
+    }
+
+    private fun getLastArgumentType(firCall: FirFunctionCall): KaType? {
+        return firCall.argumentsToSubstitutedValueParameters()?.values?.lastOrNull()?.substitutedType?.asKaType()
     }
 
     private data class SubstitutedValueParameter(val parameter: FirValueParameter, val substitutedType: ConeKotlinType)

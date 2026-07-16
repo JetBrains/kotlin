@@ -95,21 +95,18 @@ public annotation class ExperimentalJsStatic
  *
  * It is currently prohibited to export the following kinds of declarations:
  *
- *   * `expect` declarations
  *   * inline functions with reified type parameters
- *   * suspend functions
  *   * secondary constructors without `@JsName`
  *   * extension properties
- *   * enum classes
- *   * annotation classes
  *
  * Signatures of exported declarations must only contain "exportable" types:
  *
- *   * `dynamic`, `Any`, `String`, `Boolean`, `Byte`, `Short`, `Int`, `Float`, `Double`
- *   * `BooleanArray`, `ByteArray`, `ShortArray`, `IntArray`, `FloatArray`, `DoubleArray`
- *   * `Array<exportable-type>`
+ *   * `dynamic`, `Any`, `String`, `Boolean`, `Byte`, `Short`, `Int`, `Float`, `Double`, `Long`
+ *   * `BooleanArray`, `ByteArray`, `ShortArray`, `IntArray`, `FloatArray`, `DoubleArray`, `LongArray`
+ *   * `Array<exportable-type>`,
+ *   * `(Mutable)List<exportable-type>`, `(Mutable)Map<exportable-type, exportable-type>`, `(Mutable)Set<exportable-type>`
  *   * Function types with exportable parameters and return types
- *   * `external` or `@JsExport` classes and interfaces
+ *   * `external` or `@JsExport` classes, objects, enums, interfaces
  *   * Nullable counterparts of types above
  *   * Unit return type. Must not be nullable
  *
@@ -117,7 +114,7 @@ public annotation class ExperimentalJsStatic
  */
 @ExperimentalJsExport
 @Retention(AnnotationRetention.BINARY)
-@Target(CLASS, PROPERTY, FUNCTION, FILE)
+@Target(CLASS, PROPERTY, FUNCTION, FILE, TYPEALIAS)
 @SinceKotlin("1.4")
 @OptionalExpectation
 public expect annotation class JsExport() {
@@ -127,7 +124,7 @@ public expect annotation class JsExport() {
      */
     @ExperimentalJsExport
     @Retention(AnnotationRetention.BINARY)
-    @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR)
+    @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR, TYPEALIAS)
     @SinceKotlin("1.8")
     @OptionalExpectation
     public annotation class Ignore()

@@ -1368,6 +1368,23 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/attributes/Kl
 public final class org/jetbrains/kotlin/gradle/plugin/attributes/KlibPackaging$Companion {
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinCompilerDiagnosticAdditionalData : org/gradle/api/problems/AdditionalData {
+	public abstract fun getSeverity ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsAdditionalData : org/gradle/api/problems/AdditionalData {
+	public abstract fun getSeverity ()Lorg/gradle/api/provider/Property;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity : java/lang/Enum {
+	public static final field ERROR Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+	public static final field FATAL Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+	public static final field STRONG_WARNING Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+	public static final field WARNING Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion : java/io/Serializable, java/lang/Comparable {
 	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun compareTo (Ljava/lang/Object;)I

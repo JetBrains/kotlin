@@ -46,6 +46,7 @@ dependencies {
     evaluateApi(project(":core:deserialization"))
     evaluateImplementation(project(":core:descriptors"))
     evaluateApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
+    evaluateApi(project(":compiler:ir.tree"))
     wasmApi(project(":wasm:wasm.ir"))
     wasmApi(kotlinStdlib())
     interpreterApi(project(":compiler:ir.tree"))

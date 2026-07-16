@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedKotlinVersionKotlinDsl
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.*
@@ -330,13 +330,13 @@ abstract class KotlinCompile @Inject constructor(
     private fun validateKotlinVersionsInPresenceOfKotlinDslPlugin(args: KotlinJvmCompilerOptions) {
         if (!kotlinDslPluginIsPresent.get()) return
 
-        fun KotlinVersion?.unsupportedLevel(): ToolingDiagnostic.Severity? {
+        fun KotlinVersion?.unsupportedLevel(): KotlinToolingDiagnosticsSeverity? {
             if (this == null) return null
             val metadata = UnsupportedKotlinLanguageVersionsMetadata.unsupportedPerVersion[this]
             return when {
                 metadata == null -> null
-                metadata.removalVersion != null && metadata.removalVersion <= kotlinCompilerVersion.get() -> ToolingDiagnostic.Severity.STRONG_WARNING
-                metadata.deprecationVersion <= kotlinCompilerVersion.get() -> ToolingDiagnostic.Severity.WARNING
+                metadata.removalVersion != null && metadata.removalVersion <= kotlinCompilerVersion.get() -> KotlinToolingDiagnosticsSeverity.STRONG_WARNING
+                metadata.deprecationVersion <= kotlinCompilerVersion.get() -> KotlinToolingDiagnosticsSeverity.WARNING
                 else -> null
             }
         }
@@ -476,8 +476,8 @@ abstract class KotlinCompile @Inject constructor(
         ) return
 
         val severity = when (jvmTargetValidationMode.get()) {
-            JvmTargetValidationMode.ERROR -> ToolingDiagnostic.Severity.FATAL
-            JvmTargetValidationMode.WARNING -> ToolingDiagnostic.Severity.WARNING
+            JvmTargetValidationMode.ERROR -> KotlinToolingDiagnosticsSeverity.FATAL
+            JvmTargetValidationMode.WARNING -> KotlinToolingDiagnosticsSeverity.WARNING
             else -> return
         }
 

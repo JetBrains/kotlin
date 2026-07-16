@@ -59,7 +59,7 @@ plugins {
     id("build-time-report")
     id("modularized-test-configurations")
     id("resolve-dependencies")
-    id("org.gradle.crypto.checksum") version "1.4.0"
+    alias(libs.plugins.gradle.crypto.checksum)
     alias(libs.plugins.kotlinx.bcv) apply false
     id("signing-convention")
     id("org.jetbrains.kotlin.jvm") apply false
@@ -124,7 +124,7 @@ if (!project.hasProperty("versions.kotlin-native")) {
     } else if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         kotlinBuildProperties.defaultSnapshotVersion.get()
     } else {
-        "2.4.20-dev-7680"
+        "2.5.0-dev-498"
     }
 }
 
@@ -489,7 +489,7 @@ tasks {
         dependsOn(":kotlin-tooling-metadata:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
-        dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
         dependsOn(":tools:ide-plugin-dependencies-validator:test")
         dependsOn(":tools:stats-analyser:test")
         dependsOn(":libraries:tools:abi-validation:abi-tools:check")

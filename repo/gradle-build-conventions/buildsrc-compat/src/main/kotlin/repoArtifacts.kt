@@ -13,6 +13,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.JAVADOC_ELEMENTS_CONFIGURATION_NAME
@@ -297,19 +298,6 @@ fun Project.standardPublicJars() {
 @JvmOverloads
 fun Project.publish(moduleMetadata: Boolean = false, sbom: Boolean = true, configure: MavenPublication.() -> Unit = { }) {
     apply<KotlinBuildPublishingPlugin>()
-
-    tasks.register("writePublishedMark") {
-        dependsOn(tasks.named("publish"))
-        val publishedMarkFile = layout.buildDirectory.file("published.txt")
-        outputs.file(publishedMarkFile)
-        doLast {
-            publishedMarkFile.get().asFile.writeText("")
-        }
-    }
-    val publishedMark = configurations.consumable("publishedMark")
-    artifacts {
-        add(publishedMark.name, tasks.named("writePublishedMark"))
-    }
 
     if (!moduleMetadata) {
         tasks.withType<GenerateModuleMetadata> {

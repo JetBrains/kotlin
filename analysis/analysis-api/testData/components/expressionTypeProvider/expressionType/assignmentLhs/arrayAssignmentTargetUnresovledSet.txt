@@ -1,0 +1,3 @@
+expression: arr[0]
+expression PSI: KtArrayAccessExpression
+type: null

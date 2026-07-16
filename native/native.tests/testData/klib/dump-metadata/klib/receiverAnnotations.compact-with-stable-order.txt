@@ -1,5 +1,5 @@
 library {
-  // module name: <receiverAnnotations.kt>
+  // module name: <main>
 
   library fragment {
     // package name: test

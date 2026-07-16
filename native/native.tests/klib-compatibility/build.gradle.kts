@@ -182,7 +182,6 @@ customFirstStageTest("2.4.0")
 
 /* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
 // TODO: Keep updating two following compiler versions to be the previous and latest ones.
-customSecondStageTest("2.3.0")
 customSecondStageTest("2.4.0")
 // add `customSecondStageTest("2.5.0-Beta1")`, as soon it is released, and remove 2.3.0
 
@@ -195,10 +194,10 @@ customSecondStageTest("2.4.0")
 // Should backward and forward tests be executed together in one Gradle task -> so/dylib versions would be inevitably mixed up
 
 // TODO: Drop these short tasks after KT-84712, when full tasks `testCustomFirstStage_$version` and `testCustomSecondStage_$version` will become very fast
-customStagesAggregateTest("2.3.0", "first")
-customStagesAggregateTest("2.3.0", "second")
+customStagesAggregateTest("2.4.0", "first")
+customStagesAggregateTest("2.4.0", "second")
 // TODO: Drop the next one after KTI migrates to execution of  `testMinimalInAggregate_firstStage` and `testMinimalInAggregate_secondStage`
-customCompilerTest(CustomCompilerVersion("2.3.0"), "testMinimalInAggregate", "aggregate-first-stage")
+customCompilerTest(CustomCompilerVersion("2.4.0"), "testMinimalInAggregate", "aggregate-first-stage")
 
 projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true) {

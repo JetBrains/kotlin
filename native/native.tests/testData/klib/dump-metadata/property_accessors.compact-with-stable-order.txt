@@ -1,5 +1,5 @@
 library {
-  // module name: <property_accessors.kt>
+  // module name: <main>
 
   library fragment {
     // package name: test

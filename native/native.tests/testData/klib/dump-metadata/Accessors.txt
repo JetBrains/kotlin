@@ -1,5 +1,5 @@
 library {
-  // module name: <Accessors.kt>
+  // module name: <main>
 
   library fragment {
     // package name: custom.pkg

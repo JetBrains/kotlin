@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import java.io.File
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * We have to handle the returned provider lazily, because the publication's artifactId
@@ -599,6 +600,11 @@ private fun Project.createGradlePluginVariant(
                 // Workaround until 'dev.gradleplugins:gradle-api:8.13' will be published
                 variantSourceSet.compileOnlyConfigurationName("org.jetbrains.intellij.deps:gradle-api:${variant.gradleApiVersion}")
                 variantSourceSet.compileOnlyConfigurationName("javax.inject:javax.inject:1")
+                val catalogs = this@createGradlePluginVariant.extensions.getByType<VersionCatalogsExtension>()
+                // 'libs' version catalog is not available in GradlePluginTests
+                catalogs.find("libs").getOrNull()?.let { libsCatalog ->
+                    variantSourceSet.compileOnlyConfigurationName(libsCatalog.findLibrary("slf4j.api").get())
+                } ?: this@createGradlePluginVariant.logger.warn("Could not find 'libs' version catalog!")
             }
             else -> {
                 variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")

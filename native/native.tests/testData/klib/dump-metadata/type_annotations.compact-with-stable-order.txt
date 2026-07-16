@@ -1,5 +1,5 @@
 library {
-  // module name: <type_annotations.kt>
+  // module name: <main>
 
   library fragment {
     // package name: test

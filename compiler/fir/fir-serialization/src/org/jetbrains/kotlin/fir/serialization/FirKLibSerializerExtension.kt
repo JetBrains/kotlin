@@ -61,6 +61,11 @@ class FirKLibSerializerExtension(
         super.serializeConstructor(constructor, proto, childSerializer)
     }
 
+    override fun serializeTypeAlias(typeAlias: FirTypeAlias, proto: ProtoBuf.TypeAlias.Builder) {
+        typeAlias.setFileId(proto, KlibMetadataProtoBuf.typeAliasFile)
+        super.serializeTypeAlias(typeAlias, proto)
+    }
+
     override fun serializeProperty(
         property: FirProperty,
         proto: ProtoBuf.Property.Builder,

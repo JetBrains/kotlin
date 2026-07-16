@@ -261,6 +261,55 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Check wasm target compiles when switch compilation mode with IC enabled")
+    @GradleTest
+    fun jsTargetIncrementalMonolithToPerModuleClosedWorld(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify {
+                it.replace("<JsEngine>", "d8")
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.wasmJs {
+                    binaries.executable()
+                }
+            }
+
+            build(
+                ":compileDevelopmentExecutableKotlinWasmJs",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MONOLITH)
+                ),
+            ) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/redefined-wasm-module-name.wasm")
+            }
+
+            build(
+                ":compileDevelopmentExecutableKotlinWasmJs",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
+                ),
+            ) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
+
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/redefined-wasm-module-name.wasm")
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/kotlin-kotlin-stdlib.wasm")
+            }
+        }
+    }
+
     @DisplayName("Check js target with binaryen with custom per-file argument")
     @GradleTest
     fun jsTargetWithBinaryenCustomPerFileArgument(gradleVersion: GradleVersion) {

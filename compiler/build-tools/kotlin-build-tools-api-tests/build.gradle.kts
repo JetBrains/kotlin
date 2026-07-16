@@ -145,7 +145,7 @@ class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolea
 }
 
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
-val JS_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.jsStdlibClasspath"
+val JS_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.jsStdlibClasspath"
 val WASM_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.wasmStdlibClasspath"
 val METADATA_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.metadataStdlibClasspath"
 
@@ -207,15 +207,23 @@ val businessLogicTestSuits = setOf(
     "testRestrictedArguments",
 )
 
-fun JvmTestSuite.addSnapshotBuildToolsImpl() {
+fun JvmTestSuite.addStdLibClasspaths() {
     targets.all {
         testTask.configure {
-            addClasspathProperty(buildToolsApiImplResolvable.get(), COMPILER_CLASSPATH_PROPERTY)
-            addClasspathProperty(jsStdlibImplResolvable.get(), JS_STDLIB_CLASSSPATH_PROPERTY)
+            addClasspathProperty(jsStdlibImplResolvable.get(), JS_STDLIB_CLASSPATH_PROPERTY)
             addClasspathProperty(wasmStdlibImplResolvable.get(), WASM_STDLIB_CLASSSPATH_PROPERTY)
             addClasspathProperty(metadataStdlibImplResolvable.get(), METADATA_STDLIB_CLASSSPATH_PROPERTY)
         }
     }
+}
+
+fun JvmTestSuite.addSnapshotBuildToolsImpl() {
+    targets.all {
+        testTask.configure {
+            addClasspathProperty(buildToolsApiImplResolvable.get(), COMPILER_CLASSPATH_PROPERTY)
+        }
+    }
+    addStdLibClasspaths()
 }
 
 fun JvmTestSuite.addSpecificBuildToolsImpl(version: String) {
@@ -240,9 +248,9 @@ fun JvmTestSuite.addSpecificBuildToolsImpl(version: String) {
     targets.all {
         testTask.configure {
             addClasspathProperty(resolvableConfiguration.get(), COMPILER_CLASSPATH_PROPERTY)
-            addClasspathProperty(jsStdlibImplResolvable.get(), JS_STDLIB_CLASSSPATH_PROPERTY)
         }
     }
+    addStdLibClasspaths()
 }
 
 testing {

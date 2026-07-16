@@ -23,14 +23,14 @@ class Invokable {
 <!UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> val C.invokable = Invokable()
 
 fun testC() {
-    val s: String <!INITIALIZER_TYPE_MISMATCH!>=<!> C(<!TOO_MANY_ARGUMENTS!>""<!>)
+    val s: String = <!INITIALIZER_TYPE_MISMATCH!>C<!>(<!TOO_MANY_ARGUMENTS!>""<!>)
     val c: C = C()
 
     C.<!UNRESOLVED_REFERENCE!>invokable<!>()
 }
 
 fun testC2() {
-    val i: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> C2(1)
+    val i: Int = <!INITIALIZER_TYPE_MISMATCH!>C2<!>(1)
     val b: Boolean = C2(true)
     val c: C2 = C2()
 

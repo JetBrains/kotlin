@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
 import org.jetbrains.kotlin.konan.config.konanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
@@ -211,27 +213,32 @@ class NativeCompilerSecondStageFacade private constructor(
             val friendModules = friendDependencies.joinToString(File.pathSeparator)
             customNativeCompilerSettings.compiler.callCompiler(
                 output = printStream,
-                listOfNotNull(
-                    K2NativeCompilerArguments::kotlinHome.cliArgument, nativeHome.absolutePath,
-                    optimizationArgument.cliArgument,
-                    K2NativeCompilerArguments::binaryOptions.cliArgument("runtimeAssertionsMode=panic"),
-                    K2NativeCompilerArguments::verifyIr.cliArgument(verifyIrMode.name),
-                    K2NativeCompilerArguments::llvmVariant.cliArgument("dev"),
-                    K2NativeCompilerArguments::produce.cliArgument, "program",
-                    K2NativeCompilerArguments::outputName.cliArgument, executableFile.path,
-                    K2NativeCompilerArguments::generateTestRunner.cliArgument,
-                    K2NativeCompilerArguments::testDumpOutputPath.cliArgument(executableFile.resolveSibling("${executableFile.name}.dump").path),
-                    *mainLibraries.map { mainLibrary ->
+                buildList {
+                    addAll(listOf(K2NativeCompilerArguments::kotlinHome.cliArgument, nativeHome.absolutePath))
+                    add(optimizationArgument.cliArgument)
+                    add(K2NativeCompilerArguments::binaryOptions.cliArgument("${BinaryOptions.runtimeAssertionsMode}=${RuntimeAssertsMode.PANIC}"))
+                    add(K2NativeCompilerArguments::verifyIr.cliArgument(verifyIrMode.name))
+                    add(K2NativeCompilerArguments::llvmVariant.cliArgument("dev"))
+                    addAll(listOf(K2NativeCompilerArguments::produce.cliArgument, "program"))
+                    addAll(listOf(K2NativeCompilerArguments::outputName.cliArgument, executableFile.path))
+                    add(K2NativeCompilerArguments::generateTestRunner.cliArgument)
+                    add(K2NativeCompilerArguments::testDumpOutputPath
+                        .cliArgument(executableFile.resolveSibling("${executableFile.name}.dump").path))
+                    addAll(mainLibraries.map { mainLibrary ->
                         K2NativeCompilerArguments::includes.cliArgument(mainLibrary)
-                    }.toTypedArray(),
-                    K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeHome.resolve("klib").absolutePath)
-                        .takeIf { cacheMode.useStaticCacheForDistributionLibraries },
-                    K2NativeCompilerArguments::enableAssertions.cliArgument.takeIf { enableAssertions },
-                    K2NativeCompilerArguments::target.cliArgument, kotlinNativeTargets.testTarget.name, // consider getting it from compilerConfiguration
-                    K2NativeCompilerArguments::nodefaultlibs.cliArgument.takeIf {
-                        !(this.withPlatformLibs || withPlatformLibs)
-                    },
-                ),
+                    })
+                    if (cacheMode.useStaticCacheForDistributionLibraries) {
+                        add(K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeHome.resolve("klib").absolutePath))
+                        add(K2NativeCompilerArguments::binaryOptions.cliArgument("${BinaryOptions.enableReleaseBinaryCache}=true"))
+                    }
+                    if (enableAssertions) {
+                        add(K2NativeCompilerArguments::enableAssertions.cliArgument)
+                    }
+                    addAll(listOf(K2NativeCompilerArguments::target.cliArgument, kotlinNativeTargets.testTarget.name)) // consider getting it from compilerConfiguration
+                    if (!(this@NativeCompilerSecondStageFacade.withPlatformLibs || withPlatformLibs)) {
+                        add(K2NativeCompilerArguments::nodefaultlibs.cliArgument)
+                    }
+                },
                 regularAndFriendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
                 },

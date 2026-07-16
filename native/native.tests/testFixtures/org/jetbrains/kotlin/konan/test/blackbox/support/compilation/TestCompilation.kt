@@ -152,6 +152,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
                     else -> add("-Xauto-cache-from=${this@BasicCompilation.home.librariesDir}")
                 }
                 add("-Xbackend-threads=1") // The tests are run in parallel already, don't add more here.
+                add("-Xbinary=enableReleaseBinaryCache=true")
             }
             add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
         }

@@ -24,8 +24,8 @@ fun test(m1: Map<String, String?>, m2: Map<String, String>) {
     takeNullableString(JavaMaps.get<String, String?>(m1, "k"))
     takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaMaps.get<String, String?>(m1, "k")<!>)
 
-    val badValue: String <!INITIALIZER_TYPE_MISMATCH!>=<!> JavaMaps.get<String, String?>(m1, "k")
-    val badMap: Map<String, String> <!INITIALIZER_TYPE_MISMATCH!>=<!> JavaMaps.id<String, String?>(m1)
+    val badValue: String = JavaMaps.<!INITIALIZER_TYPE_MISMATCH!>get<!><String, String?>(m1, "k")
+    val badMap: Map<String, String> = JavaMaps.<!INITIALIZER_TYPE_MISMATCH!>id<!><String, String?>(m1)
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty,

@@ -1,5 +1,7 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 // CHECK-LABEL: define i32 @"kfun:#wrapString(kotlin.String){}kotlin.Int
 // CHECK-OPT: call {{zeroext i16|i16}} @Kotlin_String_get

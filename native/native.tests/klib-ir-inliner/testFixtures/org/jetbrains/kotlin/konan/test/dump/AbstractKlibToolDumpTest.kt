@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCoreTest
 import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
-import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -38,6 +37,9 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.junit.jupiter.api.Tag
 import java.io.File
 
+/**
+ * An abstract test runner for one of the KLIB tool's `dump-XXX` commands.
+ */
 @Tag("klib")
 abstract class AbstractKlibToolDumpTest : AbstractNativeCoreTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -87,24 +89,34 @@ abstract class AbstractKlibToolDumpTest : AbstractNativeCoreTest() {
         }
     }
 
-    protected abstract fun getDumpHandlers(): List<Constructor<AbstractKlibToolDumpHandler>>
+    protected abstract fun getDumpHandlers(): List<Constructor<AbstractKlibToolDumpHandler<*>>>
 }
 
-abstract class AbstractKlibToolDumpHandler(
+/**
+ * Implementations of this interface are supposed to keep various arguments that influence the way how
+ * a certain kind of KLIB dump is performed. See inheritors for examples.
+ */
+interface KlibToolDumpHandlerVariation {
+    val dumpFileSuffix: String
+}
+
+/**
+ * An abstract test handler for one of the KLIB tool's `dump-XXX` commands.
+ */
+abstract class AbstractKlibToolDumpHandler<V : KlibToolDumpHandlerVariation>(
     testServices: TestServices,
-    private val suffix: String?,
 ) : BinaryArtifactHandler<BinaryArtifacts.KLib>(
     testServices = testServices,
     artifactKind = ArtifactKinds.KLib,
     failureDisablesNextSteps = false,
     doNotRunIfThereWerePreviousFailures = false,
 ) {
-    protected abstract val signatureVersion: KotlinIrSignatureVersion?
+    protected abstract val variation: V
 
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper()
 
     final override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
-        val dump = makeDump(info.outputFile) ?: return
+        val dump = makeDump(info.outputFile, module) ?: return
         dumper.builderForModule(module.name).appendLine(dump)
     }
 
@@ -113,8 +125,7 @@ abstract class AbstractKlibToolDumpHandler(
 
         val dumpFile = buildString {
             append(originalTestDataFile.removeSuffix(".kt").removeSuffix(".def"))
-            suffix?.let { append('.').append(it) }
-            signatureVersion?.let { append(".v").append(it.number) }
+            append(variation.dumpFileSuffix)
             append(".txt")
         }
 
@@ -125,5 +136,5 @@ abstract class AbstractKlibToolDumpHandler(
     }
 
     /** Returns the text of the dump, if dump is available for the given type of KLIB. */
-    protected abstract fun makeDump(klib: File): String?
+    protected abstract fun makeDump(klib: File, module: TestModule): String?
 }

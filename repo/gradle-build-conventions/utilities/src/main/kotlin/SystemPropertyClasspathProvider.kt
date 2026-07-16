@@ -149,3 +149,15 @@ fun Test.addClasspathDirectoryProperty(
     provider.property.set(property)
     jvmArgumentProviders.add(provider)
 }
+
+fun Test.addClasspathDirectoryProperty(
+    directory: Directory,
+    classpath: FileCollection,
+    property: String,
+) {
+    val provider = project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java)
+    provider.directory.set(directory)
+    provider.classpath.from(classpath)
+    provider.property.set(property)
+    jvmArgumentProviders.add(provider)
+}

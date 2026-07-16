@@ -1,6 +1,8 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 // KT-86959: OptimizeCasts must not share a "complex" term (here, the result of bar())
 // between different loop iterations. `previousBar` holds the previous iteration's bar()

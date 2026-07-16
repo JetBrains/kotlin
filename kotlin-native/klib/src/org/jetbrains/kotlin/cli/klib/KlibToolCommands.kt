@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.hasAbi
 import org.jetbrains.kotlin.library.loadSizeInfo
-import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.name.FqName
@@ -166,18 +165,11 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
             output.logWarning("using a non-default signature version in \"dump-ir\" is not supported yet")
         }
 
-        val module = ModuleDescriptorLoader(output).load(args.library) ?: return
+        val moduleDescriptor = createFakeModuleDescriptor(args.library)
+        val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
 
-        val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
-        val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
-        val typeTranslator = TypeTranslatorImpl(symbolTable, ModuleDescriptorLoader.languageVersionSettings, module)
-        val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
-
-        val linker = KlibToolIrLinker(output, module, symbolTable)
-        module.allDependencyModules.forEach {
-            linker.deserializeOnlyHeaderModule(it, it.kotlinLibrary)
-        }
-        val irFragment = linker.deserializeFullModule(module, args.library)
+        val linker = KlibToolIrLinker(output, moduleDescriptor, symbolTable)
+        val irFragment = linker.deserializeFullModule(moduleDescriptor, args.library)
         linker.init(null)
         linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
 
@@ -217,6 +209,8 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: ParsedArgu
         val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
         val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
         val typeTranslator = TypeTranslatorImpl(symbolTable, ModuleDescriptorLoader.languageVersionSettings, module)
+
+        // TODO(KT-87732): Do not use `IrBuiltInsOverDescriptors` here.
         val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
 
         val moduleDeserializer = NonLinkingIrInlineFunctionDeserializer.ModuleDeserializer(

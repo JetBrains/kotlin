@@ -80,9 +80,10 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
 
         val version = KonanLibrarySpecialCompatibilityChecker.getCompilerVersionFromKonanProperties(stdlibLibrary)
 
-        assertNotNull(version) {
+        assertNotNull(
+            version,
             "getCompilerVersionFromKonanProperties() should return a non-null version for the real K/N stdlib at $nativeStdlibPath"
-        }
+        )
     }
 }
 

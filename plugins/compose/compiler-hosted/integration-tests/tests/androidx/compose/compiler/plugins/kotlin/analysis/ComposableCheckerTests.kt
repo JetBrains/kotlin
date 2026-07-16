@@ -196,7 +196,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
         // We should infer `ComposableFunction0<Unit>` for `T`
         val cl = identity(@Composable {})
-        val l: () -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> cl
+        val l: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>cl<!>
         """
         )
     }
@@ -212,7 +212,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
         // Explicitly instantiate `T` with `ComposableFunction0<Unit>`
         val cl = identity<@Composable () -> Unit> { A() }
-        val l: () -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> cl
+        val l: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>cl<!>
         """
         )
     }
@@ -743,7 +743,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.runtime.*;
 
             fun foo(v: @Composable ()->Unit) {
-                val myVariable: ()->Unit ${"<!INITIALIZER_TYPE_MISMATCH!>=<!> v"}
+                val myVariable: ()->Unit ${"= <!INITIALIZER_TYPE_MISMATCH!>v<!>"}
                 myVariable()
             }
         """
@@ -829,7 +829,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             fun test(f: @Composable ()->Unit) {
-                val f2: @Composable ()->Unit ${"<!INITIALIZER_TYPE_MISMATCH!>=<!> identity (<!ARGUMENT_TYPE_MISMATCH!>f<!>)"};
+                val f2: @Composable ()->Unit ${"= <!INITIALIZER_TYPE_MISMATCH!>identity<!> (<!ARGUMENT_TYPE_MISMATCH!>f<!>)"};
                 f2()
             }
         """

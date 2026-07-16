@@ -92,7 +92,8 @@ fun File.dumpMetadata(
 
 fun TestCompilationArtifact.KLIB.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
-): String = klibFile.dumpIr(kotlinNativeClassLoader)
+    absolutePathPrefixes: List<String> = emptyList(),
+): String = klibFile.dumpIr(kotlinNativeClassLoader, absolutePathPrefixes)
 
 fun File.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
@@ -108,9 +109,19 @@ fun TestCompilationArtifact.KLIB.dumpSignatures(
     kotlinNativeClassLoader: ClassLoader,
     signatureVersion: KotlinIrSignatureVersion,
     onlyTopLevelSignatures: Boolean,
+): String = klibFile.dumpSignatures(
+    kotlinNativeClassLoader = kotlinNativeClassLoader,
+    signatureVersion = signatureVersion,
+    onlyTopLevelSignatures = onlyTopLevelSignatures,
+)
+
+fun File.dumpSignatures(
+    kotlinNativeClassLoader: ClassLoader,
+    signatureVersion: KotlinIrSignatureVersion,
+    onlyTopLevelSignatures: Boolean,
 ): String = invokeKlibTool(
     kotlinNativeClassLoader = kotlinNativeClassLoader,
-    klibFile = klibFile,
+    klibFile = this,
     command = "dump-signatures",
     signatureVersion = signatureVersion,
     onlyTopLevelSignatures = onlyTopLevelSignatures,

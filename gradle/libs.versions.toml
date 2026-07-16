@@ -6,6 +6,7 @@ gradle-custom-user-data = "2.4.0"
 develocity = "4.3.3"
 develocity-plugin-adapter = "1.2.1"
 gradle-plugin-publish = "2.1.1"
+gradle-crypto-checksum = "1.4.0"
 # The version for foojay should be synced with the version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "1.0.0"
 # guava and failureaccess should be aligned relatively
@@ -241,3 +242,4 @@ gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-p
 kotlinx-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlinx-benchmark" }
 kotlinx-bcv = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-bcv" }
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
+gradle-crypto-checksum = { id = "org.gradle.crypto.checksum", version.ref = "gradle-crypto-checksum" }

@@ -19,8 +19,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -69,6 +73,28 @@ class SerializationPluginContext(baseContext: IrPluginContext) :
 
     internal val intArrayOfFunctionSymbol =
         finderForBuiltins.findFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("intArrayOf"))).first()
+
+    /**
+     * `Array<out T>?.contentDeepEquals(other: Array<out T>?)`
+     */
+    internal val contentDeepEqualsFunctionSymbol: IrSimpleFunctionSymbol? by lazy {
+        finderForBuiltins
+            .findFunctions(CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier("contentDeepEquals")))
+            .singleOrNull { it.owner.parameters.firstOrNull { p -> p.kind == IrParameterKind.ExtensionReceiver }?.type?.isNullable() == true }
+    }
+
+    /**
+     * `contentEquals` overloads for primitive (`IntArray`, `ByteArray`,...) and unsigned (`UIntArray`, `UByteArray`,...) arrays, keyed by the receiver array classifier.
+     */
+    internal val contentEqualsFunctionByArrayClassifier: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+        finderForBuiltins
+            .findFunctions(CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier("contentEquals")))
+            .mapNotNull { fn ->
+                val ext = fn.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver } ?: return@mapNotNull null
+                if (!ext.type.isNullable()) return@mapNotNull null            // @SinceKotlin("1.4") nullable-receiver overloads
+                (ext.type.classifierOrNull ?: return@mapNotNull null) to fn
+            }.toMap()
+    }
 
     // Kotlin stdlib declarations
     internal val jvmFieldClassSymbol = finderForBuiltins.findClass(JvmStandardClassIds.Annotations.JvmField)!!
@@ -222,5 +248,3 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
         }
     }
 }
-
-

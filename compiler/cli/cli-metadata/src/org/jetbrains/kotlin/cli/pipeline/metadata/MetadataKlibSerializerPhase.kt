@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToHeader
 import org.jetbrains.kotlin.util.metadataVersion
 import kotlin.io.path.absolute
 
@@ -60,9 +60,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
         val header = KlibMetadataProtoBuf.Header.newBuilder()
         header.moduleName = analysisResult.last().session.moduleData.name.asString()
 
-        if (configuration.languageVersionSettings.isPreRelease()) {
-            header.flags = KlibMetadataHeaderFlags.PRE_RELEASE
-        }
+        addMetadataFlagsToHeader(header, configuration.languageVersionSettings)
 
         val fragmentNames = mutableListOf<String>()
         val fragmentParts = mutableListOf<List<SerializedFirFile>>()

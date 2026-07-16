@@ -19,11 +19,15 @@ import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.klib.reader.KaModules
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.klibSourceFileName
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
+import org.jetbrains.kotlin.analysis.api.types.fullyExpandedType
 import org.jetbrains.kotlin.analysis.api.types.isAnyType
 import org.jetbrains.kotlin.analysis.api.types.isNullable
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -37,6 +41,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.takeIfNotEmpty
 
 public const val EXTENSION_RECEIVER_NAME: String = "_this_"
 
@@ -113,7 +118,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             is KaNamedFunctionSymbol -> listOfNotNull(exportFunction(declaration, parent = null, classTypeParameterScope = emptyMap()))
             is KaPropertySymbol -> exportProperty(declaration, parent = null, classTypeParameterScope = emptyMap())
             is KaNamedClassSymbol -> listOfNotNull(exportClass(declaration, parent = null, outerClassTypeParameterScope = emptyMap()))
-            is KaTypeAliasSymbol -> listOf(ErrorDeclaration("Type alias declarations are not implemented yet"))
+            is KaTypeAliasSymbol -> listOf(exportTypeAlias(declaration))
             else -> return null
         }
 
@@ -194,6 +199,82 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 isExternal = klass.isExternal,
             )
         }.withAttributes(klass)
+    }
+
+    context(_: KaSession)
+    private fun exportTypeAlias(typeAlias: KaTypeAliasSymbol): ExportedTypeAlias {
+        // Kotlin type aliases cannot declare bounds on their own type parameters, but the aliased type may use them in positions that
+        // carry constraints (e.g. `typealias Foo<T> = X<T>` where `class X<T : Number>`). Inherit those constraints so the generated
+        // TypeScript type alias is valid.
+        val inheritedBounds = collectInheritedTypeParameterBounds(typeAlias)
+        val typeParameterScope = TypeParameterScope(
+            container = typeAlias,
+            config = config,
+            transitivelyExportedClasses = pendingTransitivelyExportedClasses,
+            superTypeApproximator = superTypeApproximator,
+            inheritedBounds = inheritedBounds,
+        )
+        return ExportedTypeAlias(
+            name = typeAlias.getExportedIdentifier(),
+            typeParameters = typeParameterScope.values.toList(),
+            aliasedType = exportType(typeAlias.expandedType, typeParameterScope),
+            originalClassId = typeAlias.classId,
+        ).withAttributes(typeAlias)
+    }
+
+    /**
+     * Computes the upper bounds each of [typeAlias]'s own type parameters must inherit from the positions where it is used.
+     *
+     * Since a Kotlin type alias cannot declare bounds itself, but its TypeScript counterpart must, we look at the *fully expanded* aliased
+     * type (so that constraints are inherited even through alias-to-alias chains) and, for every position where one of the alias's type
+     * parameters is used directly as a type argument of a class, collect that class type parameter's upper bounds.
+     *
+     * The bounds are rewritten via a substitutor mapping the used class's type parameters to the actual type arguments at that position, so
+     * that F-bounds like `class X<T : Comparable<T>>` correctly become `Comparable<T>` in terms of the alias's parameter.
+     */
+    context(_: KaSession)
+    private fun collectInheritedTypeParameterBounds(typeAlias: KaTypeAliasSymbol): Map<KaTypeParameterSymbol, List<KaType>> {
+        val aliasParameters = typeAlias.typeParameters.takeIfNotEmpty()?.toHashSet()
+            ?: return emptyMap()
+
+        // Guard against self-referential types (e.g. a type parameter whose bound references itself).
+        val visited = hashSetOf<KaType>()
+        val result = hashMapOf<KaTypeParameterSymbol, MutableList<KaType>>()
+
+        fun visit(type: KaType) {
+            if (type !is KaClassType || !visited.add(type)) return
+
+            // Collect (class type parameter -> actual type argument) pairs across all qualifier segments (to also cover inner classes),
+            // and build a substitutor from them so that inherited bounds are expressed in terms of the alias's type parameters.
+            val positions = mutableListOf<Pair<KaTypeParameterSymbol, KaType>>()
+            val substitutor = buildSubstitutor {
+                for (qualifier in type.qualifiers) {
+                    val classTypeParameters = qualifier.symbol.typeParameters
+                    for ([index, classTypeParameter] in classTypeParameters.withIndex()) {
+                        val argument = qualifier.typeArguments.getOrNull(index)?.type ?: continue
+                        substitution(classTypeParameter, argument)
+                        positions += classTypeParameter to argument
+                    }
+                }
+            }
+
+            for ([classTypeParameter, argument] in positions) {
+                if (argument is KaTypeParameterType && argument.symbol in aliasParameters) {
+                    val bounds = classTypeParameter.upperBounds.map(substitutor::substitute).takeIfNotEmpty() ?: continue
+
+                    val existingBounds = result.getOrPut(argument.symbol, ::mutableListOf)
+
+                    existingBounds += bounds
+                }
+
+                visit(argument)
+            }
+        }
+
+        // fullyExpandedType is used for skipping an alias-alias chain
+        visit(typeAlias.expandedType.fullyExpandedType)
+
+        return result
     }
 
     context(_: KaSession)
@@ -633,7 +714,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         typeParameterScope: TypeParameterScope,
     ): ExportedClassDeclarationsInfo {
         val members = mutableListOf<ExportedDeclaration>()
-        val nestedClasses = mutableListOf<ExportedClass>()
+        val nestedClasses = mutableListOf<ExportedClassLikeDeclaration>()
         val defaultImplementations = mutableListOf<ExportedDeclaration>()
         val isCompanionObject = klass.classKind == KaClassKind.COMPANION_OBJECT
 
@@ -764,8 +845,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 }
                 is KaTypeAliasSymbol -> {
                     if (!nested.isEffectivelyExported(config, includingImplicitExport = true)) continue
-                    // TODO(KT-49795): Export type aliases
-                    continue
+                    nestedClasses.add(exportTypeAlias(nested))
                 }
                 else -> continue
             }
@@ -921,7 +1001,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
 
     private data class ExportedClassDeclarationsInfo(
         val members: List<ExportedDeclaration>,
-        val nestedClasses: List<ExportedClass>,
+        val nestedClasses: List<ExportedClassLikeDeclaration>,
     )
 
     private fun KaNamedClassSymbol.shouldContainImplementableSymbolProperty(hasNotExportedAbstractMember: Boolean): Boolean =

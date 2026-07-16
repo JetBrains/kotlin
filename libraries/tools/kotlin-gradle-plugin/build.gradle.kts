@@ -64,6 +64,11 @@ registerKotlinSourceForVersionRange(
     GradlePluginVariant.GRADLE_96,
 )
 
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_86,
+    GradlePluginVariant.GRADLE_96,
+)
+
 tasks.test {
     useJUnitPlatform {
         exclude("**/*LincheckTest.class")
@@ -701,7 +706,7 @@ tasks.withType<Test>().configureEach {
     // Content is tracked via classpath normalization (jar/metadata hashes, no absolute paths).
     // Both dev and CI use the same path — no maven.repo.local involved.
     dependsOnKotlinGradlePluginPublishToBuildRepo()
-    val buildRepoDir = rootProject.layout.buildDirectory.dir("repo")
+    val buildRepoDir = rootProject.isolated.projectDirectory.dir("build/repo")
     addClasspathDirectoryProperty(
         directory = buildRepoDir,
         classpath = project.fileTree(buildRepoDir) { exclude("**/*.md5", "**/*.sha1") },
@@ -725,7 +730,7 @@ tasks.withType<Test>().configureEach {
     )
 
     addFileProperty(
-        rootProject.layout.projectDirectory.file("kotlin-native/konan/konan.properties"),
+        rootProject.isolated.projectDirectory.file("kotlin-native/konan/konan.properties"),
         "konanProperties"
     )
 }

@@ -21,7 +21,7 @@ fun test(x: Inv<Int>) {
 
     val y0 = x.debounce { 1 }
     val y1: Inv<Int> = x.debounce { 2 }
-    val y2: Inv<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> x.debounce { 3 }
+    val y2: Inv<Any> = x.<!INITIALIZER_TYPE_MISMATCH!>debounce<!> { 3 }
     val y3: Inv<*> = x.debounce { 4 }
     val y4: Any = x.debounce { 5 }
 

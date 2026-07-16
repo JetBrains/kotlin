@@ -192,12 +192,6 @@ object JSConfigurationKeys {
     val IC_CACHE_DIRECTORY = CompilerConfigurationKey.create<String>("IC_CACHE_DIRECTORY")
 
     @JvmField
-    val IC_CACHE_READ_ONLY = CompilerConfigurationKey.create<Boolean>("IC_CACHE_READ_ONLY")
-
-    @JvmField
-    val PRESERVE_IC_ORDER = CompilerConfigurationKey.create<Boolean>("PRESERVE_IC_ORDER")
-
-    @JvmField
     val IC_FILES_TO_LOAD = CompilerConfigurationKey.create<Set<String>>("IC_FILES_TO_LOAD")
 
     @JvmField
@@ -392,14 +386,6 @@ var CompilerConfiguration.callMain: Boolean
 var CompilerConfiguration.icCacheDirectory: String?
     get() = get(JSConfigurationKeys.IC_CACHE_DIRECTORY)
     set(value) { putIfNotNull(JSConfigurationKeys.IC_CACHE_DIRECTORY, value) }
-
-var CompilerConfiguration.icCacheReadOnly: Boolean
-    get() = getBoolean(JSConfigurationKeys.IC_CACHE_READ_ONLY)
-    set(value) { put(JSConfigurationKeys.IC_CACHE_READ_ONLY, value) }
-
-var CompilerConfiguration.preserveIcOrder: Boolean
-    get() = getBoolean(JSConfigurationKeys.PRESERVE_IC_ORDER)
-    set(value) { put(JSConfigurationKeys.PRESERVE_IC_ORDER, value) }
 
 var CompilerConfiguration.icFilesToLoad: Set<String>
     get() = getSet(JSConfigurationKeys.IC_FILES_TO_LOAD)

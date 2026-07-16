@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_IR_SIGNATURE_VERSIONS
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_FLAGS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -19,7 +20,8 @@ private val TRANSIENT_MANIFEST_PROPERTIES = listOf(
     KLIB_PROPERTY_ABI_VERSION,
     KLIB_PROPERTY_METADATA_VERSION,
     KLIB_PROPERTY_COMPILER_VERSION,
-    KLIB_PROPERTY_IR_SIGNATURE_VERSIONS
+    KLIB_PROPERTY_IR_SIGNATURE_VERSIONS,
+    KLIB_PROPERTY_METADATA_FLAGS,
 )
 
 private const val SANITIZED_VALUE_STUB = "<value sanitized for test data stability>"

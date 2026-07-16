@@ -77,6 +77,9 @@ open class UpgradeCallableReferences(
                 if (parameter.kind == IrParameterKind.ExtensionReceiver && isLambda) {
                     parameter.origin = IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER
                 }
+                if (parameter.kind == IrParameterKind.Context && parameter.origin == IrDeclarationOrigin.UNDERSCORE_PARAMETER) {
+                    parameter.origin = IrDeclarationOrigin.DEFINED
+                }
                 parameter.kind = IrParameterKind.Regular
             }
         }

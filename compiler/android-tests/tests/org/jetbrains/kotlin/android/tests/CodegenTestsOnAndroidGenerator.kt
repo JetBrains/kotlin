@@ -10,6 +10,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.test.utils.TransformersFunctions.Android
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.createTempDirectory
@@ -57,12 +59,50 @@ import kotlin.test.assertTrue
 
 data class ConfigurationKey(val kind: ConfigurationKind, val jdkKind: TestJdkKind, val configuration: String)
 
+private fun CompilerConfiguration.copyWithOwnContentRoots(): CompilerConfiguration =
+    copy().also { copy ->
+        copy.get(CLIConfigurationKeys.CONTENT_ROOTS)?.let { contentRoots ->
+            copy.put(CLIConfigurationKeys.CONTENT_ROOTS, contentRoots.toMutableList())
+        }
+    }
+
+internal class AndroidTestPlan(
+    val tests: List<AndroidPlannedTest>,
+    private val generator: CodegenTestsOnAndroidGenerator
+) {
+    val flavorsToRun: List<String> = tests.map { it.flavorName }.distinct()
+
+    fun compile(test: AndroidPlannedTest) {
+        generator.compile(test)
+    }
+
+    fun generateUnitTestFiles() {
+        generator.generateUnitTestFiles()
+    }
+}
+
+internal data class AndroidPlannedTest(
+    val testFiles: List<TestClassInfo>,
+    val info: TestInfo,
+    val flavorName: String,
+    val configuration: CompilerConfiguration,
+    val moduleName: String,
+) {
+    val displayName: String get() = UnitTestFileWriter.testNameForFileName(info.file.name)
+
+    companion object {
+        val ROOT_PATH: File by lazy { Path("../testData").toAbsolutePath().toFile() }
+    }
+}
+
 class CodegenTestsOnAndroidGenerator private constructor(private val pathManager: PathManager) {
     private var currentModuleIndex = 1
 
     private val pathFilter: String? = System.getProperty("kotlin.test.android.path.filter")
 
-    private val pendingUnitTestGenerators = hashMapOf<String, UnitTestFileWriter>()
+    private val plannedTests = arrayListOf<AndroidPlannedTest>()
+    private val compiledTestNames: MutableSet<String> = ConcurrentHashMap.newKeySet()
+    private val flavorOutputLocks = ConcurrentHashMap<String, Any>()
 
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
@@ -96,8 +136,14 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     private fun prepareAndroidModuleAndGenerateTests(skipSdkDirWriting: Boolean) {
+        val plan = prepareAndroidModuleAndDiscoverTests(skipSdkDirWriting)
+        plan.tests.forEach(plan::compile)
+        plan.generateUnitTestFiles()
+    }
+
+    private fun prepareAndroidModuleAndDiscoverTests(skipSdkDirWriting: Boolean): AndroidTestPlan {
         prepareAndroidModule(skipSdkDirWriting)
-        generateTestsAndFlavourSuites()
+        return discoverTests()
     }
 
     private fun prepareAndroidModule(skipSdkDirWriting: Boolean) {
@@ -158,8 +204,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         )
     }
 
-    private fun generateTestsAndFlavourSuites() {
-        println("Generating test files...")
+    private fun discoverTests(): AndroidTestPlan {
+        println("Discovering Android test files...")
 
         val folders = arrayOf(
             ForTestCompileRuntime.transformTestDataPath("compiler/testData/codegen/box"),
@@ -169,7 +215,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         generateTestMethodsForDirectories(commonFlavor, reflectFlavor, *folders)
 
-        pendingUnitTestGenerators.values.forEach { it.generate() }
+        return AndroidTestPlan(plannedTests.toList(), this)
     }
 
     private fun generateTestMethodsForDirectories(
@@ -184,10 +230,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             processFiles(files, holders, commonFlavor, reflectionFlavor)
         }
 
-        holders.values.forEach {
-            it.writeFilesOnDisk()
-        }
-
         commonFlavor.printStatistics()
         reflectionFlavor.printStatistics()
     }
@@ -196,87 +238,88 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         private val flavorConfig: FlavorConfig,
         private val configuration: CompilerConfiguration
     ) {
-        private val rawFiles = arrayListOf<TestClassInfo>()
-        private val unitTestDescriptions = arrayListOf<TestInfo>()
-
-        private fun shouldWriteFilesOnDisk(): Boolean = rawFiles.size > 300
-
-        fun writeFilesOnDiskIfNeeded() {
-            if (shouldWriteFilesOnDisk()) {
-                writeFilesOnDisk()
-            }
-        }
-
-        fun writeFilesOnDisk() {
-            val disposable = Disposer.newDisposable("Disposable for ${FilesWriter::class.qualifiedName}.writeFilesOnDisk")
-
-            @OptIn(CoreEnvironmentDeprecation::class)
-            val environment = KotlinCoreEnvironment.createForTests(
-                disposable,
-                configuration.copy().apply {
-                    put(CommonConfigurationKeys.MODULE_NAME, "android-module-" + currentModuleIndex++)
-                    // KT-84021 Use full K/JVM stdlib, not minimal K/JVM stdlib
-                    addJvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTests())
-                    addJvmClasspathRoot(ForTestCompileRuntime.kotlinTestJarForTests())
-                },
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
+        fun addTest(testFiles: List<TestClassInfo>, info: TestInfo) {
+            plannedTests += AndroidPlannedTest(
+                testFiles = testFiles,
+                info = TestInfo(UnitTestFileWriter.generateTestName(info.file.name, generatedTestNames), info.fqName, info.file),
+                flavorName = flavorConfig.getFlavorForNewFiles(testFiles.size),
+                configuration = configuration.copyWithOwnContentRoots(),
+                moduleName = "android-module-" + currentModuleIndex++,
             )
-
-            try {
-                writeFiles(
-                    rawFiles.map {
-                        try {
-                            CodegenTestFiles.create(it.name, it.content, environment.project).psiFile
-                        } catch (e: Throwable) {
-                            throw RuntimeException("Error on processing ${it.name}:\n${it.content}", e)
-                        }
-                    }, environment, unitTestDescriptions
-                )
-            } finally {
-                rawFiles.clear()
-                unitTestDescriptions.clear()
-                disposeRootInWriteAction(disposable)
-            }
         }
 
-        private fun writeFiles(
-            filesToCompile: List<KtFile>,
-            environment: KotlinCoreEnvironment,
-            unitTestDescriptions: ArrayList<TestInfo>
-        ) {
-            if (filesToCompile.isEmpty()) return
+    }
 
-            val flavorName = flavorConfig.getFlavorForNewFiles(filesToCompile.size)
+    internal fun compile(test: AndroidPlannedTest) {
+        val disposable = Disposer.newDisposable("Disposable for ${CodegenTestsOnAndroidGenerator::class.qualifiedName}.compile")
 
-            val outputDir = File(pathManager.getOutputForCompiledFiles(flavorName))
-            println("Generating ${filesToCompile.size} from ${unitTestDescriptions.joinToString { it.fqName.asString() }} files into ${outputDir.name}, configuration: '${environment.configuration}'...")
+        @OptIn(CoreEnvironmentDeprecation::class)
+        val environment = KotlinCoreEnvironment.createForParallelTests(
+            disposable,
+            test.configuration.apply {
+                put(CommonConfigurationKeys.MODULE_NAME, test.moduleName)
+                // KT-84021 Use full K/JVM stdlib, not minimal K/JVM stdlib
+                addJvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTests())
+                addJvmClasspathRoot(ForTestCompileRuntime.kotlinTestJarForTests())
+            },
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
 
-            val state = GenerationUtils.compileFiles(filesToCompile, environment)
+        try {
+            writeFiles(
+                test.testFiles.map {
+                    try {
+                        CodegenTestFiles.create(it.name, it.content, environment.project).psiFile
+                    } catch (e: Throwable) {
+                        throw RuntimeException("Error on processing ${it.name}:\n${it.content}", e)
+                    }
+                }, environment, test
+            )
+            compiledTestNames += test.info.name
+        } finally {
+            disposeRootInWriteAction(disposable)
+        }
+    }
 
+    private fun writeFiles(
+        filesToCompile: List<KtFile>,
+        environment: KotlinCoreEnvironment,
+        test: AndroidPlannedTest
+    ) {
+        if (filesToCompile.isEmpty()) return
+
+        val outputDir = File(pathManager.getOutputForCompiledFiles(test.flavorName))
+        println("Generating ${filesToCompile.size} from ${test.info.name} (${test.info.fqName}) files into ${outputDir.name}...")
+
+        val state = GenerationUtils.compileFiles(filesToCompile, environment)
+
+        synchronized(flavorOutputLocks.computeIfAbsent(test.flavorName) { Any() }) {
             if (!outputDir.exists()) {
                 outputDir.mkdirs()
             }
             assertTrue(outputDir.exists(), "Cannot create directory for compiled files")
-            val unitTestFileWriter = pendingUnitTestGenerators.getOrPut(flavorName) {
-                UnitTestFileWriter(
-                    getFlavorUnitTestFolder(flavorName),
-                    flavorName,
-                    generatedTestNames
-                )
-            }
-            unitTestFileWriter.addTests(unitTestDescriptions)
             state.factory.writeAllTo(outputDir)
         }
+    }
 
-        private fun getFlavorUnitTestFolder(flavourName: String): String {
-            return pathManager.srcFolderInAndroidTmpFolder +
-                    "/androidTest${flavourName.replaceFirstChar(Char::uppercaseChar)}/java/" +
-                    testClassPackage.replace(".", "/") + "/"
-        }
+    private fun getFlavorUnitTestFolder(flavourName: String): String {
+        return pathManager.srcFolderInAndroidTmpFolder +
+                "/androidTest${flavourName.replaceFirstChar(Char::uppercaseChar)}/java/" +
+                testClassPackage.replace(".", "/") + "/"
+    }
 
-        fun addTest(testFiles: List<TestClassInfo>, info: TestInfo) {
-            rawFiles.addAll(testFiles)
-            unitTestDescriptions.add(info)
+    internal fun generateUnitTestFiles() {
+        val missingTests = plannedTests.map { it.info.name }.filterNot(compiledTestNames::contains)
+        assertTrue(missingTests.isEmpty(), "Compilation phase did not compile tests: ${missingTests.joinToString()}")
+        for (entry in plannedTests.groupBy { it.flavorName }) {
+            val flavorName = entry.key
+            UnitTestFileWriter(
+                getFlavorUnitTestFolder(flavorName),
+                flavorName,
+            ).also { writer ->
+                writer.addTests(entry.value.map { it.info })
+                writer.generate()
+            }
         }
     }
 
@@ -288,10 +331,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         commonFlavor: FlavorConfig,
         reflectionFlavor: FlavorConfig
     ) {
-        holders.values.forEach {
-            it.writeFilesOnDiskIfNeeded()
-        }
-
         for (file in files) {
             if (file.isDirectory) {
                 val listFiles = file.listFiles()
@@ -455,6 +494,13 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         @Throws(Throwable::class)
         fun generate(pathManager: PathManager, skipSdkDirWriting: Boolean = false) {
             CodegenTestsOnAndroidGenerator(pathManager).prepareAndroidModuleAndGenerateTests(skipSdkDirWriting)
+        }
+
+        @JvmOverloads
+        @JvmStatic
+        @Throws(Throwable::class)
+        internal fun discover(pathManager: PathManager, skipSdkDirWriting: Boolean = false): AndroidTestPlan {
+            return CodegenTestsOnAndroidGenerator(pathManager).prepareAndroidModuleAndDiscoverTests(skipSdkDirWriting)
         }
 
         private fun hasBoxMethod(text: String): Boolean {

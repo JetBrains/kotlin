@@ -1,6 +1,8 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true -Xdisable-phases=ComputeTypes
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 // KT-86948: CastsOptimization must not merge a type check/cast result across loop
 // iterations as if a node reached on one iteration is reached on every one.

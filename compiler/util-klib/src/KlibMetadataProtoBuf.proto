@@ -28,6 +28,7 @@ message Header {
   required string module_name = 1;
   /*
     Possible values are listed in KlibMetadataHeaderFlags class.
+    Flags are also stored in the manifest.
   */
   optional int32 flags = 2;
 
@@ -51,6 +52,10 @@ message Header {
 
 extend org.jetbrains.kotlin.metadata.Package {
   optional int32 package_fq_name = 171;
+}
+
+extend org.jetbrains.kotlin.metadata.TypeAlias {
+  optional int32 type_alias_file = 170 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
 }
 
 extend org.jetbrains.kotlin.metadata.Class {

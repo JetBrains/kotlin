@@ -40,8 +40,8 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
                 "create", "avd", "--force", "-n", AVD_NAME, "-p", pathManager.getAndroidAvdRoot(), "-k"
             )
 
-            // Allow override of system image via system property
-            val overrideImage = System.getProperty("kotlin.android.avd.systemImage")
+            // Allow override of system image via the Gradle project property forwarded to the test JVM.
+            val overrideImage = System.getProperty("kotlin.test.android.avd.systemImage")
             if (overrideImage != null && !overrideImage.isEmpty()) {
                 commandLine.addParameter(overrideImage)
             } else if (platform == X86) {
@@ -263,7 +263,10 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
         runProcessCancellable(stopCommandForAdb)
     }
 
-    suspend fun runTestsViaInstrumentation(suiteClassName: String?): String {
+    suspend fun runTestsViaInstrumentation(
+        suiteClassName: String?,
+        stdoutProcessor: (String) -> Unit,
+    ): String {
         println("Running tests via adb instrumentation for $suiteClassName...")
         val adbCommand = createAdbCommand()
         adbCommand.addParameters(
@@ -271,7 +274,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
             "-e", "class", suiteClassName,
             "org.jetbrains.kotlin.android.tests.gradle/org.jetbrains.kotlin.android.tests.KotlinBoxInstrumentation"
         )
-        val execute = runProcessCancellable(adbCommand)
+        val execute = runProcessCancellable(adbCommand, stdoutProcessor = stdoutProcessor)
         return execute.stdout
     }
 

@@ -15,6 +15,14 @@ RUN apt-get install -y git \
     && apt-get install -y libnspr4 \
     && apt-get install -y libatomic1 # native library for nodejs
 
+RUN apt-get update && apt-get install -y \
+    libgl1 \
+    libgl1-mesa-glx \
+    libx11-6 \
+    libxcb1 \
+    libxext6 \
+    libxrender1
+
 RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /usr/lib/jvm

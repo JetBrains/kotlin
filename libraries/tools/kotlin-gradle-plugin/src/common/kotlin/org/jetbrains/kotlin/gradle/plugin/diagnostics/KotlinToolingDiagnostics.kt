@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CompilationDependenciesPair.Companion.toFormattedString
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
@@ -79,7 +79,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    data class UklibPublicationWithoutCrossCompilation(val severity: ToolingDiagnostic.Severity) :
+    data class UklibPublicationWithoutCrossCompilation(val severity: KotlinToolingDiagnosticsSeverity) :
         ToolingDiagnosticFactory(severity, DiagnosticGroup.Kgp.Misconfiguration) {
         fun get() = build {
             title("Uklib Publication Without Klib Cross-Compilation")
@@ -921,7 +921,7 @@ internal object KotlinToolingDiagnostics {
             targetCompatibility: String,
             kotlinTaskName: String,
             jvmTarget: String,
-            severity: ToolingDiagnostic.Severity,
+            severity: KotlinToolingDiagnosticsSeverity,
         ) = build(severity = severity) {
             val gradleErrorMessage = if (severity == WARNING &&
                 GradleVersion.current() < GradleVersion.version("8.0")
@@ -1292,7 +1292,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    abstract class KotlinTargetAlreadyDeclared(severity: ToolingDiagnostic.Severity) :
+    abstract class KotlinTargetAlreadyDeclared(severity: KotlinToolingDiagnosticsSeverity) :
         ToolingDiagnosticFactory(severity, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(targetDslFunctionName: String) = build {
             title("`$targetDslFunctionName()` Kotlin Target Already Declared")
@@ -1650,7 +1650,7 @@ internal object KotlinToolingDiagnostics {
     object DeprecatedErrorGradleProperties : DeprecatedGradleProperties(ERROR)
 
     open class DeprecatedGradleProperties(
-        severity: ToolingDiagnostic.Severity,
+        severity: KotlinToolingDiagnosticsSeverity,
     ) : ToolingDiagnosticFactory(severity, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke(
             usedDeprecatedProperty: String,
@@ -1758,7 +1758,7 @@ internal object KotlinToolingDiagnostics {
         }
 
         private fun buildDiagnosticForJavaPlugin(
-            severity: ToolingDiagnostic.Severity,
+            severity: KotlinToolingDiagnosticsSeverity,
             pluginId: String,
             pluginString: String,
         ) = build(
@@ -1772,7 +1772,7 @@ internal object KotlinToolingDiagnostics {
         }
 
         private fun buildDiagnosticForApplicationPlugin(
-            severity: ToolingDiagnostic.Severity,
+            severity: KotlinToolingDiagnosticsSeverity,
         ) = build(severity = severity) {
             title(diagnosticTitle("application"))
                 .description(diagnosticDescription("'application' (also applies 'java' plugin)"))
@@ -2172,7 +2172,7 @@ internal object KotlinToolingDiagnostics {
             val version: KotlinVersion,
             val type: String,
             val accessor: String,
-            val languageVersionUnsupportedLevel: ToolingDiagnostic.Severity,
+            val languageVersionUnsupportedLevel: KotlinToolingDiagnosticsSeverity,
         )
 
         operator fun invoke(versionMetadata: List<VersionMetadata>, nonDeprecatedVersion: KotlinVersion): ToolingDiagnostic {

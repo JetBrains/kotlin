@@ -13,23 +13,21 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 
+// TODO(KT-87732): Drop this class.
 internal class ModuleDescriptorLoader(private val output: KlibToolOutput) {
-    private val logger = KlibToolLogger(output)
-
     @OptIn(K1Deprecation::class)
     fun load(library: KotlinLibrary): ModuleDescriptorImpl? {
         val storageManager = LockBasedStorageManager("klib")
 
         val module = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
-            library,
-            languageVersionSettings,
-            storageManager,
+                library,
+                languageVersionSettings,
+                storageManager,
         )
 
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()

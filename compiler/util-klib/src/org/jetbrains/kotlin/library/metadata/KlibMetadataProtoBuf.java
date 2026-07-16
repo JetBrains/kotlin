@@ -8,6 +8,7 @@ public final class KlibMetadataProtoBuf {
   public static void registerAllExtensions(
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.packageFqName);
+    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeAliasFile);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classFile);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classKdoc);
@@ -964,6 +965,22 @@ public final class KlibMetadataProtoBuf {
         null,
         null,
         171,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
+        java.lang.Integer.class);
+  public static final int TYPE_ALIAS_FILE_FIELD_NUMBER = 170;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.TypeAlias { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.TypeAlias,
+      java.lang.Integer> typeAliasFile = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.TypeAlias.getDefaultInstance(),
+        0,
+        null,
+        null,
+        170,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
   public static final int CLASS_ANNOTATION_FIELD_NUMBER = 170;

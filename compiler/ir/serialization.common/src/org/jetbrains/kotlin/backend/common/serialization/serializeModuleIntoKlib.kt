@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToHeader
 import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.File
 import java.util.Properties
@@ -179,9 +179,7 @@ private fun serializeKlibHeader(
 
     header.moduleName = moduleName
 
-    if (languageVersionSettings.isPreRelease()) {
-        header.flags = KlibMetadataHeaderFlags.PRE_RELEASE
-    }
+    addMetadataFlagsToHeader(header, languageVersionSettings)
 
     fragmentNames.forEach {
         header.addPackageFragmentName(it)

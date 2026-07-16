@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -267,6 +268,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
             val aliasProto = part.proto.getTypeAlias(ids.single())
             val postProcessor: DeserializedTypeAliasPostProcessor = {
                 part.context.memberDeserializer.loadTypeAlias(aliasProto, classId, kotlinScopeProvider, it)
+                loadTypeAliasExtensions(part, aliasProto, it.fir)
                 if (part.fileAnnotations.isNotEmpty()) {
                     it.fir.klibFileAnnotations = part.fileAnnotations
                 }
@@ -341,6 +343,11 @@ abstract class AbstractFirDeserializedSymbolProvider(
                 fir.symbol
             }
         }
+    }
+
+    open fun loadTypeAliasExtensions(
+        packagePart: PackagePartsCacheData, proto: ProtoBuf.TypeAlias, fir: FirTypeAlias,
+    ) {
     }
 
     open fun loadFunctionExtensions(

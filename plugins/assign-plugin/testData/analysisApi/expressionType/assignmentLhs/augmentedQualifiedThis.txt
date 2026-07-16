@@ -1,0 +1,3 @@
+expression: this.property
+expression PSI: KtDotQualifiedExpression
+type: kotlin.String

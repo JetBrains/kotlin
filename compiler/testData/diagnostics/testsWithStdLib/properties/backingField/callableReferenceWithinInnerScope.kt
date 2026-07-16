@@ -8,16 +8,16 @@ class InnerAndNestedScope {
     inner class Inner {
         fun foo() {
             val a: KProperty<List<String>> = ::city
-            val b: KProperty<MutableList<String>> <!INITIALIZER_TYPE_MISMATCH!>=<!> ::city
+            val b: KProperty<MutableList<String>> = ::<!INITIALIZER_TYPE_MISMATCH!>city<!>
             val c: KProperty<List<String>> = InnerAndNestedScope::city
-            val d: KProperty<MutableList<String>> <!INITIALIZER_TYPE_MISMATCH!>=<!> InnerAndNestedScope::city
+            val d: KProperty<MutableList<String>> = InnerAndNestedScope::<!INITIALIZER_TYPE_MISMATCH!>city<!>
         }
     }
 
     class Nested {
         fun bar() {
             val a: KProperty<List<String>> = InnerAndNestedScope::city
-            val b: KProperty<MutableList<String>> <!INITIALIZER_TYPE_MISMATCH!>=<!> InnerAndNestedScope::city
+            val b: KProperty<MutableList<String>> = InnerAndNestedScope::<!INITIALIZER_TYPE_MISMATCH!>city<!>
         }
     }
 }

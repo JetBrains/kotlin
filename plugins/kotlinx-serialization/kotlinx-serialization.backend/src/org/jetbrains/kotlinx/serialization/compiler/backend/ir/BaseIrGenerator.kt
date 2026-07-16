@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -233,7 +234,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 // emit call right away
                 +elementCall
             } else {
-                val partB = irNotEquals(property.irGet(substitutedPropertyType), initializerAdapter(initializer))
+                val partB = irNotEqualsConsideringArrayContent(property.type, property.irGet(substitutedPropertyType), initializerAdapter(initializer))
 
                 val condition = if (encodeDefaults == false) {
                     // drop default without call to .shouldEncodeElementDefault
@@ -250,6 +251,29 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 }
                 +irIfThen(condition, elementCall)
             }
+        }
+    }
+
+    private fun IrBuilderWithScope.irNotEqualsConsideringArrayContent(
+        type: IrType, value: IrExpression, default: IrExpression,
+    ): IrExpression {
+        val notNull = type.makeNotNull()
+        return when {
+            notNull.isArray() -> {
+                val symbol = compilerContext.contentDeepEqualsFunctionSymbol ?: return irNotEquals(value, default)
+                // `contentDeepEquals` is generic (`fun <T> Array<out T>?.contentDeepEquals(...)`), so bind `T` to the array
+                // element type — otherwise the produced IrCall would carry a null type-argument slot (malformed IR).
+                val elementType = (notNull as? IrSimpleType)?.arguments?.singleOrNull()?.typeOrNull
+                    ?: return irNotEquals(value, default)
+                irNot(irInvoke(symbol, listOf(value, default), typeArguments = listOf(elementType)))
+            }
+            // Primitive (`IntArray`…) and unsigned (`UIntArray`…) `contentEquals` overloads are non-generic — no type args.
+            notNull.isPrimitiveArray() || notNull.isUnsignedArray() -> {
+                val symbol = compilerContext.contentEqualsFunctionByArrayClassifier[notNull.classifierOrNull]
+                    ?: return irNotEquals(value, default)
+                irNot(irInvoke(symbol, listOf(value, default)))
+            }
+            else -> irNotEquals(value, default)
         }
     }
 

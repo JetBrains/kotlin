@@ -232,6 +232,8 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "compareTo" -> return (left as Boolean).compareTo(right as Boolean)
                 "or" -> return (left as Boolean).or(right as Boolean)
                 "xor" -> return (left as Boolean).xor(right as Boolean)
+                "ANDAND" -> return (left as Boolean) && (right as Boolean)
+                "OROR" -> return (left as Boolean) || (right as Boolean)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Boolean).equals(right)
@@ -251,6 +253,10 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "xor" -> return (left as Byte).xor(right as Byte)
                 "mod" -> return (left as Byte).mod(right as Byte)
                 "floorDiv" -> return (left as Byte).floorDiv(right as Byte)
+                "less" -> return (left as Byte) < (right as Byte)
+                "lessOrEqual" -> return (left as Byte) <= (right as Byte)
+                "greater" -> return (left as Byte) > (right as Byte)
+                "greaterOrEqual" -> return (left as Byte) >= (right as Byte)
             }
             SHORT -> when (name) {
                 "compareTo" -> return (left as Byte).compareTo(right as Short)
@@ -307,6 +313,10 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             CHAR -> when (name) {
                 "compareTo" -> return (left as Char).compareTo(right as Char)
                 "minus" -> return (left as Char).minus(right as Char)
+                "less" -> return (left as Char) < (right as Char)
+                "lessOrEqual" -> return (left as Char) <= (right as Char)
+                "greater" -> return (left as Char) > (right as Char)
+                "greaterOrEqual" -> return (left as Char) >= (right as Char)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Char).equals(right)
@@ -367,6 +377,11 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "rem" -> return (left as Double).rem(right as Double)
                 "times" -> return (left as Double).times(right as Double)
                 "mod" -> return (left as Double).mod(right as Double)
+                "less" -> return (left as Double) < (right as Double)
+                "lessOrEqual" -> return (left as Double) <= (right as Double)
+                "greater" -> return (left as Double) > (right as Double)
+                "greaterOrEqual" -> return (left as Double) >= (right as Double)
+                "ieee754equals" -> return (left as Double) == (right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Double).equals(right)
@@ -414,6 +429,11 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "rem" -> return (left as Float).rem(right as Float)
                 "times" -> return (left as Float).times(right as Float)
                 "mod" -> return (left as Float).mod(right as Float)
+                "less" -> return (left as Float) < (right as Float)
+                "lessOrEqual" -> return (left as Float) <= (right as Float)
+                "greater" -> return (left as Float) > (right as Float)
+                "greaterOrEqual" -> return (left as Float) >= (right as Float)
+                "ieee754equals" -> return (left as Float) == (right as Float)
             }
             DOUBLE -> when (name) {
                 "compareTo" -> return (left as Float).compareTo(right as Double)
@@ -445,6 +465,10 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "xor" -> return (left as Int).xor(right as Int)
                 "mod" -> return (left as Int).mod(right as Int)
                 "floorDiv" -> return (left as Int).floorDiv(right as Int)
+                "less" -> return (left as Int) < (right as Int)
+                "lessOrEqual" -> return (left as Int) <= (right as Int)
+                "greater" -> return (left as Int) > (right as Int)
+                "greaterOrEqual" -> return (left as Int) >= (right as Int)
             }
             BYTE -> when (name) {
                 "compareTo" -> return (left as Int).compareTo(right as Byte)
@@ -510,6 +534,10 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "xor" -> return (left as Long).xor(right as Long)
                 "mod" -> return (left as Long).mod(right as Long)
                 "floorDiv" -> return (left as Long).floorDiv(right as Long)
+                "less" -> return (left as Long) < (right as Long)
+                "lessOrEqual" -> return (left as Long) <= (right as Long)
+                "greater" -> return (left as Long) > (right as Long)
+                "greaterOrEqual" -> return (left as Long) >= (right as Long)
             }
             BYTE -> when (name) {
                 "compareTo" -> return (left as Long).compareTo(right as Byte)
@@ -588,6 +616,10 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "xor" -> return (left as Short).xor(right as Short)
                 "mod" -> return (left as Short).mod(right as Short)
                 "floorDiv" -> return (left as Short).floorDiv(right as Short)
+                "less" -> return (left as Short) < (right as Short)
+                "lessOrEqual" -> return (left as Short) <= (right as Short)
+                "greater" -> return (left as Short) > (right as Short)
+                "greaterOrEqual" -> return (left as Short) >= (right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Short).compareTo(right as Int)
@@ -848,7 +880,12 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             }
             else -> {}
         }
-        else -> {}
+        ANY -> when (rightType) {
+            ANY -> when (name) {
+                "EQEQ" -> return (left) == (right)
+            }
+            else -> {}
+        }
     }
     return null
 }
@@ -1612,6 +1649,39 @@ private val knownOps = setOf(
     "kotlin/UShort.times(USHORT, UINT)",
     "kotlin/UShort.times(USHORT, ULONG)",
     "kotlin/UShort.xor(USHORT, USHORT)",
+    "kotlin/internal/ir/less(CHAR, CHAR)",
+    "kotlin/internal/ir/less(BYTE, BYTE)",
+    "kotlin/internal/ir/less(SHORT, SHORT)",
+    "kotlin/internal/ir/less(INT, INT)",
+    "kotlin/internal/ir/less(FLOAT, FLOAT)",
+    "kotlin/internal/ir/less(LONG, LONG)",
+    "kotlin/internal/ir/less(DOUBLE, DOUBLE)",
+    "kotlin/internal/ir/lessOrEqual(CHAR, CHAR)",
+    "kotlin/internal/ir/lessOrEqual(BYTE, BYTE)",
+    "kotlin/internal/ir/lessOrEqual(SHORT, SHORT)",
+    "kotlin/internal/ir/lessOrEqual(INT, INT)",
+    "kotlin/internal/ir/lessOrEqual(FLOAT, FLOAT)",
+    "kotlin/internal/ir/lessOrEqual(LONG, LONG)",
+    "kotlin/internal/ir/lessOrEqual(DOUBLE, DOUBLE)",
+    "kotlin/internal/ir/greater(CHAR, CHAR)",
+    "kotlin/internal/ir/greater(BYTE, BYTE)",
+    "kotlin/internal/ir/greater(SHORT, SHORT)",
+    "kotlin/internal/ir/greater(INT, INT)",
+    "kotlin/internal/ir/greater(FLOAT, FLOAT)",
+    "kotlin/internal/ir/greater(LONG, LONG)",
+    "kotlin/internal/ir/greater(DOUBLE, DOUBLE)",
+    "kotlin/internal/ir/greaterOrEqual(CHAR, CHAR)",
+    "kotlin/internal/ir/greaterOrEqual(BYTE, BYTE)",
+    "kotlin/internal/ir/greaterOrEqual(SHORT, SHORT)",
+    "kotlin/internal/ir/greaterOrEqual(INT, INT)",
+    "kotlin/internal/ir/greaterOrEqual(FLOAT, FLOAT)",
+    "kotlin/internal/ir/greaterOrEqual(LONG, LONG)",
+    "kotlin/internal/ir/greaterOrEqual(DOUBLE, DOUBLE)",
+    "kotlin/internal/ir/EQEQ(ANY, ANY)",
+    "kotlin/internal/ir/ieee754equals(FLOAT, FLOAT)",
+    "kotlin/internal/ir/ieee754equals(DOUBLE, DOUBLE)",
+    "kotlin/internal/ir/ANDAND(BOOLEAN, BOOLEAN)",
+    "kotlin/internal/ir/OROR(BOOLEAN, BOOLEAN)",
 )
 fun canEvalOp(callableId: CallableId, typeA: CompileTimeType?, typeB: CompileTimeType?): Boolean {
     val types = when {

@@ -163,6 +163,6 @@ publishing {
     }
 
     repositories {
-        maven(rootProject.layout.buildDirectory.dir("internal/repo"))
+        maven(rootProject.isolated.projectDirectory.dir("build/internal/repo"))
     }
 }

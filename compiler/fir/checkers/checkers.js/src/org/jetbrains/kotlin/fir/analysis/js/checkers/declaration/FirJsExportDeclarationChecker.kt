@@ -232,7 +232,13 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             }
 
             is FirTypeAlias -> {
-                reportWrongExportedDeclaration("typealias")
+                if (LanguageFeature.JsAllowExportTypealiases.isEnabled()) {
+                    declaration.expandedTypeRef
+                        .takeIf { !it.coneType.isExportable() }
+                        ?.let {
+                            reporter.reportOn(it.source, FirJsErrors.NON_EXPORTABLE_TYPE, "referenced type", it.coneType)
+                        }
+                } else reportWrongExportedDeclaration("typealias")
             }
 
             else -> {
