@@ -107,15 +107,15 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
 
-    private val commonFlavor = FlavorConfig(TargetBackend.ANDROID, "common", 5)
-    private val reflectFlavor = FlavorConfig(TargetBackend.ANDROID, "reflect", 1)
+    private val commonFlavor = FlavorConfig("common", 5)
+    private val reflectFlavor = FlavorConfig("reflect", 1)
 
-    class FlavorConfig(private val backend: TargetBackend, private val prefix: String, val limit: Int) {
+    class FlavorConfig(private val prefix: String, val limit: Int) {
 
         private var writtenFilesCount = 0
 
         fun printStatistics() {
-            println("FlavorTestCompiler for $backend: $prefix, generated file count: $writtenFilesCount")
+            println("FlavorTestCompiler for ${TargetBackend.ANDROID}: $prefix, generated file count: $writtenFilesCount")
         }
 
         fun getFlavorForNewFiles(newFilesCount: Int): String {
