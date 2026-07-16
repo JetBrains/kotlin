@@ -26,7 +26,7 @@ internal val KaCallableSymbol.sirCallableKind: SirCallableKind
             -> TODO("encountered callable location($location) that is not translatable currently. Fix this crash during KT-65980.")
     }
 
-internal fun KaSymbol.documentation(): String? = this.psiSafe<KtDeclaration>()?.docComment?.text
+internal fun KaSymbol.documentation(): String? = (this.anchorPsi as? KtDeclaration)?.docComment?.text
 
 internal val KaSymbolModality.sirModality: SirModality
     get() = when (this) {

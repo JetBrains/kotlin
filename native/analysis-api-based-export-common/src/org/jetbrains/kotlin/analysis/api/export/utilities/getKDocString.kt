@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
 public fun KaSymbol.getKDocString(): String? {
-    val psi = psi
+    val psi = anchorPsi
     if (psi is KtDeclaration) {
         if (psi is KtPrimaryConstructor)
             return null  // to be rendered with class itself

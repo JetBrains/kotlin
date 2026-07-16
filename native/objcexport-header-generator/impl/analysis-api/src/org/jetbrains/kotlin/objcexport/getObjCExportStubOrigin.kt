@@ -19,7 +19,7 @@ fun KaSession.getObjCExportStubOrigin(symbol: KaSymbol): ObjCExportStubOrigin {
     // TODO: Extract kdoc from deserialized symbols
     return ObjCExportStubOrigin.Source(
         name = symbol.name,
-        psi = symbol.psi,
+        psi = symbol.anchorPsi,
         kdoc = symbol.getKDocString()
     )
 }
