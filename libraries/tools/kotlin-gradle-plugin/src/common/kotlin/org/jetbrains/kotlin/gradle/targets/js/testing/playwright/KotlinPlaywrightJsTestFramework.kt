@@ -37,6 +37,7 @@ import java.time.Duration
 import javax.inject.Inject
 import kotlin.time.toKotlinDuration
 
+
 /**
  * Kotlin/JS browser test framework backed by [Playwright][com.microsoft.playwright.Playwright]
  */
@@ -104,6 +105,13 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override val executable: Property<String> = objects.property(nodeJs.executable)
 
+    /**
+     * Chromium remote debugging port supplied by IntelliJ IDEA when a Playwright browser test debug session is started.
+     * The Ultimate Gradle init script sets it before Gradle asks this framework to create the execution spec.
+     */
+    @Suppress("unused")
+    val debugPort: Property<Int> = objects.property<Int>()
+
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
         NpmPackageVersion("playwright-core", PLAYWRIGHT_VERSION)
@@ -113,6 +121,20 @@ internal class KotlinPlaywrightJsTestFramework(
     internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty().convention(compilation.npmToolingDir())
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
+
+    /**
+     * Used by IntelliJ IDEA to determine the Playwright test page URL for browser test debug sessions.
+     * Called from the Ultimate Gradle init script before the browser is launched, so source mappings can be prepared.
+     */
+    @Suppress("unused")
+    fun buildDebugUrl(task: KotlinJsTest): URI {
+        val cliArgs = KotlinTestRunnerCliArgs(
+            include = task.includePatterns,
+            exclude = task.excludePatterns,
+        ).toList()
+        val runner = firstRunnerInput()
+        return runner.buildRunnerUrl(runner.testsLocation.get().url.get(), cliArgs)
+    }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -134,16 +156,34 @@ internal class KotlinPlaywrightJsTestFramework(
         ).toList()
 
         val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
+        val debugOptions = if (debug) PwDebugOptions(
+            remoteDebuggingPort = debugPort.orNull,
+        ) else null
 
         val pwRunners = buildList {
-            frameworkTaskInputs.chromiumRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, browsersDirectory, cliArgs))
-            }
-            frameworkTaskInputs.firefoxRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, browsersDirectory, cliArgs))
-            }
-            frameworkTaskInputs.webkitRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, browsersDirectory, cliArgs))
+            val chromiumRunners = frameworkTaskInputs.chromiumRunners.get()
+            if (debugOptions?.remoteDebuggingPort != null) {
+                // IntelliJ attaches to Playwright through Chromium CDP, so debug runs use one Chromium runner.
+                val runner = chromiumRunners.firstOrNull() ?: firstRunnerInput()
+                add(
+                    runner.createPwRunnerSpec(
+                        PwBrowserKind.CHROMIUM,
+                        browsersDirectory,
+                        cliArgs,
+                        debugOptions,
+                        useRunnerBrowserLaunchSettings = runner in chromiumRunners,
+                    )
+                )
+            } else {
+                chromiumRunners.forEach {
+                    add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, browsersDirectory, cliArgs, debugOptions))
+                }
+                frameworkTaskInputs.firefoxRunners.get().forEach {
+                    add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, browsersDirectory, cliArgs, debugOptions))
+                }
+                frameworkTaskInputs.webkitRunners.get().forEach {
+                    add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, browsersDirectory, cliArgs, debugOptions))
+                }
             }
         }
 
@@ -162,6 +202,8 @@ internal class KotlinPlaywrightJsTestFramework(
         kind: PwBrowserKind,
         browsersDirectory: Path,
         cliArgs: List<String>,
+        debugOptions: PwDebugOptions?,
+        useRunnerBrowserLaunchSettings: Boolean = true,
     ): PwRunnerSpec = PwRunnerSpec(
         name = name.get(),
         browserKind = kind,
@@ -171,19 +213,26 @@ internal class KotlinPlaywrightJsTestFramework(
         timeout = timeout.get().toKotlinDuration(),
         finishMarker = finishMarker.get(),
         headless = headless.get(),
-        launchArgs = launchArgs.get(),
-        launchEnvironmentVariables = launchEnvironmentVariables.get(),
-        customBrowserExecutable = customBrowserExecutable.asPathOrNull
+        // Firefox/WebKit fallback reuses the test URL/config, but must not reuse browser-specific launch settings for Chromium.
+        launchArgs = if (useRunnerBrowserLaunchSettings) launchArgs.get() else emptyList(),
+        launchEnvironmentVariables = if (useRunnerBrowserLaunchSettings) launchEnvironmentVariables.get() else emptyMap(),
+        customBrowserExecutable = if (useRunnerBrowserLaunchSettings) customBrowserExecutable.asPathOrNull else null,
+        debugOptions = debugOptions,
     )
 
     private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>): URI {
         val runnerConfig = KotlinBrowserRunnerConfig(
-            timeout = timeout.get(),
             testsFinishedMarker = finishMarker.get(),
             kotlinTestCliArguments = cliArgs
         )
         return runnerConfig.buildUrlWithConfigState(baseUrl)
     }
+
+    private fun firstRunnerInput(): BrowserRunnerInput =
+        frameworkTaskInputs.chromiumRunners.get().firstOrNull()
+            ?: frameworkTaskInputs.firefoxRunners.get().firstOrNull()
+            ?: frameworkTaskInputs.webkitRunners.get().firstOrNull()
+            ?: error("No Playwright browser runners configured")
 
     companion object {
         fun createInputs(objects: ObjectFactory): Inputs =
