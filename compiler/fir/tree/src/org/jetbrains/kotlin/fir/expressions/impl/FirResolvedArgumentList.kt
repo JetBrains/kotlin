@@ -78,6 +78,12 @@ internal class FirResolvedArgumentListImpl(
             .let { if (it.size == mappingIncludingContextArguments.size) mappingIncludingContextArguments else it }
     }
 
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        for (argument in mappingIncludingContextArguments.keys) {
+            argument.accept(visitor, data)
+        }
+    }
+
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
         mappingIncludingContextArguments = mappingIncludingContextArguments.mapKeys { [k, _] -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter>
         mapping = filterArgumentMapping()
