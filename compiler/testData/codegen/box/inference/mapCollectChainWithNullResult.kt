@@ -28,11 +28,11 @@ fun <T, R> Flow<T>.map(transform: (T) -> R): Flow<R> =
 
 var result: Any? = "not null"
 
-fun main() {
+fun main1() {
     flow<Int> { emit(1) }.map { null }.collect { result = it }
 }
 
 fun box(): String {
-    main()
+    main1()
     return if (result == null) "OK" else "fail: $result"
 }

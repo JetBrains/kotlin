@@ -8,7 +8,7 @@ operator fun <T> SequenceScope<String>.plusAssign(x: SequenceScope<T>) {}
 
 fun <T> mySequence(block: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(block) }
 
-fun main() {
+fun main1() {
     val y: Sequence<String> = mySequence {
         yield("result")
         this += this
@@ -16,6 +16,6 @@ fun main() {
 }
 
 fun box(): String {
-    main()
+    main1()
     return "OK"
 }

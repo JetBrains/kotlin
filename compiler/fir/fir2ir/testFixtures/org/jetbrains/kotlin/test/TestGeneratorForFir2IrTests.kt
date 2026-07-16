@@ -37,6 +37,11 @@ fun main(args: Array<String>) {
                 model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
             }
 
+            testClass<AbstractValhallaBlackBoxSmokeTest> {
+                model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+                model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+            }
+
             testClass<AbstractFirLightTreeHeaderModeCodegenTest> {
                 model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
                 model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)

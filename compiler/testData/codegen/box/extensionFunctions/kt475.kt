@@ -5,14 +5,14 @@ fun box() : String {
   array.add("0")
   array.add("1")
   array.add("2")
-  array.last = "5"
-  return if(array.length == 3 && array.last == "5") "OK" else "fail"
+  array.last1 = "5"
+  return if(array.length == 3 && array.last1 == "5") "OK" else "fail"
 }
 
 var <T> ArrayList<T>.length : Int
     get() = size
     set(value: Int) = throw Error()
 
-var <T> ArrayList<T>.last : T
+var <T> ArrayList<T>.last1 : T
     get() = get(size-1)!!
     set(el : T) { set(size-1, el) }

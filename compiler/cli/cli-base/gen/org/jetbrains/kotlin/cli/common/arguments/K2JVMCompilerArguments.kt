@@ -674,6 +674,17 @@ This can be used in the event of problems with the new implementation.""",
         }
 
     @Argument(
+        value = "-Xvalhalla-support",
+        valueDescription = "{none|primitives|primitivesAndFullValueClasses|allValues}",
+        description = "Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.",
+    )
+    var valhallaSupport: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xvalidate-bytecode",
         description = "Validate generated JVM bytecode before and after optimizations.",
     )

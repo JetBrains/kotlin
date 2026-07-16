@@ -9837,6 +9837,51 @@
                                 "deprecatedMessage": null
                             },
                             {
+                                "name": "Xvalhalla-support",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": "{none|primitives|primitivesAndFullValueClasses|allValues}",
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.5.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.ValhallaSupportModeType",
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "deprecatedMessage": null
+                            },
+                            {
                                 "name": "Xvalidate-bytecode",
                                 "shortName": null,
                                 "deprecatedName": null,

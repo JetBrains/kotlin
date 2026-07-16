@@ -182,6 +182,15 @@ public class KtTestUtil {
     }
 
     @NotNull
+    public static File getJdkValhallaHome() {
+        return getJdkHome("JDK_VALHALLA");
+    }
+
+    public static boolean isJdkValhallaAvailable() {
+        return getStringProperty("JDK_VALHALLA") != null;
+    }
+
+    @NotNull
     public static String getTestDataPathBase() {
         return getHomeDirectory() + "/compiler/testData";
     }

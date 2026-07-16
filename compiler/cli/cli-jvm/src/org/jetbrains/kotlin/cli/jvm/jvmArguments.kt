@@ -91,6 +91,17 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
 
+    when (ValhallaSupportMode.fromStringOrNull(arguments.valhallaSupport)) {
+        ValhallaSupportMode.NONE, null -> {}
+        else ->
+            if (jvmTarget.majorVersion < JvmTarget.JVM_27.majorVersion || !arguments.enableJvmPreview) {
+                this.report(
+                    COMPILER_ARGUMENTS_ERROR,
+                    "Project Valhalla support ('-Xvalhalla-support') requires JVM target 27 or later and the '-Xjvm-enable-preview' flag."
+                )
+            }
+    }
+
     val stringConcat = arguments.stringConcat
     if (stringConcat != null) {
         val runtimeStringConcat = JvmStringConcat.fromString(stringConcat)

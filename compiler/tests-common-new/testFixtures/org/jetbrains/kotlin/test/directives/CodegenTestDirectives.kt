@@ -81,6 +81,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Ignore dex checkers"
     )
 
+    val IGNORE_VALHALLA by directive(
+        description = "Ignore the test in the Valhalla codegen smoke test runner (e.g. behaviour that legitimately differs on a real Valhalla JDK)"
+    )
+
     val IGNORE_ERRORS by directive(
         description = """
             If this directive is enabled then ${JvmIrBackendFacade::class} won't produce any binaries for test

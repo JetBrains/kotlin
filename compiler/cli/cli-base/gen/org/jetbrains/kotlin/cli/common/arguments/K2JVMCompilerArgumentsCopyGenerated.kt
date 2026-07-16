@@ -82,6 +82,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme
     to.useTypeTable = from.useTypeTable
+    to.valhallaSupport = from.valhallaSupport
     to.validateBytecode = from.validateBytecode
     to.whenExpressionsGeneration = from.whenExpressionsGeneration
 

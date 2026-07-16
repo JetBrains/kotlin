@@ -27,6 +27,10 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
                 putAnalysisFlag(JvmAnalysisFlags.jvmDefaultMode, it)
             }
 
+            configureValhallaSupport(reporter)?.let {
+                putAnalysisFlag(JvmAnalysisFlags.valhallaSupport, it)
+            }
+
             putAnalysisFlag(JvmAnalysisFlags.inheritMultifileParts, inheritMultifileParts)
             putAnalysisFlag(JvmAnalysisFlags.sanitizeParentheses, sanitizeParentheses)
             putAnalysisFlag(JvmAnalysisFlags.suppressMissingBuiltinsError, suppressMissingBuiltinsError)
@@ -34,6 +38,20 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
             putAnalysisFlag(JvmAnalysisFlags.implicitJvmExposeBoxed, jvmExposeBoxed)
             putAnalysisFlag(AnalysisFlags.allowUnstableDependencies, allowUnstableDependencies)
             putAnalysisFlag(JvmAnalysisFlags.outputBuiltinsMetadata, outputBuiltinsMetadata)
+        }
+    }
+
+    private fun K2JVMCompilerArguments.configureValhallaSupport(reporter: Reporter): ValhallaSupportMode? {
+        val valhallaSupport = valhallaSupport ?: return null
+        return when (val mode = ValhallaSupportMode.fromStringOrNull(valhallaSupport)) {
+            null -> {
+                reporter.reportError(
+                    "Unknown -Xvalhalla-support mode: $valhallaSupport, supported modes: " +
+                            "${ValhallaSupportMode.entries.map(ValhallaSupportMode::description)}"
+                )
+                null
+            }
+            else -> mode
         }
     }
 

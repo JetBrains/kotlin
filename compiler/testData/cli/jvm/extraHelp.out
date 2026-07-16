@@ -139,6 +139,8 @@ where advanced options include:
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
   -Xuse-type-table           Use a type table in metadata serialization.
+  -Xvalhalla-support={none|primitives|primitivesAndFullValueClasses|allValues}
+                             Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.
   -Xvalidate-bytecode        Validate generated JVM bytecode before and after optimizations.
   -Xwhen-expressions={indy|inline}
                              Select the code generation scheme for type-checking 'when' expressions:

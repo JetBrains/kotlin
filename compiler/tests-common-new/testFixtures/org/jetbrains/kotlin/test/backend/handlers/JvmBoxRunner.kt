@@ -199,6 +199,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
+            TestJdkKind.FULL_JDK_VALHALLA -> KtTestUtil.getJdkValhallaHome()
             // Test-infrastructure invariant violation (not a failure of the code under test): throw a
             // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
             else -> testInfraError("Unsupported JDK kind: $jdkKind")

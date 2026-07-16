@@ -202,6 +202,15 @@ class JvmDefaultModeType : EnumType<JvmDefaultMode>(ReleaseDependent(true)) {
 }
 
 /**
+ * A value which accepts [ValhallaSupportMode] type.
+ */
+@ExperimentalArgumentApi
+@Serializable
+class ValhallaSupportModeType : EnumType<ValhallaSupportMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<ValhallaSupportMode?> = ReleaseDependent(null)
+}
+
+/**
  * A value which accepts [AbiStabilityMode] type.
  */
 @ExperimentalArgumentApi

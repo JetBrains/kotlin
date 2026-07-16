@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JVM_IR
+// IGNORE_VALHALLA
+// ^ Boxes of primitives always have no observable identity with Valhalla
 
 fun box(): String {
     val zero: Float = 0.0f

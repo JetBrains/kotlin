@@ -296,6 +296,11 @@ fun TestConfigurationBuilder.configureModernJavaWhenNeeded() {
     forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava21/*") {
         configureModernJavaTest(TestJdkKind.FULL_JDK_21, JvmTarget.JVM_21)
     }
+
+    forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithValhalla/*") {
+        defaultDirectives { configureValhallaDefaultDirectives() }
+        useMetaTestConfigurators(::ValhallaJdkAvailabilitySkipper)
+    }
 }
 
 /**
