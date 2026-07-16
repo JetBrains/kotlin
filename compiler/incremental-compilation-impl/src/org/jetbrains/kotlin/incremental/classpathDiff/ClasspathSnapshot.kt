@@ -35,6 +35,14 @@ class ClasspathEntrySnapshot(
      * rebuild of a consuming module (see the diffing logic).
      */
     val moduleInfoHash: Long? = null,
+
+    /**
+     * These are intentionally excluded from [classSnapshots] (nobody looks up the synthetic `package-info` symbol), so a change to a
+     * dependency's package-level annotations — e.g. nullability defaults — would otherwise be invisible to incremental compilation. We
+     * only need to detect *whether* they changed, so a content hash is enough; a differing hash forces a non-incremental rebuild of a
+     * consuming module (see the diffing logic). Over-triggering (a byte-different but semantically-equal descriptor) is safe and rare.
+     */
+    val packageInfoHash: Long? = null,
 )
 
 /**

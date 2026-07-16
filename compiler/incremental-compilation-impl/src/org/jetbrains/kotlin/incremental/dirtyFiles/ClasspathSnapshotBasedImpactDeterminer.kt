@@ -45,20 +45,28 @@ internal class ClasspathSnapshotBasedImpactDeterminer (
                 val currentModuleInfoHashes =
                     lazyClasspathSnapshot.getCurrentModuleInfoHashes(LazySnapshotLoadingMetrics.OnClasspathDiffComputation)
                 val previousModuleInfoHashes =
-                    loadPreviousModuleInfoHashes(classpathChanges.classpathSnapshotFiles.previousModuleInfoHashesFile)
-                if (currentModuleInfoHashes != previousModuleInfoHashes) {
-                    ChangesEither.Unknown(BuildAttribute.DEPENDENCY_MODULE_INFO_CHANGED)
-                } else {
-                    val classpathChanges = computeClasspathChanges(
-                        caches.lookupCache,
-                        lazyClasspathSnapshot,
-                        ClasspathSnapshotBuildReporter(reporter)
-                    )
-                    // `classpathChanges` contains changed and impacted symbols on the classpath.
-                    // We also need to compute symbols in the current module that are impacted by `classpathChanges`.
-                    classpathChanges.toChangeInfoList()
-                        .getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
-                        .toChangesEither()
+                    loadPreviousHashes(classpathChanges.classpathSnapshotFiles.previousModuleInfoHashesFile)
+                val currentPackageInfoHashes =
+                    lazyClasspathSnapshot.getCurrentPackageInfoHashes(LazySnapshotLoadingMetrics.OnClasspathDiffComputation)
+                val previousPackageInfoHashes =
+                    loadPreviousHashes(classpathChanges.classpathSnapshotFiles.previousPackageInfoHashesFile)
+                when {
+                    currentModuleInfoHashes != previousModuleInfoHashes ->
+                        ChangesEither.Unknown(BuildAttribute.DEPENDENCY_MODULE_INFO_CHANGED)
+                    currentPackageInfoHashes != previousPackageInfoHashes ->
+                        ChangesEither.Unknown(BuildAttribute.DEPENDENCY_PACKAGE_INFO_CHANGED)
+                    else -> {
+                        val classpathChanges = computeClasspathChanges(
+                            caches.lookupCache,
+                            lazyClasspathSnapshot,
+                            ClasspathSnapshotBuildReporter(reporter)
+                        )
+                        // `classpathChanges` contains changed and impacted symbols on the classpath.
+                        // We also need to compute symbols in the current module that are impacted by `classpathChanges`.
+                        classpathChanges.toChangeInfoList()
+                            .getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
+                            .toChangesEither()
+                    }
                 }
             }
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
@@ -69,7 +77,7 @@ internal class ClasspathSnapshotBasedImpactDeterminer (
     }
 }
 
-private fun loadPreviousModuleInfoHashes(file: File): Set<Long> =
+private fun loadPreviousHashes(file: File): Set<Long> =
     if (file.exists()) ListExternalizer(LongExternalizer).loadFromFile(file).toSet() else emptySet()
 
 private fun DirtyData.toChangesEither(): ChangesEither.Known {

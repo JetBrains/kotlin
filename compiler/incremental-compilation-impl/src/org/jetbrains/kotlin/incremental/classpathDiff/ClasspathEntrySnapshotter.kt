@@ -35,6 +35,7 @@ object ClasspathEntrySnapshotter {
         !isDirectory
                 && unixStyleRelativePath.endsWith(".class", ignoreCase = true)
                 && !unixStyleRelativePath.equals("module-info.class", ignoreCase = true)
+                && !isPackageInfoClassPath(unixStyleRelativePath)
                 && !unixStyleRelativePath.startsWith("meta-inf/", ignoreCase = true)
     }
 
@@ -45,6 +46,27 @@ object ClasspathEntrySnapshotter {
         val version = path.removePrefix("meta-inf/versions/").removeSuffix("/module-info.class")
         return version.toIntOrNull() != null
     }
+
+    private fun isPackageInfoClassPath(unixStyleRelativePath: String): Boolean {
+        val path = unixStyleRelativePath.lowercase()
+        return path == "package-info.class" || path.endsWith("/package-info.class")
+    }
+
+    /**
+     * Paths must already be sorted (as [DirectoryOrJarReader.getUnixStyleRelativePaths] returns them) so the result is stable;
+     * each path is folded in alongside its bytes, so relocating a file (e.g. between multi-release version dirs) also counts as a change.
+     */
+    private fun combinedContentHash(reader: DirectoryOrJarReader, paths: List<String>): Long? =
+        paths.takeIf { it.isNotEmpty() }?.let {
+            val buffer = ByteArrayOutputStream()
+            DataOutputStream(buffer).use { out ->
+                for (path in paths) {
+                    out.writeUTF(path)
+                    out.write(reader.readBytes(path))
+                }
+            }
+            buffer.toByteArray().hashToLong()
+        }
 
     fun snapshot(
         classpathEntry: File,
@@ -68,22 +90,18 @@ object ClasspathEntrySnapshotter {
                 }
                 classListSnapshotter.snapshot()
             }
-            val moduleInfoPaths = directoryOrJarReader
-                .getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isModuleInfoClassPath(path) }
-            val moduleInfoHash = moduleInfoPaths.takeIf { it.isNotEmpty() }?.let { paths ->
-                // `paths` is already sorted by getUnixStyleRelativePaths, so the combined hash is deterministic.
-                val buffer = ByteArrayOutputStream()
-                DataOutputStream(buffer).use { out ->
-                    for (path in paths) {
-                        out.writeUTF(path)
-                        out.write(directoryOrJarReader.readBytes(path))
-                    }
-                }
-                buffer.toByteArray().hashToLong()
-            }
+            val moduleInfoHash = combinedContentHash(
+                directoryOrJarReader,
+                directoryOrJarReader.getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isModuleInfoClassPath(path) }
+            )
+            val packageInfoHash = combinedContentHash(
+                directoryOrJarReader,
+                directoryOrJarReader.getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isPackageInfoClassPath(path) }
+            )
             return ClasspathEntrySnapshot(
                 classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap()),
                 moduleInfoHash = moduleInfoHash,
+                packageInfoHash = packageInfoHash,
             )
         }
     }
