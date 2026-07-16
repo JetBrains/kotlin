@@ -76,5 +76,5 @@ internal fun KaSession.getPsiDeclarations(symbol: KaSymbol): Collection<PsiEleme
 
 private fun KaSymbol.unwrapPsi(): PsiElement? = when (this) {
     is KaBackingFieldSymbol -> owningProperty.unwrapPsi()
-    else -> psi
+    else -> anchorPsi
 }

@@ -793,7 +793,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
 
         val kotlinClass = analyze(mainModule) {
             val symbol = findClass(ClassId.fromString("org/test/KotlinClass"))!!
-            symbol.psi as KtClassOrObject
+            symbol.realPsi as KtClassOrObject
         }
 
         session.block(kotlinClass)

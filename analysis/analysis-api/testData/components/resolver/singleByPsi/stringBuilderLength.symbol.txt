@@ -5,4 +5,4 @@ KtNameReferenceExpression(47,53): 'length'
     symbols = [
       val length: kotlin.Int
     ]
-  PSI class names: null
+  PSI class names: ClsClassImpl

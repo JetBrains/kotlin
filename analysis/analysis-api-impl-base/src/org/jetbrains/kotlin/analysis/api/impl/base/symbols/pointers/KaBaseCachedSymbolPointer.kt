@@ -73,7 +73,7 @@ abstract class KaBaseCachedSymbolPointer<out S : KaSymbol>(originalSymbol: S?) :
                 is KaConstructorSymbol -> this.containingClassId?.isLocal == false
                 is KaCallableSymbol -> this.callableId?.isLocal == false
                 is KaClassLikeSymbol -> this.classId?.isLocal == false
-                is KaClassInitializerSymbol -> (this.psi as? KtClassInitializer)?.containingDeclaration?.getClassId()?.isLocal == false
+                is KaClassInitializerSymbol -> (this.realPsi as? KtClassInitializer)?.containingDeclaration?.getClassId()?.isLocal == false
                 is KaScriptSymbol, is KaFileSymbol, is KaPackageSymbol -> true
                 else -> false
             }

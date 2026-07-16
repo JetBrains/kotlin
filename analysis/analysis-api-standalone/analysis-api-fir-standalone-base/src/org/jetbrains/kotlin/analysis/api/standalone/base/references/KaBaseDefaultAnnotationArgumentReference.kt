@@ -25,7 +25,7 @@ internal class KaBaseDefaultAnnotationArgumentReference(
         val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return emptyList()
         val constructorSymbol = annotationEntry.resolveSymbol() ?: return emptyList()
         val firstParam = constructorSymbol.valueParameters.firstOrNull() ?: return emptyList()
-        return listOfNotNull(firstParam.takeIf { it.psi?.isDefaultAnnotationMethod == true })
+        return listOfNotNull(firstParam.takeIf { it.anchorPsi?.isDefaultAnnotationMethod == true })
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {

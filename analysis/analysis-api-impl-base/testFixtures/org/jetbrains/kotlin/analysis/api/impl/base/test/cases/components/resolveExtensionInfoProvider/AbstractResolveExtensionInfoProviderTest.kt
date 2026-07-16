@@ -53,7 +53,7 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
 
     context(_: KaSession)
     private fun getPsiDeclarationInfo(symbol: KaDeclarationSymbol): String = prettyPrint {
-        val ktElement = symbol.psi as? KtElement
+        val ktElement = symbol.anchorPsi as? KtElement
         val containingVirtualFile = ktElement?.containingFile?.virtualFile
         appendLine("PSI: ${ktElement?.getDescription()} [from ${containingVirtualFile?.name}]")
         if (ktElement == null || containingVirtualFile == null) {

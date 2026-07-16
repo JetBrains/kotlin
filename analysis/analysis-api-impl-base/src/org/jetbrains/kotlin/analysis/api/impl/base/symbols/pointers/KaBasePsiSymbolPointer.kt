@@ -75,7 +75,7 @@ class KaBasePsiSymbolPointer<S : KaSymbol> private constructor(
 
             if (symbol.origin != KaSymbolOrigin.SOURCE) return null
 
-            val psi = when (val psi = symbol.psi) {
+            val psi = when (val psi = symbol.realPsi) {
                 is KtDeclaration, is KtFile, is KtContextReceiver -> psi
                 is KtObjectLiteralExpression -> psi.objectDeclaration
                 else -> return null

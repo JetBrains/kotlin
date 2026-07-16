@@ -36,7 +36,7 @@ abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTe
         }
 
         val declaration = analyzeForTest(element) {
-            element.resolveSymbol()?.psi as KtDeclaration
+            element.resolveSymbol()?.anchorPsi as KtDeclaration
         }
 
         val resolutionFacade = LLResolutionFacadeService.getInstance(project).getResolutionFacade(mainModule.ktModule)

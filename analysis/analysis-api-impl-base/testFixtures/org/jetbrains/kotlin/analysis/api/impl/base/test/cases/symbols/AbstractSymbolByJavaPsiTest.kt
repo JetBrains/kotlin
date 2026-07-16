@@ -25,8 +25,8 @@ abstract class AbstractSymbolByJavaPsiTest : AbstractSymbolTest() {
         val symbolByReference = referenceExpression.resolveSymbolPreferringCall() ?: error("Failed to resolve expression")
 
         val javaPsi = when (symbolByReference) {
-            is KaSyntheticJavaPropertySymbol -> symbolByReference.setter?.psi ?: symbolByReference.getter.psi
-            else -> symbolByReference.psi
+            is KaSyntheticJavaPropertySymbol -> symbolByReference.setter?.anchorPsi ?: symbolByReference.getter.anchorPsi
+            else -> symbolByReference.anchorPsi
         }
 
         val symbolByJavaPsi = when (javaPsi) {

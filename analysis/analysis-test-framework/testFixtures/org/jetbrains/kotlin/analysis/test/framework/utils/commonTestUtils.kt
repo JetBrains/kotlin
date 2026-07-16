@@ -34,7 +34,8 @@ fun PsiElement?.position(): String {
 }
 
 fun KaSymbol.getNameWithPositionString(): String {
-    return when (val psi = this.psi) {
+    val psi = this.anchorPsi
+    return when (psi) {
         is KtDeclarationWithBody -> psi.name
         is KtNamedDeclaration -> psi.name
         null -> "null"

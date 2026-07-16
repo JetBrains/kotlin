@@ -51,7 +51,7 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
             val callableSymbol = codeFragmentExpression.resolveSymbol()
 
             // Check whether the code fragment is configured correctly
-            assertions.assertEquals(method, callableSymbol?.psi)
+            assertions.assertEquals(method, callableSymbol?.realPsi)
 
             // Check whether elements from the original file are analyzable
             assertions.assertTrue(simpleClass.canBeAnalysed())
@@ -67,7 +67,7 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
             val callableSymbol = codeFragmentCopyExpression.resolveSymbol()
 
             // Check whether the code fragment copy is configured correctly
-            assertions.assertEquals(method, callableSymbol?.psi)
+            assertions.assertEquals(method, callableSymbol?.realPsi)
 
             // Check whether elements from the original file are analyzable
             assertions.assertTrue(simpleClass.canBeAnalysed())
@@ -119,7 +119,7 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
             val callableSymbol = codeFragmentExpression.resolveSymbol()
 
             // Check whether the code fragment is configured correctly.
-            assertions.assertEquals(method, callableSymbol?.psi)
+            assertions.assertEquals(method, callableSymbol?.realPsi)
 
             // Check whether elements from the dangling file are analyzable.
             assertions.assertTrue(simpleClass.canBeAnalysed())
@@ -143,7 +143,7 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
             val callableSymbol = nestedCodeFragmentExpression.resolveSymbol()
 
             // Check whether the code fragment is configured correctly.
-            assertions.assertEquals(method, callableSymbol?.psi)
+            assertions.assertEquals(method, callableSymbol?.realPsi)
 
             // Check whether elements from the dangling file are analyzable.
             assertions.assertTrue(simpleClass.canBeAnalysed())

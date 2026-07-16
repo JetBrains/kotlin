@@ -342,10 +342,10 @@ internal class KaFirJavaInteroperabilityComponent(
         return with(analysisSession) {
             val combinedMemberScope = classSymbol.combinedDeclaredMemberScope
             if ((psiMember as? PsiMethod)?.isConstructor == true) {
-                combinedMemberScope.constructors.firstOrNull { it.psi == psiMember }
+                combinedMemberScope.constructors.firstOrNull { it.anchorPsi == psiMember }
             } else {
                 val name = psiMember.name?.let(Name::identifier) ?: return null
-                combinedMemberScope.callables(name).firstOrNull { it.psi == psiMember }
+                combinedMemberScope.callables(name).firstOrNull { it.anchorPsi == psiMember }
                     ?: findJavaAccessorMethodBySyntheticProperty(psiMember, name, combinedMemberScope)
             }
         }
@@ -361,7 +361,7 @@ internal class KaFirJavaInteroperabilityComponent(
     context(_: KaFirSession)
     private fun findJavaAccessorMethodBySyntheticProperty(psiMember: PsiMember, name: Name, scope: KaScope): KaCallableSymbol? {
         return scope.findSyntheticJavaPropertyAccessor(name) { propertySymbol, accessorKind, _ ->
-            accessorKind.getJavaAccessorSymbol(propertySymbol)?.takeIf { it.psi == psiMember }
+            accessorKind.getJavaAccessorSymbol(propertySymbol)?.takeIf { it.anchorPsi == psiMember }
         }
     }
 

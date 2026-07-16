@@ -30,7 +30,7 @@ abstract class KaBaseKDocProvider<T : KaSession> : KaBaseSessionComponent<T>(), 
         declaration.lookupOwnedKDoc() ?: declaration.lookupKDocInParent()
 
     override fun findKDoc(symbol: KaDeclarationSymbol): KDocCommentDescriptor? = with(analysisSession) {
-        val ktElement = symbol.psi?.navigationElement as? KtDeclaration
+        val ktElement = symbol.anchorPsi?.navigationElement as? KtDeclaration
         ktElement?.let { findKDoc(it) }?.let { return it }
 
         if (symbol.origin == KaSymbolOrigin.LIBRARY) {

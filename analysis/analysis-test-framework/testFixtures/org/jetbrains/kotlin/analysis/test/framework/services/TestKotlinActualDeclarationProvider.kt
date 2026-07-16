@@ -70,7 +70,7 @@ class TestKotlinActualDeclarationProvider(private val project: Project) : Kotlin
                 for (candidateDeclaration in candidateDeclarations.orEmpty()) {
                     val isMatching = analyze(candidateDeclaration) {
                         val expectDeclarations = candidateDeclaration.symbol.getExpectsForActual()
-                        expectDeclarations.any { declaration == it.psi }
+                        expectDeclarations.any { declaration == it.realPsi }
                     }
 
                     if (isMatching) {

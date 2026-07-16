@@ -24,7 +24,7 @@ abstract class KaBaseVariableSignature<out S : KaVariableSymbol> : KaVariableSig
             //
             //   fun foo(x: (item: Int) -> Unit) { x(1) }
             //   fun bar(x: Function1<@ParameterName("item") Int, Unit>) { x(1) }
-            val nameCanBeDeclaredInAnnotation = symbol.psi == null
+            val nameCanBeDeclaredInAnnotation = symbol.anchorPsi == null
 
             runIf(nameCanBeDeclaredInAnnotation) { getValueFromParameterNameAnnotation() } ?: symbol.name
         }

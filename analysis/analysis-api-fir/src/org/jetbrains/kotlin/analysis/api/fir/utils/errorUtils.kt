@@ -30,7 +30,7 @@ internal fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, analy
         }
     }
 
-    val psi = symbol.psi
+    val psi = symbol.anchorPsi
     val psiModule = psi?.let { context(analysisSession) { it.kaModule } }
     withPsiEntry("${name}Psi", psi, psiModule)
 

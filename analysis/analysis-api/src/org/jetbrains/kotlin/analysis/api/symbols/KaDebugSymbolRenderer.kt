@@ -243,7 +243,7 @@ public class KaDebugRenderer(
                 is KaClassLikeSymbol -> renderId(symbol.classId, symbol)
                 is KaCallableSymbol -> renderId(symbol.callableId, symbol)
                 is KaNamedSymbol -> renderValue(symbol.name, printer, currentSymbolStack)
-                is KaFileSymbol -> renderValue((symbol.psi as KtFile).name, printer, currentSymbolStack)
+                is KaFileSymbol -> renderValue((symbol.anchorPsi as KtFile).name, printer, currentSymbolStack)
                 else -> error("Unsupported symbol ${symbol::class}")
             }
             append(")")
@@ -502,4 +502,3 @@ public class KaDebugRenderer(
         )
     }
 }
-

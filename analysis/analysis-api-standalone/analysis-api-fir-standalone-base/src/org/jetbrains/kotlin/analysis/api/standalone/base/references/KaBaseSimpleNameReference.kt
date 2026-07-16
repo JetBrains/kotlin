@@ -63,12 +63,12 @@ internal class KaBaseSimpleNameReference(
             when (symbol) {
                 is KaSyntheticJavaPropertySymbol ->
                     if (isRead) {
-                        listOfNotNull(symbol.javaGetterSymbol.psi)
+                        listOfNotNull(symbol.javaGetterSymbol.anchorPsi)
                     } else {
-                        if (symbol.javaSetterSymbol == null) listOfNotNull(symbol.javaGetterSymbol.psi)
-                        else listOfNotNull(symbol.javaSetterSymbol?.psi)
+                        if (symbol.javaSetterSymbol == null) listOfNotNull(symbol.javaGetterSymbol.anchorPsi)
+                        else listOfNotNull(symbol.javaSetterSymbol?.anchorPsi)
                     }
-                else -> listOfNotNull(symbol.psi)
+                else -> listOfNotNull(symbol.anchorPsi)
             }
         }
     }

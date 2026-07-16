@@ -92,7 +92,7 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
             }
 
             val regularClassSymbol = findClass(ClassId.fromString("test/JavaBox")) as KaFirPsiJavaClassSymbol
-            val psiBasedClassSymbol = (regularClassSymbol.psi as PsiClass).namedClassSymbol as KaFirPsiJavaClassSymbol
+            val psiBasedClassSymbol = (regularClassSymbol.realPsi as PsiClass).namedClassSymbol as KaFirPsiJavaClassSymbol
             assertEquals(regularClassSymbol, psiBasedClassSymbol)
 
             assertIs<KaFirPsiJavaTypeParameterSymbol>(regularClassSymbol.typeParameters.single())

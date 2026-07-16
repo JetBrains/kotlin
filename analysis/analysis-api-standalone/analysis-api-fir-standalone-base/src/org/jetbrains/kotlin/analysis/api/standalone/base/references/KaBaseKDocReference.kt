@@ -31,7 +31,7 @@ internal class KaBaseKDocReference(element: KDocName) : KDocReference(element), 
     ): Collection<PsiElement> = with(analysisSession) {
         referenceTargetSymbols.flatMap { symbol ->
             when (symbol) {
-                is KaSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.psi, symbol.javaSetterSymbol?.psi)
+                is KaSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.anchorPsi, symbol.javaSetterSymbol?.anchorPsi)
                 is KaSymbol -> getPsiDeclarations(symbol)
             }
         }

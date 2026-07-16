@@ -50,7 +50,7 @@ abstract class AbstractResolveDanglingFileSymbolTest : AbstractResolveSymbolTest
     context(session: KaSession)
     override fun additionalSymbolInfo(attempt: KaSymbolResolutionAttempt): String? {
         return attempt.symbols
-            .mapNotNull { it.psi?.containingFile?.name }
+            .mapNotNull { it.anchorPsi?.containingFile?.name }
             .takeUnless(List<String>::isEmpty)
             ?.toString()
     }

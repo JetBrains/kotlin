@@ -69,7 +69,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             if (Directives.RENDER_PSI_CLASS_NAME in testServices.moduleStructure.allDirectives) {
                 val symbols = symbolAttempt?.symbols.orEmpty()
                 printCollectionIfNotEmpty(symbols, prefix = "\nPSI class names: ") { symbol ->
-                    append(symbol.psi?.let { it::class.simpleName }.toString())
+                    append(symbol.anchorPsi?.let { it::class.simpleName }.toString())
                 }
             }
 
