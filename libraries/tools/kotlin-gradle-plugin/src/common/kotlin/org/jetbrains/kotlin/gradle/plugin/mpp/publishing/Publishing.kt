@@ -12,6 +12,10 @@ import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.api.publish.maven.tasks.GenerateMavenPom
+import org.gradle.api.publish.tasks.GenerateModuleMetadata
+import org.gradle.plugins.signing.Sign
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -162,7 +166,52 @@ private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publicati
 
             (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
             onPublicationCreated(componentPublication)
+
+            // Also skip publishing when a project dependency disables cross-compilation (KT-87394).
+            if (this@createTargetSpecificMavenPublications is KotlinNativeTarget) {
+                skipPublicationTasksWhenCrossCompilationWithDependenciesUnsupported(componentPublication)
+            }
         }
+}
+
+/**
+ * The publication is created eagerly, but the target's compilation may be skipped by the dependency-aware
+ * cross-compilation check. Gate its publish tasks on the same check so they don't fail on a missing KLIB.
+ */
+private fun KotlinNativeTarget.skipPublicationTasksWhenCrossCompilationWithDependenciesUnsupported(
+    publication: MavenPublication
+) {
+    val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+    val crossCompilationSharedData = mainCompilation.crossCompilationSharedData
+    fun isCrossCompilationSupported() = crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
+
+    val skipReason = "Cross compilation should be possible with project dependencies"
+
+    // These tasks expose the publication they operate on, so match by identity.
+    project.tasks.withType<GenerateModuleMetadata>().configureEach { task ->
+        if (task.publication.orNull === publication) {
+            task.onlyIf(skipReason) { isCrossCompilationSupported() }
+        }
+    }
+    project.tasks.withType<GenerateMavenPom>().configureEach { task ->
+        if (task.pom === publication.pom) {
+            task.onlyIf(skipReason) { isCrossCompilationSupported() }
+        }
+    }
+    project.tasks.withType<AbstractPublishToMaven>().configureEach { task ->
+        if (task.publication === publication) {
+            task.onlyIf(skipReason) { isCrossCompilationSupported() }
+        }
+    }
+
+    // The signing plugin's Sign task has no public accessor for the publication it signs, so it is matched
+    // by its conventional name 'sign<Publication>Publication'.
+    val signTaskName = lowerCamelCaseName("sign", publication.name, "publication")
+    project.tasks.withType<Sign>().configureEach { task ->
+        if (task.name == signTaskName) {
+            task.onlyIf(skipReason) { isCrossCompilationSupported() }
+        }
+    }
 }
 
 internal fun Configuration.configureSourcesPublicationAttributes(target: KotlinTarget) {
