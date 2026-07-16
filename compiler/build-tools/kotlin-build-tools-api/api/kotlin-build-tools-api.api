@@ -1225,6 +1225,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JdkReleas
 	public static final field JDK_24 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_25 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_26 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_27 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_6 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_7 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_8 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
@@ -1307,6 +1308,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget
 	public static final field JVM_24 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static final field JVM_25 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static final field JVM_26 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
+	public static final field JVM_27 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
