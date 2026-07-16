@@ -16,5 +16,6 @@ public enum class ReturnValueCheckerMode(
   CHECKER("check"),
   FULL("full"),
   DISABLED("disable"),
+  DEFAULT("default"),
   ;
 }
