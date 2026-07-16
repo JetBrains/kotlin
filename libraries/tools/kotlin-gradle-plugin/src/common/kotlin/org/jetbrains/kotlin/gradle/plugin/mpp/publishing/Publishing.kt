@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.publicationLayout
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
@@ -123,8 +124,8 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
             }
         }
         .all { kotlinTarget ->
-            /** Publication for [KotlinMetadataTarget] is created in [createRootPublication] */
-            if (kotlinTarget is KotlinMetadataTarget) return@all
+            if (kotlinTarget.publicationLayout == KotlinTargetPublicationLayout.IN_ROOT_COMPONENT) return@all
+
             when (kotlinTarget) {
                 // Android targets have their variants created in afterEvaluate; TODO handle this better?
                 is KotlinAndroidTarget -> project.whenEvaluated {
@@ -146,16 +147,6 @@ private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publicati
     kotlinComponents
         .filter { kotlinComponent -> kotlinComponent.publishableOnCurrentHost }
         .forEach { kotlinComponent ->
-            // The code below is mostly undesired, but we need the side effect of calling 'getComponents()'
-            if (this !is KotlinJvmTarget) {
-                project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
-                    components
-                }
-
-                return@forEach
-            }
-
-
             val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java).apply {
                 val publication = this
 

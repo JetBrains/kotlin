@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.extrasStoredFuture
@@ -27,6 +28,7 @@ val KotlinTarget.publicationLayout: KotlinTargetPublicationLayout
     get() = when (this) {
         is KotlinJvmTarget, is KotlinAndroidTarget, is KotlinWithJavaTarget<*, *> -> KotlinTargetPublicationLayout.IN_SEPARATE_COMPONENT
         is KotlinMetadataTarget -> KotlinTargetPublicationLayout.IN_ROOT_COMPONENT
+        is DecoratedExternalKotlinTarget -> KotlinTargetPublicationLayout.IN_SEPARATE_COMPONENT
         else -> KotlinTargetPublicationLayout.IN_ROOT_COMPONENT
     }
 

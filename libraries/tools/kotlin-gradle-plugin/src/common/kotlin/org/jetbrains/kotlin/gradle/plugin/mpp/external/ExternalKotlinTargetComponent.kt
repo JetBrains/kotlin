@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
+
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.publish.maven.MavenPublication
