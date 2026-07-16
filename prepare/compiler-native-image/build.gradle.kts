@@ -165,6 +165,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
             "-H:+AddAllCharsets",
             "-H:+UnlockExperimentalVMOptions",
             "-H:+AllowJRTFileSystem",
+            "--future-defaults=all",
             "-cp", fullClasspath,
             "-o", outputFile.get().asFile.absolutePath,
             mainClass,
