@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -1626,7 +1625,8 @@ class CallAndReferenceGenerator(
     ): IrExpression? {
         val function = (call as? FirResolvable)?.calleeReference?.toResolvedFunctionSymbol()?.fir
         val argumentList = call.argumentList as? FirResolvedArgumentList
-        if (function == null || argumentList == null || !visitor.annotationMode && argumentList.mappingIncludingContextArguments.isEmpty()) {
+        val annotationMode = visitor.annotationMode
+        if (function == null || argumentList == null || !annotationMode && argumentList.mappingIncludingContextArguments.isEmpty()) {
             putContextArguments(call, receiverInfo)
             return null
         }
@@ -1643,6 +1643,7 @@ class CallAndReferenceGenerator(
         // because they can have side effects.
         // Implicit context arguments are also in the list for convenience but their order doesn't matter because they can't have
         // side effects.
+        var needArgumentReordering = false
         val converted = buildList {
             (call as? FirContextArgumentListOwner)?.contextArguments?.forEachIndexed { index, contextArgument ->
                 // Only convert implicit context arguments here, explicit ones will be converted below to preserve the order.
@@ -1654,32 +1655,58 @@ class CallAndReferenceGenerator(
                 add(ArgumentInfo(parameter, irExpression, parameterIndex))
             }
 
+            var hasOutOfOrderArguments = false
+            var anyArgumentHasSideEffect = false
+            var explicitContextArgumentHasSideEffect = false
+            var lastParameterIndex = -1
+
             argumentList.mappingIncludingContextArguments.entries.forEach { [argument, parameter] ->
-                if (!visitor.isGetClassOfUnresolvedTypeInAnnotation(argument)) {
-                    val parameterIndex = if (parameter.valueParameterKind == FirValueParameterKind.Regular) {
-                        receiverInfo.valueArgumentOffset(contextArgumentCount) + valueParameters.indexOf(parameter)
-                    } else {
-                        receiverInfo.contextArgumentOffset() + contextParameters.indexOf(parameter)
+                if (visitor.isGetClassOfUnresolvedTypeInAnnotation(argument)) return@forEach
+
+                val parameterIndex = if (parameter.valueParameterKind == FirValueParameterKind.Regular) {
+                    receiverInfo.valueArgumentOffset(contextArgumentCount) + valueParameters.indexOf(parameter)
+                } else {
+                    receiverInfo.contextArgumentOffset() + contextParameters.indexOf(parameter)
+                }
+                val argToConvert = when {
+                    annotationMode && call is FirAnnotation -> call.argumentMapping.mapping[parameter.name]
+                    else -> argument
+                }
+                val irExpression = argToConvert?.let { convertArgument(it, parameter, substitutor) }
+                    ?: IrErrorExpressionImpl(
+                        startOffset, endOffset, type,
+                        "No evaluated argument found for parameter `${parameter.name}` in ${call.render()}"
+                    )
+                add(ArgumentInfo(parameter, irExpression, parameterIndex))
+
+                // Annotation argument are always constant and have no side effects
+                if (!annotationMode) {
+                    if (irExpression.hasSideEffects()) {
+                        anyArgumentHasSideEffect = true
+                        if (parameter.valueParameterKind == FirValueParameterKind.ContextParameter) {
+                            explicitContextArgumentHasSideEffect = true
+                        }
                     }
-                    val argToConvert = when {
-                        visitor.annotationMode && call is FirAnnotation -> call.argumentMapping.mapping[parameter.name]
-                        else -> argument
+                    if (parameterIndex < lastParameterIndex) {
+                        hasOutOfOrderArguments = true
                     }
-                    val irExpression = argToConvert?.let { convertArgument(it, parameter, substitutor) }
-                        ?: IrErrorExpressionImpl(
-                            startOffset, endOffset, type,
-                            "No evaluated argument found for parameter `${parameter.name}` in ${call.render()}"
-                        )
-                    add(ArgumentInfo(parameter, irExpression, parameterIndex))
+                    lastParameterIndex = parameterIndex
                 }
             }
+
+            // We need to write the arguments to temporary variables in their lexical order to preserve the order of their side effects
+            // - If any argument has a side effect and arguments are out of order.
+            //   This is slightly too aggressive but probably harmless
+            //   because the subset of out-of-order arguments could be actually free of side effects.
+            // - If an explicit context argument has a side effect and the extension receiver has a side effect
+            //   That's because lexically, the extension receiver appears before any explicit context argument,
+            //   but in IR, context arguments are ordered before the extension receiver.
+            //   We don't care about the dispatch receiver because it always has index 0.
+            needArgumentReordering = anyArgumentHasSideEffect && hasOutOfOrderArguments ||
+                    explicitContextArgumentHasSideEffect && receiverInfo.hasExtensionReceiver && arguments[receiverInfo.extensionReceiverOffset(contextArgumentCount)]!!.hasSideEffects()
         }
 
-        // If none of the parameters have side effects, the evaluation order doesn't matter anyway.
-        // For annotations, this is always true, since arguments have to be compile-time constants.
-        if (!visitor.annotationMode && !converted.all { (val _ = parameter, val irArgument = expression) -> irArgument.hasNoSideEffects() } &&
-            needArgumentReordering(argumentList.mappingIncludingContextArguments.values, contextParameters + valueParameters)
-        ) {
+        if (needArgumentReordering) {
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
                 fun IrExpression.freeze(nameHint: String): IrExpression {
                     if (isUnchanging()) return this
@@ -1705,10 +1732,10 @@ class CallAndReferenceGenerator(
                 statements.add(this@applyArgumentsWithReorderingIfNeeded)
             }
         } else {
-            for ((val _ = parameter, val irArgument = expression, val parameterIndex) in converted) {
+            for ((val irArgument = expression, val parameterIndex) in converted) {
                 arguments[parameterIndex] = irArgument
             }
-            if (visitor.annotationMode) {
+            if (annotationMode) {
                 val function = call.toReference(session)?.toResolvedCallableSymbol()?.fir as? FirFunction
                 for ([index, parameter] in valueParameters.withIndex()) {
                     if (parameter.isVararg && !argumentList.mapping.containsValue(parameter)) {
@@ -1729,21 +1756,6 @@ class CallAndReferenceGenerator(
             }
             return this
         }
-    }
-
-    private fun needArgumentReordering(
-        parametersInArgumentOrder: Collection<FirValueParameter>,
-        contextAndValueParameters: List<FirValueParameter>,
-    ): Boolean {
-        var lastValueParameterIndex = UNDEFINED_PARAMETER_INDEX
-        for (parameter in parametersInArgumentOrder) {
-            val index = contextAndValueParameters.indexOf(parameter)
-            if (index < lastValueParameterIndex) {
-                return true
-            }
-            lastValueParameterIndex = index
-        }
-        return false
     }
 
     /**

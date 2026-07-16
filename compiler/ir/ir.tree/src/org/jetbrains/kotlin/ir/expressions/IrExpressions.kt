@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
-import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
@@ -64,8 +63,7 @@ fun IrExpression.isUnchanging(): Boolean =
             this is IrConst ||
             (this is IrGetValue && !symbol.owner.let { it is IrVariable && it.isVar })
 
-fun IrExpression.hasNoSideEffects(): Boolean =
-    isUnchanging() || this is IrGetValue
+fun IrExpression.hasSideEffects(): Boolean = !isUnchanging() && this !is IrGetValue
 
 internal fun IrMemberAccessExpression<*>.checkArgumentSlotAccess(kind: String, index: Int, total: Int) {
     if (index >= total) {
