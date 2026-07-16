@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
+import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -81,6 +82,8 @@ internal class ComputeTypesPass(val context: NativeBackendContext) : BodyLowerin
 
     private fun leastCommonAncestor(types: List<IrType>): IrType? {
         if (types.isEmpty()) return null
+        if (types.size == 1) return types[0]
+
         val isNullable = types.any { it.isNullable() }
         val classes = types.map { it.erasedUpperBound }
         // Since the analysis is local, nothing we can do about interfaces: if an interface is written to a variable,
@@ -171,6 +174,14 @@ internal class ComputeTypesPass(val context: NativeBackendContext) : BodyLowerin
         val variableWrites = mutableMapOf<IrVariable, BitSet>()
 
         fun BitSet.computeType() = this.mapEachBit { allVariablesWrites[it].value }.computeType()
+
+        fun IrType.trySwitchVariableType(variable: IrVariable) =
+                this.takeUnless {
+                    // Conservatively handle source code defined variables: if changing the type also alters the boxing,
+                    // this might be surprising for the programmer. See KT-86678 and KT-87165 for examples.
+                    (variable.origin == IrDeclarationOrigin.DEFINED
+                            && this.getInlinedClassNative() != variable.type.getInlinedClassNative())
+                }
 
         irBody.accept(object : IrVisitor<BitSet, BitSet>() {
             fun getVariableWriteId(variable: IrElement, value: IrExpression) = VariableWrite(variable, value).let { write ->
@@ -388,7 +399,7 @@ internal class ComputeTypesPass(val context: NativeBackendContext) : BodyLowerin
                         ?: error("A use of uninitialized variable ${variable.render()}")
                 val mergedVariableWrites = getValueVariablesWrites.getOrPut(expression) { BitSet() }
                 mergedVariableWrites.or(variableWrites)
-                expression.type = mergedVariableWrites.computeType() ?: variable.type
+                expression.type = mergedVariableWrites.computeType()?.trySwitchVariableType(variable) ?: variable.type
 
                 context.logMultiple {
                     +expression.render()
@@ -432,7 +443,7 @@ internal class ComputeTypesPass(val context: NativeBackendContext) : BodyLowerin
                 declaration.transformChildrenVoid(this)
 
                 val values = variableWrites[declaration]?.mapEachBit { allVariablesWrites[it].value }
-                val actualType = values?.computeType()
+                val actualType = values?.computeType()?.trySwitchVariableType(declaration)
                 if (actualType != null) {
                     declaration.type = if (declaration.origin == IrDeclarationOrigin.DEFINED && declaration.type.isNullable()) {
                         // For `DEFINED` variables, if the original type is nullable, preserve this:
