@@ -648,13 +648,14 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 dependsOn(compileTask)
                 reportFileUnprocessed.set(project.layout.buildDirectory.file("testReports/$testName/report.xml"))
                 reportFile.set(project.layout.buildDirectory.file("testReports/$testName/report-with-prefixes.xml"))
-                filter.set(project.findProperty("gtest_filter") as? String)
+                filter.set(project.providers.gradleProperty("gtest_filter"))
                 tsanSuppressionsFile.set(project.layout.projectDirectory.file("tsan_suppressions.txt"))
                 this.target.set(target)
                 this.executionTimeout.set(
-                        (project.findProperty("gtest_timeout") as? String)?.let {
-                            Duration.parse("PT${it}")
-                        } ?: Duration.ofMinutes(5))
+                        project.providers.gradleProperty("gtest_timeout")
+                                .map { Duration.parse("PT${it}") }
+                                .orElse(Duration.ofMinutes(5))
+                )
                 this.executorsClasspath.from(project.executorsClasspathConfiguration())
                 this.distPath.set(project.nativeProtoDistribution.root.asFile.absolutePath)
                 this.dataDirPath.set(project.kotlinBuildProperties.stringProperty("konan.data.dir").orNull)
