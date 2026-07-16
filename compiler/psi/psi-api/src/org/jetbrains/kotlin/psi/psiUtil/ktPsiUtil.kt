@@ -419,7 +419,7 @@ internal fun KtDeclaration.isImplicitlyActualDeclaration(): Boolean = when (this
 
 internal fun KtClass.allowsImplicitlyActualConstructor() = isAnnotation() || isValue() || isInline()
 
-/** Returns `true` if this declaration declares context receivers (or context parameters). */
+/** Returns `true` if this declaration declares context parameters. */
 fun KtElement.isContextualDeclaration(): Boolean {
     val contextReceivers = when (this) {
         is KtCallableDeclaration -> contextReceivers
