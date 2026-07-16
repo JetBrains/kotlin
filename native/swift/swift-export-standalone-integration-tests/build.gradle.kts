@@ -24,5 +24,5 @@ sourceSets {
 }
 
 tasks.named("check") {
-    dependsOn(subprojects.map { it.tasks.named("check") })
+    dependsOn(subprojects.map { "${it.path}:check" })
 }
