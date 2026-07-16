@@ -208,17 +208,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsIrDeserializationCodegenBoxTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-            }
-
-            testClass<AbstractJsIrDeserializationCodegenBoxInlineTest> {
-                model("boxInline")
-            }
-
-            testClass<AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest> {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-            }
-
-            testClass<AbstractJsIrDeserializationCodegenBoxInlineWithInlinedFunInKlibTest> {
                 model("boxInline")
             }
         }
