@@ -53,6 +53,9 @@ data class JKlibSerializationArtifact(
     override val configuration: CompilerConfiguration,
     val projectEnvironment: VfsBasedProjectEnvironment,
     val rootDisposable: Disposable,
+    // `hasIr` is false for metadata-only header klibs produced with
+    // headerModeType="compilation". The optional IR compilation phase rejects such klibs.
+    val hasIr: Boolean = true,
     override val exitCode: ExitCode = ExitCode.OK,
 ) : PipelineArtifactWithExitCode() {
     @CliPipelineInternals(OPT_IN_MESSAGE)

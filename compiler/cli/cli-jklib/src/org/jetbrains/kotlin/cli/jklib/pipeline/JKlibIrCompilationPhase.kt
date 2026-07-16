@@ -85,6 +85,11 @@ object JKlibIrCompilationPhase :
     ) {
 
     override fun executePhase(input: JKlibSerializationArtifact): JKlibIrCompilationArtifact {
+        // A metadata-only header klib (headerModeType="compilation") contains no IR and cannot be
+        // compiled further. Reaching this phase with such a klib indicates a misconfigured pipeline.
+        if (!input.hasIr) {
+            error("JKlibIrCompilationPhase cannot run on a metadata-only header klib (hasIr = false): ${input.outputKlibPath}")
+        }
         val configuration = input.configuration
         val klib = Path(input.outputKlibPath)
 
