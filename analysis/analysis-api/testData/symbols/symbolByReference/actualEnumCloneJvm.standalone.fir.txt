@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: clone
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

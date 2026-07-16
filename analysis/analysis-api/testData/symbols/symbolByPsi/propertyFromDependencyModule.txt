@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Context
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

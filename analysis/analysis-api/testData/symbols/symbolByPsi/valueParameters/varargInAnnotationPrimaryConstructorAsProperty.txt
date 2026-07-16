@@ -15,7 +15,6 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
-  psi: KtPrimaryConstructor
   realPsi: KtPrimaryConstructor
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -48,7 +47,6 @@ KaConstructorSymbol:
       name: ints
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/Foo.ints)
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -88,7 +86,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

@@ -343,7 +343,6 @@ KtCallExpression(348,397): 'callsInPlace(block1, InvocationKind.EXACTLY_ONCE)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -420,7 +419,6 @@ KtNameReferenceExpression(348,360): 'callsInPlace'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -566,7 +564,6 @@ KtCallExpression(406,472): 'callsInPlace(block2, kotlin.contracts.InvocationKind
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -643,7 +640,6 @@ KtNameReferenceExpression(406,418): 'callsInPlace'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:

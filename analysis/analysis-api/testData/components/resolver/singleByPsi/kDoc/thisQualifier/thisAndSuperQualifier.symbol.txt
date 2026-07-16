@@ -48,7 +48,6 @@
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/Impl.withReceiver)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -81,7 +80,6 @@
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/Impl.withReceiver)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:

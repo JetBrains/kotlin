@@ -11,7 +11,6 @@ KaDestructuringDeclarationSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
-  psi: KtDestructuringDeclaration
   realPsi: KtParameter
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(shortFormLoop.kt)

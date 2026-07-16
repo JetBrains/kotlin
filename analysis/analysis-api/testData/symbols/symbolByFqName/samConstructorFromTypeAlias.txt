@@ -14,7 +14,6 @@ KaSamConstructorSymbol:
   modality: FINAL
   name: MyAlias
   origin: SAM_CONSTRUCTOR
-  psi: KtClass
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -47,7 +46,6 @@ KaSamConstructorSymbol:
       name: function
       origin: SAM_CONSTRUCTOR
       primaryConstructorProperty: null
-      psi: KtClass
       realPsi: null
       receiverParameter: null
       returnType: KaFunctionType:

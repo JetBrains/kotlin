@@ -15,7 +15,6 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
-  psi: KtPrimaryConstructor
   realPsi: KtPrimaryConstructor
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -48,7 +47,6 @@ KaConstructorSymbol:
       name: position
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/Anno.position)
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -91,7 +89,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Anno
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -127,7 +124,6 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter1
   origin: SOURCE
-  psi: KtParameter
   realPsi: KtParameter
   receiverParameter: null
   returnType: KaClassErrorType:
@@ -161,7 +157,6 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter2
   origin: SOURCE
-  psi: KtParameter
   realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -201,7 +196,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -237,7 +231,6 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter1
   origin: SOURCE
-  psi: KtParameter
   realPsi: KtParameter
   receiverParameter: null
   returnType: KaClassErrorType:
@@ -271,7 +264,6 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter2
   origin: SOURCE
-  psi: KtParameter
   realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -311,7 +303,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -352,7 +343,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -390,7 +380,6 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter1
   origin: SOURCE
-  psi: KtParameter
   realPsi: KtParameter
   receiverParameter: null
   returnType: KaClassErrorType:
@@ -424,7 +413,6 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter2
   origin: SOURCE
-  psi: KtParameter
   realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:

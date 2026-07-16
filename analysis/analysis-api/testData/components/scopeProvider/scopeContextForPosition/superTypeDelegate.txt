@@ -29,7 +29,6 @@ scopes:
         name: base
         origin: SOURCE
         primaryConstructorProperty: null
-        psi: KtParameter
         realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -67,7 +66,6 @@ scopes:
         modality: ABSTRACT
         name: Base
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -95,7 +93,6 @@ scopes:
         modality: FINAL
         name: Child
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:

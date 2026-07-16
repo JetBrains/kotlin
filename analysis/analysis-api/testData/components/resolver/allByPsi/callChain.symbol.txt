@@ -103,7 +103,6 @@ KtThisExpression(27,31): 'this'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-        psi: KtTypeReference
         realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -137,7 +136,6 @@ KtNameReferenceExpression(27,31): 'this'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-        psi: KtTypeReference
         realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -277,7 +275,6 @@ KtThisExpression(71,75): 'this'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaNamedFunctionSymbol(/bar)
-        psi: KtTypeReference
         realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -311,7 +308,6 @@ KtNameReferenceExpression(71,75): 'this'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaNamedFunctionSymbol(/bar)
-        psi: KtTypeReference
         realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:

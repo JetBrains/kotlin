@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getFoo
   origin: JAVA_SOURCE
-  psi: PsiMethodImpl
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

@@ -19,7 +19,6 @@ KaNamedClassSymbol:
   modality: OPEN
   name: Simple
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

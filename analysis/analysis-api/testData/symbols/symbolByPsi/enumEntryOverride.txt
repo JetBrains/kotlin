@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: a
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -70,7 +69,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -110,7 +108,6 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: FirstEntry
   origin: SOURCE
-  psi: KtEnumEntry
   realPsi: KtEnumEntry
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -150,7 +147,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -194,7 +190,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(<local>/i)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -233,7 +228,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: SOURCE
-    psi: KtPropertyAccessor
     realPsi: KtPropertyAccessor
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -268,7 +262,6 @@ KaKotlinPropertySymbol:
   name: i
   origin: SOURCE
   primaryConstructorParameter: null
-  psi: KtProperty
   realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -309,7 +302,6 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: SecondEntry
   origin: SOURCE
-  psi: KtEnumEntry
   realPsi: KtEnumEntry
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -349,7 +341,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -396,7 +387,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -429,7 +419,6 @@ KaNamedFunctionSymbol:
       name: i
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -475,7 +464,6 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: ThirdEntry
   origin: SOURCE
-  psi: KtEnumEntry
   realPsi: KtEnumEntry
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -515,7 +503,6 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -562,7 +549,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -595,7 +581,6 @@ KaNamedFunctionSymbol:
       name: i
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -645,7 +630,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/MyEnumClass.i)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -684,7 +668,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -723,7 +706,6 @@ KaKotlinPropertySymbol:
   name: i
   origin: SOURCE
   primaryConstructorParameter: null
-  psi: KtProperty
   realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -764,7 +746,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: MyEnumClass
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

@@ -9,7 +9,6 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
-  psi: KtTypeParameter
   realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
@@ -37,7 +36,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -57,7 +55,6 @@ KaNamedClassSymbol:
       modality: FINAL
       name: T
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -94,7 +91,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: TopLevelAlias
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: PUBLIC
@@ -123,7 +119,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: NestedLevelAlias
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: PUBLIC
@@ -152,7 +147,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: LocalTypeAlias
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: LOCAL
@@ -181,7 +175,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: LOCAL
@@ -210,7 +203,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: LocalTypeAlias
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: LOCAL
@@ -239,7 +231,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: LOCAL
@@ -273,7 +264,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: check
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -313,7 +303,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: LocalClass
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -354,7 +343,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: check
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -394,7 +382,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: LocalClass
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -435,7 +422,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: check
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -475,7 +461,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

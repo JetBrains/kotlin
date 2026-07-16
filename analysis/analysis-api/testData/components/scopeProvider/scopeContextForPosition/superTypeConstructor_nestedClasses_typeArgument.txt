@@ -28,7 +28,6 @@ scopes:
         modality: ABSTRACT
         name: BaseInterface
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -56,7 +55,6 @@ scopes:
         modality: OPEN
         name: Base
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -76,7 +74,6 @@ scopes:
             modality: FINAL
             name: T
             origin: SOURCE
-            psi: KtTypeParameter
             realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT
@@ -101,7 +98,6 @@ scopes:
         modality: FINAL
         name: Child
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:

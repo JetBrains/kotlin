@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: MutableEntry
   origin: LIBRARY
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -43,7 +42,6 @@ KaNamedClassSymbol:
       modality: FINAL
       name: K
       origin: LIBRARY
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -63,7 +61,6 @@ KaNamedClassSymbol:
       modality: FINAL
       name: V
       origin: LIBRARY
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT

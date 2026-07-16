@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: noGeneric
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -74,7 +73,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: noGenericWithExplicitType
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -125,7 +123,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterGeneric
   origin: SUBSTITUTION_OVERRIDE
-  psi: KtNamedFunction
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -158,7 +155,6 @@ KaNamedFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
-      psi: KtClass
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -211,7 +207,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterGenericWithExplicitType
   origin: SUBSTITUTION_OVERRIDE
-  psi: KtNamedFunction
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -244,7 +239,6 @@ KaNamedFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
-      psi: KtClass
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -297,7 +291,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOwnGeneric
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -316,7 +309,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: TT
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -351,7 +343,6 @@ KaNamedFunctionSymbol:
       name: tt
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -407,7 +398,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOwnGenericWithExplicitType
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -426,7 +416,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: TT
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -461,7 +450,6 @@ KaNamedFunctionSymbol:
       name: tt
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -517,7 +505,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterAndOwnGeneric
   origin: SUBSTITUTION_OVERRIDE
-  psi: KtNamedFunction
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -536,7 +523,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: TT
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -571,7 +557,6 @@ KaNamedFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
-      psi: KtClass
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -609,7 +594,6 @@ KaNamedFunctionSymbol:
       name: tt
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
-      psi: KtClass
       realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -661,7 +645,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: withOuterAndOwnGenericWithExplicitType
   origin: SUBSTITUTION_OVERRIDE
-  psi: KtNamedFunction
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -680,7 +663,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: TT
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -715,7 +697,6 @@ KaNamedFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
-      psi: KtClass
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -753,7 +734,6 @@ KaNamedFunctionSymbol:
       name: tt
       origin: SUBSTITUTION_OVERRIDE
       primaryConstructorProperty: null
-      psi: KtClass
       realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -805,7 +785,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -838,7 +817,6 @@ KaNamedFunctionSymbol:
       name: other
       origin: LIBRARY
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -891,7 +869,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -938,7 +915,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -977,7 +953,6 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
-  psi: KtClass
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

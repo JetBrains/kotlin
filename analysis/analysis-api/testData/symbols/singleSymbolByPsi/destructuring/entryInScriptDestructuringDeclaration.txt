@@ -23,7 +23,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -58,7 +57,6 @@ KaKotlinPropertySymbol:
   name: c
   origin: SOURCE
   primaryConstructorParameter: null
-  psi: KtDestructuringDeclarationEntry
   realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
   returnType: KaUsualClassType:

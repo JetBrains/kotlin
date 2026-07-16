@@ -88,7 +88,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -114,7 +113,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: Y
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -145,7 +143,6 @@ KaNamedFunctionSymbol:
       name: x
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -177,7 +174,6 @@ KaNamedFunctionSymbol:
       name: y
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -209,7 +205,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/A.map)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -247,7 +242,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -285,7 +279,6 @@ KaKotlinPropertySymbol:
   name: map
   origin: SOURCE
   primaryConstructorParameter: null
-  psi: KtProperty
   realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -328,7 +321,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -361,7 +353,6 @@ KaNamedFunctionSymbol:
       name: other
       origin: LIBRARY
       primaryConstructorProperty: null
-      psi: null
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -397,7 +388,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -432,7 +422,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

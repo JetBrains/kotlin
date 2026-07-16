@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: MyInterface
   origin: LIBRARY
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

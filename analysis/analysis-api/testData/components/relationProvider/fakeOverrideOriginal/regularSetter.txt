@@ -42,7 +42,6 @@ FAKE_OVERRIDE_ORIGINAL:
       name: value
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: null
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -51,7 +50,6 @@ FAKE_OVERRIDE_ORIGINAL:
         type: kotlin/Int
       typeParameters: []
       visibility: PUBLIC
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -84,7 +82,6 @@ FAKE_OVERRIDE_ORIGINAL:
         name: value
         origin: SOURCE
         primaryConstructorProperty: null
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:

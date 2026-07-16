@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: get
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
@@ -55,7 +54,6 @@ KaNamedFunctionSymbol:
       name: index
       origin: LIBRARY
       primaryConstructorProperty: null
-      psi: null
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:

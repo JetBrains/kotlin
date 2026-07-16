@@ -10,7 +10,6 @@ KaClassInitializerSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
-  psi: KtClassInitializer
   realPsi: KtClassInitializer
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(initWithAnnotations.kt)

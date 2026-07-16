@@ -33,7 +33,6 @@ scopes:
         modality: FINAL
         name: A
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -69,7 +68,6 @@ scopes:
         modality: FINAL
         name: b
         origin: SOURCE
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:

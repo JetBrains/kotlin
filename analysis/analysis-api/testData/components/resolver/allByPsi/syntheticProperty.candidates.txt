@@ -766,7 +766,6 @@ KtNameReferenceExpression(84,93): 'javaClass'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -896,7 +895,6 @@ KtNameReferenceExpression(109,118): 'javaClass'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1087,7 +1085,6 @@ KtNameReferenceExpression(137,146): 'javaClass'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1297,7 +1294,6 @@ KtNameReferenceExpression(166,175): 'javaClass'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1530,7 +1526,6 @@ KtNameReferenceExpression(194,203): 'javaClass'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1637,7 +1632,6 @@ KtPostfixExpression(219,230): 'something++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-            psi: KtTypeReference
             realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1683,7 +1677,6 @@ KtNameReferenceExpression(219,228): 'something'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1750,7 +1743,6 @@ KtOperationReferenceExpression(228,230): '++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-            psi: KtTypeReference
             realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1817,7 +1809,6 @@ KtPostfixExpression(235,248): '(something)++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-            psi: KtTypeReference
             realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1866,7 +1857,6 @@ KtNameReferenceExpression(236,245): 'something'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1933,7 +1923,6 @@ KtOperationReferenceExpression(246,248): '++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-            psi: KtTypeReference
             realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1979,7 +1968,6 @@ KtBinaryExpression(253,268): '(something) = 1'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -2029,7 +2017,6 @@ KtNameReferenceExpression(254,263): 'something'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -2076,7 +2063,6 @@ KtOperationReferenceExpression(265,266): '='
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -2174,7 +2160,6 @@ KtNameReferenceExpression(274,283): 'javaClass'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:

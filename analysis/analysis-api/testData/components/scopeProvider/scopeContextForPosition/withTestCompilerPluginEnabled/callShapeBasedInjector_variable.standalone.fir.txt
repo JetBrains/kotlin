@@ -38,7 +38,6 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(<local>/column)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -68,7 +67,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: PLUGIN
-          psi: null
           realPsi: null
           receiverParameter: KaReceiverParameterSymbol:
             anchorPsi: null
@@ -88,7 +86,6 @@ scopes:
             name: <receiver>
             origin: PLUGIN
             owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
-            psi: null
             realPsi: null
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -129,7 +126,6 @@ scopes:
         name: column
         origin: PLUGIN
         primaryConstructorParameter: null
-        psi: null
         realPsi: null
         receiverParameter: KaReceiverParameterSymbol:
           anchorPsi: null
@@ -149,7 +145,6 @@ scopes:
           name: <receiver>
           origin: PLUGIN
           owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -195,7 +190,6 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -228,7 +222,6 @@ scopes:
             name: other
             origin: LIBRARY
             primaryConstructorProperty: null
-            psi: null
             realPsi: null
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -264,7 +257,6 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -299,7 +291,6 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -327,7 +318,6 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: PLUGIN
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -360,7 +350,6 @@ scopes:
         modality: FINAL
         name: df
         origin: SOURCE
-        psi: KtProperty
         realPsi: KtProperty
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -404,7 +393,6 @@ scopes:
         name: df
         origin: SOURCE
         primaryConstructorProperty: null
-        psi: KtParameter
         realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -430,42 +418,36 @@ scopes:
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(META-INF)
         realPsi: PsiPackage(META-INF)
       KaPackageSymbol:
         anchorPsi: PsiPackage(java)
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(java)
         realPsi: PsiPackage(java)
       KaPackageSymbol:
         anchorPsi: PsiPackage(javax)
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(javax)
         realPsi: PsiPackage(javax)
       KaPackageSymbol:
         anchorPsi: PsiPackage(kotlin)
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(kotlin)
         realPsi: PsiPackage(kotlin)
       KaPackageSymbol:
         anchorPsi: PsiPackage(org)
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(org)
         realPsi: PsiPackage(org)
       KaPackageSymbol:
         anchorPsi: PsiPackage(sun)
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(sun)
         realPsi: PsiPackage(sun)
     classifiers: 2
       KaNamedClassSymbol:
@@ -486,7 +468,6 @@ scopes:
         modality: ABSTRACT
         name: DataFrame
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -506,7 +487,6 @@ scopes:
             modality: FINAL
             name: T
             origin: SOURCE
-            psi: KtTypeParameter
             realPsi: KtTypeParameter
             upperBounds: []
             variance: OUT_VARIANCE
@@ -531,7 +511,6 @@ scopes:
         modality: FINAL
         name: Refine
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -570,7 +549,6 @@ scopes:
         modality: FINAL
         name: add
         origin: SOURCE
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: KaReceiverParameterSymbol:
           anchorPsi: KtTypeReference
@@ -590,7 +568,6 @@ scopes:
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/add)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -624,7 +601,6 @@ scopes:
             modality: FINAL
             name: T
             origin: SOURCE
-            psi: KtTypeParameter
             realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT
@@ -640,7 +616,6 @@ scopes:
             modality: FINAL
             name: R
             origin: SOURCE
-            psi: KtTypeParameter
             realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT
@@ -671,7 +646,6 @@ scopes:
             name: columnName
             origin: SOURCE
             primaryConstructorProperty: null
-            psi: KtParameter
             realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -704,7 +678,6 @@ scopes:
             name: expression
             origin: SOURCE
             primaryConstructorProperty: null
-            psi: KtParameter
             realPsi: KtParameter
             receiverParameter: null
             returnType: KaFunctionType:
@@ -744,7 +717,6 @@ scopes:
         modality: FINAL
         name: test_1
         origin: SOURCE
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -777,7 +749,6 @@ scopes:
             name: df
             origin: SOURCE
             primaryConstructorProperty: null
-            psi: KtParameter
             realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:

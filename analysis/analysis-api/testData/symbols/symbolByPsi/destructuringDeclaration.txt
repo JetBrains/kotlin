@@ -15,7 +15,6 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
-  psi: KtPrimaryConstructor
   realPsi: KtPrimaryConstructor
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -48,7 +47,6 @@ KaConstructorSymbol:
       name: x
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/P.x)
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -86,7 +84,6 @@ KaConstructorSymbol:
       name: y
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/P.y)
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -126,7 +123,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: P
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -160,7 +156,6 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: l
   origin: SOURCE
-  psi: KtDestructuringDeclarationEntry
   realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -193,7 +188,6 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: r
   origin: SOURCE
-  psi: KtDestructuringDeclarationEntry
   realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -233,7 +227,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: destruct
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:

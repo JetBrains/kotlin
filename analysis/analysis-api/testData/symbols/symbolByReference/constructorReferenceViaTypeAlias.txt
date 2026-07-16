@@ -15,7 +15,6 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: TYPEALIASED_CONSTRUCTOR
-  psi: KtTypeAlias
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

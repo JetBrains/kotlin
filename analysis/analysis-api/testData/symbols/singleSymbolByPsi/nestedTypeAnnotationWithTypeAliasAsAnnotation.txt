@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo2
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: KtTypeReference
@@ -43,7 +42,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/foo2)
-    psi: KtTypeReference
     realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaTypeParameterType:
@@ -84,7 +82,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT

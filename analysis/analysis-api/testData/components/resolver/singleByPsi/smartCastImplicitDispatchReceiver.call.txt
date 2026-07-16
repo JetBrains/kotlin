@@ -22,7 +22,6 @@ KtNameReferenceExpression(51,57): 'length'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/test)
-            psi: KtTypeReference
             realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:

@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: IntArray
   origin: LIBRARY
-  psi: null
   realPsi: null
   superTypes: [
     KaUsualClassType:

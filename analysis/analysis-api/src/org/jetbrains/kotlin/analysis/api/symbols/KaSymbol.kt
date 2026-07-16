@@ -41,7 +41,8 @@ public interface KaSymbol : KaLifetimeOwner {
     public val location: KaSymbolLocation
 
     /**
-     * **The API is obsolete and will be deprecated soon. Use [realPsi] or [anchorPsi] instead.**
+     * **Deprecated.** Use [realPsi] for a [PsiElement] explicitly present in sources or libraries, or [anchorPsi] for a
+     * best-effort [PsiElement].
      *
      * A [PsiElement] corresponding to this [KaSymbol].
      *
@@ -58,6 +59,10 @@ public interface KaSymbol : KaLifetimeOwner {
      * @see realPsi
      * @see anchorPsi
      */
+    @Deprecated(
+        "Use 'realPsi' for a PSI explicitly present in sources or libraries, or 'anchorPsi' for a best-effort PSI.",
+        level = DeprecationLevel.WARNING,
+    )
     public val psi: PsiElement?
 
     /**
@@ -130,29 +135,39 @@ public val KaSymbol.name: Name?
     get() = if (this is KaNamedSymbol) name else null
 
 /**
- * **The API is obsolete and will be deprecated soon. Use [realPsi] or [anchorPsi] instead.**
+ * **Deprecated.** Use `realPsi as PSI` or `anchorPsi as PSI` instead.
  *
  * Returns the symbol's [PsiElement] if its type is [PSI], and otherwise throws a [ClassCastException].
  *
  * @see realPsi
  * @see anchorPsi
  */
+@Deprecated(
+    "Use 'realPsi as PSI' or 'anchorPsi as PSI' instead.",
+    level = DeprecationLevel.WARNING,
+)
+@Suppress("DEPRECATION")
 public inline fun <reified PSI : PsiElement> KaSymbol.psi(): PSI =
     psi as PSI
 
 /**
- * **The API is obsolete and will be deprecated soon. Use [realPsi] or [anchorPsi] instead.**
+ * **Deprecated.** Use `realPsi as? PSI` or `anchorPsi as? PSI` instead.
  *
  * Returns the symbol's [PsiElement] if its type is [PSI], or `null` otherwise.
  *
  * @see realPsi
  * @see anchorPsi
  */
+@Deprecated(
+    "Use 'realPsi as? PSI' or 'anchorPsi as? PSI' instead.",
+    level = DeprecationLevel.WARNING,
+)
+@Suppress("DEPRECATION")
 public inline fun <reified PSI : PsiElement> KaSymbol.psiSafe(): PSI? =
     psi as? PSI
 
 /**
- * **The API is obsolete and will be deprecated soon. Use [realPsi] or [anchorPsi] instead.**
+ * **Deprecated.** Use `realPsi as? PSI` (optionally guarded by [origin][KaSymbol.origin]) or `anchorPsi as? PSI` instead.
  *
  * Returns the symbol's [PsiElement]. Returns `null` if its [KaSymbol.origin] is not [KaSymbolOrigin.SOURCE]. Throws a [ClassCastException]
  * if its type is not [PSI].
@@ -160,6 +175,11 @@ public inline fun <reified PSI : PsiElement> KaSymbol.psiSafe(): PSI? =
  * @see realPsi
  * @see anchorPsi
  */
+@Deprecated(
+    "Use 'realPsi as? PSI' (optionally guarded by origin) or 'anchorPsi as? PSI' instead.",
+    level = DeprecationLevel.WARNING,
+)
+@Suppress("DEPRECATION")
 public inline fun <reified PSI : PsiElement> KaSymbol.sourcePsi(): PSI? {
     // TODO: support Java sources after KT-53669
     if (origin != KaSymbolOrigin.SOURCE) return null
@@ -168,7 +188,7 @@ public inline fun <reified PSI : PsiElement> KaSymbol.sourcePsi(): PSI? {
 }
 
 /**
- * **The API is obsolete and will be deprecated soon. Use [realPsi] or [anchorPsi] instead.**
+ * **Deprecated.** Use `realPsi as? PSI` (optionally guarded by [origin][KaSymbol.origin]) or `anchorPsi as? PSI` instead.
  *
  * Returns the symbol's [PsiElement] if its type is [PSI] and [KaSymbol.origin] is [KaSymbolOrigin.SOURCE] or [KaSymbolOrigin.JAVA_SOURCE],
  * and `null` otherwise.
@@ -176,6 +196,11 @@ public inline fun <reified PSI : PsiElement> KaSymbol.sourcePsi(): PSI? {
  * @see realPsi
  * @see anchorPsi
  */
+@Deprecated(
+    "Use 'realPsi as? PSI' (optionally guarded by origin) or 'anchorPsi as? PSI' instead.",
+    level = DeprecationLevel.WARNING,
+)
+@Suppress("DEPRECATION")
 public inline fun <reified PSI : PsiElement> KaSymbol.sourcePsiSafe(): PSI? {
     if (origin != KaSymbolOrigin.SOURCE && origin != KaSymbolOrigin.JAVA_SOURCE) return null
 

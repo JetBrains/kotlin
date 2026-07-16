@@ -18,7 +18,6 @@ KaDefinitelyNotNullType:
       modality: FINAL
       name: T1
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT

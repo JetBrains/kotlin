@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: Iterator
   origin: LIBRARY
-  psi: null
   realPsi: null
   superTypes: [
     KaUsualClassType:
@@ -36,7 +35,6 @@ KaNamedClassSymbol:
       modality: FINAL
       name: T
       origin: LIBRARY
-      psi: null
       realPsi: null
       upperBounds: []
       variance: OUT_VARIANCE

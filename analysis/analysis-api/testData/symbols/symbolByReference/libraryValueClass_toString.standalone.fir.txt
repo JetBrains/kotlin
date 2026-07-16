@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -67,7 +66,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/C.bar)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -106,7 +104,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -145,7 +142,6 @@ KaKotlinPropertySymbol:
   name: bar
   origin: SOURCE
   primaryConstructorParameter: null
-  psi: KtProperty
   realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -193,7 +189,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: cCompanionFunction
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -233,7 +228,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/C.cCompanionProperty)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -268,7 +262,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -303,7 +296,6 @@ KaKotlinPropertySymbol:
   name: cCompanionProperty
   origin: SOURCE
   primaryConstructorParameter: null
-  psi: KtProperty
   realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -340,7 +332,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: C2
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -374,7 +365,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: O2
   origin: SOURCE
-  psi: KtObjectDeclaration
   realPsi: KtObjectDeclaration
   superTypes: [
     KaUsualClassType:
@@ -408,7 +398,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Companion
   origin: SOURCE
-  psi: KtObjectDeclaration
   realPsi: KtObjectDeclaration
   superTypes: [
     KaUsualClassType:
@@ -441,7 +430,6 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
-  psi: KtClass
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

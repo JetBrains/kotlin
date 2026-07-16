@@ -47,7 +47,6 @@ scopes:
         modality: FINAL
         name: fromReceiver
         origin: SOURCE
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -82,7 +81,6 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -115,7 +113,6 @@ scopes:
             name: other
             origin: LIBRARY
             primaryConstructorProperty: null
-            psi: KtParameter
             realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -151,7 +148,6 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -186,7 +182,6 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -214,7 +209,6 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
-        psi: KtClass
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -264,7 +258,6 @@ scopes:
         modality: FINAL
         name: Receiver
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -292,7 +285,6 @@ scopes:
         modality: OPEN
         name: Base
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -320,7 +312,6 @@ scopes:
         modality: FINAL
         name: Child
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:

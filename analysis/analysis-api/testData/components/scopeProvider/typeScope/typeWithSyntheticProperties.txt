@@ -73,7 +73,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getValue
   origin: JAVA_SOURCE
-  psi: PsiMethodImpl
   realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
@@ -107,7 +106,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -140,7 +138,6 @@ KaNamedFunctionSymbol:
       name: other
       origin: LIBRARY
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -176,7 +173,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -211,7 +207,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -246,7 +241,6 @@ KaSyntheticJavaPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
-    psi: PsiMethodImpl
     realPsi: null
     receiverParameter: null
     returnType: KaFlexibleType:
@@ -274,7 +268,6 @@ KaSyntheticJavaPropertySymbol:
   modality: OPEN
   name: value
   origin: JAVA_SYNTHETIC_PROPERTY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:

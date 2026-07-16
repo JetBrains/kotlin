@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: a
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -63,7 +62,6 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: FirstEntry
   origin: SOURCE
-  psi: KtEnumEntry
   realPsi: KtEnumEntry
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -96,7 +94,6 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: SecondEntry
   origin: SOURCE
-  psi: KtEnumEntry
   realPsi: KtEnumEntry
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -136,7 +133,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: one
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -183,7 +179,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: one
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -216,7 +211,6 @@ KaNamedFunctionSymbol:
       name: i
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -262,7 +256,6 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: ThirdEntry
   origin: SOURCE
-  psi: KtEnumEntry
   realPsi: KtEnumEntry
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -295,7 +288,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: MyEnumClass
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InnerClassInB
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -49,7 +48,6 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
-  psi: KtClass
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

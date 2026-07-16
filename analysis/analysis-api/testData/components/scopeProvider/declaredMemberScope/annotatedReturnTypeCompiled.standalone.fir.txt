@@ -26,7 +26,6 @@ KaNamedFunctionSymbol:
   modality: ABSTRACT
   name: function
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -65,7 +64,6 @@ KaNamedFunctionSymbol:
       name: argument
       origin: LIBRARY
       primaryConstructorProperty: null
-      psi: null
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -121,7 +119,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/MyInterface.property)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -163,7 +160,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: ABSTRACT
     origin: LIBRARY
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -205,7 +201,6 @@ KaKotlinPropertySymbol:
   name: property
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

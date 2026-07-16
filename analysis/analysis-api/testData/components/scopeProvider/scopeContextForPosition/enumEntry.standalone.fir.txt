@@ -56,7 +56,6 @@ scopes:
         modality: FINAL
         name: Companion
         origin: LIBRARY
-        psi: null
         realPsi: null
         superTypes: [
           KaUsualClassType:
@@ -89,7 +88,6 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(<local>/x)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -119,7 +117,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -149,7 +146,6 @@ scopes:
         name: x
         origin: SOURCE
         primaryConstructorParameter: null
-        psi: KtProperty
         realPsi: KtProperty
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -184,7 +180,6 @@ scopes:
         modality: FINAL
         name: foo
         origin: SOURCE
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -219,7 +214,6 @@ scopes:
         modality: FINAL
         name: compareTo
         origin: SUBSTITUTION_OVERRIDE
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -252,7 +246,6 @@ scopes:
             name: other
             origin: SUBSTITUTION_OVERRIDE
             primaryConstructorProperty: null
-            psi: KtClass
             realPsi: null
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -288,7 +281,6 @@ scopes:
         modality: FINAL
         name: clone
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -323,7 +315,6 @@ scopes:
         modality: FINAL
         name: equals
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -356,7 +347,6 @@ scopes:
             name: other
             origin: LIBRARY
             primaryConstructorProperty: null
-            psi: null
             realPsi: null
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -392,7 +382,6 @@ scopes:
         modality: FINAL
         name: hashCode
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -427,7 +416,6 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -462,7 +450,6 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(kotlin/Enum.name)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -492,7 +479,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: LIBRARY
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -522,7 +508,6 @@ scopes:
         name: name
         origin: LIBRARY
         primaryConstructorParameter: null
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -554,7 +539,6 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(kotlin/Enum.ordinal)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -584,7 +568,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: LIBRARY
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -614,7 +597,6 @@ scopes:
         name: ordinal
         origin: LIBRARY
         primaryConstructorParameter: null
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -649,7 +631,6 @@ scopes:
         modality: FINAL
         name: getDeclaringClass
         origin: SUBSTITUTION_OVERRIDE
-        psi: ClsMethodImpl
         realPsi: null
         receiverParameter: null
         returnType: KaFlexibleType:
@@ -683,7 +664,6 @@ scopes:
         modality: FINAL
         name: finalize
         origin: JAVA_SOURCE
-        psi: ClsMethodImpl
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -711,7 +691,6 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
-        psi: KtEnumEntry
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -744,7 +723,6 @@ scopes:
         modality: FINAL
         name: A
         origin: SOURCE
-        psi: KtEnumEntry
         realPsi: KtEnumEntry
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -778,7 +756,6 @@ scopes:
         modality: FINAL
         name: values
         origin: SOURCE_MEMBER_GENERATED
-        psi: KtClass
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -818,7 +795,6 @@ scopes:
         modality: FINAL
         name: valueOf
         origin: SOURCE_MEMBER_GENERATED
-        psi: KtClass
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -851,7 +827,6 @@ scopes:
             name: value
             origin: SOURCE_MEMBER_GENERATED
             primaryConstructorProperty: null
-            psi: KtClass
             realPsi: null
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -887,7 +862,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE_MEMBER_GENERATED
-          psi: KtClass
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -922,7 +896,6 @@ scopes:
         name: entries
         origin: SOURCE_MEMBER_GENERATED
         primaryConstructorParameter: null
-        psi: KtClass
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -960,7 +933,6 @@ scopes:
         modality: FINAL
         name: Companion
         origin: LIBRARY
-        psi: null
         realPsi: null
         superTypes: [
           KaUsualClassType:
@@ -1002,7 +974,6 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -1035,7 +1006,6 @@ scopes:
             name: other
             origin: LIBRARY
             primaryConstructorProperty: null
-            psi: null
             realPsi: null
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1071,7 +1041,6 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -1106,7 +1075,6 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -1134,7 +1102,6 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -1158,42 +1125,36 @@ scopes:
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(META-INF)
         realPsi: PsiPackage(META-INF)
       KaPackageSymbol:
         anchorPsi: PsiPackage(java)
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(java)
         realPsi: PsiPackage(java)
       KaPackageSymbol:
         anchorPsi: PsiPackage(javax)
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(javax)
         realPsi: PsiPackage(javax)
       KaPackageSymbol:
         anchorPsi: PsiPackage(kotlin)
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(kotlin)
         realPsi: PsiPackage(kotlin)
       KaPackageSymbol:
         anchorPsi: PsiPackage(org)
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(org)
         realPsi: PsiPackage(org)
       KaPackageSymbol:
         anchorPsi: PsiPackage(sun)
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(sun)
         realPsi: PsiPackage(sun)
     classifiers: 1
       KaNamedClassSymbol:
@@ -1214,7 +1175,6 @@ scopes:
         modality: FINAL
         name: E
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:

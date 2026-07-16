@@ -18,7 +18,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: LocalTypeAlias
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: LOCAL
@@ -47,7 +46,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: LOCAL
@@ -76,7 +74,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: LocalTypeAlias
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: LOCAL
@@ -105,7 +102,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: LOCAL
@@ -132,7 +128,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: LocalClass
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -166,7 +161,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: LocalClass
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

@@ -25,6 +25,7 @@ internal class KaFirDefaultBackingFieldSymbol(
     override val analysisSession: KaFirSession,
     private val backingOwningProperty: KaFirKotlinPropertySymbol<*>,
 ) : KaBackingFieldSymbol(), KaFirSymbol<FirBackingFieldSymbol> {
+    @Suppress("OVERRIDE_DEPRECATION")
     override val psi: PsiElement?
         get() = withValidityAssertion { null }
 

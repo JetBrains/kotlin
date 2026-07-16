@@ -29,7 +29,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: DeepRecursiveFunctionBlock
   origin: LIBRARY
-  psi: null
   realPsi: null
   typeParameters: []
   visibility: PRIVATE

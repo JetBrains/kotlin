@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: fooApi3
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -66,7 +65,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalFooApi3
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -109,7 +107,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateFooApi3
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -152,7 +149,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: barApi3
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: KtTypeReference
@@ -172,7 +168,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/barApi3)
-    psi: KtTypeReference
     realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -226,7 +221,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalBarApi3
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: KtTypeReference
@@ -246,7 +240,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/internalBarApi3)
-    psi: KtTypeReference
     realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -300,7 +293,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateBarApi3
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: KtTypeReference
@@ -320,7 +312,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/privateBarApi3)
-    psi: KtTypeReference
     realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -374,7 +365,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: fooApi2
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -417,7 +407,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalFooApi2
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -460,7 +449,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateFooApi2
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -503,7 +491,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: barApi2
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: null
@@ -523,7 +510,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/barApi2)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -577,7 +563,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalBarApi2
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: null
@@ -597,7 +582,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/internalBarApi2)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -651,7 +635,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateBarApi2
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: null
@@ -671,7 +654,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/privateBarApi2)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -725,7 +707,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: fooApi1
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -768,7 +749,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalFooApi1
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -811,7 +791,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateFooApi1
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -854,7 +833,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: barApi1
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: null
@@ -874,7 +852,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/barApi1)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -928,7 +905,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalBarApi1
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: null
@@ -948,7 +924,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/internalBarApi1)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -1002,7 +977,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateBarApi1
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: null
@@ -1022,7 +996,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaNamedFunctionSymbol(library/api/privateBarApi1)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -1069,7 +1042,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: FakeI
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -1103,7 +1075,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: InternalFakeI
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -1137,7 +1108,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: PrivateFakeI
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -1171,7 +1141,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: PrivateI
   origin: LIBRARY
-  psi: null
   realPsi: null
   superTypes: [
     KaUsualClassType:
@@ -1205,7 +1174,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: InternalI
   origin: LIBRARY
-  psi: null
   realPsi: null
   superTypes: [
     KaUsualClassType:
@@ -1239,7 +1207,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: I
   origin: LIBRARY
-  psi: null
   realPsi: null
   superTypes: [
     KaUsualClassType:
@@ -1273,7 +1240,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: C1
   origin: LIBRARY
-  psi: null
   realPsi: null
   superTypes: [
     KaUsualClassType:
@@ -1307,7 +1273,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InternalC1
   origin: LIBRARY
-  psi: null
   realPsi: null
   superTypes: [
     KaUsualClassType:
@@ -1341,7 +1306,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: PrivateC1
   origin: LIBRARY
-  psi: null
   realPsi: null
   superTypes: [
     KaUsualClassType:

@@ -21,7 +21,6 @@ KtNameReferenceExpression(64,68): 'this'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaKotlinPropertySymbol(/Foo.foo)
-        psi: KtTypeReference
         realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:

@@ -13,7 +13,6 @@ KaAnonymousFunctionSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
-  psi: KtFunctionLiteral
   realPsi: KtFunctionLiteral
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: KtFunctionLiteral
@@ -33,7 +32,6 @@ KaAnonymousFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-    psi: KtFunctionLiteral
     realPsi: KtFunctionLiteral
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -99,7 +97,6 @@ KaNamedFunctionSymbol:
                   name: encoded
                   origin: SOURCE
                   primaryConstructorProperty: null
-                  psi: KtParameter
                   realPsi: KtParameter
                   receiverParameter: null
                   returnType: KaUsualClassType:
@@ -133,7 +130,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: decode
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -166,7 +162,6 @@ KaNamedFunctionSymbol:
       name: encoded
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -205,7 +200,6 @@ KaAnonymousFunctionSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
-  psi: KtFunctionLiteral
   realPsi: KtFunctionLiteral
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: KtFunctionLiteral
@@ -225,7 +219,6 @@ KaAnonymousFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-    psi: KtFunctionLiteral
     realPsi: KtFunctionLiteral
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -291,7 +284,6 @@ KaNamedFunctionSymbol:
                   name: encoded
                   origin: SOURCE
                   primaryConstructorProperty: null
-                  psi: KtParameter
                   realPsi: KtParameter
                   receiverParameter: null
                   returnType: KaUsualClassType:
@@ -325,7 +317,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: decodeFake
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -358,7 +349,6 @@ KaNamedFunctionSymbol:
       name: encoded
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -397,7 +387,6 @@ KaAnonymousFunctionSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
-  psi: KtFunctionLiteral
   realPsi: KtFunctionLiteral
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: KtFunctionLiteral
@@ -417,7 +406,6 @@ KaAnonymousFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-    psi: KtFunctionLiteral
     realPsi: KtFunctionLiteral
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -483,7 +471,6 @@ KaNamedFunctionSymbol:
                   name: encoded
                   origin: SOURCE
                   primaryConstructorProperty: null
-                  psi: KtParameter
                   realPsi: KtParameter
                   receiverParameter: null
                   returnType: KaUsualClassType:
@@ -522,7 +509,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: decodeIfString
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -555,7 +541,6 @@ KaNamedFunctionSymbol:
       name: encoded
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -594,7 +579,6 @@ KaAnonymousFunctionSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
-  psi: KtFunctionLiteral
   realPsi: KtFunctionLiteral
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: KtFunctionLiteral
@@ -614,7 +598,6 @@ KaAnonymousFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-    psi: KtFunctionLiteral
     realPsi: KtFunctionLiteral
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -680,7 +663,6 @@ KaNamedFunctionSymbol:
                   name: encoded
                   origin: SOURCE
                   primaryConstructorProperty: null
-                  psi: KtParameter
                   realPsi: KtParameter
                   receiverParameter: null
                   returnType: KaUsualClassType:
@@ -719,7 +701,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: decodeNotNumber
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -752,7 +733,6 @@ KaNamedFunctionSymbol:
       name: encoded
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:

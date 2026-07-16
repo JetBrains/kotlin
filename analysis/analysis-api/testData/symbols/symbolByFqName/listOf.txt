@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: FileWalkDirection
   origin: LIBRARY
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

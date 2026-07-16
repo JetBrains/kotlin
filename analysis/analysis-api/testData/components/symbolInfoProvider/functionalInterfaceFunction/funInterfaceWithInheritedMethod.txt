@@ -17,7 +17,6 @@ CLASS:
   modality: ABSTRACT
   name: Derived
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -70,7 +69,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   modality: ABSTRACT
   name: accept
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -114,7 +112,6 @@ FUNCTIONAL INTERFACE FUNCTION:
       name: i
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:

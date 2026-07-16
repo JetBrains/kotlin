@@ -193,7 +193,6 @@ KtNameReferenceExpression(305,306): 'y'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
-            psi: KtTypeReference
             realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:

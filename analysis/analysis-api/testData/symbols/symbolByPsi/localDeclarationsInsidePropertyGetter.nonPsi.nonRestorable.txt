@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: LocalClass
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -47,7 +46,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: LocalTypealias
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: LOCAL

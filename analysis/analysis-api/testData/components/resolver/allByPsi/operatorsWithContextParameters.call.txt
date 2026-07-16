@@ -944,7 +944,6 @@ KtPrefixExpression(890,899): '+thisProp'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1002,7 +1001,6 @@ KtOperationReferenceExpression(890,891): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1077,7 +1075,6 @@ KtPrefixExpression(908,910): '+a'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1135,7 +1132,6 @@ KtOperationReferenceExpression(908,909): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1210,7 +1206,6 @@ KtBinaryExpression(919,931): 'thisProp + 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1301,7 +1296,6 @@ KtOperationReferenceExpression(928,929): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1378,7 +1372,6 @@ KtBinaryExpression(940,945): 'a + 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1469,7 +1462,6 @@ KtOperationReferenceExpression(942,943): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1546,7 +1538,6 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1643,7 +1634,6 @@ KtArrayAccessExpression(974,978): 'a[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1740,7 +1730,6 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1828,7 +1817,6 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1939,7 +1927,6 @@ KtOperationReferenceExpression(999,1000): '='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -2064,7 +2051,6 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -2152,7 +2138,6 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -2263,7 +2248,6 @@ KtOperationReferenceExpression(1018,1019): '='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -2388,7 +2372,6 @@ KtCallExpression(1032,1042): 'thisProp()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -2466,7 +2449,6 @@ KtCallExpression(1051,1054): 'a()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -2544,7 +2526,6 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -2635,7 +2616,6 @@ KtOperationReferenceExpression(1072,1074): '+='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -2712,7 +2692,6 @@ KtBinaryExpression(1085,1091): 'a += 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -2803,7 +2782,6 @@ KtOperationReferenceExpression(1087,1089): '+='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -2883,7 +2861,6 @@ KtPostfixExpression(1100,1110): 'thisProp++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                psi: KtFunctionLiteral
                 realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
@@ -2976,7 +2953,6 @@ KtOperationReferenceExpression(1108,1110): '++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                psi: KtFunctionLiteral
                 realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
@@ -3106,7 +3082,6 @@ KtPostfixExpression(1123,1126): 'a++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                psi: KtFunctionLiteral
                 realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
@@ -3199,7 +3174,6 @@ KtOperationReferenceExpression(1124,1126): '++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                psi: KtFunctionLiteral
                 realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
@@ -3272,7 +3246,6 @@ KtBinaryExpression(1136,1141): 'b + 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -3363,7 +3336,6 @@ KtOperationReferenceExpression(1138,1139): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -3440,7 +3412,6 @@ KtPrefixExpression(1150,1152): '+b'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -3498,7 +3469,6 @@ KtOperationReferenceExpression(1150,1151): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -3573,7 +3543,6 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -3670,7 +3639,6 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -3758,7 +3726,6 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -3869,7 +3836,6 @@ KtOperationReferenceExpression(1179,1180): '='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -3994,7 +3960,6 @@ KtCallExpression(1193,1196): 'b()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -4072,7 +4037,6 @@ KtBinaryExpression(1205,1211): 'b += 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -4163,7 +4127,6 @@ KtOperationReferenceExpression(1207,1209): '+='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -4243,7 +4206,6 @@ KtPostfixExpression(1220,1223): 'b++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                psi: KtFunctionLiteral
                 realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
@@ -4336,7 +4298,6 @@ KtOperationReferenceExpression(1221,1223): '++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                psi: KtFunctionLiteral
                 realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:

@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: testFunction
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -63,7 +62,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/testValue)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -98,7 +96,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -133,7 +130,6 @@ KaKotlinPropertySymbol:
   name: testValue
   origin: SOURCE
   primaryConstructorParameter: null
-  psi: KtProperty
   realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -170,7 +166,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: C
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -204,7 +199,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: I
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -238,7 +232,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: O
   origin: SOURCE
-  psi: KtObjectDeclaration
   realPsi: KtObjectDeclaration
   superTypes: [
     KaUsualClassType:

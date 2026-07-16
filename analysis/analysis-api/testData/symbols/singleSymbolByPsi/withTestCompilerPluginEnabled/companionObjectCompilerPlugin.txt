@@ -19,7 +19,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: WithGeneratedCompanion
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

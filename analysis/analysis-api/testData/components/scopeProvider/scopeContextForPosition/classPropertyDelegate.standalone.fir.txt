@@ -40,7 +40,6 @@ scopes:
         name: constructorParam
         origin: SOURCE
         primaryConstructorProperty: null
-        psi: KtParameter
         realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -77,7 +76,6 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Child.constructorProp)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -107,7 +105,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -160,7 +157,6 @@ scopes:
           name: constructorProp
           origin: SOURCE
           primaryConstructorProperty: KaKotlinPropertySymbol(test/Child.constructorProp)
-          psi: KtParameter
           realPsi: KtParameter
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -169,7 +165,6 @@ scopes:
             type: kotlin/Int
           typeParameters: []
           visibility: PUBLIC
-        psi: KtParameter
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -204,7 +199,6 @@ scopes:
         modality: FINAL
         name: childMember
         origin: SOURCE
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -236,7 +230,6 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Child.childProp)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -266,7 +259,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -296,7 +288,6 @@ scopes:
         name: childProp
         origin: SOURCE
         primaryConstructorParameter: null
-        psi: KtProperty
         realPsi: KtProperty
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -328,7 +319,6 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Base.value)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -358,7 +348,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -411,7 +400,6 @@ scopes:
           name: value
           origin: SOURCE
           primaryConstructorProperty: KaKotlinPropertySymbol(test/Base.value)
-          psi: KtParameter
           realPsi: KtParameter
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -420,7 +408,6 @@ scopes:
             type: kotlin/Int
           typeParameters: []
           visibility: PUBLIC
-        psi: KtParameter
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -455,7 +442,6 @@ scopes:
         modality: FINAL
         name: baseMember
         origin: SOURCE
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -487,7 +473,6 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Base.baseProp)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -517,7 +502,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -547,7 +531,6 @@ scopes:
         name: baseProp
         origin: SOURCE
         primaryConstructorParameter: null
-        psi: KtProperty
         realPsi: KtProperty
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -582,7 +565,6 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -615,7 +597,6 @@ scopes:
             name: other
             origin: LIBRARY
             primaryConstructorProperty: null
-            psi: null
             realPsi: null
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -651,7 +632,6 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -686,7 +666,6 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -714,7 +693,6 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE
-        psi: KtPrimaryConstructor
         realPsi: KtPrimaryConstructor
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -747,7 +725,6 @@ scopes:
             name: constructorProp
             origin: SOURCE
             primaryConstructorProperty: KaKotlinPropertySymbol(test/Child.constructorProp)
-            psi: KtParameter
             realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -780,7 +757,6 @@ scopes:
             name: constructorParam
             origin: SOURCE
             primaryConstructorProperty: null
-            psi: KtParameter
             realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -819,7 +795,6 @@ scopes:
         modality: OPEN
         name: Base
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -847,7 +822,6 @@ scopes:
         modality: FINAL
         name: Child
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:

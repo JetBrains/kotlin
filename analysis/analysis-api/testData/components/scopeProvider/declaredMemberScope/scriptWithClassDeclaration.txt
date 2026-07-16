@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -56,7 +55,6 @@ KaNamedFunctionSymbol:
       name: action
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
@@ -110,7 +108,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: PLUGIN
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -145,7 +142,6 @@ KaKotlinPropertySymbol:
   name: $$result
   origin: PLUGIN
   primaryConstructorParameter: null
-  psi: KtScriptInitializer
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

@@ -23,7 +23,6 @@ KaSyntheticJavaPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
-    psi: KtNamedFunction
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -61,7 +60,6 @@ KaSyntheticJavaPropertySymbol:
   modality: OPEN
   name: something
   origin: JAVA_SYNTHETIC_PROPERTY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -110,7 +108,6 @@ KaSyntheticJavaPropertySymbol:
       name: s
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -124,7 +121,6 @@ KaSyntheticJavaPropertySymbol:
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
-    psi: KtNamedFunction
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -157,7 +153,6 @@ KaSyntheticJavaPropertySymbol:
         name: s
         origin: SOURCE
         primaryConstructorProperty: null
-        psi: KtParameter
         realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:

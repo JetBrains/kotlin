@@ -30,7 +30,6 @@ KtCallExpression(117,140): 'block(regularParameter)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:

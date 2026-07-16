@@ -26,7 +26,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -59,7 +58,6 @@ KaNamedFunctionSymbol:
       name: text
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:

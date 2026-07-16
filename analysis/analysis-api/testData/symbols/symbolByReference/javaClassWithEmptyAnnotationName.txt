@@ -19,7 +19,6 @@ KaNamedClassSymbol:
   modality: OPEN
   name: JavaClass
   origin: JAVA_SOURCE
-  psi: PsiClassImpl
   realPsi: PsiClassImpl
   superTypes: [
     KaUsualClassType:

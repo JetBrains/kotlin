@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -66,7 +65,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:

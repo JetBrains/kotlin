@@ -20,7 +20,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/MyClass.Companion.extension)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -59,7 +58,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: null
     realPsi: null
     receiverParameter: KaReceiverParameterSymbol:
       anchorPsi: null
@@ -79,7 +77,6 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: LIBRARY
       owningCallableSymbol: KaKotlinPropertySymbol(/MyClass.Companion.extension)
-      psi: null
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -129,7 +126,6 @@ KaKotlinPropertySymbol:
   name: extension
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: null
   realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: null
@@ -149,7 +145,6 @@ KaKotlinPropertySymbol:
     name: <receiver>
     origin: LIBRARY
     owningCallableSymbol: KaKotlinPropertySymbol(/MyClass.Companion.extension)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:

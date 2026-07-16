@@ -22,7 +22,6 @@ KtCallExpression(205,216): 'funMember()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -52,7 +51,6 @@ KtCallExpression(205,216): 'funMember()'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:

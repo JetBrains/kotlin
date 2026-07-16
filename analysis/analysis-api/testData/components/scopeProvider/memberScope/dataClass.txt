@@ -20,7 +20,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Abc.firstProperty)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -59,7 +58,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -121,7 +119,6 @@ KaKotlinPropertySymbol:
     name: firstProperty
     origin: SOURCE
     primaryConstructorProperty: KaKotlinPropertySymbol(/Abc.firstProperty)
-    psi: KtParameter
     realPsi: KtParameter
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -135,7 +132,6 @@ KaKotlinPropertySymbol:
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
     importableFqName: null
-  psi: KtParameter
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -180,7 +176,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Abc.secondProperty)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -219,7 +214,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -281,7 +275,6 @@ KaKotlinPropertySymbol:
     name: secondProperty
     origin: SOURCE
     primaryConstructorProperty: KaKotlinPropertySymbol(/Abc.secondProperty)
-    psi: KtParameter
     realPsi: KtParameter
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -295,7 +288,6 @@ KaKotlinPropertySymbol:
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
     importableFqName: null
-  psi: KtParameter
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -340,7 +332,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Abc.thirdProperty)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -379,7 +370,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -441,7 +431,6 @@ KaKotlinPropertySymbol:
     name: thirdProperty
     origin: SOURCE
     primaryConstructorProperty: KaKotlinPropertySymbol(/Abc.thirdProperty)
-    psi: KtParameter
     realPsi: KtParameter
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -455,7 +444,6 @@ KaKotlinPropertySymbol:
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
     importableFqName: null
-  psi: KtParameter
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -503,7 +491,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: check
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -547,7 +534,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Abc.bodyProperty)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -586,7 +572,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: KtPropertyAccessor
     realPsi: KtPropertyAccessor
     receiverParameter: KaReceiverParameterSymbol:
       anchorPsi: KtTypeReference
@@ -606,7 +591,6 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/Abc.bodyProperty)
-      psi: KtTypeReference
       realPsi: KtTypeReference
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -652,7 +636,6 @@ KaKotlinPropertySymbol:
   name: bodyProperty
   origin: SOURCE
   primaryConstructorParameter: null
-  psi: KtProperty
   realPsi: KtProperty
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: KtTypeReference
@@ -672,7 +655,6 @@ KaKotlinPropertySymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/Abc.bodyProperty)
-    psi: KtTypeReference
     realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -731,7 +713,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: component1
   origin: SOURCE_MEMBER_GENERATED
-  psi: KtParameter
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -778,7 +759,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: component2
   origin: SOURCE_MEMBER_GENERATED
-  psi: KtParameter
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -825,7 +805,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: component3
   origin: SOURCE_MEMBER_GENERATED
-  psi: KtParameter
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -872,7 +851,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: copy
   origin: SOURCE_MEMBER_GENERATED
-  psi: KtPrimaryConstructor
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -905,7 +883,6 @@ KaNamedFunctionSymbol:
       name: firstProperty
       origin: SOURCE_MEMBER_GENERATED
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -943,7 +920,6 @@ KaNamedFunctionSymbol:
       name: secondProperty
       origin: SOURCE_MEMBER_GENERATED
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -981,7 +957,6 @@ KaNamedFunctionSymbol:
       name: thirdProperty
       origin: SOURCE_MEMBER_GENERATED
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -1034,7 +1009,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: SOURCE_MEMBER_GENERATED
-  psi: KtClass
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -1067,7 +1041,6 @@ KaNamedFunctionSymbol:
       name: other
       origin: SOURCE_MEMBER_GENERATED
       primaryConstructorProperty: null
-      psi: KtClass
       realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -1120,7 +1093,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: SOURCE_MEMBER_GENERATED
-  psi: KtClass
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -1167,7 +1139,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: SOURCE_MEMBER_GENERATED
-  psi: KtClass
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -1206,7 +1177,6 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
-  psi: KtPrimaryConstructor
   realPsi: KtPrimaryConstructor
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -1239,7 +1209,6 @@ KaConstructorSymbol:
       name: firstProperty
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/Abc.firstProperty)
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -1277,7 +1246,6 @@ KaConstructorSymbol:
       name: secondProperty
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/Abc.secondProperty)
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -1315,7 +1283,6 @@ KaConstructorSymbol:
       name: thirdProperty
       origin: SOURCE
       primaryConstructorProperty: KaKotlinPropertySymbol(/Abc.thirdProperty)
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:

@@ -109,7 +109,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: component1
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaTypeParameterType:
@@ -143,7 +142,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: component2
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaTypeParameterType:
@@ -177,7 +175,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: copy
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -217,7 +214,6 @@ KaNamedFunctionSymbol:
       name: first
       origin: LIBRARY
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -249,7 +245,6 @@ KaNamedFunctionSymbol:
       name: second
       origin: LIBRARY
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -284,7 +279,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -317,7 +311,6 @@ KaNamedFunctionSymbol:
       name: other
       origin: LIBRARY
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -353,7 +346,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -388,7 +380,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -420,7 +411,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/Pair.first)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaTypeParameterType:
@@ -449,7 +439,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaTypeParameterType:
@@ -478,7 +467,6 @@ KaKotlinPropertySymbol:
   name: first
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
   realPsi: KtProperty
   receiverParameter: null
   returnType: KaTypeParameterType:
@@ -509,7 +497,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/Pair.second)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaTypeParameterType:
@@ -538,7 +525,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaTypeParameterType:
@@ -567,7 +553,6 @@ KaKotlinPropertySymbol:
   name: second
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
   realPsi: KtProperty
   receiverParameter: null
   returnType: KaTypeParameterType:

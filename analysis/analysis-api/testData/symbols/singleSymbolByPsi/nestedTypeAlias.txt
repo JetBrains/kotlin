@@ -20,7 +20,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: MyAlias
   origin: SOURCE
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: [
     KaTypeParameterSymbol:
@@ -34,7 +33,6 @@ KaTypeAliasSymbol:
       modality: FINAL
       name: C
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -54,7 +52,6 @@ KaTypeAliasSymbol:
       modality: FINAL
       name: D
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT

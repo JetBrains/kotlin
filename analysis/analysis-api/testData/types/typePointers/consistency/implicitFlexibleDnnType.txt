@@ -69,7 +69,6 @@ KaFlexibleType:
                   modality: FINAL
                   name: T
                   origin: SOURCE
-                  psi: KtTypeParameter
                   realPsi: KtTypeParameter
                   upperBounds: []
                   variance: INVARIANT
@@ -95,7 +94,6 @@ KaFlexibleType:
                 modality: FINAL
                 name: T
                 origin: SOURCE
-                psi: KtTypeParameter
                 realPsi: KtTypeParameter
                 upperBounds: []
                 variance: INVARIANT
@@ -167,7 +165,6 @@ KaFlexibleType:
               modality: FINAL
               name: T
               origin: SOURCE
-              psi: KtTypeParameter
               realPsi: KtTypeParameter
               upperBounds: []
               variance: INVARIANT
@@ -193,7 +190,6 @@ KaFlexibleType:
             modality: FINAL
             name: T
             origin: SOURCE
-            psi: KtTypeParameter
             realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT
@@ -274,7 +270,6 @@ KaFlexibleType:
                   modality: FINAL
                   name: T
                   origin: SOURCE
-                  psi: KtTypeParameter
                   realPsi: KtTypeParameter
                   upperBounds: []
                   variance: INVARIANT
@@ -300,7 +295,6 @@ KaFlexibleType:
                 modality: FINAL
                 name: T
                 origin: SOURCE
-                psi: KtTypeParameter
                 realPsi: KtTypeParameter
                 upperBounds: []
                 variance: INVARIANT
@@ -372,7 +366,6 @@ KaFlexibleType:
               modality: FINAL
               name: T
               origin: SOURCE
-              psi: KtTypeParameter
               realPsi: KtTypeParameter
               upperBounds: []
               variance: INVARIANT
@@ -398,7 +391,6 @@ KaFlexibleType:
             modality: FINAL
             name: T
             origin: SOURCE
-            psi: KtTypeParameter
             realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT

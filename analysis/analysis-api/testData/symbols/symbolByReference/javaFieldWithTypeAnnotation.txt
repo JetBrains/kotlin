@@ -19,7 +19,6 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: field
   origin: JAVA_SOURCE
-  psi: PsiFieldImpl
   realPsi: PsiFieldImpl
   receiverParameter: null
   returnType: KaFlexibleType:

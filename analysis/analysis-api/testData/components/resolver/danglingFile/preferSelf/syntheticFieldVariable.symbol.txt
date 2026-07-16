@@ -5,3 +5,4 @@ KtNameReferenceExpression(27,32): 'field'
     symbols = [
       var field: kotlin.Int
     ]
+  additional: [fake.kt]

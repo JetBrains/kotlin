@@ -24,7 +24,6 @@ FUNCTION:
   modality: OPEN
   name: plus
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -68,7 +67,6 @@ FUNCTION:
       name: a
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:

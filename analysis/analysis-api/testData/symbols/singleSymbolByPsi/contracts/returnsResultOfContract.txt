@@ -36,7 +36,6 @@ KaNamedFunctionSymbol:
               name: block
               origin: SOURCE
               primaryConstructorProperty: null
-              psi: KtParameter
               realPsi: KtParameter
               receiverParameter: null
               returnType: KaFunctionType:
@@ -86,7 +85,6 @@ KaNamedFunctionSymbol:
               name: block
               origin: SOURCE
               primaryConstructorProperty: null
-              psi: KtParameter
               realPsi: KtParameter
               receiverParameter: null
               returnType: KaFunctionType:
@@ -126,7 +124,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: myLet
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
     anchorPsi: KtTypeReference
@@ -146,7 +143,6 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/myLet)
-    psi: KtTypeReference
     realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaTypeParameterType:
@@ -174,7 +170,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -194,7 +189,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: R
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -229,7 +223,6 @@ KaNamedFunctionSymbol:
       name: block
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:

@@ -18,7 +18,6 @@ FAKE_OVERRIDE_ORIGINAL:
     modality: FINAL
     name: value
     origin: JAVA_SOURCE
-    psi: PsiFieldImpl
     realPsi: PsiFieldImpl
     receiverParameter: null
     returnType: KaFlexibleType:

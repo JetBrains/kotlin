@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: C2
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -50,7 +49,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: O2
   origin: SOURCE
-  psi: KtObjectDeclaration
   realPsi: KtObjectDeclaration
   superTypes: [
     KaUsualClassType:
@@ -84,7 +82,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Companion
   origin: SOURCE
-  psi: KtObjectDeclaration
   realPsi: KtObjectDeclaration
   superTypes: [
     KaUsualClassType:

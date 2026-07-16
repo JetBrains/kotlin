@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: dynamicFunctionCall
   origin: JS_DYNAMIC
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaDynamicType:
@@ -55,7 +54,6 @@ KaNamedFunctionSymbol:
       name: args
       origin: JS_DYNAMIC
       primaryConstructorProperty: null
-      psi: null
       realPsi: null
       receiverParameter: null
       returnType: KaDynamicType:

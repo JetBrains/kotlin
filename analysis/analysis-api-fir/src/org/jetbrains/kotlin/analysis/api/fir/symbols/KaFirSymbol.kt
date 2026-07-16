@@ -41,6 +41,8 @@ internal interface KaFirSymbol<out S : FirBasedSymbol<*>> : KaSymbol, KaLifetime
 
     override val token: KaLifetimeToken get() = analysisSession.token
     override val origin: KaSymbolOrigin get() = withValidityAssertion { symbolOrigin() }
+
+    @Suppress("OVERRIDE_DEPRECATION")
     override val psi: PsiElement? get() = withValidityAssertion { findPsi() }
 
     override val realPsi: PsiElement?

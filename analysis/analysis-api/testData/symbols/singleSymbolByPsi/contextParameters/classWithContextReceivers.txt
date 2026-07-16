@@ -37,7 +37,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

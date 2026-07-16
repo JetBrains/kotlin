@@ -25,7 +25,6 @@ FAKE_OVERRIDE_ORIGINAL:
     modality: OPEN
     name: foo
     origin: SOURCE
-    psi: KtNamedFunction
     realPsi: KtNamedFunction
     receiverParameter: null
     returnType: KaTypeParameterType:
@@ -57,7 +56,6 @@ FAKE_OVERRIDE_ORIGINAL:
         name: t
         origin: SOURCE
         primaryConstructorProperty: null
-        psi: KtParameter
         realPsi: KtParameter
         receiverParameter: null
         returnType: KaTypeParameterType:

@@ -16,7 +16,6 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: SYNCHRONIZED
   origin: LIBRARY
-  psi: KtEnumEntry
   realPsi: KtEnumEntry
   receiverParameter: null
   returnType: KaUsualClassType:

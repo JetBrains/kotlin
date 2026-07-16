@@ -16,7 +16,6 @@ FAKE_OVERRIDE_ORIGINAL:
     modality: FINAL
     name: A
     origin: SAM_CONSTRUCTOR
-    psi: KtClass
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -49,7 +48,6 @@ FAKE_OVERRIDE_ORIGINAL:
         name: function
         origin: SAM_CONSTRUCTOR
         primaryConstructorProperty: null
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaFunctionType:

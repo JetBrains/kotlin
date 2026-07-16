@@ -32,6 +32,7 @@ internal class KaFirDestructuringDeclarationSymbol private constructor(
         analysisSession = session,
     )
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override val psi: KtDestructuringDeclaration
         get() = withValidityAssertion {
             backingPsi ?: when (val psi = firSymbol.fir.psi) {

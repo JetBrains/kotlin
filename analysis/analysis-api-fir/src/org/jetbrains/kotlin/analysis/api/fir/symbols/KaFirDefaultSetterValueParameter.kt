@@ -73,6 +73,7 @@ internal class KaFirDefaultSetterValueParameter(
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override val psi: PsiElement?
         get() = withValidityAssertion { null }
 

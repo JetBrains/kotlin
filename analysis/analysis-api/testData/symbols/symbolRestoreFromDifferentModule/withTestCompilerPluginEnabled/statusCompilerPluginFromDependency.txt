@@ -20,7 +20,6 @@ KaNamedClassSymbol:
   modality: OPEN
   name: Foo
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -53,7 +52,6 @@ KaNamedClassSymbol:
   modality: OPEN
   name: Foo
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

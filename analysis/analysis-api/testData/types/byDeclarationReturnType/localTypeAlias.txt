@@ -23,7 +23,6 @@ KaUsualClassType:
               modality: FINAL
               name: T
               origin: SOURCE
-              psi: KtTypeParameter
               realPsi: KtTypeParameter
               upperBounds: []
               variance: INVARIANT
@@ -64,7 +63,6 @@ KaUsualClassType:
             modality: FINAL
             name: T
             origin: SOURCE
-            psi: KtTypeParameter
             realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT
@@ -91,7 +89,6 @@ KaUsualClassType:
         modality: FINAL
         name: T
         origin: SOURCE
-        psi: KtTypeParameter
         realPsi: KtTypeParameter
         upperBounds: []
         variance: INVARIANT

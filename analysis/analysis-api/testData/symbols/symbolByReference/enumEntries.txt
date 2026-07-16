@@ -23,7 +23,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
-    psi: KtClass
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -63,7 +62,6 @@ KaKotlinPropertySymbol:
   name: entries
   origin: SOURCE_MEMBER_GENERATED
   primaryConstructorParameter: null
-  psi: KtClass
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

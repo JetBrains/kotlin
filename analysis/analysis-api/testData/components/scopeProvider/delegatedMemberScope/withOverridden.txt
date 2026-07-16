@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: bar
   origin: DELEGATED
-  psi: KtNamedFunction
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

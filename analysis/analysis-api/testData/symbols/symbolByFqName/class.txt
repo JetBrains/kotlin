@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: Lazy
   origin: LIBRARY
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -36,7 +35,6 @@ KaNamedClassSymbol:
       modality: FINAL
       name: T
       origin: LIBRARY
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: OUT_VARIANCE

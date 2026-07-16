@@ -13,7 +13,6 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: TA
   origin: LIBRARY
-  psi: KtTypeAlias
   realPsi: KtTypeAlias
   typeParameters: []
   visibility: PUBLIC

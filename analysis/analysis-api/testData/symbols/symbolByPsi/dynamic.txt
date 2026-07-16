@@ -20,7 +20,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.p)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaDynamicType:
@@ -58,7 +57,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaDynamicType:
@@ -96,7 +94,6 @@ KaKotlinPropertySymbol:
   name: p
   origin: SOURCE
   primaryConstructorParameter: null
-  psi: KtProperty
   realPsi: KtProperty
   receiverParameter: null
   returnType: KaDynamicType:
@@ -133,7 +130,6 @@ KaAnonymousFunctionSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
-  psi: KtFunctionLiteral
   realPsi: KtFunctionLiteral
   receiverParameter: null
   returnType: KaDynamicType:
@@ -173,7 +169,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: f
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaDynamicType:
@@ -205,7 +200,6 @@ KaNamedFunctionSymbol:
       name: p
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaDynamicType:
@@ -250,7 +244,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

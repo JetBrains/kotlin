@@ -11,7 +11,6 @@ KaDestructuringDeclarationSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
-  psi: KtDestructuringDeclaration
   realPsi: KtDestructuringDeclaration
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(fullFormLambda.kt)

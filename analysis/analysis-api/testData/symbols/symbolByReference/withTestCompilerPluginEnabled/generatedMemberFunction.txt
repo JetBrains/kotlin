@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: materialize
   origin: PLUGIN
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

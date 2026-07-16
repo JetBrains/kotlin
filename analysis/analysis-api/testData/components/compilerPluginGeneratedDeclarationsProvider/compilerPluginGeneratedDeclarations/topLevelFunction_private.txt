@@ -26,7 +26,6 @@ callables: 1
     modality: FINAL
     name: testFun_generated
     origin: PLUGIN
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:

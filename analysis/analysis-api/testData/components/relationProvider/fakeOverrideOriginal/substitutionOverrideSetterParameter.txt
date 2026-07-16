@@ -24,7 +24,6 @@ FAKE_OVERRIDE_ORIGINAL:
     name: value
     origin: SOURCE
     primaryConstructorProperty: null
-    psi: KtParameter
     realPsi: KtParameter
     receiverParameter: null
     returnType: KaTypeParameterType:

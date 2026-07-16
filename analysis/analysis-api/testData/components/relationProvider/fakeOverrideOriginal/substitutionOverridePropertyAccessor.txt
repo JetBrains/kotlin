@@ -42,7 +42,6 @@ FAKE_OVERRIDE_ORIGINAL:
       name: value
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: null
       realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -50,7 +49,6 @@ FAKE_OVERRIDE_ORIGINAL:
         type: T
       typeParameters: []
       visibility: PUBLIC
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -83,7 +81,6 @@ FAKE_OVERRIDE_ORIGINAL:
         name: value
         origin: SOURCE
         primaryConstructorProperty: null
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaTypeParameterType:

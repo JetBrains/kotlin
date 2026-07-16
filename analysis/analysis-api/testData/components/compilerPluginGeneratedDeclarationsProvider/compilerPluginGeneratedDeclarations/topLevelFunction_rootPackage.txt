@@ -26,7 +26,6 @@ callables: 1
     modality: FINAL
     name: dummyTest
     origin: PLUGIN
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -59,7 +58,6 @@ callables: 1
         name: value
         origin: PLUGIN
         primaryConstructorProperty: null
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:

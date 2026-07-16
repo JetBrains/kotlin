@@ -16,7 +16,6 @@ scopes:
         modality: FINAL
         name: T1
         origin: SOURCE
-        psi: KtTypeParameter
         realPsi: KtTypeParameter
         upperBounds: []
         variance: INVARIANT
@@ -32,7 +31,6 @@ scopes:
         modality: FINAL
         name: T2
         origin: SOURCE
-        psi: KtTypeParameter
         realPsi: KtTypeParameter
         upperBounds: []
         variance: INVARIANT
@@ -53,42 +51,36 @@ scopes:
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(META-INF)
         realPsi: PsiPackage(META-INF)
       KaPackageSymbol:
         anchorPsi: PsiPackage(java)
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(java)
         realPsi: PsiPackage(java)
       KaPackageSymbol:
         anchorPsi: PsiPackage(javax)
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(javax)
         realPsi: PsiPackage(javax)
       KaPackageSymbol:
         anchorPsi: PsiPackage(kotlin)
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(kotlin)
         realPsi: PsiPackage(kotlin)
       KaPackageSymbol:
         anchorPsi: PsiPackage(org)
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(org)
         realPsi: PsiPackage(org)
       KaPackageSymbol:
         anchorPsi: PsiPackage(sun)
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(sun)
         realPsi: PsiPackage(sun)
     classifiers: 2
       KaNamedClassSymbol:
@@ -109,7 +101,6 @@ scopes:
         modality: FINAL
         name: A
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -137,7 +128,6 @@ scopes:
         modality: FINAL
         name: B
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -170,7 +160,6 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/foo)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -198,7 +187,6 @@ scopes:
             modality: FINAL
             name: a
             origin: SOURCE
-            psi: KtParameter
             realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -234,7 +222,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
-          psi: KtPropertyAccessor
           realPsi: KtPropertyAccessor
           receiverParameter: KaReceiverParameterSymbol:
             anchorPsi: KtTypeReference
@@ -254,7 +241,6 @@ scopes:
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaKotlinPropertySymbol(/foo)
-            psi: KtTypeReference
             realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -290,7 +276,6 @@ scopes:
         name: foo
         origin: SOURCE
         primaryConstructorParameter: null
-        psi: KtProperty
         realPsi: KtProperty
         receiverParameter: KaReceiverParameterSymbol:
           anchorPsi: KtTypeReference
@@ -310,7 +295,6 @@ scopes:
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaKotlinPropertySymbol(/foo)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -336,7 +320,6 @@ scopes:
             modality: FINAL
             name: T1
             origin: SOURCE
-            psi: KtTypeParameter
             realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT
@@ -352,7 +335,6 @@ scopes:
             modality: FINAL
             name: T2
             origin: SOURCE
-            psi: KtTypeParameter
             realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT

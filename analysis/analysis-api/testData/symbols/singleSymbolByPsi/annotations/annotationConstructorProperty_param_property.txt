@@ -29,7 +29,6 @@ KaValueParameterSymbol:
   name: prop
   origin: SOURCE
   primaryConstructorProperty: KaKotlinPropertySymbol(/MyClass.prop)
-  psi: KtParameter
   realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -75,7 +74,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/MyClass.prop)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -114,7 +112,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -183,7 +180,6 @@ KaKotlinPropertySymbol:
     name: prop
     origin: SOURCE
     primaryConstructorProperty: KaKotlinPropertySymbol(/MyClass.prop)
-    psi: KtParameter
     realPsi: KtParameter
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -197,7 +193,6 @@ KaKotlinPropertySymbol:
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
     importableFqName: null
-  psi: KtParameter
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: JavaInterface
   origin: JAVA_SOURCE
-  psi: PsiClassImpl
   realPsi: PsiClassImpl
   superTypes: [
     KaUsualClassType:

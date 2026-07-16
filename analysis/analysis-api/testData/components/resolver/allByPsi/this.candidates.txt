@@ -1072,7 +1072,6 @@ KtCallExpression(625,630): 'foo()'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1156,7 +1155,6 @@ KtNameReferenceExpression(625,628): 'foo'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1735,7 +1733,6 @@ KtCallExpression(891,896): 'foo()'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1819,7 +1816,6 @@ KtNameReferenceExpression(891,894): 'foo'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -2542,7 +2538,6 @@ KtCallExpression(1272,1282): 'body(this)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(one/myWith)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaTypeParameterType:

@@ -18,7 +18,6 @@ KaContextParameterSymbol:
   modality: FINAL
   name: par
   origin: SOURCE
-  psi: KtParameter
   realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:

@@ -22,7 +22,6 @@ KaValueParameterSymbol:
   name: ctx
   origin: SOURCE
   primaryConstructorProperty: KaKotlinPropertySymbol(/Test.ctx)
-  psi: KtParameter
   realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -59,7 +58,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Test.ctx)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -98,7 +96,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: SOURCE
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -160,7 +157,6 @@ KaKotlinPropertySymbol:
     name: ctx
     origin: SOURCE
     primaryConstructorProperty: KaKotlinPropertySymbol(/Test.ctx)
-    psi: KtParameter
     realPsi: KtParameter
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -174,7 +170,6 @@ KaKotlinPropertySymbol:
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
     importableFqName: null
-  psi: KtParameter
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

@@ -15,7 +15,6 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: TYPEALIASED_CONSTRUCTOR
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -38,7 +37,6 @@ KaConstructorSymbol:
       modality: FINAL
       name: E
       origin: LIBRARY
-      psi: null
       realPsi: null
       upperBounds: []
       variance: INVARIANT
@@ -73,7 +71,6 @@ KaConstructorSymbol:
       name: c
       origin: TYPEALIASED_CONSTRUCTOR
       primaryConstructorProperty: null
-      psi: ClsClassImpl
       realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:

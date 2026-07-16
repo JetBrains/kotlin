@@ -26,7 +26,6 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: func
   origin: JAVA_SOURCE
-  psi: PsiMethodImpl
   realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
@@ -75,7 +74,6 @@ KaSyntheticJavaPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
-    psi: PsiMethodImpl
     realPsi: null
     receiverParameter: null
     returnType: KaFlexibleType:
@@ -112,7 +110,6 @@ KaSyntheticJavaPropertySymbol:
   modality: OPEN
   name: prop
   origin: JAVA_SYNTHETIC_PROPERTY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
@@ -150,7 +147,6 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_SOURCE
-  psi: PsiMethodImpl
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -183,7 +179,6 @@ KaConstructorSymbol:
       name: integer
       origin: JAVA_SOURCE
       primaryConstructorProperty: null
-      psi: PsiParameterImpl
       realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:

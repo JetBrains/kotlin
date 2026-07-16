@@ -31,7 +31,6 @@ scopes:
         modality: FINAL
         name: ValueInt
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:

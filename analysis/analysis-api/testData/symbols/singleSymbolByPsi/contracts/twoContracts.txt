@@ -45,7 +45,6 @@ KaNamedFunctionSymbol:
                       name: foo
                       origin: SOURCE
                       primaryConstructorProperty: null
-                      psi: KtParameter
                       realPsi: KtParameter
                       receiverParameter: null
                       returnType: KaUsualClassType:
@@ -89,7 +88,6 @@ KaNamedFunctionSymbol:
                       name: bar
                       origin: SOURCE
                       primaryConstructorProperty: null
-                      psi: KtParameter
                       realPsi: KtParameter
                       receiverParameter: null
                       returnType: KaUsualClassType:
@@ -133,7 +131,6 @@ KaNamedFunctionSymbol:
               name: block
               origin: SOURCE
               primaryConstructorProperty: null
-              psi: KtParameter
               realPsi: KtParameter
               receiverParameter: null
               returnType: KaFunctionType:
@@ -172,7 +169,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: twoContracts
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -205,7 +201,6 @@ KaNamedFunctionSymbol:
       name: foo
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -243,7 +238,6 @@ KaNamedFunctionSymbol:
       name: bar
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -281,7 +275,6 @@ KaNamedFunctionSymbol:
       name: block
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:

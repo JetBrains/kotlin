@@ -17,7 +17,6 @@ FAKE_OVERRIDE_ORIGINAL:
     modality: FINAL
     name: xx
     origin: SOURCE
-    psi: KtParameter
     realPsi: KtParameter
     receiverParameter: null
     returnType: KaUsualClassType:

@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -50,7 +49,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: B
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -88,7 +86,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: A
       origin: SOURCE
-      psi: KtContextReceiver
       realPsi: KtContextReceiver
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -130,7 +127,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: tooo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -170,7 +166,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: B
       origin: SOURCE
-      psi: KtContextReceiver
       realPsi: KtContextReceiver
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -212,7 +207,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: tooo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -252,7 +246,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: A
       origin: SOURCE
-      psi: KtContextReceiver
       realPsi: KtContextReceiver
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -283,7 +276,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: B
       origin: SOURCE
-      psi: KtContextReceiver
       realPsi: KtContextReceiver
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -331,7 +323,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: tooo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -371,7 +362,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: B
       origin: SOURCE
-      psi: KtContextReceiver
       realPsi: KtContextReceiver
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -402,7 +392,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: A
       origin: SOURCE
-      psi: KtContextReceiver
       realPsi: KtContextReceiver
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -450,7 +439,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: tooo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:

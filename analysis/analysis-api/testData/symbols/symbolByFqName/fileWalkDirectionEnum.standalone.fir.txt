@@ -23,7 +23,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -46,7 +45,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T
       origin: LIBRARY
-      psi: null
       realPsi: null
       upperBounds: []
       variance: INVARIANT
@@ -81,7 +79,6 @@ KaNamedFunctionSymbol:
       name: element
       origin: LIBRARY
       primaryConstructorProperty: null
-      psi: null
       realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -129,7 +126,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -152,7 +148,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T
       origin: LIBRARY
-      psi: null
       realPsi: null
       upperBounds: []
       variance: INVARIANT
@@ -187,7 +182,6 @@ KaNamedFunctionSymbol:
       name: elements
       origin: LIBRARY
       primaryConstructorProperty: null
-      psi: null
       realPsi: null
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -238,7 +232,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -261,7 +254,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T
       origin: LIBRARY
-      psi: null
       realPsi: null
       upperBounds: []
       variance: INVARIANT

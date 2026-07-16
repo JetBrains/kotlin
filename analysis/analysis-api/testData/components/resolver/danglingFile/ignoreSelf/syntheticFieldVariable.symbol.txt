@@ -6,3 +6,4 @@ KtNameReferenceExpression(27,32): 'field'
       var field: kotlin.Int
     ]
     diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'backing field field: Int': it is private in file.>
+  additional: [fake.kt]

@@ -22,7 +22,6 @@ KaValueParameterSymbol:
   name: param
   origin: TYPEALIASED_CONSTRUCTOR
   primaryConstructorProperty: null
-  psi: KtClass
   realPsi: null
   receiverParameter: null
   returnType: KaTypeParameterType:

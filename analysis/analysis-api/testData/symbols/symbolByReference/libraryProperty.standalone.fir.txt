@@ -20,7 +20,6 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(one/topLevelProperty)
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -55,7 +54,6 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: null
     realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -90,7 +88,6 @@ KaKotlinPropertySymbol:
   name: topLevelProperty
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: null
   realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:

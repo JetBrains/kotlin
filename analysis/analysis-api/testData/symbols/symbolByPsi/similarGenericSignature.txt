@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: OPEN
   name: A
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -43,7 +42,6 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: J
   origin: SOURCE
-  psi: KtTypeParameter
   realPsi: KtTypeParameter
   upperBounds: [
     KaUsualClassType:
@@ -83,7 +81,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaTypeParameterType:
@@ -101,7 +98,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: J
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: [
         KaUsualClassType:
@@ -141,7 +137,6 @@ KaNamedFunctionSymbol:
       name: j
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
@@ -175,7 +170,6 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
-  psi: KtTypeParameter
   realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
@@ -210,7 +204,6 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaTypeParameterType:
@@ -228,7 +221,6 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -263,7 +255,6 @@ KaNamedFunctionSymbol:
       name: j
       origin: SOURCE
       primaryConstructorProperty: null
-      psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:

@@ -16,7 +16,6 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: a
   origin: SOURCE
-  psi: KtDestructuringDeclarationEntry
   realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
   returnType: KaUsualClassType:

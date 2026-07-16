@@ -46,7 +46,6 @@ scopes:
         modality: FINAL
         name: a
         origin: SOURCE
-        psi: KtParameter
         realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -84,7 +83,6 @@ scopes:
         modality: FINAL
         name: A
         origin: SOURCE
-        psi: KtClass
         realPsi: KtClass
         superTypes: [
           KaUsualClassType:
@@ -117,7 +115,6 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(one/foo)
-          psi: null
           realPsi: null
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -145,7 +142,6 @@ scopes:
             modality: FINAL
             name: a
             origin: SOURCE
-            psi: KtParameter
             realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -171,7 +167,6 @@ scopes:
             modality: FINAL
             name: <unused var>
             origin: SOURCE
-            psi: KtParameter
             realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -213,7 +208,6 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
-          psi: KtPropertyAccessor
           realPsi: KtPropertyAccessor
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -243,7 +237,6 @@ scopes:
         name: foo
         origin: SOURCE
         primaryConstructorParameter: null
-        psi: KtProperty
         realPsi: KtProperty
         receiverParameter: null
         returnType: KaUsualClassType:

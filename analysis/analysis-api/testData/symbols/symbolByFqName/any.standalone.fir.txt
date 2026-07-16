@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: OPEN
   name: Any
   origin: LIBRARY
-  psi: null
   realPsi: null
   superTypes: []
   typeParameters: []

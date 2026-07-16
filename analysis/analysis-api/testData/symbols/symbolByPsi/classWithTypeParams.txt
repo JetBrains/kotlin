@@ -12,7 +12,6 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
-  psi: KtTypeParameter
   realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
@@ -33,7 +32,6 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: R
   origin: SOURCE
-  psi: KtTypeParameter
   realPsi: KtTypeParameter
   upperBounds: []
   variance: INVARIANT
@@ -61,7 +59,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -84,7 +81,6 @@ KaNamedClassSymbol:
       modality: FINAL
       name: T
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
@@ -104,7 +100,6 @@ KaNamedClassSymbol:
       modality: FINAL
       name: R
       origin: SOURCE
-      psi: KtTypeParameter
       realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT

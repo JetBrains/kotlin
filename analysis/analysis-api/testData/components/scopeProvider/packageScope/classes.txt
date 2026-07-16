@@ -16,7 +16,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: A
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -50,7 +49,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: InternalA
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -84,7 +82,6 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: PrivateA
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -118,7 +115,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: B
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -152,7 +148,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InternalB
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:
@@ -186,7 +181,6 @@ KaNamedClassSymbol:
   modality: FINAL
   name: PrivateB
   origin: SOURCE
-  psi: KtClass
   realPsi: KtClass
   superTypes: [
     KaUsualClassType:

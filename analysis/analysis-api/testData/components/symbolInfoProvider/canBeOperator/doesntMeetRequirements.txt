@@ -24,7 +24,6 @@ FUNCTION:
   modality: FINAL
   name: plus
   origin: SOURCE
-  psi: KtNamedFunction
   realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:

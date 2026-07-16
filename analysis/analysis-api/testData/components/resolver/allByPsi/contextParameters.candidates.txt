@@ -1061,7 +1061,6 @@ KtCallExpression(488,499): 'funMember()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1091,7 +1090,6 @@ KtCallExpression(488,499): 'funMember()'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1145,7 +1143,6 @@ KtNameReferenceExpression(488,497): 'funMember'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1175,7 +1172,6 @@ KtNameReferenceExpression(488,497): 'funMember'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1231,7 +1227,6 @@ KtNameReferenceExpression(512,526): 'propertyMember'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            psi: KtFunctionLiteral
             realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -1261,7 +1256,6 @@ KtNameReferenceExpression(512,526): 'propertyMember'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1501,7 +1495,6 @@ KtCallExpression(611,629): 'funMember(a = A())'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
@@ -1568,7 +1561,6 @@ KtNameReferenceExpression(611,620): 'funMember'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          psi: KtFunctionLiteral
           realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:

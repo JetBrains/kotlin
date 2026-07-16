@@ -35,6 +35,7 @@ internal class KaFirPackageSymbol(
     override val anchorPsi: PsiElement?
         get() = realPsi
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override val psi: PsiElement?
         get() = realPsi
 

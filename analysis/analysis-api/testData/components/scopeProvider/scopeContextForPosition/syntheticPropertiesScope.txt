@@ -47,7 +47,6 @@ scopes:
         modality: OPEN
         name: getValue
         origin: JAVA_SOURCE
-        psi: PsiMethodImpl
         realPsi: null
         receiverParameter: null
         returnType: KaFlexibleType:
@@ -81,7 +80,6 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -114,7 +112,6 @@ scopes:
             name: other
             origin: LIBRARY
             primaryConstructorProperty: null
-            psi: KtParameter
             realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
@@ -150,7 +147,6 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -185,7 +181,6 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -220,7 +215,6 @@ scopes:
           location: PROPERTY
           modality: OPEN
           origin: JAVA_SYNTHETIC_PROPERTY
-          psi: PsiMethodImpl
           realPsi: null
           receiverParameter: null
           returnType: KaFlexibleType:
@@ -248,7 +242,6 @@ scopes:
         modality: OPEN
         name: value
         origin: JAVA_SYNTHETIC_PROPERTY
-        psi: null
         realPsi: null
         receiverParameter: null
         returnType: KaFlexibleType:
@@ -275,7 +268,6 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: JAVA_SOURCE
-        psi: PsiClassImpl
         realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -305,42 +297,36 @@ scopes:
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(META-INF)
         realPsi: PsiPackage(META-INF)
       KaPackageSymbol:
         anchorPsi: PsiPackage(java)
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(java)
         realPsi: PsiPackage(java)
       KaPackageSymbol:
         anchorPsi: PsiPackage(javax)
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(javax)
         realPsi: PsiPackage(javax)
       KaPackageSymbol:
         anchorPsi: PsiPackage(kotlin)
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(kotlin)
         realPsi: PsiPackage(kotlin)
       KaPackageSymbol:
         anchorPsi: PsiPackage(org)
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(org)
         realPsi: PsiPackage(org)
       KaPackageSymbol:
         anchorPsi: PsiPackage(sun)
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
-        psi: PsiPackage(sun)
         realPsi: PsiPackage(sun)
     classifiers: 1
       KaNamedClassSymbol:
@@ -361,7 +347,6 @@ scopes:
         modality: OPEN
         name: JavaClass
         origin: JAVA_SOURCE
-        psi: PsiClassImpl
         realPsi: PsiClassImpl
         superTypes: [
           KaUsualClassType:
@@ -397,7 +382,6 @@ scopes:
         modality: FINAL
         name: test
         origin: SOURCE
-        psi: KtNamedFunction
         realPsi: KtNamedFunction
         receiverParameter: KaReceiverParameterSymbol:
           anchorPsi: KtTypeReference
@@ -417,7 +401,6 @@ scopes:
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/test)
-          psi: KtTypeReference
           realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
