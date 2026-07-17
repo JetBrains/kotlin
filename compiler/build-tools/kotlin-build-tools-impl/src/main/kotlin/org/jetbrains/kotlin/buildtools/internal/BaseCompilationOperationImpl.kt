@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
+import org.jetbrains.kotlin.components.ClassloadersCache
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.*
@@ -291,6 +292,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 register(ImportTracker::class.java, ImportTrackerAdapter(tracker))
             }
             register(PluginCliParser.PluginsLoader::class.java, kotlinToolchains.classloadersCache.asPluginsLoader())
+            register(ClassloadersCache::class.java, kotlinToolchains.classloadersCache)
         }.build()
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
         val metricsReporter = getMetricsReporter()

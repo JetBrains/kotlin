@@ -12,17 +12,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
-
-    implementation project(':module1')
-    implementation project(':module2')
-    implementation project(':module3')
-    implementation project(':module4')
-    implementation project(':module5')
-    implementation project(':module6')
-    implementation project(':module7')
-    implementation project(':module8')
-    implementation project(':module9')
-    implementation project(':module10')
 }
 
 kapt {
