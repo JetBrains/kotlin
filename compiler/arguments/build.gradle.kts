@@ -39,6 +39,10 @@ dependencies {
     embedded(project(":compiler:arguments.common")) {
         isTransitive = false
     }
+    compileOnly(project(":generators"))
+    embedded(project(":generators")) {
+        isTransitive = false
+    }
 
     testImplementation(kotlinTest("junit5"))
     testImplementation(project(":compiler:config.jvm"))
@@ -69,6 +73,7 @@ val generateJson = tasks.register<JavaExec>("generateJson") {
         listOf(outputJsonInResources.get().path)
     }
 
+    systemProperties["teamcity"] = kotlinBuildProperties.isTeamcityBuild.get()
 }
 
 tasks.named("processResources") {
