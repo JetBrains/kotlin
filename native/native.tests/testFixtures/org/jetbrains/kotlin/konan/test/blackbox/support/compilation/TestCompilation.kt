@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
@@ -121,6 +123,20 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
                 !(isSmallBinaryEnabled && optimizationMode == OptimizationMode.DEBUG)
             }
             .forEach { add(it.asCompilerCliArgument()) }
+        sourceModules.forEach {
+            when (it) {
+                is TestModule.Exclusive -> {
+                    applyModuleDirectives(it.directives)
+                }
+                else -> {}
+            }
+        }
+    }
+
+    private fun ArgsBuilder.applyModuleDirectives(directives: RegisteredDirectives) {
+        directives[LANGUAGE].forEach {
+            add("-XXLanguage:$it")
+        }
     }
 
     protected fun ArgsBuilder.applyMinidumpArgs() {
