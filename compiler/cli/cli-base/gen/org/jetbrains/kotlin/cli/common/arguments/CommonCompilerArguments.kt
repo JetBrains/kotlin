@@ -204,6 +204,17 @@ default: 'param-property' in language version 2.4+, 'first-only-warn' in languag
         }
 
     @Argument(
+        value = "-Xcallable-references-to-contextual",
+        description = "Enable callable references to contextual declarations.",
+    )
+    @Enables(LanguageFeature.CallableReferencesToContextual)
+    var callableReferencesToContextual: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xcheck-phase-conditions",
         description = "Check pre- and postconditions of IR lowering phases.",
     )

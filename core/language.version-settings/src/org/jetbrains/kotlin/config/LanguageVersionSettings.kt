@@ -621,7 +621,7 @@ enum class LanguageFeature(
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, "KT-73894", enabledInLatestLVTests = false),
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
     StrictEquals(sinceVersion = null, testOnly = true, issue = "KT-83683", enabledInLatestLVTests = false),
-    CallableReferencesToContextual(sinceVersion = null, testOnly = true, issue = "KT-54594", enabledInLatestLVTests = true),
+    CallableReferencesToContextual(sinceVersion = null, issue = "KT-54594", enabledInLatestLVTests = true),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-19318", enabledInLatestLVTests = false),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308", enabledInLatestLVTests = false),
 

@@ -22,6 +22,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.apiVersion = from.apiVersion
     to.autoAdvanceApiVersion = from.autoAdvanceApiVersion
     to.autoAdvanceLanguageVersion = from.autoAdvanceLanguageVersion
+    to.callableReferencesToContextual = from.callableReferencesToContextual
     to.checkPhaseConditions = from.checkPhaseConditions
     to.collectionLiterals = from.collectionLiterals
     to.commonSources = from.commonSources.copyOf()

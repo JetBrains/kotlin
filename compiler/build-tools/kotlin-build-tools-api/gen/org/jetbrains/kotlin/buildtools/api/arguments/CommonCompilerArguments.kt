@@ -184,6 +184,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_ANNOTATION_TARGET_ALL", KotlinReleaseVersion(2, 1, 20))
 
     /**
+     * Enable callable references to contextual declarations.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_CALLABLE_REFERENCES_TO_CONTEXTUAL: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_CALLABLE_REFERENCES_TO_CONTEXTUAL", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Check pre- and postconditions of IR lowering phases.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

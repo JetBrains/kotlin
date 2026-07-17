@@ -818,6 +818,19 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
+        name = "Xcallable-references-to-contextual"
+        description = "Enable callable references to contextual declarations.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.CallableReferencesToContextual))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+
+    compilerArgument {
         name = "Xcontext-sensitive-resolution"
         description = "Enable experimental context-sensitive resolution.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
