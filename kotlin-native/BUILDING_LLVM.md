@@ -16,7 +16,7 @@ Use [package.py](tools/llvm_builder/README.md) script to build LLVM distribution
 Change `kotlin.native.llvm` Gradle property to the absolute path of the freshly built LLVM distribution.
 
 It's possible to:
-* either edit [gradle.properties](gradle.properties),
+* either edit [gradle.properties](../gradle.properties),
 * or pass `-Pkotlin.native.llvm=<path>` when executing Gradle tasks from the command line.
 
 It's important to correctly specify llvm version. Look up `<version>` in `<llvm-distribution>/lib/clang/<version>/include`.
@@ -25,7 +25,7 @@ by `kotlin.native.llvm=<path>`.
 
 Now we are ready to build Kotlin/Native itself. The process is described in [README.md](README.md).
 
-*NOTE*: In [gradle.properties](gradle.properties) we also have defined special `default` and `next`
+*NOTE*: In [gradle.properties](../gradle.properties) we also have defined special `default` and `next`
 LLVM versions. The `default` version is the one Kotlin/Native uses, and the `next` is there to experiment
 during migration to another LLVM version.
 
