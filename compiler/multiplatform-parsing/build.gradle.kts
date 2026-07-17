@@ -132,7 +132,7 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
                 "--nobak", // Prevent generating backup `.kt~` files
             )
         },
-        commonSourceSet = true,
+        generatedSourceSetKind = GeneratedSourceSetKind.KmpCommon,
         additionalInputsToTrack = { fileCollection ->
             fileCollection.from(lexerFile)
             fileCollection.from(skeletonDownloadTask)
