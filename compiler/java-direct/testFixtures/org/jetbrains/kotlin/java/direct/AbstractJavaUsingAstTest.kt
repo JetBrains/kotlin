@@ -14,8 +14,7 @@ abstract class AbstractJavaUsingAstTest : AbstractFirPhasedDiagnosticTest(FirPar
         super.configure(builder)
         with(builder) {
             useMetaTestConfigurators(
-                ::OnlyTestsWithJavaSourcesMetaConfigurator,
-                ::SkipTestsPinningPsiJavaModelDeviationsMetaConfigurator,
+                ::OnlyTestsWithJavaSourcesMetaConfigurator
             )
             useConfigurators(::JavaDirectConfigurator)
         }
