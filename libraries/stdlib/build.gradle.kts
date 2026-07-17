@@ -7,9 +7,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -32,6 +34,7 @@ plugins {
     id("d8-configuration")
     id("binaryen-configuration")
     id("nodejs-configuration")
+    id("wasmtime-configuration")
 }
 
 description = "Kotlin Standard Library"
@@ -308,7 +311,13 @@ kotlin {
         // upgrade after bootstrap
         // KT-85971
         this as KotlinJsTargetDsl
-        nodejs()
+        if (this.wasmTargetType == KotlinWasmTargetType.JS) {
+            nodejs()
+        } else {
+            this as KotlinWasmWasiTargetDsl
+            @OptIn(ExperimentalWasmDsl::class)
+            wasmtime()
+        }
         compilerOptions {
             sourceMap = false
             sourceMapEmbedSources.unsetConvention()
@@ -870,7 +879,7 @@ tasks {
             enabled = false  // Causes out-of-memory in CI: KTI-2150
         }
     }
-    val wasmWasiNodeTest by existing {
+    val wasmWasiWasmtimeTest by existing {
         if (!kotlinBuildProperties.booleanProperty("kotlin.stdlib.wasi.tests").get()) {
             enabled = false
         }

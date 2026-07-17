@@ -16,6 +16,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check-v2")
+    id("wasmtime-configuration")
 }
 
 node {
@@ -157,22 +158,8 @@ val jsc = configurations.create("jsc") {
 }
 
 val wasmtimeVersion = libs.versions.wasmtime
-val wasmtimePlatformSuffix = when (currentOsType) {
-    OsType(OsName.LINUX, OsArch.X86_64) -> "x86_64-linux"
-    OsType(OsName.MAC, OsArch.X86_64) -> "x86_64-macos"
-    OsType(OsName.MAC, OsArch.ARM64) -> "aarch64-macos"
-    OsType(OsName.WINDOWS, OsArch.X86_32),
-    OsType(OsName.WINDOWS, OsArch.X86_64) -> "x86_64-windows"
-    else -> error("unsupported os type $currentOsType")
-}
-val wasmtimeSuffix = wasmtimePlatformSuffix + "@" + when (currentOsType.name) {
-    OsName.LINUX -> "tar.xz"
-    OsName.MAC -> "tar.xz"
-    OsName.WINDOWS -> "zip"
-    else -> error("unsupported os type $currentOsType")
-}
 
-val wasmtime = configurations.create("wasmtime") {
+configurations.create("wasmtime") {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
@@ -212,11 +199,9 @@ dependencies {
     implicitDependencies("org.jsc:jsc:${libs.versions.jscLinux.get()}:linux64")
     implicitDependencies("org.jsc:jsc:${libs.versions.jscWindows.get()}:win64")
 
-    wasmtime("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:$wasmtimeSuffix")
-
-    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-windows@zip")
-    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-linux@tar.xz")
-    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:aarch64-macos@tar.xz")
+    implicitDependencies("bytecodealliance.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-windows@zip")
+    implicitDependencies("bytecodealliance.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-linux@tar.xz")
+    implicitDependencies("bytecodealliance.wasmtime:wasmtime:${wasmtimeVersion.get()}:aarch64-macos@tar.xz")
 }
 
 optInToExperimentalCompilerApi()
@@ -321,22 +306,6 @@ val createJscRunner = tasks.register<CreateJscRunner>("createJscRunner") {
     inputDirectory.set(unzipJsc.flatMap { it.into })
 }
 
-val unzipWasmtime = tasks.register<UnzipWasmtime>("unzipWasmtime") {
-    from.setFrom(wasmtime)
-
-    val currentOsTypeForConfigurationCache = currentOsType.name
-
-    getIsWindows.set(currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX))
-
-    val wasmtimeDirectoryName: Provider<String> = wasmtimeVersion.map { version -> "wasmtime-$version-$wasmtimePlatformSuffix" }
-
-    into.set(
-        toolsDirectory.zip(wasmtimeDirectoryName) { toolsDir: Directory, wasmtimeDir: String ->
-            toolsDir.dir("Wasmtime").dir(wasmtimeDir)
-        }
-    )
-}
-
 fun Test.setupSpiderMonkey() {
     val jsShellExecutablePath = unzipJsShell
         .map { it.destinationDir }
@@ -370,17 +339,6 @@ fun Test.setupJsc() {
     }
 }
 
-fun Test.setupWasmtime() {
-    val wasmtime = unzipWasmtime
-        .flatMap { it.into.dir("wasmtime-v${wasmtimeVersion.get()}-$wasmtimePlatformSuffix") }
-        .map { it.file("wasmtime") }
-
-    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(wasmtime)
-        property.set("wasm.engine.path.Wasmtime")
-    }
-}
-
 testsJar {}
 
 projectTests {
@@ -398,6 +356,9 @@ projectTests {
             with(d8KotlinBuild) {
                 setupV8()
             }
+            with(wasmtimeKotlinBuild) {
+                setupWasmtime()
+            }
             with(wasmNodeJsKotlinBuild) {
                 setupNodeJs(nodejsVersion)
                 dependsOn(":js:js.tests:npmInstall")
@@ -413,7 +374,6 @@ projectTests {
             setupSpiderMonkey()
             setupWasmEdge()
             setupJsc()
-            setupWasmtime()
             useJUnitPlatform()
             setupGradlePropertiesForwarding()
             addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")

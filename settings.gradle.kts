@@ -116,7 +116,6 @@ dependencyResolutionManagement {
         mozillaReleases()
         kotlinFileDependenciesJsc()
         githubRelease("WasmEdge", "WasmEdge", revisionPrefix = "", groupAlias = "org.wasmedge")
-        githubRelease("bytecodealliance", "wasmtime", groupAlias = "dev.wasmtime")
         githubCommit("webassembly", "testsuite")
         githubRelease("webassembly", "wabt", revisionPrefix = "")
         githubTag("google", "breakpad")
@@ -125,6 +124,7 @@ dependencyResolutionManagement {
         yarnDistributions()
         binaryenDistributions()
         d8Distributions()
+        wasmtimeDistributions()
         androidRepository()
         androidSystemImages()
         val mirrorRepo: String? = settings.providers.systemProperty("maven.repository.mirror").orNull
