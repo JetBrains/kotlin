@@ -47,9 +47,6 @@ fun main(args: Array<String>) {
             testClass<AbstractAtomicfuJsTest> {
                 model("box/")
             }
-            testClass<AbstractAtomicfuJsWithInlinedFunInKlibTest> {
-                model("box/")
-            }
         }
 
         testGroup(

@@ -59,10 +59,6 @@ fun main(args: Array<String>) {
                 model("boxIr")
             }
 
-            testClass<AbstractSerializationJsBoxWithInlinedFunInKlibTest> {
-                model("boxIr")
-            }
-
             // Serialization compiler plugin native tests.
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "SerializationNativeTestGenerated",
