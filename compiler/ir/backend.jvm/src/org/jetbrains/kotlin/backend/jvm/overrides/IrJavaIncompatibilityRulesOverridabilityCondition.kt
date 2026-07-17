@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFromJava
+import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -41,7 +42,12 @@ class IrJavaIncompatibilityRulesOverridabilityCondition : IrExternalOverridabili
     ): Boolean {
         val originalSuperMember = superMember.original as? IrSimpleFunction ?: return false
         val originalSubMember = subMember.original as? IrSimpleFunction ?: return false
-        if (!originalSubMember.dispatchReceiverParameter!!.type.getClass()!!.isFromJava()) return false
+        if (!originalSubMember.isStatic) {
+            // For non-static methods, return false if Sub is not from Java, because Kotlin will create bridges and this check is not relevant.
+            // For statics, bridges are never created.
+            val originalSubDispatchReceiverType = originalSubMember.dispatchReceiverParameter!!.type
+            if (!originalSubDispatchReceiverType.getClass()!!.isFromJava()) return false
+        }
         require(originalSubMember.parameters.size == originalSuperMember.parameters.size) {
             "External overridability condition with CONFLICTS_ONLY should not be run with different value parameters size: " +
                     "subMember=${originalSubMember.render()} superMember=${originalSuperMember.render()}"
