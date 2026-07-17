@@ -13,10 +13,13 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.internal.ProjectByPath
 import org.jetbrains.kotlin.gradle.plugin.internal.ProjectDependencyAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.moduleVersionIdentifier
@@ -63,6 +66,18 @@ interface SwiftExportAdvancedConfiguration {
      * Specifies additional compiler arguments to be passed to the compiler.
      */
     val freeCompilerArgs: ListProperty<String>
+}
+
+@ExperimentalSwiftExportDsl
+interface SwiftExportExportedConfigurationModuleMetadata : SwiftExportedModuleMetadata {
+    fun filterByFQName(fqName: String)
+
+    fun filterByAnnotation(annotation: String)
+}
+
+@ExperimentalSwiftExportDsl
+interface SwiftExportExportedConfiguration {
+    fun configureExportedDependency(dependency: Any, configure: SwiftExportExportedConfigurationModuleMetadata.() -> Unit)
 }
 
 internal fun ObjectFactory.SwiftExportExtension(
@@ -170,6 +185,16 @@ abstract class SwiftExportExtension @Inject constructor(
         configure.execute(this)
     }
 
+    @ExperimentalSwiftExportDsl
+    fun exportedConfiguration(configure: SwiftExportExportedConfiguration.() -> Unit) {
+        // not implemented yet
+    }
+
+    @ExperimentalSwiftExportDsl
+    fun exportedConfiguration(configure: Action<SwiftExportExportedConfiguration>) {
+        // not implemented yet
+    }
+
     /**
      * Returns a list of exported modules.
      */
@@ -232,6 +257,41 @@ abstract class SwiftExportExtension @Inject constructor(
 
     private fun forAllSwiftExportBinaries(configure: AbstractNativeLibrary.() -> Unit) {
         _swiftExportBinaries.configureEach(configure)
+    }
+
+    companion object {
+        fun <T : Any> addDependencyToExportConfiguration(project: Project, dependency: Any, configure: T.() -> Unit = {}): Dependency {
+            val dependencyHandler = project.dependencies
+            val target = (project.kotlinExtension as KotlinMultiplatformExtension).targets.withType(KotlinNativeTarget::class.java).first()
+
+            val dependency = when (dependency) {
+                is Provider<*> -> {
+                    if (dependency is Dependency) dependency else dependencyHandler.create(dependency)
+                }
+                else -> {
+                    dependencyHandler.create(dependency)
+                }
+            }
+            (dependency as T).configure()
+            val dependencyProvider = project.providers.provider { dependency }
+            val swiftExportBinaries = project.objects.domainObjectSet(AbstractNativeLibrary::class.java)
+            swiftExportBinaries.configureEach { binary ->
+                val swiftExportCompilation = target.compilations.getByName(SwiftExportConstants.SWIFT_EXPORT_COMPILATION)
+                val compileDependencyConfiguration = swiftExportCompilation.internal.configurations.compileDependencyConfiguration
+                val exportedSwiftExportApiConfigurationName = target.exportedSwiftExportApiConfigurationName(binary.buildType)
+
+                dependencyHandler.addProvider(exportedSwiftExportApiConfigurationName, dependencyProvider)
+                dependencyHandler.addProvider(
+                    compileDependencyConfiguration.name,
+                    dependencyProvider
+                )
+
+                project.configurations.getByName(exportedSwiftExportApiConfigurationName).shouldResolveConsistentlyWith(
+                    compileDependencyConfiguration
+                )
+            }
+            return dependency
+        }
     }
 }
 

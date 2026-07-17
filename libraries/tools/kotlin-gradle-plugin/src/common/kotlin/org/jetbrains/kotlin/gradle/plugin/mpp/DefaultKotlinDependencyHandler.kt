@@ -10,11 +10,15 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.model.ObjectFactory
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
+import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 import javax.inject.Inject
@@ -197,6 +201,40 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             directory = directory,
             scope = scope,
         )
+
+    override fun exported(dependencyNotation: Any): Dependency? {
+        return addDependencyToExportConfiguration<Any>(dependencyNotation)
+    }
+
+    override fun exported(
+        dependencyNotation: String,
+        configure: ExternalModuleDependency.() -> Unit,
+    ): ExternalModuleDependency {
+        return addDependencyToExportConfiguration(dependencyNotation, configure) as ExternalModuleDependency
+    }
+
+    override fun <T : Dependency> exported(dependency: T, configure: T.() -> Unit): T {
+        return addDependencyToExportConfiguration(dependency, configure) as T
+    }
+
+    override fun exportedOnly(dependencyNotation: Any): Dependency? {
+        return addDependencyToExportConfiguration<Any>(dependencyNotation)
+    }
+
+    override fun exportedOnly(
+        dependencyNotation: String,
+        configure: ExternalModuleDependency.() -> Unit,
+    ): ExternalModuleDependency {
+        return addDependencyToExportConfiguration(dependencyNotation, configure) as ExternalModuleDependency
+    }
+
+    override fun <T : Dependency> exportedOnly(dependency: T, configure: T.() -> Unit): T {
+        return addDependencyToExportConfiguration(dependency, configure) as T
+    }
+
+    private fun <T : Any> addDependencyToExportConfiguration(dependency: Any, configure: T.() -> Unit = {}): Dependency {
+        return SwiftExportExtension.addDependencyToExportConfiguration(project, dependency, configure)
+    }
 }
 
 internal fun ObjectFactory.DefaultKotlinDependencyHandler(

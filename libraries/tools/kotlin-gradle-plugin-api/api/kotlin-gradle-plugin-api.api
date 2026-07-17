@@ -976,6 +976,16 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDepende
 	public abstract fun devNpm (Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun devNpm (Ljava/lang/String;Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun devNpm (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun exported (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun exported (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public abstract fun exported (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public abstract fun exported (Lorg/gradle/api/artifacts/Dependency;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun exported (Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun exportedOnly (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun exportedOnly (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public abstract fun exportedOnly (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public abstract fun exportedOnly (Lorg/gradle/api/artifacts/Dependency;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun exportedOnly (Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun implementation (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun implementation (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun implementation (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
@@ -1005,6 +1015,10 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler$De
 	public static fun api (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun compileOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public static fun compileOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun exported (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public static fun exported (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun exportedOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public static fun exportedOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun implementation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public static fun implementation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun kotlin (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;)Lorg/gradle/api/artifacts/ExternalModuleDependency;

@@ -551,4 +551,123 @@ interface KotlinDependencyHandler : HasProject {
         name: String,
         version: String,
     ): Dependency
+
+
+    /**
+     * Adds an `exported`
+     * [module dependency](https://docs.gradle.org/current/userguide/declaring_dependencies.html#sub:module_dependencies) to this entity.
+     *
+     * @see [HasKotlinDependencies.implementationConfigurationName]
+     *
+     * @param dependencyNotation The module dependency notation, as per [DependencyHandler.create].
+     * @return The module dependency, or `null` if dependencyNotation is a provider.
+     */
+    fun exported(dependencyNotation: Any): Dependency?
+
+    /**
+     * Adds an `exported`
+     * [module dependency](https://docs.gradle.org/current/userguide/declaring_dependencies.html#sub:module_dependencies) to this entity.
+     *
+     * @see [HasKotlinDependencies.implementationConfigurationName]
+     *
+     * @param dependencyNotation The module dependency notation, as per [DependencyHandler.create].
+     * @param configure Additional configuration for the created module dependency.
+     * @return The module dependency, or `null` if dependencyNotation is a provider.
+     */
+    fun exported(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
+
+    /**
+     * Adds an `exported`
+     * [module dependency](https://docs.gradle.org/current/userguide/declaring_dependencies.html#sub:module_dependencies) to this entity.
+     *
+     * @see [HasKotlinDependencies.implementationConfigurationName]
+     *
+     * @param dependencyNotation The module dependency notation, as per [DependencyHandler.create].
+     * @param configure additional configuration for the created module dependency.
+     * @return The module dependency, or `null` if dependencyNotation is a provider.
+     */
+    fun exported(dependencyNotation: String, configure: Action<ExternalModuleDependency>) =
+        implementation(dependencyNotation) { configure.execute(this) }
+
+    /**
+     * Adds an `exported` dependency to this entity.
+     *
+     * @see [HasKotlinDependencies.implementationConfigurationName]
+     *
+     * @param dependency The dependency to add.
+     * @param configure Additional configuration for the [dependency].
+     * @return The added [dependency].
+     */
+    fun <T : Dependency> exported(dependency: T, configure: T.() -> Unit): T
+
+    /**
+     * Adds an `exported` dependency to this entity.
+     *
+     * @see [HasKotlinDependencies.implementationConfigurationName]
+     *
+     * @param dependency The dependency to add.
+     * @param configure Additional configuration for the [dependency].
+     * @return The added [dependency].
+     */
+    fun <T : Dependency> exported(dependency: T, configure: Action<T>) =
+        exported(dependency) { configure.execute(this) }
+
+    /**
+     * Adds a `exportedOnly` [module dependency](https://docs.gradle.org/current/userguide/declaring_dependencies.html#sub:module_dependencies)
+     * to this entity.
+     *
+     * @see [HasKotlinDependencies.compileOnlyConfigurationName]
+     *
+     * @param dependencyNotation The module dependency notation, as per [DependencyHandler.create].
+     * @return The module dependency, or `null` if dependencyNotation is a provider.
+     */
+    fun exportedOnly(dependencyNotation: Any): Dependency?
+
+    /**
+     * Adds a `exportedOnly` [module dependency](https://docs.gradle.org/current/userguide/declaring_dependencies.html#sub:module_dependencies)
+     * to this entity.
+     *
+     * @see [HasKotlinDependencies.compileOnlyConfigurationName]
+     *
+     * @param dependencyNotation The module dependency notation, as per [DependencyHandler.create].
+     * @param configure Additional configuration for the created module dependency.
+     * @return The module dependency, or `null` if dependencyNotation is a provider.
+     */
+    fun exportedOnly(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
+
+    /**
+     * Adds a `exportedOnly` [module dependency](https://docs.gradle.org/current/userguide/declaring_dependencies.html#sub:module_dependencies)
+     * to this entity.
+     *
+     * @see [HasKotlinDependencies.compileOnlyConfigurationName]
+     *
+     * @param dependencyNotation The module dependency notation, as per [DependencyHandler.create].
+     * @param configure Additional configuration for the created module dependency.
+     * @return The module dependency, or `null` if dependencyNotation is a provider.
+     */
+    fun exportedOnly(dependencyNotation: String, configure: Action<ExternalModuleDependency>) =
+        compileOnly(dependencyNotation) { configure.execute(this) }
+
+    /**
+     * Adds a `exportedOnly` dependency to this entity.
+     *
+     * @see [HasKotlinDependencies.compileOnlyConfigurationName]
+     *
+     * @param dependency The dependency to add.
+     * @param configure Additional configuration for the [dependency].
+     * @return The added [dependency].
+     */
+    fun <T : Dependency> exportedOnly(dependency: T, configure: T.() -> Unit): T
+
+    /**
+     * Adds a `exportedOnly` dependency to this entity.
+     *
+     * @see [HasKotlinDependencies.compileOnlyConfigurationName]
+     *
+     * @param dependency The dependency to add.
+     * @param configure Additional configuration for the [dependency].
+     * @return The added [dependency].
+     */
+    fun <T : Dependency> exportedOnly(dependency: T, configure: Action<T>) =
+        compileOnly(dependency) { configure.execute(this) }
 }
