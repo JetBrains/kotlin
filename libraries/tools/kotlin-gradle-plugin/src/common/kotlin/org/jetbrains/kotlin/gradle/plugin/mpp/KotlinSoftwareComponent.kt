@@ -16,25 +16,19 @@ import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
-import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
-import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
-import org.jetbrains.kotlin.gradle.targets.metadata.*
+import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 abstract class KotlinSoftwareComponent(
     private val project: Project,
@@ -51,18 +45,18 @@ abstract class KotlinSoftwareComponent(
 
     private suspend fun subcomponentTargetsWithAvailableAtPointers(): List<KotlinTarget> {
         AfterFinaliseCompilations.await()
-        return kotlinTargets
-            .filter { target ->
-                if (target is KotlinMetadataTarget) return@filter false
-                true
-            }
+        return kotlinTargets.filter { target ->
+            target.platformType in listOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
+        }
     }
 
     /**
      * These are variants pointing to subcomponent variants via available-at pointers
      */
-    private val _variants = project.future {
-        subcomponentTargetsWithAvailableAtPointers()
+    private val _variants: Future<Set<SoftwareComponent>> = project.future {
+        AfterFinaliseCompilations.await()
+        kotlinTargets
+            .filter { target -> target.publicationLayout == KotlinTargetPublicationLayout.IN_SEPARATE_COMPONENT }
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
                     .filter { component -> component.publishable }
@@ -81,67 +75,21 @@ abstract class KotlinSoftwareComponent(
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
         metadataTarget.awaitMetadataCompilationsCreated()
 
-        // FIXME: Remove this, for now we definitely want to continue publishing existing KMP publication together with Uklib variants
-        // if (onlyPublishUklib) return
-
-        mutableSetOf<DefaultKotlinUsageContext>().apply {
-            this += DefaultKotlinUsageContext(
-                compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                mavenScope = KotlinUsageContext.MavenScope.COMPILE,
-                dependencyConfigurationName = metadataTarget.apiElementsConfigurationName
-            )
-
-            val sourcesElements = metadataTarget.sourcesElementsConfigurationName
-            if (metadataTarget.isSourcesPublishable) {
-                addSourcesJarArtifactToConfiguration(
-                    sourcesElements,
-                    classifierPrefix = when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
-                        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> "metadata"
-                        KmpPublicationStrategy.StandardKMPPublication -> null
-                    },
-                )
-                this += DefaultKotlinUsageContext(
-                    compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                    dependencyConfigurationName = sourcesElements,
-                    includeIntoProjectStructureMetadata = false,
-                    publishOnlyIf = { metadataTarget.isSourcesPublishable }
-                )
-            }
-        }
+        kotlinTargets
+            .asSequence()
+            .filter { target -> target.publicationLayout != KotlinTargetPublicationLayout.IN_SEPARATE_COMPONENT }
+            .flatMap { target -> target.internal.kotlinComponents }
+            .filter { component -> component.publishable }
+            .filterIsInstance<KotlinVariant>()
+            .flatMap { variant -> variant.usages }
+            .toSet()
     }
 
 
     override fun getUsages(): Set<UsageContext> {
-        return _usages.getOrThrow().publishableUsages() + includeExtraUsagesFrom.usages + uklibUsages.getOrThrow().toSet()
-    }
-
-    private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
-            getHostSpecificMainSharedSourceSets(project)
-
-    /**
-     * Registration (during object init) of [sourcesJarTask] is required for cases when
-     * user build scripts want to have access to sourcesJar task to configure it
-     */
-    private val sourcesJarTask: TaskProvider<Jar> = sourcesJarTaskNamed(
-        "sourcesJar",
-        name,
-        project,
-        project.future { allPublishableCommonSourceSets().associate { it.name to it.defaultImpl.allKotlin } },
-        name.toLowerCaseAsciiOnly()
-    )
-
-    private fun addSourcesJarArtifactToConfiguration(
-        configurationName: String,
-        classifierPrefix: String?,
-    ): PublishArtifact {
-        return project.artifacts.add(configurationName, sourcesJarTask) { sourcesJarArtifact ->
-            sourcesJarArtifact.classifier = dashSeparatedName(
-                listOfNotNull(
-                    classifierPrefix,
-                    "sources",
-                )
-            )
-        }
+        return _usages.getOrThrow().publishableUsages() +
+                includeExtraUsagesFrom.usages +
+                uklibUsages.getOrThrow().toSet()
     }
 
     val publicationDelegate: MavenPublication? get() = project.kotlinMultiplatformRootPublication.lenient.getOrNull()
@@ -178,6 +126,8 @@ class DefaultKotlinUsageContext(
     override val dependencyConfigurationName: String,
     internal val overrideConfigurationArtifacts: SetProperty<PublishArtifact>? = null,
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
+    internal val overrideName: String? = null,
+    internal val additionalConfigurationAttributes: Provider<AttributeContainer>? = null,
     override val includeIntoProjectStructureMetadata: Boolean = true,
     internal val publishOnlyIf: PublishOnlyIf = PublishOnlyIf { true },
 ) : KotlinUsageContext {
@@ -188,7 +138,7 @@ class DefaultKotlinUsageContext(
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
-    override fun getName(): String = dependencyConfigurationName
+    override fun getName(): String = overrideName ?: dependencyConfigurationName
 
     private val configuration: Configuration
         get() = project.configurations.getByName(dependencyConfigurationName)
@@ -219,6 +169,11 @@ class DefaultKotlinUsageContext(
             project.providers,
             dest = result,
             keys = filterOutNonPublishableAttributes(configurationAttributes.keySet())
+        )
+        additionalConfigurationAttributes?.get()?.copyAttributesTo(
+            project.providers,
+            dest = result,
+            keys = filterOutNonPublishableAttributes(additionalConfigurationAttributes.get().keySet())
         )
 
         return result

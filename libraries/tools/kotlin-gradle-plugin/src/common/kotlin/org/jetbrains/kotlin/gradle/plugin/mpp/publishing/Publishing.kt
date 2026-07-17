@@ -122,8 +122,8 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
             }
         }
         .all { kotlinTarget ->
-            /** Publication for [KotlinMetadataTarget] is created in [createRootPublication] */
-            if (kotlinTarget is KotlinMetadataTarget) return@all
+            if (kotlinTarget.publicationLayout == KotlinTargetPublicationLayout.IN_ROOT_COMPONENT) return@all
+
             when (kotlinTarget) {
                 // Android targets have their variants created in afterEvaluate; TODO handle this better?
                 is KotlinAndroidTarget -> project.whenEvaluated {
