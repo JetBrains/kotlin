@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.jetbrains.kotlin.kar.test.consumer</groupId>
+    <artifactId>maven-kotlin-consumer</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <kotlin.version>KOTLIN_VERSION</kotlin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>kotlin-build</id>
+            <url>KOTLIN_BUILD_REPOSITORY_URL</url>
+        </repository>
+        <repository>
+            <id>kar-publication</id>
+            <url>LOCAL_REPOSITORY_URL</url>
+        </repository>
+        <repository>
+            <id>kotlin-dev</id>
+            <url>https://packages.jetbrains.team/maven/p/kt/dev</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>kotlin-dev</id>
+            <url>https://packages.jetbrains.team/maven/p/kt/dev</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin.kar.test</groupId>
+            <artifactId>sample-jvm</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
