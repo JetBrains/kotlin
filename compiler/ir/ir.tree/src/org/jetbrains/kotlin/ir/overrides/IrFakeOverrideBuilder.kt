@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isClass
-import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 class IrFakeOverrideBuilder(
     private val typeSystem: IrTypeSystemContext,
     val strategy: FakeOverrideBuilderStrategy,
-    private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
+    externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) {
     private val overrideChecker = IrOverrideChecker(typeSystem, externalOverridabilityConditions)
 
@@ -66,7 +65,7 @@ class IrFakeOverrideBuilder(
                 clazz.declarations.filterIsInstance<IrOverridableMember>().partition { it.isStaticMember }
 
             val supertypes = clazz.superTypes.filterNot { it is IrErrorType }
-            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, supertypes, isStaticJavaMembers = false)
+            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, supertypes, isStaticMembers = false)
 
             // Static Java members from the superclass need fake overrides in the subclass, to support the case when the static member is
             // declared in an inaccessible grandparent class but is exposed as public in the parent. For example:
@@ -79,7 +78,7 @@ class IrFakeOverrideBuilder(
             // we need to generate a fake override in class B. This is only possible in case of superclasses, as static _interface_ members
             // are not inherited (see JLS 8.4.8 and 9.4.1).
             val superClass = supertypes.filter { it.classOrFail.owner.isClass }
-            buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass, isStaticJavaMembers = true)
+            buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass, isStaticMembers = true)
         }
     }
 
@@ -88,7 +87,7 @@ class IrFakeOverrideBuilder(
         allFromCurrent: List<IrOverridableMember>,
         oldSignatures: Boolean,
         supertypes: List<IrType>,
-        isStaticJavaMembers: Boolean,
+        isStaticMembers: Boolean,
     ) {
         // TODO KT-83545 Stop deserializing fake overrides
         // Drop all deserialized `overridenSymbols` before FO recalculation from scratch
@@ -97,13 +96,7 @@ class IrFakeOverrideBuilder(
         }
         val allFromSuper = supertypes.flatMap { superType ->
             superType.classOrFail.owner.declarations
-                .filterIsInstanceAnd<IrOverridableMember> {
-                    if (isStaticJavaMembers) {
-                        it.isStaticMember && (it.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB || it.isFakeOverride)
-                    } else {
-                        !it.isStaticMember
-                    }
-                }
+                .filterIsInstanceAnd<IrOverridableMember> { it.isStaticMember == isStaticMembers }
                 .mapNotNull {
                     val fakeOverride = strategy.fakeOverrideMember(superType, it, clazz) ?: return@mapNotNull null
                     FakeOverride(fakeOverride, it)
@@ -119,7 +112,7 @@ class IrFakeOverrideBuilder(
                 !strategy.isGenericClashFromSameSupertypeAllowed -> false // workaround is disabled
                 else -> superMembers.all { it.original.parent == superMembers[0].original.parent }
             }
-            val isIntersectionOverrideForbidden = isStaticJavaMembers || isIntersectionOverrideForbiddenByGenericClash
+            val isIntersectionOverrideForbidden = isStaticMembers || isIntersectionOverrideForbiddenByGenericClash
             generateOverridesInFunctionGroup(
                 superMembers, allFromCurrentByName[name] ?: emptyList(), clazz, oldSignatures, isIntersectionOverrideForbidden
             )
