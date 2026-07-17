@@ -256,7 +256,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
             buildAndFail(
                 ":assemble",
-                buildOptions = defaultBuildOptions.copy(continueAfterFailure = true, separateCompilation = true)
+                buildOptions = buildOptions.copy(continueAfterFailure = true, separateCompilation = true)
             ) {
                 // ensures no unexpected task dependencies are added
                 val libraryTasks = setOf(
