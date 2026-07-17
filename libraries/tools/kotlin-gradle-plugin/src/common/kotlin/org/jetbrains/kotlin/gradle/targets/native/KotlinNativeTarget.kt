@@ -153,28 +153,21 @@ private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.
 internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean =
     konanTargets.none { target -> target in targetsEnabledOnAllHosts }
 
-private suspend fun <T> getHostSpecificElements(
-    fragments: Iterable<T>,
-    isNativeShared: suspend (T) -> Boolean,
-    getKonanTargets: suspend (T) -> Set<KonanTarget>,
-): Set<T> = fragments.filterTo(mutableSetOf()) { isNativeShared(it) && isHostSpecificKonanTargetsSet(getKonanTargets(it)) }
-
 internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
-    return getHostSpecificElements(
-        project.kotlinExtension.awaitSourceSets(),
-        isNativeShared = { sourceSet -> sourceSet.isNativeSourceSet.await() },
-        getKonanTargets = { sourceSet ->
-            sourceSet.internal.awaitPlatformCompilations()
-                .filterIsInstance<KotlinNativeCompilation>()
-                .filter { compilation ->
-                    when (compilation.target.publicationLayout) {
-                        IN_ROOT_COMPONENT -> false
-                        IN_SEPARATE_COMPONENT -> true
-                    }
-                }
-                .mapTo(mutableSetOf()) { it.konanTarget }
+    return project.kotlinExtension.awaitSourceSets().filterTo(mutableSetOf()) {
+        if (!it.isNativeSourceSet.await()) {
+            return@filterTo false
         }
-    )
+
+        val nativeCompilations = it.internal.awaitPlatformCompilations()
+            .filterIsInstance<KotlinNativeCompilation>()
+
+        if (nativeCompilations.any { compilation -> compilation.target.publicationLayout == IN_ROOT_COMPONENT }) {
+            return@filterTo false
+        }
+
+        isHostSpecificKonanTargetsSet(nativeCompilations.map { it.konanTarget }.toSet())
+    }
 }
 
 /**
