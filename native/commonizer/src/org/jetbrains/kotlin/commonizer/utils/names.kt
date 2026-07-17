@@ -19,6 +19,8 @@ internal val DEPRECATED_ANNOTATION_CLASS_ID: CirEntityId = CirEntityId.create(DE
 internal const val ANY_CLASS_FULL_NAME: ClassName = "kotlin/Any"
 internal val ANY_CLASS_ID: CirEntityId = CirEntityId.create(ANY_CLASS_FULL_NAME)
 
+internal val OBJC_NAME_ANNOTATION_CLASS_ID: CirEntityId = CirEntityId.create("kotlin/native/ObjCName")
+
 internal val SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_IDS: List<CirEntityId> = listOf(
     ANY_CLASS_ID,
     CirEntityId.create("kotlin/Nothing")
