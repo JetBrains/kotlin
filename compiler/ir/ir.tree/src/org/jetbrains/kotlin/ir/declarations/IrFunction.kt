@@ -33,7 +33,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
 
     // Even though [parameters] is an immutable list, the backing list is a mutable list to avoid creating a copy
     // on each invocation of [transformChildren]. See KT-84019.
-    private val _parameters: MutableList<IrValueParameter> = ArrayList()
+    protected open val parameterStorage: MutableList<IrValueParameter> = ArrayList()
 
     /**
      * All value parameters.
@@ -44,35 +44,42 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
      */
     @OptIn(DelicateIrParameterIndexSetter::class)
     var parameters: List<IrValueParameter>
-        get() = _parameters
+        get() {
+            if (parameterStorage.firstOrNull()?.indexInParameters == -1) {
+                for ([index, parameter] in parameterStorage.withIndex()) {
+                    parameter.indexInParameters = index
+                }
+            }
+            return parameterStorage
+        }
         set(value) {
-            for (parameter in _parameters) {
+            for (parameter in parameterStorage) {
                 parameter.indexInParameters = -1
             }
             for ([index, parameter] in value.withIndex()) {
                 parameter.indexInParameters = index
             }
             // A defensive copy for usages like `function.parameters = function.parameters`
-            _parameters.assignFrom(value.toList())
+            parameterStorage.assignFrom(value.toList())
         }
 
     /**
      * The first parameter of kind [IrParameterKind.DispatchReceiver] in [parameters], if present.
      */
     val dispatchReceiverParameter: IrValueParameter?
-        get() = _parameters.firstOrNull { it.kind == IrParameterKind.DispatchReceiver }
+        get() = parameterStorage.firstOrNull { it.kind == IrParameterKind.DispatchReceiver }
 
     abstract var body: IrBody?
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
-        _parameters.forEach { it.accept(visitor, data) }
+        parameterStorage.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
-        _parameters.transformInPlace(transformer, data)
+        parameterStorage.transformInPlace(transformer, data)
         body = body?.transform(transformer, data)
     }
 }

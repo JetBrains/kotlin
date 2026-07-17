@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.backend.PropertySymbols
 import org.jetbrains.kotlin.fir.backend.lazyMappedPropertyListVar
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.backend.utils.*
+import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
+import org.jetbrains.kotlin.fir.backend.utils.toIrConst
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -29,14 +31,11 @@ import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.isFacadeClass
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -214,8 +213,8 @@ class Fir2IrLazyProperty(
             parent = this@Fir2IrLazyProperty.parent,
             isFakeOverride = isFakeOverride,
             correspondingPropertySymbol = this.symbol
-        ).also {
-            initializeAccessor(it, fir.getter, ConversionTypeOrigin.DEFAULT)
+        ).apply {
+            classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.DEFAULT)
         }
     }
 
@@ -238,59 +237,9 @@ class Fir2IrLazyProperty(
             parent = this@Fir2IrLazyProperty.parent,
             isFakeOverride = isFakeOverride,
             correspondingPropertySymbol = this.symbol
-        ).also {
-            initializeAccessor(it, fir.setter, ConversionTypeOrigin.SETTER)
+        ).apply {
+            classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.SETTER)
         }
-    }
-
-    private fun initializeAccessor(accessor: Fir2IrLazyPropertyAccessor, firAccessor: FirPropertyAccessor?, typeOrigin: ConversionTypeOrigin) {
-        declarationStorage.enterScope(accessor.symbol)
-
-        accessor.classifiersGenerator.setTypeParameters(accessor, fir, typeOrigin)
-
-        accessor.parameters = buildList {
-            val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
-            if (containingClass != null && accessor.shouldHaveDispatchReceiver(containingClass)) {
-                this += accessor.declareThisReceiverParameter(
-                    thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class: ${containingClass.render()}"),
-                    thisOrigin = accessor.origin,
-                    kind = IrParameterKind.DispatchReceiver,
-                )
-            }
-
-            callablesGenerator.addContextParametersTo(
-                accessor.fir.contextParametersForFunctionOrContainingProperty(),
-                accessor,
-                this@buildList,
-                typeOrigin,
-            )
-
-            fir.receiverParameter?.takeUnless { fir.isCompanionExtension }?.let {
-                this += accessor.declareThisReceiverParameter(
-                    thisType = it.typeRef.toIrType(typeOrigin),
-                    thisOrigin = accessor.origin,
-                    explicitReceiver = it,
-                    kind = IrParameterKind.ExtensionReceiver,
-                )
-            }
-
-            if (accessor.isSetter) {
-                val valueParameter = firAccessor?.valueParameters?.firstOrNull()
-                this += callablesGenerator.createDefaultSetterParameter(
-                    accessor.startOffset, accessor.endOffset,
-                    (valueParameter?.returnTypeRef ?: accessor.fir.returnTypeRef).toIrType(
-                        typeOrigin
-                    ),
-                    parent = accessor,
-                    firValueParameter = valueParameter,
-                    name = valueParameter?.name?.takeUnless { firAccessor is FirDefaultPropertySetter },
-                    isCrossinline = valueParameter?.isCrossinline == true,
-                    isNoinline = valueParameter?.isNoinline == true
-                )
-            }
-        }
-
-        declarationStorage.leaveScope(accessor.symbol)
     }
 
     override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) lazy@{

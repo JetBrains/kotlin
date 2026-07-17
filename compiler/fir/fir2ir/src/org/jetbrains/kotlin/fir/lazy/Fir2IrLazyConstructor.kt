@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.toIrType
+import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
@@ -22,8 +23,12 @@ import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class Fir2IrLazyConstructor(
@@ -86,4 +91,44 @@ class Fir2IrLazyConstructor(
 
     override val containerSource: DeserializedContainerSource?
         get() = fir.containerSource
+
+    @OptIn(DelicateIrParameterIndexSetter::class)
+    override val parameterStorage: MutableList<IrValueParameter> by lazy {
+        declarationStorage.enterScope(this.symbol)
+
+        buildList {
+            val containingClass = parent as? IrClass
+            val outerClass = containingClass?.parentClassOrNull
+            if (containingClass?.isInner == true && outerClass != null) {
+                context(c) {
+                    add(
+                        this@Fir2IrLazyConstructor.declareThisReceiverParameter(
+                            thisType = outerClass.thisReceiver!!.type,
+                            thisOrigin = origin,
+                            kind = IrParameterKind.DispatchReceiver
+                        )
+                    )
+                }
+            }
+
+            callablesGenerator.addContextParametersTo(
+                fir.contextParameters,
+                this@Fir2IrLazyConstructor,
+                this@buildList
+            )
+
+            fir.valueParameters.mapTo(this) { valueParameter ->
+                val parentClass = parent as? IrClass
+                callablesGenerator.createIrParameter(
+                    valueParameter,
+                    useStubForDefaultValueStub = parentClass?.classId != StandardClassIds.Enum,
+                    forcedDefaultValueConversion = parentClass?.isAnnotationClass == true
+                ).apply {
+                    this.parent = this@Fir2IrLazyConstructor
+                }
+            }
+        }.apply {
+            declarationStorage.leaveScope(this@Fir2IrLazyConstructor.symbol)
+        }.toMutableList()
+    }
 }

@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import kotlin.properties.ReadWriteProperty
 
@@ -92,14 +95,23 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
 
-    internal fun shouldHaveDispatchReceiver(containingClass: IrClass): Boolean {
+    protected fun shouldHaveDispatchReceiver(containingClass: IrClass): Boolean {
         return !fir.isStatic && !containingClass.isFacadeClass
     }
 
+    protected fun createThisReceiverParameter(thisType: IrType, kind: IrParameterKind, explicitReceiver: FirReceiverParameter? = null): IrValueParameter {
+        declarationStorage.enterScope(this.symbol)
+        return context(c) {
+            declareThisReceiverParameter(thisType, origin, kind = kind, explicitReceiver = explicitReceiver).apply {
+                declarationStorage.leaveScope(this@AbstractFir2IrLazyFunction.symbol)
+            }
+        }
+    }
+
     override val factory: IrFactory
-        get() = super<AbstractFir2IrLazyDeclaration>.factory
+        get() = super.factory
 
     override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrAnnotation>> {
-        return super<AbstractFir2IrLazyDeclaration>.createLazyAnnotations()
+        return super.createLazyAnnotations()
     }
 }
