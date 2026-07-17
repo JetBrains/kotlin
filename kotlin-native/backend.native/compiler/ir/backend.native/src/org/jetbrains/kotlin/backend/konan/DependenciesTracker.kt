@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStra
 import org.jetbrains.kotlin.backend.konan.serialization.CachedEagerInitializedFiles
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -116,7 +118,7 @@ internal class DependenciesTrackerImpl(
 
     override fun add(declaration: IrDeclaration, weak: Boolean, onlyBitcode: Boolean): Unit =
             add(computeFileOrigin(declaration.getPackageFragment()) {
-                context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(declaration)
+                declaration.file.path
             }, weak, onlyBitcode)
 
     override fun addNativeRuntime(onlyBitcode: Boolean) =
