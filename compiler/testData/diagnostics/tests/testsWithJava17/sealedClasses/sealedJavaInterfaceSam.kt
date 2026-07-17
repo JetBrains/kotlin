@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: IFace.java
 public sealed interface IFace {
   void m();
@@ -13,8 +13,8 @@ final class JImpl implements IFace {
 fun acceptFace(i: IFace) {}
 
 fun test() {
-    acceptFace(IFace {})
-    acceptFace({})
+    acceptFace(<!INTERFACE_AS_FUNCTION!>IFace<!> {})
+    acceptFace(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral */
