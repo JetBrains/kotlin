@@ -377,8 +377,6 @@ class MemoizedInlineClassReplacements(
             isPrimary = constructor.isPrimary
         }.apply {
             parent = constructor.parent
-            metadata = constructor.metadata
-            constructor.metadata = null
             copyFunctionSignatureFrom(constructor)
             annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
             body = constructor.body?.patchDeclarationParents(this)

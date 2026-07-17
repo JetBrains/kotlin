@@ -19,7 +19,6 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 import java.lang.reflect.Constructor
@@ -204,12 +203,9 @@ internal class DescriptorKFunction private constructor(
     ): CallerImpl<Constructor<*>> {
         return if (!isDefault && shouldHideConstructorDueToValueClassTypeValueParameters(descriptor)) {
             if (isBound)
-                CallerImpl.AccessorForHiddenBoundConstructor(
-                    member, boundReceiver,
-                    isNonExposedConstructorOfOrdinaryClassWithInlineClassParameter(member)
-                )
+                CallerImpl.AccessorForHiddenBoundConstructor(member, boundReceiver)
             else
-                CallerImpl.AccessorForHiddenConstructor(member, isNonExposedConstructorOfOrdinaryClassWithInlineClassParameter(member))
+                CallerImpl.AccessorForHiddenConstructor(member)
         } else {
             if (isBound)
                 CallerImpl.BoundConstructor(member, boundReceiver)
@@ -254,8 +250,3 @@ internal class DescriptorKFunction private constructor(
     override fun toString(): String =
         ReflectionObjectRenderer.renderFunction(this)
 }
-
-internal fun isNonExposedConstructorOfOrdinaryClassWithInlineClassParameter(member: Constructor<*>): Boolean =
-    member.parameterTypes.any {
-        it.name == JvmStandardClassIds.JVM_EXPOSE_BOXED_NON_EXPOSED_CONSTRUCTOR_MARKER_FQ_NAME.asString()
-    }
