@@ -213,10 +213,6 @@ abstract class KotlinIrLinker(
             }
         }
 
-        // TODO: we do have serializations for those, but let's just create a stub for now.
-        if (!symbol.isBound && (symbol.descriptor.isExpectMember || symbol.descriptor.containingDeclaration?.isExpectMember == true))
-            return null
-
         if (!symbol.isBound) return null
 
         //assert(symbol.isBound) {
