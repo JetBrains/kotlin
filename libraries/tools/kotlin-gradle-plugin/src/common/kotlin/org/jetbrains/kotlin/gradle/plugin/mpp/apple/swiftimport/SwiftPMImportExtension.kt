@@ -155,7 +155,7 @@ abstract class SwiftPMImportExtension @Inject constructor(
      * Configure this property during project configuration.
      */
     var packageResolvedSynchronization: PackageResolvedSynchronization =
-        PackageResolvedSynchronization.Identifier("default")
+        PackageResolvedSynchronization("default")
         set(value) {
             if (isProjectEvaluated) {
                 project.reportDiagnostic(
@@ -403,11 +403,11 @@ abstract class SwiftPMImportExtension @Inject constructor(
 
     /** Creates a shared lock-file synchronization identifier for projects that should resolve one SwiftPM graph together. */
     fun identifier(value: String): PackageResolvedSynchronization =
-        PackageResolvedSynchronization.Identifier(value)
+        PackageResolvedSynchronization(value)
 
     /** Disables cross-project lock-file synchronization and resolves this project's SwiftPM graph independently. */
     fun noSynchronization(): PackageResolvedSynchronization =
-        PackageResolvedSynchronization.Identifier(
+        PackageResolvedSynchronization(
             noSyncIdentifier(project.name)
         )
 
@@ -559,24 +559,17 @@ internal fun Set<KonanTarget>.toSwiftPMPlatforms(): Set<SwiftPMDependency.Platfo
     filter { it.family.isAppleFamily }.map { it.swiftPMPlatform() }.toSet()
 
 
-/** Controls persisted `Package.resolved` synchronization for SwiftPM import. */
-sealed class PackageResolvedSynchronization : Serializable {
-    /** Shares one persisted lock file bucket between all projects with the same identifier. */
-    data class Identifier(val identifier: String) : PackageResolvedSynchronization()
-}
 
-internal fun PackageResolvedSynchronization.toKotlinxSerializable(): SerializablePackageResolvedSynchronization = when (this) {
-    is PackageResolvedSynchronization.Identifier -> SerializablePackageResolvedSynchronization.Identifier(identifier)
+/** Shared lock-file synchronization scope identified by a stable string. */
+@kotlinx.serialization.Serializable
+data class PackageResolvedSynchronization(val identifier: String) : Serializable
+
+internal fun PackageResolvedSynchronization.toKotlinxSerializable(): SerializablePackageResolvedSynchronization{
+    return SerializablePackageResolvedSynchronization(identifier)
 }
 
 @kotlinx.serialization.Serializable
-internal sealed class SerializablePackageResolvedSynchronization {
-    @kotlinx.serialization.Serializable
-    data class Identifier(val identifier: String) : SerializablePackageResolvedSynchronization()
-
-    @kotlinx.serialization.Serializable
-    object None : SerializablePackageResolvedSynchronization()
-}
+internal data class SerializablePackageResolvedSynchronization(val identifier: String)
 
 // This is the structure that we serialize into
 @kotlinx.serialization.Serializable

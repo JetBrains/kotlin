@@ -42,7 +42,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
         project("empty", version) {
             withLockFileFixture(
-                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
             ) {
                 val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
                 val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
@@ -60,7 +60,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = from("1.0.0"),
@@ -73,7 +73,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val buzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                             swiftPackage(
                                 url = url(buzzRepo.url),
                                 version = from("1.0.0"),
@@ -153,7 +153,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
         project("empty", version) {
             withLockFileFixture(
-                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
             ) {
                 val fuzzRepo = repoRef(fuzzRepoName).also {
                     createRepo(it.name, listOf("1.0.0"))
@@ -166,7 +166,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                     }
 
                     swiftPMDependencies {
-                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                        packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                     }
                 }
 
@@ -176,7 +176,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val buzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                         }
                     }
                 }
@@ -184,7 +184,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = from("1.0.0"),
@@ -241,14 +241,14 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
         project("empty", version) {
             withLockFileFixture(
-                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
             ) {
                 val commonRepo = repoRef(commonRepoName).also { createRepo(it.name, listOf("1.0.0", "1.0.1", "1.0.2")) }
 
                 initSwiftPmProject(cacheDirFile) {
                     // no direct deps in root, just initialize plugin infrastructure
                     swiftPMDependencies {
-                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                        packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                     }
                 }
 
@@ -259,7 +259,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                             swiftPackage(
                                 url = url(commonRepo.url),
                                 version = from("1.0.0"),
@@ -273,7 +273,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val buzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                             swiftPackage(
                                 url = url(commonRepo.url),
                                 version = exact("1.0.1"),
@@ -348,7 +348,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
         project("empty", version) {
             withLockFileFixture(
-                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
             ) {
                 val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
                 val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
@@ -356,7 +356,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 initSwiftPmProject(cacheDirFile) {
                     // no direct deps in root, just initialize plugin infrastructure
                     swiftPMDependencies {
-                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                        packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                     }
                 }
 
@@ -366,7 +366,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = from("1.0.0"),
@@ -379,7 +379,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val buzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                             swiftPackage(
                                 url = url(buzzRepo.url),
                                 version = from("1.0.0"),
@@ -507,14 +507,14 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
         project("empty", version) {
             withLockFileFixture(
-                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
             ) {
                 val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
                 val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
 
                 initSwiftPmProject(cacheDirFile) {
                     swiftPMDependencies {
-                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                        packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                     }
                 }
 
@@ -523,7 +523,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = from("1.0.0"),
@@ -536,7 +536,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val buzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(commonIdentifier)
                             swiftPackage(
                                 url = url(buzzRepo.url),
                                 version = from("1.0.0"),
@@ -651,7 +651,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(fuzzIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(fuzzIdentifier)
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = from("1.0.0"),
@@ -665,7 +665,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val buzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(buzzIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(buzzIdentifier)
                             swiftPackage(
                                 url = url(buzzRepo.url),
                                 version = from("1.0.0"),
@@ -787,7 +787,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                 val sharedProject = project("empty", version) {
                     withLockFileFixture(
-                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(sharedProjectName),
+                        packageResolvedSynchronization = PackageResolvedSynchronization(sharedProjectName),
                     ) {
                         initSwiftPmProject(cacheDirFile) {
                             jvm()
@@ -897,20 +897,20 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
         project("empty", version) {
             withLockFileFixture(
-                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("rootLock")
+                packageResolvedSynchronization = PackageResolvedSynchronization("rootLock")
             ) {
                 val repo = repoRef(repoName).also { createRepo(it.name, listOf("1.0.0")) }
 
                 initSwiftPmProject(cacheDirFile) {
                     swiftPMDependencies {
-                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("rootLock")
+                        packageResolvedSynchronization = PackageResolvedSynchronization("rootLock")
                     }
                 }
 
                 val projectWithDeps = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(alignedIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(alignedIdentifier)
                             swiftPackage(
                                 url = url(repo.url),
                                 version = from("1.0.0"),
@@ -923,7 +923,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val projectWithoutDeps = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(emptyIdentifier)
+                            packageResolvedSynchronization = PackageResolvedSynchronization(emptyIdentifier)
                         }
                     }
                 }

@@ -268,7 +268,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("fuzzLock")
+                            packageResolvedSynchronization = PackageResolvedSynchronization("fuzzLock")
                             swiftPackage(
                                 url = url(sharedRepo.url),
                                 version = exact("1.0.0"),
@@ -280,7 +280,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                 val buzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("buzzLock")
+                            packageResolvedSynchronization = PackageResolvedSynchronization("buzzLock")
                             swiftPackage(
                                 url = url(sharedRepo.url),
                                 version = exact("1.0.0"),
@@ -373,7 +373,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                 val coreProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("coreLock")
+                            packageResolvedSynchronization = PackageResolvedSynchronization("coreLock")
                             swiftPackage(
                                 url = url(sharedRepo.url),
                                 version = exact("1.0.0"),
@@ -385,7 +385,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                 val logsProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("logsLock")
+                            packageResolvedSynchronization = PackageResolvedSynchronization("logsLock")
                             swiftPackage(
                                 url = url(sharedRepo.url),
                                 version = exact("1.0.0"),
@@ -443,7 +443,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("fuzzLock")
+                            packageResolvedSynchronization = PackageResolvedSynchronization("fuzzLock")
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = exact("1.0.0"),
@@ -455,7 +455,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                 val buzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("buzzLock")
+                            packageResolvedSynchronization = PackageResolvedSynchronization("buzzLock")
                             swiftPackage(
                                 url = url(buzzRepo.url),
                                 version = exact("1.0.0"),

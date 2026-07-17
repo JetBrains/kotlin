@@ -195,50 +195,48 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             )
         }
 
-        when (val packageIdentifier = identifierSynchronizationOrNull()) {
-            is PackageResolvedSynchronization.Identifier -> {
-                val packageResolvedSynchronizationIdentifier = packageIdentifier.identifier
-                enableFingerprintCoordination(
-                    fingerprintCoordinationService = fingerprintCoordinationService,
-                    generateSyntheticPackageTask = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
-                    fingerprintSyntheticPackageTask = fingerprintSyntheticPackageTask,
-                    transitiveSwiftPMMetadataProvider = transitiveSwiftPMMetadataProvider,
-                    directSwiftPMMetadata = directSwiftPMMetadataProvider,
-                    fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
-                )
+        val packageResolvedSynchronization = locateOrRegisterSwiftPMDependenciesExtension().packageResolvedSynchronization
 
-                if (multiplatformExtension.awaitTargets().any { it.supportsSwiftPMImport() }) {
 
-                    val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(project)
+        val packageResolvedSynchronizationIdentifier = packageResolvedSynchronization.identifier
+        enableFingerprintCoordination(
+            fingerprintCoordinationService = fingerprintCoordinationService,
+            generateSyntheticPackageTask = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
+            fingerprintSyntheticPackageTask = fingerprintSyntheticPackageTask,
+            transitiveSwiftPMMetadataProvider = transitiveSwiftPMMetadataProvider,
+            directSwiftPMMetadata = directSwiftPMMetadataProvider,
+            fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
+        )
 
-                    val projectPath = project.path
+        if (multiplatformExtension.awaitTargets().any { it.supportsSwiftPMImport() }) {
 
-                    aggregationService.get().contribute(
-                        identifier = packageResolvedSynchronizationIdentifier,
-                        projectPathContribution = projectPath,
-                    )
+            val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(project)
 
-                    val sharedCheckoutDir = provideIdentifierCheckoutDir(packageResolvedSynchronizationIdentifier)
+            val projectPath = project.path
 
-                    val actualGeneratedClaimer = locateOrRegisterUmbrellaPackageGenerateTask(
-                        identifier = packageResolvedSynchronizationIdentifier,
-                        aggregationService = aggregationService,
-                        isMacOSHost = isMacOSHost,
-                    )
-                    val actualFetchClaimer = locateOrRegisterUmbrellaFetchTask(
-                        identifier = packageResolvedSynchronizationIdentifier,
-                        aggregationService = aggregationService,
-                        checkOutDir = sharedCheckoutDir,
-                        actualGeneratedClaimer = actualGeneratedClaimer,
-                        isMacOSHost = isMacOSHost,
-                    )
+            aggregationService.get().contribute(
+                identifier = packageResolvedSynchronizationIdentifier,
+                projectPathContribution = projectPath,
+            )
 
-                    fetchSyntheticImportProjectPackages.configure {
-                        it.dependsOn(actualFetchClaimer)
-                    }
-                }
+            val sharedCheckoutDir = provideIdentifierCheckoutDir(packageResolvedSynchronizationIdentifier)
+
+            val actualGeneratedClaimer = locateOrRegisterUmbrellaPackageGenerateTask(
+                identifier = packageResolvedSynchronizationIdentifier,
+                aggregationService = aggregationService,
+                isMacOSHost = isMacOSHost,
+            )
+            val actualFetchClaimer = locateOrRegisterUmbrellaFetchTask(
+                identifier = packageResolvedSynchronizationIdentifier,
+                aggregationService = aggregationService,
+                checkOutDir = sharedCheckoutDir,
+                actualGeneratedClaimer = actualGeneratedClaimer,
+                isMacOSHost = isMacOSHost,
+            )
+
+            fetchSyntheticImportProjectPackages.configure {
+                it.dependsOn(actualFetchClaimer)
             }
-            else -> Unit
         }
     }
 
@@ -337,23 +335,19 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 it.persistedPackageResolved.set(providePersistedPackageResolved())
             }
 
-            when (identifierSynchronizationOrNull()) {
-                is PackageResolvedSynchronization.Identifier -> {
-                    xcodebuildDumpTask.configure {
-                        it.fingerprintCoordinationService.set(fingerprintCoordinationService)
-                        it.syntheticPackageFingerprint.set(
-                            fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
-                        )
-                        it.xcodebuildFingerprint.set(fingerprintXcode.map { it.xcodebuildFingerprint.get() })
-                    }
+            xcodebuildDumpTask.configure {
+                it.fingerprintCoordinationService.set(fingerprintCoordinationService)
+                it.syntheticPackageFingerprint.set(
+                    fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
+                )
+                it.xcodebuildFingerprint.set(fingerprintXcode.map { it.xcodebuildFingerprint.get() })
+            }
 
-                    defFilesAndLdDumpGenerationTask.configure { defFileTask ->
-                        defFileTask.xcodebuildFingerprint.set(
-                            xcodebuildDumpTask.map { it.xcodebuildFingerprint.get() }
-                        )
-                        defFileTask.fingerprintsXcodeDumpsDir.set(provideXcodeDumpsDir())
-                    }
-                }
+            defFilesAndLdDumpGenerationTask.configure { defFileTask ->
+                defFileTask.xcodebuildFingerprint.set(
+                    xcodebuildDumpTask.map { it.xcodebuildFingerprint.get() }
+                )
+                defFileTask.fingerprintsXcodeDumpsDir.set(provideXcodeDumpsDir())
             }
         }
 
@@ -730,12 +724,6 @@ internal fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (t
         -> error("unsupported targets")
 }
 
-internal fun Project.identifierSynchronizationOrNull(): PackageResolvedSynchronization.Identifier? {
-    val sync = locateOrRegisterSwiftPMDependenciesExtension()
-        .packageResolvedSynchronization
-    return sync as? PackageResolvedSynchronization.Identifier
-}
-
 /**
  * For test tasks that depend on dynamic frameworks we pass the DYLD_ env search path
  */
@@ -982,14 +970,11 @@ private fun Project.providePersistedPackageResolvedSync(): PackageResolvedSynchr
 private fun Project.rootDirFile(): File = rootProject.projectDir
 
 private fun Project.providePersistedPackageResolved(): RegularFile {
-    return when (val syncStrategy = providePersistedPackageResolvedSync()) {
-        is PackageResolvedSynchronization.Identifier -> {
-            layout.file(
-                provider {
-                    rootDirFile().resolve(".swiftpm-locks/${syncStrategy.identifier}/swiftImport/Package.resolved")
-                }
-            ).get()
-        }
+    return providePersistedPackageResolvedSync().let { layout.file(
+            provider {
+                rootDirFile().resolve(".swiftpm-locks/${it.identifier}/swiftImport/Package.resolved")
+            }
+        ).get()
     }
 }
 

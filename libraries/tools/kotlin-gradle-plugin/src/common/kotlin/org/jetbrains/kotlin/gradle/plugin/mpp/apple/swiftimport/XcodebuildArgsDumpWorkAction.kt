@@ -74,7 +74,6 @@ internal interface XcodebuildArgsDumpWorkParameters : WorkParameters {
     val additionalXcodeArgs: ListProperty<String>
     val fingerprintCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
     val xcodebuildExecutionFingerprint: Property<XcodeDumpBucketMapKey>
-    val coordinationEnabled: Property<Boolean>
     val ideaSyncEnabled: Property<Boolean>
     val errorFile: RegularFileProperty
     val xcodebuildFinishedMarkerFile: Property<File>
@@ -107,18 +106,14 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
         try {
             doExecute()
             parameters.xcodebuildFinishedMarkerFile.get().writeText(System.currentTimeMillis().toString())
-            if (parameters.coordinationEnabled.get()) {
-                parameters.fingerprintCoordinationService.get().markXcodeDumpCompleted(
-                    key = parameters.xcodebuildExecutionFingerprint.get(),
-                )
-            }
+            parameters.fingerprintCoordinationService.get().markXcodeDumpCompleted(
+                key = parameters.xcodebuildExecutionFingerprint.get(),
+            )
         } catch (failure: Throwable) {
-            if (parameters.coordinationEnabled.get()) {
-                parameters.fingerprintCoordinationService.get().markXcodeDumpFailed(
-                    key = parameters.xcodebuildExecutionFingerprint.get(),
-                    failure = failure,
-                )
-            }
+            parameters.fingerprintCoordinationService.get().markXcodeDumpFailed(
+                key = parameters.xcodebuildExecutionFingerprint.get(),
+                failure = failure,
+            )
 
             if (parameters.ideaSyncEnabled.get()) {
                 val errorText = "Warning: Failed to dump xcodebuild arguments: ${failure.message ?: ""}"

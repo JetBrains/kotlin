@@ -129,6 +129,8 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             )
         }
 
+
+        //There are some synthetic package generation task which do not require fingerprint coordination,eg. umbrella package
         if (!syntheticPackageFingerprint.isPresent) {
             runPackageGeneration(
                 syntheticImportProjectRoot.get().asFile

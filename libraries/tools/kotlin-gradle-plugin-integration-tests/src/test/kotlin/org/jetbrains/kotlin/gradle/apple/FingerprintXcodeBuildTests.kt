@@ -338,7 +338,7 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             withLockFileFixture {
                 initSwiftPmProject(cacheDirFile) {
                     swiftPMDependencies {
-                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(
+                        packageResolvedSynchronization = PackageResolvedSynchronization(
                             if (project.providers.gradleProperty(useAlternateIdentifier).isPresent) "alternate" else "default"
                         )
 

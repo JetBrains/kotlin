@@ -51,7 +51,7 @@ class FingerprintSyntheticPackageTests : KGPBaseTest() {
             val product2Parameter = "product2"
             buildScriptInjection {
                 project.tasks.register<FingerprintSyntheticPackage>("fingerprint") {
-                    packageResolvedSynchronizationFingerprint.set(PackageResolvedSynchronization.Identifier("Foo"))
+                    packageResolvedSynchronizationFingerprint.set(PackageResolvedSynchronization("Foo"))
                     transitiveSwiftPMMetadata.set(
                         TransitiveSwiftPMMetadata(
                             mapOf(

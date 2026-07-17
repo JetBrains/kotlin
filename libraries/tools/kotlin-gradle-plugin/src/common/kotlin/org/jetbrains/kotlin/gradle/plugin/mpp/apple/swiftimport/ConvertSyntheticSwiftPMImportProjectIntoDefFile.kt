@@ -56,11 +56,6 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:Internal
     abstract val fingerprintsXcodeDumpsDir: DirectoryProperty
 
-    @get:Internal
-    val syntheticDumpDir: Provider<Directory> = xcodebuildSdk.flatMap { sdk ->
-        layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(sdk))
-    }
-
     @get:Nested
     abstract val localPackages: LocalPackageTrackingInputs
 
@@ -85,7 +80,6 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
 
     @get:InputFiles
-    @get:Optional
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val xcodebuildFingerprint: RegularFileProperty
 
@@ -136,11 +130,8 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
             return
         }
 
-        val dumpedXcodeBuildArgsDir = if (xcodebuildFingerprint.isPresent) {
-            resolveDumpedXcodeBuildArgsDir()
-        } else {
-            syntheticDumpDir.get().asFile
-        }
+        val dumpedXcodeBuildArgsDir = resolveDumpedXcodeBuildArgsDir()
+
 
         try {
             writeDefAndLinkerOutputs(
@@ -190,11 +181,13 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     }
 
     class MoreThanOneLinkerCallDiscovered(
-        linkerCalls: List<File>
+        linkerCalls: List<File>,
     ) : MoreThanOneCallDiscovered(linkerCalls, "linker")
+
     class MoreThanOneClangCallDiscovered(
-        clangCalls: List<File>
+        clangCalls: List<File>,
     ) : MoreThanOneCallDiscovered(clangCalls, "clang")
+
     abstract class MoreThanOneCallDiscovered(
         calls: List<File>,
         name: String,

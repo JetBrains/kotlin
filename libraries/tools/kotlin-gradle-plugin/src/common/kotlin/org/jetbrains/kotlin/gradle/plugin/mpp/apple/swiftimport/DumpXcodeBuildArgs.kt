@@ -46,7 +46,6 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
 
     /** Hash produced by PrepareXcodeBuildArgsDumpFingerprint and read during execution to claim/join a bucket. */
     @get:InputFiles
-    @get:Optional
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val xcodebuildFingerprint: RegularFileProperty
 
@@ -126,21 +125,13 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     private val xcodebuildFinishedMarkerFile: File
         get() {
             val markerName = "xcodebuildFinishedMarker"
-            if (isCoordinationDisabled()) {
-                return localDerivedDataDir().resolve(markerName)
-            } else {
-                return fingerprintCoordinationService.get().sharedXcodeDerivedDataDir(
-                    xcodebuildExecutionHash = readXcodebuildFingerprint(),
-                    xcodebuildSdk = xcodebuildSdk.get(),
-                ).resolve(markerName)
-            }
+            return fingerprintCoordinationService.get().sharedXcodeDerivedDataDir(
+                xcodebuildExecutionHash = readXcodebuildFingerprint(),
+                xcodebuildSdk = xcodebuildSdk.get(),
+            ).resolve(markerName)
         }
 
     private fun readXcodebuildFingerprint() = xcodebuildFingerprint.asFile.get().readText().trim().split("\n")[1]
-    private fun localDerivedDataDir() = syntheticImportDd.get().asFile.resolve("dd_${xcodebuildSdk.get()}")
-
-    @Suppress("SENSELESS_COMPARISON")
-    private fun isCoordinationDisabled() = xcodebuildFingerprint.asFile.orNull == null || syntheticPackageFingerprint.asFile.orNull == null
 
     // ./gradlew clean
     init {
@@ -156,18 +147,6 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     fun dumpXcodeBuildArgs() {
         val errorFile = ideImportError.get().asFile
         errorFile.delete()
-
-        // this is the case when package sync strategy is set to PackageResolvedSynchronization.None
-        if (isCoordinationDisabled()) {
-            submitXcodebuildArgsDumpWorkAction(
-                dumpDir = syntheticDumpDir.get().asFile,
-                derivedDataDir = syntheticImportDd.get().asFile.resolve("dd_${xcodebuildSdk.get()}"),
-                syntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
-                swiftPMDependenciesCheckout = swiftPMDependenciesCheckout.get().asFile,
-                xcodebuildExecutionHash = null,
-            )
-            return
-        }
 
         val syntheticPackageFingerprintFile = syntheticPackageFingerprint.asFile.get()
 
@@ -228,9 +207,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         derivedDataDir: File,
         syntheticImportProjectRoot: File,
         swiftPMDependenciesCheckout: File,
-        xcodebuildExecutionHash: XcodeDumpBucketMapKey?,
+        xcodebuildExecutionHash: XcodeDumpBucketMapKey,
     ) {
-        val isCoordinationEnabled = xcodebuildExecutionHash != null
         workerExecutor.noIsolation().submit(XcodebuildArgsDumpWorkAction::class.java) { params ->
             params.xcodebuildPlatform.set(xcodebuildPlatform)
             params.xcodebuildSdk.set(xcodebuildSdk)
@@ -240,16 +218,12 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             params.syntheticImportDd.fileValue(derivedDataDir)
             params.dumpedXcodeBuildArgsDir.fileValue(dumpDir)
             params.additionalXcodeArgs.set(additionalXcodeArgs)
-            params.coordinationEnabled.set(isCoordinationEnabled)
             params.ideaSyncEnabled.set(ideaSyncEnabled)
             params.errorFile.set(ideImportError)
             params.xcodebuildFinishedMarkerFile.set(xcodebuildFinishedMarkerFile)
+            params.fingerprintCoordinationService.set(fingerprintCoordinationService)
+            params.xcodebuildExecutionFingerprint.set(xcodebuildExecutionHash)
             params.testExecutionService.set(testExecutionService)
-
-            if (isCoordinationEnabled) {
-                params.fingerprintCoordinationService.set(fingerprintCoordinationService)
-                params.xcodebuildExecutionFingerprint.set(xcodebuildExecutionHash!!)
-            }
         }
     }
 

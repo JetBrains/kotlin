@@ -582,7 +582,7 @@ internal fun sharedRootBucketDir(dumpDir: Path): Path =
     dumpDir.parent.parent
 
 internal fun TestProject.noSynchronization(): PackageResolvedSynchronization {
-    return PackageResolvedSynchronization.Identifier(
+    return PackageResolvedSynchronization(
         noSyncIdentifier(this.projectName)
     )
 }
@@ -731,7 +731,7 @@ private fun KotlinMultiplatformExtension.swiftImportTestExecutionService(
     }
 
 internal fun TestProject.withLockFileFixture(
-    packageResolvedSynchronization: PackageResolvedSynchronization = PackageResolvedSynchronization.Identifier("default"),
+    packageResolvedSynchronization: PackageResolvedSynchronization = PackageResolvedSynchronization("default"),
     block: LockFileTestFixture.() -> Unit,
 ) {
     val cacheDirFile = projectPath.resolve("customXcodePackageCache").toFile()
@@ -756,10 +756,7 @@ internal fun TestProject.withLockFileFixture(
 internal fun TestProject.selectedPersistedPackageResolvedPath(
     sync: PackageResolvedSynchronization,
 ): Path =
-    when (sync) {
-        is PackageResolvedSynchronization.Identifier ->
-            projectPath.resolve(".swiftpm-locks/${sync.identifier}/swiftImport/Package.resolved")
-    }
+    projectPath.resolve(".swiftpm-locks/${sync.identifier}/swiftImport/Package.resolved")
 
 internal fun TestProject.initSwiftPmProject(
     cacheDirFile: File,

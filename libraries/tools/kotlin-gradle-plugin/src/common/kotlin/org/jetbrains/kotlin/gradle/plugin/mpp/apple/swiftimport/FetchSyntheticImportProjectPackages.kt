@@ -133,6 +133,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         val errorFile = ideImportError.get().asFile
         errorFile.delete()
 
+        // means we are fetching an umbrella package
         if (!syntheticPackageFingerprint.isPresent) {
             submitSwiftResolveWorkAction(
                 ownerSyntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
