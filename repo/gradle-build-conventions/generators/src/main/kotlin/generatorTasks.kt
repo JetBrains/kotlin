@@ -105,6 +105,7 @@ fun Project.generatedSourcesTask(
         classpath(generatorClasspath)
         mainClass.set(generatorMainClass)
         systemProperties["line.separator"] = "\n"
+        systemProperties["teamcity"] = kotlinBuildProperties.isTeamcityBuild.get()
         args(argsProvider(generationRoot))
 
         val additionalInputFiles = objects.fileCollection()
