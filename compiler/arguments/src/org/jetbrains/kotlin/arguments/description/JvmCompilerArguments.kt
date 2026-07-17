@@ -968,10 +968,10 @@ The default value is 'inline'.""",
     }
 
     compilerArgument {
-        name = "Xuse-ic-classpath-metadata"
+        name = "Xuse-metadata-on-incremental-classpath"
         description = """
-            Use classpath metadata for incremental compilation.
-            This is used solely for incremental compilation and should not be used directly.
+            Use fragment metadata found on the compilation classpath to perform incremental compilation.
+            This flag is intended for incremental compilation only and should not be used directly.
         """.trimIndent().asReleaseDependent()
         valueType = BooleanType.defaultFalse
 

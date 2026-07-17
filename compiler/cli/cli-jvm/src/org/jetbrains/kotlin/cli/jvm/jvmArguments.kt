@@ -147,7 +147,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 
     put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, arguments.ignoredAnnotationsForBridges?.toList().orEmpty())
 
-    put(JVMConfigurationKeys.USE_IC_CLASSPATH_METADATA, arguments.useIcClasspathMetadata)
+    put(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH, arguments.useMetadataOnIncrementalClasspath)
     put(JVMConfigurationKeys.USE_JAVA_DIRECT, arguments.javaDirect)
 }
 

@@ -123,7 +123,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             override("Xjsr305", CustomCompilerArguments.jsr305Factory)
 
             // KMP related
-            drop("Xuse-ic-classpath-metadata")
+            drop("Xuse-metadata-on-incremental-classpath")
         }
         with(removedJvmCompilerArguments) {
             drop("Xuse-javac")

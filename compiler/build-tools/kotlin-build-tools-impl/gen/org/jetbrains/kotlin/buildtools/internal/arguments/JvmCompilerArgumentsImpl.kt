@@ -103,10 +103,10 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_14_INLINE_CLASSES_MANGLING_SCHEME
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_FAST_JAR_FILE_SYSTEM
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_IC_CLASSPATH_METADATA
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_JAVAC
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_K2_KAPT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_METADATA_ON_INCREMENTAL_CLASSPATH
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_OLD_CLASS_FILES_READING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_USE_TYPE_TABLE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_VALHALLA_SUPPORT
@@ -250,10 +250,10 @@ internal class JvmCompilerArgumentsImpl(
     if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE)}
     if (X_USE_14_INLINE_CLASSES_MANGLING_SCHEME in this) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME)}
     if (X_USE_FAST_JAR_FILE_SYSTEM in this) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM)}
-    if (X_USE_IC_CLASSPATH_METADATA in this) { arguments.useIcClasspathMetadata = get(X_USE_IC_CLASSPATH_METADATA)}
     if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS)}
     try { if (X_USE_JAVAC in this) { arguments.setUsingReflection("useJavac", get(X_USE_JAVAC))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_JAVAC. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     try { if (X_USE_K2_KAPT in this) { arguments.setUsingReflection("useK2Kapt", get(X_USE_K2_KAPT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
+    if (X_USE_METADATA_ON_INCREMENTAL_CLASSPATH in this) { arguments.useMetadataOnIncrementalClasspath = get(X_USE_METADATA_ON_INCREMENTAL_CLASSPATH)}
     if (X_USE_OLD_CLASS_FILES_READING in this) { arguments.useOldClassFilesReading = get(X_USE_OLD_CLASS_FILES_READING)}
     if (X_USE_TYPE_TABLE in this) { arguments.useTypeTable = get(X_USE_TYPE_TABLE)}
     if (X_VALHALLA_SUPPORT in this) { arguments.valhallaSupport = get(X_VALHALLA_SUPPORT)?.stringValue}
@@ -340,10 +340,10 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE] = arguments.typeEnhancementImprovementsInStrictMode } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_14_INLINE_CLASSES_MANGLING_SCHEME] = arguments.useOldInlineClassesManglingScheme } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FAST_JAR_FILE_SYSTEM] = arguments.useFastJarFileSystem } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_IC_CLASSPATH_METADATA] = arguments.useIcClasspathMetadata } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_INLINE_SCOPES_NUMBERS] = arguments.useInlineScopesNumbers } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_JAVAC] = arguments.getUsingReflection<Boolean>("useJavac") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_K2_KAPT] = arguments.getUsingReflection<Boolean?>("useK2Kapt") } catch (_: NoSuchMethodError) {  }
+    try { this[X_USE_METADATA_ON_INCREMENTAL_CLASSPATH] = arguments.useMetadataOnIncrementalClasspath } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_OLD_CLASS_FILES_READING] = arguments.useOldClassFilesReading } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_TYPE_TABLE] = arguments.useTypeTable } catch (_: NoSuchMethodError) {  }
     try { this[X_VALHALLA_SUPPORT] = arguments.valhallaSupport?.let { ValhallaSupportMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::valhallaSupport, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xvalhalla-support value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
@@ -427,10 +427,10 @@ internal class JvmCompilerArgumentsImpl(
     if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE)}
     if (X_USE_14_INLINE_CLASSES_MANGLING_SCHEME in this) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME)}
     if (X_USE_FAST_JAR_FILE_SYSTEM in this) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM)}
-    if (X_USE_IC_CLASSPATH_METADATA in this) { arguments.useIcClasspathMetadata = get(X_USE_IC_CLASSPATH_METADATA)}
     if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS)}
     try { if (X_USE_JAVAC in this) { arguments.setUsingReflection("useJavac", get(X_USE_JAVAC))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_JAVAC. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     try { if (X_USE_K2_KAPT in this) { arguments.setUsingReflection("useK2Kapt", get(X_USE_K2_KAPT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
+    if (X_USE_METADATA_ON_INCREMENTAL_CLASSPATH in this) { arguments.useMetadataOnIncrementalClasspath = get(X_USE_METADATA_ON_INCREMENTAL_CLASSPATH)}
     if (X_USE_OLD_CLASS_FILES_READING in this) { arguments.useOldClassFilesReading = get(X_USE_OLD_CLASS_FILES_READING)}
     if (X_USE_TYPE_TABLE in this) { arguments.useTypeTable = get(X_USE_TYPE_TABLE)}
     if (X_VALHALLA_SUPPORT in this) { arguments.valhallaSupport = get(X_VALHALLA_SUPPORT)?.stringValue}
@@ -657,15 +657,15 @@ internal class JvmCompilerArgumentsImpl(
     public val X_USE_FAST_JAR_FILE_SYSTEM: JvmCompilerArgument<Boolean?> =
         JvmCompilerArgument("X_USE_FAST_JAR_FILE_SYSTEM")
 
-    public val X_USE_IC_CLASSPATH_METADATA: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_USE_IC_CLASSPATH_METADATA")
-
     public val X_USE_INLINE_SCOPES_NUMBERS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_INLINE_SCOPES_NUMBERS")
 
     public val X_USE_JAVAC: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_USE_JAVAC")
 
     public val X_USE_K2_KAPT: JvmCompilerArgument<Boolean?> = JvmCompilerArgument("X_USE_K2_KAPT")
+
+    public val X_USE_METADATA_ON_INCREMENTAL_CLASSPATH: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_USE_METADATA_ON_INCREMENTAL_CLASSPATH")
 
     public val X_USE_OLD_CLASS_FILES_READING: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_OLD_CLASS_FILES_READING")

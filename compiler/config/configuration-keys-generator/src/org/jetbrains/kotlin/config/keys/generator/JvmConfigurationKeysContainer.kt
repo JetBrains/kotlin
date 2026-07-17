@@ -60,6 +60,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val WHEN_GENERATION_SCHEME by key<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions.")
     val IGNORED_ANNOTATIONS_FOR_BRIDGES by key<List<String>>("Annotations fqNames that shall be skipped while copying the annotations from the target to the bridge functions.")
     val IC_METADATA_TRACKER by key<ICJvmMetadataTracker>("Tracks generated in-module JVM metadata for KMP JVM IC", throwOnNull = false)
-    val USE_IC_CLASSPATH_METADATA by key<Boolean>("Enable classpath metadata for KMP incremental compilation")
+    val USE_METADATA_ON_INCREMENTAL_CLASSPATH by key<Boolean>("Use fragment metadata found on the compilation classpath to perform incremental compilation")
     val USE_JAVA_DIRECT by key<Boolean>("Use java-direct as frontend Java facade")
 }
