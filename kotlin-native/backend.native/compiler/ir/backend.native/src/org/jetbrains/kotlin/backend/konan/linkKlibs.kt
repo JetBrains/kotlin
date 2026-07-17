@@ -90,7 +90,6 @@ internal fun LinkKlibsContext.linkKlibs(
     val stdlibIsBeingCached = libraryToCacheModule == stdlibModule
     require(!(stdlibIsCached && stdlibIsBeingCached)) { "The cache for stdlib is already built" }
 
-    val mainModule = IrModuleFragmentImpl(moduleDescriptor)
     val irLinker = createIrLinker(moduleDescriptor, libraryToCacheModule)
     deserializeDependencies(moduleDescriptor, irLinker)
     ensureCStructsAndEnumsAreLoadedForCaching(irLinker, libraryToCacheModule)
@@ -99,7 +98,7 @@ internal fun LinkKlibsContext.linkKlibs(
     val irBuiltIns = IrBuiltInsForLinker(irLinker, config.configuration.languageVersionSettings)
     val symbols = BackendNativeSymbols(this, irBuiltIns, config.configuration)
 
-    irLinker.init(mainModule)
+    irLinker.init(null)
     ExternalDependenciesGenerator(irLinker.symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
@@ -129,12 +128,12 @@ internal fun LinkKlibsContext.linkKlibs(
         }
     }
 
-    mainModule.files.forEach { it.metadata = DescriptorMetadataSource.File(listOf(mainModule.descriptor)) }
     modules.values.forEach { module ->
         module.files.forEach { it.metadata = DescriptorMetadataSource.File(listOf(module.descriptor)) }
     }
 
     return if (libraryToCache == null) {
+        val mainModule = IrModuleFragmentImpl(moduleDescriptor)
         LinkKlibsOutput(modules, mainModule, irBuiltIns, symbols, symbolTable, irLinker)
     } else {
         val libraryPath: Path = libraryToCache.klib.path
