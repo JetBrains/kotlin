@@ -104,7 +104,7 @@ fun test_10(): Int {
 }
 
 fun test_11(): Int {
-    return <!UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS!>when<!> (J.getNullable()) {
+    return when (J.getNullable()) {
         J.A -> 1
         J.B -> 2
         else -> 3
