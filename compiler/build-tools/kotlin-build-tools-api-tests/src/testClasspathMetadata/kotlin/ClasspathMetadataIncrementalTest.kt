@@ -156,7 +156,7 @@ private fun configureKmpJvmFragments(enableClasspathMetadata: Boolean): (JvmComp
             add("-Xfragment-refines=${fragmentRefines.joinToString(",")}")
         }
         add("-Xfragment-sources=${fragmentSources.joinToString(",")}")
-        add("-Xuse-ic-classpath-metadata=$enableClasspathMetadata")
+        add("-Xuse-metadata-on-incremental-classpath=$enableClasspathMetadata")
     }
 
     builder.compilerArguments.applyArgumentStrings(args)
