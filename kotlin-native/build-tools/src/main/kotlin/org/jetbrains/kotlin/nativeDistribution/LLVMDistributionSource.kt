@@ -55,13 +55,13 @@ sealed interface LLVMDistributionSource {
 
 private fun Project.getRemoteLLVMDistribution(source: String, kind: LLVMDistributionKind, host: KonanTarget): RemoteLLVMDistribution? {
     val addressPropertyName = "${ROOT_PROPERTY_NAME}.${source}.${host.name.lowercase()}.${kind.name.lowercase()}"
-    val address = findProperty(addressPropertyName) as String?
+    val address = providers.gradleProperty(addressPropertyName).orNull
     if (address == null) {
         logger.warn("Missing the $source LLVM distribution ($kind) for $host. Specify it with $addressPropertyName")
         return null
     }
     val versionPropertyName = "${ROOT_PROPERTY_NAME}.${source}.${host.name.lowercase()}.version"
-    val version = findProperty(versionPropertyName) as String?
+    val version = providers.gradleProperty(versionPropertyName).orNull
     if (version == null) {
         logger.warn("Missing the $source LLVM distribution version for $host. Specify it with $versionPropertyName")
         return null
@@ -86,7 +86,7 @@ private fun Project.getRemoteLLVMDistributions(source: String): List<RemoteLLVMD
  */
 val Project.llvmDistributionSource: LLVMDistributionSource
     get() {
-        val llvmProperty = property(ROOT_PROPERTY_NAME) as String
+        val llvmProperty = providers.gradleProperty(ROOT_PROPERTY_NAME).get()
         return when (llvmProperty) {
             "default" -> LLVMDistributionSource.Default(getRemoteLLVMDistributions("default"))
             "next" -> LLVMDistributionSource.Next(getRemoteLLVMDistributions("next"))
@@ -98,7 +98,7 @@ val Project.llvmDistributionSource: LLVMDistributionSource
                 check(path.isDirectory()) {
                     "The local LLVM distribution must be a directory. $ROOT_PROPERTY_NAME=`$path`"
                 }
-                val version = property("${ROOT_PROPERTY_NAME}.next.${HostManager.host.name}.version") as String
+                val version = providers.gradleProperty("${ROOT_PROPERTY_NAME}.next.${HostManager.host.name}.version").get()
                 LLVMDistributionSource.Local(path, version)
             }
         }
