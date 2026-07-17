@@ -28,7 +28,7 @@ class EmulatorExecutor(
             this.executableAbsolutePath = configurables.absoluteEmulatorExecutable
             this.workingDirectory = workingDirectory
             this.args.add(0, request.executableAbsolutePath)
-            // TODO: Move these to konan.properties when when it will be possible
+            // TODO: Move these to konan.properties when it will be possible
             //       to represent absolute path there.
             this.args.addAll(0, listOf("-L", absoluteTargetSysRoot))
         })

@@ -59,7 +59,7 @@ class CompositeLookupsCacheAttributesManager(
 
     override fun isCompatible(actual: CompositeLookupsCacheAttributes, expected: CompositeLookupsCacheAttributes): Boolean {
         // cache can be reused when all required (expected) components are present
-        // (components that are not required anymore are not not interfere)
+        // (components that are not required anymore are not interfere)
         return actual.version == expected.version && actual.components.containsAll(expected.components)
     }
 

@@ -23,7 +23,7 @@ by composition functions it calls. For example, if a composable function calls `
 
 ## Sketch of the algorithm
 
-The following Prolog program demonstrates how type type of the applier can be inferred from the
+The following Prolog program demonstrates how type of the applier can be inferred from the
 content of the function (https://swish.swi-prolog.org/p/Composer%20Inference.swinb):
 
 ```
@@ -48,7 +48,7 @@ applier(vector(C), vectorApplier) :- applier(C, vectorApplier).
 
 
 The above corresponds to calling `ComposeNode` (from Layout.kt and Vector.kt) and can easily be
-derived from the body of the call. Taking advantage of of Prolog's unification algorithm, this can
+derived from the body of the call. Taking advantage of Prolog's unification algorithm, this can
 also express open composition functions like the `CompositionLocalProvider`,
 
 ```
