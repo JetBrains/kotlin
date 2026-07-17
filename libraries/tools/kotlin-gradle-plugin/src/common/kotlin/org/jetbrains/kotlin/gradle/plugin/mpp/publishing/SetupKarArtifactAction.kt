@@ -53,6 +53,9 @@ private const val PACK_KAR_TASK_NAME = "packKar"
 
 // TODO KAR: Investigate the possibility of adding the .kar.xz
 internal const val KAR_ARTIFACT_TYPE = "kar"
+internal const val XZ_ARTIFACT_TYPE = "xz"
+internal const val KAR_COMPRESSED_ARTIFACT_EXTENSION = "${KAR_ARTIFACT_TYPE}.${XZ_ARTIFACT_TYPE}"
+internal const val KAR_DECOMPRESSED_ARTIFACT_EXTENSION = KAR_ARTIFACT_TYPE
 internal const val KAR_CONFIGURATION = "kotlinArchive"
 
 /**
@@ -92,12 +95,12 @@ internal val SetupKarArtifactAction = KotlinProjectSetupCoroutine {
         }
     }
 
-    val packTask = tasks.register(PACK_KAR_TASK_NAME, PackKarTask::class.java) { zip ->
+    val packTask = tasks.register(PACK_KAR_TASK_NAME, PackKarTask::class.java) { task ->
         compileKlibTasks.forEach { (target, compileTaskProvider) ->
             val compileTask = compileTaskProvider?.get() ?: return@forEach
             val platformPath = target.karPlatformKlibPath ?: return@forEach
-            zip.into(platformPath) { spec ->
-                zip.dependsOn(compileTask)
+            task.into(platformPath) { spec ->
+                task.dependsOn(compileTask)
                 if (compileTask.produceUnpackagedKlib.get()) {
                     spec.from(compileTask.klibDirectory)
                 } else {
@@ -106,8 +109,8 @@ internal val SetupKarArtifactAction = KotlinProjectSetupCoroutine {
             }
         }
 
-        zip.destinationDirectory.set(layout.buildDirectory.dir("kar"))
-        zip.archiveExtension.set(KAR_ARTIFACT_TYPE)
+        task.destinationDirectory.set(layout.buildDirectory.dir("kar"))
+        task.archiveExtension.set(KAR_COMPRESSED_ARTIFACT_EXTENSION)
     }
 
     /* Include all metadata compile klibs */
@@ -182,9 +185,10 @@ internal val SetupKarArtifactAction = KotlinProjectSetupCoroutine {
 
 
 internal fun Project.configureKarKlibTransformation() {
-    dependencies.artifactTypes.maybeCreate(KAR_ARTIFACT_TYPE).apply {
+    dependencies.artifactTypes.maybeCreate(XZ_ARTIFACT_TYPE).apply {
         attributes.attribute(karStateAttribute, karStateCompressed)
     }
+    dependencies.artifactTypes.maybeCreate(KAR_ARTIFACT_TYPE)
 
     multiplatformExtension.targets.configureEach { target ->
         val platformPath = target.karPlatformKlibPath ?: return@configureEach
@@ -195,7 +199,7 @@ internal fun Project.configureKarKlibTransformation() {
 
 private fun KotlinTarget.registerUnpackMergedKlibTransform(platformPath: String) {
     project.dependencies.registerTransform(XZDecompressAction::class.java) { spec ->
-        spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, KAR_ARTIFACT_TYPE)
+        spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, XZ_ARTIFACT_TYPE)
         spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, KAR_ARTIFACT_TYPE)
 
         spec.from.attribute(karStateAttribute, karStateCompressed)

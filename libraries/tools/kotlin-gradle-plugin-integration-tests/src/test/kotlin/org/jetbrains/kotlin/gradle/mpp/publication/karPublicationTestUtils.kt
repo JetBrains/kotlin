@@ -29,7 +29,7 @@ internal fun KGPBaseTest.publishKarOnce(
     publicationRoot: Path,
 ): Path {
     val repository = publicationRoot.resolve(gradleVersion.version)
-    val kar = repository.resolve("org/jetbrains/kotlin/kar/test/sample/1.0/sample-1.0.kar")
+    val kar = repository.resolve("org/jetbrains/kotlin/kar/test/sample/1.0/sample-1.0.kar.xz")
     val jvmPublication = repository.resolve("org/jetbrains/kotlin/kar/test/sample-jvm/1.0")
     val jvmPom = jvmPublication.resolve("sample-jvm-1.0.pom")
 

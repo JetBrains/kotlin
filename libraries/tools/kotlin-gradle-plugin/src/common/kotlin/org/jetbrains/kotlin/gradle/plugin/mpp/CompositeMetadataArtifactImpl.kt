@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KAR_ARTIFACT_TYPE
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KAR_DECOMPRESSED_ARTIFACT_EXTENSION
 import org.jetbrains.kotlin.gradle.utils.checksumString
 import org.jetbrains.kotlin.gradle.utils.copyPartially
 import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
@@ -67,7 +67,7 @@ internal class CompositeMetadataArtifactImpl(
         override val sourceSetName: String,
         private val artifactFile: ArtifactFile,
     ) : CompositeMetadataArtifactContent.SourceSetContent, Closeable {
-        private val isKar = artifactFile.file.extension == KAR_ARTIFACT_TYPE
+        private val isKar = artifactFile.file.extension == KAR_DECOMPRESSED_ARTIFACT_EXTENSION
 
         val sourceSetPath = if (isKar) "metadata/$sourceSetName" else sourceSetName
 
