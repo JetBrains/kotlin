@@ -43,7 +43,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
      * [[dispatch receiver, context parameters, extension receiver, regular parameters]].
      */
     @OptIn(DelicateIrParameterIndexSetter::class)
-    var parameters: List<IrValueParameter>
+    open var parameters: List<IrValueParameter>
         get() = _parameters
         set(value) {
             for (parameter in _parameters) {
@@ -60,18 +60,21 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
      * The first parameter of kind [IrParameterKind.DispatchReceiver] in [parameters], if present.
      */
     val dispatchReceiverParameter: IrValueParameter?
-        get() = _parameters.firstOrNull { it.kind == IrParameterKind.DispatchReceiver }
+        get() = parameters.firstOrNull { it.kind == IrParameterKind.DispatchReceiver }
 
     abstract var body: IrBody?
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
-        _parameters.forEach { it.accept(visitor, data) }
+        parameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
+        // Here we can't transform parameters as the list is immutable,
+        // so we have to forbid transforming for all implementations that
+        // override parameters
         _parameters.transformInPlace(transformer, data)
         body = body?.transform(transformer, data)
     }

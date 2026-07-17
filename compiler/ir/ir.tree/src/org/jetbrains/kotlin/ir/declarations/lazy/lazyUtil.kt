@@ -6,12 +6,17 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.ir.IrLock
+import org.jetbrains.kotlin.ir.declarations.DelicateIrParameterIndexSetter
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 fun <T> lazyVar(lock: IrLock, initializer: () -> T): ReadWriteProperty<Any?, T> = SynchronizedLazyVar(lock, initializer)
 
-private class SynchronizedLazyVar<T>(val lock: IrLock, initializer: () -> T) : ReadWriteProperty<Any?, T> {
+fun lazyVarForParameters(lock: IrLock, initializer: () -> List<IrValueParameter>): ReadWriteProperty<Any?, List<IrValueParameter>> =
+    SynchronizedLazyVarForParameters(lock, initializer)
+
+private open class SynchronizedLazyVar<T>(val lock: IrLock, initializer: () -> T) : ReadWriteProperty<Any?, T> {
     @Volatile
     private var isInitialized = false
 
@@ -43,6 +48,21 @@ private class SynchronizedLazyVar<T>(val lock: IrLock, initializer: () -> T) : R
         synchronized(lock) {
             this._value = value
             isInitialized = true
+        }
+    }
+}
+
+private class SynchronizedLazyVarForParameters(
+    lock: IrLock, initializer: () -> List<IrValueParameter>
+) : SynchronizedLazyVar<List<IrValueParameter>>(lock, initializer) {
+    @OptIn(DelicateIrParameterIndexSetter::class)
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: List<IrValueParameter>) {
+        super.setValue(thisRef, property, value)
+        for (parameter in value) {
+            parameter.indexInParameters = -1
+        }
+        for ([index, parameter] in value.withIndex()) {
+            parameter.indexInParameters = index
         }
     }
 }

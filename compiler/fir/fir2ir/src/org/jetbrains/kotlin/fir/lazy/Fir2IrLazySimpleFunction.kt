@@ -6,23 +6,30 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.generators.Fir2IrCallableDeclarationsGenerator
 import org.jetbrains.kotlin.fir.backend.lazyMappedFunctionListVar
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.initialSignatureAttr
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.ir.declarations.DelicateIrParameterIndexSetter
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
+import org.jetbrains.kotlin.ir.declarations.lazy.lazyVarForParameters
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -52,6 +59,57 @@ class Fir2IrLazySimpleFunction(
         fir.symbol.resolvedReturnTypeRef.toIrType()
     }
 
+    @OptIn(DelicateIrParameterIndexSetter::class)
+    override var parameters: List<IrValueParameter> by lazyVarForParameters(lock) {
+        declarationStorage.enterScope(this.symbol)
+
+        buildList {
+            var index = 0
+            val containingClass = parent as? IrClass
+            if (containingClass != null && shouldHaveDispatchReceiver(containingClass)) {
+                val thisType = context(c) {
+                    Fir2IrCallableDeclarationsGenerator.computeDispatchReceiverType(
+                        this@Fir2IrLazySimpleFunction,
+                        fir,
+                        containingClass,
+                    )
+                }
+                add(
+                    createThisReceiverParameter(
+                        thisType ?: error("No dispatch receiver receiver for function"),
+                        kind = IrParameterKind.DispatchReceiver,
+                    )
+                )
+            }
+
+            callablesGenerator.addContextParametersTo(
+                fir.contextParameters,
+                this@Fir2IrLazySimpleFunction,
+                this@buildList
+            )
+
+            fir.receiverParameter?.takeUnless { fir.isCompanionExtension }?.let {
+                add(
+                    createThisReceiverParameter(it.typeRef.toIrType(typeConverter), IrParameterKind.ExtensionReceiver)
+                )
+            }
+
+            fir.valueParameters.mapTo(this) { valueParameter ->
+                callablesGenerator.createIrParameter(
+                    valueParameter, skipDefaultParameter = isFakeOverride
+                ).apply {
+                    this.parent = this@Fir2IrLazySimpleFunction
+                }
+            }
+
+            for (parameter in this) {
+                parameter.indexInParameters = index++
+            }
+        }.apply {
+            declarationStorage.leaveScope(this@Fir2IrLazySimpleFunction.symbol)
+        }
+    }
+
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) lazy@{
         if (firParent == null || parent !is Fir2IrLazyClass) return@lazy emptyList()
 
@@ -79,4 +137,8 @@ class Fir2IrLazySimpleFunction(
     override var companionExtensionClass: IrClassSymbol?
         get() = fir.receiverParameter?.takeIf { fir.isCompanionExtension }?.typeRef?.toIrType()?.classOrFail
         set(_) = mutationNotSupported()
+
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        transformingNotSupported(fir)
+    }
 }

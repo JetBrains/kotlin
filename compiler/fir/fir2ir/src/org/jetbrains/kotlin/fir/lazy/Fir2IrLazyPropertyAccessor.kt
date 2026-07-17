@@ -13,22 +13,30 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.propertyIfAccessor
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.ir.declarations.DelicateIrParameterIndexSetter
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
+import org.jetbrains.kotlin.ir.declarations.lazy.lazyVarForParameters
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.util.isFacadeClass
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -38,7 +46,7 @@ class Fir2IrLazyPropertyAccessor(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     private val firAccessor: FirPropertyAccessor?,
-    val isSetter: Boolean,
+    private val isSetter: Boolean,
     private val firParentProperty: FirProperty,
     firParentClass: FirRegularClass?,
     symbol: IrSimpleFunctionSymbol,
@@ -69,6 +77,62 @@ class Fir2IrLazyPropertyAccessor(
 
     override var returnType: IrType by lazyVar(lock) {
         if (isSetter) builtins.unitType else firParentProperty.returnTypeRef.toIrType(conversionTypeContext)
+    }
+
+    @OptIn(DelicateIrParameterIndexSetter::class)
+    override var parameters: List<IrValueParameter> by lazyVarForParameters(lock) {
+        declarationStorage.enterScope(this.symbol)
+
+        buildList {
+            var index = 0
+            val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
+            if (containingClass != null && shouldHaveDispatchReceiver(containingClass)) {
+                add(
+                    createThisReceiverParameter(
+                        thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"),
+                        kind = IrParameterKind.DispatchReceiver,
+                    )
+                )
+            }
+
+            callablesGenerator.addContextParametersTo(
+                fir.propertyIfAccessor.contextParameters,
+                this@Fir2IrLazyPropertyAccessor,
+                this@buildList
+            )
+
+            firParentProperty.receiverParameter?.takeUnless { firParentProperty.isCompanionExtension }?.let {
+                add(
+                    createThisReceiverParameter(
+                        it.typeRef.toIrType(typeConverter, conversionTypeContext),
+                        IrParameterKind.ExtensionReceiver, it
+                    )
+                )
+            }
+
+            if (isSetter) {
+                val valueParameter = firAccessor?.valueParameters?.firstOrNull()
+                add(
+                    callablesGenerator.createDefaultSetterParameter(
+                        startOffset, endOffset,
+                        (valueParameter?.returnTypeRef ?: firParentProperty.returnTypeRef).toIrType(
+                            typeConverter, conversionTypeContext
+                        ),
+                        parent = this@Fir2IrLazyPropertyAccessor,
+                        firValueParameter = valueParameter,
+                        name = valueParameter?.name?.takeUnless { firAccessor is FirDefaultPropertySetter },
+                        isCrossinline = valueParameter?.isCrossinline == true,
+                        isNoinline = valueParameter?.isNoinline == true
+                    )
+                )
+            }
+
+            for (parameter in this) {
+                parameter.indexInParameters = index++
+            }
+        }.apply {
+            declarationStorage.leaveScope(this@Fir2IrLazyPropertyAccessor.symbol)
+        }
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) {
@@ -119,4 +183,9 @@ class Fir2IrLazyPropertyAccessor(
     override var companionExtensionClass: IrClassSymbol?
         get() = firParentProperty.receiverParameter?.takeIf { firParentProperty.isCompanionExtension }?.typeRef?.toIrType()?.classOrFail
         set(_) = mutationNotSupported()
+
+
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        transformingNotSupported(fir)
+    }
 }
