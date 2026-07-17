@@ -7,7 +7,9 @@ package org.jetbrains.kotlinx.jspo.runners
 
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
@@ -33,4 +35,7 @@ class JsPlainObjectsRuntimeClasspathProvider(testServices: TestServices) : Runti
 fun TestConfigurationBuilder.configureForKotlinxJsPlainObjects() {
     useConfigurators(::JsPlainObjectsEnvironmentConfigurator)
     useCustomRuntimeClasspathProviders(::JsPlainObjectsRuntimeClasspathProvider)
+    configureFirHandlersStep {
+        useHandlers(::NoFirCompilationErrorsHandler)
+    }
 }
