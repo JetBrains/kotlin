@@ -2,16 +2,16 @@
 // WITH_STDLIB
 // LANGUAGE_FEATURE_TOGGLED: ReturnValueCheckerIsStable
 
-@file:MustUseReturnValues
+<!IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED!>@file:MustUseReturnValues<!>
 
 fun foo(): String = ""
 
-@IgnorableReturnValue
+<!IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED!>@IgnorableReturnValue<!>
 fun bar(): Int = 42
 
-@MustUseReturnValues
+<!IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED!>@MustUseReturnValues<!>
 class Test {
-    @IgnorableReturnValue
+    <!IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED!>@IgnorableReturnValue<!>
     fun method(): Double = 0.0
 }
 

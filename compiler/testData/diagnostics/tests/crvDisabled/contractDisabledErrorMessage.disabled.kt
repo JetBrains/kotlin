@@ -8,7 +8,7 @@ import kotlin.contracts.*
 inline fun <T, R> T.myLet(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
+        <!ERROR_IN_CONTRACT_DESCRIPTION("requires language features '-Xallow-returns-result-of', '-Xreturn-value-checker' to be enabled")!>returnsResultOf(block)<!>
     }
     return block(this)
 }
