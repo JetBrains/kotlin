@@ -1,1 +1,4 @@
+compiler/testData/cli/jvm/dfaWarningExampleK2.kt:3:25: warning: unused return value of 'length'.
+        (arg as String).length
+                        ^^^^^^
 OK
