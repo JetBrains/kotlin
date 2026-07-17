@@ -76,7 +76,7 @@ projectTests {
         jdkHomeProvider.javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
         jvmArgumentProviders.add(jdkHomeProvider)
 
-        if (project.hasProperty("teamcity") || project.hasProperty("kotlin.test.android.teamcity")) {
+        if (project.kotlinBuildProperties.isTeamcityBuild.get() || project.providers.gradleProperty("kotlin.test.android.teamcity").isPresent) {
             systemProperty("kotlin.test.android.teamcity", true)
         }
 
