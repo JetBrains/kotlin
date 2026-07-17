@@ -322,6 +322,24 @@ fun RepositoryHandler.d8Distributions() {
     }
 }
 
+fun RepositoryHandler.wasmtimeDistributions() {
+    exclusiveContent { exclusive ->
+        exclusive.forRepository {
+            ivy { repository ->
+                repository.name = "Wasmtime Distributions"
+                repository.setUrl("https://cache-redirector.jetbrains.com/github.com/bytecodealliance/wasmtime/releases/download")
+                repository.patternLayout { layout ->
+                    layout.artifact("v[revision]/[artifact]-v[revision]-[classifier].[ext]")
+                }
+                repository.metadataSources { sources -> sources.artifact() }
+            }
+        }
+        exclusive.filter { content ->
+            content.includeModule("bytecodealliance.wasmtime", "wasmtime")
+        }
+    }
+}
+
 fun RepositoryHandler.androidRepository() {
     exclusiveContent { exclusive ->
         exclusive.forRepository {
