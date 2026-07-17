@@ -247,9 +247,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental context receivers.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_CONTEXT_RECEIVERS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_CONTEXT_RECEIVERS", KotlinReleaseVersion(1, 6, 20))
 

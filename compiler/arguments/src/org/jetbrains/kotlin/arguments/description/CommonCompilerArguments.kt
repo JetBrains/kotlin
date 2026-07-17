@@ -792,19 +792,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
-        name = "Xcontext-receivers"
-        description = "Enable experimental context receivers.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.ContextReceivers))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_20,
-        )
-    }
-
-
-    compilerArgument {
         name = "Xcontext-parameters"
         description = "Enable experimental context parameters.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

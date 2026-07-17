@@ -66,10 +66,6 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.ContextParameters, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.contextReceivers) {
-        put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.contextSensitiveResolution) {
         put(LanguageFeature.ContextSensitiveResolutionUsingExpectedType, LanguageFeature.State.ENABLED)
     }

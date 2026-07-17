@@ -309,17 +309,6 @@ Multiple constraints can be specified by repeating this option. Cycles in constr
         }
 
     @Argument(
-        value = "-Xcontext-receivers",
-        description = "Enable experimental context receivers.",
-    )
-    @Enables(LanguageFeature.ContextReceivers)
-    var contextReceivers: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xcontext-sensitive-resolution",
         description = "Enable experimental context-sensitive resolution.",
     )
