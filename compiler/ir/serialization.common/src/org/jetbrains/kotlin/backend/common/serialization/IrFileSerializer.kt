@@ -1564,11 +1564,6 @@ open class IrFileSerializer(
                 // Skip the declaration if producing header klib and the declaration is not public.
                 return@forEach
             }
-            if (it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
-                // Skip the declaration unless it is `expect annotation class` marked with `OptionalExpectation`
-                // without the corresponding `actual` counterpart for the current leaf target.
-                return@forEach
-            }
 
             val serializedDeclaration = serializeTopLevelDeclaration(it, file)
             topLevelDeclarations.add(serializedDeclaration)
