@@ -59,15 +59,6 @@ internal fun resolve(name: String): ClassId? {
  *    `java.util` are packages and `List` is the type;
  *  - each segment after the leftmost type must be a member type of the previous one (JLS
  *    6.5.5.2): declared, or — with [fullResolution] — inherited from its supertypes.
- *
- * Like javac, once a leftmost type is found the interpretation is committed: if the descent
- * then fails, the name is NOT retried as a plain `package.Class` split. On a package/type name
- * clash (discouraged by JLS 6.1) the shadowing type therefore wins and the reference stays
- * unresolved (red code), matching javac and diverging from the PSI Java model, which resolves
- * the package interpretation — pinned by `qualifiedNamePackageClassClash.kt`.
- *
- * [fullResolution] controls whether inherited-inner-class lookup is enabled; `false` selects the
- * reentrance-safe flavor used as a fallback from [resolveInheritedInnerClassToClassId].
  */
 context(c: JavaResolutionContext)
 internal fun resolveQualifiedNameToClassIdFromParts(
@@ -95,15 +86,7 @@ internal fun resolveQualifiedNameToClassIdFromParts(
         val declared = current.createNestedClassId(Name.identifier(parts[next]))
         current = when {
             classExists(declared, fullResolution) -> declared
-            // Commit like javac: the leftmost-type interpretation is final, so a failed descent
-            // yields the (nonexistent) nested id of the committed prefix — e.g. on a package/type
-            // name clash `pkg.clash.Nested`, where the class `pkg.clash` shadows the package
-            // (JLS 6.1), this returns the dangling ClassId(pkg, clash.Nested), which stays
-            // unresolved downstream — red code, as javac reports (`qualifiedNamePackageClassClash.kt`).
-            fullResolution -> findInheritedNestedClass(current, parts[next])
-                ?: return parts.subList(next, parts.size).fold(current) { id, segment -> id.createNestedClassId(Name.identifier(segment)) }
-            // The reentrance-safe flavor seeds supertype walks; a dangling id would silently
-            // poison the walk, so fail the resolution instead.
+            fullResolution -> findInheritedNestedClass(current, parts[next]) ?: return null
             else -> return null
         }
         next++
