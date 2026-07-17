@@ -130,7 +130,7 @@ fun Test.setUpJsBoxTests() {
 
 fun Test.forwardProperties() {
     val rootLocalProperties = Properties().apply {
-        rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
+        File(rootDir, "local.properties").takeIf { it.exists() }?.inputStream()?.use {
             load(it)
         }
     }
