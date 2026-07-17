@@ -55,7 +55,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = if (browsers.get().isNotEmpty()) {
             setOf(
-                NpmPackageVersion("playwright", "1.60.0")
+                NpmPackageVersion("playwright", PLAYWRIGHT_VERSION)
             )
         } else emptySet()
 
