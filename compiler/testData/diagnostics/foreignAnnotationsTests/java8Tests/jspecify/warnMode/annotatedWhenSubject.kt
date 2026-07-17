@@ -38,4 +38,9 @@ fun test() {
         O2 -> {}
         null -> {}
     }
+
+    <!UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS!>when<!> (J.identity(O2 as Sealed2)) {
+        O2 -> {}
+        else -> {}
+    }
 }
