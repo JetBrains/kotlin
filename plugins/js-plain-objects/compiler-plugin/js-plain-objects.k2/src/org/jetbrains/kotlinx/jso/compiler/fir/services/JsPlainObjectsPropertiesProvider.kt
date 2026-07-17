@@ -14,22 +14,22 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getProperties
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.withReplacedConeType
@@ -65,11 +65,11 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
         } else {
             buildList {
                 val memberScope = classSymbol.declaredMemberScope(session, null)
-                classSymbol.resolvedSuperTypes.forEach {
-                    val expandedType = it.fullyExpandedType(session)
+                for (superType in classSymbol.resolvedSuperTypes) {
+                    val expandedType = superType.fullyExpandedType(session)
                     val superInterface = expandedType
                         .toRegularClassSymbol(session)
-                        ?.takeIf { it.classKind == ClassKind.INTERFACE } ?: return@forEach
+                        ?.takeIf { it.classKind == ClassKind.INTERFACE } ?: continue
 
                     val substitutionMap = superInterface.typeParameterSymbols
                         .zip(expandedType.typeArguments)
@@ -78,15 +78,15 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
                     val substitutor = substitutorByMap(substitutionMap, session)
 
                     val superInterfaceSimpleObjectProperties = createJsPlainObjectProperties(superInterface)
-                    superInterfaceSimpleObjectProperties.forEach {
-                        val overriddenProperty = memberScope.getProperties(it.name).firstOrNull()
+                    for (property in superInterfaceSimpleObjectProperties) {
+                        val overriddenProperty = memberScope.getProperties(property.name).firstOrNull()
                         add(
                             ClassProperty(
-                                it.name,
+                                property.name,
                                 overriddenProperty?.resolvedReturnTypeRef
-                                    ?: it.resolvedTypeRef.withReplacedConeType(substitutor.substituteOrNull(it.resolvedTypeRef.coneType)),
-                                it.source,
-                                it.jsName,
+                                    ?: property.resolvedTypeRef.withReplacedConeType(substitutor.substituteOrNull(property.resolvedTypeRef.coneType)),
+                                property.source,
+                                property.jsName,
                             )
                         )
                     }
