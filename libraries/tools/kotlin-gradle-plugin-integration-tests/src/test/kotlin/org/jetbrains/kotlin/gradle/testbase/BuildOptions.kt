@@ -221,7 +221,15 @@ data class BuildOptions(
         }
         // Isolated projects can't be enabled, if the configuration cache is disabled
         val isolatedProjectsFlag = isolatedProjects.toBooleanFlag(gradleVersion) && configurationCacheFlag == true
-        arguments.add("-Dorg.gradle.unsafe.isolated-projects=$isolatedProjectsFlag")
+        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_7)) {
+            arguments.add("-Dorg.gradle.unsafe.isolated-projects=$isolatedProjectsFlag")
+        } else {
+            if (isolatedProjectsFlag) {
+                arguments.add("--isolated-projects")
+            } else {
+                arguments.add("--no-isolated-projects")
+            }
+        }
 
         if (parallel) {
             arguments.add("--parallel")
