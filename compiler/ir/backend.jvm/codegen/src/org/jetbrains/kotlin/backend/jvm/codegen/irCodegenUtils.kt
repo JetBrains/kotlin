@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -355,3 +356,14 @@ internal fun IrFunctionAccessExpression.isGenericCallWithCallersSingleTypeParame
     val callerTypeParam = caller.typeParameters.singleOrNull() ?: return false
     return calleeTypeArg.name == callerTypeParam.name && calleeTypeArg.parent.kotlinFqName == callerTypeParam.parent.kotlinFqName
 }
+
+internal val IrConst.jvmValue: Any?
+    get() {
+        return when (val value = value) {
+            is UByte -> value.toByte()
+            is UShort -> value.toShort()
+            is UInt -> value.toInt()
+            is ULong -> value.toLong()
+            else -> value
+        }
+    }

@@ -971,6 +971,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                     ConstantValueKind.UnsignedByte -> convertTo<Byte>(constValue)
                     ConstantValueKind.Short -> convertTo<Short>(constValue)
                     ConstantValueKind.UnsignedShort -> convertTo<Short>(constValue)
+                    ConstantValueKind.UnsignedLong -> convertTo<Long>(constValue)
                     else -> constValue
                 }
             }
@@ -1601,13 +1602,13 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }
         }
 
-        if (constantValue.isOfPrimitiveType() && args.size == 1) {
+        if (constantValue.isOfPrimitiveOrUnsignedType() && args.size == 1) {
             // Do not inline primitive constants
             tryParseReferenceToIntConstant(args.single())?.let { return it }
         } else if (constantValue is List<*> &&
             constantValue.isNotEmpty() &&
             args.isNotEmpty() &&
-            constantValue.all { it.isOfPrimitiveType() }
+            constantValue.all { it.isOfPrimitiveOrUnsignedType() }
         ) {
             val parsed = args.mapNotNull(::tryParseReferenceToIntConstant)
             if (parsed.size == args.size) {
@@ -1966,7 +1967,8 @@ private class LegacyFunctionTypeKindProjector(private val session: FirSession) :
     }
 }
 
-private fun Any?.isOfPrimitiveType(): Boolean = when (this) {
-    is Boolean, is Byte, is Int, is Long, is Short, is Char, is Float, is Double -> true
+private fun Any?.isOfPrimitiveOrUnsignedType(): Boolean = when (this) {
+    is Boolean, is Byte, is Int, is Long, is Short, is Char, is Float, is Double,
+    is UByte, is UShort, is UInt, is ULong -> true
     else -> false
 }

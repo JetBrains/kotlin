@@ -894,7 +894,7 @@ class ExpressionCodegen(
 
     override fun visitConst(expression: IrConst, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
-        when (val value = expression.value) {
+        when (val value = expression.jvmValue) {
             is Boolean -> {
                 // BooleanConstants _may not_ be materialized, so we ensure an instruction for the line number.
                 mv.nop()

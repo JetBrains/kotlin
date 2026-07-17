@@ -418,7 +418,7 @@ class ClassCodegen private constructor(
         val flags = field.computeFieldFlags(context, config.languageVersionSettings)
         val fv = visitor.newField(
             field, flags, fieldName, fieldType.descriptor,
-            fieldSignature, (field.initializer?.expression as? IrConst)?.value
+            fieldSignature, (field.initializer?.expression as? IrConst)?.jvmValue
         )
 
         jvmFieldSignatureClashDetector.trackDeclaration(field, JvmMemberSignature.Field(fieldName, fieldType.descriptor))
