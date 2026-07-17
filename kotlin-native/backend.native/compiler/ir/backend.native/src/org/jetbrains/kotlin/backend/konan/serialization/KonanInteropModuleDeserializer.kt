@@ -242,7 +242,7 @@ internal class KonanInteropModuleDeserializer(
 
     private fun getOrCreateContainingPackageFragment(forKmDeclaration: Any): IrPackageFragment {
         val containerSource = KlibDeserializedContainerSource(klib, moduleHeaderProto, deserializationConfiguration, definedPackageFqName, null)
-        val descriptor = DeserializedSecondStageInteropPackageDescriptor(moduleDescriptor, definedPackageFqName, containerSource)
+        val descriptor = DeserializedSecondStageInteropPackageDescriptor(moduleFragment.descriptor, definedPackageFqName, containerSource)
         if (forKmDeclaration is KmClass && forKmDeclaration.inheritsFromCStructOrEnum() && !isLibraryCached) {
             // Most declarations from C-interop Klib are just stubs which shouldn't be lowered, so they are
             // put inside IrExternalPackageFragment, the same way as on the first stage of compilation.
