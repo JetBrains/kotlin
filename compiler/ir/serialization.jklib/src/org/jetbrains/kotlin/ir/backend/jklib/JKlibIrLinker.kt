@@ -200,7 +200,7 @@ class JKlibIrLinker(
         override fun contains(idSig: IdSignature): Boolean =
             super.contains(idSig) || descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
 
-        override fun getDefinedPackageNames(): Set<FqName> = getPackagesFqNames(moduleDescriptor)
+        override fun getDefinedPackageNames(): Set<FqName> = getPackagesFqNames(moduleFragment.descriptor)
 
         private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
             val result = mutableSetOf<FqName>()

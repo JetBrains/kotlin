@@ -106,8 +106,6 @@ abstract class IrModuleDeserializer(
     abstract fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol?
     abstract fun deserializedSymbolNotFound(idSig: IdSignature): Nothing
 
-    val moduleDescriptor: ModuleDescriptor get() = _moduleDescriptor ?: error("No ModuleDescriptor provided")
-
     open fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol =
         error("Unsupported operation")
 
@@ -165,7 +163,7 @@ class IrModuleDeserializerWithBuiltIns(
     mangler: KotlinMangler.IrMangler,
     onDeserializedClass: (IrClass, IdSignature) -> Unit,
     private val delegate: IrModuleDeserializer
-) : IrModuleDeserializer(delegate.moduleDescriptor, delegate.libraryAbiVersion) {
+) : IrModuleDeserializer(delegate.moduleFragment.descriptor, delegate.libraryAbiVersion) {
 
     init {
         // TODO: figure out how it should work for K/N

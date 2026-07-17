@@ -344,7 +344,7 @@ abstract class KotlinIrLinker(
     private fun maybeWrapWithBuiltIn(
         moduleDeserializer: IrModuleDeserializer,
     ): IrModuleDeserializer =
-        if (isBuiltInModule(moduleDeserializer.moduleDescriptor)) {
+        if (isBuiltInModule(moduleDeserializer.moduleFragment.descriptor)) {
             IrModuleDeserializerWithBuiltIns(
                 symbolTable,
                 irMangler,

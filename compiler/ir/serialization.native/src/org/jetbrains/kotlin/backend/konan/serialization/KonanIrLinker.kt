@@ -124,7 +124,7 @@ class KonanIrLinker(
     val modules: Map<Path, IrModuleFragment>
         get() = mutableMapOf<Path, IrModuleFragment>().apply {
             deserializersForModules
-                .filter { !it.key.isForwardDeclarationModuleName && it.value.moduleDescriptor !== currentModule }
+                .filter { !it.key.isForwardDeclarationModuleName && it.value.moduleFragment.descriptor !== currentModule }
                 .forEach {
                     val klib = it.value.klib
                     this[klib.path] = it.value.moduleFragment
