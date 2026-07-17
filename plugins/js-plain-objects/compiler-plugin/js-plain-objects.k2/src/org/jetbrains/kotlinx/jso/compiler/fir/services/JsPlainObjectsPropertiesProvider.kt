@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.withReplacedConeType
@@ -48,7 +49,7 @@ class ClassProperty(
 class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessionComponent(session) {
 
     private val cache: FirCache<FirClassSymbol<*>, List<ClassProperty>, Nothing?> =
-        session.firCachesFactory.createCache(this::createJsPlainObjectProperties)
+        session.firCachesFactory.createCache { createJsPlainObjectProperties(it) }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(JsPlainObjectsPredicates.AnnotatedWithJsPlainObject.DECLARATION)
@@ -59,7 +60,10 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
     }
 
     @OptIn(SymbolInternals::class)
-    private fun createJsPlainObjectProperties(classSymbol: FirClassSymbol<*>): List<ClassProperty> =
+    private fun createJsPlainObjectProperties(
+        classSymbol: FirClassSymbol<*>,
+        visitedSuperInterfaces: MutableSet<FirRegularClassSymbol> = hashSetOf(),
+    ): List<ClassProperty> =
         if (!classSymbol.hasAnnotation(JsPlainObjectsAnnotations.jsPlainObjectAnnotationClassId, session)) {
             emptyList()
         } else {
@@ -71,13 +75,16 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
                         .toRegularClassSymbol(session)
                         ?.takeIf { it.classKind == ClassKind.INTERFACE } ?: continue
 
+                    if (superInterface in visitedSuperInterfaces) continue
+                    visitedSuperInterfaces.add(superInterface)
+
                     val substitutionMap = superInterface.typeParameterSymbols
                         .zip(expandedType.typeArguments)
                         .associate { [declared, provided] -> declared to provided.type!! }
 
                     val substitutor = substitutorByMap(substitutionMap, session)
 
-                    val superInterfaceSimpleObjectProperties = createJsPlainObjectProperties(superInterface)
+                    val superInterfaceSimpleObjectProperties = createJsPlainObjectProperties(superInterface, visitedSuperInterfaces)
                     for (property in superInterfaceSimpleObjectProperties) {
                         val overriddenProperty = memberScope.getProperties(property.name).firstOrNull()
                         add(
