@@ -1,5 +1,4 @@
 // ISSUE: KT-87127
-// IGNORE_BACKEND: JS_IR
 
 import kotlinx.js.JsPlainObject
 
@@ -18,7 +17,7 @@ external interface C: A
 external interface D: C, B
 
 fun box(): String {
-    val d = <!NO_VALUE_FOR_PARAMETER!>D<!>(value = "Miku")
+    val d = D(value = "Miku")
 
     if (d.value != "Miku") return "Fail: unexpected value ${d.value}"
 
