@@ -59,7 +59,7 @@ class GeneralNativeIT : KGPBaseTest() {
                 file.appendText(
                     """
                     run {
-                        val serviceProvider = gradle.sharedServices.registrations.getByName("service").getService()
+                        val serviceProvider = gradle.sharedServices.registrations.findByName("service")!!.getService()
                         tasks.getByPath("compileKotlinLinux").doFirst {
                             val service = serviceProvider.get()
                             val countDownLatch = service.parameters.javaClass.getMethod("getLatch").invoke(service.parameters) as CountDownLatch

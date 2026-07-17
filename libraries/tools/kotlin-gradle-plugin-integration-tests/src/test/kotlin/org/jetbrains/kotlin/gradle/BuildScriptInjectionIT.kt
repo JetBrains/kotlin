@@ -279,6 +279,11 @@ class BuildScriptInjectionIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(
+        // org.gradle.api.plugins.UnknownPluginException serialVersionUID has changed between 9.6.0 and 9.7.0 causing serialization exception
+        // Re-check this test on updating Gradle version in the repo to 9.7.0
+        maxVersion = TestVersions.Gradle.G_9_6
+    )
     fun buildscriptBlockInjection(version: GradleVersion) {
         testBuildscriptBlockInjection(
             "emptyKts",
@@ -287,6 +292,11 @@ class BuildScriptInjectionIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(
+        // org.gradle.api.plugins.UnknownPluginException serialVersionUID has changed between 9.6.0 and 9.7.0 causing serialization exception
+        // Re-check this test on updating Gradle version in the repo to 9.7.0
+        maxVersion = TestVersions.Gradle.G_9_6
+    )
     fun buildscriptBlockInjectionGroovy(version: GradleVersion) {
         testBuildscriptBlockInjection(
             "empty",
