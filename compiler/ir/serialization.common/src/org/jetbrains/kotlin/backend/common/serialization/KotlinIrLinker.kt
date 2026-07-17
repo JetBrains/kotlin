@@ -245,7 +245,7 @@ abstract class KotlinIrLinker(
     override fun init(moduleFragment: IrModuleFragment?) {
         if (moduleFragment != null) {
             val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment)
-            registerModuleDeserializer(moduleFragment.name.asString(), moduleFragment.descriptor, currentModuleDeserializer)
+            registerModuleDeserializer(moduleFragment.name.asString(), currentModuleDeserializer)
         }
     }
 
@@ -298,7 +298,6 @@ abstract class KotlinIrLinker(
 
         val deserializer = deserializersForModules[moduleName] ?: registerModuleDeserializer(
             moduleName = moduleName,
-            moduleDescriptor = moduleDescriptor,
             moduleDeserializer = createModuleDeserializer(
                 moduleDescriptor = moduleDescriptor,
                 klib = kotlinLibrary,
@@ -325,10 +324,9 @@ abstract class KotlinIrLinker(
 
     private fun registerModuleDeserializer(
         moduleName: String,
-        moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer {
-        val deserializer = maybeWrapWithBuiltIn(moduleDescriptor, moduleDeserializer)
+        val deserializer = maybeWrapWithBuiltIn(moduleDeserializer)
         deserializersForModules[moduleName] = deserializer
 
         val definedPackageNames = deserializer.getDefinedPackageNames()
@@ -344,10 +342,9 @@ abstract class KotlinIrLinker(
     }
 
     private fun maybeWrapWithBuiltIn(
-        moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer,
     ): IrModuleDeserializer =
-        if (isBuiltInModule(moduleDescriptor)) {
+        if (isBuiltInModule(moduleDeserializer.moduleDescriptor)) {
             IrModuleDeserializerWithBuiltIns(
                 symbolTable,
                 irMangler,
