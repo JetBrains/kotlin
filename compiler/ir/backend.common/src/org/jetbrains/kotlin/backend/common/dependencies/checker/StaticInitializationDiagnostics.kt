@@ -35,12 +35,12 @@ object StaticInitializationDiagnostics : KtDiagnosticsContainer() {
         override val MAP by KtDiagnosticFactoryToRendererMap("Static Initialization") {
             it.put(
                 POSSIBLE_INITIALIZATION_DEADLOCK,
-                "Possible initialization deadlock with '{0}'.",
+                "Possible initialization deadlock with {0}.",
                 Renderer { classes -> classes.joinToString(transform = FqName::asString) },
             )
             it.put(
                 POSSIBLY_UNINITIALIZED_PROPERTY,
-                "Possibly uninitialized property '{0}' due to mutually dependent (direct or indirect) accesses '{1}'.",
+                "Possibly uninitialized property {0} due to mutually dependent (direct or indirect) accesses {1}.",
                 Renderer(FqName::asString),
                 Renderer { classes ->
                     if (classes.isEmpty()) "between the declarations of its containing class"
@@ -49,7 +49,7 @@ object StaticInitializationDiagnostics : KtDiagnosticsContainer() {
             )
             it.put(
                 POSSIBLY_UNINITIALIZED_ENUM_ENTRY,
-                "Possibly uninitialized enum entry '{0}' due to mutually dependent (direct or indirect) accesses '{1}'.",
+                "Possibly uninitialized enum entry {0} due to mutually dependent (direct or indirect) accesses {1}.",
                 Renderer { enumEntrySymbol -> enumEntrySymbol.owner.name.asString() },
                 Renderer { classes ->
                     if (classes.isEmpty()) "between the declarations of its containing class"
@@ -58,33 +58,33 @@ object StaticInitializationDiagnostics : KtDiagnosticsContainer() {
             )
             it.put(
                 ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY,
-                "The expression accesses (either directly or indirectly) the property '{0}' when it is possibly uninitialized.",
+                "The expression accesses (either directly or indirectly) the property {0} when it is possibly uninitialized.",
                 Renderer(FqName::asString),
             )
             it.put(
                 ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY,
-                "The expression accesses (either directly or indirectly) the enum entry '{0}' when it is possibly uninitialized.",
+                "The expression accesses (either directly or indirectly) the enum entry {0} when it is possibly uninitialized.",
                 Renderer { enumEntrySymbol -> enumEntrySymbol.owner.name.asString() },
             )
             it.put(
                 POSSIBLE_CYCLIC_ACCESS,
-                "The expression accesses (either directly or indirectly) the declaration '{0}' that is possibly uninitialized due to cyclic access in its own initializer.",
+                "The expression accesses (either directly or indirectly) the declaration {0} that is possibly uninitialized due to cyclic access in its own initializer.",
                 Renderer { declSymbol -> (declSymbol.owner as? IrDeclarationWithName)?.name?.asString() ?: "???" },
             )
             it.put(
                 ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE,
-                "The expression accesses (either directly or indirectly) the object '{0}' when it is not fully (statically) initialized (due to mutual static dependencies), any static access to its declarations may cause an NPE.",
+                "The expression accesses (either directly or indirectly) the object {0} when it is not fully (statically) initialized (due to mutual static dependencies), any static access to its declarations may cause an NPE.",
                 Renderer(FqName::asString),
             )
             it.put(
                 ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS,
-                "The expression accesses (either directly or indirectly) the declaration '{1}' of a class '{0}' when it is not fully statically initialized (due to mutual static dependencies), any static access to its declarations may cause an NPE.",
+                "The expression accesses (either directly or indirectly) the declaration {1} of a class {0} when it is not fully statically initialized (due to mutual static dependencies), any static access to its declarations may cause an NPE.",
                 Renderer(FqName::asString),
                 Renderer { declSymbol -> declSymbol.owner.name.asString() },
             )
             it.put(
                 CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS,
-                "The constructor call creates a possible static initialization deadlock due to mutual static dependencies of its constructed class '{0}'.",
+                "The constructor call creates a possible static initialization deadlock due to mutual static dependencies of its constructed class {0}.",
                 Renderer(FqName::asString),
             )
         }
