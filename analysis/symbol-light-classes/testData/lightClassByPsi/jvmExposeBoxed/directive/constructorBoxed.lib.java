@@ -43,6 +43,4 @@ public final class Test /* Test*/ {
 
   @org.jetbrains.annotations.Nullable()
   public final StringWrapper getS-DSQDras();//  getS-DSQDras()
-
-  private  Test(StringWrapper, kotlin.jvm.internal.BoxingConstructorMarker);//  .ctor(StringWrapper, kotlin.jvm.internal.BoxingConstructorMarker)
 }

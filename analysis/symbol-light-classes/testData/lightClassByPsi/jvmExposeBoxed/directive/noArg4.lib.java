@@ -37,7 +37,7 @@ public final class RegularClassWithValueConstructor /* RegularClassWithValueCons
   @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  RegularClassWithValueConstructor(@org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(IntWrapper)
 
-  private  RegularClassWithValueConstructor(int, kotlin.jvm.internal.BoxingConstructorMarker);//  .ctor(int, kotlin.jvm.internal.BoxingConstructorMarker)
+  private  RegularClassWithValueConstructor(int);//  .ctor(int)
 
   public  RegularClassWithValueConstructor();//  .ctor()
 
@@ -54,7 +54,7 @@ public final class RegularClassWithValueConstructorAndAnnotation /* RegularClass
   @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  RegularClassWithValueConstructorAndAnnotation(@org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(IntWrapper)
 
-  private  RegularClassWithValueConstructorAndAnnotation(int, kotlin.jvm.internal.BoxingConstructorMarker);//  .ctor(int, kotlin.jvm.internal.BoxingConstructorMarker)
+  private  RegularClassWithValueConstructorAndAnnotation(int);//  .ctor(int)
 
   public  RegularClassWithValueConstructorAndAnnotation();//  .ctor()
 

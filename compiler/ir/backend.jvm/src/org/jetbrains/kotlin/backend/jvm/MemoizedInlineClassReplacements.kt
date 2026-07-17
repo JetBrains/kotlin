@@ -176,12 +176,6 @@ class MemoizedInlineClassReplacements(
                             createStaticReplacement(it)
                     }
 
-                it is IrConstructor &&
-                        !it.constructedClass.isInlineClass &&
-                        it.parameters.any { parameter -> parameter.type.isInlineClassType() } &&
-                        !it.isFromJava() ->
-                    getReplacementForRegularClassConstructor(it)
-
                 // Otherwise, mangle functions with mangled parameters, ignoring constructors
                 it is IrSimpleFunction && it.needsReplacement -> createMethodReplacement(it)
 
@@ -362,31 +356,6 @@ class MemoizedInlineClassReplacements(
                 replacementOrigin
         }
         name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
-    }
-
-    // When we expose regular class constructors, we add another constructor with BoxingMarker parameter
-    // to be called from Kotlin, while original constructor is to be called from Java.
-    fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? {
-        if (constructor.isFromJava()) return null
-        if (constructor.constructedClass.isInlineClass) return null
-        if (constructor.parameters.none { it.type.isInlineClassType() }) return null
-        if (!constructor.shouldBeExposedByAnnotationOrFlag(context)) return null
-
-        return constructor.factory.buildConstructor {
-            updateFrom(constructor)
-            isPrimary = constructor.isPrimary
-        }.apply {
-            parent = constructor.parent
-            copyFunctionSignatureFrom(constructor)
-            annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
-            body = constructor.body?.patchDeclarationParents(this)
-
-            addValueParameter {
-                name = Name.identifier("\$boxingMarker")
-                origin = JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
-                type = context.symbols.boxingConstructorMarkerClass.defaultType.makeNullable()
-            }
-        }
     }
 }
 

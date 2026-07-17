@@ -28,7 +28,6 @@ object JvmLoweredDeclarationOrigin {
     val STATIC_INLINE_CLASS_REPLACEMENT by IrDeclarationOriginImpl.Regular
     val STATIC_INLINE_CLASS_CONSTRUCTOR by IrDeclarationOriginImpl.Regular
     val INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER by IrDeclarationOriginImpl.Regular
-    val NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER by IrDeclarationOriginImpl.Regular
     val EXPOSED_INLINE_CLASS_CONSTRUCTOR by IrDeclarationOriginImpl.Regular
     val GENERATED_ASSERTION_ENABLED_FIELD by IrDeclarationOriginImpl.Synthetic
     val GENERATED_EXTENDED_MAIN by IrDeclarationOriginImpl.Synthetic

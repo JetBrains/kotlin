@@ -10,8 +10,8 @@ public final class Delegating {
     private final @org.jetbrains.annotations.NotNull field id: java.lang.String
     public method <init>(): void
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: Id): void
-    private method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
-    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: java.lang.String): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getId(): Id
     public final @org.jetbrains.annotations.NotNull method getId-eEFUqEU(): java.lang.String
 }
@@ -61,9 +61,9 @@ public final class Regular {
     private final @org.jetbrains.annotations.NotNull field id: java.lang.String
     public method <init>(): void
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: Id): void
-    private method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
-    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: java.lang.String): void
+    public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getId(): Id
     public final @org.jetbrains.annotations.NotNull method getId-eEFUqEU(): java.lang.String
 }
@@ -73,10 +73,9 @@ public final class ResultHolder {
     // source: 'Test.kt'
     private final @org.jetbrains.annotations.NotNull field result: java.lang.Object
     public method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.Result): void
-    private method <init>(p0: java.lang.Object, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
-    public synthetic method <init>(p0: java.lang.Object, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic method <init>(p0: kotlin.Result, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: kotlin.Result, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getResult(): kotlin.Result
     public final @org.jetbrains.annotations.NotNull method getResult-d1pmJ48(): java.lang.Object
     public final inner class kotlin/Result$Companion

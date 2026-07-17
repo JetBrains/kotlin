@@ -29,7 +29,7 @@ fun box(): String {
     // For ordinary class constructors we still use non-exposed one,
     // since this is the constructor, which is called from Kotlin code
     val holderCtor = Holder::class.primaryConstructor!!.javaConstructor
-    if (holderCtor.toString() != "public test.Holder(java.lang.String,kotlin.jvm.internal.BoxingConstructorMarker,kotlin.jvm.internal.DefaultConstructorMarker)") return "FAIL 3: $holderCtor"
+    if (holderCtor.toString() != "public test.Holder(java.lang.String,kotlin.jvm.internal.DefaultConstructorMarker)") return "FAIL 3: $holderCtor"
     val neHolderCtor = NonExposedHolder::class.primaryConstructor!!.javaConstructor
     if (neHolderCtor.toString() != "public test.NonExposedHolder(java.lang.String,kotlin.jvm.internal.DefaultConstructorMarker)") return "FAIL 4: $neHolderCtor"
     return "OK"

@@ -586,10 +586,6 @@ fun IrMutableAnnotationContainer.copyAnnotationsAndAddJavaLangDeprecated(source:
             irBuilder.irAnnotation(irBuilder.irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
 }
 
-fun IrConstructor.isNonExposedConstructorOfOrdinaryClass(): Boolean =
-    parameters.lastOrNull()?.origin == JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
-
-
 @OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.isInlineClass: Boolean get() = isInlineClass(treatCompatibleFullValueClassesAsInline = false)
 
