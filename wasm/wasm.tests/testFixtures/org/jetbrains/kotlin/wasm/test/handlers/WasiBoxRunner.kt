@@ -21,13 +21,29 @@ import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 /**
- * The `test.mjs` launcher script for running the WASI unit-test runner (`startUnitTests()`):
- * imports the compiled module and starts unit tests, exiting with code 1 on any uncaught exception.
+ * The `test.mjs` launcher script for running WASI unit tests under Node.js.
+ *
+ * For a grouped batch the launcher exports `startTest()` — the result-collecting driver that prints one
+ * structured line per test (see `GroupedTestsResultProtocol`); per-test pass/fail is attributed on the JVM side,
+ * so test failures are reported through stdout rather than by throwing. For a legacy single-test unit-test
+ * batch (no such driver) it falls back to the compiler-generated `startUnitTests()`. Any uncaught exception
+ * (e.g. a hard VM trap) still exits with code 1.
+ *
+ * Note: only Node.js runs this script (and thus can take the `startUnitTests()` fallback). The standalone WASI
+ * VMs (WasmEdge/Wasmtime) do not run this script — they invoke the `startTest` export directly (see
+ * [WasmVM.WasmEdge]/[WasmVM.Wasmtime], which hardcode `startTest`), so those VMs **require** a `startTest`
+ * export. This holds by construction: a grouped batch always exports `startTest` (the generated driver), and an
+ * isolated single-test box run is compiled with the `wasiBoxTestRun.kt` additional file that also exports
+ * `startTest`. A `startUnitTests`-only module is therefore never handed to a standalone VM.
  */
 private fun startUnitTestsWasiScript(): String = """
     try {
         let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
-        jsModule.startUnitTests();
+        if (typeof jsModule.startTest === 'function') {
+            jsModule.startTest();
+        } else {
+            jsModule.startUnitTests();
+        }
     } catch(e) {
         console.log('Failed with exception!');
         console.log(e);

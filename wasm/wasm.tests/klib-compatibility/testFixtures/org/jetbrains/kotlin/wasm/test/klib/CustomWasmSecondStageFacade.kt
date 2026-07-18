@@ -43,7 +43,8 @@ import java.io.PrintStream
  * An implementation of [CustomKlibCompilerSecondStageFacade] for WasmJs and WasmWasi, invoking the current version of the K/Wasm backend.
  *
  * Many independent tests are batched into a single WASM executable (instead of one executable per test) for throughput, using
- * separate `@kotlin.test.Test`-annotated functions. This is the **second stage** of a two-stage pipeline:
+ * one synthesized `ProxyLauncher_<hash>` class per test driven by a generated result-collecting runner
+ * (see `GroupedTestsResultProtocol`). This is the **second stage** of a two-stage pipeline:
  * Stage 1 (`NonGroupingStage`) compiles each test independently into a per-test KLIB;
  * then this facade ([Grouping.transform]) links a *batch* of those KLIBs into one [BinaryArtifacts.Wasm] executable.
  *
@@ -115,10 +116,12 @@ class CustomWasmSecondStageFacade internal constructor(
         /**
          * groupedBatch — Non-isolated grouped batch: the common case, and the path that makes batching pay off.
          *
-         * Generates a small `ProxyBatchLauncher.kt` containing one `ProxyLauncher_<hash>` `@Test` class per test in
+         * Generates a small `ProxyBatchLauncher.kt` containing one `ProxyLauncher_<hash>` class per test in
          * the batch (each calling its `box()` via the per-test FQN, computed from [BatchingPackageInserter.computePackage]
-         * + [MainFunctionForBlackBoxTestsSourceProvider.detectPackage]), plus (on WASI) a `@WasmExport fun startTest()`
-         * driving every `ProxyLauncher_*.runTest()` sequentially. Only that launcher source is compiled fresh, into a
+         * + [MainFunctionForBlackBoxTestsSourceProvider.detectPackage]), plus a generated result-collecting runner
+         * (exported as `runGroupedTests` on wasm-js / `startTest` on wasm-wasi) that runs every
+         * `ProxyLauncher_*.runTest()` and prints one structured result line per test (see `GroupedTestsResultProtocol`).
+         * Only that launcher source is compiled fresh, into a
          * small `launcher.klib`, which is then linked as `-Xinclude` together with all per-test KLIBs passed as ordinary
          * `-libraries` (deduplicated against shared `helpers.klib` artifacts from [WasmCoroutineHelpersModuleTransformer],
          * since all helper KLIBs in a batch share `unique_name=helpers`) — everything else is reused as-is from Stage 1.

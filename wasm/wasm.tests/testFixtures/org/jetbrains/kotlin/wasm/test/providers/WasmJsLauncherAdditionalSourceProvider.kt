@@ -51,12 +51,10 @@ class WasmJsLauncherAdditionalSourceProvider(testServices: TestServices) : Abstr
          * Computes the synthetic per-test `Launcher` class name used by the WASM (non-grouped)
          * test infrastructure for tests that are executed in isolation.
          *
-         * The same name is referenced in two places that must stay in sync:
-         *   - [generateLauncherContent] generates the launcher class declaration
-         *     `class Launcher_<hash> { @Test fun runTest() = <fqn>.box() }` for the test file;
-         *   - `AbstractWasmGroupingStageBoxRunner.computeExpectedSuiteNames` consumes it
-         *     as one of the expected `##teamcity[testSuiteFinished name='Launcher_<hash>'`
-         *     markers when verifying that an isolated test from a grouped batch actually ran.
+         * This `@Test`-annotated launcher is driven by the compiler-generated `startUnitTests()` on the isolated
+         * (single-test) unit-test path; its pass/fail is attributed to the sole test in the batch by
+         * `AbstractWasmGroupingStageBoxRunner` without per-test demux. (Multi-test grouped batches instead use the
+         * fresh `ProxyBatchLauncher` and its structured result driver — see `GroupedTestsResultProtocol`.)
          *  Should hash collisions ever happen here, please improve the logic
          */
         fun computeLauncherClassName(file: TestFile): String =

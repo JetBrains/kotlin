@@ -42,9 +42,9 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkIncorrectBoxResult() {
-        // In the grouped (two-stage) pipeline the box is validated by the per-test `@Test` launcher run via the
-        // unit-test runner; an incorrect box result therefore surfaces as the `kotlin.test.assertEquals` failure
-        // re-thrown as an `AssertionError` (rather than the standalone `WasmVMException("Wrong box result")`).
+        // In the grouped (two-stage) pipeline the box result is validated inside the synthesized per-test launcher
+        // (`ProxyLauncher_*.runTest()`), which throws a plain `AssertionError` on a non-"OK" result (see `GroupedTestsResultProtocol`).
+        // The launcher deliberately reproduces the `kotlin.test.assertEquals` message format ("... Expected <OK>, actual <...>."),
         val exception = assertThrowsIfNotMuted<AssertionError> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
