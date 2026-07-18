@@ -114,20 +114,6 @@ pluginManager.apply("nodejs-configuration")
 
 IdeVersionConfigurator.setCurrentIde(project)
 
-if (!project.hasProperty("versions.kotlin-native")) {
-    /**
-     * "versions.kotlin-native" is the version of K/N dist that will be baked into KGP and that KGP will try to resolve to run K/N
-     * compilations (including in KGP tests).
-     */
-    extra["versions.kotlin-native"] = if (kotlinBuildProperties.alignKotlinNativeVersionInTCBuilds) {
-        kotlinBuildProperties.kotlinVersion.get()
-    } else if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
-        kotlinBuildProperties.defaultSnapshotVersion.get()
-    } else {
-        "2.5.0-dev-498"
-    }
-}
-
 val coreLibProjects by extra {
     listOfNotNull(
         ":kotlin-stdlib",

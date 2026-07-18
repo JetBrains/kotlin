@@ -178,7 +178,17 @@ fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$p
 fun Project.kotlinxCollectionsImmutable() =
     "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${kotlinBuildProperties.versionsProperty("kotlinx-collections-immutable").get()}"
 
-val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
+val Project.kotlinNativeVersion: String
+    get() = providers.gradleProperty("kotlin.native.version")
+        .orElse(
+            if (kotlinBuildProperties.alignKotlinNativeVersionInTCBuilds) {
+                kotlinBuildProperties.kotlinVersion.get()
+            } else if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+                kotlinBuildProperties.defaultSnapshotVersion.get()
+            } else {
+                providers.gradleProperty("kotlin.native.version.default").get()
+            }
+        ).get()
 
 val Project.nodejsVersion: String get() = kotlinBuildProperties.versionsProperty("nodejs").get()
 val Project.nodejsLtsVersion: String get() = kotlinBuildProperties.versionsProperty("nodejs.lts").get()
