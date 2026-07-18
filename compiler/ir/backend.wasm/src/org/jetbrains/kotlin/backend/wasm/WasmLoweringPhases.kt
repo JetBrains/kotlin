@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 
-private fun createValidateIrAfterInliningOnlyPrivateFunctionsPhase(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<*> {
-    return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
+private fun createIrValidationAfterInliningPrivateFunctionsKlibPhase(context: LoweringContext): IrValidationAfterInliningPrivateFunctionsKlibPhase<*> {
+    return IrValidationAfterInliningPrivateFunctionsKlibPhase(
         context,
         checkInlineFunctionCallSites = { inlineFunctionUseSite ->
             // Call sites of only non-private functions are allowed at this stage.
@@ -36,8 +36,8 @@ private fun createValidateIrAfterInliningOnlyPrivateFunctionsPhase(context: Lowe
     )
 }
 
-private fun createValidateIrAfterInliningAllFunctionsPhase(context: LoweringContext): IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<*> {
-    return IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase(
+private fun createIrValidationAfterInliningAllFunctionsKlibSecondStagePhase(context: LoweringContext): IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<*> {
+    return IrValidationAfterInliningAllFunctionsKlibSecondStagePhase(
         context,
         checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
             // No inline function call sites should remain at this stage.
@@ -115,7 +115,7 @@ fun wasmLoweringsOfTheFirstPhase(
 
 val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
     // BEGIN: Common Native/JS/Wasm prefix.
-    ::KlibIrValidationBeforeLoweringPhase,
+    ::IrValidationBeforeLoweringsKlibSecondStagePhase,
     ::InlineCallCycleCheckerLowering,
     ::createUpgradeCallableReferences,
     ::LateinitLowering,
@@ -128,10 +128,10 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::createSyntheticAccessorGenerationPhase,
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
-    ::createValidateIrAfterInliningOnlyPrivateFunctionsPhase,
+    ::createIrValidationAfterInliningPrivateFunctionsKlibPhase,
     ::WasmAllFunctionInlining,
     ::RedundantCastsRemoverLowering,
-    ::createValidateIrAfterInliningAllFunctionsPhase,
+    ::createIrValidationAfterInliningAllFunctionsKlibSecondStagePhase,
     // END: Common Native/JS/Wasm prefix.
 
     ::createConstEvaluationPhase,
@@ -264,5 +264,5 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::WasmInlineObjectsWithPureInitializationLowering,
 
     ::WhenBranchOptimiserLowering,
-    ::IrValidationAfterLoweringPhase,
+    ::IrValidationAfterLoweringsSecondStagePhase,
 )

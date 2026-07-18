@@ -77,7 +77,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
      */
     protected open val irValidationCompilerOptions = listOf(
         // Enable basic IR validation before all lowerings (IrValidationBeforeLoweringPhase)
-        // and after all lowerings (IrValidationAfterLoweringPhase).
+        // and after all lowerings (IrValidationAfterLoweringsSecondStagePhase).
         "-Xverify-ir=error",
         // Additionally, validate IR after each compilation phase
         "-Xphases-to-validate-after=all"
