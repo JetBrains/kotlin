@@ -119,7 +119,7 @@
     },
     {
       "parentPhaseType": IrPreLowering,
-      "name": "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
+      "name": "IrValidationAfterInliningPrivateFunctionsKlibPhase",
       "time": {
         "nanos": $UINT$
       }
@@ -147,7 +147,7 @@
     },
     {
       "parentPhaseType": IrPreLowering,
-      "name": "IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase",
+      "name": "IrValidationAfterInliningAllFunctionsKlibFirstStagePhase",
       "time": {
         "nanos": $UINT$
       }

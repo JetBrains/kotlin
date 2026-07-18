@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.common.phaser.KlibIrValidationBeforeLoweringPhase
+import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringsKlibSecondStagePhase
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.common.wrapWithCompilationException
 import org.jetbrains.kotlin.backend.konan.*
@@ -75,7 +75,7 @@ internal fun PhaseEngine<NativeGenerationState>.runModuleWisePhase(
 
 internal val validateIrBeforeLowering = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "ValidateIrBeforeLowering",
-        op = { context, module -> KlibIrValidationBeforeLoweringPhase(context.context).lower(module) }
+        op = { context, module -> IrValidationBeforeLoweringsKlibSecondStagePhase(context.context).lower(module) }
 )
 
 internal val checkInlineCallCyclesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
@@ -87,7 +87,7 @@ internal val checkInlineCallCyclesPhase = createSimpleNamedCompilerPhase<NativeG
 internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "ValidateIrAfterInliningOnlyPrivateFunctions",
         op = { context, module ->
-            IrValidationAfterInliningOnlyPrivateFunctionsPhase(
+            IrValidationAfterInliningPrivateFunctionsKlibPhase(
                     context = context.context,
                     checkInlineFunctionCallSites = { inlineFunctionUseSite ->
                         // Call sites of only non-private functions are allowed at this stage.
@@ -100,7 +100,7 @@ internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedComp
 internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "ValidateIrAfterInliningAllFunctions",
         op = { context, module ->
-            IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase(
+            IrValidationAfterInliningAllFunctionsKlibSecondStagePhase(
                     context = context.context,
                     checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
                         // No inline function call sites should remain at this stage.
@@ -115,7 +115,7 @@ internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhas
 
 internal val validateIrAfterLowering = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "ValidateIrAfterLowering",
-        op = { context, module -> IrValidationAfterLoweringPhase(context.context).lower(module) }
+        op = { context, module -> IrValidationAfterLoweringsSecondStagePhase(context.context).lower(module) }
 )
 
 internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<NativeBackendContext, Unit>(
