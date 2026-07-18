@@ -60,7 +60,9 @@ fun CompilerConfiguration.setupCommonArguments(
                 this.report(COMPILER_ARGUMENTS_ERROR, "Unsupported IR verification mode $verifyIrString")
             }
         }
-    } ?: IrVerificationMode.NONE
+    } ?: IrVerificationMode.NONE.also {
+        this.report(COMPILER_ARGUMENTS_WARNING, "!!! IR verification mode was not specified")
+    }
     put(CommonConfigurationKeys.VERIFY_IR, irVerificationMode)
 
     if (arguments.disableIrCheckers.isNotEmpty() && irVerificationMode == IrVerificationMode.NONE) {
