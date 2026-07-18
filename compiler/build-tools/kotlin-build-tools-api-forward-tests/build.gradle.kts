@@ -77,8 +77,8 @@ val scriptingCompilerPluginResolvable = configurations.resolvable("scriptingComp
     extendsFrom(scriptingCompilerPlugin.get())
 }
 
-val unpackedResources by configurations.dependencyScope("unpackedResources")
-val unpackedResourcesResolvable by configurations.resolvable("unpackedResourcesResolvable") {
+val unpackedResources = configurations.dependencyScope("unpackedResources")
+val unpackedResourcesResolvable = configurations.resolvable("unpackedResourcesResolvable") {
     // Wire the dependency declarations
     extendsFrom(unpackedResources)
     // These attributes must be compatible with the producer
