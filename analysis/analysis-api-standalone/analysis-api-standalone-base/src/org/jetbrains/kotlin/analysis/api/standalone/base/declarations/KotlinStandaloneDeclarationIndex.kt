@@ -12,6 +12,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal interface KotlinStandaloneDeclarationIndex {
+    /**
+     * All indexed files keyed by their [KtFile.getPackageFqName]. In contrast to the declaration-based maps, this map also contains files
+     * without any top-level declarations, so it can be used to find every package that is mentioned in a package directive.
+     */
+    val filesByPackage: Map<FqName, Set<KtFile>>
+
     val facadeFileMap: Map<FqName, Set<KtFile>>
     val multiFileClassPartMap: Map<FqName, Set<KtFile>>
     val scriptMap: Map<FqName, Set<KtScript>>

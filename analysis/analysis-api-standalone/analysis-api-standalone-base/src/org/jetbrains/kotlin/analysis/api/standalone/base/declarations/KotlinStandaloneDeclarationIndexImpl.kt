@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclarationIndex {
+    override val filesByPackage: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
     override val facadeFileMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
     override val multiFileClassPartMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
     override val scriptMap: MutableMap<FqName, MutableSet<KtScript>> = mutableMapOf()
@@ -37,6 +38,10 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
     override val inheritableTypeAliasesByAliasedName: MutableMap<Name, MutableSet<KtTypeAlias>> = mutableMapOf()
 
     private fun indexFile(file: KtFile) {
+        filesByPackage.computeIfAbsent(file.packageFqName) {
+            mutableSetOf()
+        }.add(file)
+
         if (!file.hasTopLevelCallables()) return
         facadeFileMap.computeIfAbsent(file.packageFqName) {
             mutableSetOf()

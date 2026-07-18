@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
+import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageNamesProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
@@ -90,13 +91,16 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     override fun computePackageNames(): Set<String>? =
         when (contextualModule) {
             is KaSourceModule, is KaScriptModule, is KaNotUnderContentRootModule ->
-                computePackageSetFromIndex()
+                computePackageSetFromIndex(contextualModule)
 
             is KaLibraryModule ->
                 if (contextualModule.canComputePackageSetFromIndex) {
-                    computePackageSetFromIndex()
+                    computePackageSetFromIndex(contextualModule)
                 } else {
-                    computeBinaryLibraryModulePackageSet(contextualModule)
+                    KotlinStandalonePackageNamesProvider.getInstance(contextualModule.project)
+                        .computeKlibPackageNames(scope)
+                        ?.mapTo(mutableSetOf()) { it.asString() }
+                        ?: computeBinaryLibraryModulePackageSet(contextualModule)
                 }
 
             else -> null
@@ -109,18 +113,10 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     private val KaLibraryModule.canComputePackageSetFromIndex: Boolean
         get() = KotlinPlatformSettings.getInstance(project).deserializedDeclarationsOrigin == KotlinDeserializedDeclarationsOrigin.STUBS
 
-    private fun computePackageSetFromIndex(): Set<String> = buildSet {
-        addPackageNamesInScope(index.classLikeDeclarationsByPackage)
-        addPackageNamesInScope(index.topLevelCallablesByPackage)
-    }
-
-    private fun <T : KtDeclaration> MutableSet<String>.addPackageNamesInScope(map: Map<FqName, Set<T>>) {
-        map.forEach { [fqName, declarations] ->
-            if (declarations.any { it.inScope }) {
-                add(fqName.asString())
-            }
-        }
-    }
+    private fun computePackageSetFromIndex(module: KaModule): Set<String> =
+        KotlinStandalonePackageNamesProvider.getInstance(module.project)
+            .computePackageNamesFromIndex(scope)
+            .mapTo(mutableSetOf()) { it.asString() }
 
     /**
      * The computation only supports JARs for now and is intended for test purposes.
@@ -186,12 +182,17 @@ class KotlinStandaloneDeclarationProvider internal constructor(
  * [shouldBuildStubsForBinaryLibraries] is true. In Standalone mode, binary roots don't need to be specified because library symbols are
  * provided via class-based deserialization, not stub-based deserialization.
  *
+ * The created declaration providers compute their package names through
+ * [KotlinStandalonePackageNamesProvider][org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageNamesProvider],
+ * which must be registered as a project service with this factory instance (see its documentation).
+ *
  * @param binaryRoots Binary roots of the binary libraries that are specific to [project].
  * @param sharedBinaryRoots Binary roots that are shared between multiple different projects. This allows Kotlin tests to cache stubs for
  *  shared libraries like the Kotlin stdlib.
- * @param shouldComputeBinaryLibraryPackageSets Whether to compute package sets for binary libraries when they are NOT indexed by default.
- *  It is risky to enable this in production because in some file systems, file traversal can be slow. So we shouldn't enable this without
- *  further investigation.
+ * @param shouldComputeBinaryLibraryPackageSets Whether to compute package sets for binary libraries that are not indexed by walking JAR
+ *  contents (see `computeBinaryLibraryModulePackageSet`). This governs only the JAR-traversal fallback; index-based and KLib package
+ *  computation always runs through `KotlinStandalonePackageNamesProvider`. It is risky to enable JAR traversal in production because in
+ *  some file systems, file traversal can be slow. So we shouldn't enable this without further investigation.
  * @param postponeIndexing Whether to postpone indexing until the first access.
  *  This is useful for tests to reduce the startup time and potentially avoid redundant indexing (which might be heavy, especially if stubs are used).
  */
@@ -230,15 +231,11 @@ class KotlinStandaloneDeclarationProviderFactory(
         }
     }
 
-    private val index: KotlinStandaloneDeclarationIndex
+    internal val index: KotlinStandaloneDeclarationIndex
         get() = indexData.index
 
     override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider {
         return KotlinStandaloneDeclarationProvider(index, scope, contextualModule, environment, shouldComputeBinaryLibraryPackageSets)
-    }
-
-    fun getAdditionalCreatedKtFiles(): List<KtFile> {
-        return indexData.fakeKtFiles
     }
 
     fun getAllKtClasses(): List<KtClassOrObject> = index.classesByClassId.values.flattenTo(mutableListOf())
